@@ -23,9 +23,9 @@ import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
 public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
 
-	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
+//	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-	void deleteData(List resultLimits) throws LIMSRuntimeException;
+//	void deleteData(List resultLimits) throws LIMSRuntimeException;
 
 	List getAllResultLimits() throws LIMSRuntimeException;
 
@@ -33,7 +33,7 @@ public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
 
 	void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-	void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
+//	void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
 	List getNextResultLimitRecord(String id) throws LIMSRuntimeException;
 

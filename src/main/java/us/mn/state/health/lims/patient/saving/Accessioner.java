@@ -410,7 +410,7 @@ public abstract class Accessioner {
 	private void persisteSampleItemsChanged() {
 //		analysisService.deleteData(analysisToDelete);
 		analysisService.deleteAll(analysisToDelete);
-		sampleItemService.deleteData(sampleItemsToDelete);
+		sampleItemService.deleteAll(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
 			analysisService.updateData(analysis);
 		}
@@ -901,9 +901,9 @@ public abstract class Accessioner {
 //			sampleService.getData(sample);
 			so.setSample(sample);
 			if (so.getId() == null) {
-				sampleOrganizationService.insertData(so);
+				sampleOrganizationService.insert(so);
 			} else {
-				sampleOrganizationService.updateData(so);
+				sampleOrganizationService.update(so);
 			}
 		}
 	}
@@ -929,7 +929,7 @@ public abstract class Accessioner {
 				item.setSortOrder(Integer.toString(nextSortOrder++));
 				item.setSysUserId(sysUserId);
 
-				sampleItemService.insertData(item);
+				sampleItemService.insert(item);
 			} else {
 				sampleTestPair.item = item = existingSampleItem;
 			}
@@ -1007,7 +1007,7 @@ public abstract class Accessioner {
 				.equals(sample.getStatus())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
 			sample.setSysUserId(sysUserId);
-			sampleService.updateData(sample);
+			sampleService.update(sample);
 		}
 	}
 
@@ -1083,7 +1083,7 @@ public abstract class Accessioner {
 		if (null != sample) {
 			sample.setSysUserId(sysUserId);
 			if (sample.getId() != null) {
-				sampleService.updateData(sample);
+				sampleService.update(sample);
 				HibernateUtil.getSession().evict(sample);
 			} else {
 				sampleService.insertDataWithAccessionNumber(sample);
@@ -1095,7 +1095,7 @@ public abstract class Accessioner {
 		if (null != sampleProject) {
 			sampleProject.setSample(sample);
 			sampleProject.setSysUserId(sysUserId);
-			sampleProjectService.insertData(sampleProject);
+			sampleProjectService.insert(sampleProject);
 		}
 	}
 
@@ -1127,7 +1127,7 @@ public abstract class Accessioner {
 				oldOh.setSampleId(sample.getId());
 				oldOh.setPatientId(patientInDB.getId());
 				oldOh.setSysUserId(sysUserId);
-				observationHistoryService.updateData(oldOh);
+				observationHistoryService.update(oldOh);
 			}
 		}
 
@@ -1155,7 +1155,7 @@ public abstract class Accessioner {
 			newOh.setSampleId(sample.getId());
 			newOh.setPatientId(patientInDB.getId());
 			newOh.setSysUserId(sysUserId);
-			observationHistoryService.insertData(newOh);
+			observationHistoryService.insert(newOh);
 		}
 	}
 
@@ -1226,7 +1226,7 @@ public abstract class Accessioner {
 				newOH.setPatientId(patientInDB.getId());
 				newOH.setSampleId(sample.getId());
 
-				observationHistoryService.insertData(newOH);
+				observationHistoryService.insert(newOH);
 			}
 		}
 	}
@@ -1261,7 +1261,7 @@ public abstract class Accessioner {
 			}
 			Person personToDelete = patientToDelete.getPerson();
 			patientToDelete.setSysUserId(sysUserId);
-			patientService.deleteData(Arrays.asList(patientToDelete));
+			patientService.deleteAll(Arrays.asList(patientToDelete));
 			personToDelete.setSysUserId(sysUserId);
 			personService.deleteData(Arrays.asList(personToDelete));
 		}
@@ -1329,7 +1329,7 @@ public abstract class Accessioner {
 						observation.setSampleItemId(sampleItemId);
 						observation.setPatientId(patientInDB.getId());
 						observation.setSysUserId(sysUserId);
-						observationHistoryService.insertData(observation);
+						observationHistoryService.insert(observation);
 					}
 				}
 			}

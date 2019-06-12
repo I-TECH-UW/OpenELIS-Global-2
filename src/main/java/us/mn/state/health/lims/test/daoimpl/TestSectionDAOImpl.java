@@ -25,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -50,116 +47,114 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
 	private SystemUserSectionDAO systemUserSectionDAO;
 
-	@Override
-	public void deleteData(List testSections) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List testSections) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < testSections.size(); i++) {
+//				TestSection data = (TestSection) testSections.get(i);
+//
+//				TestSection oldData = readTestSection(data.getId());
+//				TestSection newData = new TestSection();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TEST_SECTION";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < testSections.size(); i++) {
+//				TestSection data = (TestSection) testSections.get(i);
+//				// bugzilla 2206
+//				data = readTestSection(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < testSections.size(); i++) {
-				TestSection data = (TestSection) testSections.get(i);
-
-				TestSection oldData = readTestSection(data.getId());
-				TestSection newData = new TestSection();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TEST_SECTION";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < testSections.size(); i++) {
-				TestSection data = (TestSection) testSections.get(i);
-				// bugzilla 2206
-				data = readTestSection(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TestSection testSection) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateTestSectionExists(testSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testSection.getTestSectionName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(testSection);
-			testSection.setId(id);
-
-			auditDAO.saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TestSection testSection) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateTestSectionExists(testSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testSection.getTestSectionName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
-		}
-
-		TestSection oldData = readTestSection(testSection.getId());
-		TestSection newData = testSection;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = testSection.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TEST_SECTION";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(testSection);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
-		}
-	}
+//	@Override
+//	public boolean insertData(TestSection testSection) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateTestSectionExists(testSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testSection.getTestSectionName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(testSection);
+//			testSection.setId(id);
+//
+//			auditDAO.saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
+//		}
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(TestSection testSection) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateTestSectionExists(testSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testSection.getTestSectionName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
+//		}
+//
+//		TestSection oldData = readTestSection(testSection.getId());
+//		TestSection newData = testSection;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = testSection.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TEST_SECTION";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(testSection);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
@@ -439,7 +434,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 		return list;
 	}
 
-	private boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
 		try {
 
 			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";

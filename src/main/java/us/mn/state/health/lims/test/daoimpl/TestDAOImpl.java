@@ -31,11 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -69,110 +66,110 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	@Autowired
 	private TestAnalyteDAO testAnalyteDAO;
 
-	@Override
-	public void deleteData(List tests) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List tests) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < tests.size(); i++) {
+//				Test data = (Test) tests.get(i);
+//
+//				Test oldData = readTest(data.getId());
+//				Test newData = new Test();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TEST";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < tests.size(); i++) {
+//				Test data = (Test) tests.get(i);
+//				Test cloneData = readTest(data.getId());
+//
+//				cloneData.setIsActive(IActionConstants.NO);
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < tests.size(); i++) {
-				Test data = (Test) tests.get(i);
+//	@Override
+//	public boolean insertData(Test test) throws LIMSRuntimeException {
+//
+//		try {
+//			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
+//			}
+//			String id = (String) sessionFactory.getCurrentSession().save(test);
+//			test.setId(id);
+//
+//			String sysUserId = test.getSysUserId();
+//			String tableName = "TEST";
+//			auditDAO.saveNewHistory(test, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				Test oldData = readTest(data.getId());
-				Test newData = new Test();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TEST";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < tests.size(); i++) {
-				Test data = (Test) tests.get(i);
-				Test cloneData = readTest(data.getId());
-
-				cloneData.setIsActive(IActionConstants.NO);
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Test test) throws LIMSRuntimeException {
-
-		try {
-			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
-			}
-			String id = (String) sessionFactory.getCurrentSession().save(test);
-			test.setId(id);
-
-			String sysUserId = test.getSysUserId();
-			String tableName = "TEST";
-			auditDAO.saveNewHistory(test, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Test test) throws LIMSRuntimeException {
-
-		try {
-			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
-			}
-		} catch (Exception e) {
-			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test updateData()", e);
-		}
-		Test oldData = readTest(test.getId());
-
-		try {
-
-			String sysUserId = test.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TEST";
-			auditDAO.saveHistory(test, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("TestDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(test);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(test);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(test);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Test updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Test test) throws LIMSRuntimeException {
+//
+//		try {
+//			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test updateData()", e);
+//		}
+//		Test oldData = readTest(test.getId());
+//
+//		try {
+//
+//			String sysUserId = test.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TEST";
+//			auditDAO.saveHistory(test, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("TestDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(test);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(test);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(test);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Test test) throws LIMSRuntimeException {
@@ -954,7 +951,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 		return list;
 	}
 
-	private boolean duplicateTestExists(Test test) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTestExists(Test test) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

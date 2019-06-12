@@ -9,12 +9,6 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 public interface SampleProjectService extends BaseObjectService<SampleProject, String> {
 	void getData(SampleProject sampleProj);
 
-	void deleteData(List sampleProjs);
-
-	void updateData(SampleProject sampleProj);
-
-	boolean insertData(SampleProject sampleProj);
-
 	List getSampleProjectsByProjId(String projId);
 
 	SampleProject getSampleProjectBySampleId(String id);

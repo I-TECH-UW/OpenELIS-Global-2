@@ -34,7 +34,7 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 	public boolean insertData(Patient patient) throws LIMSRuntimeException;
 
-	public void deleteData(List patients) throws LIMSRuntimeException;
+//	public void deleteData(List patients) throws LIMSRuntimeException;
 
 	public List getAllPatients() throws LIMSRuntimeException;
 

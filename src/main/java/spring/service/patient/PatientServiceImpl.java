@@ -47,7 +47,8 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService, IPatientService {
+public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
+		implements PatientService, IPatientService {
 
 	public static final String ADDRESS_STREET = "Street";
 	public static final String ADDRESS_STATE = "State";
@@ -530,12 +531,6 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	public Patient getData(String patientId) {
 		return getBaseObjectDAO().getData(patientId);
-	}
-
-	@Override
-	public void deleteData(List patients) {
-		getBaseObjectDAO().deleteData(patients);
-
 	}
 
 	@Override

@@ -8,12 +8,6 @@ import us.mn.state.health.lims.role.valueholder.Role;
 public interface RoleService extends BaseObjectService<Role, String> {
 	void getData(Role role);
 
-	void deleteData(List<Role> roles);
-
-	void updateData(Role role);
-
-	boolean insertData(Role role);
-
 	List getNextRoleRecord(String id);
 
 	List getPreviousRoleRecord(String id);

@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 
 @Service
-public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUserSection, String> implements SystemUserSectionService {
+public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUserSection, String>
+		implements SystemUserSectionService {
 	@Autowired
 	protected SystemUserSectionDAO baseObjectDAO;
 
@@ -25,54 +27,61 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
 	@Override
 	public void getData(SystemUserSection systemUserSection) {
-        getBaseObjectDAO().getData(systemUserSection);
+		getBaseObjectDAO().getData(systemUserSection);
 
-	}
-
-	@Override
-	public void deleteData(List systemUserSection) {
-        getBaseObjectDAO().deleteData(systemUserSection);
-
-	}
-
-	@Override
-	public void updateData(SystemUserSection systemUserSection) {
-        getBaseObjectDAO().updateData(systemUserSection);
-
-	}
-
-	@Override
-	public boolean insertData(SystemUserSection systemUserSection) {
-        return getBaseObjectDAO().insertData(systemUserSection);
 	}
 
 	@Override
 	public List getAllSystemUserSections() {
-        return getBaseObjectDAO().getAllSystemUserSections();
+		return getBaseObjectDAO().getAllSystemUserSections();
 	}
 
 	@Override
 	public List getPageOfSystemUserSections(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfSystemUserSections(startingRecNo);
+		return getBaseObjectDAO().getPageOfSystemUserSections(startingRecNo);
 	}
 
 	@Override
 	public List getNextSystemUserSectionRecord(String id) {
-        return getBaseObjectDAO().getNextSystemUserSectionRecord(id);
+		return getBaseObjectDAO().getNextSystemUserSectionRecord(id);
 	}
 
 	@Override
 	public Integer getTotalSystemUserSectionCount() {
-        return getBaseObjectDAO().getTotalSystemUserSectionCount();
+		return getBaseObjectDAO().getTotalSystemUserSectionCount();
 	}
 
 	@Override
 	public List getPreviousSystemUserSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousSystemUserSectionRecord(id);
+		return getBaseObjectDAO().getPreviousSystemUserSectionRecord(id);
 	}
 
 	@Override
 	public List getAllSystemUserSectionsBySystemUserId(int systemUserId) {
-        return getBaseObjectDAO().getAllSystemUserSectionsBySystemUserId(systemUserId);
+		return getBaseObjectDAO().getAllSystemUserSectionsBySystemUserId(systemUserId);
+	}
+
+	@Override
+	public String insert(SystemUserSection systemUserSection) {
+		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
+		}
+		return super.insert(systemUserSection);
+	}
+
+	@Override
+	public SystemUserSection save(SystemUserSection systemUserSection) {
+		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
+		}
+		return super.save(systemUserSection);
+	}
+
+	@Override
+	public SystemUserSection update(SystemUserSection systemUserSection) {
+		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
+		}
+		return super.update(systemUserSection);
 	}
 }

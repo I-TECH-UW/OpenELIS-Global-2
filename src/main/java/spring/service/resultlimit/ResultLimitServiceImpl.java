@@ -356,16 +356,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	}
 
 	@Override
-	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
-		return getBaseObjectDAO().insertData(resultLimit);
-	}
-
-	@Override
-	public void deleteData(List resultLimits) throws LIMSRuntimeException {
-		getBaseObjectDAO().deleteData(resultLimits);
-	}
-
-	@Override
 	public List getAllResultLimits() throws LIMSRuntimeException {
 		return getBaseObjectDAO().getAllResultLimits();
 	}
@@ -378,11 +368,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	@Override
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		getBaseObjectDAO().getData(resultLimit);
-	}
-
-	@Override
-	public void updateData(ResultLimit resultLimit) throws LIMSRuntimeException {
-		getBaseObjectDAO().updateData(resultLimit);
 	}
 
 	@Override

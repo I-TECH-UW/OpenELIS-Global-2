@@ -15,8 +15,6 @@
 */
 package us.mn.state.health.lims.sampleorganization.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -31,13 +29,13 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  */
 public interface SampleOrganizationDAO extends BaseDAO<SampleOrganization, String> {
 
-	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+//	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-	public void deleteData(List sampleOrgs) throws LIMSRuntimeException;
+//	public void deleteData(List sampleOrgs) throws LIMSRuntimeException;
 
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+//	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
 	public void getDataBySample(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 

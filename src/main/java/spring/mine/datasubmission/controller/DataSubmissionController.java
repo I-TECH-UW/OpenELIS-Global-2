@@ -98,7 +98,7 @@ public class DataSubmissionController extends BaseController {
 		dataSubUrl = (SiteInformation) siteInformationService.getSiteInformationByDomainName("Data Sub URL");
 		dataSubUrl.setValue(form.getDataSubUrl().getValue());
 		dataSubUrl.setSysUserId(getSysUserId(request));
-		siteInformationService.updateData(dataSubUrl);
+		siteInformationService.update(dataSubUrl);
 		for (DataIndicator indicator : indicators) {
 			if (submit && indicator.isSendIndicator()) {
 				boolean success = dataSubmitter.sendDataIndicator(indicator);

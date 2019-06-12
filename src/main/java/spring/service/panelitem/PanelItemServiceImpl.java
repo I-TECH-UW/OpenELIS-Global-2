@@ -8,14 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.panel.PanelService;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Service
@@ -23,9 +21,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	@Autowired
 	protected PanelItemDAO baseObjectDAO;
 	@Autowired
-	TestDAO testDAO;
-	@Autowired
-	PanelService panelService;
+	private PanelService panelService;
 
 	PanelItemServiceImpl() {
 		super(PanelItem.class);
@@ -44,23 +40,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	@Override
 	public void getData(PanelItem panelItem) {
 		getBaseObjectDAO().getData(panelItem);
-	}
-
-	@Override
-	public void deleteData(List panelItems) {
-		getBaseObjectDAO().deleteData(panelItems);
-
-	}
-
-	@Override
-	public void updateData(PanelItem panelItem) {
-		getBaseObjectDAO().updateData(panelItem);
-
-	}
-
-	@Override
-	public boolean insertData(PanelItem panelItem) {
-		return getBaseObjectDAO().insertData(panelItem);
 	}
 
 	@Override
@@ -137,42 +116,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 		return super.update(panelItem);
 	}
 
-	@Override
-	@Transactional
-	public void delete(List panelItems) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-//			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < panelItems.size(); i++) {
-				PanelItem data = (PanelItem) panelItems.get(i);
-
-				PanelItem oldData = readPanelItem(data.getId());
-				PanelItem newData = new PanelItem();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PANEL_ITEM";
-				auditTrailDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < panelItems.size(); i++) {
-				PanelItem data = (PanelItem) panelItems.get(i);
-				data = readPanelItem(data.getId());
-				baseObjectDAO.delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem deleteData()", e);
-		}
-	}
-
 	public PanelItem readPanelItem(String idString) {
 		PanelItem pi;
 		try {
@@ -196,7 +139,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 		for (PanelItem oldPanelItem : panelItems) {
 			oldPanelItem.setSysUserId(currentUser);
 		}
-		delete(panelItems);
+		deleteAll(panelItems);
 
 		for (Test test : newTests) {
 			PanelItem panelItem = new PanelItem();

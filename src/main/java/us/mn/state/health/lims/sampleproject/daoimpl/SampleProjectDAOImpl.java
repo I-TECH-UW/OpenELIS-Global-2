@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -53,103 +52,103 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 		super(SampleProject.class);
 	}
 
-	@Override
-	public void deleteData(List sampleProjs) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List sampleProjs) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < sampleProjs.size(); i++) {
+//				SampleProject data = (SampleProject) sampleProjs.get(i);
+//
+//				SampleProject oldData = readSampleProject(data.getId());
+//				SampleProject newData = new SampleProject();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+//				String tableName = "SAMPLE_PROJECTS";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleProject AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < sampleProjs.size(); i++) {
+//				SampleProject data = (SampleProject) sampleProjs.get(i);
+//				// bugzilla 2206
+//				data = readSampleProject(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleProjectDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleProject deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < sampleProjs.size(); i++) {
-				SampleProject data = (SampleProject) sampleProjs.get(i);
+//	@Override
+//	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(sampleProj);
+//			sampleProj.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = sampleProj.getSysUserId();
+//			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+//			String tableName = "SAMPLE_PROJECTS";
+//			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleProjectDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleProject insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				SampleProject oldData = readSampleProject(data.getId());
-				SampleProject newData = new SampleProject();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
-				String tableName = "SAMPLE_PROJECTS";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < sampleProjs.size(); i++) {
-				SampleProject data = (SampleProject) sampleProjs.get(i);
-				// bugzilla 2206
-				data = readSampleProject(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(sampleProj);
-			sampleProj.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = sampleProj.getSysUserId();
-			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
-			String tableName = "SAMPLE_PROJECTS";
-			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException {
-
-		SampleProject oldData = readSampleProject(sampleProj.getId());
-		SampleProject newData = sampleProj;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = sampleProj.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
-			String tableName = "SAMPLE_PROJECTS";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(sampleProj);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleProj);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleProj);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException {
+//
+//		SampleProject oldData = readSampleProject(sampleProj.getId());
+//		SampleProject newData = sampleProj;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = sampleProj.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+//			String tableName = "SAMPLE_PROJECTS";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleProject AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(sampleProj);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleProj);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleProj);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleProject updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {

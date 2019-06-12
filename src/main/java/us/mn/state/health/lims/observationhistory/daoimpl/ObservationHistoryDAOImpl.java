@@ -18,21 +18,22 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Component
-@Transactional 
-public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, String> implements ObservationHistoryDAO {
+@Transactional
+public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, String>
+		implements ObservationHistoryDAO {
 
 	public ObservationHistoryDAOImpl() {
 		super(ObservationHistory.class);
 	}
 
-	@Override
-	public void insertOrUpdateData(ObservationHistory observation) throws LIMSRuntimeException {
-		if (observation.getId() == null) {
-			insertData(observation);
-		} else {
-			updateData(observation);
-		}
-	}
+//	@Override
+//	public void insertOrUpdateData(ObservationHistory observation) throws LIMSRuntimeException {
+//		if (observation.getId() == null) {
+//			insertData(observation);
+//		} else {
+//			updateData(observation);
+//		}
+//	}
 
 	@Override
 	public List<ObservationHistory> getAll(Patient patient, Sample sample) {
@@ -219,17 +220,17 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		LogEvent.logError(this.getClass().getSimpleName(), methodName, e.toString());
 		return new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + methodName, e);
 	}
-
-	@Override
-	public boolean insertData(ObservationHistory observation) throws LIMSRuntimeException {
-		insert(observation);
-		return true;
-	}
-
-	@Override
-	public void updateData(ObservationHistory observation) throws LIMSRuntimeException {
-		save(observation);
-	}
+//
+//	@Override
+//	public boolean insertData(ObservationHistory observation) throws LIMSRuntimeException {
+//		insert(observation);
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(ObservationHistory observation) throws LIMSRuntimeException {
+//		save(observation);
+//	}
 
 	@Override
 	public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException {

@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -49,124 +47,124 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	@Autowired
 	private AuditTrailDAO auditDAO;
 
-	@Override
-	public void deleteData(List systemUsers) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List systemUsers) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < systemUsers.size(); i++) {
+//				SystemUser data = (SystemUser) systemUsers.get(i);
+//
+//				SystemUser oldData = readSystemUser(data.getId());
+//				SystemUser newData = new SystemUser();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SYSTEM_USER";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < systemUsers.size(); i++) {
+//				SystemUser data = (SystemUser) systemUsers.get(i);
+//				SystemUser cloneData = readSystemUser(data.getId());
+//
+//				// Make the change to the object.
+//				cloneData.setIsActive(IActionConstants.NO);
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < systemUsers.size(); i++) {
-				SystemUser data = (SystemUser) systemUsers.get(i);
+//	@Override
+//	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException {
+//
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateSystemUserExists(systemUser)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUser.getFirstName() + BLANK + systemUser.getFirstName());
+//			}
+//			String id = (String) sessionFactory.getCurrentSession().save(systemUser);
+//			systemUser.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = systemUser.getSysUserId();
+//			String tableName = "SYSTEM_USER";
+//			auditDAO.saveNewHistory(systemUser, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				SystemUser oldData = readSystemUser(data.getId());
-				SystemUser newData = new SystemUser();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SYSTEM_USER";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < systemUsers.size(); i++) {
-				SystemUser data = (SystemUser) systemUsers.get(i);
-				SystemUser cloneData = readSystemUser(data.getId());
-
-				// Make the change to the object.
-				cloneData.setIsActive(IActionConstants.NO);
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException {
-
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateSystemUserExists(systemUser)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUser.getFirstName() + BLANK + systemUser.getFirstName());
-			}
-			String id = (String) sessionFactory.getCurrentSession().save(systemUser);
-			systemUser.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = systemUser.getSysUserId();
-			String tableName = "SYSTEM_USER";
-			auditDAO.saveNewHistory(systemUser, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SystemUser systemUser) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if active record already exists
-		try {
-			if (duplicateSystemUserExists(systemUser)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUser.getLastName() + BLANK + systemUser.getFirstName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
-		}
-
-		SystemUser oldData = readSystemUser(systemUser.getId());
-		SystemUser newData = systemUser;
-		// some bug is occurring where a new entry is entered when lastupdated is null
-		// so we are passing in a value which will be corrected on update
-		// TODO find reason for the bug and fix
-		systemUser.setLastupdated(oldData.getLastupdated());
-
-		// add to audit trail
-		try {
-
-			String sysUserId = systemUser.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SYSTEM_USER";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(systemUser);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUser);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUser);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(SystemUser systemUser) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if active record already exists
+//		try {
+//			if (duplicateSystemUserExists(systemUser)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUser.getLastName() + BLANK + systemUser.getFirstName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
+//		}
+//
+//		SystemUser oldData = readSystemUser(systemUser.getId());
+//		SystemUser newData = systemUser;
+//		// some bug is occurring where a new entry is entered when lastupdated is null
+//		// so we are passing in a value which will be corrected on update
+//		// TODO find reason for the bug and fix
+//		systemUser.setLastupdated(oldData.getLastupdated());
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = systemUser.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SYSTEM_USER";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(systemUser);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUser);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUser);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException {
@@ -333,7 +331,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	// bugzilla 1482
-	private boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

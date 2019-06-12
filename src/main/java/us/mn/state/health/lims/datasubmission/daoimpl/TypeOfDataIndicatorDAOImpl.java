@@ -3,12 +3,9 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -23,9 +20,6 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	public TypeOfDataIndicatorDAOImpl() {
 		super(TypeOfDataIndicator.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 	@Override
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
@@ -77,58 +71,58 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 		}
 	}
 
-	@Override
-	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
+//	@Override
+//	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(typeOfIndicator);
+//			typeOfIndicator.setId(id);
+//
+//			String sysUserId = typeOfIndicator.getSysUserId();
+//			String tableName = "TYPE_OF_DATA_INDICATOR";
+//			auditDAO.saveNewHistory(typeOfIndicator, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfDataIndicator insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(typeOfIndicator);
-			typeOfIndicator.setId(id);
-
-			String sysUserId = typeOfIndicator.getSysUserId();
-			String tableName = "TYPE_OF_DATA_INDICATOR";
-			auditDAO.saveNewHistory(typeOfIndicator, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfDataIndicator insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
-
-		TypeOfDataIndicator oldData = getTypeOfDataIndicator(typeOfIndicator.getId());
-
-		try {
-
-			String sysUserId = typeOfIndicator.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TYPE_OF_DATA_INDICATOR";
-			auditDAO.saveHistory(typeOfIndicator, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("DataValueDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfDataIndicator AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(typeOfIndicator);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfIndicator);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(typeOfIndicator);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataValue updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
+//
+//		TypeOfDataIndicator oldData = getTypeOfDataIndicator(typeOfIndicator.getId());
+//
+//		try {
+//
+//			String sysUserId = typeOfIndicator.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TYPE_OF_DATA_INDICATOR";
+//			auditDAO.saveHistory(typeOfIndicator, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("DataValueDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfDataIndicator AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(typeOfIndicator);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfIndicator);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(typeOfIndicator);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataValue updateData()", e);
+//		}
+//	}
 
 	@Override
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {

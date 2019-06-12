@@ -10,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Service
-public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization, String> implements OrganizationService {
+public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization, String>
+		implements OrganizationService {
 	@Autowired
 	protected OrganizationDAO baseObjectDAO;
 	@Autowired
@@ -77,33 +79,6 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	}
 
 	@Override
-	@Transactional
-	public void delete(String id, String sysUserId) {
-		Organization oldObject = getBaseObjectDAO().get(id)
-				.orElseThrow(() -> new ObjectNotFoundException(id, Organization.class.getName()));
-		oldObject.setIsActive(IActionConstants.NO);
-		oldObject.setSysUserId(sysUserId);
-		update(oldObject);
-	}
-
-	@Override
-	@Transactional
-	public void deleteAll(List<Organization> baseObjects) {
-		for (Organization organization : baseObjects) {
-			delete(organization);
-		}
-	}
-
-	@Override
-	@Transactional
-	public void deleteAll(List<String> ids, String sysUserId) {
-		for (String id : ids) {
-			delete(id, sysUserId);
-		}
-
-	}
-
-	@Override
 	@Transactional(readOnly = true)
 	public void getData(Organization organization) {
 		getBaseObjectDAO().getData(organization);
@@ -111,26 +86,30 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	}
 
 	@Override
-	public void deleteData(List organizations) {
-		getBaseObjectDAO().deleteData(organizations);
-
+	public String insert(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.insert(organization);
 	}
 
 	@Override
-	public void updateData(Organization organization) {
-		getBaseObjectDAO().updateData(organization);
-
+	public Organization update(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.update(organization);
 	}
 
 	@Override
-	public boolean insertData(Organization organization) {
-		return getBaseObjectDAO().insertData(organization);
-	}
-
-	@Override
-	public void insertOrUpdateData(Organization organization) {
-		getBaseObjectDAO().insertOrUpdateData(organization);
-
+	public Organization save(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.save(organization);
 	}
 
 	@Override

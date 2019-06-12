@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -85,43 +83,43 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @return boolean
 	 * @throws LIMSRuntimeException
 	 */
-	@Override
-	public boolean insertData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
-
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateStatusOfSampleExists(statusOfSample)) {
-				StringBuffer sb = new StringBuffer();
-				sb.append("Duplicate record exists for Description: ");
-				sb.append(statusOfSample.getDescription());
-				sb.append(" Status Type: ");
-				sb.append(statusOfSample.getStatusType());
-				// bugzilla 2154
-				LogEvent.logError("StatusOfSample", "insertData()", sb.toString());
-				throw new LIMSDuplicateRecordException(sb.toString());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(statusOfSample);
-
-			statusOfSample.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = statusOfSample.getSysUserId();
-			String tableName = "STATUS_OF_SAMPLE";
-			auditDAO.saveNewHistory(statusOfSample, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("StatusOfSampleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in StatusOfSample insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
+//
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateStatusOfSampleExists(statusOfSample)) {
+//				StringBuffer sb = new StringBuffer();
+//				sb.append("Duplicate record exists for Description: ");
+//				sb.append(statusOfSample.getDescription());
+//				sb.append(" Status Type: ");
+//				sb.append(statusOfSample.getStatusType());
+//				// bugzilla 2154
+//				LogEvent.logError("StatusOfSample", "insertData()", sb.toString());
+//				throw new LIMSDuplicateRecordException(sb.toString());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(statusOfSample);
+//
+//			statusOfSample.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = statusOfSample.getSysUserId();
+//			String tableName = "STATUS_OF_SAMPLE";
+//			auditDAO.saveNewHistory(statusOfSample, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("StatusOfSampleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in StatusOfSample insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	/**
 	 * udpateData()
@@ -129,54 +127,54 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @param statusOfSample
 	 * @throws LIMSRuntimeException
 	 */
-	@Override
-	public void updateData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateStatusOfSampleExists(statusOfSample)) {
-				StringBuffer sb = new StringBuffer();
-				sb.append("Duplicate record exists for Description: ");
-				sb.append(statusOfSample.getDescription());
-				sb.append(" Status Type: ");
-				sb.append(statusOfSample.getStatusType());
-				// bugzilla 2154
-				LogEvent.logError("StatusOfSample", "updateData()", sb.toString());
-				throw new LIMSDuplicateRecordException(sb.toString());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in StatusOfSample updateData()", e);
-		}
-
-		StatusOfSample oldData = readStatusOfSample(statusOfSample.getId());
-		StatusOfSample newData = statusOfSample;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = statusOfSample.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "STATUS_OF_SAMPLE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("StatusOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in StatusOfSample AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(statusOfSample);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(statusOfSample);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(statusOfSample);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in StatusOfSample updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateStatusOfSampleExists(statusOfSample)) {
+//				StringBuffer sb = new StringBuffer();
+//				sb.append("Duplicate record exists for Description: ");
+//				sb.append(statusOfSample.getDescription());
+//				sb.append(" Status Type: ");
+//				sb.append(statusOfSample.getStatusType());
+//				// bugzilla 2154
+//				LogEvent.logError("StatusOfSample", "updateData()", sb.toString());
+//				throw new LIMSDuplicateRecordException(sb.toString());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in StatusOfSample updateData()", e);
+//		}
+//
+//		StatusOfSample oldData = readStatusOfSample(statusOfSample.getId());
+//		StatusOfSample newData = statusOfSample;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = statusOfSample.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "STATUS_OF_SAMPLE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("StatusOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in StatusOfSample AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(statusOfSample);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(statusOfSample);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(statusOfSample);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in StatusOfSample updateData()", e);
+//		}
+//	}
 
 	/**
 	 * getData()
@@ -419,7 +417,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @return boolean
 	 *
 	 */
-	private boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException {
 		try {
 
 			List list = new Vector();

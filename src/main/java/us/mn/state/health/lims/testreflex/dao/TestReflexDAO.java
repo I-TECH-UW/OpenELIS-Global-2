@@ -39,13 +39,13 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
 	 * @return
 	 * @throws LIMSRuntimeException
 	 */
-	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException;
+//	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException;
 
 	/**
 	 * @param testReflexs
 	 * @throws LIMSRuntimeException
 	 */
-	public void deleteData(List testReflexs) throws LIMSRuntimeException;
+//	public void deleteData(List testReflexs) throws LIMSRuntimeException;
 
 	/**
 	 * @return
@@ -70,7 +70,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
 	 * @param testReflex
 	 * @throws LIMSRuntimeException
 	 */
-	public void updateData(TestReflex testReflex) throws LIMSRuntimeException;
+//	public void updateData(TestReflex testReflex) throws LIMSRuntimeException;
 
 	/**
 	 * @param id
@@ -139,4 +139,6 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
 
 	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
 			throws LIMSRuntimeException;
+
+	boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException;
 }

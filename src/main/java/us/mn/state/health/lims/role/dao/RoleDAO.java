@@ -25,9 +25,9 @@ import us.mn.state.health.lims.role.valueholder.Role;
 
 public interface RoleDAO extends BaseDAO<Role, String> {
 
-	public boolean insertData(Role role) throws LIMSRuntimeException;
+//	public boolean insertData(Role role) throws LIMSRuntimeException;
 
-	public void deleteData(List<Role> roles) throws LIMSRuntimeException;
+//	public void deleteData(List<Role> roles) throws LIMSRuntimeException;
 
 	public List<Role> getAllRoles() throws LIMSRuntimeException;
 
@@ -35,7 +35,7 @@ public interface RoleDAO extends BaseDAO<Role, String> {
 
 	public void getData(Role role) throws LIMSRuntimeException;
 
-	public void updateData(Role role) throws LIMSRuntimeException;
+//	public void updateData(Role role) throws LIMSRuntimeException;
 
 	@SuppressWarnings("rawtypes")
 	public List getNextRoleRecord(String id) throws LIMSRuntimeException;

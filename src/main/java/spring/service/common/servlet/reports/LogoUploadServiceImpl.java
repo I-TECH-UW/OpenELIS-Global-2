@@ -23,7 +23,7 @@ public class LogoUploadServiceImpl implements LogoUploadService {
 		imageService.delete(image);
 		logoInformation.setValue("");
 		logoInformation.setSysUserId("1");
-		siteInformationService.updateData(logoInformation);
+		siteInformationService.update(logoInformation);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class LogoUploadServiceImpl implements LogoUploadService {
 
 		logoInformation.setValue(image.getId());
 		logoInformation.setSysUserId("1");
-		siteInformationService.updateData(logoInformation);
+		siteInformationService.update(logoInformation);
 	}
 
 }

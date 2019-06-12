@@ -34,13 +34,13 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  */
 public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent, String> {
 
-	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+//	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException;
+//	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException;
 
 	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-	public void updateData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+//	public void updateData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
 	public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 

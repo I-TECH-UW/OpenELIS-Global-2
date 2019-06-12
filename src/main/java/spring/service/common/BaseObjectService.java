@@ -292,4 +292,5 @@ public interface BaseObjectService<T extends BaseObject<PK>, PK extends Serializ
 	 * @return check if baseObject has a previous baseObject in the database
 	 */
 	public boolean hasPrevious(String id);
+
 }

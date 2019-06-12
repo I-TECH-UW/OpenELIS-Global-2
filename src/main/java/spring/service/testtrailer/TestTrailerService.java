@@ -8,12 +8,6 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
 public interface TestTrailerService extends BaseObjectService<TestTrailer, String> {
 	void getData(TestTrailer testTrailer);
 
-	void deleteData(List testTrailers);
-
-	void updateData(TestTrailer testTrailer);
-
-	boolean insertData(TestTrailer testTrailer);
-
 	List getPageOfTestTrailers(int startingRecNo);
 
 	List getNextTestTrailerRecord(String id);

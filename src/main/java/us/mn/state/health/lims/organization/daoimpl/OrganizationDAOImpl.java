@@ -29,10 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -54,119 +52,117 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
 	private ProjectDAO projectDAO;
 
-	@Override
-	public void deleteData(List organizations) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List organizations) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < organizations.size(); i++) {
+//				Organization data = (Organization) organizations.get(i);
+//
+//				Organization oldData = readOrganization(data.getId());
+//				Organization newData = new Organization();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "ORGANIZATION";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("OrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < organizations.size(); i++) {
+//				Organization data = (Organization) organizations.get(i);
+//				Organization cloneData = readOrganization(data.getId());
+//
+//				// Make the change to the object.
+//				cloneData.setIsActive(IActionConstants.NO);
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("OrganizationDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < organizations.size(); i++) {
-				Organization data = (Organization) organizations.get(i);
+//	@Override
+//	public boolean insertData(Organization organization) throws LIMSRuntimeException {
+//
+//		try {
+//			if (organization.getIsActive().equals(IActionConstants.YES) && duplicateOrganizationExists(organization)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + organization.getOrganizationName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(organization);
+//			organization.setId(id);
+//
+//			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				Organization oldData = readOrganization(data.getId());
-				Organization newData = new Organization();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "ORGANIZATION";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("OrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < organizations.size(); i++) {
-				Organization data = (Organization) organizations.get(i);
-				Organization cloneData = readOrganization(data.getId());
-
-				// Make the change to the object.
-				cloneData.setIsActive(IActionConstants.NO);
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("OrganizationDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Organization organization) throws LIMSRuntimeException {
-
-		try {
-			if (organization.getIsActive().equals(IActionConstants.YES) && duplicateOrganizationExists(organization)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + organization.getOrganizationName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(organization);
-			organization.setId(id);
-
-			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Organization organization) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if active record already exists
-		try {
-			if (organization.getIsActive().equals(IActionConstants.YES) && duplicateOrganizationExists(organization)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + organization.getOrganizationName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization updateData()", e);
-		}
-
-		Organization oldData = readOrganization(organization.getId());
-		Organization newData = organization;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = organization.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "ORGANIZATION";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("OrganizationDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(organization);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(organization);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(organization);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Organization updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Organization organization) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if active record already exists
+//		try {
+//			if (organization.getIsActive().equals(IActionConstants.YES) && duplicateOrganizationExists(organization)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + organization.getOrganizationName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization updateData()", e);
+//		}
+//
+//		Organization oldData = readOrganization(organization.getId());
+//		Organization newData = organization;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = organization.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "ORGANIZATION";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("OrganizationDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(organization);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(organization);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(organization);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Organization updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Organization organization) throws LIMSRuntimeException {
@@ -437,7 +433,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		return list;
 	}
 
-	private boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();
@@ -608,15 +605,15 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		return null;
 	}
 
-	@Override
-	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException {
-		if (organization.getId() == null) {
-			insertData(organization);
-		} else {
-			updateData(organization);
-		}
-
-	}
+//	@Override
+//	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException {
+//		if (organization.getId() == null) {
+//			insertData(organization);
+//		} else {
+//			updateData(organization);
+//		}
+//
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override

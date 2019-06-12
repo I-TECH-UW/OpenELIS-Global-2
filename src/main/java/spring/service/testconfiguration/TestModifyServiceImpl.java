@@ -53,7 +53,7 @@ public class TestModifyServiceImpl implements TestModifyService {
 		for (PanelItem item : panelItems) {
 			item.setSysUserId(currentUserId);
 		}
-		panelItemService.delete(panelItems);
+		panelItemService.deleteAll(panelItems);
 
 		List<ResultLimit> resultLimitItems = resultLimitService.getAllResultLimitsForTest(testAddParams.testId);
 		for (ResultLimit item : resultLimitItems) {

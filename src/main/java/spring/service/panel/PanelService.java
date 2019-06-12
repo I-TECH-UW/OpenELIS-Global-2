@@ -7,16 +7,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 public interface PanelService extends BaseObjectService<Panel, String> {
 
-	@Override
-	String insert(Panel panel);
-
 	void getData(Panel panel);
-
-	void deleteData(List panels);
-
-	void updateData(Panel panel);
-
-	boolean insertData(Panel panel);
 
 	String getIdForPanelName(String name);
 

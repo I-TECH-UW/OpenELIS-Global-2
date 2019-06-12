@@ -423,7 +423,7 @@ public class TestReflexUtil {
 				observation.setPatientId(patientId);
 				observation.setSampleId(sample.getId());
 				observation.setSysUserId(currentUserId);
-				observationService.insertData(observation);
+				observationService.insert(observation);
 			}
 
 			Analysis newAnalysis = reflexAction.getNewAnalysis();

@@ -91,14 +91,14 @@ public class PluginPermissionService {
 
 		if (role.getId() == null) {
 			role.setActive(true);
-			roleService.insertData(role);
+			roleService.insert(role);
 		} else if (!role.isActive()) {
 			role.setActive(true);
-			roleService.updateData(role);
+			roleService.update(role);
 		}
 
 		if (module.getId() == null) {
-			moduleService.insertData(module);
+			moduleService.insert(module);
 		}
 
 		RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());

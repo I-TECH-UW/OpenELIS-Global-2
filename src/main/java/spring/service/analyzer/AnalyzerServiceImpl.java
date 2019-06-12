@@ -46,7 +46,8 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String>
 		for (AnalyzerTestMapping mapping : testMappings) {
 			mapping.setAnalyzerId(analyzer.getId());
 			if (newMapping(mapping, existingMappings)) {
-				analyzerMappingService.insertData(mapping, "1");
+				mapping.setSysUserId("1");
+				analyzerMappingService.insert(mapping);
 				existingMappings.add(mapping);
 			}
 		}

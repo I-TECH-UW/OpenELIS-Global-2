@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -25,7 +26,8 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String> implements TestSectionService, LocaleChangeListener {
+public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String>
+		implements TestSectionService, LocaleChangeListener {
 
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
@@ -139,23 +141,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	@Override
-	public void deleteData(List testSections) {
-		getBaseObjectDAO().deleteData(testSections);
-
-	}
-
-	@Override
-	public void updateData(TestSection testSection) {
-		getBaseObjectDAO().updateData(testSection);
-
-	}
-
-	@Override
-	public boolean insertData(TestSection testSection) {
-		return getBaseObjectDAO().insertData(testSection);
-	}
-
-	@Override
 	public List getTestSections(String filter) {
 		return getBaseObjectDAO().getTestSections(filter);
 	}
@@ -213,5 +198,29 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	@Override
 	public List<TestSection> getAllInActiveTestSections() {
 		return getBaseObjectDAO().getAllInActiveTestSections();
+	}
+
+	@Override
+	public String insert(TestSection testSection) {
+		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
+		}
+		return super.insert(testSection);
+	}
+
+	@Override
+	public TestSection save(TestSection testSection) {
+		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
+		}
+		return super.save(testSection);
+	}
+
+	@Override
+	public TestSection update(TestSection testSection) {
+		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
+		}
+		return super.update(testSection);
 	}
 }

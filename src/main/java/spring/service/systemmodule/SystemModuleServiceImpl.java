@@ -32,23 +32,6 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 	}
 
 	@Override
-	public void deleteData(List systemModule) {
-		getBaseObjectDAO().deleteData(systemModule);
-
-	}
-
-	@Override
-	public void updateData(SystemModule systemModule) {
-		getBaseObjectDAO().updateData(systemModule);
-
-	}
-
-	@Override
-	public boolean insertData(SystemModule systemModule) {
-		return insert(systemModule) != null;
-	}
-
-	@Override
 	public Integer getTotalSystemModuleCount() {
 		return getBaseObjectDAO().getTotalSystemModuleCount();
 	}

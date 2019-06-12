@@ -44,7 +44,7 @@ public class ConfigurationSideEffects {
 			if (modifierRole != null && modifierRole.getId() != null) {
 				modifierRole.setActive("true".equals(siteInformation.getValue()));
 				modifierRole.setSysUserId(siteInformation.getSysUserId());
-				roleService.updateData(modifierRole);
+				roleService.update(modifierRole);
 			}
 
 		}
@@ -57,7 +57,7 @@ public class ConfigurationSideEffects {
 				if (GenericValidator.isBlankOrNull(accessionPrefix.getValue())) {
 					accessionPrefix.setValue(siteInformation.getValue());
 					accessionPrefix.setSysUserId(siteInformation.getSysUserId());
-					siteInformationService.updateData(accessionPrefix);
+					siteInformationService.update(accessionPrefix);
 				}
 			}
 		}

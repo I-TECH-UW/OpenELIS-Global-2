@@ -15,7 +15,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
-@Transactional 
+@Transactional
 public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String> implements SystemModuleUrlDAO {
 
 	public SystemModuleUrlDAOImpl() {
@@ -51,25 +51,25 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 
 	}
 
-	@Override
-	public boolean insertData(SystemModuleUrl systemModuleUrl) throws LIMSRuntimeException {
-
-		try {
-
-			String id = (String) sessionFactory.getCurrentSession().save(systemModuleUrl);
-			systemModuleUrl.setId(id);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// closeSession(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			e.printStackTrace();
-			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemModule insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(SystemModuleUrl systemModuleUrl) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(systemModuleUrl);
+//			systemModuleUrl.setId(id);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// closeSession(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			e.printStackTrace();
+//			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemModule insertData()", e);
+//		}
+//
+//	return true;
+//}
 
 }

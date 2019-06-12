@@ -32,23 +32,6 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 	}
 
 	@Override
-	public void deleteData(List panels) {
-		getBaseObjectDAO().deleteData(panels);
-
-	}
-
-	@Override
-	public void updateData(Panel panel) {
-		getBaseObjectDAO().updateData(panel);
-
-	}
-
-	@Override
-	public boolean insertData(Panel panel) {
-		return getBaseObjectDAO().insertData(panel);
-	}
-
-	@Override
 	public String getIdForPanelName(String name) {
 		return getBaseObjectDAO().getIdForPanelName(name);
 	}
@@ -104,13 +87,6 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 	}
 
 	@Override
-	public Panel update(Panel panel) {
-		panel = super.update(panel);
-		baseObjectDAO.clearIDMaps();
-		return panel;
-	}
-
-	@Override
 	public List<Panel> getAllPanels() {
 		return baseObjectDAO.getAllPanels();
 	}
@@ -128,6 +104,7 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
 		}
+		baseObjectDAO.clearIDMaps();
 		return super.insert(panel);
 	}
 
@@ -139,6 +116,7 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
 		}
+		baseObjectDAO.clearIDMaps();
 		return super.save(panel);
 	}
 
@@ -150,6 +128,13 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
 		}
+		baseObjectDAO.clearIDMaps();
 		return super.update(panel);
+	}
+
+	@Override
+	public void delete(Panel panel) {
+		super.delete(panel);
+		baseObjectDAO.clearIDMaps();
 	}
 }

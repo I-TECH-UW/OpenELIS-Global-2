@@ -32,9 +32,9 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
  */
 public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
-	public boolean insertData(Organization organization) throws LIMSRuntimeException;
+//	public boolean insertData(Organization organization) throws LIMSRuntimeException;
 
-	public void deleteData(List organizations) throws LIMSRuntimeException;
+//	public void deleteData(List organizations) throws LIMSRuntimeException;
 
 	public List getAllOrganizations() throws LIMSRuntimeException;
 
@@ -42,7 +42,7 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
 	public void getData(Organization organization) throws LIMSRuntimeException;
 
-	public void updateData(Organization organization) throws LIMSRuntimeException;
+//	public void updateData(Organization organization) throws LIMSRuntimeException;
 
 	public List getOrganizations(String filter) throws LIMSRuntimeException;
 
@@ -81,8 +81,10 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
 	public Organization getOrganizationById(String organizationId) throws LIMSRuntimeException;
 
-	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException;
+//	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException;
 
 	public List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException;
+
+	boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException;
 
 }

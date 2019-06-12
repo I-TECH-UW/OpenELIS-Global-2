@@ -8,12 +8,6 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 public interface SiteInformationService extends BaseObjectService<SiteInformation, String> {
 	void getData(SiteInformation siteInformation);
 
-	void deleteData(String siteInformationId, String currentUserId);
-
-	void updateData(SiteInformation siteInformation);
-
-	boolean insertData(SiteInformation siteInformation);
-
 	SiteInformation getSiteInformationByName(String siteName);
 
 	List<SiteInformation> getAllSiteInformation();

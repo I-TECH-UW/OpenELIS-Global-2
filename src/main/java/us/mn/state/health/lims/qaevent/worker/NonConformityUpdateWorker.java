@@ -230,7 +230,7 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
 				sampleHumanService.insertData(sampleHuman);
 			} else {
-				sampleService.updateData(sample);
+				sampleService.update(sample);
 			}
 
 			if (updateSampleHuman) {
@@ -243,28 +243,28 @@ public class NonConformityUpdateWorker {
 
 			if (insertSampleItems) {
 				for (SampleItem si : sampleItemsByType.values()) {
-					sampleItemService.insertData(si);
+					sampleItemService.insert(si);
 				}
 			}
 
 			if (insertSampleProject) {
-				sampleProjectService.insertData(sampleProject);
+				sampleProjectService.insert(sampleProject);
 			}
 
 			if (insertDoctorObservation) {
 				doctorObservation.setPatientId(patient.getId());
 				doctorObservation.setSampleId(sample.getId());
-				observationService.insertData(doctorObservation);
+				observationService.insert(doctorObservation);
 			}
 
 			if (insertServiceObservation) {
 				serviceObservation.setPatientId(patient.getId());
 				serviceObservation.setSampleId(sample.getId());
-				observationService.insertData(serviceObservation);
+				observationService.insert(serviceObservation);
 			}
 
 			if (insertNewOrganizaiton) {
-				orgService.insertData(newOrganization);
+				orgService.insert(newOrganization);
 				orgService.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			}
 
@@ -273,12 +273,12 @@ public class NonConformityUpdateWorker {
 					sampleRequester.setRequesterId(newOrganization.getId());
 				}
 				sampleRequester.setSampleId(Long.parseLong(sample.getId()));
-				sampleRequesterService.insertData(sampleRequester);
+				sampleRequesterService.insert(sampleRequester);
 			}
 
 			for (SampleQaEvent event : sampleQAEventInsertList) {
 				event.setSample(sample);
-				sampleQaEventService.insertData(event);
+				sampleQaEventService.insert(event);
 			}
 
 			for (NoteSet noteSet : insertableNotes) {
@@ -293,11 +293,11 @@ public class NonConformityUpdateWorker {
 			}
 
 			for (Note note : updateableNotes) {
-				noteService.updateData(note);
+				noteService.update(note);
 			}
 
 			noteService.deleteAll(deleteableNotes);
-			sampleQaEventService.deleteData(sampleQAEventDeleteList);
+			sampleQaEventService.deleteAll(sampleQAEventDeleteList);
 
 			for (QaObservation qa : qaObservationMap.keySet()) {
 				if (qa.getId() == null) {

@@ -9,14 +9,6 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 public interface OrganizationService extends BaseObjectService<Organization, String> {
 	void getData(Organization organization);
 
-	void deleteData(List organizations);
-
-	void updateData(Organization organization);
-
-	boolean insertData(Organization organization);
-
-	void insertOrUpdateData(Organization organization);
-
 	List getNextOrganizationRecord(String id);
 
 	Organization getOrganizationByName(Organization organization, boolean ignoreCase);

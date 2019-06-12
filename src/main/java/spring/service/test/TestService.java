@@ -11,12 +11,6 @@ public interface TestService extends BaseObjectService<Test, String> {
 
 	void getData(Test test);
 
-	void deleteData(List tests);
-
-	void updateData(Test test);
-
-	boolean insertData(Test test);
-
 	Test getActiveTestById(Integer id);
 
 	Test getTestByUserLocalizedName(String testName);

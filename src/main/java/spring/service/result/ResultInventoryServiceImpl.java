@@ -11,7 +11,8 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
 @Service
-public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInventory, String> implements ResultInventoryService {
+public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInventory, String>
+		implements ResultInventoryService {
 	@Autowired
 	protected ResultInventoryDAO baseObjectDAO;
 
@@ -26,39 +27,22 @@ public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInve
 
 	@Override
 	public void getData(ResultInventory resultInventory) {
-        getBaseObjectDAO().getData(resultInventory);
+		getBaseObjectDAO().getData(resultInventory);
 
-	}
-
-	@Override
-	public void deleteData(List results) {
-        getBaseObjectDAO().deleteData(results);
-
-	}
-
-	@Override
-	public void updateData(ResultInventory resultInventory) {
-        getBaseObjectDAO().updateData(resultInventory);
-
-	}
-
-	@Override
-	public boolean insertData(ResultInventory resultInventory) {
-        return getBaseObjectDAO().insertData(resultInventory);
 	}
 
 	@Override
 	public ResultInventory getResultInventoryById(ResultInventory resultInventory) {
-        return getBaseObjectDAO().getResultInventoryById(resultInventory);
+		return getBaseObjectDAO().getResultInventoryById(resultInventory);
 	}
 
 	@Override
 	public List getAllResultInventoryss() {
-        return getBaseObjectDAO().getAllResultInventoryss();
+		return getBaseObjectDAO().getAllResultInventoryss();
 	}
 
 	@Override
 	public List<ResultInventory> getResultInventorysByResult(Result result) {
-        return getBaseObjectDAO().getResultInventorysByResult(result);
+		return getBaseObjectDAO().getResultInventorysByResult(result);
 	}
 }

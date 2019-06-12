@@ -27,9 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -56,102 +54,102 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	@Autowired
 	private TestDAO testDAO;
 
-	@Override
-	public void deleteData(List panelItems) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List panelItems) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < panelItems.size(); i++) {
+//				PanelItem data = (PanelItem) panelItems.get(i);
+//
+//				PanelItem oldData = readPanelItem(data.getId());
+//				PanelItem newData = new PanelItem();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "PANEL_ITEM";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < panelItems.size(); i++) {
+//				PanelItem data = (PanelItem) panelItems.get(i);
+//				data = readPanelItem(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < panelItems.size(); i++) {
-				PanelItem data = (PanelItem) panelItems.get(i);
+//	@Override
+//	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException {
+//		try {
+//			if (duplicatePanelItemExists(panelItem)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(panelItem);
+//			panelItem.setId(id);
+//
+//			String sysUserId = panelItem.getSysUserId();
+//			String tableName = "PANEL_ITEM";
+//			auditDAO.saveNewHistory(panelItem, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				PanelItem oldData = readPanelItem(data.getId());
-				PanelItem newData = new PanelItem();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PANEL_ITEM";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < panelItems.size(); i++) {
-				PanelItem data = (PanelItem) panelItems.get(i);
-				data = readPanelItem(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException {
-		try {
-			if (duplicatePanelItemExists(panelItem)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(panelItem);
-			panelItem.setId(id);
-
-			String sysUserId = panelItem.getSysUserId();
-			String tableName = "PANEL_ITEM";
-			auditDAO.saveNewHistory(panelItem, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(PanelItem panelItem) throws LIMSRuntimeException {
-		try {
-			if (duplicatePanelItemExists(panelItem)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + panelItem.getPanel().getPanelName());
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
-		}
-
-		PanelItem oldData = readPanelItem(panelItem.getId());
-		// add to audit trail
-		try {
-
-			String sysUserId = panelItem.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PANEL_ITEM";
-			auditDAO.saveHistory(panelItem, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(panelItem);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(panelItem);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(panelItem);
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(PanelItem panelItem) throws LIMSRuntimeException {
+//		try {
+//			if (duplicatePanelItemExists(panelItem)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + panelItem.getPanel().getPanelName());
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
+//		}
+//
+//		PanelItem oldData = readPanelItem(panelItem.getId());
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = panelItem.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PANEL_ITEM";
+//			auditDAO.saveHistory(panelItem, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(panelItem);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(panelItem);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(panelItem);
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException {

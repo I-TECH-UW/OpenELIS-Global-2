@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -49,113 +47,113 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	@Autowired
 	private AuditTrailDAO auditDAO;
 
-	@Override
-	public void deleteData(List scriptlets) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List scriptlets) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < scriptlets.size(); i++) {
+//				Scriptlet data = (Scriptlet) scriptlets.get(i);
+//
+//				Scriptlet oldData = readScriptlet(data.getId());
+//				Scriptlet newData = new Scriptlet();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SCRIPTLET";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < scriptlets.size(); i++) {
+//				Scriptlet data = (Scriptlet) scriptlets.get(i);
+//				// bugzilla 2206
+//				data = readScriptlet(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < scriptlets.size(); i++) {
-				Scriptlet data = (Scriptlet) scriptlets.get(i);
+//	@Override
+//	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException {
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateScriptletExists(scriptlet)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(scriptlet);
+//			scriptlet.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = scriptlet.getSysUserId();
+//			String tableName = "SCRIPTLET";
+//			auditDAO.saveNewHistory(scriptlet, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				Scriptlet oldData = readScriptlet(data.getId());
-				Scriptlet newData = new Scriptlet();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SCRIPTLET";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < scriptlets.size(); i++) {
-				Scriptlet data = (Scriptlet) scriptlets.get(i);
-				// bugzilla 2206
-				data = readScriptlet(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException {
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateScriptletExists(scriptlet)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(scriptlet);
-			scriptlet.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = scriptlet.getSysUserId();
-			String tableName = "SCRIPTLET";
-			auditDAO.saveNewHistory(scriptlet, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateScriptletExists(scriptlet)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet updateData()", e);
-		}
-
-		Scriptlet oldData = readScriptlet(scriptlet.getId());
-		Scriptlet newData = scriptlet;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = scriptlet.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SCRIPTLET";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(scriptlet);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(scriptlet);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(scriptlet);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateScriptletExists(scriptlet)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet updateData()", e);
+//		}
+//
+//		Scriptlet oldData = readScriptlet(scriptlet.getId());
+//		Scriptlet newData = scriptlet;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = scriptlet.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SCRIPTLET";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(scriptlet);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(scriptlet);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(scriptlet);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Scriptlet updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
@@ -341,7 +339,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 		return list;
 	}
 
-	private boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

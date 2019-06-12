@@ -232,11 +232,15 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public T update(T baseObject) {
+		return update(baseObject, IActionConstants.AUDIT_TRAIL_UPDATE);
+	}
+
+	protected T update(T baseObject, String auditTrailType) {
 		T oldObject = getBaseObjectDAO().get(baseObject.getId())
 				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
+					getBaseObjectDAO().getTableName());
 		}
 		return getBaseObjectDAO().save(baseObject);
 
@@ -250,6 +254,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			resultObjects.add(update(baseObject));
 		}
 		return resultObjects;
+	}
+
+	// used for "deleting" an object but operation is actually an update
+	protected void updateDelete(T baseObject) {
+		update(baseObject, IActionConstants.AUDIT_TRAIL_DELETE);
 	}
 
 	@Override
@@ -273,7 +282,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 					getBaseObjectDAO().getTableName());
 		}
-		getBaseObjectDAO().delete(oldObject);
+		delete(oldObject);
 	}
 
 	@Override
@@ -361,5 +370,9 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Transactional(readOnly = true)
 	public boolean hasPrevious(String id) {
 		return getBaseObjectDAO().getPrevious(id).isPresent();
+	}
+
+	protected void disableLogging() {
+		this.auditTrailLog = false;
 	}
 }

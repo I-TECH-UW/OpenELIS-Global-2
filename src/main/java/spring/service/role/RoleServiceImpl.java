@@ -37,23 +37,6 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role, String> impleme
 	}
 
 	@Override
-	public void deleteData(List<Role> roles) {
-		getBaseObjectDAO().deleteData(roles);
-
-	}
-
-	@Override
-	public void updateData(Role role) {
-		getBaseObjectDAO().updateData(role);
-
-	}
-
-	@Override
-	public boolean insertData(Role role) {
-		return getBaseObjectDAO().insertData(role);
-	}
-
-	@Override
 	public List getNextRoleRecord(String id) {
 		return getBaseObjectDAO().getNextRoleRecord(id);
 	}

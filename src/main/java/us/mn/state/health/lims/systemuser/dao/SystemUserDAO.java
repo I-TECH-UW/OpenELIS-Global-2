@@ -31,9 +31,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  */
 public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
-	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
-
-	public void deleteData(List systemUsers) throws LIMSRuntimeException;
+//	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
 
 	public List getAllSystemUsers() throws LIMSRuntimeException;
 
@@ -41,7 +39,7 @@ public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException;
 
-	public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
+//	public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
 
 	public List getNextSystemUserRecord(String id) throws LIMSRuntimeException;
 
@@ -52,4 +50,6 @@ public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 	public SystemUser getDataForLoginUser(String name) throws LIMSRuntimeException;
 
 	public SystemUser getUserById(String userId) throws LIMSRuntimeException;
+
+	boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException;
 }

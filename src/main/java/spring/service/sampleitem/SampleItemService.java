@@ -12,12 +12,6 @@ public interface SampleItemService extends BaseObjectService<SampleItem, String>
 
 	SampleItem getData(String sampleItemId);
 
-	void deleteData(List<SampleItem> sampleItems);
-
-	void updateData(SampleItem sampleItem);
-
-	boolean insertData(SampleItem sampleItem);
-
 	List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample);
 
 	List<SampleItem> getPageOfSampleItems(int startingRecNo);

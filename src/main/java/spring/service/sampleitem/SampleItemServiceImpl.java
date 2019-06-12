@@ -50,23 +50,6 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
 	}
 
 	@Override
-	public void deleteData(List<SampleItem> sampleItems) {
-        getBaseObjectDAO().deleteData(sampleItems);
-
-	}
-
-	@Override
-	public void updateData(SampleItem sampleItem) {
-        getBaseObjectDAO().updateData(sampleItem);
-
-	}
-
-	@Override
-	public boolean insertData(SampleItem sampleItem) {
-        return getBaseObjectDAO().insertData(sampleItem);
-	}
-
-	@Override
 	public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
         return getBaseObjectDAO().getSampleItemsBySampleIdAndType(sampleId,typeOfSample);
 	}

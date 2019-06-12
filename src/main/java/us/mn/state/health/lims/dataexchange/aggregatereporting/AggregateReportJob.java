@@ -212,7 +212,7 @@ public class AggregateReportJob implements Job {
 				if (sendInfo != null) {
 					sendInfo.setValue(MessageUtil.getMessage("http.success"));
 					sendInfo.setSysUserId("1");
-					siteInfoService.updateData(sendInfo);
+					siteInfoService.update(sendInfo);
 				}
 
 			} catch (LIMSRuntimeException e) {
@@ -277,7 +277,7 @@ public class AggregateReportJob implements Job {
 				if (sendInfo != null) {
 					sendInfo.setValue(status);
 					sendInfo.setSysUserId("1");
-					siteInfoService.updateData(sendInfo);
+					siteInfoService.update(sendInfo);
 				}
 			} catch (LIMSRuntimeException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeSendStatus()", e);

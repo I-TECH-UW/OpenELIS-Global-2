@@ -10,7 +10,8 @@ import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
 @Service
-public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOfDataIndicator, String> implements TypeOfDataIndicatorService {
+public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOfDataIndicator, String>
+		implements TypeOfDataIndicatorService {
 	@Autowired
 	protected TypeOfDataIndicatorDAO baseObjectDAO;
 
@@ -25,28 +26,17 @@ public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOf
 
 	@Override
 	public void getData(TypeOfDataIndicator typeOfIndicator) {
-        getBaseObjectDAO().getData(typeOfIndicator);
+		getBaseObjectDAO().getData(typeOfIndicator);
 
-	}
-
-	@Override
-	public void updateData(TypeOfDataIndicator typeOfIndicator) {
-        getBaseObjectDAO().updateData(typeOfIndicator);
-
-	}
-
-	@Override
-	public boolean insertData(TypeOfDataIndicator typeOfIndicator) {
-        return getBaseObjectDAO().insertData(typeOfIndicator);
 	}
 
 	@Override
 	public TypeOfDataIndicator getTypeOfDataIndicator(String id) {
-        return getBaseObjectDAO().getTypeOfDataIndicator(id);
+		return getBaseObjectDAO().getTypeOfDataIndicator(id);
 	}
 
 	@Override
 	public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() {
-        return getBaseObjectDAO().getAllTypeOfDataIndicator();
+		return getBaseObjectDAO().getAllTypeOfDataIndicator();
 	}
 }

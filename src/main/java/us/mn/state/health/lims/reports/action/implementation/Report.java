@@ -40,7 +40,6 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public abstract class Report implements IReportCreator {
 
@@ -105,12 +104,12 @@ public abstract class Report implements IReportCreator {
 		reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance().getDefaultLocale());
 	}
 
-	@Deprecated
-	private Object getImage(String siteName) {
-		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(siteName);
-		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-				: imageService.retrieveImageInputStream(siteInformation.getValue());
-	}
+//	@Deprecated
+//	private Object getImage(String siteName) {
+//		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(siteName);
+//		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
+//				: imageService.retrieveImageInputStream(siteInformation.getValue());
+//	}
 
 	/**
 	 *

@@ -293,11 +293,11 @@ public class StatusService {
 			record.setSysUserId(sysUserId);
 			record.setValue(getDictionaryID(status));
 			record.setValueType(ValueType.DICTIONARY);
-			observationHistoryService.insertData(record);
+			observationHistoryService.insert(record);
 		} else {
 			record.setSysUserId(sysUserId);
 			record.setValue(getDictionaryID(status));
-			observationHistoryService.updateData(record);
+			observationHistoryService.update(record);
 		}
 	}
 

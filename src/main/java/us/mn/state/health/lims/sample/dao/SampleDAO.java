@@ -24,15 +24,15 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public interface SampleDAO extends BaseDAO<Sample, String> {
 
-	public boolean insertData(Sample sample) throws LIMSRuntimeException;
+//	public boolean insertData(Sample sample) throws LIMSRuntimeException;
 
-	public void deleteData(List samples) throws LIMSRuntimeException;
+//	public void deleteData(List samples) throws LIMSRuntimeException;
 
 	public List getPageOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(Sample sample) throws LIMSRuntimeException;
 
-	public void updateData(Sample sample) throws LIMSRuntimeException;
+//	public void updateData(Sample sample) throws LIMSRuntimeException;
 
 	public List getNextSampleRecord(String id) throws LIMSRuntimeException;
 
@@ -42,7 +42,7 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
 
 	public Sample getSampleByAccessionNumber(String accessionNumber) throws LIMSRuntimeException;
 
-	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException;
+//	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException;
 
 	public List getSamplesByStatusAndDomain(List statuses, String domain) throws LIMSRuntimeException;
 
@@ -80,4 +80,6 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
 
 	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd)
 			throws LIMSRuntimeException;
+
+	public String getNextAccessionNumber();
 }

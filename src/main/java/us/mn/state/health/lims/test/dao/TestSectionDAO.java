@@ -31,9 +31,9 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  */
 public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
-	public boolean insertData(TestSection testSection) throws LIMSRuntimeException;
+//	public boolean insertData(TestSection testSection) throws LIMSRuntimeException;
 
-	public void deleteData(List testSections) throws LIMSRuntimeException;
+//	public void deleteData(List testSections) throws LIMSRuntimeException;
 
 	public List<TestSection> getAllTestSections() throws LIMSRuntimeException;
 
@@ -43,7 +43,7 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
 	public void getData(TestSection testSection) throws LIMSRuntimeException;
 
-	public void updateData(TestSection testSection) throws LIMSRuntimeException;
+//	public void updateData(TestSection testSection) throws LIMSRuntimeException;
 
 	public List getTestSections(String filter) throws LIMSRuntimeException;
 
@@ -64,4 +64,6 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 	public TestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException;
 
 	public List<TestSection> getAllInActiveTestSections() throws LIMSRuntimeException;
+
+	boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException;
 }

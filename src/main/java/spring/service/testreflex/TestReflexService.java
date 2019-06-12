@@ -11,12 +11,6 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 public interface TestReflexService extends BaseObjectService<TestReflex, String> {
 	void getData(TestReflex testReflex);
 
-	void deleteData(List testReflexs);
-
-	void updateData(TestReflex testReflex);
-
-	boolean insertData(TestReflex testReflex);
-
 	List getPageOfTestReflexs(int startingRecNo);
 
 	List getTestReflexesByTestResult(TestResult testResult);

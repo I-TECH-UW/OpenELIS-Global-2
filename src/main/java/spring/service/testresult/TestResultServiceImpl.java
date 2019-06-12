@@ -63,23 +63,6 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 	}
 
 	@Override
-	public void deleteData(List testResults) {
-		getBaseObjectDAO().deleteData(testResults);
-
-	}
-
-	@Override
-	public void updateData(TestResult testResult) {
-		getBaseObjectDAO().updateData(testResult);
-
-	}
-
-	@Override
-	public boolean insertData(TestResult testResult) {
-		return getBaseObjectDAO().insertData(testResult);
-	}
-
-	@Override
 	public List getNextTestResultRecord(String id) {
 		return getBaseObjectDAO().getNextTestResultRecord(id);
 	}

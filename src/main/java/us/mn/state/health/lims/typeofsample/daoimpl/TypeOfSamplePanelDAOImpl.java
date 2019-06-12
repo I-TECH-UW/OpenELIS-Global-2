@@ -23,12 +23,9 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -44,48 +41,45 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 		super(TypeOfSamplePanel.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(String[] typeOfSamplesPanelIDs, String currentUserId) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			for (String id : typeOfSamplesPanelIDs) {
+//				TypeOfSamplePanel data = readTypeOfSamplePanel(id);
+//
+//				auditDAO.saveHistory(new TypeOfSamplePanel(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+//						"SAMPLETYPE_PANEL");
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(String[] typeOfSamplesPanelIDs, String currentUserId) throws LIMSRuntimeException {
-
-		try {
-
-			for (String id : typeOfSamplesPanelIDs) {
-				TypeOfSamplePanel data = readTypeOfSamplePanel(id);
-
-				auditDAO.saveHistory(new TypeOfSamplePanel(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-						"SAMPLETYPE_PANEL");
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(typeOfSamplePanel);
-
-			typeOfSamplePanel.setId(id);
-
-			auditDAO.saveNewHistory(typeOfSamplePanel, typeOfSamplePanel.getSysUserId(), "SAMPLETYPE_PANEL");
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanel insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(typeOfSamplePanel);
+//
+//			typeOfSamplePanel.setId(id);
+//
+//			auditDAO.saveNewHistory(typeOfSamplePanel, typeOfSamplePanel.getSysUserId(), "SAMPLETYPE_PANEL");
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfSamplePanelDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSamplePanel insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	@Override
 	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {

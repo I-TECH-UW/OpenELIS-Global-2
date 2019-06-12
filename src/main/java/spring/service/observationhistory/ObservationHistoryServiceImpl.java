@@ -24,7 +24,8 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Service
 @DependsOn({ "springContext" })
-public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory, String> implements ObservationHistoryService {
+public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory, String>
+		implements ObservationHistoryService {
 
 	public enum ObservationType {
 		INITIAL_SAMPLE_CONDITION("initialSampleCondition"), PAYMENT_STATUS("paymentStatus"),
@@ -185,25 +186,8 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
-	public void updateData(ObservationHistory observation) {
-		getBaseObjectDAO().updateData(observation);
-
-	}
-
-	@Override
-	public boolean insertData(ObservationHistory observation) {
-		return getBaseObjectDAO().insertData(observation);
-	}
-
-	@Override
 	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
 		return getBaseObjectDAO().getAll(patient, sample, observationHistoryTypeId);
-	}
-
-	@Override
-	public void insertOrUpdateData(ObservationHistory observation) {
-		getBaseObjectDAO().insertOrUpdateData(observation);
-
 	}
 
 	@Override

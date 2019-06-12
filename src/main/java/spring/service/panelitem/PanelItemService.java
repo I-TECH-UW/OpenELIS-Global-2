@@ -3,19 +3,12 @@ package spring.service.panelitem;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 	void getData(PanelItem panelItem);
-
-	void deleteData(List panelItems);
-
-	void updateData(PanelItem panelItem);
-
-	boolean insertData(PanelItem panelItem);
 
 	Integer getTotalPanelItemCount();
 
@@ -36,8 +29,6 @@ public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 	List getAllPanelItems();
 
 	List getPanelItems(String filter);
-
-	void delete(List panelItems) throws LIMSRuntimeException;
 
 	List<PanelItem> getPanelItemsForPanel(String panelId);
 

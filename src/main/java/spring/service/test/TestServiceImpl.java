@@ -22,6 +22,8 @@ import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -400,23 +402,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
-	public void deleteData(List tests) {
-		getBaseObjectDAO().deleteData(tests);
-
-	}
-
-	@Override
-	public void updateData(Test test) {
-		getBaseObjectDAO().updateData(test);
-
-	}
-
-	@Override
-	public boolean insertData(Test test) {
-		return getBaseObjectDAO().insertData(test);
-	}
-
-	@Override
 	public Test getActiveTestById(Integer id) {
 		return getBaseObjectDAO().getActiveTestById(id);
 	}
@@ -584,5 +569,20 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	@Override
 	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
 		return getBaseObjectDAO().getPageOfSearchedTestsBySysUserId(startingRecNo, sysUserId, searchString);
+	}
+
+	@Override
+	public void delete(Test test) {
+		Test oldTest = get(test.getId());
+		oldTest.setIsActive(IActionConstants.NO);
+		updateDelete(oldTest);
+	}
+
+	@Override
+	public String insert(Test test) {
+		if (test.getIsActive().equals(IActionConstants.YES) && getBaseObjectDAO().duplicateTestExists(test)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
+		}
+		return super.insert(test);
 	}
 }

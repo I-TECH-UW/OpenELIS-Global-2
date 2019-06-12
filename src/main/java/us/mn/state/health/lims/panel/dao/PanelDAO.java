@@ -31,9 +31,9 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
  */
 public interface PanelDAO extends BaseDAO<Panel, String> {
 
-	public boolean insertData(Panel panel) throws LIMSRuntimeException;
+//	public boolean insertData(Panel panel) throws LIMSRuntimeException;
 
-	public void deleteData(List panels) throws LIMSRuntimeException;
+//	public void deleteData(List panels) throws LIMSRuntimeException;
 
 	public List<Panel> getAllActivePanels() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface PanelDAO extends BaseDAO<Panel, String> {
 
 	public void getData(Panel panel) throws LIMSRuntimeException;
 
-	public void updateData(Panel panel) throws LIMSRuntimeException;
+//	public void updateData(Panel panel) throws LIMSRuntimeException;
 
 	public List getActivePanels(String filter) throws LIMSRuntimeException;
 

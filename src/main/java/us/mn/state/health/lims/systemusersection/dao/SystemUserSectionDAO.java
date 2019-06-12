@@ -26,9 +26,9 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
  */
 public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String> {
 
-	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+//	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
-	public void deleteData(List systemUserSection) throws LIMSRuntimeException;
+//	public void deleteData(List systemUserSection) throws LIMSRuntimeException;
 
 	public List getAllSystemUserSections() throws LIMSRuntimeException;
 
@@ -36,8 +36,8 @@ public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String>
 
 	public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
-	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
-
+//	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+//
 	public List getNextSystemUserSectionRecord(String id) throws LIMSRuntimeException;
 
 	public List getPreviousSystemUserSectionRecord(String id) throws LIMSRuntimeException;
@@ -45,5 +45,7 @@ public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String>
 	public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
 
 	public List getAllSystemUserSectionsBySystemUserId(int systemUserId) throws LIMSRuntimeException;
+
+	boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
 }

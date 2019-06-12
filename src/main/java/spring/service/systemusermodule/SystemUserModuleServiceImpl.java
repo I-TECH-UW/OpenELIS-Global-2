@@ -22,8 +22,7 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
 	@Override
 	protected SystemUserModuleDAO getBaseObjectDAO() {
-		// TODO Auto-generated method stub
-		return null;
+		return baseObjectDAO;
 	}
 
 	@Override

@@ -51,44 +51,44 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 		super(Patient.class);
 	}
 
-	@Override
-	public void deleteData(List patients) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-
-			for (int i = 0; i < patients.size(); i++) {
-				Patient data = (Patient) patients.get(i);
-
-				Patient oldData = readPatient(data.getId());
-				Patient newData = new Patient();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PATIENT";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < patients.size(); i++) {
-				Patient data = (Patient) patients.get(i);
-				// bugzilla 2206
-				data = readPatient(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient deleteData()", e);
-		}
-	}
+//	@Override
+//	public void deleteData(List patients) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < patients.size(); i++) {
+//				Patient data = (Patient) patients.get(i);
+//
+//				Patient oldData = readPatient(data.getId());
+//				Patient newData = new Patient();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "PATIENT";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("PatientDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Patient AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < patients.size(); i++) {
+//				Patient data = (Patient) patients.get(i);
+//				// bugzilla 2206
+//				data = readPatient(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("PatientDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Patient deleteData()", e);
+//		}
+//	}
 
 	@Override
 	public boolean insertData(Patient patient) throws LIMSRuntimeException {

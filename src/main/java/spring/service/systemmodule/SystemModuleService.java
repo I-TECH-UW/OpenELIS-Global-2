@@ -9,12 +9,6 @@ public interface SystemModuleService extends BaseObjectService<SystemModule, Str
 
 	void getData(SystemModule systemModule);
 
-	void deleteData(List systemModule);
-
-	void updateData(SystemModule systemModule);
-
-	boolean insertData(SystemModule systemModule);
-
 	Integer getTotalSystemModuleCount();
 
 	List getPageOfSystemModules(int startingRecNo);

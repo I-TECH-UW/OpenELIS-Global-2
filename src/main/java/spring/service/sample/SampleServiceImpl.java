@@ -304,23 +304,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
-	public void deleteData(List samples) {
-		getBaseObjectDAO().deleteData(samples);
-
-	}
-
-	@Override
-	public void updateData(Sample sample) {
-		getBaseObjectDAO().updateData(sample);
-
-	}
-
-	@Override
-	public boolean insertData(Sample sample) {
-		return getBaseObjectDAO().insertData(sample);
-	}
-
-	@Override
 	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd) {
 		return getBaseObjectDAO().getConfirmationSamplesReceivedInDateRange(receivedDateStart, receivedDateEnd);
 	}
@@ -410,5 +393,11 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	@Override
 	public List getPageOfSamples(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfSamples(startingRecNo);
+	}
+
+	@Override
+	public String generateAccessionNumberAndInsert(Sample sample) {
+		sample.setAccessionNumber(getBaseObjectDAO().getNextAccessionNumber());
+		return insert(sample);
 	}
 }

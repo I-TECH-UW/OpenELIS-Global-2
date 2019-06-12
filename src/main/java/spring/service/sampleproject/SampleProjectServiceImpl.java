@@ -12,7 +12,8 @@ import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 
 @Service
-public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProject, String> implements SampleProjectService {
+public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProject, String>
+		implements SampleProjectService {
 	@Autowired
 	protected SampleProjectDAO baseObjectDAO;
 
@@ -35,23 +36,6 @@ public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProjec
 	public void getData(SampleProject sampleProj) {
 		getBaseObjectDAO().getData(sampleProj);
 
-	}
-
-	@Override
-	public void deleteData(List sampleProjs) {
-		getBaseObjectDAO().deleteData(sampleProjs);
-
-	}
-
-	@Override
-	public void updateData(SampleProject sampleProj) {
-		getBaseObjectDAO().updateData(sampleProj);
-
-	}
-
-	@Override
-	public boolean insertData(SampleProject sampleProj) {
-		return getBaseObjectDAO().insertData(sampleProj);
 	}
 
 	@Override

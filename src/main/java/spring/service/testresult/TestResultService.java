@@ -10,12 +10,6 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 public interface TestResultService extends BaseObjectService<TestResult, String> {
 	void getData(TestResult testResult);
 
-	void deleteData(List testResults);
-
-	void updateData(TestResult testResult);
-
-	boolean insertData(TestResult testResult);
-
 	List getNextTestResultRecord(String id);
 
 	TestResult getTestResultById(TestResult testResult);

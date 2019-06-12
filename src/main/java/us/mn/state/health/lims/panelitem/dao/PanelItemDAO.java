@@ -32,9 +32,9 @@ import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
  */
 public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
-	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
+//	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
 
-	public void deleteData(List panelItems) throws LIMSRuntimeException;
+//	public void deleteData(List panelItems) throws LIMSRuntimeException;
 
 	public List getAllPanelItems() throws LIMSRuntimeException;
 
@@ -42,7 +42,7 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException;
 
-	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
+//	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
 
 	public List getPanelItems(String filter) throws LIMSRuntimeException;
 
