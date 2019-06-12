@@ -33,13 +33,13 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
  */
 public interface SampleHumanDAO extends BaseDAO<SampleHuman, String> {
 
-	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException;
+//	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
-	public void deleteData(List sampleHumans) throws LIMSRuntimeException;
+//	public void deleteData(List sampleHumans) throws LIMSRuntimeException;
 
 	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
-	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException;
+//	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
 	public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException;
 

@@ -31,6 +31,7 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 	public void delete(SystemUser systemUser) {
 		SystemUser oldData = get(systemUser.getId());
 		oldData.setIsActive(IActionConstants.NO);
+		oldData.setSysUserId(systemUser.getSysUserId());
 		updateDelete(oldData);
 	}
 
@@ -77,7 +78,7 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
 	@Override
 	public String insert(SystemUser systemUser) {
-		if (baseObjectDAO.duplicateSystemUserExists(systemUser)) {
+		if (duplicateSystemUserExists(systemUser)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUser.getFirstName()
 					+ IActionConstants.BLANK + systemUser.getFirstName());
 		}
@@ -86,7 +87,7 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
 	@Override
 	public SystemUser save(SystemUser systemUser) {
-		if (baseObjectDAO.duplicateSystemUserExists(systemUser)) {
+		if (duplicateSystemUserExists(systemUser)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUser.getFirstName()
 					+ IActionConstants.BLANK + systemUser.getFirstName());
 		}
@@ -95,11 +96,15 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
 	@Override
 	public SystemUser update(SystemUser systemUser) {
-		if (baseObjectDAO.duplicateSystemUserExists(systemUser)) {
+		if (duplicateSystemUserExists(systemUser)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUser.getFirstName()
 					+ IActionConstants.BLANK + systemUser.getFirstName());
 		}
 		return super.update(systemUser);
+	}
+
+	private boolean duplicateSystemUserExists(SystemUser systemUser) {
+		return baseObjectDAO.duplicateSystemUserExists(systemUser);
 	}
 
 }

@@ -205,7 +205,7 @@ public class AggregateReportJob implements Job {
 					report.setSend(false);
 					report.setSentDate(DateUtil.getNowAsTimestamp());
 					report.setSysUserId("1");
-					reportExternalExportService.updateReportExternalExport(report);
+					reportExternalExportService.update(report);
 				}
 
 				SiteInformation sendInfo = siteInfoService.getSiteInformationByName("testUsageSendStatus");

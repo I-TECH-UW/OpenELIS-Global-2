@@ -24,11 +24,9 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -46,9 +44,6 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 @Component
 @Transactional
 public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> implements SampleQaEventDAO {
-
-	@Autowired
-	AuditTrailDAO auditDAO;
 
 	public SampleQaEventDAOImpl() {
 		super(SampleQaEvent.class);

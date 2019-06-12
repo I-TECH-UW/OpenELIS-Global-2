@@ -8,11 +8,6 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 
 public interface AnalyzerResultsService extends BaseObjectService<AnalyzerResults, String> {
 
-	@Override
-	void deleteAll(List<AnalyzerResults> deletableAnalyzerResults);
-
-	void updateData(AnalyzerResults results);
-
 	AnalyzerResults readAnalyzerResults(String idString);
 
 	List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId);

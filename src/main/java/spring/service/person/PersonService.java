@@ -9,12 +9,6 @@ import us.mn.state.health.lims.person.valueholder.Person;
 public interface PersonService extends BaseObjectService<Person, String> {
 	void getData(Person person);
 
-	void deleteData(List persons);
-
-	void updateData(Person person);
-
-	boolean insertData(Person person);
-
 	List getNextPersonRecord(String id);
 
 	List getPreviousPersonRecord(String id);

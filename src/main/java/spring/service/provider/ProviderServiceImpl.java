@@ -26,49 +26,32 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
 
 	@Override
 	public void getData(Provider provider) {
-        getBaseObjectDAO().getData(provider);
+		getBaseObjectDAO().getData(provider);
 
-	}
-
-	@Override
-	public void deleteData(List providers) {
-        getBaseObjectDAO().deleteData(providers);
-
-	}
-
-	@Override
-	public void updateData(Provider provider) {
-        getBaseObjectDAO().updateData(provider);
-
-	}
-
-	@Override
-	public boolean insertData(Provider provider) {
-        return getBaseObjectDAO().insertData(provider);
 	}
 
 	@Override
 	public List getPageOfProviders(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfProviders(startingRecNo);
+		return getBaseObjectDAO().getPageOfProviders(startingRecNo);
 	}
 
 	@Override
 	public List getAllProviders() {
-        return getBaseObjectDAO().getAllProviders();
+		return getBaseObjectDAO().getAllProviders();
 	}
 
 	@Override
 	public List getNextProviderRecord(String id) {
-        return getBaseObjectDAO().getNextProviderRecord(id);
+		return getBaseObjectDAO().getNextProviderRecord(id);
 	}
 
 	@Override
 	public List getPreviousProviderRecord(String id) {
-        return getBaseObjectDAO().getPreviousProviderRecord(id);
+		return getBaseObjectDAO().getPreviousProviderRecord(id);
 	}
 
 	@Override
 	public Provider getProviderByPerson(Person person) {
-        return getBaseObjectDAO().getProviderByPerson(person);
+		return getBaseObjectDAO().getProviderByPerson(person);
 	}
 }

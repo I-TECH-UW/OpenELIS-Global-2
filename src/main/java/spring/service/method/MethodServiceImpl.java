@@ -34,7 +34,8 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
 	public void delete(Method method) {
 		Method oldMethod = get(method.getId());
 		oldMethod.setIsActive(IActionConstants.NO);
-		update(oldMethod);
+		oldMethod.setSysUserId(method.getSysUserId());
+		updateDelete(oldMethod);
 	}
 
 	@Override

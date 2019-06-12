@@ -15,28 +15,21 @@
 */
 package us.mn.state.health.lims.panelitem.daoimpl;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.valueholder.Test;
 
 /**
  * @author diane benz
@@ -48,11 +41,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	public PanelItemDAOImpl() {
 		super(PanelItem.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
-	private TestDAO testDAO;
 
 //	@Override
 //	public void deleteData(List panelItems) throws LIMSRuntimeException {
@@ -400,37 +388,37 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 		}
 	}
 
-	@Override
-	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-		try {
-			String sql = "from PanelItem pi where pi.panel = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", panel);
-
-			List list = query.list();
-
-			if (onlyTestsFullySetup && list != null && list.size() > 0) {
-				Iterator panelItemIterator = list.iterator();
-				list = new Vector();
-				while (panelItemIterator.hasNext()) {
-					PanelItem panelItem = (PanelItem) panelItemIterator.next();
-					String testName = panelItem.getTestName();
-					Test test = testDAO.getTestByName(testName);
-					if (test != null && !StringUtil.isNullorNill(test.getId()) && testDAO.isTestFullySetup(test)) {
-						list.add(panelItem);
-					}
-
-				}
-			}
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return list;
-
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getPanelItemByPanel()", e.toString());
-			throw new LIMSRuntimeException("Error in Method getPanelItemByPanel(String filter)", e);
-		}
-	}
+//	@Override
+//	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
+//		try {
+//			String sql = "from PanelItem pi where pi.panel = :param";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", panel);
+//
+//			List list = query.list();
+//
+//			if (onlyTestsFullySetup && list != null && list.size() > 0) {
+//				Iterator panelItemIterator = list.iterator();
+//				list = new Vector();
+//				while (panelItemIterator.hasNext()) {
+//					PanelItem panelItem = (PanelItem) panelItemIterator.next();
+//					String testName = panelItem.getTestName();
+//					Test test = testDAO.getTestByName(testName);
+//					if (test != null && !StringUtil.isNullorNill(test.getId()) && testDAO.isTestFullySetup(test)) {
+//						list.add(panelItem);
+//					}
+//
+//				}
+//			}
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return list;
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("PanelItemDAOImpl", "getPanelItemByPanel()", e.toString());
+//			throw new LIMSRuntimeException("Error in Method getPanelItemByPanel(String filter)", e);
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override

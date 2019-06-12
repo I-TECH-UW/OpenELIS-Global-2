@@ -18,8 +18,6 @@ public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 
 	List getPageOfPanelItems(int startingRecNo);
 
-	List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup);
-
 	List getNextPanelItemRecord(String id);
 
 	boolean getDuplicateSortOrderForPanel(PanelItem panelItem);

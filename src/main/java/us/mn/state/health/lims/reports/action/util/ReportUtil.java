@@ -146,7 +146,7 @@ public class ReportUtil {
 		try {
 			documentTrackService.insertAll(documents);
 //			for (DocumentTrack document : documents) {
-//				documentTrackService.insertData(document);
+//				documentTrackService.insert(document);
 //			}
 
 		} catch (LIMSRuntimeException e) {

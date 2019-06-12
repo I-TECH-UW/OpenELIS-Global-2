@@ -66,7 +66,7 @@ public class PatientIdentityTypeMap {
 		String id;
 		PatientIdentityType patientIdentityType = new PatientIdentityType();
 		patientIdentityType.setIdentityType(type);
-		patientIdentityTypeService.insertData(patientIdentityType);
+		patientIdentityTypeService.insert(patientIdentityType);
 
 		id = patientIdentityType.getId();
 

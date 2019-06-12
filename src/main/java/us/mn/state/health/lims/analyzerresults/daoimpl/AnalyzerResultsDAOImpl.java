@@ -20,14 +20,11 @@ package us.mn.state.health.lims.analyzerresults.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -39,9 +36,6 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 	public AnalyzerResultsDAOImpl() {
 		super(AnalyzerResults.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -69,63 +63,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //	}
 
 	@Override
-	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) throws LIMSRuntimeException {
-		// most of this should be moved out of this method, these are business rules,
-		// not save ops
-		try {
-			for (AnalyzerResults result : results) {
-				boolean duplicateByAccessionAndTestOnly = false;
-				List<AnalyzerResults> previousResults = getDuplicateResultByAccessionAndTest(result);
-				AnalyzerResults previousResult = null;
-
-				// This next block may seem more complicated then it need be but it covers the
-				// case where there may be a third duplicate
-				// and it covers rereading the same file
-				if (previousResults != null) {
-					duplicateByAccessionAndTestOnly = true;
-					for (AnalyzerResults foundResult : previousResults) {
-						previousResult = foundResult;
-						if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
-							duplicateByAccessionAndTestOnly = false;
-							break;
-						}
-					}
-				}
-
-				if (duplicateByAccessionAndTestOnly) {
-					result.setDuplicateAnalyzerResultId(previousResult.getId());
-					result.setReadOnly(true);
-				}
-
-				if (previousResults == null || duplicateByAccessionAndTestOnly) {
-
-					String id = (String) sessionFactory.getCurrentSession().save(result);
-					result.setId(id);
-
-					if (duplicateByAccessionAndTestOnly) {
-						previousResult.setDuplicateAnalyzerResultId(id);
-						previousResult.setSysUserId(sysUserId);
-					}
-
-					auditDAO.saveNewHistory(result, sysUserId, "analyzer_results");
-
-					if (duplicateByAccessionAndTestOnly) {
-						updateData(previousResult);
-					}
-				}
-			}
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
-		}
-
-	}
-
 	@SuppressWarnings("unchecked")
-	private List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
+	public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
 		try {
 
 			List<AnalyzerResults> list = new ArrayList<>();
@@ -149,27 +88,27 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 		}
 	}
 
-	@Override
-	public void updateData(AnalyzerResults results) throws LIMSRuntimeException {
-
-		AnalyzerResults oldData = readAnalyzerResults(results.getId());
-		AnalyzerResults newData = results;
-
-		try {
-
-			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-					"ANALYZER_RESULTS");
-
-			sessionFactory.getCurrentSession().merge(results);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(results);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(results);
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(AnalyzerResults results) throws LIMSRuntimeException {
+//
+//		AnalyzerResults oldData = readAnalyzerResults(results.getId());
+//		AnalyzerResults newData = results;
+//
+//		try {
+//
+//			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+//					"ANALYZER_RESULTS");
+//
+//			sessionFactory.getCurrentSession().merge(results);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(results);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(results);
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
+//		}
+//	}
 
 	@Override
 	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {

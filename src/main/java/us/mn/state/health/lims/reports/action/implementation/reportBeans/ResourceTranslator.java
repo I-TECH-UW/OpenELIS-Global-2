@@ -151,7 +151,7 @@ public class ResourceTranslator<T extends BaseObject> {
 
 		@SuppressWarnings("unchecked")
 		public DictionaryTranslator() {
-			super(SpringContext.getBean(DictionaryService.class).getAllDictionarys());
+			super(SpringContext.getBean(DictionaryService.class).getAll());
 		}
 
 		@Override

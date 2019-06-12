@@ -4,25 +4,18 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
 @Component
 @Transactional
 public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String> implements PatientIdentityDAO {
-
-	@Autowired
-	AuditTrailDAO auditDAO;
 
 	public PatientIdentityDAOImpl() {
 		super(PatientIdentity.class);
@@ -52,54 +45,54 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 		return identities;
 	}
 
-	@Override
-	public boolean insertData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(patientIdentity);
-			patientIdentity.setId(id);
+//	@Override
+//	public boolean insertData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(patientIdentity);
+//			patientIdentity.setId(id);
+//
+//			String sysUserId = patientIdentity.getSysUserId();
+//			String tableName = "PATIENT_IDENTITY";
+//			auditDAO.saveNewHistory(patientIdentity, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientIdentityDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PatientIdentity insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			String sysUserId = patientIdentity.getSysUserId();
-			String tableName = "PATIENT_IDENTITY";
-			auditDAO.saveNewHistory(patientIdentity, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("PatientIdentityDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientIdentity insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
-		PatientIdentity oldData = getCurrentPatientIdentity(patientIdentity.getId());
-
-		// add to audit trail
-		try {
-
-			String sysUserId = patientIdentity.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PATIENT_IDENTITY";
-			auditDAO.saveHistory(patientIdentity, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("PatientIdentityDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientIdentity AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(patientIdentity);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(patientIdentity);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientIdentity);
-		} catch (Exception e) {
-			LogEvent.logError("patientIdentityDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in patientIdentity updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
+//		PatientIdentity oldData = getCurrentPatientIdentity(patientIdentity.getId());
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = patientIdentity.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PATIENT_IDENTITY";
+//			auditDAO.saveHistory(patientIdentity, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientIdentityDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PatientIdentity AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(patientIdentity);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(patientIdentity);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientIdentity);
+//		} catch (Exception e) {
+//			LogEvent.logError("patientIdentityDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in patientIdentity updateData()", e);
+//		}
+//	}
 
 	public PatientIdentity getCurrentPatientIdentity(String id) {
 		PatientIdentity current = null;
@@ -115,27 +108,27 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 		return current;
 	}
 
-	@Override
-	public void delete(String patientIdentityId, String activeUserId) throws LIMSRuntimeException {
-		try {
-
-			PatientIdentity oldData = readPatientIdentity(patientIdentityId);
-			Patient newData = new Patient();
-
-			String event = IActionConstants.AUDIT_TRAIL_DELETE;
-			String tableName = "PATIENT_IDENTITY";
-			auditDAO.saveHistory(newData, oldData, activeUserId, event, tableName);
-
-			sessionFactory.getCurrentSession().delete(oldData);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-
-			LogEvent.logError("PatientIdentityDAOImpl", "delete()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientIdentity delete()", e);
-		}
-	}
+//	@Override
+//	public void delete(String patientIdentityId, String activeUserId) throws LIMSRuntimeException {
+//		try {
+//
+//			PatientIdentity oldData = readPatientIdentity(patientIdentityId);
+//			Patient newData = new Patient();
+//
+//			String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//			String tableName = "PATIENT_IDENTITY";
+//			auditDAO.saveHistory(newData, oldData, activeUserId, event, tableName);
+//
+//			sessionFactory.getCurrentSession().delete(oldData);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("PatientIdentityDAOImpl", "delete()", e.toString());
+//			throw new LIMSRuntimeException("Error in PatientIdentity delete()", e);
+//		}
+//	}
 
 	public PatientIdentity readPatientIdentity(String idString) {
 

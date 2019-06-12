@@ -16,11 +16,9 @@
 */
 package us.mn.state.health.lims.scheduler.daoimpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
@@ -32,9 +30,6 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 	public CronSchedulerDAOImpl() {
 		super(CronScheduler.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException {

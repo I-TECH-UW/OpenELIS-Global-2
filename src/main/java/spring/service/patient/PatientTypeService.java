@@ -8,17 +8,11 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 public interface PatientTypeService extends BaseObjectService<PatientType, String> {
 
-	public boolean insertData(PatientType patientType) throws LIMSRuntimeException;
-
-	public void deleteData(List patientType) throws LIMSRuntimeException;
-
 	public List getAllPatientTypes() throws LIMSRuntimeException;
 
 	public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(PatientType patientType) throws LIMSRuntimeException;
-
-	public void updateData(PatientType patientType) throws LIMSRuntimeException;
 
 	public List getPatientTypes(String filter) throws LIMSRuntimeException;
 

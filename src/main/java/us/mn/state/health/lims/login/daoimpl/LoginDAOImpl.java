@@ -29,7 +29,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.security.PasswordUtil;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
@@ -347,57 +346,57 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @param login the login object
 	 * @return login object value
 	 */
-	@Override
-	public Login getValidateLogin(Login login) throws LIMSRuntimeException {
-
-		// Crypto crypto = new Crypto();
-		PasswordUtil passUtil = new PasswordUtil();
-		Login loginData = null;
-
-		try {
-			List list = new ArrayList();
-			String sql = "from Login l where l.loginName = :param1";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param1", login.getLoginName());
-			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				loginData = (Login) list.get(0);
-				int passwordExpiredDayNo = getPasswordExpiredDayNo(login);
-				int systemUserId = getSystemUserId(login);
-				loginData.setPasswordExpiredDayNo(passwordExpiredDayNo);
-				loginData.setSystemUserId(systemUserId);
-				try {
-					// null login if incorrect password is entered
-					if (!passUtil.checkPassword(login.getPassword(), loginData.getPassword())) {
-						loginData = null;
-					}
-					// error when no salt present, must be old password
-				} catch (IllegalArgumentException e) {
-					// move passwords from encryption to salted hashing
-
-					// if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
-					// updateCryptoPasswordToHash(loginData);
-					// } else {
-					// loginData = null;
-					PasswordUtil pUtil = new PasswordUtil();
-					loginData.setPassword(pUtil.hashPassword(login.getPassword()));
-					// }
-				}
-			}
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getValidateLogin()", e.toString());
-			throw new LIMSRuntimeException("Error in Login getValidateLogin()", e);
-		}
-
-		return loginData;
-	}
+//	@Override
+//	public Login getValidateLogin(Login login) throws LIMSRuntimeException {
+//
+//		// Crypto crypto = new Crypto();
+//		PasswordUtil passUtil = new PasswordUtil();
+//		Login loginData = null;
+//
+//		try {
+//			List list = new ArrayList();
+//			String sql = "from Login l where l.loginName = :param1";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param1", login.getLoginName());
+//			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (list.size() > 0) {
+//				loginData = (Login) list.get(0);
+//				int passwordExpiredDayNo = getPasswordExpiredDayNo(login);
+//				int systemUserId = getSystemUserId(login);
+//				loginData.setPasswordExpiredDayNo(passwordExpiredDayNo);
+//				loginData.setSystemUserId(systemUserId);
+//				try {
+//					// null login if incorrect password is entered
+//					if (!passUtil.checkPassword(login.getPassword(), loginData.getPassword())) {
+//						loginData = null;
+//					}
+//					// error when no salt present, must be old password
+//				} catch (IllegalArgumentException e) {
+//					// move passwords from encryption to salted hashing
+//
+//					// if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
+//					// updateCryptoPasswordToHash(loginData);
+//					// } else {
+//					// loginData = null;
+//					PasswordUtil pUtil = new PasswordUtil();
+//					loginData.setPassword(pUtil.hashPassword(login.getPassword()));
+//					// }
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getValidateLogin()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login getValidateLogin()", e);
+//		}
+//
+//		return loginData;
+//	}
 
 	/**
 	 * Get the user login information base on login name

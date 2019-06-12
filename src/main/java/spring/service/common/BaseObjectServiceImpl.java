@@ -11,7 +11,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
+import us.mn.state.health.lims.audittrail.dao.AuditTrailService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -22,7 +22,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 		implements BaseObjectService<T, PK> {
 
 	@Autowired
-	protected AuditTrailDAO auditTrailDAO;
+	protected AuditTrailService auditTrailDAO;
 
 	private final Class<T> classType;
 

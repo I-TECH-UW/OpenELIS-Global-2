@@ -19,7 +19,6 @@ import java.util.List;
 
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 /**
@@ -54,7 +53,7 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 
-	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+//	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
 	public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
 

@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -41,9 +39,6 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 	public MethodDAOImpl() {
 		super(Method.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	public void deleteData(List methods) throws LIMSRuntimeException {

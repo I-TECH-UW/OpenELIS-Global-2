@@ -303,8 +303,8 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
-//			LogEvent.logError("UserTestSectionDAOImpl", "getSampleTestAnalytes()", e.toString());
-//			throw new LIMSRuntimeException("Error in UserTestSectionDAOImpl getSampleTestAnalytes()", e);
+//			LogEvent.logError("UserTestSectionServiceImpl", "getSampleTestAnalytes()", e.toString());
+//			throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getSampleTestAnalytes()", e);
 //		}
 //		return sample_Tas;
 //}

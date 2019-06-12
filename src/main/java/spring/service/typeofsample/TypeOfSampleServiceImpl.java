@@ -329,7 +329,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
 	@Override
 	public String insert(TypeOfSample typeOfSample) {
-		if (baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample)) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
 		}
 		baseObjectDAO.clearMap();
@@ -338,7 +338,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
 	@Override
 	public TypeOfSample save(TypeOfSample typeOfSample) {
-		if (baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample)) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
 		}
 		baseObjectDAO.clearMap();
@@ -347,10 +347,14 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
 	@Override
 	public TypeOfSample update(TypeOfSample typeOfSample) {
-		if (baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample)) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
 		}
 		baseObjectDAO.clearMap();
 		return super.update(typeOfSample);
+	}
+
+	private boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) {
+		return baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample);
 	}
 }

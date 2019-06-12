@@ -43,18 +43,6 @@ public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<Repor
 	}
 
 	@Override
-	public void updateReportExternalImport(ReportExternalImport report) {
-		getBaseObjectDAO().updateReportExternalImport(report);
-
-	}
-
-	@Override
-	public void insertReportExternalImport(ReportExternalImport report) {
-		getBaseObjectDAO().insertReportExternalImport(report);
-
-	}
-
-	@Override
 	public List<String> getUniqueSites() {
 		return getBaseObjectDAO().getUniqueSites();
 	}
@@ -64,11 +52,11 @@ public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<Repor
 	public void updateReports(List<ReportExternalImport> insertableImportReports,
 			List<ReportExternalImport> updatableImportReports) {
 		for (ReportExternalImport importReport : insertableImportReports) {
-			insertReportExternalImport(importReport);
+			insert(importReport);
 		}
 
 		for (ReportExternalImport importReport : updatableImportReports) {
-			updateReportExternalImport(importReport);
+			update(importReport);
 		}
 	}
 }

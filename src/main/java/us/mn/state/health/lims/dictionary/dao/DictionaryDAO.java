@@ -35,7 +35,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
 //	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException;
 
-	public List getAllDictionarys() throws LIMSRuntimeException;
+//	public List getAllDictionarys() throws LIMSRuntimeException;
 
 //	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException;
 

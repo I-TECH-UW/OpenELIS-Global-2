@@ -16,7 +16,6 @@
 package us.mn.state.health.lims.organization.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -68,7 +67,7 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 	 * @param projectName project.projectName to match
 	 * @return a Set of organizations.
 	 */
-	public Set<Organization> getOrganizationsByProjectName(String projectName);
+//	public Set<Organization> getOrganizationsByProjectName(String projectName);
 
 	/**
 	 * Find all organzations which are of the given organization type (matching the

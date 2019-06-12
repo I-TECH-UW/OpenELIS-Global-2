@@ -14,8 +14,6 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
 
 	boolean duplicateDictionaryExists(Dictionary dictionary);
 
-	List getAllDictionarys();
-
 	boolean isDictionaryFrozen(Dictionary dictionary);
 
 	List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);

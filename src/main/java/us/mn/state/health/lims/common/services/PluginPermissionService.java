@@ -111,7 +111,7 @@ public class PluginPermissionService {
 			roleModule.setHasDelete("Y");
 			roleModule.setHasSelect("Y");
 			roleModule.setHasUpdate("Y");
-			roleModuleService.insertData(roleModule);
+			roleModuleService.insert(roleModule);
 		}
 
 		return true;

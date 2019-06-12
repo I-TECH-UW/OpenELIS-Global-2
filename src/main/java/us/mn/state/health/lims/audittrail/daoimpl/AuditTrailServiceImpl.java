@@ -29,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
+import spring.service.referencetables.ReferenceTablesService;
+import us.mn.state.health.lims.audittrail.dao.AuditTrailService;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
@@ -38,17 +39,16 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.LabelValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
 @Transactional
-public class AuditTrailDAOImpl extends BaseDAOImpl<History, String> implements AuditTrailDAO {
+public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implements AuditTrailService {
 
 	@Autowired
-	ReferenceTablesDAO referenceTablesDAO;
+	ReferenceTablesService referenceTablesService;
 
-	public AuditTrailDAOImpl() {
+	public AuditTrailServiceImpl() {
 		super(History.class);
 	}
 
@@ -61,7 +61,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History, String> implements A
 
 		ReferenceTables referenceTables = new ReferenceTables();
 		referenceTables.setTableName(tableName);
-		ReferenceTables referenceTable = referenceTablesDAO.getReferenceTableByName(referenceTables);
+		ReferenceTables referenceTable = referenceTablesService.getReferenceTableByName(referenceTables);
 
 		// bugzilla 2111: if keepHistory is N then return - don't throw exception
 		if (referenceTable != null && !referenceTable.getKeepHistory().equals(YES)) {
@@ -119,7 +119,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History, String> implements A
 		// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
 		ReferenceTables referenceTables = new ReferenceTables();
 		referenceTables.setTableName(tableName);
-		ReferenceTables rt = referenceTablesDAO.getReferenceTableByName(referenceTables);
+		ReferenceTables rt = referenceTablesService.getReferenceTableByName(referenceTables);
 
 //		bugzilla 2111: if keepHistory is N then return - don't throw exception
 		if (rt != null && !rt.getKeepHistory().equals(YES)) {

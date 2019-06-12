@@ -31,9 +31,9 @@ import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
  */
 public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String> {
 
-	public boolean insertData(RenameTestSection testSection) throws LIMSRuntimeException;
+//	public boolean insertData(RenameTestSection testSection) throws LIMSRuntimeException;
 
-	public void deleteData(List testSections) throws LIMSRuntimeException;
+//	public void deleteData(List testSections) throws LIMSRuntimeException;
 
 	public List getAllTestSections() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String>
 
 	public void getData(RenameTestSection testSection) throws LIMSRuntimeException;
 
-	public void updateData(RenameTestSection testSection) throws LIMSRuntimeException;
+//	public void updateData(RenameTestSection testSection) throws LIMSRuntimeException;
 
 	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
 
@@ -55,4 +55,6 @@ public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String>
 	public Integer getTotalTestSectionCount() throws LIMSRuntimeException;
 
 	public RenameTestSection getTestSectionById(String id);
+
+	boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException;
 }

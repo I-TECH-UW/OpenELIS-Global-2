@@ -72,7 +72,7 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
 	@Override
 	public String insert(Scriptlet scriptlet) {
-		if (baseObjectDAO.duplicateScriptletExists(scriptlet)) {
+		if (duplicateScriptletExists(scriptlet)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
 		}
 		return super.insert(scriptlet);
@@ -80,7 +80,7 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
 	@Override
 	public Scriptlet save(Scriptlet scriptlet) {
-		if (baseObjectDAO.duplicateScriptletExists(scriptlet)) {
+		if (duplicateScriptletExists(scriptlet)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
 		}
 		return super.save(scriptlet);
@@ -88,9 +88,13 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
 	@Override
 	public Scriptlet update(Scriptlet scriptlet) {
-		if (baseObjectDAO.duplicateScriptletExists(scriptlet)) {
+		if (duplicateScriptletExists(scriptlet)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
 		}
 		return super.update(scriptlet);
+	}
+
+	private boolean duplicateScriptletExists(Scriptlet scriptlet) {
+		return baseObjectDAO.duplicateScriptletExists(scriptlet);
 	}
 }

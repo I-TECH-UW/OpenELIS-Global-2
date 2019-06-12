@@ -21,7 +21,6 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +29,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
-import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
@@ -45,9 +42,6 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	public TestSectionDAOImpl() {
 		super(TestSection.class);
 	}
-
-	@Autowired
-	private SystemUserSectionDAO systemUserSectionDAO;
 
 //	@Override
 //	public void deleteData(List testSections) throws LIMSRuntimeException {
@@ -197,18 +191,18 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	 * @return list of tests
 	 */
 	@Override
-	public List getAllTestSectionsBySysUserId(int sysUserId) throws LIMSRuntimeException {
+	public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
 		List list = new Vector();
 
-		String sectionIdList = "";
 		String sql = "";
 
 		try {
-			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
+			// moved into service layer
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
 			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
 				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
 				sql = "from TestSection where id in (" + sectionIdList + ")";
@@ -290,17 +284,18 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// this is for autocomplete
 	@Override
-	public List getTestSectionsBySysUserId(String filter, int sysUserId) throws LIMSRuntimeException {
+	public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+			throws LIMSRuntimeException {
 		List list = new Vector();
-		String sectionIdList = "";
 		String sql = "";
 
 		try {
-			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
+			// this part has been moved into the service layer
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
 			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
 				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
 				sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("

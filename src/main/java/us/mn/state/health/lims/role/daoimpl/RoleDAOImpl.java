@@ -24,11 +24,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -43,9 +41,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	public RoleDAOImpl() {
 		super(Role.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	public void deleteData(List<Role> roles) throws LIMSRuntimeException {

@@ -18,16 +18,13 @@
 package us.mn.state.health.lims.dictionary.daoimpl;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -48,9 +45,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	public DictionaryDAOImpl() {
 		super(Dictionary.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	public void deleteData(List dictionarys) throws LIMSRuntimeException {
@@ -201,26 +195,26 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		}
 	}
 
-	@Override
-	public List getAllDictionarys() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Dictionary";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary getAllDictionarys()", e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getAllDictionarys() throws LIMSRuntimeException {
+//		List list = new Vector();
+//		try {
+//			String sql = "from Dictionary";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			// query.setMaxResults(10);
+//			// query.setFirstResult(3);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary getAllDictionarys()", e);
+//		}
+//
+//		return list;
+//	}
 
 //	@Override
 //	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException {

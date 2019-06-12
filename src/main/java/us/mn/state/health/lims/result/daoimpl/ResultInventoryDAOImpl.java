@@ -20,11 +20,9 @@ package us.mn.state.health.lims.result.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -39,9 +37,6 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 	public ResultInventoryDAOImpl() {
 		super(ResultInventory.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 	@Override
 	@SuppressWarnings("unchecked")

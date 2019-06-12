@@ -147,9 +147,9 @@ public class TestUsageBacklogImpl extends Thread implements TestUsageBacklog {
 
 		try {
 			if (report.getId() == null) {
-				reportExternalExportService.insertReportExternalExport(report);
+				reportExternalExportService.insert(report);
 			} else {
-				reportExternalExportService.updateReportExternalExport(report);
+				reportExternalExportService.insert(report);
 			}
 
 		} catch (LIMSRuntimeException e) {

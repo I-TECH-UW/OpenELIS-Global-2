@@ -64,7 +64,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
 	@Override
 	public String insert(StatusOfSample statusOfSample) {
-		if (baseObjectDAO.duplicateStatusOfSampleExists(statusOfSample)) {
+		if (duplicateStatusOfSampleExists(statusOfSample)) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("Duplicate record exists for Description: ");
 			sb.append(statusOfSample.getDescription());
@@ -79,7 +79,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
 	@Override
 	public StatusOfSample save(StatusOfSample statusOfSample) {
-		if (baseObjectDAO.duplicateStatusOfSampleExists(statusOfSample)) {
+		if (duplicateStatusOfSampleExists(statusOfSample)) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("Duplicate record exists for Description: ");
 			sb.append(statusOfSample.getDescription());
@@ -94,7 +94,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
 	@Override
 	public StatusOfSample update(StatusOfSample statusOfSample) {
-		if (baseObjectDAO.duplicateStatusOfSampleExists(statusOfSample)) {
+		if (duplicateStatusOfSampleExists(statusOfSample)) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("Duplicate record exists for Description: ");
 			sb.append(statusOfSample.getDescription());
@@ -105,5 +105,9 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 			throw new LIMSDuplicateRecordException(sb.toString());
 		}
 		return super.update(statusOfSample);
+	}
+
+	private boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) {
+		return baseObjectDAO.duplicateStatusOfSampleExists(statusOfSample);
 	}
 }

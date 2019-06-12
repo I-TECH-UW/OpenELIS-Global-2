@@ -22,15 +22,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -50,119 +46,116 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 		super(SystemUserModule.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(List systemUserModules) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < systemUserModules.size(); i++) {
+//				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
+//
+//				SystemUserModule oldData = readSystemUserModule(data.getId());
+//				SystemUserModule newData = new SystemUserModule();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SYSTEM_USER_MODULE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < systemUserModules.size(); i++) {
+//				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
+//				// bugzilla 2206
+//				data = readSystemUserModule(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List systemUserModules) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public boolean insertData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateSystemUserModuleExists(systemUserModule)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(systemUserModule);
+//			systemUserModule.setId(id);
+//
+//			// add to audit trail
+//
+//			String sysUserId = systemUserModule.getSysUserId();
+//			String tableName = "SYSTEM_USER_MODULE";
+//			auditDAO.saveNewHistory(systemUserModule, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			for (int i = 0; i < systemUserModules.size(); i++) {
-				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
-
-				SystemUserModule oldData = readSystemUserModule(data.getId());
-				SystemUserModule newData = new SystemUserModule();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SYSTEM_USER_MODULE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < systemUserModules.size(); i++) {
-				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
-				// bugzilla 2206
-				data = readSystemUserModule(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateSystemUserModuleExists(systemUserModule)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(systemUserModule);
-			systemUserModule.setId(id);
-
-			// add to audit trail
-
-			String sysUserId = systemUserModule.getSysUserId();
-			String tableName = "SYSTEM_USER_MODULE";
-			auditDAO.saveNewHistory(systemUserModule, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateSystemUserModuleExists(systemUserModule)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
-		}
-
-		SystemUserModule oldData = readSystemUserModule(systemUserModule.getId());
-		SystemUserModule newData = systemUserModule;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = systemUserModule.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SYSTEM_USER_MODULE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(systemUserModule);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserModule);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(systemUserModule);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateSystemUserModuleExists(systemUserModule)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
+//		}
+//
+//		SystemUserModule oldData = readSystemUserModule(systemUserModule.getId());
+//		SystemUserModule newData = systemUserModule;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = systemUserModule.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SYSTEM_USER_MODULE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(systemUserModule);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserModule);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(systemUserModule);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
@@ -329,7 +322,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 		return list;
 	}
 
-	private boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();
@@ -362,26 +356,26 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 		}
 	}
 
-	@Override
-	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
-		try {
-			List list = new ArrayList();
-
-			String sql = "from SystemUserModule as sum join fetch sum.systemModule as sm where sum.systemUser.id = :id and sm.systemModuleName = :name";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("id", Integer.parseInt(id));
-			query.setParameter("name", name);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			return list.size() > 0;
-		} catch (Exception e) {
-			LogEvent.logError("systemUserModuleDAOImpl", "isUserAllowedAccordingToName()", e.toString());
-			throw new LIMSRuntimeException("Error in isUserAllowedAccordingToName()", e);
-		}
-	}
+//	@Override
+//	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
+//		try {
+//			List list = new ArrayList();
+//
+//			String sql = "from SystemUserModule as sum join fetch sum.systemModule as sm where sum.systemUser.id = :id and sm.systemModuleName = :name";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("id", Integer.parseInt(id));
+//			query.setParameter("name", name);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			return list.size() > 0;
+//		} catch (Exception e) {
+//			LogEvent.logError("systemUserModuleDAOImpl", "isUserAllowedAccordingToName()", e.toString());
+//			throw new LIMSRuntimeException("Error in isUserAllowedAccordingToName()", e);
+//		}
+//	}
 
 	@Override
 	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {

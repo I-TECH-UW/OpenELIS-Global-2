@@ -30,7 +30,7 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
 
 	@Override
 	public String insert(Analyte analyte) {
-		if (getBaseObjectDAO().duplicateAnalyteExists(analyte)) {
+		if (duplicateAnalyteExists(analyte)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 		}
 		return super.insert(analyte);
@@ -38,7 +38,7 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
 
 	@Override
 	public Analyte save(Analyte analyte) {
-		if (getBaseObjectDAO().duplicateAnalyteExists(analyte)) {
+		if (duplicateAnalyteExists(analyte)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 		}
 		return super.save(analyte);
@@ -46,17 +46,22 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
 
 	@Override
 	public Analyte update(Analyte analyte) {
-		if (getBaseObjectDAO().duplicateAnalyteExists(analyte)) {
+		if (duplicateAnalyteExists(analyte)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 		}
 		return super.update(analyte);
 	}
 
+	private boolean duplicateAnalyteExists(Analyte analyte) {
+		return duplicateAnalyteExists(analyte);
+	}
+
 	@Override
 	public void delete(Analyte analyte) {
-		analyte = get(analyte.getId());
-		analyte.setIsActive(IActionConstants.NO);
-		update(analyte);
+		Analyte oldData = get(analyte.getId());
+		oldData.setIsActive(IActionConstants.NO);
+		oldData.setSysUserId(analyte.getSysUserId());
+		updateDelete(oldData);
 	}
 
 }

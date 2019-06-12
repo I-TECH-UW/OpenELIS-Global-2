@@ -1,9 +1,7 @@
 package spring.service.organization;
 
 import java.util.List;
-import java.util.Set;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,11 +69,10 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	@Override
 	@Transactional
 	public void delete(Organization organization) {
-		Organization oldObject = getBaseObjectDAO().get(organization.getId())
-				.orElseThrow(() -> new ObjectNotFoundException(organization.getId(), Organization.class.getName()));
+		Organization oldObject = get(organization.getId());
 		oldObject.setIsActive(IActionConstants.NO);
 		oldObject.setSysUserId(organization.getSysUserId());
-		update(oldObject);
+		updateDelete(oldObject);
 	}
 
 	@Override
@@ -128,12 +125,6 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName) {
 		return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty, typeName);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public Set<Organization> getOrganizationsByProjectName(String projectName) {
-		return getBaseObjectDAO().getOrganizationsByProjectName(projectName);
 	}
 
 	@Override

@@ -25,7 +25,6 @@ import java.util.Set;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -162,7 +161,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 	List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList,
 			List<Integer> statusIdList);
 
-	Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName);
+//	Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName);
 
 	List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate)
 			throws LIMSRuntimeException;

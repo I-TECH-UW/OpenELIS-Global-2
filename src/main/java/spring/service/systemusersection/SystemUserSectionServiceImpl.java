@@ -63,7 +63,7 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
 	@Override
 	public String insert(SystemUserSection systemUserSection) {
-		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+		if (duplicateSystemUserSectionExists(systemUserSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
 		}
 		return super.insert(systemUserSection);
@@ -71,7 +71,7 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
 	@Override
 	public SystemUserSection save(SystemUserSection systemUserSection) {
-		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+		if (duplicateSystemUserSectionExists(systemUserSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
 		}
 		return super.save(systemUserSection);
@@ -79,9 +79,13 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
 	@Override
 	public SystemUserSection update(SystemUserSection systemUserSection) {
-		if (baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection)) {
+		if (duplicateSystemUserSectionExists(systemUserSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemUserSection.getSysUserId());
 		}
 		return super.update(systemUserSection);
+	}
+
+	private boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) {
+		return baseObjectDAO.duplicateSystemUserSectionExists(systemUserSection);
 	}
 }

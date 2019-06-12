@@ -1,10 +1,8 @@
 package us.mn.state.health.lims.datasubmission.daoimpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.datasubmission.dao.DataResourceDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataResource;
@@ -16,9 +14,6 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 	public DataResourceDAOImpl() {
 		super(DataResource.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	public void getData(DataResource resource) throws LIMSRuntimeException {

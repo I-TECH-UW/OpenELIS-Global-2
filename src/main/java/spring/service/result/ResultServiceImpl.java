@@ -474,29 +474,6 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Override
-	public void deleteData(Result result) {
-		getBaseObjectDAO().deleteData(result);
-
-	}
-
-	@Override
-	public void deleteData(List results) {
-		getBaseObjectDAO().deleteData(results);
-
-	}
-
-	@Override
-	public void updateData(Result result) {
-		getBaseObjectDAO().updateData(result);
-
-	}
-
-	@Override
-	public boolean insertData(Result result) {
-		return getBaseObjectDAO().insertData(result);
-	}
-
-	@Override
 	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate) {
 		return getBaseObjectDAO().getResultsForTestSectionInDateRange(testSectionId, lowDate, highDate);
 	}

@@ -8,12 +8,6 @@ import us.mn.state.health.lims.project.valueholder.Project;
 public interface ProjectService extends BaseObjectService<Project, String> {
 	void getData(Project project);
 
-	void deleteData(List projects);
-
-	void updateData(Project project);
-
-	boolean insertData(Project project);
-
 	List getPageOfProjects(int startingRecNo);
 
 	List getPreviousProjectRecord(String id);

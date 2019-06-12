@@ -8,12 +8,6 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
 public interface QaEventService extends BaseObjectService<QaEvent, String> {
 	void getData(QaEvent qaEvent);
 
-	void deleteData(List qaEvents);
-
-	void updateData(QaEvent qaEvent);
-
-	boolean insertData(QaEvent qaEvent);
-
 	QaEvent getQaEventByName(QaEvent qaEvent);
 
 	List getQaEvents(String filter);

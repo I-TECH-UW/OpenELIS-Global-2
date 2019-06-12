@@ -2,13 +2,14 @@ package spring.service.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
+import spring.service.testanalyte.TestAnalyteService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -24,6 +26,8 @@ import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -35,6 +39,7 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem.ResultDisplayType;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
+import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
@@ -55,20 +60,15 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<Entity, Map<String, String>> entityToMap;
 
-	@Autowired
 	protected static TestDAO baseObjectService = SpringContext.getBean(TestDAO.class);
 
-	@Autowired
 	private static TestResultService TEST_RESULT_Service = SpringContext.getBean(TestResultService.class);
-	@Autowired
 	private static TypeOfSampleTestService TYPE_OF_SAMPLE_testService = SpringContext
 			.getBean(TypeOfSampleTestService.class);
-	@Autowired
 	private static TypeOfSampleService TYPE_OF_SAMPLE_Service = SpringContext.getBean(TypeOfSampleService.class);
-	@Autowired
 	private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
-	@Autowired
 	private PanelService panelService = SpringContext.getBean(PanelService.class);
+	private TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
 
 	private Test test;
 
@@ -232,11 +232,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	public String getTestSectionName() {
 		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection());
-	}
-
-	@Transactional
-	public static List<Test> getAllActiveTests() {
-		return baseObjectService.getAllActiveTests(false);
 	}
 
 	public static Map<String, String> getMap(Entity entiy) {
@@ -423,7 +418,8 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) {
-		return getBaseObjectDAO().getAllActiveTests(onlyTestsFullySetup);
+		List<Test> tests = getBaseObjectDAO().getAllActiveTests(onlyTestsFullySetup);
+		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
@@ -437,18 +433,8 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
-	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {
-		return getBaseObjectDAO().getPageOfTestsBySysUserId(startingRecNo, sysUserId);
-	}
-
-	@Override
 	public Integer getTotalSearchedTestCount(String searchString) {
 		return getBaseObjectDAO().getTotalSearchedTestCount(searchString);
-	}
-
-	@Override
-	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString) {
-		return getBaseObjectDAO().getAllSearchedTotalTestCount(request, searchString);
 	}
 
 	@Override
@@ -469,11 +455,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	@Override
 	public List getPageOfSearchedTests(int startingRecNo, String searchString) {
 		return getBaseObjectDAO().getPageOfSearchedTests(startingRecNo, searchString);
-	}
-
-	@Override
-	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) {
-		return getBaseObjectDAO().getAllTestsBySysUserId(sysUserId, onlyTestsFullySetup);
 	}
 
 	@Override
@@ -508,7 +489,32 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	public boolean isTestFullySetup(Test test) {
-		return getBaseObjectDAO().isTestFullySetup(test);
+		try {
+			List testAnalytesByTest = testAnalyteService.getAllTestAnalytesPerTest(test);
+			boolean result = true;
+			if (testAnalytesByTest == null || testAnalytesByTest.size() == 0) {
+				result = false;
+			} else {
+				// bugzilla 2291 make sure none of the components has a null
+				// result group
+				boolean atLeastOneResultGroupFound = false;
+				for (int j = 0; j < testAnalytesByTest.size(); j++) {
+					TestAnalyte testAnalyte = (TestAnalyte) testAnalytesByTest.get(j);
+					if (testAnalyte.getResultGroup() == null) {
+						atLeastOneResultGroupFound = true;
+						break;
+					}
+				}
+				if (atLeastOneResultGroupFound) {
+					result = false;
+				}
+			}
+			return result;
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
+			throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
+		}
 	}
 
 	@Override
@@ -533,12 +539,14 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	public List getTests(String filter, boolean onlyTestsFullySetup) {
-		return getBaseObjectDAO().getTests(filter, onlyTestsFullySetup);
+		List<Test> tests = getBaseObjectDAO().getTests(filter, onlyTestsFullySetup);
+		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
 	public List<Test> getAllTests(boolean onlyTestsFullySetup) {
-		return getBaseObjectDAO().getAllTests(onlyTestsFullySetup);
+		List<Test> tests = getBaseObjectDAO().getAllTests(onlyTestsFullySetup);
+		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
@@ -557,24 +565,15 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
-	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) {
-		return getBaseObjectDAO().getTotalSearchedTestCountBySysUserId(sysUserId, searchString);
-	}
-
-	@Override
 	public Integer getNextAvailableSortOrderByTestSection(Test test) {
 		return getBaseObjectDAO().getNextAvailableSortOrderByTestSection(test);
-	}
-
-	@Override
-	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
-		return getBaseObjectDAO().getPageOfSearchedTestsBySysUserId(startingRecNo, sysUserId, searchString);
 	}
 
 	@Override
 	public void delete(Test test) {
 		Test oldTest = get(test.getId());
 		oldTest.setIsActive(IActionConstants.NO);
+		oldTest.setSysUserId(test.getSysUserId());
 		updateDelete(oldTest);
 	}
 
@@ -584,5 +583,49 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
 		}
 		return super.insert(test);
+	}
+
+	private List<Test> filterOnlyFullSetup(boolean onlyTestsFullySetup, List<Test> list) {
+		if (onlyTestsFullySetup && list != null && list.size() > 0) {
+			Iterator<Test> testIterator = list.iterator();
+			list = new Vector<>();
+			while (testIterator.hasNext()) {
+				Test test = testIterator.next();
+				if (isTestFullySetup(test)) {
+					list.add(test);
+				}
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

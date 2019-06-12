@@ -408,7 +408,7 @@ public abstract class Accessioner {
 	 * default
 	 */
 	private void persisteSampleItemsChanged() {
-//		analysisService.deleteData(analysisToDelete);
+//		analysisService.delete(analysisToDelete);
 		analysisService.deleteAll(analysisToDelete);
 		sampleItemService.deleteAll(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
@@ -1051,13 +1051,13 @@ public abstract class Accessioner {
 			person.setSysUserId(sysUserId);
 			patientInDB.setSysUserId(sysUserId);
 			if (patientInDB.getId() == null) {
-				personService.insertData(person);
-				patientService.insertData(patientInDB);
+				personService.insert(person);
+				patientService.insert(patientInDB);
 			} else {
 				// The reason for the explicit person update is to capture the
 				// history.
-				personService.updateData(person);
-				patientService.updateData(patientInDB);
+				personService.update(person);
+				patientService.update(patientInDB);
 			}
 		}
 	}
@@ -1075,7 +1075,7 @@ public abstract class Accessioner {
 		for (PatientIdentity identity : patientIdentities) {
 			identity.setPatientId(patientInDB.getId());
 			identity.setSysUserId(sysUserId);
-			identityService.insertData(identity);
+			identityService.insert(identity);
 		}
 	}
 
@@ -1109,9 +1109,9 @@ public abstract class Accessioner {
 			// we do not store any doctor name as a provider in SampleHuman
 			sampleHuman.setSysUserId(sysUserId);
 			if (null == sampleHuman.getId()) {
-				sampleHumanService.insertData(sampleHuman);
+				sampleHumanService.insert(sampleHuman);
 			} else {
-				sampleHumanService.updateData(sampleHuman);
+				sampleHumanService.update(sampleHuman);
 			}
 		}
 	}
@@ -1168,8 +1168,7 @@ public abstract class Accessioner {
 	 * observationHistoryService.getAll(knownPatientTemplate(),
 	 * knownSampleTemplate()); for (ObservationHistory oldOh : oldOHes) {
 	 * oldOh.setSampleId(sample.getId()); oldOh.setPatientId(patientInDB.getId());
-	 * oldOh.setSysUserId(sysUserId); observationHistoryService.updateData(oldOh); }
-	 * }
+	 * oldOh.setSysUserId(sysUserId); observationHistoryService.update(oldOh); } }
 	 *
 	 * for (ObservationHistory newOh : observationHistories) { boolean machedInDB =
 	 * false; List<ObservationHistory> existingTypeOHes =
@@ -1185,14 +1184,14 @@ public abstract class Accessioner {
 	 * (oh.getValueType().equals(newValueType)) { machedInDB = true; if
 	 * (oh.getValue() != null && !oh.getValue().equals(newOh.getValue())) {
 	 * oh.setSysUserId(sysUserId); oh.setValue(newOh.getValue());
-	 * observationHistoryService.updateData(oh);
+	 * observationHistoryService.update(oh);
 	 *
 	 * } } } // if (deleteTypeOHes.size() > 0) { //
 	 * observationHistoryService.delete(deleteTypeOHes); // }
 	 *
 	 * if (!machedInDB) { newOh.setSampleId(sample.getId());
 	 * newOh.setPatientId(patientInDB.getId()); newOh.setSysUserId(sysUserId);
-	 * observationHistoryService.insertData(newOh); } } }
+	 * observationHistoryService.insert(newOh); } } }
 	 */
 	/**
 	 *
@@ -1263,7 +1262,7 @@ public abstract class Accessioner {
 			patientToDelete.setSysUserId(sysUserId);
 			patientService.deleteAll(Arrays.asList(patientToDelete));
 			personToDelete.setSysUserId(sysUserId);
-			personService.deleteData(Arrays.asList(personToDelete));
+			personService.deleteAll(Arrays.asList(personToDelete));
 		}
 	}
 

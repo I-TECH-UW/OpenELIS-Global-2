@@ -152,9 +152,9 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 		person.setFirstName(results.getFirstName());
 		person.setSysUserId(sysUserId);
 
-		personService.insertData(person);
+		personService.insert(person);
 		patient.setPerson(person);
-		patientService.insertData(patient);
+		patientService.insert(patient);
 
 		persistIdentityType(patientIdentityService, results.getStNumber(), "ST", patient.getId());
 		persistIdentityType(patientIdentityService, results.getSubjectNumber(), "SUBJECT", patient.getId());
@@ -179,7 +179,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 			patientIdentity.setSysUserId(sysUserId);
 			patientIdentity.setIdentityData(paramValue);
 			patientIdentity.setLastupdatedFields();
-			patientIdentityService.insertData(patientIdentity);
+			patientIdentityService.insert(patientIdentity);
 		}
 	}
 

@@ -15,16 +15,12 @@
 */
 package us.mn.state.health.lims.analyzer.daoimpl;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
 
 @Component
 @Transactional
@@ -80,33 +76,33 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //		return analyzer;
 //	}
 
-	@Override
-	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
-		try {
-			Analyzer re = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return re;
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer getAnalyzerById()", e);
-		}
-	}
+//	@Override
+//	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
+//		try {
+//			Analyzer re = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return re;
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer getAnalyzerById()", e);
+//		}
+//	}
 
-	@Override
-	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException {
-		String sql = "From Analyzer a where a.name = :name";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("name", name);
-			Analyzer analyzer = (Analyzer) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return analyzer;
-		} catch (HibernateException e) {
-			handleException(e, "getAnalyzerrByName");
-		}
-		return null;
-	}
+//	@Override
+//	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException {
+//		String sql = "From Analyzer a where a.name = :name";
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("name", name);
+//			Analyzer analyzer = (Analyzer) query.uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return analyzer;
+//		} catch (HibernateException e) {
+//			handleException(e, "getAnalyzerrByName");
+//		}
+//		return null;
+//	}
 
 //	@Override
 //	public void getData(Analyzer analyzer) throws LIMSRuntimeException {

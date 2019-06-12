@@ -14,14 +14,10 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -36,108 +32,105 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 		super(PatientType.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
-
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(PatientTypeDAOImpl.class);
 
-	@Override
-	public void deleteData(List patientTypes) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List patientTypes) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < patientTypes.size(); i++) {
+//				PatientType data = (PatientType) patientTypes.get(i);
+//
+//				PatientType oldData = readPatientType(data.getId());
+//				PatientType newData = new PatientType();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "PATIENT_TYPE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in PATIENT_TYPE AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < patientTypes.size(); i++) {
+//				PatientType data = (PatientType) patientTypes.get(i);
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in PatientType deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < patientTypes.size(); i++) {
-				PatientType data = (PatientType) patientTypes.get(i);
+//	@Override
+//	public boolean insertData(PatientType patientType) throws LIMSRuntimeException {
+//		try {
+//
+//			if (duplicatePatientTypeExists(patientType)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + patientType.getDescription());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(patientType);
+//			patientType.setId(id);
+//
+//			String sysUserId = patientType.getSysUserId();
+//			String tableName = "PATIENT_TYPE";
+//			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in patientType insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				PatientType oldData = readPatientType(data.getId());
-				PatientType newData = new PatientType();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PATIENT_TYPE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in PATIENT_TYPE AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < patientTypes.size(); i++) {
-				PatientType data = (PatientType) patientTypes.get(i);
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in PatientType deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(PatientType patientType) throws LIMSRuntimeException {
-		try {
-
-			if (duplicatePatientTypeExists(patientType)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + patientType.getDescription());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(patientType);
-			patientType.setId(id);
-
-			String sysUserId = patientType.getSysUserId();
-			String tableName = "PATIENT_TYPE";
-			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in patientType insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(PatientType patientTypes) throws LIMSRuntimeException {
-		try {
-			/*
-			 * if (duplicatePatientTypeExists(patientTypes)) { throw new
-			 * LIMSDuplicateRecordException( "Duplicate record exists for " +
-			 * patientTypes.getDescription()); }
-			 */
-		} catch (Exception e) {
-			throw new LIMSRuntimeException("Error in patientType updateData()", e);
-		}
-
-		PatientType oldData = readPatientType(patientTypes.getId().toString());
-		PatientType newData = patientTypes;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = patientTypes.getId().toString();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PATIENT_TYPE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in patientType AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(patientTypes);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(patientTypes);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientTypes);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in PatientType updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(PatientType patientTypes) throws LIMSRuntimeException {
+//		try {
+//			/*
+//			 * if (duplicatePatientTypeExists(patientTypes)) { throw new
+//			 * LIMSDuplicateRecordException( "Duplicate record exists for " +
+//			 * patientTypes.getDescription()); }
+//			 */
+//		} catch (Exception e) {
+//			throw new LIMSRuntimeException("Error in patientType updateData()", e);
+//		}
+//
+//		PatientType oldData = readPatientType(patientTypes.getId().toString());
+//		PatientType newData = patientTypes;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = patientTypes.getId().toString();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PATIENT_TYPE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in patientType AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(patientTypes);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(patientTypes);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientTypes);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in PatientType updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
@@ -323,7 +316,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	// Check duplicate with fild Description .
-	private boolean duplicatePatientTypeExists(PatientType patientType) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicatePatientTypeExists(PatientType patientType) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

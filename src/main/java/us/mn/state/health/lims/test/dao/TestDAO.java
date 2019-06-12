@@ -17,8 +17,6 @@ package us.mn.state.health.lims.test.dao;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -45,11 +43,11 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
 	public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException;
 
-	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+//	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
 	public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException;
 
-	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException;
+//	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException;
 
 	public void getData(Test test) throws LIMSRuntimeException;
 
@@ -83,19 +81,19 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
 	public Integer getTotalTestCount() throws LIMSRuntimeException;
 
-	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException;
+//	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException;
 
 	public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException;
 
-	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
-			throws LIMSRuntimeException;
+//	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
+//			throws LIMSRuntimeException;
 
-	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) throws LIMSRuntimeException;
+//	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) throws LIMSRuntimeException;
 
 	public Integer getTotalSearchedTestCount(String searchString) throws LIMSRuntimeException;
 
-	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString)
-			throws LIMSRuntimeException;
+//	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString)
+//			throws LIMSRuntimeException;
 
 	public Integer getNextAvailableSortOrderByTestSection(Test test) throws LIMSRuntimeException;
 

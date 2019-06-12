@@ -1,7 +1,6 @@
 package spring.service.organization;
 
 import java.util.List;
-import java.util.Set;
 
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.organization.valueholder.Organization;
@@ -16,8 +15,6 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
 	List<Organization> getOrganizationsByParentId(String parentId);
 
 	List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName);
-
-	Set<Organization> getOrganizationsByProjectName(String projectName);
 
 	Integer getTotalOrganizationCount();
 

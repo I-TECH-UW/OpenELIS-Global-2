@@ -22,15 +22,4 @@ public class InventoryLocationServiceImpl extends BaseObjectServiceImpl<Inventor
 		return baseObjectDAO;
 	}
 
-	@Override
-	public void updateData(InventoryLocation inventoryLocation) {
-		getBaseObjectDAO().updateData(inventoryLocation);
-
-	}
-
-	@Override
-	public boolean insertData(InventoryLocation inventoryLocation) {
-		return getBaseObjectDAO().insertData(inventoryLocation);
-	}
-
 }

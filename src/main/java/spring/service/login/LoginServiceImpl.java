@@ -136,11 +136,6 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	public Login getValidateLogin(Login login) {
-		return getBaseObjectDAO().getValidateLogin(login);
-	}
-
-	@Override
 	@Transactional
 	public Login getUserProfile(String loginName) {
 		return getMatch("loginName", loginName).orElse(null);

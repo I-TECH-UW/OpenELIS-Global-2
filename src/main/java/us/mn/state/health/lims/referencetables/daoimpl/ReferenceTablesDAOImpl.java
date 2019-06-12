@@ -22,14 +22,10 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -48,157 +44,154 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 		super(ReferenceTables.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(List referenceTableses) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < referenceTableses.size(); i++) {
+//
+//				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
+//
+//				ReferenceTables oldData = readReferenceTables(data.getId());
+//				ReferenceTables newData = new ReferenceTables();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "REFERENCE_TABLES";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ReferenceTables AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < referenceTableses.size(); i++) {
+//
+//				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
+//				// bugzilla 2206
+//				data = readReferenceTables(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ReferenceTables deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List referenceTableses) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public boolean insertData(ReferenceTables referenceTables) throws LIMSRuntimeException {
+//
+//		// String isHl7Encoded;
+//		// String keepHistory;
+//		boolean isNew = true;
+//
+//		/*
+//		 * isHl7Encoded = referencetables.getIsHl7Encoded(); if
+//		 * (StringUtil.isNullorNill(isHl7Encoded) || "0".equals(isHl7Encoded)) {
+//		 * referencetables.setIsHl7Encoded ("N"); }
+//		 *
+//		 * keepHistory = referencetables.getKeepHistory(); if
+//		 * (StringUtil.isNullorNill(keepHistory) || "0".equals(keepHistory)) {
+//		 * referencetables.setKeepHistory ("N"); }
+//		 */
+//
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateReferenceTablesExists(referenceTables, isNew)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
+//			}
+//
+//			// System.out.println("This is ID from insert referencetables " +
+//			// referencetables.getId());
+//			String id = (String) sessionFactory.getCurrentSession().save(referenceTables);
+//			referenceTables.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = referenceTables.getSysUserId();
+//			String tableName = "REFERENCE_TABLES";
+//			auditDAO.saveNewHistory(referenceTables, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Referencetables insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			for (int i = 0; i < referenceTableses.size(); i++) {
-
-				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
-
-				ReferenceTables oldData = readReferenceTables(data.getId());
-				ReferenceTables newData = new ReferenceTables();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "REFERENCE_TABLES";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ReferenceTables AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < referenceTableses.size(); i++) {
-
-				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
-				// bugzilla 2206
-				data = readReferenceTables(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ReferenceTables deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(ReferenceTables referenceTables) throws LIMSRuntimeException {
-
-		// String isHl7Encoded;
-		// String keepHistory;
-		boolean isNew = true;
-
-		/*
-		 * isHl7Encoded = referencetables.getIsHl7Encoded(); if
-		 * (StringUtil.isNullorNill(isHl7Encoded) || "0".equals(isHl7Encoded)) {
-		 * referencetables.setIsHl7Encoded ("N"); }
-		 *
-		 * keepHistory = referencetables.getKeepHistory(); if
-		 * (StringUtil.isNullorNill(keepHistory) || "0".equals(keepHistory)) {
-		 * referencetables.setKeepHistory ("N"); }
-		 */
-
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateReferenceTablesExists(referenceTables, isNew)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
-			}
-
-			// System.out.println("This is ID from insert referencetables " +
-			// referencetables.getId());
-			String id = (String) sessionFactory.getCurrentSession().save(referenceTables);
-			referenceTables.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = referenceTables.getSysUserId();
-			String tableName = "REFERENCE_TABLES";
-			auditDAO.saveNewHistory(referenceTables, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-
-		// String isHl7Encoded;
-		// String keepHistory;
-		boolean isNew = false;
-
-		/*
-		 * isHl7Encoded = referencetables.getIsHl7Encoded(); System.out.println
-		 * ("Yi isH17Encodded is " + isHl7Encoded); if
-		 * (StringUtil.isNullorNill(isHl7Encoded) || "0".equals(isHl7Encoded)) {
-		 * referencetables.setIsHl7Encoded ("N"); }
-		 *
-		 * keepHistory = referencetables.getKeepHistory(); System.out.println
-		 * ("Yi isH17Encodded is " + keepHistory); if
-		 * (StringUtil.isNullorNill(keepHistory) || "0".equals(keepHistory)) {
-		 * referencetables.setKeepHistory ("N"); }
-		 */
-
-		try {
-			if (duplicateReferenceTablesExists(referenceTables, isNew)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
-		}
-
-		// System.out.println("This is name from updateData " +
-		// referencetables.getTableName());
-		ReferenceTables oldData = readReferenceTables(referenceTables.getId());
-		ReferenceTables newData = referenceTables;
-
-		// System.out.println("updateDate " + newData.getTableName() + " " +
-		// oldData.getTableName());
-		// add to audit trail
-		try {
-
-			String sysUserId = referenceTables.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "REFERENCE_TABLES";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(referenceTables);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(referenceTables);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(referenceTables);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//
+//		// String isHl7Encoded;
+//		// String keepHistory;
+//		boolean isNew = false;
+//
+//		/*
+//		 * isHl7Encoded = referencetables.getIsHl7Encoded(); System.out.println
+//		 * ("Yi isH17Encodded is " + isHl7Encoded); if
+//		 * (StringUtil.isNullorNill(isHl7Encoded) || "0".equals(isHl7Encoded)) {
+//		 * referencetables.setIsHl7Encoded ("N"); }
+//		 *
+//		 * keepHistory = referencetables.getKeepHistory(); System.out.println
+//		 * ("Yi isH17Encodded is " + keepHistory); if
+//		 * (StringUtil.isNullorNill(keepHistory) || "0".equals(keepHistory)) {
+//		 * referencetables.setKeepHistory ("N"); }
+//		 */
+//
+//		try {
+//			if (duplicateReferenceTablesExists(referenceTables, isNew)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
+//		}
+//
+//		// System.out.println("This is name from updateData " +
+//		// referencetables.getTableName());
+//		ReferenceTables oldData = readReferenceTables(referenceTables.getId());
+//		ReferenceTables newData = referenceTables;
+//
+//		// System.out.println("updateDate " + newData.getTableName() + " " +
+//		// oldData.getTableName());
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = referenceTables.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "REFERENCE_TABLES";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Referencetables AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(referenceTables);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(referenceTables);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(referenceTables);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
@@ -363,7 +356,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	}
 
 	// bugzilla 1482
-	private boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew)
+	@Override
+	public boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew)
 			throws LIMSRuntimeException {
 		try {
 

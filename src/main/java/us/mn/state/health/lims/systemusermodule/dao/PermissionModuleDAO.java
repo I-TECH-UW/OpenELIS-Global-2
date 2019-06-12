@@ -30,9 +30,9 @@ public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO
 
 	public static final String SUPERVISOR = "Supervisor";
 
-	public boolean insertData(T permissionModule) throws LIMSRuntimeException;
+//	public boolean insertData(T permissionModule) throws LIMSRuntimeException;
 
-	public void deleteData(List permissionModules) throws LIMSRuntimeException;
+//	public void deleteData(List permissionModules) throws LIMSRuntimeException;
 
 	public List getAllPermissionModules() throws LIMSRuntimeException;
 
@@ -40,7 +40,7 @@ public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO
 
 	public void getData(T permissionModule) throws LIMSRuntimeException;
 
-	public void updateData(T permissionModule) throws LIMSRuntimeException;
+//	public void updateData(T permissionModule) throws LIMSRuntimeException;
 
 	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException;
 
@@ -50,7 +50,7 @@ public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO
 
 	public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
 
-	public boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
+//	public boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
 
 	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
 

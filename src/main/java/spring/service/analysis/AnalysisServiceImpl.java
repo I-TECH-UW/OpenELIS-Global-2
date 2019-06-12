@@ -33,7 +33,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -435,11 +434,6 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	@Override
 	public List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
 		return getBaseObjectDAO().getMaxRevisionAnalysesBySampleIncludeCanceled(sampleItem);
-	}
-
-	@Override
-	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
-		return getBaseObjectDAO().getPatientPreviousAnalysisForTestName(patient, currentSample, testName);
 	}
 
 	@Override

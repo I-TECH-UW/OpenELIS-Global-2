@@ -21,19 +21,14 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
-import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
-import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 @Component
 @Transactional
@@ -44,59 +39,54 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 		super(PatientPatientType.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
-	private PatientTypeDAO patientTypeDAO;
+//	@Override
+//	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(patientType);
+//			patientType.setId(id);
+//
+//			String sysUserId = patientType.getSysUserId();
+//			String tableName = "PATIENT_PATIENT_TYPE";
+//			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PatientPatientType insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-	@Override
-	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(patientType);
-			patientType.setId(id);
-
-			String sysUserId = patientType.getSysUserId();
-			String tableName = "PATIENT_PATIENT_TYPE";
-			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientPatientType insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(PatientPatientType patientType) throws LIMSRuntimeException {
-		PatientPatientType oldData = getCurrentPatientPatientType(patientType.getId());
-
-		// add to audit trail
-		try {
-
-			String sysUserId = patientType.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PATIENT_PATIENT_TYPE";
-			auditDAO.saveHistory(patientType, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("PatientPatientTypeDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientPatientTypeAuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(patientType);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(patientType);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientType);
-		} catch (Exception e) {
-			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(PatientPatientType patientType) throws LIMSRuntimeException {
+//		PatientPatientType oldData = getCurrentPatientPatientType(patientType.getId());
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = patientType.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PATIENT_PATIENT_TYPE";
+//			auditDAO.saveHistory(patientType, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientPatientTypeDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in PatientPatientTypeAuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(patientType);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(patientType);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientType);
+//		} catch (Exception e) {
+//			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
+//		}
+//	}
 
 	public PatientPatientType getCurrentPatientPatientType(String id) {
 		PatientPatientType current = null;
@@ -112,21 +102,21 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 		return current;
 	}
 
-	@Override
-	public PatientType getPatientTypeForPatient(String id) {
-
-		PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
-
-		if (patientPatientType != null) {
-			PatientType patientType = new PatientType();
-			patientType.setId(patientPatientType.getPatientTypeId());
-			patientTypeDAO.getData(patientType);
-
-			return patientType;
-		}
-
-		return null;
-	}
+//	@Override
+//	public PatientType getPatientTypeForPatient(String id) {
+//
+//		PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
+//
+//		if (patientPatientType != null) {
+//			PatientType patientType = new PatientType();
+//			patientType.setId(patientPatientType.getPatientTypeId());
+//			patientTypeDAO.getData(patientType);
+//
+//			return patientType;
+//		}
+//
+//		return null;
+//	}
 
 	@Override
 	@SuppressWarnings("unchecked")

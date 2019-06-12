@@ -5,10 +5,6 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 public interface PatientPatientTypeService extends BaseObjectService<PatientPatientType, String> {
-	void updateData(PatientPatientType patientType);
-
-	boolean insertData(PatientPatientType patientType);
-
 	PatientType getPatientTypeForPatient(String id);
 
 	PatientPatientType getPatientPatientTypeForPatient(String patientId);

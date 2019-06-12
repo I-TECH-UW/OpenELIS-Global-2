@@ -48,7 +48,7 @@ public class PatientUtil {
 			UNKNOWN_PERSON = new Person();
 			UNKNOWN_PERSON.setSysUserId("1");
 			UNKNOWN_PERSON.setLastName("UNKNOWN_");
-			personService.insertData(UNKNOWN_PERSON);
+			personService.insert(UNKNOWN_PERSON);
 		}
 
 		ProviderService providerService = SpringContext.getBean(ProviderService.class);
@@ -58,7 +58,7 @@ public class PatientUtil {
 			UNKNOWN_PROVIDER = new Provider();
 			UNKNOWN_PROVIDER.setSysUserId("1");
 			UNKNOWN_PROVIDER.setPerson(UNKNOWN_PERSON);
-			providerService.insertData(UNKNOWN_PROVIDER);
+			providerService.insert(UNKNOWN_PROVIDER);
 		}
 
 		UNKNOWN_PATIENT = patientService.getPatientByPerson(UNKNOWN_PERSON);
@@ -67,7 +67,7 @@ public class PatientUtil {
 			UNKNOWN_PATIENT = new Patient();
 			UNKNOWN_PATIENT.setSysUserId("1");
 			UNKNOWN_PATIENT.setPerson(UNKNOWN_PERSON);
-			patientService.insertData(UNKNOWN_PATIENT);
+			patientService.insert(UNKNOWN_PATIENT);
 		}
 	}
 

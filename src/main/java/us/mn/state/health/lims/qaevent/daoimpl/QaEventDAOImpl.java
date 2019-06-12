@@ -20,14 +20,10 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -46,116 +42,113 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		super(QaEvent.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(List qaEvents) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < qaEvents.size(); i++) {
+//				QaEvent data = (QaEvent) qaEvents.get(i);
+//
+//				QaEvent oldData = readQaEvent(data.getId());
+//				QaEvent newData = new QaEvent();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "QA_EVENT";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < qaEvents.size(); i++) {
+//				QaEvent data = (QaEvent) qaEvents.get(i);
+//				QaEvent cloneData = readQaEvent(data.getId());
+//
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List qaEvents) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateQaEventExists(qaEvent)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(qaEvent);
+//			qaEvent.setId(id);
+//
+//			String sysUserId = qaEvent.getSysUserId();
+//			String tableName = "QA_EVENT";
+//			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			for (int i = 0; i < qaEvents.size(); i++) {
-				QaEvent data = (QaEvent) qaEvents.get(i);
-
-				QaEvent oldData = readQaEvent(data.getId());
-				QaEvent newData = new QaEvent();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "QA_EVENT";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < qaEvents.size(); i++) {
-				QaEvent data = (QaEvent) qaEvents.get(i);
-				QaEvent cloneData = readQaEvent(data.getId());
-
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateQaEventExists(qaEvent)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(qaEvent);
-			qaEvent.setId(id);
-
-			String sysUserId = qaEvent.getSysUserId();
-			String tableName = "QA_EVENT";
-			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException {
-		try {
-			if (duplicateQaEventExists(qaEvent)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
-		}
-
-		QaEvent oldData = readQaEvent(qaEvent.getId());
-		QaEvent newData = qaEvent;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = qaEvent.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "QA_EVENT";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(qaEvent);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(qaEvent);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaEvent);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException {
+//		try {
+//			if (duplicateQaEventExists(qaEvent)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
+//		}
+//
+//		QaEvent oldData = readQaEvent(qaEvent.getId());
+//		QaEvent newData = qaEvent;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = qaEvent.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "QA_EVENT";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(qaEvent);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(qaEvent);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaEvent);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
@@ -338,7 +331,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		return list;
 	}
 
-	private boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

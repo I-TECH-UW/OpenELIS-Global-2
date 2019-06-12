@@ -32,9 +32,9 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
  */
 public interface ProviderDAO extends BaseDAO<Provider, String> {
 
-	public boolean insertData(Provider provider) throws LIMSRuntimeException;
+//	public boolean insertData(Provider provider) throws LIMSRuntimeException;
 
-	public void deleteData(List providers) throws LIMSRuntimeException;
+//	public void deleteData(List providers) throws LIMSRuntimeException;
 
 	public List getAllProviders() throws LIMSRuntimeException;
 
@@ -42,7 +42,7 @@ public interface ProviderDAO extends BaseDAO<Provider, String> {
 
 	public void getData(Provider provider) throws LIMSRuntimeException;
 
-	public void updateData(Provider provider) throws LIMSRuntimeException;
+//	public void updateData(Provider provider) throws LIMSRuntimeException;
 
 	public List getNextProviderRecord(String id) throws LIMSRuntimeException;
 

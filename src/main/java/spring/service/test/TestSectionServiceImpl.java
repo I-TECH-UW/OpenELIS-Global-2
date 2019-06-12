@@ -6,19 +6,20 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.systemusersection.SystemUserSectionService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.localization.valueholder.Localization;
+import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -33,9 +34,8 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<String, String> testUnitIdToNameMap;
 
-	@Autowired
 	protected static TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
-
+	private SystemUserSectionService systemUserSectionService = SpringContext.getBean(SystemUserSectionService.class);
 	private TestSection testSection;
 
 	public synchronized void initializeGlobalVariables() {
@@ -182,12 +182,25 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public List getTestSectionsBySysUserId(String filter, int sysUserId) {
-		return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId);
+		String sectionIdList = "";
+
+		List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+		for (int i = 0; i < userTestSectionList.size(); i++) {
+			SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+		}
+		return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId, sectionIdList);
 	}
 
 	@Override
 	public List getAllTestSectionsBySysUserId(int sysUserId) {
-		return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId);
+		String sectionIdList = "";
+
+		List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+		for (int i = 0; i < userTestSectionList.size(); i++) {
+			SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+			sectionIdList += sus.getTestSection().getId() + ",";
+		}
+		return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIdList);
 	}
 
 	@Override
@@ -202,7 +215,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public String insert(TestSection testSection) {
-		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+		if (duplicateTestSectionExists(testSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
 		}
 		return super.insert(testSection);
@@ -210,7 +223,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public TestSection save(TestSection testSection) {
-		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+		if (duplicateTestSectionExists(testSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
 		}
 		return super.save(testSection);
@@ -218,9 +231,13 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public TestSection update(TestSection testSection) {
-		if (baseObjectDAO.duplicateTestSectionExists(testSection)) {
+		if (duplicateTestSectionExists(testSection)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testSection.getTestSectionName());
 		}
 		return super.update(testSection);
+	}
+
+	private boolean duplicateTestSectionExists(TestSection testSection) {
+		return baseObjectDAO.duplicateTestSectionExists(testSection);
 	}
 }

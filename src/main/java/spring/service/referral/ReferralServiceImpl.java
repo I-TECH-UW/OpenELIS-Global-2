@@ -38,17 +38,6 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
 	}
 
 	@Override
-	public void updateData(Referral referral) {
-		getBaseObjectDAO().updateData(referral);
-
-	}
-
-	@Override
-	public boolean insertData(Referral referral) {
-		return getBaseObjectDAO().insertData(referral);
-	}
-
-	@Override
 	public Referral getReferralById(String referralId) {
 		return getBaseObjectDAO().getReferralById(referralId);
 	}

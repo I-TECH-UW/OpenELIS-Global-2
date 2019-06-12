@@ -22,12 +22,9 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -43,9 +40,6 @@ import us.mn.state.health.lims.person.valueholder.Person;
 @Component
 @Transactional
 public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements PatientDAO {
-
-	@Autowired
-	AuditTrailDAO auditDAO;
 
 	public PatientDAOImpl() {
 		super(Patient.class);
@@ -90,58 +84,58 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //		}
 //	}
 
-	@Override
-	public boolean insertData(Patient patient) throws LIMSRuntimeException {
+//	@Override
+//	public boolean insertData(Patient patient) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(patient);
+//			patient.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = patient.getSysUserId();
+//			String tableName = "PATIENT";
+//			auditDAO.saveNewHistory(patient, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("PatientDAOImpl", "insertData()", e.toString());
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in Patient insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(patient);
-			patient.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = patient.getSysUserId();
-			String tableName = "PATIENT";
-			auditDAO.saveNewHistory(patient, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "insertData()", e.toString());
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Patient insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Patient patient) throws LIMSRuntimeException {
-
-		Patient oldData = readPatient(patient.getId());
-
-		try {
-
-			String sysUserId = patient.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PATIENT";
-			auditDAO.saveHistory(patient, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("PatientDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(patient);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(patient);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(patient);
-		} catch (Exception e) {
-			LogEvent.logError("PatientDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Patient patient) throws LIMSRuntimeException {
+//
+//		Patient oldData = readPatient(patient.getId());
+//
+//		try {
+//
+//			String sysUserId = patient.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PATIENT";
+//			auditDAO.saveHistory(patient, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Patient AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(patient);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(patient);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patient);
+//		} catch (Exception e) {
+//			LogEvent.logError("PatientDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Patient updateData()", e);
+//		}
+//	}
 
 	@Override
 	public Patient getData(String patientId) throws LIMSRuntimeException {

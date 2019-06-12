@@ -31,21 +31,6 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, Str
 	}
 
 	@Override
-	public void deleteData(List roleModules) {
-		baseObjectDAO.deleteData(roleModules);
-	}
-
-	@Override
-	public void updateData(RoleModule roleModule) {
-		baseObjectDAO.updateData(roleModule);
-	}
-
-	@Override
-	public boolean insertData(RoleModule roleModule) {
-		return baseObjectDAO.insert(roleModule) != null;
-	}
-
-	@Override
 	public List getAllPermissionModules() {
 		return baseObjectDAO.getAllPermissionModules();
 	}
@@ -58,11 +43,6 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, Str
 	@Override
 	public List getPageOfPermissionModules(int startingRecNo) {
 		return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
-	}
-
-	@Override
-	public boolean isAgentAllowedAccordingToName(String id, String string) {
-		return baseObjectDAO.isAgentAllowedAccordingToName(id, string);
 	}
 
 	@Override

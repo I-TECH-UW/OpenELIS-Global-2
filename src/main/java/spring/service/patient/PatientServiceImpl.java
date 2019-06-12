@@ -534,17 +534,6 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	}
 
 	@Override
-	public void updateData(Patient patient) {
-		getBaseObjectDAO().updateData(patient);
-
-	}
-
-	@Override
-	public boolean insertData(Patient patient) {
-		return getBaseObjectDAO().insertData(patient);
-	}
-
-	@Override
 	public Patient getPatientByNationalId(String subjectNumber) {
 		return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
 	}

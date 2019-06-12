@@ -15,12 +15,9 @@
 */
 package us.mn.state.health.lims.inventory.daoimpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -34,9 +31,6 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	public InventoryLocationDAOImpl() {
 		super(InventoryLocation.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -84,50 +78,50 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //		}
 //	}
 
-	@Override
-	public boolean insertData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
-			inventoryItem.setId(id);
+//	@Override
+//	public boolean insertData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
+//			inventoryItem.setId(id);
+//
+//			String sysUserId = inventoryItem.getSysUserId();
+//			String tableName = "INVENTORY_ITEM";
+//			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryLocationDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryLocation insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			String sysUserId = inventoryItem.getSysUserId();
-			String tableName = "INVENTORY_ITEM";
-			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("InventoryLocationDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryLocation insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
-		InventoryLocation oldData = readInventoryLocation(inventoryItem.getId());
-		InventoryLocation newData = inventoryItem;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = inventoryItem.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "INVENTORY_ITEM";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-
-			sessionFactory.getCurrentSession().merge(inventoryItem);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryItem);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryItem);
-		} catch (Exception e) {
-			LogEvent.logError("InventoryLocationDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryLocation updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
+//		InventoryLocation oldData = readInventoryLocation(inventoryItem.getId());
+//		InventoryLocation newData = inventoryItem;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = inventoryItem.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "INVENTORY_ITEM";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//
+//			sessionFactory.getCurrentSession().merge(inventoryItem);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryItem);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryItem);
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryLocationDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryLocation updateData()", e);
+//		}
+//	}
 
 //	@Override
 //	public void getData(InventoryLocation inventoryItem) throws LIMSRuntimeException {

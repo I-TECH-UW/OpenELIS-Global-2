@@ -20,11 +20,9 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
@@ -41,23 +39,20 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 		super(ReferringTestResult.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
-
-	@Override
-	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(referringTestResult);
-			referringTestResult.setId(id);
-
-			auditDAO.saveNewHistory(referringTestResult, referringTestResult.getSysUserId(), "REFERRING_TEST_RESULT");
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertData");
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(referringTestResult);
+//			referringTestResult.setId(id);
+//
+//			auditDAO.saveNewHistory(referringTestResult, referringTestResult.getSysUserId(), "REFERRING_TEST_RESULT");
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertData");
+//		}
+//
+//		return true;
+//	}
 
 	@Override
 	@SuppressWarnings("unchecked")

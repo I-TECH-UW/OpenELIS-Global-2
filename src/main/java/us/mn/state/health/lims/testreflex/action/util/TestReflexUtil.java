@@ -442,9 +442,9 @@ public class TestReflexUtil {
 				finalResult.setAnalysis(result.getAnalysis());
 				finalResult.setSysUserId(currentUserId);
 				if (finalResult.getId() == null) {
-					resultService.insertData(finalResult);
+					resultService.insert(finalResult);
 				} else {
-					resultService.updateData(finalResult);
+					resultService.update(finalResult);
 				}
 			}
 
@@ -553,9 +553,9 @@ public class TestReflexUtil {
 							cd4Result.setSysUserId(currentUserId);
 
 							if (cd4Result.getId() == null) {
-								resultService.insertData(cd4Result);
+								resultService.insert(cd4Result);
 							} else {
-								resultService.updateData(cd4Result);
+								resultService.update(cd4Result);
 							}
 						}
 					} // else It is a HIV conclusion

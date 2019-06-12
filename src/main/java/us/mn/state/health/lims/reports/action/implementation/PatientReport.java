@@ -248,7 +248,7 @@ public abstract class PatientReport extends Report {
 			try {
 				analysisService.updateAll(updatedAnalysis, true);
 //				for (Analysis analysis : updatedAnalysis) {
-//					analysisService.updateData(analysis, true);
+//					analysisService.update(analysis, true);
 //				}
 
 			} catch (LIMSRuntimeException lre) {

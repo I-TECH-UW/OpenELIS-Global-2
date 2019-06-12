@@ -93,7 +93,7 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
 	@Override
 	public String insert(TestReflex testReflex) {
-		if (baseObjectDAO.duplicateTestReflexExists(testReflex)) {
+		if (duplicateTestReflexExists(testReflex)) {
 			throw new LIMSDuplicateRecordException(
 					"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 							+ IActionConstants.BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName()
@@ -105,7 +105,7 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
 	@Override
 	public TestReflex save(TestReflex testReflex) {
-		if (baseObjectDAO.duplicateTestReflexExists(testReflex)) {
+		if (duplicateTestReflexExists(testReflex)) {
 			throw new LIMSDuplicateRecordException(
 					"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 							+ IActionConstants.BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName()
@@ -117,7 +117,7 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
 	@Override
 	public TestReflex update(TestReflex testReflex) {
-		if (baseObjectDAO.duplicateTestReflexExists(testReflex)) {
+		if (duplicateTestReflexExists(testReflex)) {
 			throw new LIMSDuplicateRecordException(
 					"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 							+ IActionConstants.BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName()
@@ -125,5 +125,9 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 							+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 		}
 		return super.update(testReflex);
+	}
+
+	private boolean duplicateTestReflexExists(TestReflex testReflex) {
+		return baseObjectDAO.duplicateTestReflexExists(testReflex);
 	}
 }

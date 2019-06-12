@@ -17,7 +17,6 @@ package us.mn.state.health.lims.analyzer.dao;
 
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 public interface AnalyzerDAO extends BaseDAO<Analyzer, String> {
 
@@ -33,7 +32,7 @@ public interface AnalyzerDAO extends BaseDAO<Analyzer, String> {
 
 //	public void updateData(Analyzer analyzer) throws LIMSRuntimeException;
 
-	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException;
+//	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException;
 
-	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException;
+//	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException;
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
@@ -26,17 +27,6 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 	}
 
 	@Override
-	public boolean insertData(PatientType patientType) throws LIMSRuntimeException {
-		return getBaseObjectDAO().insertData(patientType);
-	}
-
-	@Override
-	public void deleteData(List patientType) throws LIMSRuntimeException {
-		getBaseObjectDAO().deleteData(patientType);
-
-	}
-
-	@Override
 	public List getAllPatientTypes() throws LIMSRuntimeException {
 		return getBaseObjectDAO().getAllPatientTypes();
 	}
@@ -49,12 +39,6 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 	@Override
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
 		getBaseObjectDAO().getData(patientType);
-	}
-
-	@Override
-	public void updateData(PatientType patientType) throws LIMSRuntimeException {
-		getBaseObjectDAO().updateData(patientType);
-
 	}
 
 	@Override
@@ -80,6 +64,34 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 	@Override
 	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException {
 		return getBaseObjectDAO().getTotalPatientTypeCount();
+	}
+
+	@Override
+	public String insert(PatientType patientType) {
+		if (duplicatePatientTypeExists(patientType)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + patientType.getDescription());
+		}
+		return super.insert(patientType);
+	}
+
+	@Override
+	public PatientType save(PatientType patientType) {
+		if (duplicatePatientTypeExists(patientType)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + patientType.getDescription());
+		}
+		return super.save(patientType);
+	}
+
+	@Override
+	public PatientType update(PatientType patientType) {
+		if (duplicatePatientTypeExists(patientType)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + patientType.getDescription());
+		}
+		return super.update(patientType);
+	}
+
+	private boolean duplicatePatientTypeExists(PatientType patientType) {
+		return baseObjectDAO.duplicatePatientTypeExists(patientType);
 	}
 
 }

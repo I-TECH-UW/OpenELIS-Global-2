@@ -23,22 +23,17 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
 
 /**
  *
@@ -52,114 +47,109 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 		super(RoleModule.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
-	private UserRoleDAO userRoleDAO;
+//	@Override
+//	public void deleteData(List roleModules) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < roleModules.size(); i++) {
+//				RoleModule data = (RoleModule) roleModules.get(i);
+//
+//				RoleModule oldData = readRoleModule(data.getId());
+//				RoleModule newData = new RoleModule();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SYSTEM_ROLE_MODULE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < roleModules.size(); i++) {
+//				RoleModule data = (RoleModule) roleModules.get(i);
+//				data = readRoleModule(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List roleModules) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-
-			for (int i = 0; i < roleModules.size(); i++) {
-				RoleModule data = (RoleModule) roleModules.get(i);
-
-				RoleModule oldData = readRoleModule(data.getId());
-				RoleModule newData = new RoleModule();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SYSTEM_ROLE_MODULE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < roleModules.size(); i++) {
-				RoleModule data = (RoleModule) roleModules.get(i);
-				data = readRoleModule(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(RoleModule permissionModule) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateRoleModuleExists(permissionModule)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + permissionModule.getPermissionAgentId());
-			}
-
+//	@Override
+//	public boolean insertData(RoleModule permissionModule) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateRoleModuleExists(permissionModule)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + permissionModule.getPermissionAgentId());
+//			}
+//
+////			String id = (String) sessionFactory.getCurrentSession().save(permissionModule);
 //			String id = (String) sessionFactory.getCurrentSession().save(permissionModule);
-			String id = (String) sessionFactory.getCurrentSession().save(permissionModule);
-			permissionModule.setId(id);
+//			permissionModule.setId(id);
+//
+//			// add to audit trail
+//
+//			String sysUserId = permissionModule.getSysUserId();
+//			String tableName = "SYSTEM_ROLE_MODULE";
+//			auditDAO.saveNewHistory(permissionModule, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			// add to audit trail
-
-			String sysUserId = permissionModule.getSysUserId();
-			String tableName = "SYSTEM_ROLE_MODULE";
-			auditDAO.saveNewHistory(permissionModule, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(RoleModule roleModule) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateRoleModuleExists(roleModule)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + roleModule.getPermissionAgentId());
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
-		}
-
-		RoleModule oldData = readRoleModule(roleModule.getId());
-		RoleModule newData = roleModule;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = roleModule.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SYSTEM_ROLE_MODULE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(roleModule);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(roleModule);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(roleModule);
-		} catch (Exception e) {
-			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(RoleModule roleModule) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateRoleModuleExists(roleModule)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + roleModule.getPermissionAgentId());
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
+//		}
+//
+//		RoleModule oldData = readRoleModule(roleModule.getId());
+//		RoleModule newData = roleModule;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = roleModule.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SYSTEM_ROLE_MODULE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(roleModule);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(roleModule);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(roleModule);
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(RoleModule systemUserModule) throws LIMSRuntimeException {
@@ -368,10 +358,10 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 		}
 	}
 
-	@Override
-	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
-		return userRoleDAO.userInRole(id, name);
-	}
+//	@Override
+//	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
+//		return userRoleDAO.userInRole(id, name);
+//	}
 
 	@Override
 	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {

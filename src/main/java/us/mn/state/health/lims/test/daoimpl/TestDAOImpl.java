@@ -18,35 +18,23 @@
 package us.mn.state.health.lims.test.daoimpl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.method.valueholder.Method;
-import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
-import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testanalyte.dao.TestAnalyteDAO;
-import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 
 /**
  * @author diane benz
@@ -58,13 +46,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	public TestDAOImpl() {
 		super(Test.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
-	@Autowired
-	private SystemUserSectionDAO systemUserSectionDAO;
-	@Autowired
-	private TestAnalyteDAO testAnalyteDAO;
 
 //	@Override
 //	public void deleteData(List tests) throws LIMSRuntimeException {
@@ -197,7 +178,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			String sql = "from Test Order by description";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
+//			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
 		} catch (Exception e) {
 			handleException(e, "getAllTests()");
@@ -214,7 +195,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			String sql = "from Test WHERE is_Active = 'Y' Order by description";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
+//			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -225,19 +206,19 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 		return list;
 	}
 
-	private List<Test> filterOnlyFullSetup(boolean onlyTestsFullySetup, List<Test> list) {
-		if (onlyTestsFullySetup && list != null && list.size() > 0) {
-			Iterator<Test> testIterator = list.iterator();
-			list = new Vector<>();
-			while (testIterator.hasNext()) {
-				Test test = testIterator.next();
-				if (isTestFullySetup(test)) {
-					list.add(test);
-				}
-			}
-		}
-		return list;
-	}
+//	private List<Test> filterOnlyFullSetup(boolean onlyTestsFullySetup, List<Test> list) {
+//		if (onlyTestsFullySetup && list != null && list.size() > 0) {
+//			Iterator<Test> testIterator = list.iterator();
+//			list = new Vector<>();
+//			while (testIterator.hasNext()) {
+//				Test test = testIterator.next();
+//				if (isTestFullySetup(test)) {
+//					list.add(test);
+//				}
+//			}
+//		}
+//		return list;
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -262,40 +243,40 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	 * @param sysUserId the user system id
 	 * @return list of test section bugzilla 2291 added onlyTestsFullySetup
 	 */
-	@Override
-	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-		List list = new Vector();
-		String sectionIdList = "";
-		String sql;
-
-		try {
-			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
-
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				sql = "from Test t where t.testSection.id  in (" + sectionIdList + ") Order by description";
-			} else {
-				return list;
-			}
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-
-			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "getAllTestsBySysUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in Test getAllTestsBySysUserId()", e);
-		}
-		return list;
-	}
+//	@Override
+//	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
+//		List list = new Vector();
+//		String sectionIdList = "";
+//		String sql;
+//
+//		try {
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
+//
+//			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+//				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+//				sql = "from Test t where t.testSection.id  in (" + sectionIdList + ") Order by description";
+//			} else {
+//				return list;
+//			}
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//
+//			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "getAllTestsBySysUserId()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test getAllTestsBySysUserId()", e);
+//		}
+//		return list;
+//	}
 
 	@Override
 	public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
@@ -367,45 +348,45 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	 * @param sysUserId     is the user system id
 	 * @return list of test section
 	 */
-	@Override
-	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-			String sectionIdList = "";
-			String sql;
-
-			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
-
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				sql = "from Test t where t.testSection.id in (" + sectionIdList
-						+ ") order by t.testSection.testSectionName, t.testName";
-			} else {
-				return list;
-			}
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "getPageOfTestsBySysUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException {
+//		List list = new Vector();
+//		try {
+//			// calculate maxRow to be one more than the page size
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//
+//			String sectionIdList = "";
+//			String sql;
+//
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
+//
+//			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+//				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+//				sql = "from Test t where t.testSection.id in (" + sectionIdList
+//						+ ") order by t.testSection.testSectionName, t.testName";
+//			} else {
+//				return list;
+//			}
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "getPageOfTestsBySysUserId()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
+//		}
+//
+//		return list;
+//	}
 
 	/**
 	 * Get all the tests assigned to this user
@@ -414,60 +395,60 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	 * @param sysUserId     is the user system id
 	 * @return list of test section
 	 */
-	@Override
-	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString)
-			throws LIMSRuntimeException {
-		String wildCard = "*";
-		String newSearchStr;
-		String sql;
-
-		try {
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-			String sectionIdList = "";
-
-			@SuppressWarnings("unchecked")
-			List<SystemUserSection> userTestSectionList = systemUserSectionDAO
-					.getAllSystemUserSectionsBySystemUserId(sysUserId);
-
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				sectionIdList += userTestSectionList.get(i).getTestSection().getId() + ",";
-			}
-
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				int wCdPosition = searchString.indexOf(wildCard);
-
-				if (wCdPosition == -1) // no wild card looking for exact match
-				{
-					newSearchStr = searchString.toLowerCase().trim();
-					sql = "from Test t  where t.testSection.id in (" + sectionIdList
-							+ " ) and  trim(lower (t.description)) = :param  order by t.testSection.testSectionName, t.testName";
-				} else {
-					newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-					sql = "from Test t where t.testSection.id in (" + sectionIdList
-							+ ") and trim(lower (t.description)) like :param  order by t.testSection.testSectionName, t.testName";
-				}
-			} else {
-				return new ArrayList<>();
-			}
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", newSearchStr);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			@SuppressWarnings("unchecked")
-			List<Test> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return list;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
-		}
-
-	}
+//	@Override
+//	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString)
+//			throws LIMSRuntimeException {
+//		String wildCard = "*";
+//		String newSearchStr;
+//		String sql;
+//
+//		try {
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//
+//			String sectionIdList = "";
+//
+//			@SuppressWarnings("unchecked")
+//			List<SystemUserSection> userTestSectionList = systemUserSectionDAO
+//					.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				sectionIdList += userTestSectionList.get(i).getTestSection().getId() + ",";
+//			}
+//
+//			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+//				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+//				int wCdPosition = searchString.indexOf(wildCard);
+//
+//				if (wCdPosition == -1) // no wild card looking for exact match
+//				{
+//					newSearchStr = searchString.toLowerCase().trim();
+//					sql = "from Test t  where t.testSection.id in (" + sectionIdList
+//							+ " ) and  trim(lower (t.description)) = :param  order by t.testSection.testSectionName, t.testName";
+//				} else {
+//					newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+//					sql = "from Test t where t.testSection.id in (" + sectionIdList
+//							+ ") and trim(lower (t.description)) like :param  order by t.testSection.testSectionName, t.testName";
+//				}
+//			} else {
+//				return new ArrayList<>();
+//			}
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", newSearchStr);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			@SuppressWarnings("unchecked")
+//			List<Test> list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return list;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
+//		}
+//
+//	}
 
 	public Test readTest(String idString) {
 		Test test;
@@ -508,7 +489,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			query.setParameter("param", filter + "%");
 			list = query.list();
 
-			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
+//			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -794,92 +775,92 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	// end bugzilla 2371
 
 	// bugzilla 2371
-	@Override
-	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString)
-			throws LIMSRuntimeException {
-		String wildCard = "*";
-		String newSearchStr;
-		String sql;
-		Integer count = null;
-
-		try {
-			String sectionIdList = "";
-
-			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
-
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
-
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				int wCdPosition = searchString.indexOf(wildCard);
-
-				if (wCdPosition == -1) // no wild card looking for exact match
-				{
-					newSearchStr = searchString.toLowerCase().trim();
-					sql = "select count (*) from Test t  where t.testSection.id in (" + sectionIdList
-							+ ") and trim(lower (t.description)) = :param ";
-				} else {
-					newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-					sql = "select count (*) from Test t where t.testSection.id in (" + sectionIdList
-							+ ") and trim(lower (t.description)) like :param ";
-				}
-			} else {
-				return count;
-			}
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", newSearchStr);
-
-			List results = query.list();
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (results != null && results.get(0) != null) {
-				if (results.get(0) != null) {
-					count = ((Long) results.get(0)).intValue();
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
-		}
-
-		return count;
-	}
+//	@Override
+//	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString)
+//			throws LIMSRuntimeException {
+//		String wildCard = "*";
+//		String newSearchStr;
+//		String sql;
+//		Integer count = null;
+//
+//		try {
+//			String sectionIdList = "";
+//
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
+//
+//			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+//				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+//				int wCdPosition = searchString.indexOf(wildCard);
+//
+//				if (wCdPosition == -1) // no wild card looking for exact match
+//				{
+//					newSearchStr = searchString.toLowerCase().trim();
+//					sql = "select count (*) from Test t  where t.testSection.id in (" + sectionIdList
+//							+ ") and trim(lower (t.description)) = :param ";
+//				} else {
+//					newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+//					sql = "select count (*) from Test t where t.testSection.id in (" + sectionIdList
+//							+ ") and trim(lower (t.description)) like :param ";
+//				}
+//			} else {
+//				return count;
+//			}
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", newSearchStr);
+//
+//			List results = query.list();
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (results != null && results.get(0) != null) {
+//				if (results.get(0) != null) {
+//					count = ((Long) results.get(0)).intValue();
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
+//		}
+//
+//		return count;
+//	}
 
 	// end bugzilla 2371
 
 	// bugzilla 2371
-	@Override
-	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
-			throws LIMSRuntimeException {
-		Integer count;
-
-		try {
-			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
-				count = getTotalSearchedTestCount(searchString);
-			} else {
-				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-
-				UserModuleService userModuleService = new UserModuleServiceImpl();
-				if (!userModuleService.isUserAdmin(request)) {
-					count = getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
-				} else {
-					count = getTotalSearchedTestCount(searchString);
-
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
-		}
-		return count;
-	}
+//	@Override
+//	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
+//			throws LIMSRuntimeException {
+//		Integer count;
+//
+//		try {
+//			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
+//				count = getTotalSearchedTestCount(searchString);
+//			} else {
+//				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+//
+//				UserModuleService userModuleService = new UserModuleServiceImpl();
+//				if (!userModuleService.isUserAdmin(request)) {
+//					count = getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
+//				} else {
+//					count = getTotalSearchedTestCount(searchString);
+//
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
+//		}
+//		return count;
+//	}
 
 	// end if bugzilla 2371
 
@@ -987,35 +968,35 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	// bugzilla 2236
-	@Override
-	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException {
-		try {
-			List testAnalytesByTest = testAnalyteDAO.getAllTestAnalytesPerTest(test);
-			boolean result = true;
-			if (testAnalytesByTest == null || testAnalytesByTest.size() == 0) {
-				result = false;
-			} else {
-				// bugzilla 2291 make sure none of the components has a null
-				// result group
-				boolean atLeastOneResultGroupFound = false;
-				for (int j = 0; j < testAnalytesByTest.size(); j++) {
-					TestAnalyte testAnalyte = (TestAnalyte) testAnalytesByTest.get(j);
-					if (testAnalyte.getResultGroup() == null) {
-						atLeastOneResultGroupFound = true;
-						break;
-					}
-				}
-				if (atLeastOneResultGroupFound) {
-					result = false;
-				}
-			}
-			return result;
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
-			throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
-		}
-	}
+//	@Override
+//	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException {
+//		try {
+//			List testAnalytesByTest = testAnalyteDAO.getAllTestAnalytesPerTest(test);
+//			boolean result = true;
+//			if (testAnalytesByTest == null || testAnalytesByTest.size() == 0) {
+//				result = false;
+//			} else {
+//				// bugzilla 2291 make sure none of the components has a null
+//				// result group
+//				boolean atLeastOneResultGroupFound = false;
+//				for (int j = 0; j < testAnalytesByTest.size(); j++) {
+//					TestAnalyte testAnalyte = (TestAnalyte) testAnalytesByTest.get(j);
+//					if (testAnalyte.getResultGroup() == null) {
+//						atLeastOneResultGroupFound = true;
+//						break;
+//					}
+//				}
+//				if (atLeastOneResultGroupFound) {
+//					result = false;
+//				}
+//			}
+//			return result;
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
+//			throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
+//		}
+//	}
 
 	// bugzilla 2443
 	@Override

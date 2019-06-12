@@ -49,7 +49,6 @@ import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
@@ -57,19 +56,18 @@ import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public class LabOrderSearchProvider extends BaseQueryProvider{
+public class LabOrderSearchProvider extends BaseQueryProvider {
 //	private TestDAO testDAO = new TestDAOImpl();
 //	private PanelDAO panelDAO = new PanelDAOImpl();
 //	private PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
 //	private TypeOfSampleTestDAO typeOfSampleTest = new TypeOfSampleTestDAOImpl();
-	
+
 	protected TestService testService = SpringContext.getBean(TestService.class);
 	protected PanelService panelService = SpringContext.getBean(PanelService.class);
 	protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
 	protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
 	protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
-	
-	
+
 	private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
 	private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
 	private Map<String, List<TestSampleType>> testNameTestSampleTypeMap;
@@ -82,7 +80,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	private static final String PROVIDER_PHONE = "phone";
 
 	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		String orderNumber = request.getParameter("orderNumber");
 
@@ -90,12 +89,12 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 
 		String result = createSearchResultXML(orderNumber, xml);
 
-		if(!result.equals(VALID)){
-			if(result.equals(NOT_FOUND)){
+		if (!result.equals(VALID)) {
+			if (result.equals(NOT_FOUND)) {
 				result = MessageUtil.getMessage("electronic.order.message.orderNotFound");
-			}else if(result.equals(CANCELED)){
+			} else if (result.equals(CANCELED)) {
 				result = MessageUtil.getMessage("electronic.order.message.canceled");
-			}else if(result.equals(REALIZED)){
+			} else if (result.equals(REALIZED)) {
 				result = MessageUtil.getMessage("electronic.order.message.realized");
 			}
 			result += "\n\n" + MessageUtil.getMessage("electronic.order.message.suggestion");
@@ -106,21 +105,22 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 
 	}
 
-	private String createSearchResultXML(String orderNumber, StringBuilder xml){
+	private String createSearchResultXML(String orderNumber, StringBuilder xml) {
 
 		String success = VALID;
 
-		List<ElectronicOrder> eOrders = new ElectronicOrderDAOImpl().getElectronicOrdersByExternalId(orderNumber);
-		if(eOrders.isEmpty()){
+		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+		if (eOrders.isEmpty()) {
 			return NOT_FOUND;
 		}
 
 		ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-		ExternalOrderStatus eOrderStatus = StatusService.getInstance().getExternalOrderStatusForID(eOrder.getStatusId());
+		ExternalOrderStatus eOrderStatus = StatusService.getInstance()
+				.getExternalOrderStatusForID(eOrder.getStatusId());
 
-		if(eOrderStatus == ExternalOrderStatus.Cancelled){
+		if (eOrderStatus == ExternalOrderStatus.Cancelled) {
 			return CANCELED;
-		}else if(eOrderStatus == ExternalOrderStatus.Realized){
+		} else if (eOrderStatus == ExternalOrderStatus.Realized) {
 			return REALIZED;
 		}
 
@@ -130,29 +130,29 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		return success;
 	}
 
-	private String getPatientGuid(ElectronicOrder eOrder){
+	private String getPatientGuid(ElectronicOrder eOrder) {
 		PatientServiceImpl patientService = new PatientServiceImpl(eOrder.getPatient());
 		return patientService.getGUID();
 	}
 
-	private void createOrderXML(String orderMessage, String patientGuid, StringBuilder xml){
-		List<Request> tests = new ArrayList<Request>();
-		List<Request> panels = new ArrayList<Request>();
-		Map<String, String> requesterValuesMap = new HashMap<String, String>();
-		
+	private void createOrderXML(String orderMessage, String patientGuid, StringBuilder xml) {
+		List<Request> tests = new ArrayList<>();
+		List<Request> panels = new ArrayList<>();
+		Map<String, String> requesterValuesMap = new HashMap<>();
+
 		getTestsAndPanels(tests, panels, orderMessage, requesterValuesMap);
 		createMaps(tests, panels);
 		xml.append("<order>");
 		addRequester(xml, requesterValuesMap);
 		addPatientGuid(xml, patientGuid);
 		addSampleTypes(xml);
-	    addCrossPanels(xml);
+		addCrossPanels(xml);
 		addCrosstests(xml);
 		addAlerts(xml, patientGuid);
 		xml.append("</order>");
 	}
 
-	private void addRequester(StringBuilder xml, Map<String, String> requesterValuesMap){
+	private void addRequester(StringBuilder xml, Map<String, String> requesterValuesMap) {
 		xml.append("<requester>");
 		XMLUtil.appendKeyValue(PROVIDER_FIRST_NAME, requesterValuesMap.get(PROVIDER_FIRST_NAME), xml);
 		XMLUtil.appendKeyValue(PROVIDER_LAST_NAME, requesterValuesMap.get(PROVIDER_LAST_NAME), xml);
@@ -160,68 +160,74 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append("</requester>");
 	}
 
-	private void getTestsAndPanels(List<Request> tests, List<Request> panels, String orderMessage, Map<String, String> requesterValuesMap){
+	private void getTestsAndPanels(List<Request> tests, List<Request> panels, String orderMessage,
+			Map<String, String> requesterValuesMap) {
 		HapiContext context = new DefaultHapiContext();
 		Parser p = context.getGenericParser();
-		try{
-			OML_O21 hapiMsg = (OML_O21)p.parse(orderMessage);
+		try {
+			OML_O21 hapiMsg = (OML_O21) p.parse(orderMessage);
 
 			ORC commonOrderSegment = hapiMsg.getORDER().getORC();
-			
-			requesterValuesMap.put(PROVIDER_PHONE, commonOrderSegment.getCallBackPhoneNumber(0).getXtn12_UnformattedTelephoneNumber().getValue());
-			requesterValuesMap.put(PROVIDER_LAST_NAME, commonOrderSegment.getOrderingProvider(0).getFamilyName().getSurname().getValue());
-			requesterValuesMap.put(PROVIDER_FIRST_NAME, commonOrderSegment.getOrderingProvider(0).getGivenName().getValue());
-			
-			
+
+			requesterValuesMap.put(PROVIDER_PHONE,
+					commonOrderSegment.getCallBackPhoneNumber(0).getXtn12_UnformattedTelephoneNumber().getValue());
+			requesterValuesMap.put(PROVIDER_LAST_NAME,
+					commonOrderSegment.getOrderingProvider(0).getFamilyName().getSurname().getValue());
+			requesterValuesMap.put(PROVIDER_FIRST_NAME,
+					commonOrderSegment.getOrderingProvider(0).getGivenName().getValue());
+
 			OML_O21_OBSERVATION_REQUEST orderRequest = hapiMsg.getORDER().getOBSERVATION_REQUEST();
 
 			addToTestOrPanel(tests, panels, commonOrderSegment, orderRequest.getOBSERVATION().getOBX());
 
 			List<OML_O21_ORDER_PRIOR> priorOrders = orderRequest.getPRIOR_RESULT().getORDER_PRIORAll();
-			for(OML_O21_ORDER_PRIOR priorOrder : priorOrders){
+			for (OML_O21_ORDER_PRIOR priorOrder : priorOrders) {
 				addToTestOrPanel(tests, panels, commonOrderSegment, priorOrder.getOBSERVATION_PRIOR().getOBX());
 			}
 
-		}catch(HL7Exception e){
+		} catch (HL7Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx){
+
+	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx) {
 		String loinc = orc.getOrderType().getIdentifier().toString();
 		String testName = testService.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
+		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance()
+				.getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
-	private void createMaps(List<Request> testRequests, List<Request> panelNames){
-		typeOfSampleMap = new HashMap<TypeOfSample, PanelTestLists>();
-		panelSampleTypesMap = new HashMap<Panel, List<TypeOfSample>>();
-		testNameTestSampleTypeMap = new HashMap<String, List<TestSampleType>>();
+	private void createMaps(List<Request> testRequests, List<Request> panelNames) {
+		typeOfSampleMap = new HashMap<>();
+		panelSampleTypesMap = new HashMap<>();
+		testNameTestSampleTypeMap = new HashMap<>();
 
 		createMapsForTests(testRequests);
 
 		createMapsForPanels(panelNames);
 	}
 
-	private void addPatientGuid(StringBuilder xml, String patientGuid){
+	private void addPatientGuid(StringBuilder xml, String patientGuid) {
 		xml.append("<patient>");
 		XMLUtil.appendKeyValue("guid", patientGuid, xml);
 		xml.append("</patient>");
 	}
 
-	private void createMapsForTests(List<Request> testRequests){
-		for(Request testRequest : testRequests){
+	private void createMapsForTests(List<Request> testRequests) {
+		for (Request testRequest : testRequests) {
 			List<Test> tests = testService.getActiveTestsByLoinc(testRequest.getLoinc());
-						
+
 			Test singleTest = tests.get(0);
-			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(singleTest.getId());
+			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getInstance()
+					.getTypeOfSampleForTest(singleTest.getId());
 			boolean hasSingleSampleType = tests.size() == 1;
 
-			if(tests.size() > 1){
-				if(!GenericValidator.isBlankOrNull(testRequest.getSampleType())){
-					for(Test test : tests){
-						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId());
-						if(typeOfSample.getDescription().equals(testRequest.getSampleType())){
+			if (tests.size() > 1) {
+				if (!GenericValidator.isBlankOrNull(testRequest.getSampleType())) {
+					for (Test test : tests) {
+						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance()
+								.getTypeOfSampleForTest(test.getId());
+						if (typeOfSample.getDescription().equals(testRequest.getSampleType())) {
 							hasSingleSampleType = true;
 							singleSampleType = typeOfSample;
 							singleTest = test;
@@ -230,23 +236,24 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 					}
 				}
 
-				if(!hasSingleSampleType){
+				if (!hasSingleSampleType) {
 					List<TestSampleType> testSampleTypeList = testNameTestSampleTypeMap.get(testRequest.getName());
 
-					if(testSampleTypeList == null){
-						testSampleTypeList = new ArrayList<TestSampleType>();
+					if (testSampleTypeList == null) {
+						testSampleTypeList = new ArrayList<>();
 						testNameTestSampleTypeMap.put(testRequest.getName(), testSampleTypeList);
 					}
 
-					for(Test test : tests){
-						testSampleTypeList.add(new TestSampleType(test, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId())));
+					for (Test test : tests) {
+						testSampleTypeList.add(new TestSampleType(test,
+								TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId())));
 					}
 				}
 			}
 
-			if(hasSingleSampleType){
+			if (hasSingleSampleType) {
 				PanelTestLists panelTestLists = typeOfSampleMap.get(singleSampleType);
-				if(panelTestLists == null){
+				if (panelTestLists == null) {
 					panelTestLists = new PanelTestLists();
 					typeOfSampleMap.put(singleSampleType, panelTestLists);
 				}
@@ -256,19 +263,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		}
 	}
 
-	private void createMapsForPanels(List<Request> panelRequests){
-		for(Request panelRequest : panelRequests){
+	private void createMapsForPanels(List<Request> panelRequests) {
+		for (Request panelRequest : panelRequests) {
 			Panel panel = panelService.getPanelByName(panelRequest.getName());
 
-			if(panel != null){
-				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForPanelId(panel.getId());
+			if (panel != null) {
+				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getInstance()
+						.getTypeOfSampleForPanelId(panel.getId());
 				boolean hasSingleSampleType = typeOfSamples.size() == 1;
 				TypeOfSample singleTypeOfSample = typeOfSamples.get(0);
-				
-				if( !GenericValidator.isBlankOrNull(panelRequest.getSampleType())){
-					if( typeOfSamples.size() > 1){
-						for( TypeOfSample typeOfSample : typeOfSamples){
-							if( typeOfSample.getDescription().equals(panelRequest.getSampleType())){
+
+				if (!GenericValidator.isBlankOrNull(panelRequest.getSampleType())) {
+					if (typeOfSamples.size() > 1) {
+						for (TypeOfSample typeOfSample : typeOfSamples) {
+							if (typeOfSample.getDescription().equals(panelRequest.getSampleType())) {
 								hasSingleSampleType = true;
 								singleTypeOfSample = typeOfSample;
 								break;
@@ -276,32 +284,33 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 						}
 					}
 				}
-				
-				if(hasSingleSampleType){
+
+				if (hasSingleSampleType) {
 					PanelTestLists panelTestLists = typeOfSampleMap.get(singleTypeOfSample);
-					if(panelTestLists == null){
+					if (panelTestLists == null) {
 						panelTestLists = new PanelTestLists();
 						typeOfSampleMap.put(singleTypeOfSample, panelTestLists);
 					}
 
 					panelTestLists.addPanel(panel);
-				}else{
+				} else {
 					panelSampleTypesMap.put(panel, typeOfSamples);
 				}
 			}
 		}
 	}
 
-	private void addSampleTypes(StringBuilder xml){
+	private void addSampleTypes(StringBuilder xml) {
 		xml.append("<sampleTypes>");
-		for(TypeOfSample typeOfSample : typeOfSampleMap.keySet()){
-			if (typeOfSample != null )
+		for (TypeOfSample typeOfSample : typeOfSampleMap.keySet()) {
+			if (typeOfSample != null) {
 				addSampleType(xml, typeOfSample, typeOfSampleMap.get(typeOfSample));
+			}
 		}
 		xml.append("</sampleTypes>");
 	}
 
-	private void addSampleType(StringBuilder xml, TypeOfSample typeOfSample, PanelTestLists panelTestLists){
+	private void addSampleType(StringBuilder xml, TypeOfSample typeOfSample, PanelTestLists panelTestLists) {
 		xml.append("<sampleType>");
 		XMLUtil.appendKeyValue("id", typeOfSample.getId(), xml);
 		XMLUtil.appendKeyValue("name", typeOfSample.getLocalizedName(), xml);
@@ -310,9 +319,9 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append("</sampleType>");
 	}
 
-	private void addPanels(StringBuilder xml, List<Panel> panels, String sampleTypeId){
+	private void addPanels(StringBuilder xml, List<Panel> panels, String sampleTypeId) {
 		xml.append("<panels>");
-		for(Panel panel : panels){
+		for (Panel panel : panels) {
 			xml.append("<panel>");
 			XMLUtil.appendKeyValue("id", panel.getId(), xml);
 			XMLUtil.appendKeyValue("name", panel.getLocalizedName(), xml);
@@ -322,33 +331,32 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append("</panels>");
 	}
 
-	private void addPanelTests(StringBuilder xml, String panelId, String sampleTypeId){
+	private void addPanelTests(StringBuilder xml, String panelId, String sampleTypeId) {
 		List<Test> panelTests = getTestsForPanelAndType(panelId, sampleTypeId);
-		addTests( xml, "panelTests", panelTests);
+		addTests(xml, "panelTests", panelTests);
 	}
 
-	private List<Test> getTestsForPanelAndType(String panelId, String sampleTypeId){
+	private List<Test> getTestsForPanelAndType(String panelId, String sampleTypeId) {
 		List<TypeOfSampleTest> sampleTestList = typeOfSampleTestService.getTypeOfSampleTestsForSampleType(sampleTypeId);
-		List<Integer> testList = new ArrayList<Integer>();
-		for(TypeOfSampleTest  typeTest : sampleTestList){
+		List<Integer> testList = new ArrayList<>();
+		for (TypeOfSampleTest typeTest : sampleTestList) {
 			testList.add(Integer.parseInt(typeTest.getTestId()));
 		}
-		
+
 		List<PanelItem> panelList = panelItemService.getPanelItemsForPanelAndItemList(panelId, testList);
-		List<Test> tests = new ArrayList<Test>();
-		for(PanelItem item : panelList){
+		List<Test> tests = new ArrayList<>();
+		for (PanelItem item : panelList) {
 			tests.add(item.getTest());
 		}
-		
+
 		return tests;
 	}
 
-
-	private void addTests(StringBuilder xml, String parent, List<Test> tests){
+	private void addTests(StringBuilder xml, String parent, List<Test> tests) {
 		xml.append("<");
 		xml.append(parent);
 		xml.append(">");
-		for(Test test : tests){
+		for (Test test : tests) {
 			xml.append("<test>");
 			XMLUtil.appendKeyValue("id", test.getId(), xml);
 			XMLUtil.appendKeyValue("name", test.getLocalizedName(), xml);
@@ -359,16 +367,16 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append(">");
 	}
 
-	private void addCrossPanels(StringBuilder xml){
+	private void addCrossPanels(StringBuilder xml) {
 		xml.append("<crosspanels>");
-		for(Panel panel : panelSampleTypesMap.keySet()){
+		for (Panel panel : panelSampleTypesMap.keySet()) {
 			addCrosspanel(xml, panel, panelSampleTypesMap.get(panel));
 		}
 
 		xml.append("</crosspanels>");
 	}
 
-	private void addCrosspanel(StringBuilder xml, Panel panel, List<TypeOfSample> typeOfSampleList){
+	private void addCrosspanel(StringBuilder xml, Panel panel, List<TypeOfSample> typeOfSampleList) {
 		xml.append("<crosspanel>");
 		XMLUtil.appendKeyValue("name", panel.getLocalizedName(), xml);
 		XMLUtil.appendKeyValue("id", panel.getId(), xml);
@@ -376,42 +384,42 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append("</crosspanel>");
 	}
 
-	private void addPanelCrosssampletypes(StringBuilder xml, List<TypeOfSample> typeOfSampleList){
+	private void addPanelCrosssampletypes(StringBuilder xml, List<TypeOfSample> typeOfSampleList) {
 		xml.append("<crosssampletypes>");
-		for(TypeOfSample typeOfSample : typeOfSampleList){
+		for (TypeOfSample typeOfSample : typeOfSampleList) {
 			addCrosspanelTypeOfSample(xml, typeOfSample);
 		}
 		xml.append("</crosssampletypes>");
 	}
 
-	private void addCrosspanelTypeOfSample(StringBuilder xml, TypeOfSample typeOfSample){
+	private void addCrosspanelTypeOfSample(StringBuilder xml, TypeOfSample typeOfSample) {
 		xml.append("<crosssampletype>");
 		XMLUtil.appendKeyValue("id", typeOfSample.getId(), xml);
 		XMLUtil.appendKeyValue("name", typeOfSample.getLocalizedName(), xml);
 		xml.append("</crosssampletype>");
 	}
 
-	private void addCrosstests(StringBuilder xml){
+	private void addCrosstests(StringBuilder xml) {
 		xml.append("<crosstests>");
-		for(String testName : testNameTestSampleTypeMap.keySet()){
+		for (String testName : testNameTestSampleTypeMap.keySet()) {
 			addCrosstestForTestName(xml, testName, testNameTestSampleTypeMap.get(testName));
 		}
 		xml.append("</crosstests>");
 
 	}
 
-	private void addCrosstestForTestName(StringBuilder xml, String testName, List<TestSampleType> list){
+	private void addCrosstestForTestName(StringBuilder xml, String testName, List<TestSampleType> list) {
 		xml.append("<crosstest>");
 		XMLUtil.appendKeyValue("name", testName, xml);
 		xml.append("<crosssampletypes>");
-		for(TestSampleType testSampleType : list){
+		for (TestSampleType testSampleType : list) {
 			addTestCrosssampleType(xml, testSampleType);
 		}
 		xml.append("</crosssampletypes>");
 		xml.append("</crosstest>");
 	}
 
-	private void addTestCrosssampleType(StringBuilder xml, TestSampleType testSampleType){
+	private void addTestCrosssampleType(StringBuilder xml, TestSampleType testSampleType) {
 		xml.append("<crosssampletype>");
 		XMLUtil.appendKeyValue("id", testSampleType.getSampleType().getId(), xml);
 		XMLUtil.appendKeyValue("name", testSampleType.getSampleType().getLocalizedName(), xml);
@@ -419,77 +427,79 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 		xml.append("</crosssampletype>");
 	}
 
-	private void addAlerts(StringBuilder xml, String patientGuid){
-		PatientServiceImpl patientService = new PatientServiceImpl( patientGuid);
-		if( GenericValidator.isBlankOrNull(patientService.getEnteredDOB()) || GenericValidator.isBlankOrNull(patientService.getGender())){
-			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"), xml);
+	private void addAlerts(StringBuilder xml, String patientGuid) {
+		PatientServiceImpl patientService = new PatientServiceImpl(patientGuid);
+		if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB())
+				|| GenericValidator.isBlankOrNull(patientService.getGender())) {
+			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),
+					xml);
 		}
 	}
-	
-	public class PanelTestLists{
-		private List<Test> tests = new ArrayList<Test>();
-		private List<Panel> panels = new ArrayList<Panel>();
 
-		public List<Test> getTests(){
+	public class PanelTestLists {
+		private List<Test> tests = new ArrayList<>();
+		private List<Panel> panels = new ArrayList<>();
+
+		public List<Test> getTests() {
 			return tests;
 		}
 
-		public List<Panel> getPanels(){
+		public List<Panel> getPanels() {
 			return panels;
 		}
 
-		public void addPanel(Panel panel){
-			if(panel != null){
+		public void addPanel(Panel panel) {
+			if (panel != null) {
 				panels.add(panel);
 			}
 		}
 
-		public void addTest(Test test){
-			if(test != null){
+		public void addTest(Test test) {
+			if (test != null) {
 				tests.add(test);
 			}
 		}
 
 	}
 
-	public class TestSampleType{
+	public class TestSampleType {
 		private Test test;
 		private TypeOfSample sampleType;
 
-		public TestSampleType(Test test, TypeOfSample sampleType){
+		public TestSampleType(Test test, TypeOfSample sampleType) {
 			this.test = test;
 			this.sampleType = sampleType;
 		}
 
-		public Test getTest(){
+		public Test getTest() {
 			return test;
 		}
 
-		public TypeOfSample getSampleType(){
+		public TypeOfSample getSampleType() {
 			return sampleType;
 		}
 	}
 
-	private class Request{
+	private class Request {
 		private String name;
 		private String loinc;
 		private String sampleType;
 
-		public Request(String name, String loinc, String sampleType){
+		public Request(String name, String loinc, String sampleType) {
 			this.name = name;
 			this.loinc = loinc;
 			this.sampleType = sampleType;
 		}
 
-		public String getSampleType(){
+		public String getSampleType() {
 			return sampleType;
 		}
-		
+
 		public String getLoinc() {
 			return loinc;
 		}
 
-		public String getName(){
+		public String getName() {
 			return name;
 		}
 

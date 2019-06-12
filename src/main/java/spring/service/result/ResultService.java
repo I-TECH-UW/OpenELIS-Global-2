@@ -13,14 +13,6 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 public interface ResultService extends BaseObjectService<Result, String> {
 	void getData(Result result);
 
-	void deleteData(Result result);
-
-	void deleteData(List results);
-
-	void updateData(Result result);
-
-	boolean insertData(Result result);
-
 	List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate);
 
 	List getNextResultRecord(String id);

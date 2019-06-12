@@ -8,7 +8,6 @@ import java.util.Set;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -41,8 +40,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 			boolean sortedByDateAndAccession);
 
 	List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
-
-	Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName);
 
 	List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate);
 

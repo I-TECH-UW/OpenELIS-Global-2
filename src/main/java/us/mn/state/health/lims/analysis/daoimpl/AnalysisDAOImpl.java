@@ -28,24 +28,16 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import spring.service.samplehuman.SampleHumanService;
-import spring.service.test.TestService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -57,11 +49,6 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @Component
 @Transactional
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements AnalysisDAO {
-
-	protected TestService testService = SpringContext.getBean(TestService.class);
-	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	@Autowired
-	AuditTrailDAO auditDAO;
 
 	public AnalysisDAOImpl() {
 		super(Analysis.class);
@@ -1434,46 +1421,46 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	}
 
-	@Override
-	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
-		Analysis previousAnalysis = null;
-		List<Integer> sampIDList = new ArrayList<>();
-		List<Integer> testIDList = new ArrayList<>();
-//		TestDAO testDAO = new TestDAOImpl();
-//		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-
-		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
-
-		if (sampList.isEmpty() || testService.getTestByName(testName) == null) {
-			return previousAnalysis;
-		}
-
-		testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
-
-		for (Sample sample : sampList) {
-			sampIDList.add(Integer.parseInt(sample.getId()));
-		}
-
-		List<Integer> statusList = new ArrayList<>();
-		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-
-//		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
-
-		if (analysisList == null || analysisList.isEmpty()) {
-			return previousAnalysis;
-		}
-
-		for (int i = 0; i < analysisList.size(); i++) {
-			if (i < analysisList.size() - 1 && currentSample.getAccessionNumber()
-					.equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())) {
-				previousAnalysis = analysisList.get(i + 1);
-				return previousAnalysis;
-			}
-
-		}
-		return previousAnalysis;
-
-	}
+//	@Override
+//	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
+//		Analysis previousAnalysis = null;
+//		List<Integer> sampIDList = new ArrayList<>();
+//		List<Integer> testIDList = new ArrayList<>();
+////		TestDAO testDAO = new TestDAOImpl();
+////		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
+//
+//		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
+//
+//		if (sampList.isEmpty() || testService.getTestByName(testName) == null) {
+//			return previousAnalysis;
+//		}
+//
+//		testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
+//
+//		for (Sample sample : sampList) {
+//			sampIDList.add(Integer.parseInt(sample.getId()));
+//		}
+//
+//		List<Integer> statusList = new ArrayList<>();
+//		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
+//
+////		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+//		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
+//
+//		if (analysisList == null || analysisList.isEmpty()) {
+//			return previousAnalysis;
+//		}
+//
+//		for (int i = 0; i < analysisList.size(); i++) {
+//			if (i < analysisList.size() - 1 && currentSample.getAccessionNumber()
+//					.equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())) {
+//				previousAnalysis = analysisList.get(i + 1);
+//				return previousAnalysis;
+//			}
+//
+//		}
+//		return previousAnalysis;
+//
+//	}
 
 }

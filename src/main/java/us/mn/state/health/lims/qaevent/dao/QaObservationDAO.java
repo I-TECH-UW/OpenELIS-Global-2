@@ -22,9 +22,9 @@ import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 public interface QaObservationDAO extends BaseDAO<QaObservation, String> {
 
-	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException;
+//	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException;
 
-	public void updateData(QaObservation qaObservation) throws LIMSRuntimeException;
+//	public void updateData(QaObservation qaObservation) throws LIMSRuntimeException;
 
 	public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
 			throws LIMSRuntimeException;

@@ -310,11 +310,11 @@ public class ResultSaveService {
 
 			for (ReferralResult referral : referrals) {
 				referral.setSysUserId(currentUserId);
-				referralResultService.deleteData(referral);
+				referralResultService.delete(referral);
 			}
 
 			result.setSysUserId(currentUserId);
-			resultService.deleteData(result);
+			resultService.delete(result);
 		}
 
 	}

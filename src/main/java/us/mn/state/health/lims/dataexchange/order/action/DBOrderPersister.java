@@ -119,12 +119,12 @@ public class DBOrderPersister implements IOrderPersister {
 		addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
 		addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
 
-		personService.insertData(person);
-		patientService.insertData(patient);
+		personService.insert(person);
+		patientService.insert(patient);
 
 		for (PatientIdentity identity : identities) {
 			identity.setPatientId(patient.getId());
-			identityService.insertData(identity);
+			identityService.insert(identity);
 		}
 	}
 
@@ -164,7 +164,7 @@ public class DBOrderPersister implements IOrderPersister {
 					if (!newIdentityValue.equals(identity.getIdentityData())) {
 						identity.setIdentityData(newIdentityValue);
 						identity.setSysUserId(SERVICE_USER_ID);
-						identityService.updateData(identity);
+						identityService.update(identity);
 					}
 					assigned = true;
 					break;
@@ -177,7 +177,7 @@ public class DBOrderPersister implements IOrderPersister {
 				identity.setIdentityData(newIdentityValue);
 				identity.setPatientId(patientId);
 				identity.setSysUserId(SERVICE_USER_ID);
-				identityService.insertData(identity);
+				identityService.insert(identity);
 			}
 		}
 	}
@@ -203,7 +203,7 @@ public class DBOrderPersister implements IOrderPersister {
 
 		if (updatePatient) {
 			patient.setSysUserId(SERVICE_USER_ID);
-			patientService.updateData(patient);
+			patientService.update(patient);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class DBOrderPersister implements IOrderPersister {
 
 		if (updatePerson) {
 			person.setSysUserId(SERVICE_USER_ID);
-			personService.updateData(person);
+			personService.update(person);
 		}
 	}
 

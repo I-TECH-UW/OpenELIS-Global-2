@@ -11,8 +11,6 @@ public interface LoginService extends BaseObjectService<Login, String> {
 
 	int getPasswordExpiredDayNo(Login login);
 
-	Login getValidateLogin(Login login);
-
 	Login getUserProfile(String loginName);
 
 	int getSystemUserId(Login login);

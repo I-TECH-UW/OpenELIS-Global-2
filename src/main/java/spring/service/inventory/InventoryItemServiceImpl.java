@@ -25,17 +25,6 @@ public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryIte
 	}
 
 	@Override
-	public void updateData(InventoryItem inventoryItem) {
-		getBaseObjectDAO().updateData(inventoryItem);
-
-	}
-
-	@Override
-	public boolean insertData(InventoryItem InventoryItem) {
-		return getBaseObjectDAO().insertData(InventoryItem);
-	}
-
-	@Override
 	public InventoryItem readInventoryItem(String idString) {
 		return getBaseObjectDAO().readInventoryItem(idString);
 	}

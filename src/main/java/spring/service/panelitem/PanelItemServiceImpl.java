@@ -63,11 +63,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	}
 
 	@Override
-	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) {
-		return getBaseObjectDAO().getPanelItemByPanel(panel, onlyTestsFullySetup);
-	}
-
-	@Override
 	public List getNextPanelItemRecord(String id) {
 		return getBaseObjectDAO().getNextPanelItemRecord(id);
 	}

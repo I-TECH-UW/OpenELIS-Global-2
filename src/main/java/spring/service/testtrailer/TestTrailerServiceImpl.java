@@ -67,7 +67,7 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
 	@Override
 	public String insert(TestTrailer testTrailer) {
-		if (baseObjectDAO.duplicateTestTrailerExists(testTrailer)) {
+		if (duplicateTestTrailerExists(testTrailer)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
 		}
 		return super.insert(testTrailer);
@@ -75,7 +75,7 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
 	@Override
 	public TestTrailer save(TestTrailer testTrailer) {
-		if (baseObjectDAO.duplicateTestTrailerExists(testTrailer)) {
+		if (duplicateTestTrailerExists(testTrailer)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
 		}
 		return super.save(testTrailer);
@@ -83,9 +83,13 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
 	@Override
 	public TestTrailer update(TestTrailer testTrailer) {
-		if (baseObjectDAO.duplicateTestTrailerExists(testTrailer)) {
+		if (duplicateTestTrailerExists(testTrailer)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
 		}
 		return super.update(testTrailer);
+	}
+
+	private boolean duplicateTestTrailerExists(TestTrailer testTrailer) {
+		return baseObjectDAO.duplicateTestTrailerExists(testTrailer);
 	}
 }

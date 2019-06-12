@@ -17,7 +17,6 @@ package us.mn.state.health.lims.organization.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -25,7 +24,6 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +35,6 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.valueholder.Project;
 
 /**
  * @author diane benz
@@ -50,9 +46,6 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	public OrganizationDAOImpl() {
 		super(Organization.class);
 	}
-
-	@Autowired
-	private ProjectDAO projectDAO;
 
 //	@Override
 //	public void deleteData(List organizations) throws LIMSRuntimeException {
@@ -524,14 +517,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 	// end bugzilla 2372
 
-	@Override
-	public Set<Organization> getOrganizationsByProjectName(String projectName) {
-		Project p = new Project();
-		p.setProjectName(projectName);
-		p = projectDAO.getProjectByName(p, false, true);
-		Set<Organization> orgs = p.getOrganizations();
-		return orgs;
-	}
+//	@Override
+//	public Set<Organization> getOrganizationsByProjectName(String projectName) {
+//		Project p = new Project();
+//		p.setProjectName(projectName);
+//		p = projectDAO.getProjectByName(p, false, true);
+//		Set<Organization> orgs = p.getOrganizations();
+//		return orgs;
+//	}
 
 	/**
 	 * @see us.mn.state.health.lims.organization.dao.OrganizationDAO#getOrganizationsByOrgTypeName(java.lang.String,

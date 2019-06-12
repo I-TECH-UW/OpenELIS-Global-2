@@ -195,9 +195,9 @@ public class NonConformityUpdateWorker {
 
 		try {
 			if (insertPatient) {
-				patientService.insertData(patient);
+				patientService.insert(patient);
 			} else if (updatePatient) {
-				patientService.updateData(patient);
+				patientService.update(patient);
 			}
 
 			if (insertProvider) {
@@ -207,18 +207,18 @@ public class NonConformityUpdateWorker {
 			if (subjectNoPatientIdentity != null) {
 				subjectNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(subjectNoPatientIdentity.getId())) {
-					patientIdentityService.insertData(subjectNoPatientIdentity);
+					patientIdentityService.insert(subjectNoPatientIdentity);
 				} else {
-					patientIdentityService.updateData(subjectNoPatientIdentity);
+					patientIdentityService.update(subjectNoPatientIdentity);
 				}
 			}
 
 			if (STNoPatientIdentity != null) {
 				STNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(STNoPatientIdentity.getId())) {
-					patientIdentityService.insertData(STNoPatientIdentity);
+					patientIdentityService.insert(STNoPatientIdentity);
 				} else {
-					patientIdentityService.updateData(STNoPatientIdentity);
+					patientIdentityService.update(STNoPatientIdentity);
 				}
 			}
 
@@ -228,7 +228,7 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setPatient(patient);
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
-				sampleHumanService.insertData(sampleHuman);
+				sampleHumanService.insert(sampleHuman);
 			} else {
 				sampleService.update(sample);
 			}
@@ -238,7 +238,7 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setPatient(patient);
 				sampleHuman.setSysUserId(webData.getCurrentSysUserId());
-				sampleHumanService.updateData(sampleHuman);
+				sampleHumanService.update(sampleHuman);
 			}
 
 			if (insertSampleItems) {
@@ -302,9 +302,9 @@ public class NonConformityUpdateWorker {
 			for (QaObservation qa : qaObservationMap.keySet()) {
 				if (qa.getId() == null) {
 					qa.setObservedId(qaObservationMap.get(qa).getId());
-					qaObservationService.insertData(qa);
+					qaObservationService.insert(qa);
 				} else {
-					qaObservationService.updateData(qa);
+					qaObservationService.update(qa);
 				}
 			}
 
@@ -482,14 +482,14 @@ public class NonConformityUpdateWorker {
 	private void persistProviderData() {
 		if (providerPerson != null) {
 			providerPerson.setSysUserId(webData.getCurrentSysUserId());
-			personService.insertData(providerPerson);
+			personService.insert(providerPerson);
 		}
 		if (provider != null) {
 			provider.setSysUserId(webData.getCurrentSysUserId());
 			if (providerPerson != null) {
 				provider.setPerson(providerPerson);
 			}
-			providerService.insertData(provider);
+			providerService.insert(provider);
 		}
 
 		if (providerPerson != null) {

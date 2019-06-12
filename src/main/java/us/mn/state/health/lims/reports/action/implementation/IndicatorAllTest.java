@@ -30,6 +30,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -62,7 +63,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 	private List<TestBucket> testBucketList;
 
 	private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
-
+	private TestService testService = SpringContext.getBean(TestService.class);
 	private static final String USER_TEST_SECTION_ID;
 
 	static {
@@ -101,7 +102,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		concatSection_TestToBucketMap = new HashMap<>();
 		testBucketList = new ArrayList<>();
 
-		List<Test> testList = TestServiceImpl.getAllActiveTests();
+		List<Test> testList = testService.getAllActiveTests(false);
 
 		for (Test test : testList) {
 

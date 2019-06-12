@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	@Transactional
 	public Dictionary update(Dictionary dictionary) {
-		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
+		if (duplicateDictionaryExists(dictionary)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
 		} else {
 			return super.update(dictionary);
@@ -44,7 +43,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	@Transactional
 	public String insert(Dictionary dictionary) {
-		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
+		if (duplicateDictionaryExists(dictionary)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
 		} else {
 			return super.insert(dictionary);
@@ -54,17 +53,10 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	@Transactional
 	public void delete(Dictionary dictionary) {
-		delete(dictionary.getId(), dictionary.getSysUserId());
-	}
-
-	@Override
-	@Transactional
-	public void delete(String id, String sysUserId) {
-		Dictionary oldData = baseObjectDAO.get(id)
-				.orElseThrow(() -> new ObjectNotFoundException(id, Dictionary.class.getName()));
+		Dictionary oldData = get(dictionary.getId());
 		oldData.setIsActive(IActionConstants.NO);
-		oldData.setSysUserId(sysUserId);
-		super.update(oldData);
+		oldData.setSysUserId(dictionary.getSysUserId());
+		updateDelete(oldData);
 	}
 
 	@Override
@@ -86,10 +78,10 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	@Transactional
 	public void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) {
-		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
+		if (duplicateDictionaryExists(dictionary)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
 		}
-		if (isDictionaryFrozenCheckRequired && baseObjectDAO.isDictionaryFrozen(dictionary)) {
+		if (isDictionaryFrozenCheckRequired && isDictionaryFrozen(dictionary)) {
 			throw new LIMSFrozenRecordException("Dictionary Entry is referenced " + dictionary.getDictEntry());
 		}
 		super.update(dictionary);
@@ -145,11 +137,6 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	public boolean duplicateDictionaryExists(Dictionary dictionary) {
 		return getBaseObjectDAO().duplicateDictionaryExists(dictionary);
-	}
-
-	@Override
-	public List getAllDictionarys() {
-		return getBaseObjectDAO().getAllDictionarys();
 	}
 
 	@Override

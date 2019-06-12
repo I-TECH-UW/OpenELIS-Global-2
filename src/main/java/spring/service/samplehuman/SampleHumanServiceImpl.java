@@ -46,23 +46,6 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman, S
 	}
 
 	@Override
-	public void deleteData(List sampleHumans) {
-		getBaseObjectDAO().deleteData(sampleHumans);
-
-	}
-
-	@Override
-	public void updateData(SampleHuman sampleHuman) {
-		getBaseObjectDAO().updateData(sampleHuman);
-
-	}
-
-	@Override
-	public boolean insertData(SampleHuman sampleHuman) {
-		return getBaseObjectDAO().insertData(sampleHuman);
-	}
-
-	@Override
 	public Provider getProviderForSample(Sample sample) {
 		return getBaseObjectDAO().getProviderForSample(sample);
 	}

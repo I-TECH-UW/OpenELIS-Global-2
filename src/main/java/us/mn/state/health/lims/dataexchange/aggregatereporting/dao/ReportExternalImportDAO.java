@@ -27,9 +27,9 @@ public interface ReportExternalImportDAO extends BaseDAO<ReportExternalImport, S
 	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
 			throws LIMSRuntimeException;
 
-	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException;
+//	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException;
 
-	public void updateReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException;
+//	public void updateReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException;
 
 	public List<String> getUniqueSites() throws LIMSRuntimeException;
 

@@ -26,7 +26,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  * @author Hung Nguyen
  * @date created 09/12/2006
  */
-public interface AuditTrailDAO extends BaseDAO<History, String> {
+public interface AuditTrailService extends BaseDAO<History, String> {
 
 	public void saveHistory(Object newObject, Object existingObject, String sysUserId, String event, String tableName)
 			throws LIMSRuntimeException;

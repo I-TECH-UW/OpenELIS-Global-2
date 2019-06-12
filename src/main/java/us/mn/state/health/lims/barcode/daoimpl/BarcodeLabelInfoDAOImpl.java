@@ -2,11 +2,9 @@ package us.mn.state.health.lims.barcode.daoimpl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
@@ -26,9 +24,6 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 	public BarcodeLabelInfoDAOImpl() {
 		super(BarcodeLabelInfo.class);
 	}
-
-	@Autowired
-	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("rawtypes")
 	List list;

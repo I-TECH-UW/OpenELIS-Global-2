@@ -8,12 +8,6 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 public interface ReferenceTablesService extends BaseObjectService<ReferenceTables, String> {
 	void getData(ReferenceTables referenceTables);
 
-	void deleteData(List referenceTableses);
-
-	void updateData(ReferenceTables referenceTables);
-
-	boolean insertData(ReferenceTables referenceTables);
-
 	List getAllReferenceTablesForHl7Encoding();
 
 	List getAllReferenceTables();

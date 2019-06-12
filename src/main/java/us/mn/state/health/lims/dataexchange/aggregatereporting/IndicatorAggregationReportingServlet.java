@@ -169,7 +169,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 		login.setLoginName(user);
 		login.setPassword(password);
 
-		Login loginInfo = loginService.getValidateLogin(login);
+		Login loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
 
 		return loginInfo != null;
 	}
