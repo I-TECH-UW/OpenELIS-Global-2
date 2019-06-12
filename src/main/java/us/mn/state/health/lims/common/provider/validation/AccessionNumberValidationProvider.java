@@ -21,16 +21,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public class AccessionNumberValidationProvider extends BaseValidationProvider {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	public AccessionNumberValidationProvider() {
 		super();
@@ -64,10 +66,8 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
 		if (!StringUtil.isNullorNill(targetId)) {
 
 			try {
-				SampleDAO sampleDAO = new SampleDAOImpl();
-
 				// Get sample by passing in sample vo instead of targetId.
-				Sample sample = sampleDAO.getSampleByAccessionNumber(targetId.trim());
+				Sample sample = sampleService.getSampleByAccessionNumber(targetId.trim());
 				
 				// BGM - bugzilla 1495 now we need to know which form it's coming from
 				// and need to read what is the correct status from SytemConfig

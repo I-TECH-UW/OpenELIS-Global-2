@@ -117,7 +117,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	public void delete(List panelItems) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-//			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < panelItems.size(); i++) {
 				PanelItem data = (PanelItem) panelItems.get(i);
 
@@ -139,8 +138,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 				PanelItem data = (PanelItem) panelItems.get(i);
 				data = readPanelItem(data.getId());
 				baseObjectDAO.delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "deleteData()", e.toString());
@@ -152,9 +149,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 		PanelItem pi;
 		try {
 			pi = get(idString);
-//			pi = HibernateUtil.getSession().get(PanelItem.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);

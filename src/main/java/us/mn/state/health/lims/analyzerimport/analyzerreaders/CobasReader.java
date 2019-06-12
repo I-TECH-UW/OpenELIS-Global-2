@@ -21,19 +21,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
+import javax.annotation.PostConstruct;
 
+import org.apache.commons.validator.GenericValidator;
+
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.HibernateProxy;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 
 public class CobasReader extends AnalyzerLineInserter {
+	
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	
     private static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
 	private static String ASTL_ID;
 	private static String ALTL_ID;
@@ -59,20 +62,21 @@ public class CobasReader extends AnalyzerLineInserter {
 	private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
-	static{
-		TestDAO testDAO = new TestDAOImpl();
-		ASTL_ID = testDAO.getActiveTestByName("Transaminases ASTL").get(0).getId();
-		ALTL_ID = testDAO.getActiveTestByName("Transaminases ALTL").get(0).getId();
-		CRE_ID = testDAO.getActiveTestByName("Créatininémie").get(0).getId();
-		GLU_ID = testDAO.getActiveTestByName("Glycémie").get(0).getId();
+	@PostConstruct
+	private void initialize() {
+//		TestDAO testDAO = new TestDAOImpl();
+		ASTL_ID = testService.getActiveTestByName("Transaminases ASTL").get(0).getId();
+		ALTL_ID = testService.getActiveTestByName("Transaminases ALTL").get(0).getId();
+		CRE_ID = testService.getActiveTestByName("Créatininémie").get(0).getId();
+		GLU_ID = testService.getActiveTestByName("Glycémie").get(0).getId();
 
 		testIdToPresentation = new HashMap<String, Integer>();
 		testIdToPresentation.put(ALTL_ID, 0);
 		testIdToPresentation.put(ASTL_ID, 1);
 		testIdToPresentation.put(CRE_ID, 2);
 		testIdToPresentation.put(GLU_ID, 3);
-
 	}
+	
 	public boolean insert(List<String> lines, String currentUserId) {
 		boolean successful = true;
 		
@@ -111,17 +115,18 @@ public class CobasReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-			Transaction tx = HibernateProxy.beginTransaction();
+//			Transaction tx = HibernateProxy.beginTransaction();
 
 			try {
 				persistResults(results, currentUserId);
-				tx.commit();
+//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+//				tx.rollback();
 				successful = false;
-			} finally {
-				HibernateProxy.closeSession();
-			}
+			} 
+//			finally {
+//				HibernateProxy.closeSession();
+//			}
 		}
 
 		return successful;

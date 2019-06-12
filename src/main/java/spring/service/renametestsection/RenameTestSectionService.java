@@ -27,4 +27,6 @@ public interface RenameTestSectionService extends BaseObjectService<RenameTestSe
 	List getPreviousTestSectionRecord(String id);
 
 	List getAllTestSections();
+	
+	RenameTestSection getTestSectionById(String id);
 }

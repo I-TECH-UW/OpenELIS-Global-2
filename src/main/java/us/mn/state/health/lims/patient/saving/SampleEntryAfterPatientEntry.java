@@ -29,6 +29,6 @@ public class SampleEntryAfterPatientEntry extends SampleEntry {
     protected void populateSampleHuman() throws Exception {
         sampleHuman = new SampleHuman();
         sampleHuman.setSampleId(statusSet.getSampleId());
-        sampleHumanDAO.getDataBySample(sampleHuman);
+        sampleHumanService.getDataBySample(sampleHuman);
     }    
 }

@@ -70,7 +70,6 @@ public class PanelRenameEntryController extends BaseController {
 	}
 
 	private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
-//		PanelDAO panelDAO = new PanelDAOImpl();
 		Panel panel = panelService.getPanelById(panelId);
 
 		if (panel != null) {
@@ -80,23 +79,12 @@ public class PanelRenameEntryController extends BaseController {
 			name.setFrench(nameFrench.trim());
 			name.setSysUserId(userId);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-//				new LocalizationDAOImpl().updateData(name);
 				localizationService.update(name);
-//				tx.commit();
 			} catch (HibernateException e) {
-//				tx.rollback();
 				e.printStackTrace();
 			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
-
 		}
-
-		// Refresh panel names
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
 	}
 

@@ -25,18 +25,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 
+import spring.service.panel.PanelService;
+import spring.service.renametestsection.RenameTestSectionService;
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.service.unitofmeasure.UnitOfMeasureService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.renametestsection.daoimpl.RenameTestSectionDAOImpl;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class EntityNamesProvider extends BaseQueryProvider {
+	
+	protected PanelService panelService = SpringContext.getBean(PanelService.class);
+	protected RenameTestSectionService renameTestSectionService = SpringContext.getBean(RenameTestSectionService.class);
+	protected TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	protected UnitOfMeasureService unitOfMeasureService = SpringContext.getBean(UnitOfMeasureService.class);
+	
     public static final String PANEL = "panel";
     public static final String SAMPLE_TYPE = "sampleType";
     public static final String TEST_SECTION = "testSection";
@@ -105,22 +112,22 @@ public class EntityNamesProvider extends BaseQueryProvider {
     }
 
     private Localization getLocalizationForPanel(String id) {
-        Panel panel = new PanelDAOImpl().getPanelById( id );
+        Panel panel = panelService.getPanelById( id );
         return panel != null ? panel.getLocalization() : null;
     }
 
     private Localization getLocalizationForSampleType(String id) {
-        TypeOfSample typeOfSample = new TypeOfSampleDAOImpl().getTypeOfSampleById(id);
+        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(id);
         return typeOfSample != null ? typeOfSample.getLocalization() : null;
     }
   
     private Localization getLocalizationForRenameTestSection(String id) {
-        RenameTestSection testSection = new RenameTestSectionDAOImpl().getTestSectionById(id);
-        return testSection != null ? testSection.getLocalization() : null;
+        RenameTestSection renameTestSection = renameTestSectionService.getTestSectionById(id);
+        return renameTestSection != null ? renameTestSection.getLocalization() : null;
     }
     
     private Localization getLocalizationForUnitOfMeasure(String id) {
-        UnitOfMeasure unitOfMeasure = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(id);
+        UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureById(id);
         return unitOfMeasure != null ? unitOfMeasure.getLocalization() : null;
     }
     

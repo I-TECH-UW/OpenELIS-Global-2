@@ -21,16 +21,20 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 
-public class PatientHistoryService extends HistoryService {
-	private static String PATIENT_TABLE_ID;
-	private static final String PERSON_TABLE_ID;
-
+public class PatientHistoryService extends AbstractHistoryService {
+	
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
+	private final String PATIENT_TABLE_ID;
+	private final String PERSON_TABLE_ID;
 
 	private static final String GENDER_ATTRIBUTE = "gender";
 	private static final String DOB_ATTRIBUTE = "birthDateForDisplay";
@@ -39,13 +43,9 @@ public class PatientHistoryService extends HistoryService {
 	private static final String FIRST_NAME_ATTRIBUTE = "firstName";
 	private static final String LAST_NAME_ATTRIBUTE = "lastName";
 
-	static {
-		ReferenceTablesDAO tableDAO = new ReferenceTablesDAOImpl();
-		PATIENT_TABLE_ID = tableDAO.getReferenceTableByName("PATIENT").getId();
-		PERSON_TABLE_ID = tableDAO.getReferenceTableByName("PERSON").getId();
-	}
-
 	public PatientHistoryService(Patient patient) {
+		PATIENT_TABLE_ID = referenceTablesService.getReferenceTableByName("PATIENT").getId();
+		PERSON_TABLE_ID = referenceTablesService.getReferenceTableByName("PERSON").getId();
 		if( patient != null){
             setUpForPatient( patient );
         }
@@ -54,7 +54,7 @@ public class PatientHistoryService extends HistoryService {
 	@SuppressWarnings("unchecked")
 	private void setUpForPatient(Patient patient) {
 
-		historyList = auditTrailDAO.getHistoryByRefIdAndRefTableId(patient.getId(),PATIENT_TABLE_ID);
+		historyList = historyService.getHistoryByRefIdAndRefTableId(patient.getId(),PATIENT_TABLE_ID);
 
 		attributeToIdentifierMap = new HashMap<String, String>();
 		attributeToIdentifierMap.put(DOB_ATTRIBUTE, MessageUtil.getMessage("patient.birthDate"));
@@ -70,7 +70,7 @@ public class PatientHistoryService extends HistoryService {
 		newValueMap.put(DOB_ATTRIBUTE, patient.getBirthDateForDisplay());
 
 		if (patient.getPerson() != null) {
-			List<History> personHistory = auditTrailDAO.getHistoryByRefIdAndRefTableId(patient.getPerson().getId(),PERSON_TABLE_ID);
+			List<History> personHistory = historyService.getHistoryByRefIdAndRefTableId(patient.getPerson().getId(),PERSON_TABLE_ID);
 			historyList.addAll(personHistory);
 
 			newValueMap.put(FIRST_NAME_ATTRIBUTE, patient.getPerson().getFirstName());

@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.method.dao.MethodDAO;
-import us.mn.state.health.lims.method.daoimpl.MethodDAOImpl;
+import spring.service.method.MethodService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -41,6 +41,8 @@ import us.mn.state.health.lims.method.daoimpl.MethodDAOImpl;
  * @author Darren L. Spurgeon
  */
 public class MethodAutocompleteProvider extends BaseAutocompleteProvider {
+	
+	protected MethodService methodService = SpringContext.getBean(MethodService.class);
 
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
@@ -54,8 +56,7 @@ public class MethodAutocompleteProvider extends BaseAutocompleteProvider {
 		String methodName = request.getParameter("methodName");
 		//System.out
 				//.println("MethodAutocompleteProvider methodName " + methodName);
-		MethodDAO methodDAO = new MethodDAOImpl();
-		List list = methodDAO.getMethods(methodName);
+		List list = methodService.getMethods(methodName);
 		//System.out.println("MethodAutocompleteProvider list " + list.size());
 
 		return list;

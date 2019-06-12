@@ -46,7 +46,7 @@ public class webtestInfoController extends BaseController {
 
 		addUserInfo(xmlBuilder);
 		// addUserLocked(xmlBuilder);
-		addNumberOfPatients(xmlBuilder);
+//		addNumberOfPatients(xmlBuilder);
 		addNumberOfSamples(xmlBuilder);
 
 		xmlBuilder.append("</webTestInfo>");

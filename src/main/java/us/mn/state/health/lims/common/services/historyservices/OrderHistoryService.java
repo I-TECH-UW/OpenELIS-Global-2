@@ -21,38 +21,42 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.person.PersonService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.services.PersonService;
+//import us.mn.state.health.lims.common.services.PersonService;
 import us.mn.state.health.lims.common.services.RequesterService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public class OrderHistoryService extends HistoryService {
-	private static final String SAMPLE_TABLE_ID;
-    private static final String SAMPLE_REQUESTER_TABLE_ID;
+public class OrderHistoryService extends AbstractHistoryService {
+	
+	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
+	private final String SAMPLE_TABLE_ID;
+    private final String SAMPLE_REQUESTER_TABLE_ID;
 
 	private static final String ACCESSION_ATTRIBUTE = "accessionNumber";
     private static final String ORGANIZATION_ATTRIBUTE = "requestingOrganization";
     private static final String PROVIDER_ATTRIBUTE = "requestingProvider";
 	
-	static {
-		ReferenceTablesDAO tableDAO = new ReferenceTablesDAOImpl();
-		SAMPLE_TABLE_ID = tableDAO.getReferenceTableByName("SAMPLE").getId();
-        SAMPLE_REQUESTER_TABLE_ID = tableDAO.getReferenceTableByName( "SAMPLE_REQUESTER" ).getId();
-	}
-
     private String currentProviderRequestLinkId;
 
     private String currentOrganizationRequesterLinkId;
     private SampleRequester requester;
 
     public OrderHistoryService(Sample sample) {
+    	SAMPLE_TABLE_ID = referenceTablesService.getReferenceTableByName("SAMPLE").getId();
+        SAMPLE_REQUESTER_TABLE_ID = referenceTablesService.getReferenceTableByName( "SAMPLE_REQUESTER" ).getId();
 		setUpForOrder( sample );
 	}
 	
@@ -68,7 +72,7 @@ public class OrderHistoryService extends HistoryService {
         History searchHistory = new History();
 		searchHistory.setReferenceId(sample.getId());
 		searchHistory.setReferenceTable(SAMPLE_TABLE_ID);
-		historyList = auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory);
+		historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
         newValueMap = new HashMap<String, String>();
         addReferrerHistory( sample, searchHistory );
@@ -86,7 +90,7 @@ public class OrderHistoryService extends HistoryService {
         if( requester != null ){
             searchHistory.setReferenceId( requester.getId() );
             searchHistory.setReferenceTable( SAMPLE_REQUESTER_TABLE_ID );
-            List<History> list = auditTrailDAO.getHistoryByRefIdAndRefTableId( searchHistory );
+            List<History> list = historyService.getHistoryByRefIdAndRefTableId( searchHistory );
             historyList.addAll( list );
             newValueMap.put( ORGANIZATION_ATTRIBUTE, requesterService.getReferringSiteName() );
             currentOrganizationRequesterLinkId = requester.getId();
@@ -96,7 +100,7 @@ public class OrderHistoryService extends HistoryService {
         if( requester != null){
                 searchHistory.setReferenceId( requester.getId() );
                 searchHistory.setReferenceTable( SAMPLE_REQUESTER_TABLE_ID);
-                List<History> list = auditTrailDAO.getHistoryByRefIdAndRefTableId( searchHistory );
+                List<History> list = historyService.getHistoryByRefIdAndRefTableId( searchHistory );
                 historyList.addAll( list );
             newValueMap.put(PROVIDER_ATTRIBUTE, requesterService.getRequesterLastFirstName());
                 currentProviderRequestLinkId = requester.getId();
@@ -130,7 +134,6 @@ public class OrderHistoryService extends HistoryService {
             if( history.getReferenceId( ).equals( currentProviderRequestLinkId )){
                 String value = extractSimple(changes, "requesterId");
                 if (value != null) {
-                    PersonService personService = new PersonService( new PersonDAOImpl().getPersonById( value ) );
                     changeMap.put(PROVIDER_ATTRIBUTE, personService.getLastFirstName());
                 }
             }else if( history.getReferenceId().equals( currentOrganizationRequesterLinkId )){

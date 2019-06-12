@@ -22,14 +22,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 
 public abstract class BaseSiteYearAccessionValidator {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	protected static final String INCREMENT_STARTING_VALUE = "000001";
 	protected static final int UPPER_INC_RANGE = 999999;
@@ -65,9 +67,7 @@ public abstract class BaseSiteYearAccessionValidator {
 
 		String nextAccessionNumber;
 
-		SampleDAO sampleDAO = new SampleDAOImpl();
-
-		String curLargestAccessionNumber = sampleDAO.getLargestAccessionNumberMatchingPattern(
+		String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(
 				ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
 				getMaxAccessionLength());
 
@@ -119,9 +119,7 @@ public abstract class BaseSiteYearAccessionValidator {
 	// recordType parameter is not used in this case
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
 
-		SampleDAO SampleDAO = new SampleDAOImpl();
-
-		return SampleDAO.getSampleByAccessionNumber(accessionNumber) != null;
+		return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
 	}
 
 	public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,

@@ -6,26 +6,28 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.sample.SampleServiceImpl;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
-public class QaHistoryService extends HistoryService {
-
-	private SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
+public class QaHistoryService extends AbstractHistoryService {
 	
+	protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+
 	public QaHistoryService(Sample sample) {
 		setUpForSample( sample );
 	}
 
 	@SuppressWarnings("unchecked")
 	private void setUpForSample(Sample sample) {
-		List<SampleQaEvent> qaEventList =  new SampleService( sample ).getSampleQAEventList();
+		List<SampleQaEvent> qaEventList =  new SampleServiceImpl( sample ).getSampleQAEventList();
 		
 		History searchHistory = new History();
 		searchHistory.setReferenceTable( QAService.TABLE_REFERENCE_ID);
@@ -33,7 +35,7 @@ public class QaHistoryService extends HistoryService {
 		
 		for( SampleQaEvent event : qaEventList){
 			searchHistory.setReferenceId(event.getId());
-			historyList.addAll(auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory));
+			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
 		}
 		
 		newValueMap = new HashMap<String, String>();
@@ -41,7 +43,7 @@ public class QaHistoryService extends HistoryService {
 
 	@Override
 	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		identifier =  sampleQaEventDAO.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
+		identifier =  sampleQaEventService.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
 		items.add(getCoreTrail(history));
 	}
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -45,16 +44,10 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Scope("prototype")
 public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String> implements AnalysisService {
 
-	@Autowired
 	protected AnalysisDAO baseObjectDAO = SpringContext.getBean(AnalysisDAO.class);
-
-	@Autowired
 	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	@Autowired
 	private ResultService resultService = SpringContext.getBean(ResultService.class);
-	@Autowired
 	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
-	@Autowired
 	private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
 
 	private Analysis analysis;

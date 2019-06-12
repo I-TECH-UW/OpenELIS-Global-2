@@ -22,17 +22,20 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.result.ResultService;
+import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 
-public class ResultHistoryService extends HistoryService {
-	private static ResultDAO resultDAO = new ResultDAOImpl();
+public class ResultHistoryService extends AbstractHistoryService {
+
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
 	public ResultHistoryService(Result result, Analysis analysis) {
 		setUpForResult(result, analysis);
@@ -43,8 +46,8 @@ public class ResultHistoryService extends HistoryService {
 		if ( analysis.getTest() != null) {
 			History searchHistory = new History();
 			searchHistory.setReferenceId(result.getId());
-			searchHistory.setReferenceTable( ResultService.TABLE_REFERENCE_ID);
-			historyList = auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory);
+			searchHistory.setReferenceTable( ResultServiceImpl.TABLE_REFERENCE_ID);
+			historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
 			newValueMap = new HashMap<String, String>();
 			newValueMap.put(VALUE_ATTRIBUTE, getViewableValue(result.getValue(), result));
@@ -66,7 +69,7 @@ public class ResultHistoryService extends HistoryService {
 	protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
 		String value = extractSimple(changes, "value");
 		if (value != null) {
-			Result result = resultDAO.getResultById(history.getReferenceId());
+			Result result = resultService.getResultById(history.getReferenceId());
 			value = getViewableValue(value, result);
 
 			if (value != null) {

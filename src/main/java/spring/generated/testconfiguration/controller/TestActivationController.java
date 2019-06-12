@@ -153,40 +153,29 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> deactivateSampleTypes = getDeactivatedSampleTypes(deactivateSampleIds);
 		List<TypeOfSample> activateSampleTypes = getActivatedSampleTypes(activateSampleSets);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-//		TestDAO testDAO = new TestDAOImpl();
-//		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-
 		try {
-			for (Test test : deactivateTests) {
-				testService.update(test);
-			}
-
-			for (Test test : activateTests) {
-				testService.update(test);
-			}
-
-			for (TypeOfSample typeOfSample : deactivateSampleTypes) {
-				typeOfSampleService.update(typeOfSample);
-			}
-
-			for (TypeOfSample typeOfSample : activateSampleTypes) {
-				typeOfSampleService.update(typeOfSample);
-			}
-
-			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
-				TypeOfSampleServiceImpl.getInstance().clearCache();
-			}
-
-//			tx.commit();
+				for (Test test : deactivateTests) {
+					testService.update(test);
+				}
+	
+				for (Test test : activateTests) {
+					testService.update(test);
+				}
+	
+				for (TypeOfSample typeOfSample : deactivateSampleTypes) {
+					typeOfSampleService.update(typeOfSample);
+				}
+	
+				for (TypeOfSample typeOfSample : activateSampleTypes) {
+					typeOfSampleService.update(typeOfSample);
+				}
+	
+				if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
+					TypeOfSampleServiceImpl.getInstance().clearCache();
+				}
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
 		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		List<TestActivationBean> activeTestList = createTestList(true, true);
 		List<TestActivationBean> inactiveTestList = createTestList(false, true);

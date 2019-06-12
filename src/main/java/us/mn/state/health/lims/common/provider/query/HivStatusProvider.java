@@ -22,17 +22,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 
 public class HivStatusProvider extends BaseQueryProvider {
+	
+	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
 	private static final String NOT_FOUND = "Not found";
 	/**
@@ -77,8 +79,7 @@ public class HivStatusProvider extends BaseQueryProvider {
         Patient patient = new Patient();
         patient.setId(patientId);
         String typeId = ObservationHistoryTypeMap.getInstance().getIDForType(HIV_STATUS_OH_TYPE);
-        ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
-        List<ObservationHistory> list = ohDAO.getAll(patient, null, typeId);
+        List<ObservationHistory> list = observationHistoryService.getAll(patient, null, typeId);
         
         return list.isEmpty() ? NOT_FOUND : list.get(list.size() - 1).getValue(); 
     }

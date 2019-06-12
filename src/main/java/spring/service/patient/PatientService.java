@@ -60,4 +60,7 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 	String getGender();
 
 	String getNationalId();
+
+	Patient getPatient();
+
 }

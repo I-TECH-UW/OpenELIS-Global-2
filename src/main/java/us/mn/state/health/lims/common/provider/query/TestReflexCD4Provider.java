@@ -20,66 +20,58 @@ package us.mn.state.health.lims.common.provider.query;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.result.ResultService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 
 public class TestReflexCD4Provider extends BaseQueryProvider {
+	
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
 
 	private static String CD4_TEST_ID;
 	private static String GB_TEST_ID;
 	private static String LYMPH_TEST_ID;
-
 	
-	private ResultDAO resultDAO = new ResultDAOImpl();
 	private static final String VALUE_SEPERATOR = ",";
 	protected AjaxServlet ajaxServlet = null;
 
-	static{
-		TestDAO testDAO = new TestDAOImpl();
-		
-		Test test = testDAO.getTestByName("CD4 percentage count");
+	@PostConstruct
+	private void initialize() {
+		Test test = testService.getTestByName("CD4 percentage count");
 		if( test != null){
 			CD4_TEST_ID = test.getId();
 		}
-		
-		test = testDAO.getTestByName("Lymph %");
+		test = testService.getTestByName("Lymph %");
 		if( test != null){
 			LYMPH_TEST_ID = test.getId();
 		}
-		
-		test = testDAO.getTestByName("GB");
+		test = testService.getTestByName("GB");
 		if( test != null){
 			GB_TEST_ID = test.getId();
 		}
-		
 	}
 	
 	@Override
 	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		String resultIds = request.getParameter("results");
 		String values = request.getParameter("values");
 		String childRow = request.getParameter("childRow");
-
-		
-
 		StringBuilder xml = new StringBuilder();
-
 		String result = VALID;
 
 		if (initialConditionsSatisfied(resultIds, values, childRow) ) {
@@ -88,12 +80,8 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 		} else {
 			result = createTestReflexXML(resultIds, values, childRow, xml);
 		}
-
-		
 		ajaxServlet.sendData(xml.toString(), result, request, response);
-
 	}
-
 
 	private boolean initialConditionsSatisfied(String resultIds, String values, String childRow) {
 		return GenericValidator.isBlankOrNull(resultIds) || 
@@ -104,10 +92,8 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 			   GenericValidator.isBlankOrNull(LYMPH_TEST_ID);
 	}
 
-
 	private String createTestReflexXML(String resultIds, String values, String childRow, StringBuilder xml) {
 		String[] resultIdSeries = resultIds.split(VALUE_SEPERATOR);
-
 		String CD4Result = "";
 		String GBResult = "";
 		String LymphResult = "";
@@ -116,7 +102,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 			String[] valueSeries = values.split(VALUE_SEPERATOR);
 			
 			for( int i = 0; i < resultIdSeries.length; i++){
-				Result result = resultDAO.getResultById(resultIdSeries[i]);
+				Result result = resultService.getResultById(resultIdSeries[i]);
 				
 				if( result != null){
 					String testId = result.getAnalysis().getTest().getId();
@@ -153,17 +139,15 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 		return INVALID;
 	}
 
-
 	private String fetchIfNeeded(String testId, String currentResult, String validResultId) {
 		if( !GenericValidator.isBlankOrNull(currentResult)){
 			return currentResult;
 		}
 		
-		Result result = resultDAO.getResultById(validResultId);
-
+		Result result = resultService.getResultById(validResultId);
 		Sample sample = result.getAnalysis().getSampleItem().getSample();
 		
-		List<Result> resultList = resultDAO.getResultsForTestAndSample(sample.getId(), testId);
+		List<Result> resultList = resultService.getResultsForTestAndSample(sample.getId(), testId);
 		
 		if( resultList.isEmpty()){
 			return null;
@@ -171,7 +155,6 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 			return resultList.get(0).getValue();
 		}
 	}
-
 
 	private void createChoiceElement(TestReflex testReflex, StringBuilder xml) {
 

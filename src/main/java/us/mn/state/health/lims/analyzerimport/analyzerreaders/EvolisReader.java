@@ -21,25 +21,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
+import javax.annotation.PostConstruct;
 
+import org.apache.commons.validator.GenericValidator;
+
+import spring.service.dictionary.DictionaryService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.HibernateProxy;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @SuppressWarnings("unused")
 public class EvolisReader extends AnalyzerLineInserter {
+	
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
 	private static String NEGATIVE_DICTIONARY_ID = null;
 	private static String POSITIVE_DICTIONARY_ID = null;
@@ -55,20 +57,17 @@ public class EvolisReader extends AnalyzerLineInserter {
 	
 	private static AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 	
-	static{
-		TestDAO testDAO = new TestDAOImpl();
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
-		DictionaryDAO dictioanryDAO = new DictionaryDAOImpl();
-		
+	@PostConstruct
+	private void initialize() {
 		Test test = new Test();
 		test.setTestName("Integral");  //integral and murex use the same dictionary values
-		test = testDAO.getTestByName(test);
+		test = testService.getTestByName(test);
 		
 		
-		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest( test.getId() );
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest( test.getId() );
 		
 		for( TestResult testResult : testResults){
-			String dictionaryValue = dictioanryDAO.getDictionaryById(testResult.getValue()).getDictEntry();
+			String dictionaryValue = dictionaryService.getDictionaryById(testResult.getValue()).getDictEntry();
 			
 			if( "Positive".equals(dictionaryValue)){
 				POSITIVE_DICTIONARY_ID = testResult.getValue();
@@ -92,20 +91,23 @@ public class EvolisReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-			Transaction tx = HibernateProxy.beginTransaction();
+//			Transaction tx = HibernateProxy.beginTransaction();
 
 			try {
 
 				persistResults(results, currentUserId);
 
-				tx.commit();
+//				tx.commit();
 
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+//				tx.rollback();
+				lre.printStackTrace();
 				successful = false;
-			} finally {
-				HibernateProxy.closeSession();
-			}
+			} 
+			
+//			finally {
+//				HibernateProxy.closeSession();
+//			}
 		}
 
 		return successful;

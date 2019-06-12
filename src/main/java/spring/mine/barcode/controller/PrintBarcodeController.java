@@ -50,8 +50,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Controller
 public class PrintBarcodeController extends BaseController {
 
-//	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-//	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
 	private static final Set<Integer> excludedAnalysisStatusList = new HashSet<>();
 	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
@@ -94,7 +92,6 @@ public class PrintBarcodeController extends BaseController {
 			return findForward(FWD_SUCCESS, displayObjects, form);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		String accessionNumber = form.getAccessionNumber();
 		Sample sample = getSample(accessionNumber);
 		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
@@ -103,8 +100,6 @@ public class PrintBarcodeController extends BaseController {
 			List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
 			displayObjects.put("existingTests", currentTestList);
 		}
-//		tx.commit();
-
 		addPatientSearch(displayObjects);
 		return findForward(FWD_SUCCESS, displayObjects, form);
 	}
@@ -145,7 +140,6 @@ public class PrintBarcodeController extends BaseController {
 	 * @return The sample belonging to accession number
 	 */
 	private Sample getSample(String accessionNumber) {
-//		SampleDAO sampleDAO = new SampleDAOImpl();
 		return sampleService.getSampleByAccessionNumber(accessionNumber);
 	}
 
@@ -156,8 +150,6 @@ public class PrintBarcodeController extends BaseController {
 	 * @return The list of sample items belonging to sample
 	 */
 	private List<SampleItem> getSampleItems(Sample sample) {
-//		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-
 		return sampleItemService.getSampleItemsBySampleIdAndStatus(sample.getId(), ENTERED_STATUS_SAMPLE_LIST);
 	}
 
@@ -236,7 +228,6 @@ public class PrintBarcodeController extends BaseController {
 	private void setPatientInfo(Map<String, Object> displayObjects, Sample sample)
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-//		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
 		Patient patient = sampleHumanService.getPatientForSample(sample);
 		IPatientService patientService = new PatientServiceImpl(patient);
 

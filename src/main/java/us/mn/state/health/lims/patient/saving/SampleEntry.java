@@ -161,9 +161,9 @@ public class SampleEntry extends Accessioner {
 	 */
 	private void cleanupSampleAndAnalysis(String sampleId, String typeName) {
 		TypeOfSample typeOfSample = BaseProjectFormMapper.getTypeOfSampleByDescription(typeName);
-		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
+		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
 		for (SampleItem sampleItem : sampleItems) {
-			List<Analysis> analyses = analysisDAO.getAnalysesBySampleItem(sampleItem);
+			List<Analysis> analyses = analysisService.getAnalysesBySampleItem(sampleItem);
 			if (cleanupExistingAnalysis(analyses).size() != 0) {
 				sampleItem.setSysUserId(sysUserId);
 				sampleItemsToDelete.add(sampleItem);

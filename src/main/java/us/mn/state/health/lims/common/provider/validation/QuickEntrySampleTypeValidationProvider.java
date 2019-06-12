@@ -21,11 +21,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 /**
@@ -35,9 +35,10 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * 
  * @author	Ken Rosha	08/30/2006
  */
-public class QuickEntrySampleTypeValidationProvider 
-	extends BaseValidationProvider 
-{
+public class QuickEntrySampleTypeValidationProvider	extends BaseValidationProvider {
+	
+	protected TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	
 	public QuickEntrySampleTypeValidationProvider()
 	{
 		super();
@@ -66,11 +67,10 @@ public class QuickEntrySampleTypeValidationProvider
 		StringBuffer s = new StringBuffer();
 
 		if (!StringUtil.isNullorNill(targetId)) {
-			TypeOfSampleDAO typeDAO = new TypeOfSampleDAOImpl();
 			TypeOfSample typeOfSample = new TypeOfSample();
 			typeOfSample.setDescription(targetId);
 			//passing in a nill or null domain retrieves records for ALL domains
-			typeOfSample = typeDAO.getTypeOfSampleByDescriptionAndDomain(
+			typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(
 					typeOfSample, true);
 			if (typeOfSample != null) {
 				//bugzilla 1465

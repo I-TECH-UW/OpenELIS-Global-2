@@ -129,9 +129,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
 
-//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-
-//		configurationList = siteInformationDAO.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
 		configurationList = siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
 		for (SiteInformation siteInformation : configurationList) {
 			if ("localization".equals(siteInformation.getTag())) {
@@ -142,8 +139,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		hideEncryptedFields(configurationList);
 
-//		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
-//				siteInformationDAO.getCountForDomainName(dbDomainName));
 		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
 				siteInformationService.getCountForDomainName(dbDomainName));
 
@@ -182,19 +177,13 @@ public class SiteInformationMenuController extends BaseMenuController {
 		}
 
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
-//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 
 			for (String siteInformationId : selectedIDs) {
-//				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
 				siteInformationService.delete(siteInformationId, getSysUserId(request));
 			}
 
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";
@@ -206,9 +195,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 			return findForward(FWD_FAIL_DELETE, form);
 
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		ConfigurationProperties.forceReload();
 

@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,29 +19,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.DisplayListService;
 import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
+import spring.service.panel.PanelService;
 import spring.service.role.RoleService;
 import spring.service.rolemodule.RoleModuleService;
-import spring.service.panel.PanelService;
 import spring.service.systemmodule.SystemModuleService;
-import spring.service.systemusermodule.PermissionModuleService;
 import spring.service.typeofsample.TypeOfSamplePanelService;
 import spring.service.typeofsample.TypeOfSampleService;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
-import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.testconfiguration.action.PanelTestConfigurationUtil;
 import us.mn.state.health.lims.testconfiguration.action.SampleTypePanel;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 @Controller
@@ -138,9 +133,6 @@ public class PanelCreateController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-//		RoleDAO roleDAO = new RoleDAOImpl();
-//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
 		String identifyingName = form.getString("panelEnglishName");
 		String sampleTypeId = form.getString("sampleTypeId");
 		String userId = getSysUserId(request);
