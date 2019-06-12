@@ -22,7 +22,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public class TypeOfSampleService {
+public class CommonTypeOfSampleService {
 
 	private static Map<String, List<Test>> sampleIdTestMap = new HashMap<String, List<Test>>();
     private static Map<String, String> typeOfSampleIdToNameMap;

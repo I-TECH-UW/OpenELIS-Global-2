@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.testtrailer.dao.TestTrailerDAO;
-import us.mn.state.health.lims.testtrailer.daoimpl.TestTrailerDAOImpl;
+import spring.service.testtrailer.TestTrailerService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -42,6 +42,8 @@ import us.mn.state.health.lims.testtrailer.daoimpl.TestTrailerDAOImpl;
  */
 public class TestTrailerAutocompleteProvider extends BaseAutocompleteProvider {
 
+	protected TestTrailerService testTrailerService = SpringContext.getBean(TestTrailerService.class);
+	
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
@@ -54,8 +56,7 @@ public class TestTrailerAutocompleteProvider extends BaseAutocompleteProvider {
 		String testTrailerName = request.getParameter("testTrailerName");
 		//System.out.println("TestTrailerAutocompleteProvider testTrailerName "
 		//		+ testTrailerName);
-		TestTrailerDAO testTrailerDAO = new TestTrailerDAOImpl();
-		List list = testTrailerDAO.getTestTrailers(testTrailerName);
+		List list = testTrailerService.getTestTrailers(testTrailerName);
 		//System.out.println("TestTrailerAutocompleteProvider list "
 		//		+ list.size());
 

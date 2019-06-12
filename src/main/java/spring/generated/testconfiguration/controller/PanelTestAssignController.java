@@ -74,8 +74,6 @@ public class PanelTestAssignController extends BaseController {
 		}
 
 		if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
-
-//			PanelDAO panelDAO = new PanelDAOImpl();
 			Panel panel = panelService.getPanelById(form.getPanelId());
 			IdValuePair panelPair = new IdValuePair(panel.getId(), panel.getLocalizedName());
 
@@ -106,7 +104,6 @@ public class PanelTestAssignController extends BaseController {
 
 	public List<Test> getAllTestsByPanelId(String panelId) {
 		List<Test> testList = new ArrayList<>();
-//		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
 
 		@SuppressWarnings("unchecked")
 		List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);

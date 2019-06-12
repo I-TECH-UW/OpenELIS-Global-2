@@ -12,7 +12,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -32,34 +31,41 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.address.AddressPartService;
+import spring.service.address.PersonAddressService;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.inventory.InventoryItemService;
+import spring.service.inventory.InventoryLocationService;
+import spring.service.inventory.InventoryReceiptService;
+import spring.service.localization.LocalizationService;
+import spring.service.organization.OrganizationService;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
+import spring.service.resultlimit.ResultLimitService;
+import spring.service.role.RoleService;
+import spring.service.rolemodule.RoleModuleService;
+import spring.service.scriptlet.ScriptletService;
+import spring.service.systemmodule.SystemModuleService;
+import spring.service.systemusermodule.SystemUserModuleService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleTestService;
+import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
-import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
-import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
-import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryItemDAOImpl;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryLocationDAOImpl;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryReceiptDAOImpl;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.scriptlet.dao.ScriptletDAO;
-import us.mn.state.health.lims.scriptlet.daoimpl.ScriptletDAOImpl;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
@@ -68,12 +74,54 @@ public class InventoryController extends BaseController {
 
 	@Autowired
 	InventoryFormValidator formValidator;
+	@Autowired
+	AddressPartService addressPartService;
+	@Autowired
+	AnalyzerTestMappingService analyzerTestMappingService;
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	InventoryItemService inventoryItemService;
+	@Autowired
+	InventoryLocationService inventoryLocationService;
+	@Autowired
+	InventoryReceiptService inventoryReceiptService;
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	RoleService roleService;
+	@Autowired
+	RoleModuleService roleModuleService;
+	@Autowired
+	SystemModuleService systemModuleService;
+	@Autowired
+	SystemUserModuleService systemUserModuleService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	LocalizationService localizationService;
+	@Autowired
+	OrganizationService organizationService;
+	@Autowired
+	PersonAddressService personAddressService;
+	@Autowired
+	PanelItemService panelItemService;
+	@Autowired
+	TestService testService;
+	@Autowired
+	ResultLimitService resultLimitService;
+	@Autowired
+	ScriptletService scriptletService;
+	@Autowired
+	TestResultService testResultService;
+	@Autowired
+	UnitOfMeasureService unitOfMeasureService;
 
 	private List<InventoryKitItem> modifiedItems;
 	private List<InventorySet> newInventory;
 	private List<InventorySet> modifiedInventory;
-
-	private OrganizationDAO organizationDAO = new OrganizationDAOImpl();
 
 	@ModelAttribute("form")
 	public InventoryForm initForm() {
@@ -122,8 +170,7 @@ public class InventoryController extends BaseController {
 	private List<IdValuePair> getSources() {
 		List<IdValuePair> sources = new ArrayList<>();
 
-		OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-		List<Organization> organizations = organizationDAO.getOrganizationsByTypeName("organizationName",
+		List<Organization> organizations = organizationService.getOrganizationsByTypeName("organizationName",
 				"TestKitVender");
 
 		for (Organization organization : organizations) {
@@ -147,9 +194,7 @@ public class InventoryController extends BaseController {
 		createInventoryFromModifiedItems();
 		createNewInventory(form);
 
-		InventoryItemDAO itemDAO = new InventoryItemDAOImpl();
-
-		Errors errors = validateNewInventory(itemDAO);
+		Errors errors = validateNewInventory();
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
@@ -157,34 +202,30 @@ public class InventoryController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		InventoryLocationDAO locationDAO = new InventoryLocationDAOImpl();
-		InventoryReceiptDAO receiptDAO = new InventoryReceiptDAOImpl();
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			for (InventorySet inventory : modifiedInventory) {
-				itemDAO.updateData(inventory.getItem());
+				inventoryItemService.updateData(inventory.getItem());
 
 				inventory.getLocation().setInventoryItem(inventory.getItem());
-				locationDAO.updateData(inventory.getLocation());
+				inventoryLocationService.updateData(inventory.getLocation());
 
-				receiptDAO.updateData(inventory.getReceipt());
+				inventoryReceiptService.updateData(inventory.getReceipt());
 			}
 
 			for (InventorySet inventory : newInventory) {
-				itemDAO.insertData(inventory.getItem());
+				inventoryItemService.insertData(inventory.getItem());
 
 				String id = inventory.getItem().getId();
 				inventory.getLocation().setInventoryItem(inventory.getItem());
 				inventory.getReceipt().setInventoryItemId(id);
 
-				locationDAO.insertData(inventory.getLocation());
-				receiptDAO.insertData(inventory.getReceipt());
+				inventoryLocationService.insertData(inventory.getLocation());
+				inventoryReceiptService.insertData(inventory.getReceipt());
 			}
 
-			tx.commit();
+//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
@@ -194,10 +235,10 @@ public class InventoryController extends BaseController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
-	private Errors validateNewInventory(InventoryItemDAO itemDAO) {
+	private Errors validateNewInventory() {
 		Errors errors = new BaseErrors();
 
-		List<InventoryItem> items = itemDAO.getAllInventoryItems();
+		List<InventoryItem> items = inventoryItemService.getAllInventoryItems();
 		List<String> names = new ArrayList<>();
 
 		for (InventoryItem item : items) {
@@ -246,7 +287,7 @@ public class InventoryController extends BaseController {
 
 		Organization organization = new Organization();
 		organization.setId(kitItem.getOrganizationId());
-		organizationDAO.getData(organization);
+		organizationService.getData(organization);
 
 		receipt.setId(kitItem.getInventoryReceiptId());
 		receipt.setOrganization(organization);
@@ -308,7 +349,7 @@ public class InventoryController extends BaseController {
 
 		Organization organization = new Organization();
 		organization.setId(organizationId);
-		organizationDAO.getData(organization);
+		organizationService.getData(organization);
 
 		receipt.setOrganization(organization);
 		receipt.setReceivedDate(DateUtil.convertStringDateToTruncatedTimestamp(receiveDate));
@@ -338,8 +379,7 @@ public class InventoryController extends BaseController {
 		if (!StringUtil.isNullorNill(testNameSelected)) {
 			Test test = new Test();
 			test.setTestName(testNameSelected);
-			TestDAO testDAO = new TestDAOImpl();
-			test = testDAO.getTestByName(test);
+			test = testService.getTestByName(test);
 
 			String messageKey = "testresult.testName";
 
@@ -354,8 +394,7 @@ public class InventoryController extends BaseController {
 		if (!StringUtil.isNullorNill(scriptletSelected)) {
 			Scriptlet scriptlet = new Scriptlet();
 			scriptlet.setScriptletName(scriptletSelected);
-			ScriptletDAO scriptletDAO = new ScriptletDAOImpl();
-			scriptlet = scriptletDAO.getScriptletByName(scriptlet);
+			scriptlet = scriptletService.getScriptletByName(scriptlet);
 
 			String messageKey = "testresult.scriptletName";
 
@@ -375,8 +414,7 @@ public class InventoryController extends BaseController {
 
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(val);
-				DictionaryDAO dictDAO = new DictionaryDAOImpl();
-				List dictionarys = dictDAO.getAllDictionarys();
+				List dictionarys = dictionaryService.getAllDictionarys();
 
 				boolean found = false;
 				for (int i = 0; i < dictionarys.size(); i++) {
@@ -396,7 +434,6 @@ public class InventoryController extends BaseController {
 				errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
 			}
 		}
-
 		return errors;
 	}
 

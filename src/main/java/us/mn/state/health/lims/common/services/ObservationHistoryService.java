@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.util.SpringContext;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
@@ -33,6 +34,9 @@ import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistory
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
 public class ObservationHistoryService{
+	
+	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
+	
 
 	private static final ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
 	private static final DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();

@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
+import spring.service.citystatezip.CityStateZipService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -41,6 +41,8 @@ import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
  * @author Darren L. Spurgeon
  */
 public class CityAutocompleteProvider extends BaseAutocompleteProvider {
+	
+	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
@@ -52,8 +54,7 @@ public class CityAutocompleteProvider extends BaseAutocompleteProvider {
 		String city = request.getParameter("city");
 
         //bugzilla 1545
-		CityStateZipDAO cityStateZipDAO = new CityStateZipDAOImpl();
-		List list = cityStateZipDAO.getCities(city);
+		List list = cityStateZipService.getCities(city);
 
 		return list;
 	}

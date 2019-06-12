@@ -19,19 +19,17 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 
 import java.util.List;
 
-import org.hibernate.Transaction;
-
-import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
-import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
+import spring.service.analyzerresults.AnalyzerResultsService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.HibernateProxy;
 
 public abstract class AnalyzerLineInserter {
-	private static AnalyzerResultsDAO analyzerResultDAO = null;
+	
+	protected AnalyzerResultsService analyzerResultService = SpringContext.getBean(AnalyzerResultsService.class);
 
 	protected void persistResults(List<AnalyzerResults> results, String systemUserId) {
-		getAnalyzerResultDAO().insertAnalyzerResults(results, systemUserId);
+		analyzerResultService.insertAnalyzerResults(results, systemUserId);
 	}
 
     protected boolean persistImport(String currentUserId, List<AnalyzerResults> results) {
@@ -44,37 +42,18 @@ public abstract class AnalyzerLineInserter {
                 }
             }
 
-            Transaction tx = HibernateProxy.beginTransaction();
-
             try {
-
                 persistResults(results, currentUserId);
 
-                tx.commit();
-
             } catch (LIMSRuntimeException lre) {
-                tx.rollback();
+            	lre.printStackTrace();
                 return false;
-            } finally {
-                HibernateProxy.closeSession();
-            }
+            } 
         }
         return true;
     }
-	private AnalyzerResultsDAO getAnalyzerResultDAO() {
-		if( analyzerResultDAO == null){
-			analyzerResultDAO = new AnalyzerResultsDAOImpl();
-		}
-		
-		return analyzerResultDAO;
-	}
-
-	public static void setAnalyzerResultDAO(AnalyzerResultsDAO analyzerResultDAO) {
-		AnalyzerLineInserter.analyzerResultDAO = analyzerResultDAO;
-	}
-	
+    
 	public abstract boolean insert(List<String> lines, String currentUserId);
 
 	public abstract String getError();
-	
 }

@@ -28,29 +28,25 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.dictionary.DictionaryService;
+import spring.service.systemuser.SystemUserService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public abstract class HistoryService {
+public abstract class AbstractHistoryService {
 
 	protected static final String STATUS_ATTRIBUTE = "status";
 	protected static final String VALUE_ATTRIBUTE = "value";
-
-	protected static AuditTrailDAO auditTrailDAO = new AuditTrailDAOImpl();
-	private static SystemUserDAO userDAO = new SystemUserDAOImpl();
-	protected static DictionaryDAO dictDAO = new DictionaryDAOImpl();
+	
+	protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
 	protected Map<String, String> attributeToIdentifierMap;
 	protected List<History> historyList;
@@ -58,8 +54,8 @@ public abstract class HistoryService {
 
 	protected Map<String, String> newValueMap;
 
-	protected HistoryService() {
-	}
+//	protected HistoryService() {
+//	}
 
 	protected abstract void addInsertion(History history, List<AuditTrailItem> items);
 
@@ -195,7 +191,7 @@ public abstract class HistoryService {
 	protected String getViewableValue(String value, Result result) {
 		if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
-			Dictionary dictionaryValue = dictDAO.getDictionaryById(value);
+			Dictionary dictionaryValue = dictionaryService.getDictionaryById(value);
 			value = dictionaryValue != null ? dictionaryValue.getDictEntry()
 					: MessageUtil.getMessage("result.undefined");
 		}
@@ -204,7 +200,7 @@ public abstract class HistoryService {
 	}
 
 	private String getUserName(History history) {
-		SystemUser user = userDAO.getUserById(history.getSysUserId());
+		SystemUser user = systemUserService.getUserById(history.getSysUserId());
 		return user.getDisplayName();
 	}
 

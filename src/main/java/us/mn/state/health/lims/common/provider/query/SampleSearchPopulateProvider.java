@@ -26,18 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleorganization.SampleOrganizationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusSet;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 /**
@@ -45,6 +43,10 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  * @since Jul 14, 2010
  */
 public class SampleSearchPopulateProvider extends BaseQueryProvider {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	protected SampleOrganizationService sampleOrganizationService = SpringContext.getBean(SampleOrganizationService.class);
 
     /**
      * @throws LIMSInvalidConfigurationException
@@ -63,7 +65,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
         if (!GenericValidator.isBlankOrNull(patientID)) {
             sample = getSampleForPatientID(patientID);
         } else {
-            sample = getSampleForAccessionNo(accessionNo);
+            sample = sampleService.getSampleByAccessionNumber(accessionNo);
             StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNo);
             patientID = statusSet.getPatientId();
         }
@@ -106,33 +108,17 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      * @return first organization, if any of this sample
      */
     private Organization getOrganizationForSample(Sample sample) {
-        SampleOrganizationDAO soDAO = new SampleOrganizationDAOImpl();
         SampleOrganization so = new SampleOrganization();
         so.setSample(sample);
-        soDAO.getDataBySample(so);
+        sampleOrganizationService.getDataBySample(so);
         return so.getOrganization();
     }
 
     private Sample getSampleForPatientID(String patientID)  {
-        SampleHumanDAO shDao = new SampleHumanDAOImpl();
-        List<Sample> samples = shDao.getSamplesForPatient(patientID);
+        List<Sample> samples = sampleHumanService.getSamplesForPatient(patientID);
         Sample sample = findBestMatch(samples);
         // Reread in order to fill in pretend columns (aka accessionNumber)
-        SampleDAO sampleDAO = new SampleDAOImpl();
-        sampleDAO.getData(sample);
-        return sample;
-    }
-
-    /**
-     * @param accessionNo
-     * @return some sample or null;
-     * @throws LIMSInvalidConfigurationException
-     */
-    private Sample getSampleForAccessionNo(String accessionNo) {
-        SampleDAO sampleDAO;
-        Sample sample = null;
-        sampleDAO = new SampleDAOImpl();
-        sample = sampleDAO.getSampleByAccessionNumber(accessionNo);
+        sampleService.getData(sample);
         return sample;
     }
 

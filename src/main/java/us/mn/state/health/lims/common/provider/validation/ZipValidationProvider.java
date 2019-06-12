@@ -21,8 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
+import spring.service.citystatezip.CityStateZipService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
@@ -33,6 +33,8 @@ import us.mn.state.health.lims.common.util.StringUtil;
  * bugzilla 1765 changed to validate zipcode only (combination of city/zip is validated elsewhere)
  */
 public class ZipValidationProvider extends BaseValidationProvider {
+	
+	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
 	public ZipValidationProvider() {
 		super();
@@ -60,10 +62,9 @@ public class ZipValidationProvider extends BaseValidationProvider {
 
 		if (!StringUtil.isNullorNill(zip)) {
 		    //bugzilla 1545
-			CityStateZipDAO cityStateZipDAO = new CityStateZipDAOImpl();
 			CityStateZip cityStateZip = new CityStateZip();
 			cityStateZip.setZipCode(zip.trim());
-			cityStateZip = cityStateZipDAO.getZipCode(cityStateZip);
+			cityStateZip = cityStateZipService.getZipCode(cityStateZip);
 			
 			if (cityStateZip == null) {
 				s.append(INVALID);

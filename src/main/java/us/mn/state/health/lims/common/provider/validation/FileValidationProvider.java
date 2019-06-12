@@ -21,14 +21,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.samplepdf.SamplePdfService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.samplepdf.dao.SamplePdfDAO;
-import us.mn.state.health.lims.samplepdf.daoimpl.SamplePdfDAOImpl;
 
 public class FileValidationProvider extends BaseValidationProvider {
+	
+	protected SamplePdfService samplePdfService = SpringContext.getBean(SamplePdfService.class);
+	
 	int indentLevel = -1;
 	public FileValidationProvider() {
 		super();
@@ -54,8 +57,7 @@ public class FileValidationProvider extends BaseValidationProvider {
         if (!StringUtil.isNullorNill(targetId)) {
             try { 
             	int x = Integer.parseInt(targetId);
-				SamplePdfDAO samplePdfDAO = new SamplePdfDAOImpl();
-				isFound = samplePdfDAO.isAccessionNumberFound(x);
+				isFound = samplePdfService.isAccessionNumberFound(x);
 				if ( isFound )
 					msg = VALID;
             } catch ( NullPointerException npe ) {

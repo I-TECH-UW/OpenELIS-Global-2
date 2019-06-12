@@ -19,6 +19,7 @@ package us.mn.state.health.lims.common.provider.query;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,35 +27,37 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
+import spring.service.address.AddressPartService;
+import spring.service.address.PersonAddressService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.patienttype.PatientPatientTypeService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientPatientTypeDAOImpl;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 public class PatientSearchPopulateProvider extends BaseQueryProvider {
-	private static PatientDAO patientDAO = new PatientDAOImpl();
-	private static PersonAddressDAO addressDAO = new PersonAddressDAOImpl();
+	
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
+	protected PatientPatientTypeService patientPatientTypeService = SpringContext.getBean(PatientPatientTypeService.class);
+	protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	protected PersonAddressService personAddressService = SpringContext.getBean(PersonAddressService.class);
+	
 	private static String ADDRESS_PART_VILLAGE_ID;
 	private static String ADDRESS_PART_COMMUNE_ID;
 	private static String ADDRESS_PART_DEPT_ID;
 
-	static{
-		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-		List<AddressPart> partList = addressPartDAO.getAll();
-
+	@PostConstruct
+	private void initialize() {
+		List<AddressPart> partList = addressPartService.getAll();
 		for( AddressPart addressPart : partList){
 			if( "department".equals(addressPart.getPartName())){
 				ADDRESS_PART_DEPT_ID = addressPart.getId();
@@ -66,7 +69,6 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 		}
 	}
 
-
 	@Override
 	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
 			IOException {
@@ -77,9 +79,9 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 		StringBuilder xml = new StringBuilder();
 		String result = null;
 		if (nationalId != null) {
-		    result = createSearchResultXML(patientDAO.getPatientByNationalId(nationalId), xml);
+		    result = createSearchResultXML(patientService.getPatientByNationalId(nationalId), xml);
 		} else if (externalId != null ) {
-            result = createSearchResultXML(patientDAO.getPatientByExternalId(externalId), xml);
+            result = createSearchResultXML(patientService.getPatientByExternalId(externalId), xml);
 		} else {
             result = createSearchResultXML(getPatientForID(patientKey), xml);
 		}
@@ -107,9 +109,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 		Patient patient = new Patient();
 		patient.setId(personKey);
 
-		PatientDAO dao = new PatientDAOImpl();
-
-		dao.getData(patient);
+		patientService.getData(patient);
 		if (patient.getId() == null)  {
 		    return null;
 		} else {
@@ -173,7 +173,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 	    if (GenericValidator.isBlankOrNull(addressPartId)) {
 	        return "";
 	    }
-		PersonAddress address = addressDAO.getByPersonIdAndPartId( person.getId(), addressPartId);
+		PersonAddress address = personAddressService.getByPersonIdAndPartId( person.getId(), addressPartId);
 
 		return address != null ? address.getValue() : "";
 	}
@@ -192,10 +192,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
     }
 
     private String getPatientType(Patient patient) {
-		PatientPatientTypeDAO patientPatientTypeDAO = new PatientPatientTypeDAOImpl();
-
-		PatientType patientType =patientPatientTypeDAO.getPatientTypeForPatient(patient.getId());
-
+		PatientType patientType =patientPatientTypeService.getPatientTypeForPatient(patient.getId());
 		return patientType != null ? patientType.getType() : null;
 	}
 

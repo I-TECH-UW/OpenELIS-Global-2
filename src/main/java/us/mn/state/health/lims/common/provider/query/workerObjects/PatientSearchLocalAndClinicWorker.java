@@ -21,9 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.person.PersonService;
+import spring.service.search.SearchResultsService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.externalLinks.ExternalPatientSearch;
@@ -32,21 +36,17 @@ import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
+	
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
 	private final String sysUserId;
 
@@ -93,8 +93,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 		try {
 
 			searchThread.start();
-			SearchResultsDAO localSearch = createLocalSearchResultDAOImp();
-			localResults = localSearch.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID, nationalID, patientID, guid);
+			localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID, nationalID, patientID, guid);
 
 			searchThread.join(SystemConfiguration.getInstance().getSearchTimeLimit() + 500);
 
@@ -131,20 +130,13 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 	}
 
 	private void insertNewPatients(	List<PatientDemographicsSearchResults> newPatientsFromClinic) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			for (PatientDemographicsSearchResults results : newPatientsFromClinic) {
 				insertNewPatients(results);
 			}
-
-			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+			lre.printStackTrace();
+		} 
 	}
 
 	private void insertNewPatients(PatientDemographicsSearchResults results) {
@@ -160,24 +152,20 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 		person.setFirstName(results.getFirstName());
 		person.setSysUserId(sysUserId);
 
-		PersonDAO personDAO = new PersonDAOImpl();
-		PatientDAO patientDAO = new PatientDAOImpl();
-		PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-
-		personDAO.insertData(person);
+		personService.insertData(person);
 		patient.setPerson(person);
-		patientDAO.insertData(patient);
+		patientService.insertData(patient);
 
-		persistIdentityType(identityDAO, results.getStNumber(), "ST", patient.getId());
-		persistIdentityType(identityDAO, results.getSubjectNumber(), "SUBJECT", patient.getId());
-		persistIdentityType(identityDAO, results.getMothersName(), "MOTHER", patient.getId());
-		persistIdentityType(identityDAO, results.getGUID(), "GUID", patient.getId());
-		persistIdentityType(identityDAO, results.getDataSourceId(), "ORG_SITE", patient.getId());
+		persistIdentityType(patientIdentityService, results.getStNumber(), "ST", patient.getId());
+		persistIdentityType(patientIdentityService, results.getSubjectNumber(), "SUBJECT", patient.getId());
+		persistIdentityType(patientIdentityService, results.getMothersName(), "MOTHER", patient.getId());
+		persistIdentityType(patientIdentityService, results.getGUID(), "GUID", patient.getId());
+		persistIdentityType(patientIdentityService, results.getDataSourceId(), "ORG_SITE", patient.getId());
 
 		results.setPatientID(patient.getId());
 	}
 
-	public void persistIdentityType(PatientIdentityDAO identityDAO,	String paramValue, String type, String patientId)
+	public void persistIdentityType(PatientIdentityService patientIdentityService,	String paramValue, String type, String patientId)
 			throws LIMSRuntimeException {
 
 		if (!GenericValidator.isBlankOrNull(paramValue)) {
@@ -185,13 +173,13 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 			String typeID = PatientIdentityTypeMap.getInstance().getIDForType(
 					type);
 
-			PatientIdentity identity = new PatientIdentity();
-			identity.setPatientId(patientId);
-			identity.setIdentityTypeId(typeID);
-			identity.setSysUserId(sysUserId);
-			identity.setIdentityData(paramValue);
-			identity.setLastupdatedFields();
-			identityDAO.insertData(identity);
+			PatientIdentity patientIdentity = new PatientIdentity();
+			patientIdentity.setPatientId(patientId);
+			patientIdentity.setIdentityTypeId(typeID);
+			patientIdentity.setSysUserId(sysUserId);
+			patientIdentity.setIdentityData(paramValue);
+			patientIdentity.setLastupdatedFields();
+			patientIdentityService.insertData(patientIdentity);
 		}
 	}
 
@@ -227,10 +215,4 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 			result.setDataSourceName(MessageUtil.getMessage(messageKey));
 		}
 	}
-
-	// Protected for unit tests until we start using JMock
-	protected SearchResultsDAO createLocalSearchResultDAOImp() {
-		return new SearchResultsDAOImp();
-	}
-
 }

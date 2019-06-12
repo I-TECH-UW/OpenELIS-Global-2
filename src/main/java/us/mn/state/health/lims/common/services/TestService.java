@@ -51,9 +51,10 @@ public class TestService implements LocaleChangeListener{
     public static final String HIV_TYPE = "HIV_TEST_KIT";
     public static final String SYPHILIS_TYPE = "SYPHILIS_TEST_KIT";
     private static final TestService INSTANCE = new TestService( new Test() );
-    private static final TypeOfSampleTestDAOImpl TYPE_OF_SAMPLE_TEST_DAO = new TypeOfSampleTestDAOImpl();
     private static String VARIABLE_TYPE_OF_SAMPLE_ID;
     private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+    
+    private static final TypeOfSampleTestDAOImpl TYPE_OF_SAMPLE_TEST_DAO = new TypeOfSampleTestDAOImpl();
     private static final TestResultDAO TEST_RESULT_DAO = new TestResultDAOImpl();
     private static final TestDAO TEST_DAO = new TestDAOImpl();
     private static final TypeOfSampleDAO TYPE_OF_SAMPLE_DAO = new TypeOfSampleDAOImpl();

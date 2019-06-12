@@ -28,27 +28,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.analyzer.AnalyzerService;
 import spring.service.sample.SampleServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerLineInserter;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerReaderUtil;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-
-
-
-public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter
-{
+public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {
+	
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected AnalyzerService analyzerService = SpringContext.getBean(AnalyzerService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	
   private static final String UNDER_THREASHOLD = "< LL";
   private static final double THREASHOLD = 20.0;
   
@@ -68,22 +70,20 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter
 	
   private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
   private String error;
-  Test test = (Test)new TestDAOImpl().getActiveTestByName("Viral Load").get(0);
+  Test test = testService.getActiveTestByName("Viral Load").get(0);
   String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
-  AnalysisDAO analysisDao =  new AnalysisDAOImpl();
 
-  static
-  {
-	testHeaderNameMap.put("Viral Load", new TestDAOImpl().getActiveTestByName("Viral Load").get(0));//.getTestByGUID("0e240569-c095-41c7-bfd2-049527452f16"));
-	testHeaderNameMap.put("DNA PCR", new TestDAOImpl().getActiveTestByName("DNA PCR").get(0));//.getTestByGUID("fe6405c8-f96b-491b-95c9-b1f635339d6a"));
-	
-	unitsIndexMap.put("CD4", "");
-	unitsIndexMap.put("%CD4", "%");
-			
-    AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
-    Analyzer analyzer = analyzerDAO.getAnalyzerByName("Cobas6800VLAnalyzer");
-    ANALYZER_ID =analyzer.getId();
-  }
+	@PostConstruct
+	private void initialize() {
+		testHeaderNameMap.put("Viral Load", testService.getActiveTestByName("Viral Load").get(0));//.getTestByGUID("0e240569-c095-41c7-bfd2-049527452f16"));
+		testHeaderNameMap.put("DNA PCR", testService.getActiveTestByName("DNA PCR").get(0));//.getTestByGUID("fe6405c8-f96b-491b-95c9-b1f635339d6a"));
+		
+		unitsIndexMap.put("CD4", "");
+		unitsIndexMap.put("%CD4", "%");
+				
+	    Analyzer analyzer = analyzerService.getAnalyzerByName("Cobas6800VLAnalyzer");
+	    ANALYZER_ID =analyzer.getId();
+	}
 
   public String getError() {
     return this.error;
@@ -98,7 +98,7 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter
 	if (!result.getAccessionNumber().startsWith(projectCode) || sampleServ.getSample()==null )
 		return;
 			
-	List<Analysis> analyses=analysisDao.getAnalysisByAccessionAndTestId(result.getAccessionNumber(), result.getTestId());
+	List<Analysis> analyses=analysisService.getAnalysisByAccessionAndTestId(result.getAccessionNumber(), result.getTestId());
 	for(Analysis analysis :analyses) {
 		if(analysis.getStatusId().equals(validStatusId))
 			return;

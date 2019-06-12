@@ -24,12 +24,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.organization.OrganizationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 public class HealthDistrictsForRegionProvider extends BaseQueryProvider {
+	
+	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
 	/**
 	 * @throws LIMSInvalidConfigurationException
@@ -42,7 +45,7 @@ public class HealthDistrictsForRegionProvider extends BaseQueryProvider {
 		StringBuilder xml = new StringBuilder();
 		String result = VALID;
 
-		List<Organization> districts = new OrganizationDAOImpl().getOrganizationsByParentId( request.getParameter("regionId"));
+		List<Organization> districts = organizationService.getOrganizationsByParentId( request.getParameter("regionId"));
 		createDistrictXml(districts, request.getParameter("selectedValue"), xml);
 		
 		ajaxServlet.sendData(xml.toString(), result, request, response);

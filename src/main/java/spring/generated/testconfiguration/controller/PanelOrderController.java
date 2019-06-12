@@ -69,9 +69,6 @@ public class PanelOrderController extends BaseController {
 				.createTypeOfSamplePanelMap(true);
 		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(false);
-//		List<Panel> panels = new PanelDAOImpl().getAllPanels();
-//		gnr: local var panels is never used
-//		List<Panel> panels = panelService.getAllPanels();
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
@@ -119,7 +116,6 @@ public class PanelOrderController extends BaseController {
 		List<Panel> panels = new ArrayList<>();
 
 		String currentUserId = getSysUserId(request);
-//		PanelDAO panelDAO = new PanelDAOImpl();
 		for (ActivateSet sets : orderSet) {
 			Panel panel = panelService.getPanelById(sets.id);
 			panel.setSortOrderInt(sets.sortOrder);
@@ -127,19 +123,13 @@ public class PanelOrderController extends BaseController {
 			panels.add(panel);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			for (Panel panel : panels) {
 				panelService.update(panel);
 			}
-//			tx.commit();
 		} catch (HibernateException e) {
-//			tx.rollback();
 			e.printStackTrace();
 		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);

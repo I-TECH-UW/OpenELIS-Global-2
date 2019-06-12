@@ -30,16 +30,18 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.login.LoginService;
+import spring.service.systemuser.SystemUserService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerReader;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
 public class AnalyzerImportServlet extends HttpServlet {
+	
+	protected LoginService loginService = SpringContext.getBean(LoginService.class);
+	protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 	
 	private static final long serialVersionUID = 1L;
 	private static final String USER = "user";
@@ -136,17 +138,17 @@ public class AnalyzerImportServlet extends HttpServlet {
 		login.setLoginName(user);
 		login.setPassword(password);
 		
-		LoginDAO loginDAO = new LoginDAOImpl();
+//		LoginDAO loginDAO = new LoginDAOImpl();
 		
-		login = loginDAO.getValidateLogin(login);
+		login = loginService.getValidateLogin(login);
 		
 		
 		
 		if( login == null ){
 			return false;
 		}else{
-			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-			SystemUser systemUser = systemUserDAO.getDataForLoginUser(login.getLoginName());
+//			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
+			SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
 			systemUserId = systemUser.getId();
 		}
 			

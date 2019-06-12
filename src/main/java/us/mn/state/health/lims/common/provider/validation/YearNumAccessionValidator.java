@@ -21,11 +21,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 
 public class YearNumAccessionValidator implements IAccessionNumberValidator {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	private String incrementStartingValue = "000001";
 	private static int upperIncrementValue = 999999;
@@ -125,9 +127,7 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 	public String getNextAvailableAccessionNumber(String prefix) {
 		String nextAccessionNumber;
 
-		SampleDAO accessionNumberDAO = new SampleDAOImpl();
-
-		String curLargestAccessionNumber = accessionNumberDAO.getLargestAccessionNumberWithPrefix(prefix);
+		String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
 
 		if (curLargestAccessionNumber == null) {
 			if (REQUESTED_NUMBERS.isEmpty()) {
@@ -156,10 +156,7 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 	// recordType parameter is not used in this case
 	@Override
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-
-		SampleDAO sampleDAO = new SampleDAOImpl();
-
-		return sampleDAO.getSampleByAccessionNumber(accessionNumber) != null;
+		return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
 	}
 
 	@Override

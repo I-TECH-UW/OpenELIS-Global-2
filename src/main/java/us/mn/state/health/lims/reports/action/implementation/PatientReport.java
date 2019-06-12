@@ -28,10 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
@@ -77,7 +78,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
@@ -113,7 +113,8 @@ public abstract class PatientReport extends Report {
 	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected NoteService noteService = SpringContext.getBean(NoteService.class);
 	protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
-	protected static AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	
 	private List<String> handledOrders;
 	private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -142,7 +143,8 @@ public abstract class PatientReport extends Report {
 	protected Map<String, Boolean> sampleCompleteMap;
 	protected Map<String, Boolean> sampleCorrectedMap;
 
-	static {
+	@PostConstruct
+	private void initialize() {
 		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart part : partList) {
 			if ("department".equals(part.getPartName())) {
@@ -242,17 +244,13 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (!updatedAnalysis.isEmpty()) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				for (Analysis analysis : updatedAnalysis) {
 					analysisService.updateData(analysis, true);
 				}
-				tx.commit();
 
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
-
+				lre.printStackTrace();
 			}
 		}
 	}

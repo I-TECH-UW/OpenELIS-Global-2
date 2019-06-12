@@ -27,14 +27,16 @@ import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.project.ProjectService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
 
 public class ScanGeneratorProvider extends BaseQueryProvider {
+	
+	protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
 
 	public ScanGeneratorProvider() {
 		super();
@@ -56,8 +58,7 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
 				nextNumber = getNextScanNumber("");	
 			} else {
 				//check program code validity
-				ProjectDAO projectDAO = new ProjectDAOImpl();
-				List<Project> programCodes = projectDAO.getAllProjects();
+				List<Project> programCodes = projectService.getAllProjects();
 				boolean found = false;
 				for ( Project code: programCodes ){
 					if ( programCode.equals(code.getProgramCode())){

@@ -19,25 +19,29 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.hibernate.Transaction;
 
+import spring.service.dictionary.DictionaryService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.HibernateProxy;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
-
 	
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
 	private int ORDER_NUMBER = 0;
 	private int ORDER_DATE = 0;
@@ -54,20 +58,19 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 	private String error;
 
-	static{
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Test test = new TestDAOImpl().getActiveTestByName("DNA PCR").get(0);
-		List<TestResult> testResults = new TestResultDAOImpl().getActiveTestResultsByTest( test.getId() );
+	@PostConstruct
+	private void initialize() {
+		Test test = testService.getActiveTestByName("DNA PCR").get(0);
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest( test.getId() );
 		
 		for(TestResult testResult : testResults){
-			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
+			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
 			if( "Positive".equals(dictionary.getDictEntry())){
 				POSITIVE_ID = dictionary.getId();
 			}else if( "Negative".equals(dictionary.getDictEntry())){
 				NEGATIVE_ID = dictionary.getId();
 			}
 		}
-		
 	}
 	
 	public boolean insert(List<String> lines, String currentUserId) {
@@ -107,7 +110,6 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 				HibernateProxy.closeSession();
 			}
 		}
-
 		return successful;
 	}
 
@@ -127,7 +129,6 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 				SAMPLE_TYPE = i;
 			}
 		}
-
 		return ORDER_DATE != 0 && ORDER_NUMBER != 0 && RESULT != 0 && SAMPLE_TYPE != 0;
 	}
 
@@ -138,7 +139,6 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 		if (resultFromDB != null) {
 			resultList.add(resultFromDB);
 		}
-
 	}
 
 	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList, MappedTestName mappedName) {
@@ -184,7 +184,6 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 //				result = UNDER_THREASHOLD;
 //			}
 		}
-
 		return result;
 	}
 

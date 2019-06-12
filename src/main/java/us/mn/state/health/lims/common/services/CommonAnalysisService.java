@@ -22,33 +22,38 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
 import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.util.SpringContext;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 /**
  */
-public class AnalysisService {
-	private static final AnalysisDAO analysisDAO = SpringContext.getBean(AnalysisDAO.class);
-	private static final DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	private static final ResultDAO resultDAO = new ResultDAOImpl();
-	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+public class CommonAnalysisService {
+	
+//	private static final AnalysisDAO analysisDAO = SpringContext.getBean(AnalysisDAO.class);
+//	private static final DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+//	private static final ResultDAO resultDAO = new ResultDAOImpl();
+//	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+	
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	
+	
 	private final Analysis analysis;
 	public static final String TABLE_REFERENCE_ID;
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
@@ -57,12 +62,12 @@ public class AnalysisService {
 		TABLE_REFERENCE_ID = new ReferenceTablesDAOImpl().getReferenceTableByName("ANALYSIS").getId();
 	}
 
-	public AnalysisService(Analysis analysis) {
+	public CommonAnalysisService(Analysis analysis) {
 		this.analysis = analysis;
 	}
 
-	public AnalysisService(String analysisId) {
-		analysis = analysisDAO.getAnalysisById(analysisId);
+	public CommonAnalysisService(String analysisId) {
+		analysis = analysisService.getAnalysisById(analysisId);
 	}
 
 	public Analysis getAnalysis() {
@@ -76,16 +81,16 @@ public class AnalysisService {
 		Test test = getTest();
 		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
-		TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
+		TypeOfSample typeOfSample = CommonTypeOfSampleService.getTypeOfSampleForTest(test.getId());
 
 		if (typeOfSample != null
-				&& typeOfSample.getId().equals(TypeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+				&& typeOfSample.getId().equals(CommonTypeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}
 
 		String parentResultType = analysis.getParentResult() != null ? analysis.getParentResult().getResultType() : "";
 		if (TypeOfTestResultService.ResultType.isMultiSelectVariant(parentResultType)) {
-			Dictionary dictionary = dictionaryDAO.getDictionaryById(analysis.getParentResult().getValue());
+			Dictionary dictionary = dictionaryService.getDictionaryById(analysis.getParentResult().getValue());
 			if (dictionary != null) {
 				String parentResult = dictionary.getLocalAbbreviation();
 				if (GenericValidator.isBlankOrNull(parentResult)) {
@@ -102,7 +107,7 @@ public class AnalysisService {
 		if (analysis == null) {
 			return "";
 		}
-		List<Result> existingResults = resultDAO.getResultsByAnalysis(analysis);
+		List<Result> existingResults = resultService.getResultsByAnalysis(analysis);
 		StringBuilder multiSelectBuffer = new StringBuilder();
 		for (Result existingResult : existingResults) {
 			if (TypeOfTestResultService.ResultType.isMultiSelectVariant(existingResult.getResultType())) {
@@ -119,14 +124,14 @@ public class AnalysisService {
 
 	public String getJSONMultiSelectResults() {
 		return analysis == null ? ""
-				: ResultService.getJSONStringForMultiSelect(resultDAO.getResultsByAnalysis(analysis));
+				: us.mn.state.health.lims.common.services.ResultService.getJSONStringForMultiSelect(resultService.getResultsByAnalysis(analysis));
 	}
 
 	public Result getQuantifiedResult() {
 		if (analysis == null) {
 			return null;
 		}
-		List<Result> existingResults = resultDAO.getResultsByAnalysis(analysis);
+		List<Result> existingResults = resultService.getResultsByAnalysis(analysis);
 		List<String> quantifiableResultsIds = new ArrayList<>();
 		for (Result existingResult : existingResults) {
 			if (TypeOfTestResultService.ResultType.isDictionaryVariant(existingResult.getResultType())) {
@@ -166,7 +171,7 @@ public class AnalysisService {
 		if (analysis == null || currentResult == null) {
 			return false;
 		}
-		List<Result> results = resultDAO.getResultsByAnalysis(analysis);
+		List<Result> results = resultService.getResultsByAnalysis(analysis);
 		if (results.size() == 1) {
 			return false;
 		}
@@ -192,12 +197,12 @@ public class AnalysisService {
 		return analysis == null ? null : analysis.getTest();
 	}
 
-	public static List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate) {
-		return analysisDAO.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
+	public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate) {
+		return analysisService.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
 	}
 
 	public List<Result> getResults() {
-		return analysis == null ? new ArrayList<>() : resultDAO.getResultsByAnalysis(analysis);
+		return analysis == null ? new ArrayList<>() : resultService.getResultsByAnalysis(analysis);
 	}
 
 	public boolean hasBeenCorrectedSinceLastPatientReport() {
@@ -213,7 +218,7 @@ public class AnalysisService {
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
 		return analysis == null ? ""
-				: new NoteService(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
+				: new CommonNoteService(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
 						excludeExternPrefix);
 	}
 
@@ -223,7 +228,7 @@ public class AnalysisService {
 
 	public TypeOfSample getTypeOfSample() {
 		return analysis == null ? null
-				: typeOfSampleDAO.getTypeOfSampleById(analysis.getSampleItem().getTypeOfSampleId());
+				: typeOfSampleService.getTypeOfSampleById(analysis.getSampleItem().getTypeOfSampleId());
 	}
 
 	public Panel getPanel() {

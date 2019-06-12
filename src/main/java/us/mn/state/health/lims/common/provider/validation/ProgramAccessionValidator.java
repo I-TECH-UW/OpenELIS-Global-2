@@ -26,24 +26,26 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.project.ProjectService;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.StatusSet;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public class ProgramAccessionValidator implements IAccessionNumberValidator {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
+	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
 	private static final String INCREMENT_STARTING_VALUE  = "00001";
 	private static final int UPPER_INC_RANGE = 99999;
@@ -52,8 +54,6 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	private static final int PROGRAM_END = 4;
 	private static final int LENGTH = 9;
 	private static final boolean NEED_PROGRAM_CODE = true;
-	private static ProjectDAO projectDAO;
-	
 
 	public boolean needProgramCode() {
 		return NEED_PROGRAM_CODE;
@@ -92,9 +92,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 		String programCode = accessionNumber.substring(PROGRAM_START, PROGRAM_END).toUpperCase();
 
 		//check program code validity
-		ProjectDAO projectDAO = getProjectDAO();
-		List<Project> programCodes = projectDAO.getAllProjects();
-
+		List<Project> programCodes = projectService.getAllProjects();
 
 		boolean found = false;
 		for ( Project code: programCodes ){
@@ -138,9 +136,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	public String getNextAvailableAccessionNumber(String prefix){
 		String nextAccessionNumber = null;
 
-		SampleDAO sampleDAO = new SampleDAOImpl();
-
-		String curLargestAccessionNumber = sampleDAO.getLargestAccessionNumberWithPrefix(prefix);
+		String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
 
 		if( curLargestAccessionNumber == null){
 			nextAccessionNumber = createFirstAccessionNumber(prefix);
@@ -152,7 +148,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	}
 
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-		boolean accessionNumberUsed = new SampleDAOImpl().getSampleByAccessionNumber(accessionNumber) != null;
+		boolean accessionNumberUsed = sampleService.getSampleByAccessionNumber(accessionNumber) != null;
 		
 		if( recordType == null){
 			return accessionNumberUsed;
@@ -219,9 +215,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
   public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType,
           String isRequired, String studyFormName) {
     ValidationResults results = validFormat(accessionNumber, true);
-    SampleDAO sampleDAO = new SampleDAOImpl();
-
-    boolean accessionUsed = (sampleDAO.getSampleByAccessionNumber(accessionNumber) != null);
+    boolean accessionUsed = (sampleService.getSampleByAccessionNumber(accessionNumber) != null);
     if (results == ValidationResults.SUCCESS) {
 
       if (IActionConstants.TRUE.equals(isRequired) && !accessionUsed) {
@@ -286,7 +280,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	 * @param existingRequired true => it is required that there is an existing studyFormName?
      * @return
      */
-    private static ValidationResults matchExistingStudyFormName(String accessionNumber, String studyFormName, boolean existingRequired) {
+    private ValidationResults matchExistingStudyFormName(String accessionNumber, String studyFormName, boolean existingRequired) {
         if (GenericValidator.isBlankOrNull(studyFormName)) {
             return SAMPLE_FOUND;
         }
@@ -297,14 +291,13 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
         return SAMPLE_STATUS_FAIL;  // the sample was entered on a different form!
     }
 
-    public static String findStudyFormName(String accessionNumber) {
-        ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
+    public String findStudyFormName(String accessionNumber) {
         StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
         Patient p = new Patient();
         p.setId(statusSet.getPatientId());
         Sample s = new Sample();
         s.setId(statusSet.getSampleId());
-        List<ObservationHistory> all = ohDAO.getAll(p, s, ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName"));
+        List<ObservationHistory> all = observationHistoryService.getAll(p, s, ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName"));
         String existingName = "";
         if (all.size() > 0) {
             existingName = all.get(0).getValue();
@@ -326,16 +319,4 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     public String getPrefix(){
         return null; //no single prefix
     }
-
-    private static ProjectDAO getProjectDAO() {
-		if( projectDAO == null){
-			projectDAO = new ProjectDAOImpl();
-		}
-		
-		return projectDAO;
-	}
-
-	public static void setProjectDAO(ProjectDAO projectDAO) {
-		ProgramAccessionValidator.projectDAO = projectDAO;
-	}
 }

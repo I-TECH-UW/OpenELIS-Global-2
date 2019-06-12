@@ -99,11 +99,6 @@ public class SiteInformationController extends BaseController {
 		boolean isNew = id == null || "0".equals(id);
 
 		if (!isNew) {
-//			SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-//			SiteInformation siteInformation = new SiteInformation();
-//			siteInformation.setId(id);
-//			siteInformationDAO.getData(siteInformation);
-
 			SiteInformation siteInformation = siteInformationService.get(id);
 
 			request.setAttribute(ID, siteInformation.getId());
@@ -129,7 +124,6 @@ public class SiteInformationController extends BaseController {
 
 				PropertyUtils.setProperty(form, "dictionaryValues", dictionaryValues);
 			}
-
 		}
 
 		String domainName = form.getString("siteInfoDomainName");
@@ -208,7 +202,6 @@ public class SiteInformationController extends BaseController {
 	private void setLocalizationValues(BaseForm form, SiteInformation siteInformation)
 			throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if ("localization".equals(siteInformation.getTag())) {
-//			LocalizationService localizationService = new LocalizationService(siteInformation.getValue());
 			Localization localization = localizationService.get(siteInformation.getValue());
 			PropertyUtils.setProperty(form, "englishValue", localization.getEnglish());
 			PropertyUtils.setProperty(form, "frenchValue", localization.getFrench());
@@ -265,36 +258,23 @@ public class SiteInformationController extends BaseController {
 
 	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, String english,
 			String french) {
-		// LocalizationService oldLocalizationService = new
-		// LocalizationService(localizationId);
-		// oldLocalizationService.setCurrentUserId(getSysUserId(request));
 		Localization localization = localizationService.get(localizationId);
 		localization.setSysUserId(getSysUserId(request));
 		String forward = FWD_SUCCESS_INSERT;
-		// if (oldLocalizationService.updateLocalizationIfNeeded(english, french)) {
 		if (localizationService.languageChanged(localization, english, french)) {
 			Errors errors;
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 			try {
-//				new LocalizationDAOImpl().updateData(oldLocalizationService.getLocalization());
 				localization.setEnglish(english);
 				localization.setFrench(french);
 				localizationService.update(localization);
-//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-//				tx.rollback();
 				errors = new BaseErrors();
 				errors.reject("errors.UpdateException");
 				saveErrors(errors);
 				forward = FWD_FAIL_INSERT;
 
 			}
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
-
 		}
-
 		return forward;
 	}
 
@@ -310,7 +290,6 @@ public class SiteInformationController extends BaseController {
 		}
 
 		String forward = FWD_SUCCESS_INSERT;
-//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 		SiteInformation siteInformation = new SiteInformation();
 
 		if (newSiteInformation) {
@@ -320,8 +299,6 @@ public class SiteInformationController extends BaseController {
 			siteInformation.setEncrypted((Boolean) form.get("encrypted"));
 			siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
 		} else {
-//			siteInformation.setId(request.getParameter(ID));
-//			siteInformationDAO.getData(siteInformation);
 			siteInformation = siteInformationService.get(request.getParameter(ID));
 		}
 
@@ -335,23 +312,17 @@ public class SiteInformationController extends BaseController {
 		} else if ("ResultConfiguration".equals(domainName)) {
 			siteInformation.setDomain(RESULT_CONFIG_DOMAIN);
 		}
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 
 			if (newSiteInformation) {
 				siteInformationService.insert(siteInformation);
-//				siteInformationDAO.insertData(siteInformation);
 			} else {
 				siteInformationService.update(siteInformation);
-//				siteInformationDAO.updateData(siteInformation);
 			}
 
 			new ConfigurationSideEffects().siteInformationChanged(siteInformation);
 
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
 
@@ -370,10 +341,6 @@ public class SiteInformationController extends BaseController {
 			forward = FWD_FAIL_INSERT;
 
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
-
 		return forward;
 	}
 

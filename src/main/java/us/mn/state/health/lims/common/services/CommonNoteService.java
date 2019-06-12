@@ -25,6 +25,11 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.person.PersonService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -45,9 +50,16 @@ import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public class NoteService {
+public class CommonNoteService {
+	
+	protected Service organizationService = SpringContext.getBean(OrganizationService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
 	private static NoteDAO noteDAO = new NoteDAOImpl();
 	private static SampleQaEventDAO sampleQADAO = new SampleQaEventDAOImpl();
+	
 	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
 
@@ -85,28 +97,28 @@ public class NoteService {
 		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("SAMPLE_ITEM").getId();
 	}
 
-	public NoteService(Analysis analysis) {
-		tableId = AnalysisService.TABLE_REFERENCE_ID;
+	public CommonNoteService(Analysis analysis) {
+		tableId = CommonAnalysisService.TABLE_REFERENCE_ID;
 		objectId = analysis.getId();
 		binding = BoundTo.ANALYSIS;
 		object = analysis;
 	}
 
-	public NoteService(Sample sample) {
+	public CommonNoteService(Sample sample) {
 		tableId = SampleService.TABLE_REFERENCE_ID;
 		objectId = sample.getId();
 		binding = BoundTo.SAMPLE;
 		object = sample;
 	}
 
-	public NoteService(SampleQaEvent sampleQaEvent) {
+	public CommonNoteService(SampleQaEvent sampleQaEvent) {
 		tableId = QAService.TABLE_REFERENCE_ID;
 		objectId = sampleQaEvent.getId();
 		binding = BoundTo.QA_EVENT;
 		object = sampleQaEvent;
 	}
 
-	public NoteService(SampleItem sampleItem) {
+	public CommonNoteService(SampleItem sampleItem) {
 		tableId = SAMPLE_ITEM_TABLE_REFERENCE_ID;
 		objectId = sampleItem.getId();
 		binding = BoundTo.SAMPLE_ITEM;
@@ -314,7 +326,7 @@ public class NoteService {
 	public static String getReferenceTableIdForNoteBinding(BoundTo binding) {
 		switch (binding) {
 		case ANALYSIS: {
-			return AnalysisService.TABLE_REFERENCE_ID;
+			return CommonAnalysisService.TABLE_REFERENCE_ID;
 		}
 		case QA_EVENT: {
 			return QAService.TABLE_REFERENCE_ID;
@@ -333,7 +345,7 @@ public class NoteService {
 
 	public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
 		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode,
-				AnalysisService.TABLE_REFERENCE_ID);
+				CommonAnalysisService.TABLE_REFERENCE_ID);
 	}
 
 	private String getNotePrefix(Note note, boolean excludeExternPrefix) {

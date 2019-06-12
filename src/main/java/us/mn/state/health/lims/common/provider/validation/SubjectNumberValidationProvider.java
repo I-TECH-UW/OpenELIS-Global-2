@@ -25,16 +25,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.search.SearchResultsService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
  * via AJAX.
  */
 public class SubjectNumberValidationProvider extends BaseValidationProvider{
+	
+	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
     public SubjectNumberValidationProvider(){
         super();
@@ -58,7 +61,7 @@ public class SubjectNumberValidationProvider extends BaseValidationProvider{
 
         //We just care about duplicates but blank values do not count as duplicates
         if( !( GenericValidator.isBlankOrNull( STNumber ) && GenericValidator.isBlankOrNull( subjectNumber ) && GenericValidator.isBlankOrNull( nationalId ) ) ){
-            List<PatientSearchResults> results = new SearchResultsDAOImp().getSearchResults( null, null, STNumber, subjectNumber, nationalId, null, null, null );
+            List<PatientSearchResults> results = searchResultsService.getSearchResults( null, null, STNumber, subjectNumber, nationalId, null, null, null );
 
 
             boolean allowDuplicates = ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true" );

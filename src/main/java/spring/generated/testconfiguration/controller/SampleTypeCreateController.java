@@ -95,10 +95,6 @@ public class SampleTypeCreateController extends BaseController {
 			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-//		RoleDAO roleDAO = new RoleDAOImpl();
-//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
-
 		String identifyingName = form.getString("sampleTypeEnglishName");
 		String userId = getSysUserId(request);
 
@@ -117,8 +113,6 @@ public class SampleTypeCreateController extends BaseController {
 		RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
 		RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			localizationService.insert(localization);
 			typeOfSample.setLocalization(localization);
@@ -129,16 +123,9 @@ public class SampleTypeCreateController extends BaseController {
 			roleModuleService.insert(workplanResultModule);
 			roleModuleService.insert(resultResultModule);
 			roleModuleService.insert(validationValidationModule);
-
-//			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
 		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

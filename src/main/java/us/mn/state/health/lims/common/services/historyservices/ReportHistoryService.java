@@ -21,24 +21,25 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService.ReportType;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public class ReportHistoryService extends HistoryService {
+public class ReportHistoryService extends AbstractHistoryService {
+	
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
 	private static String REPORT_TABLE_ID;
 	
-	static {
-		ReferenceTablesDAO tableDAO = new ReferenceTablesDAOImpl();
-		REPORT_TABLE_ID = tableDAO.getReferenceTableByName("document_track").getId();
-	}
-	
 	public ReportHistoryService(Sample sample) {
+		REPORT_TABLE_ID = referenceTablesService.getReferenceTableByName("document_track").getId();
 		setUpForReport(sample);
 	}
 	
@@ -51,7 +52,7 @@ public class ReportHistoryService extends HistoryService {
 			History searchHistory = new History();
 			searchHistory.setReferenceId(docTrack.getId());
 			searchHistory.setReferenceTable(REPORT_TABLE_ID);
-			historyList.addAll(auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory));
+			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
 		}
 	}
 

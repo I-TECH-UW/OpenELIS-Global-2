@@ -21,13 +21,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.servlet.data.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 /**
@@ -36,6 +35,9 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * bugzilla 2443
  */
 public class NextTestSortOrderDataProvider extends BaseDataProvider {
+	
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
 	public NextTestSortOrderDataProvider() {
 		super();
@@ -65,17 +67,15 @@ public class NextTestSortOrderDataProvider extends BaseDataProvider {
         String result = INVALID;
 
 		if (!StringUtil.isNullorNill(testSectionId)) {
-			TestDAO testDAO = new TestDAOImpl();
-			TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 			Test test = new Test();
 			TestSection testSection = new TestSection();
 			testSection.setId(testSectionId);
-			testSectionDAO.getData(testSection);
+			testSectionService.getData(testSection);
 			
 			if (testSection != null && !StringUtil.isNullorNill(testSection.getId())) {
 				test.setTestSection(testSection);
 
-				Integer sortOrder = testDAO.getNextAvailableSortOrderByTestSection(test);
+				Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);
 				if (sortOrder != null) {
 					result =  sortOrder.toString();
 				} else {
