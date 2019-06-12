@@ -30,17 +30,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
+	
+	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
     
     /**
      * nationality and nationalityOther are both fields stored as OH type = "nationality" one is stored as D and the "other" L
@@ -71,8 +73,6 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
        // "initialSampleConditionINNs"
     };
     
-    ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
-
     StringBuilder xml = new StringBuilder();
 
     private Patient patient = new Patient();
@@ -114,7 +114,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 
     private void buildSingleObservationHistories() {
         List<ObservationHistory> histories;
-		histories = ohDAO.getAll(patient, sample);
+		histories = observationHistoryService.getAll(patient, sample);
         for (ObservationHistory history : histories) {
             String ohTypeName = ohTypeMap.getTypeFromId(history.getObservationHistoryTypeId());
             if (ohTypeName.contains("RecordStatus")) {  // sample and patient record status get mapped to their localized strings.
@@ -178,7 +178,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
      */
 	private List<ObservationHistory> getObservationsByType(String listName) {
         String typeId = ObservationHistoryTypeMap.getInstance().getIDForType(listName);
-        List<ObservationHistory> multiHistories = ohDAO.getAll(patient, sample, typeId);
+        List<ObservationHistory> multiHistories = observationHistoryService.getAll(patient, sample, typeId);
         return multiHistories;
     }
 	

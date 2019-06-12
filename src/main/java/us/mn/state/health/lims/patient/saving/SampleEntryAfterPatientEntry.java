@@ -29,7 +29,7 @@ public class SampleEntryAfterPatientEntry extends SampleEntry {
 	/**
 	 * Find existing sampleHuman, so we can update it with our new patient when we
 	 * fill in all IDs when we persist.
-	 * 
+	 *
 	 * @see us.mn.state.health.lims.patient.saving.PatientEntry#populateSampleHuman()
 	 */
 	@Override

@@ -19,62 +19,40 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 
 import java.util.List;
 
-import org.hibernate.Transaction;
-
-import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
-import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
+import spring.service.analyzerresults.AnalyzerResultsService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 public abstract class AnalyzerLineInserter {
-	private static AnalyzerResultsDAO analyzerResultDAO = null;
+
+	protected AnalyzerResultsService analyzerResultService = SpringContext.getBean(AnalyzerResultsService.class);
 
 	protected void persistResults(List<AnalyzerResults> results, String systemUserId) {
-		getAnalyzerResultDAO().insertAnalyzerResults(results, systemUserId);
+		analyzerResultService.insertAnalyzerResults(results, systemUserId);
 	}
 
-    protected boolean persistImport(String currentUserId, List<AnalyzerResults> results) {
+	protected boolean persistImport(String currentUserId, List<AnalyzerResults> results) {
 
-        if (results.size() > 0) {
-            for(AnalyzerResults analyzerResults : results ){
-                if( analyzerResults.getTestId().equals("-1")){
-                    analyzerResults.setTestId(null);
-                    analyzerResults.setReadOnly(true);
-                }
-            }
+		if (results.size() > 0) {
+			for (AnalyzerResults analyzerResults : results) {
+				if (analyzerResults.getTestId().equals("-1")) {
+					analyzerResults.setTestId(null);
+					analyzerResults.setReadOnly(true);
+				}
+			}
 
-            Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-            try {
-
-                persistResults(results, currentUserId);
-
-                tx.commit();
-
-            } catch (LIMSRuntimeException lre) {
-                tx.rollback();
-                return false;
-            } finally {
-                HibernateUtil.closeSession();
-            }
-        }
-        return true;
-    }
-	private AnalyzerResultsDAO getAnalyzerResultDAO() {
-		if( analyzerResultDAO == null){
-			analyzerResultDAO = new AnalyzerResultsDAOImpl();
+			try {
+				persistResults(results, currentUserId);
+			} catch (LIMSRuntimeException lre) {
+				lre.printStackTrace();
+				return false;
+			}
 		}
-		
-		return analyzerResultDAO;
+		return true;
 	}
 
-	public static void setAnalyzerResultDAO(AnalyzerResultsDAO analyzerResultDAO) {
-		AnalyzerLineInserter.analyzerResultDAO = analyzerResultDAO;
-	}
-	
 	public abstract boolean insert(List<String> lines, String currentUserId);
 
 	public abstract String getError();
-	
 }

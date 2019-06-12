@@ -80,4 +80,9 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 	public List getAllTestSections() {
         return getBaseObjectDAO().getAllTestSections();
 	}
+
+	@Override
+	public RenameTestSection getTestSectionById(String id) {
+		return getBaseObjectDAO().getTestSectionById(id);
+	}
 }

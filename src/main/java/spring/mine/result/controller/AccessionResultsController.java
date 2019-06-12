@@ -46,9 +46,9 @@ public class AccessionResultsController extends BaseController {
 	private Sample sample;
 	private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 	@Autowired
-	private SampleService sampleService;
+	SampleService sampleService;
 	@Autowired
-	private SampleHumanService sampleHumanService;
+	SampleHumanService sampleHumanService;
 	@Autowired
 	private RoleService roleService;
 	@Autowired

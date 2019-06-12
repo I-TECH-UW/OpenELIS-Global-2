@@ -129,9 +129,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
 
-//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-
-//		configurationList = siteInformationDAO.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
 		configurationList = siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
 		for (SiteInformation siteInformation : configurationList) {
 			if ("localization".equals(siteInformation.getTag())) {
@@ -142,8 +139,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		hideEncryptedFields(configurationList);
 
-//		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
-//				siteInformationDAO.getCountForDomainName(dbDomainName));
 		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
 				siteInformationService.getCountForDomainName(dbDomainName));
 
@@ -190,7 +185,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 //			}
 
 		} catch (LIMSRuntimeException lre) {
-
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";

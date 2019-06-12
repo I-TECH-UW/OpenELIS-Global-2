@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.login.dao.UserTestSectionDAO;
-import us.mn.state.health.lims.login.daoimpl.UserTestSectionDAOImpl;
+import spring.service.usertestsection.UserTestSectionService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -41,6 +41,8 @@ import us.mn.state.health.lims.login.daoimpl.UserTestSectionDAOImpl;
  * @author Darren L. Spurgeon
  */
 public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
+	
+	protected UserTestSectionService userTestSectionService = SpringContext.getBean(UserTestSectionService.class);
 
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
@@ -57,8 +59,7 @@ public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
 		//				+ testSectionName);
 		//Get test sections by sys user id
 		//bugzilla 2160
-		UserTestSectionDAO userTestSectionDAO = new UserTestSectionDAOImpl();
-		List list = userTestSectionDAO.getAllUserTestSectionsByName(request, testSectionName);
+		List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
 		//System.out.println("TestSectionAutocompleteProvider list "
 		//		+ list.size());
 		return list;

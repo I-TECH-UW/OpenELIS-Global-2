@@ -69,7 +69,6 @@ public class PanelRenameEntryController extends BaseController {
 	}
 
 	private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
-//		PanelDAO panelDAO = new PanelDAOImpl();
 		Panel panel = panelService.getPanelById(panelId);
 
 		if (panel != null) {
@@ -84,10 +83,7 @@ public class PanelRenameEntryController extends BaseController {
 			} catch (LIMSRuntimeException e) {
 				e.printStackTrace();
 			}
-
 		}
-
-		// Refresh panel names
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
 	}
 

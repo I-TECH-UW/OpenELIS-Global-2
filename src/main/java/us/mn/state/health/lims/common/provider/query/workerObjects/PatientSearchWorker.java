@@ -23,15 +23,17 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.patientidentity.PatientIdentityService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.patient.util.PatientUtil;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
 
 abstract public class PatientSearchWorker {
+	
+	protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
 
 	abstract public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber, String nationalID,
 			String patientID, String guid, StringBuilder xml);
@@ -66,8 +68,7 @@ abstract public class PatientSearchWorker {
 	}
 
 	private List<PatientIdentity> getIdentityListForPatient(String patientId) {
-		PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-		return identityDAO.getPatientIdentitiesForPatient(patientId);
+		return patientIdentityService.getPatientIdentitiesForPatient(patientId);
 	}
 
 	protected void sortPatients( List<PatientSearchResults> foundList){

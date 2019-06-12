@@ -24,12 +24,15 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.organization.OrganizationService;
+import spring.service.patient.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import spring.service.sample.SampleService;
 import spring.service.sample.SampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -50,7 +53,9 @@ public class SampleOrderService {
 
 	private static SampleService sampleService = SpringContext.getBean(SampleService.class);
 	private static OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
-	private boolean needRequesterList = FormFields.getInstance().useField(FormFields.Field.RequesterSiteList);
+	private ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
+	
+	boolean needRequesterList = FormFields.getInstance().useField(FormFields.Field.RequesterSiteList);
 	private boolean needPaymentOptions = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.TRACK_PATIENT_PAYMENT, "true");
 	private boolean needTestLocationCode = FormFields.getInstance().useField(FormFields.Field.TEST_LOCATION_CODE);
@@ -125,21 +130,21 @@ public class SampleOrderService {
 			sampleOrder.setReceivedTime(sampleServiceImpl.getReceived24HourTimeForDisplay());
 
 			sampleOrder.setRequestDate(
-					ObservationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));
+					observationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));
 			sampleOrder.setReferringPatientNumber(
-					ObservationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId()));
+					observationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId()));
 			sampleOrder.setNextVisitDate(
-					ObservationHistoryService.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
+					observationHistoryService.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
 			sampleOrder.setPaymentOptionSelection(
-					ObservationHistoryService.getRawValueForSample(ObservationType.PAYMENT_STATUS, sample.getId()));
+					observationHistoryService.getRawValueForSample(ObservationType.PAYMENT_STATUS, sample.getId()));
 			sampleOrder.setTestLocationCode(
-					ObservationHistoryService.getRawValueForSample(ObservationType.TEST_LOCATION_CODE, sample.getId()));
-			sampleOrder.setOtherLocationCode(ObservationHistoryService
+					observationHistoryService.getRawValueForSample(ObservationType.TEST_LOCATION_CODE, sample.getId()));
+			sampleOrder.setOtherLocationCode(observationHistoryService
 					.getValueForSample(ObservationType.TEST_LOCATION_CODE_OTHER, sample.getId()));
-			sampleOrder.setBillingReferenceNumber(ObservationHistoryService
+			sampleOrder.setBillingReferenceNumber(observationHistoryService
 					.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER, sample.getId()));
 			sampleOrder.setProgram(
-					ObservationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId()));
+					observationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId()));
 
 			RequesterService requesterService = new RequesterService(sample.getId());
 			sampleOrder.setProviderFirstName(requesterService.getRequesterFirstName());
@@ -243,7 +248,7 @@ public class SampleOrderService {
 	private void createObservationHistoryArtifacts(SampleOrderItem sampleOrder, String currentUserId,
 			SampleOrderPersistenceArtifacts artifacts) {
 		List<ObservationHistory> observations = new ArrayList<>();
-		PatientService patientService = new PatientService(artifacts.getSample());
+		PatientService patientService = new PatientServiceImpl(artifacts.getSample());
 		String patientId = patientService.getPatient().getId();
 
 		createOrUpdateObservation(currentUserId, observations, patientId, ObservationType.REFERRERS_PATIENT_ID,
@@ -268,14 +273,14 @@ public class SampleOrderService {
 
 	private void createOrUpdateObservation(String currentUserId, List<ObservationHistory> observations,
 			String patientId, ObservationType observationType, String value, ValueType valueType) {
-		ObservationHistory observation = ObservationHistoryService.getObservationForSample(observationType,
+		ObservationHistory observation = observationHistoryService.getObservationForSample(observationType,
 				sampleOrder.getSampleId());
 		if (observation == null && !GenericValidator.isBlankOrNull(value)) {
 			observation = new ObservationHistory();
 			observation.setSampleId(sampleOrder.getSampleId());
 			observation.setPatientId(patientId);
 			observation.setObservationHistoryTypeId(
-					ObservationHistoryService.getObservationTypeIdForType(observationType));
+					observationHistoryService.getObservationTypeIdForType(observationType));
 			observation.setValueType(valueType.getCode());
 		}
 

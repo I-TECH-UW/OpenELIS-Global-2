@@ -7,12 +7,15 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
-import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
-import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Component
 public class AnalyzerTestMappingValidator implements Validator {
+
+	protected AnalyzerTestMappingService analyzerTestMappingService = SpringContext
+			.getBean(AnalyzerTestMappingService.class);
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -35,8 +38,7 @@ public class AnalyzerTestMappingValidator implements Validator {
 	public void preInsertValidate(AnalyzerTestMapping analyzerTestMapping, Errors errors) {
 		validate(analyzerTestMapping, errors);
 
-		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
-		List<AnalyzerTestMapping> testMappingList = mappingDAO.getAll();
+		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAll();
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerTestMapping.getAnalyzerId().equals(testMapping.getAnalyzerId())
 					&& analyzerTestMapping.getAnalyzerTestName().equals(testMapping.getAnalyzerTestName())) {
@@ -48,6 +50,7 @@ public class AnalyzerTestMappingValidator implements Validator {
 	public void preUpdateValidate(AnalyzerTestMapping analyzerTestMapping, Errors errors) {
 		validate(analyzerTestMapping, errors);
 
+//		ValidationHelper.validateIdField(analyzerTestMapping.getId(), "id", errors, true);
 		ValidationHelper.validateIdField(analyzerTestMapping.getStringId(), "id", errors, true);
 
 	}

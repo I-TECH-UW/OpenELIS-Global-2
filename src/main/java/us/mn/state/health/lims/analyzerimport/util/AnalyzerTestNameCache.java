@@ -22,19 +22,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analyzer.AnalyzerService;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
-import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
-import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class AnalyzerTestNameCache {
+
+	protected AnalyzerService analyzerService = SpringContext.getBean(AnalyzerService.class);
+	protected AnalyzerTestMappingService analyzerTestMappingService = SpringContext
+			.getBean(AnalyzerTestMappingService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+
 	public static final String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
 	public static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
 	public static final String FACSCALIBUR = "Facscalibur";
@@ -50,7 +56,8 @@ public class AnalyzerTestNameCache {
 	private static Map<String, String> requestTODBName = new HashMap<>();
 	private static boolean isMapped = false;
 
-	static {
+	@PostConstruct
+	private void initialize() {
 		requestTODBName.put("sysmex", SYSMEX_XT2000_NAME);
 		requestTODBName.put("cobas_integra", COBAS_INTEGRA400_NAME);
 		requestTODBName.put("facscalibur", FACSCALIBUR);
@@ -121,8 +128,7 @@ public class AnalyzerTestNameCache {
 	}
 
 	private void loadMaps() {
-		AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
-		List<Analyzer> analyzerList = analyzerDAO.getAll();
+		List<Analyzer> analyzerList = analyzerService.getAll();
 		analyzerNameToTestNameMap.clear();
 
 		analyzerNameToIdMap = new HashMap<>();
@@ -132,16 +138,14 @@ public class AnalyzerTestNameCache {
 			analyzerNameToTestNameMap.put(analyzer.getName(), new HashMap<String, MappedTestName>());
 		}
 
-		AnalyzerTestMappingDAO analyzerTestMappingDAO = new AnalyzerTestMappingDAOImpl();
-		List<AnalyzerTestMapping> mappingList = analyzerTestMappingDAO.getAll();
+		List<AnalyzerTestMapping> mappingList = analyzerTestMappingService.getAll();
 
-		TestDAO testDAO = new TestDAOImpl();
 		for (AnalyzerTestMapping mapping : mappingList) {
-			MappedTestName mappedTestName = createMappedTestName(testDAO, mapping);
+			MappedTestName mappedTestName = createMappedTestName(testService, mapping);
 
 			Analyzer analyzer = new Analyzer();
 			analyzer.setId(mapping.getAnalyzerId());
-			analyzer = new AnalyzerDAOImpl().getAnalyzerById(analyzer);
+			analyzer = analyzerService.get(analyzer.getId());
 
 			Map<String, MappedTestName> testMap = analyzerNameToTestNameMap.get(analyzer.getName());
 			if (testMap != null) {
@@ -151,7 +155,7 @@ public class AnalyzerTestNameCache {
 
 	}
 
-	private MappedTestName createMappedTestName(TestDAO testDAO, AnalyzerTestMapping mapping) {
+	private MappedTestName createMappedTestName(TestService testService, AnalyzerTestMapping mapping) {
 
 		MappedTestName mappedTest = new MappedTestName();
 		mappedTest.setAnalyzerTestName(mapping.getAnalyzerTestName());
@@ -160,7 +164,7 @@ public class AnalyzerTestNameCache {
 		if (mapping.getTestId() != null) {
 			Test test = new Test();
 			test.setId(mapping.getTestId());
-			testDAO.getData(test);
+			testService.getData(test);
 			mappedTest.setOpenElisTestName(TestServiceImpl.getUserLocalizedTestName(test));
 		} else {
 			mappedTest.setTestId("-1");

@@ -21,10 +21,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 
 public class DigitAccessionValidator implements IAccessionNumberValidator {
+	
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	private String incrementStartingValue = "0000001";
 	private int upperIncRange = 9999999;
@@ -113,10 +115,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 	@Override
 	public String getNextAvailableAccessionNumber(String prefix) throws IllegalStateException {
 		String nextAccessionNumber;
-
-		SampleDAO accessionNumberDAO = new SampleDAOImpl();
-
-		String curLargestAccessionNumber = accessionNumberDAO.getLargestAccessionNumber();
+		String curLargestAccessionNumber = sampleService.getLargestAccessionNumber();
 
 		if (curLargestAccessionNumber == null) {
 			nextAccessionNumber = incrementStartingValue;
@@ -141,10 +140,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 	// recordType parameter is not used in this case
 	@Override
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-
-		SampleDAO sampleDAO = new SampleDAOImpl();
-
-		return sampleDAO.getSampleByAccessionNumber(accessionNumber) != null;
+		return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
 	}
 
 	@Override

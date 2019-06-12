@@ -22,23 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.referencetables.ReferenceTablesService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 
-public class AnalysisHistoryService extends HistoryService {
-	private static String ANALYSIS_TABLE_ID;
-
-	static {
-		ReferenceTablesDAO tableDAO = new ReferenceTablesDAOImpl();
-		ANALYSIS_TABLE_ID = tableDAO.getReferenceTableByName("ANALYSIS").getId();
-	}
+public class AnalysisHistoryService extends AbstractHistoryService {
+	
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
+	private String ANALYSIS_TABLE_ID;
 
 	public AnalysisHistoryService(Analysis analysis) {
+		ANALYSIS_TABLE_ID = referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
 		setUpForAnalysis(analysis);
 	}
 
@@ -48,7 +49,7 @@ public class AnalysisHistoryService extends HistoryService {
 			History searchHistory = new History();
 			searchHistory.setReferenceId(analysis.getId());
 			searchHistory.setReferenceTable(ANALYSIS_TABLE_ID);
-			historyList = auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory);
+			historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
 			newValueMap = new HashMap<String, String>();
 			newValueMap.put(STATUS_ATTRIBUTE, StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));

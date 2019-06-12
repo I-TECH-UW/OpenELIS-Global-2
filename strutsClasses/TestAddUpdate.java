@@ -36,7 +36,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
@@ -180,13 +180,13 @@ public class TestAddUpdate extends BaseAction {
         }
     }
     private Localization createNameLocalization(TestAddParams testAddParams) {
-        return LocalizationService.createNewLocalization(testAddParams.testNameEnglish,
-                testAddParams.testNameFrench, LocalizationService.LocalizationType.TEST_NAME);
+        return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,
+                testAddParams.testNameFrench, LocalizationServiceImpl.LocalizationType.TEST_NAME);
     }
 
     private Localization createReportingNameLocalization(TestAddParams testAddParams) {
-        return  LocalizationService.createNewLocalization(testAddParams.testReportNameEnglish,
-                testAddParams.testReportNameFrench, LocalizationService.LocalizationType.REPORTING_TEST_NAME);
+        return  LocalizationServiceImpl.createNewLocalization(testAddParams.testReportNameEnglish,
+                testAddParams.testReportNameFrench, LocalizationServiceImpl.LocalizationType.REPORTING_TEST_NAME);
     }
 
     private List<TestSet> createTestSets(TestAddParams testAddParams) {

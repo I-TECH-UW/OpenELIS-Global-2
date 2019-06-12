@@ -21,12 +21,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	Analysis getAnalysisById(String analysisId);
 
-//	void deleteData(List analysiss);
-
-	void updateData(Analysis analysis);
-
-	void updateData(Analysis analysis, boolean skipAuditTrail);
-
 	List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date sqlDayOne,
 			Date sqlDayTwo);
 
@@ -166,6 +160,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	List<Result> getResults();
 
-	void updateAllData(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+	void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+
+	void update(Analysis analysis, boolean skipAuditTrail);
 
 }

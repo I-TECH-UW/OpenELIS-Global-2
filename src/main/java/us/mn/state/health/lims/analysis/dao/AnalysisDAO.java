@@ -54,7 +54,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
 	void getData(Analysis analysis) throws LIMSRuntimeException;
 
-	void updateData(Analysis analysis) throws LIMSRuntimeException;
+//	void updateData(Analysis analysis) throws LIMSRuntimeException;
 
 //	@SuppressWarnings("rawtypes")
 //	List getAnalyses(String filter) throws LIMSRuntimeException;
@@ -195,5 +195,5 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
 	Analysis getAnalysisById(String analysisId) throws LIMSRuntimeException;
 
-	void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException;
+//	void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException;
 }

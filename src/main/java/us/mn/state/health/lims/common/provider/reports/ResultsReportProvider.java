@@ -44,9 +44,18 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.util.JRLoader;
 import spring.mine.common.constants.Constants;
 import spring.mine.common.validator.BaseErrors;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
+import spring.service.provider.ProviderService;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleorganization.SampleOrganizationService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -55,20 +64,12 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportAnalyteResult;
@@ -77,20 +78,10 @@ import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportLa
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportSample;
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportSampleComparator;
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportTest;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
@@ -103,10 +94,19 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  */
 public class ResultsReportProvider extends BaseReportsProvider {
 
-	private AnalysisDAO analysisDAO;
-	private SampleDAO sampleDAO;
-	private ResultDAO resultDAO;
-	private DictionaryDAO dictionaryDAO;
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
+	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
+	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	protected SampleOrganizationService sampleOrganizationService = SpringContext
+			.getBean(SampleOrganizationService.class);
+
 	private String dateAsText;
 	private String originalMessage;
 	private String amendedMessage;
@@ -177,8 +177,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
 		Locale locale = SystemConfiguration.getInstance().getDefaultLocale();
 		// bugzilla 2227
-		analysisDAO = new AnalysisDAOImpl();
-		sampleDAO = new SampleDAOImpl();
 		Date today = Calendar.getInstance().getTime();
 		dateAsText = DateUtil.formatDateAsText(today);
 
@@ -215,10 +213,10 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			List unfilteredListOfCurrentAnalyses = new ArrayList();
 			// bugzilla 1900
 			if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-				unfilteredListOfCurrentAnalyses = analysisDAO
+				unfilteredListOfCurrentAnalyses = analysisService
 						.getMaxRevisionAnalysesReadyForReportPreviewBySample(accessionNumbers);
 			} else {
-				unfilteredListOfCurrentAnalyses = analysisDAO.getMaxRevisionAnalysesReadyToBeReported();
+				unfilteredListOfCurrentAnalyses = analysisService.getMaxRevisionAnalysesReadyToBeReported();
 			}
 
 			List analysesPrinted = new ArrayList();
@@ -257,7 +255,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				String id = reportTest.getAnalysisId();
 				Analysis analysis = new Analysis();
 				analysis.setId(id);
-				analysisDAO.getData(analysis);
+				analysisService.getData(analysis);
 
 				String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
 				if (samples.containsKey(accessionNumber)) {
@@ -280,16 +278,8 @@ public class ResultsReportProvider extends BaseReportsProvider {
 					SourceOfSample sourceOfSample = new SourceOfSample();
 					String sourceOther = null;
 
-					PatientDAO patientDAO = new PatientDAOImpl();
-					PersonDAO personDAO = new PersonDAOImpl();
-					ProviderDAO providerDAO = new ProviderDAOImpl();
-					SampleDAO sampleDAO = new SampleDAOImpl();
-					SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-					SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-					SampleOrganizationDAO sampleOrganizationDAO = new SampleOrganizationDAOImpl();
-
 					sample.setAccessionNumber(accessionNumber);
-					sampleDAO.getSampleByAccessionNumber(sample);
+					sampleService.getSampleByAccessionNumber(sample);
 					if (!StringUtil.isNullorNill(sample.getId())) {
 						reportSample = new ResultsReportSample();
 						// initialize this value to false
@@ -302,20 +292,20 @@ public class ResultsReportProvider extends BaseReportsProvider {
 						reportSample.setSample(analysis.getSampleItem().getSample());
 
 						sampleHuman.setSampleId(sample.getId());
-						sampleHumanDAO.getDataBySample(sampleHuman);
+						sampleHumanService.getDataBySample(sampleHuman);
 						sampleOrganization.setSample(sample);
-						sampleOrganizationDAO.getDataBySample(sampleOrganization);
+						sampleOrganizationService.getDataBySample(sampleOrganization);
 						sampleItem.setSample(sample);
-						sampleItemDAO.getDataBySample(sampleItem);
+						sampleItemService.getDataBySample(sampleItem);
 						patient.setId(sampleHuman.getPatientId());
-						patientDAO.getData(patient);
+						patientService.getData(patient);
 						person = patient.getPerson();
-						personDAO.getData(person);
+						personService.getData(person);
 
 						provider.setId(sampleHuman.getProviderId());
-						providerDAO.getData(provider);
+						providerService.getData(provider);
 						providerPerson = provider.getPerson();
-						personDAO.getData(providerPerson);
+						personService.getData(providerPerson);
 
 						sourceOfSample = sampleItem.getSourceOfSample();
 						typeOfSample = sampleItem.getTypeOfSample();
@@ -473,17 +463,17 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				List pendingAnalyses = null;
 				// bugzilla 1900
 				if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-					pendingAnalyses = analysisDAO
+					pendingAnalyses = analysisService
 							.getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(samp.getSample());
 				} else {
-					pendingAnalyses = analysisDAO
+					pendingAnalyses = analysisService
 							.getMaxRevisionPendingAnalysesReadyToBeReportedBySample(samp.getSample());
 				}
 
 				List pendingReportTests = populatePendingTests(pendingAnalyses);
 
 				// bugzilla 2027
-				List previouslyReportedTests = analysisDAO.getAnalysesAlreadyReportedBySample(samp.getSample());
+				List previouslyReportedTests = analysisService.getAnalysesAlreadyReportedBySample(samp.getSample());
 				previouslyReportedTests = populateTests(previouslyReportedTests, PREVIOUS_SECTION);
 
 				// sort the pending tests
@@ -556,7 +546,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				Analysis analysis = (Analysis) analysesPrinted.get(i);
 				analysis.setSysUserId(sysUserId);
 				analysis.setPrintedDateForDisplay(dateAsText);
-				analysisDAO.updateData(analysis);
+				analysisService.update(analysis);
 			}
 			tx.commit();
 		} catch (Exception e) {
@@ -597,8 +587,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
 	// this is for current and previous tests
 	private List populateTests(List listOfTests, int section) {
-		resultDAO = new ResultDAOImpl();
-		dictionaryDAO = new DictionaryDAOImpl();
 		Dictionary dictionary = new Dictionary();
 		// filter list of analyses to report (depending on whether amended/original
 		// report
@@ -608,7 +596,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			String id = (String) listOfTests.get(i);
 			Analysis analysis = new Analysis();
 			analysis.setId(id);
-			analysisDAO.getData(analysis);
+			analysisService.getData(analysis);
 
 			ResultsReportTest reportTest = new ResultsReportTest();
 			reportTest.setAnalysis(analysis);
@@ -647,7 +635,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			String id = (String) pendingAnalyses.get(i);
 			Analysis pendingAnalysis = new Analysis();
 			pendingAnalysis.setId(id);
-			analysisDAO.getData(pendingAnalysis);
+			analysisService.getData(pendingAnalysis);
 			ResultsReportTest reportTest = new ResultsReportTest();
 			reportTest.setAnalyteResults(null);
 			reportTest.setAnalysis(pendingAnalysis);
@@ -686,7 +674,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				if (!currentTest.getAnalysis().getRevision().equals("0")
 						&& currentTest.getAnalysis().getPrintedDate() == null) {
 					// get original test also
-					Analysis previousAnalysis = analysisDAO
+					Analysis previousAnalysis = analysisService
 							.getPreviousAnalysisForAmendedAnalysis(currentTest.getAnalysis());
 					ResultsReportTest reportTest = new ResultsReportTest();
 					reportTest.setAnalysis(previousAnalysis);
@@ -711,12 +699,12 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			String id = reportTest.getAnalysisId();
 			Analysis analysis = new Analysis();
 			analysis.setId(id);
-			analysisDAO.getData(analysis);
+			analysisService.getData(analysis);
 
 			String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
 
 			// get reportable results for test, and corresponding analyte information
-			List results = resultDAO.getReportableResultsByAnalysis(analysis);
+			List results = resultService.getReportableResultsByAnalysis(analysis);
 
 			// double-check that there is at least one reportable result
 			if (results == null || results.size() == 0) {
@@ -735,7 +723,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				if (result.getResultType().equals(SystemConfiguration.getInstance().getDictionaryType())) {
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(result.getValue());
-					dictionaryDAO.getData(dictionary);
+					dictionaryService.getData(dictionary);
 					resultValue = dictionary.getDictEntry();
 				} else {
 					resultValue = result.getValue();

@@ -31,15 +31,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.sampleitem.SampleItemService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.sample.form.ProjectData;
 import us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
 import us.mn.state.health.lims.sample.util.CI.IProjectFormMapper;
 import us.mn.state.health.lims.sample.util.CI.ProjectFormMapperFactory;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -51,6 +50,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @since Aug 16, 2010
  */
 public class SampleItemTestProvider extends BaseQueryProvider {
+	
+	protected static AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
 
 	/**
 	 * @see us.mn.state.health.lims.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
@@ -143,8 +145,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
 		for (Test test : tests) {
 			testIds.add(Integer.valueOf(test.getId()));
 		}
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		return analysisDAO.getAnalysisBySampleAndTestIds(sampleKey, testIds);
+		return analysisService.getAnalysisBySampleAndTestIds(sampleKey, testIds);
 
 	}
 
@@ -152,8 +153,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
 		String sampleItemDesc = changeUIIdToDescription(sampleItemType);
 		IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName, null);
 		TypeOfSample typeOfSample = projectFormMapper.getTypeOfSample(sampleItemDesc);
-		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleId(sampleId);
+		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
 		for (SampleItem sampleItem : sampleItems) {
 			if (sampleItem.getTypeOfSampleId().equals(typeOfSample.getId())) {
 				return true;

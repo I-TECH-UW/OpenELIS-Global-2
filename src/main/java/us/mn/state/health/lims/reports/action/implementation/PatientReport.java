@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -112,7 +114,8 @@ public abstract class PatientReport extends Report {
 	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected NoteService noteService = SpringContext.getBean(NoteService.class);
 	protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
-	protected static AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+
 	private List<String> handledOrders;
 	private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -141,7 +144,8 @@ public abstract class PatientReport extends Report {
 	protected Map<String, Boolean> sampleCompleteMap;
 	protected Map<String, Boolean> sampleCorrectedMap;
 
-	static {
+	@PostConstruct
+	private void initialize() {
 		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart part : partList) {
 			if ("department".equals(part.getPartName())) {
@@ -241,9 +245,8 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (!updatedAnalysis.isEmpty()) {
-
 			try {
-				analysisService.updateAllData(updatedAnalysis, true);
+				analysisService.updateAll(updatedAnalysis, true);
 //				for (Analysis analysis : updatedAnalysis) {
 //					analysisService.updateData(analysis, true);
 //				}

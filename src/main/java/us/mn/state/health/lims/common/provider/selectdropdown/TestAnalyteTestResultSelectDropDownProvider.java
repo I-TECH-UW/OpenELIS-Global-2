@@ -24,16 +24,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.dictionary.DictionaryService;
+import spring.service.testanalyte.TestAnalyteService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.testanalyte.dao.TestAnalyteDAO;
-import us.mn.state.health.lims.testanalyte.daoimpl.TestAnalyteDAOImpl;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 import us.mn.state.health.lims.testresult.valueholder.TestResultComparator;
 
@@ -52,9 +50,12 @@ import us.mn.state.health.lims.testresult.valueholder.TestResultComparator;
  * 
  * @author Darren L. Spurgeon
  */
-public class TestAnalyteTestResultSelectDropDownProvider extends
-		BaseSelectDropDownProvider {
-
+public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropDownProvider {
+	
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
+	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+	
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
@@ -69,15 +70,12 @@ public class TestAnalyteTestResultSelectDropDownProvider extends
 
 		List listOfTestResults = new ArrayList();
 
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
 		TestAnalyte testAnalyte = new TestAnalyte();
-		TestAnalyteDAO testAnalyteDAO = new TestAnalyteDAOImpl();
-		DictionaryDAO dictDAO = new DictionaryDAOImpl();
 
 		if (!StringUtil.isNullorNill(testAnalyteId)) {
 			testAnalyte.setId(testAnalyteId);
-			testAnalyteDAO.getData(testAnalyte);
-			listOfTestResults = testResultDAO
+			testAnalyteService.getData(testAnalyte);
+			listOfTestResults = testResultService
 					.getTestResultsByTestAndResultGroup(testAnalyte);
 		}
 
@@ -98,7 +96,7 @@ public class TestAnalyteTestResultSelectDropDownProvider extends
 				// get from dictionary
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(tr.getValue());
-				dictDAO.getData(dictionary);
+				dictionaryService.getData(dictionary);
 				// System.out.println("setting dictEntry "
 				// + dictionary.getDictEntry());
 				//bugzilla 1847: use dictEntryDisplayValue

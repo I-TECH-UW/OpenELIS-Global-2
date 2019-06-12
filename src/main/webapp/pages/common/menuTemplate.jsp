@@ -2,7 +2,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.services.LocalizationService,
+			spring.service.localization.LocalizationServiceImpl,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
@@ -170,7 +170,7 @@ function setMenuAction(button, form, action, validate, parameters) {
 			<spring:message code="${title}" text="${title}" />
 		</c:when>
 		<c:otherwise> 
-			<%=LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
+			<%=LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
 		</c:otherwise>
 	</c:choose>
 	</title>

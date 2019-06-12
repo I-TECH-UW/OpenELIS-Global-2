@@ -32,10 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -46,11 +48,7 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 /**
@@ -60,6 +58,8 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @Transactional
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements AnalysisDAO {
 
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	@Autowired
 	AuditTrailDAO auditDAO;
 
@@ -141,47 +141,45 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //		return true;
 //	}
 
-	@Override
-	public void updateData(Analysis analysis) {
-		updateData(analysis, false);
-	}
-
-	@Override
-	public void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException {
-		Analysis oldData = readAnalysis(analysis.getId());
-
-		if (!skipAuditTrail) {
-			try {
-
-				String sysUserId = analysis.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-				String tableName = "ANALYSIS";
-				auditDAO.saveHistory(analysis, oldData, sysUserId, event, tableName);
-			} catch (Exception e) {
-				LogEvent.logError("AnalysisDAOImpl", "AuditTrail updateData()", e.toString());
-				throw new LIMSRuntimeException("Error in Analysis AuditTrail updateData()", e);
-			}
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(analysis);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(analysis);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(analysis);
-		} catch (Exception e) {
-			LogEvent.logError("AnalysisDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Analysis updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Analysis analysis) {
+//		updateData(analysis, false);
+//	}
+//
+//	@Override
+//	public void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException {
+//		Analysis oldData = readAnalysis(analysis.getId());
+//
+//		if (!skipAuditTrail) {
+//			try {
+//
+//				String sysUserId = analysis.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//				String tableName = "ANALYSIS";
+//				auditDAO.saveHistory(analysis, oldData, sysUserId, event, tableName);
+//			} catch (Exception e) {
+//				LogEvent.logError("AnalysisDAOImpl", "AuditTrail updateData()", e.toString());
+//				throw new LIMSRuntimeException("Error in Analysis AuditTrail updateData()", e);
+//			}
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(analysis);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(analysis);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(analysis);
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalysisDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analysis updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
 			Analysis analysisClone = sessionFactory.getCurrentSession().get(Analysis.class, analysis.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (analysisClone != null) {
 				PropertyUtils.copyProperties(analysis, analysisClone);
 			} else {
@@ -243,8 +241,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 		Analysis analysis = null;
 		try {
 			analysis = sessionFactory.getCurrentSession().get(Analysis.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "readAnalysis()", e.toString());
@@ -312,8 +308,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //
 //		return list;
 //	}
-
 	@SuppressWarnings("unchecked")
+
 	@Override
 	public List<Analysis> getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList)
 			throws LIMSRuntimeException {
@@ -477,7 +473,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 			query.setParameterList("excludedStatusIds", statusIds);
 
 			List<Analysis> analysisList = query.list();
-			// closeSession(); // CSL remove old
 			return analysisList;
 
 		} catch (HibernateException e) {
@@ -1444,16 +1439,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 		Analysis previousAnalysis = null;
 		List<Integer> sampIDList = new ArrayList<>();
 		List<Integer> testIDList = new ArrayList<>();
-		TestDAO testDAO = new TestDAOImpl();
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
+//		TestDAO testDAO = new TestDAOImpl();
+//		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 
-		List<Sample> sampList = sampleHumanDAO.getSamplesForPatient(patient.getId());
+		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
 
-		if (sampList.isEmpty() || testDAO.getTestByName(testName) == null) {
+		if (sampList.isEmpty() || testService.getTestByName(testName) == null) {
 			return previousAnalysis;
 		}
 
-		testIDList.add(Integer.parseInt(testDAO.getTestByName(testName).getId()));
+		testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
 
 		for (Sample sample : sampList) {
 			sampIDList.add(Integer.parseInt(sample.getId()));
@@ -1462,9 +1457,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 		List<Integer> statusList = new ArrayList<>();
 		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
 
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
-				statusList);
+//		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
 
 		if (analysisList == null || analysisList.isEmpty()) {
 			return previousAnalysis;

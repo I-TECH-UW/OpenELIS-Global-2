@@ -29,7 +29,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -52,7 +52,7 @@ public class TestSectionCreateAction extends BaseAction {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
         for( TestSection testSection : testSections){
-            builder.append(LocalizationService.getLocalizationValueByLocal(locale, testSection.getLocalization()));
+            builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, testSection.getLocalization()));
             builder.append(NAME_SEPARATOR);
         }
 

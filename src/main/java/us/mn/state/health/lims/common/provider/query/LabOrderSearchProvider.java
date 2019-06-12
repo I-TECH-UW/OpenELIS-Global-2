@@ -38,32 +38,38 @@ import ca.uhn.hl7v2.model.v251.segment.OBX;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.parser.Parser;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.dataexchange.order.ElectronicOrderService;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleTestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 public class LabOrderSearchProvider extends BaseQueryProvider{
-	private TestDAO testDAO = new TestDAOImpl();
-	private PanelDAO panelDAO = new PanelDAOImpl();
-	private PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
-	private TypeOfSampleTestDAO typeOfSampleTest = new TypeOfSampleTestDAOImpl();
+//	private TestDAO testDAO = new TestDAOImpl();
+//	private PanelDAO panelDAO = new PanelDAOImpl();
+//	private PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
+//	private TypeOfSampleTestDAO typeOfSampleTest = new TypeOfSampleTestDAOImpl();
+	
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected PanelService panelService = SpringContext.getBean(PanelService.class);
+	protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
+	protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
+	protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+	
+	
 	private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
 	private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
 	private Map<String, List<TestSampleType>> testNameTestSampleTypeMap;
@@ -183,8 +189,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	
 	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx){
 		String loinc = orc.getOrderType().getIdentifier().toString();
-		String testName = testDAO.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(testDAO.getActiveTestsByLoinc(loinc).get(0).getId())));
+		String testName = testService.getActiveTestsByLoinc(loinc).get(0).getName();
+		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
 	private void createMaps(List<Request> testRequests, List<Request> panelNames){
@@ -205,7 +211,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 
 	private void createMapsForTests(List<Request> testRequests){
 		for(Request testRequest : testRequests){
-			List<Test> tests = testDAO.getActiveTestsByLoinc(testRequest.getLoinc());
+			List<Test> tests = testService.getActiveTestsByLoinc(testRequest.getLoinc());
 						
 			Test singleTest = tests.get(0);
 			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(singleTest.getId());
@@ -252,7 +258,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 
 	private void createMapsForPanels(List<Request> panelRequests){
 		for(Request panelRequest : panelRequests){
-			Panel panel = panelDAO.getPanelByName(panelRequest.getName());
+			Panel panel = panelService.getPanelByName(panelRequest.getName());
 
 			if(panel != null){
 				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForPanelId(panel.getId());
@@ -322,13 +328,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	}
 
 	private List<Test> getTestsForPanelAndType(String panelId, String sampleTypeId){
-		List<TypeOfSampleTest> sampleTestList = typeOfSampleTest.getTypeOfSampleTestsForSampleType(sampleTypeId);
+		List<TypeOfSampleTest> sampleTestList = typeOfSampleTestService.getTypeOfSampleTestsForSampleType(sampleTypeId);
 		List<Integer> testList = new ArrayList<Integer>();
 		for(TypeOfSampleTest  typeTest : sampleTestList){
 			testList.add(Integer.parseInt(typeTest.getTestId()));
 		}
 		
-		List<PanelItem> panelList = panelItemDAO.getPanelItemsForPanelAndItemList(panelId, testList);
+		List<PanelItem> panelList = panelItemService.getPanelItemsForPanelAndItemList(panelId, testList);
 		List<Test> tests = new ArrayList<Test>();
 		for(PanelItem item : panelList){
 			tests.add(item.getTest());

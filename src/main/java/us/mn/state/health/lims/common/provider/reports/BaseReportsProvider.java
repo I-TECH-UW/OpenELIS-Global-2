@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.servlet.reports.ReportsServlet;
@@ -40,6 +40,8 @@ import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportTe
  * bugzila 2265 implements IActionConstants
  */
 public abstract class BaseReportsProvider implements IActionConstants {
+	
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
 	protected ReportsServlet reportsServlet = null;
 
@@ -217,7 +219,6 @@ public abstract class BaseReportsProvider implements IActionConstants {
 	//bugzila 1856 recursively add in phantom tests to build the actual original hierarchy
 	//this is so that tests that are part of parent/child relationships can be taken into account for sorting
 	private void recursiveHierarchyBuild(ResultsReportTest element, List tests, List newTests){
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 		if (element != null && element.getAnalysis().getParentAnalysis() != null) {
 			//find out if parent is already in the original list
 			boolean alreadyInList = false;
@@ -231,7 +232,7 @@ public abstract class BaseReportsProvider implements IActionConstants {
 				//add phantom test to list
 				Analysis analysis = new Analysis();
 				analysis.setId(element.getAnalysis().getParentAnalysis().getId());
-				analysisDAO.getData(analysis);
+				analysisService.getData(analysis);
 				ResultsReportTest test = new ResultsReportTest();
 				test.setAnalysis(analysis);
 				test.setPhantom(true);

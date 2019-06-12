@@ -412,7 +412,7 @@ public abstract class Accessioner {
 		analysisService.deleteAll(analysisToDelete);
 		sampleItemService.deleteAll(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
-			analysisService.updateData(analysis);
+			analysisService.update(analysis);
 		}
 	}
 

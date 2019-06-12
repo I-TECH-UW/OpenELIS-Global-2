@@ -25,13 +25,15 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.services.historyservices.AnalysisHistoryService;
-import us.mn.state.health.lims.common.services.historyservices.HistoryService;
+import us.mn.state.health.lims.common.services.historyservices.AbstractHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.NoteHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.OrderHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.PatientHistoryHistoryService;
@@ -44,17 +46,16 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementBridge;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public class AuditTrailViewWorker {
+	
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private ResultDAO resultDAO = new ResultDAOImpl();
 	private String accessionNumber = null;
 	private Sample sample;
 
@@ -130,7 +131,7 @@ public class AuditTrailViewWorker {
 
     private void getSample(){
         if( sample == null ){
-            sample = new SampleDAOImpl().getSampleByAccessionNumber(accessionNumber);
+            sample = sampleService.getSampleByAccessionNumber(accessionNumber);
         }
     }
 
@@ -139,7 +140,7 @@ public class AuditTrailViewWorker {
 		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
 		
 		if (sample != null) {
-			HistoryService historyService = new ReportHistoryService(sample);
+			AbstractHistoryService historyService = new ReportHistoryService(sample);
 			items.addAll(historyService.getAuditTrailItems());
 
 			//sortItemsByTime(items);
@@ -155,7 +156,7 @@ public class AuditTrailViewWorker {
 	private Collection<AuditTrailItem> addSamples() {
 		List<AuditTrailItem> sampleItems = new ArrayList<AuditTrailItem>();
 		if (sample != null) {
-			HistoryService historyService = new SampleHistoryService(sample);
+			AbstractHistoryService historyService = new SampleHistoryService(sample);
 			sampleItems.addAll(historyService.getAuditTrailItems());
 
 			//sortItems(sampleItems);
@@ -172,7 +173,7 @@ public class AuditTrailViewWorker {
 	private Collection<AuditTrailItem> addOrders() {
 		List<AuditTrailItem> orderItems = new ArrayList<AuditTrailItem>();
 		if (sample != null) {
-			HistoryService historyService = new OrderHistoryService(sample);
+			AbstractHistoryService historyService = new OrderHistoryService(sample);
 			orderItems.addAll(historyService.getAuditTrailItems());
 
 			//sortItems(orderItems);
@@ -195,11 +196,11 @@ public class AuditTrailViewWorker {
 	private List<AuditTrailItem> addTestsAndResults() {
 		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
 
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
 		for (Analysis analysis : analysisList) {
-			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
-			HistoryService historyService = new AnalysisHistoryService(analysis);
+			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+			AbstractHistoryService historyService = new AnalysisHistoryService(analysis);
 			List<AuditTrailItem> resultItems = historyService.getAuditTrailItems();
 			items.addAll(resultItems);
 			
@@ -221,7 +222,7 @@ public class AuditTrailViewWorker {
 
 	private Collection<AuditTrailItem> addPatientHistory() {	
 		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
-		HistoryService historyService;
+		AbstractHistoryService historyService;
 		Patient patient = PatientUtil.getPatientForSample(sample);
 		if( patient != null) {
 			historyService = new PatientHistoryService(patient);
@@ -247,7 +248,7 @@ public class AuditTrailViewWorker {
 	private Collection<AuditTrailItem> addNotes() {
 		List<AuditTrailItem> notes = new ArrayList<AuditTrailItem>();
 		if (sample != null) {
-			HistoryService historyService = new NoteHistoryService(sample);
+			AbstractHistoryService historyService = new NoteHistoryService(sample);
 			notes.addAll(historyService.getAuditTrailItems());
 
 			//sortItems(notes);

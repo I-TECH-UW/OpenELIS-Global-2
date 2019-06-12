@@ -121,9 +121,6 @@ public class PanelCreateController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-//		RoleDAO roleDAO = new RoleDAOImpl();
-//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
 		String identifyingName = form.getString("panelEnglishName");
 		String sampleTypeId = form.getString("sampleTypeId");
 		String systemUserId = getSysUserId(request);

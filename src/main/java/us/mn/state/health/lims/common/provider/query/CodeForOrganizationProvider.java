@@ -23,12 +23,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.organization.OrganizationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 public class CodeForOrganizationProvider extends BaseQueryProvider {
+	
+	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
 	/**
 	 * @throws LIMSInvalidConfigurationException
@@ -41,7 +44,7 @@ public class CodeForOrganizationProvider extends BaseQueryProvider {
 		StringBuilder xml = new StringBuilder();
 		String result = VALID;
 
-		Organization organization = new OrganizationDAOImpl().getOrganizationById(request.getParameter("organizationId"));
+		Organization organization = organizationService.getOrganizationById(request.getParameter("organizationId"));
 		String code = organization != null ? organization.getCode() : "";
 		createXml( code, xml);
 		

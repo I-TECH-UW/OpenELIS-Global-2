@@ -120,9 +120,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 		PanelItem pi;
 		try {
 			pi = get(idString);
-//			pi = HibernateUtil.getSession().get(PanelItem.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);

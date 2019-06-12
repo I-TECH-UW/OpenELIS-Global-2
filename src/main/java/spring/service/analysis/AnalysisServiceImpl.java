@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -45,16 +46,10 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Scope("prototype")
 public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String> implements AnalysisService {
 
-	@Autowired
 	protected AnalysisDAO baseObjectDAO = SpringContext.getBean(AnalysisDAO.class);
-
-	@Autowired
 	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	@Autowired
 	private ResultService resultService = SpringContext.getBean(ResultService.class);
-	@Autowired
 	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
-	@Autowired
 	private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
 
 	private Analysis analysis;
@@ -394,15 +389,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	}
 
 	@Override
-	public void updateData(Analysis analysis) {
-		getBaseObjectDAO().updateData(analysis);
-
-	}
-
-	@Override
-	public void updateData(Analysis analysis, boolean skipAuditTrail) {
-		getBaseObjectDAO().updateData(analysis, skipAuditTrail);
-
+	public void update(Analysis analysis, boolean skipAuditTrail) {
+		Analysis oldObject = getBaseObjectDAO().get(analysis.getId())
+				.orElseThrow(() -> new ObjectNotFoundException(analysis.getId(), "Analysis"));
+		if (auditTrailLog && !skipAuditTrail) {
+			auditTrailDAO.saveHistory(analysis, oldObject, analysis.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					getBaseObjectDAO().getTableName());
+		}
+		getBaseObjectDAO().save(analysis);
 	}
 
 	@Override
@@ -579,9 +573,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional
-	public void updateAllData(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
+	public void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
 		for (Analysis analysis : updatedAnalysis) {
-			updateData(analysis, skipAuditTrail);
+			update(analysis, skipAuditTrail);
 		}
 	}
 }

@@ -26,19 +26,20 @@ import org.apache.commons.validator.GenericValidator;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.search.SearchResultsService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 public class PatientSearchLocalWorker extends PatientSearchWorker {
-	private PatientDAO patientDAO = new PatientDAOImpl();
-
+	
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
+	
 	@Override
 	public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
 			String nationalID, String patientID, String guid, StringBuilder xml) {
@@ -54,10 +55,9 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 			return IActionConstants.INVALID;
 		}
 
-		SearchResultsDAO search = new SearchResultsDAOImp();
 		// N.B. results do not have the referrinngPatientId information but it is not
 		// displayed so for now it will be left as null
-		List<PatientSearchResults> results = search.getSearchResults(lastName, firstName, STNumber, subjectNumber,
+		List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber,
 				nationalID, nationalID, patientID, guid);
 		if (!GenericValidator.isBlankOrNull(nationalID)) {
 			List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
@@ -86,7 +86,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
 		if (observationList != null) {
 			for (ObservationHistory observation : observationList) {
-				Patient patient = patientDAO.getData(observation.getPatientId());
+				Patient patient = patientService.getData(observation.getPatientId());
 				if (patient != null) {
 					resultList.add(getSearchResultsForPatient(patient, referringId));
 				}

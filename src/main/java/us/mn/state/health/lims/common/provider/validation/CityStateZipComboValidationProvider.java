@@ -21,19 +21,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
+import spring.service.citystatezip.CityStateZipService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-
 
 /**
  * @author benzd1
  * bugzilla 1765 validates combinations of city/state/zip
  */
 public class CityStateZipComboValidationProvider extends BaseValidationProvider {
+	
+	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
 	public CityStateZipComboValidationProvider() {
 		super();
@@ -72,12 +73,11 @@ public class CityStateZipComboValidationProvider extends BaseValidationProvider 
 		StringBuffer s = new StringBuffer();
 
 		    //bugzilla 1545
-			CityStateZipDAO cityStateZipDAO = new CityStateZipDAOImpl();
 			CityStateZip cityStateZip = new CityStateZip();
 			cityStateZip.setCity(city.trim());
 			cityStateZip.setZipCode(zipCode);
 			cityStateZip.setState(state);
-			if (cityStateZipDAO.isCityStateZipComboValid(cityStateZip)) {
+			if (cityStateZipService.isCityStateZipComboValid(cityStateZip)) {
 				s.append(VALID);
 			} else {
 				s.append(INVALID);

@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -46,26 +45,15 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	private static Long PERSON_REQUESTER_TYPE_ID;
 	private static Long ORGANIZATION_REQUESTER_TYPE_ID;
 
-	@Autowired
 	protected SampleDAO sampleDAO = SpringContext.getBean(SampleDAO.class);
-	@Autowired
 	private static final AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-	@Autowired
 	private static final SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	@Autowired
 	private static final SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
-	@Autowired
-	private static final SampleRequesterService sampleRequesterService = SpringContext
-			.getBean(SampleRequesterService.class);
-	@Autowired
+	private static final SampleRequesterService sampleRequesterService = SpringContext.getBean(SampleRequesterService.class);
 	private static final PersonService personService = SpringContext.getBean(PersonService.class);
-	@Autowired
 	private static ReferenceTablesService refTableService = SpringContext.getBean(ReferenceTablesService.class);
-	@Autowired
 	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
-	@Autowired
 	private static OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-	@Autowired
 	private static TestService testService = SpringContext.getBean(TestService.class);
 
 	private Sample sample;

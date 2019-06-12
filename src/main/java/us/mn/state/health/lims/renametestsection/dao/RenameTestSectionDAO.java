@@ -53,4 +53,6 @@ public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String>
 
 	// bugzilla 1411
 	public Integer getTotalTestSectionCount() throws LIMSRuntimeException;
+
+	public RenameTestSection getTestSectionById(String id);
 }

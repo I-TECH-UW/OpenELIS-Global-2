@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -19,25 +19,29 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.hibernate.Transaction;
 
+import spring.service.dictionary.DictionaryService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 
-	
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
 	private int ORDER_NUMBER = 0;
 	private int ORDER_DATE = 0;
@@ -50,31 +54,31 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 	private static final String VALID_PREFIXES = "LART,LDBS,LRTN,LIND,LSPE";
 	private static String NEGATIVE_ID;
 	private static String POSITIVE_ID;
-	
+
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 	private String error;
 
-	static{
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Test test = new TestDAOImpl().getActiveTestByName("DNA PCR").get(0);
-		List<TestResult> testResults = new TestResultDAOImpl().getActiveTestResultsByTest( test.getId() );
-		
-		for(TestResult testResult : testResults){
-			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
-			if( "Positive".equals(dictionary.getDictEntry())){
+	@PostConstruct
+	private void initialize() {
+		Test test = testService.getActiveTestByName("DNA PCR").get(0);
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
+
+		for (TestResult testResult : testResults) {
+			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
+			if ("Positive".equals(dictionary.getDictEntry())) {
 				POSITIVE_ID = dictionary.getId();
-			}else if( "Negative".equals(dictionary.getDictEntry())){
+			} else if ("Negative".equals(dictionary.getDictEntry())) {
 				NEGATIVE_ID = dictionary.getId();
 			}
 		}
-		
 	}
-	
+
+	@Override
 	public boolean insert(List<String> lines, String currentUserId) {
 		error = null;
 		boolean successful = true;
 
-		List<AnalyzerResults> results = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> results = new ArrayList<>();
 
 		boolean columnsFound = manageColumns(lines.get(0));
 
@@ -83,10 +87,12 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 			return false;
 		}
 
-		MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS, TEST_NAME);
+		MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
+				TEST_NAME);
 
 		if (mappedName == null) {
-			mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS, TEST_NAME);
+			mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
+					TEST_NAME);
 		}
 
 		for (int i = 1; i < lines.size(); ++i) {
@@ -107,7 +113,6 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 				HibernateUtil.closeSession();
 			}
 		}
-
 		return successful;
 	}
 
@@ -123,11 +128,10 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 				ORDER_DATE = i;
 			} else if ("Result".equals(header)) {
 				RESULT = i;
-			}else if ("Sample Type".equals(header)) {
+			} else if ("Sample Type".equals(header)) {
 				SAMPLE_TYPE = i;
 			}
 		}
-
 		return ORDER_DATE != 0 && ORDER_NUMBER != 0 && RESULT != 0 && SAMPLE_TYPE != 0;
 	}
 
@@ -138,35 +142,36 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 		if (resultFromDB != null) {
 			resultList.add(resultFromDB);
 		}
-
 	}
 
-	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList, MappedTestName mappedName) {
+	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList,
+			MappedTestName mappedName) {
 		String[] fields = line.split(DELIMITER);
 
 		AnalyzerResults analyzerResults = new AnalyzerResults();
 
 		String result = getAppropriateResults(fields[RESULT]);
 		String accessionNumber = fields[ORDER_NUMBER].replace("\"", "").trim();
-		
+
 		analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
-		analyzerResults.setResult( result );
-		analyzerResults.setCompleteDate(DateUtil.convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
+		analyzerResults.setResult(result);
+		analyzerResults.setCompleteDate(DateUtil
+				.convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
 		analyzerResults.setTestId(mappedName.getTestId());
-		analyzerResults.setIsControl(!VALID_PREFIXES.contains(accessionNumber.subSequence(0,3)));
+		analyzerResults.setIsControl(!VALID_PREFIXES.contains(accessionNumber.subSequence(0, 3)));
 		analyzerResults.setTestName(mappedName.getOpenElisTestName());
 		analyzerResults.setResultType("D");
 
-		if( analyzerResults.getIsControl()){
-			if( !"S".equals(fields[SAMPLE_TYPE].replace("\"", "").trim())){
+		if (analyzerResults.getIsControl()) {
+			if (!"S".equals(fields[SAMPLE_TYPE].replace("\"", "").trim())) {
 				accessionNumber += ":" + fields[SAMPLE_TYPE].replace("\"", "").trim();
-			}			
-		}else{
+			}
+		} else {
 			accessionNumber = accessionNumber.substring(0, 9);
 		}
-		
+
 		analyzerResults.setAccessionNumber(accessionNumber);
-		
+
 		addValueToResults(resultList, analyzerResults);
 	}
 
@@ -184,10 +189,8 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 //				result = UNDER_THREASHOLD;
 //			}
 		}
-
 		return result;
 	}
-
 
 	@Override
 	public String getError() {

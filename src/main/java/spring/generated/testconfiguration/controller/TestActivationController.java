@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,6 +28,7 @@ import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestActivationService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
@@ -155,7 +155,7 @@ public class TestActivationController extends BaseController {
 
 		try {
 			testActivationService.updateAll(deactivateTests, activateTests, deactivateSampleTypes, activateSampleTypes);
-		} catch (HibernateException lre) {
+		} catch (LIMSRuntimeException lre) {
 			lre.printStackTrace();
 		}
 

@@ -34,7 +34,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
@@ -280,7 +280,7 @@ public class TestModifyAction extends BaseAction {
 
         List<Panel> panelList = testService.getPanels();
         for(Panel panel : panelList){
-            builder.append(LocalizationService.getLocalizedValueById(panel.getLocalization().getId()));
+            builder.append(LocalizationServiceImpl.getLocalizedValueById(panel.getLocalization().getId()));
             builder.append(", ");
         }
 

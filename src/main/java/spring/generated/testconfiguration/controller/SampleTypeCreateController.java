@@ -87,10 +87,6 @@ public class SampleTypeCreateController extends BaseController {
 			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-//		RoleDAO roleDAO = new RoleDAOImpl();
-//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
-
 		String identifyingName = form.getString("sampleTypeEnglishName");
 		String userId = getSysUserId(request);
 
@@ -115,7 +111,6 @@ public class SampleTypeCreateController extends BaseController {
 		} catch (LIMSRuntimeException lre) {
 			lre.printStackTrace();
 		}
-
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 

@@ -84,22 +84,6 @@ public class OrganizationController extends BaseController {
 	private OrganizationAddress villageAddress;
 	private boolean updateVillage = false;
 
-//	static {
-//		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-//		List<AddressPart> partList = addressPartDAO.getAll();
-//
-//		for (AddressPart addressPart : partList) {
-//			if ("department".equals(addressPart.getPartName())) {
-//				DEPARTMENT_ID = addressPart.getId();
-//			} else if ("commune".equals(addressPart.getPartName())) {
-//				COMMUNE_ID = addressPart.getId();
-//			} else if ("village".equals(addressPart.getPartName())) {
-//				VILLAGE_ID = addressPart.getId();
-//			}
-//		}
-//
-//	}
-
 	private static boolean useParentOrganization = FormFields.getInstance().useField(Field.OrganizationParent);
 	private static boolean useOrganizationState = FormFields.getInstance().useField(Field.OrgState);
 	private static boolean useOrganizationTypeList = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
@@ -223,13 +207,8 @@ public class OrganizationController extends BaseController {
 
 			if (organization.getId() != null && orgTypeList != null) {
 				if (orgTypeList.size() > 0) {
-
-					// OrganizationOrganizationTypeDAO ootDAO = new
-					// OrganizationOrganizationTypeDAOImpl();
 					List<String> selectedOrgTypeList = organizationService
 							.getTypeIdsForOrganizationId(organization.getId());
-//					List<String> selectedOrgTypeList = ootDAO.getTypeIdsForOrganizationId(organization.getId());
-
 					for (String orgTypeId : selectedOrgTypeList) {
 						selectedList.add(orgTypeId);
 					}
@@ -464,14 +443,11 @@ public class OrganizationController extends BaseController {
 	}
 
 	private void linkOrgWithOrgType(Organization organization) {
-//		OrganizationOrganizationTypeDAO ootDAO = new OrganizationOrganizationTypeDAOImpl();
-
 		organizationService.deleteAllLinksForOrganization(organization.getId());
 
 		for (String typeId : selectedOrgTypes) {
 			organizationService.linkOrganizationAndType(organization, typeId);
 		}
-
 	}
 
 	private List getPossibleStates(BaseForm form) {

@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
+import spring.service.organization.OrganizationService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -44,6 +44,8 @@ import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
  */
 public class OrganizationAutocompleteProvider extends BaseAutocompleteProvider {
 
+	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
@@ -55,11 +57,10 @@ public class OrganizationAutocompleteProvider extends BaseAutocompleteProvider {
 
 		String orgName = request.getParameter("organizationName");
 		String orgTypeName = request.getParameter("orgType");
-		OrganizationDAO orgDAO = new OrganizationDAOImpl();
 		if( GenericValidator.isBlankOrNull(orgTypeName)){
-			list = orgDAO.getOrganizations(orgName);
+			list = organizationService.getOrganizations(orgName);
 		}else{
-			list = orgDAO.getOrganizationsByTypeNameAndLeadingChars(orgName, orgTypeName);
+			list = organizationService.getOrganizationsByTypeNameAndLeadingChars(orgName, orgTypeName);
 		}
 
 		return list;

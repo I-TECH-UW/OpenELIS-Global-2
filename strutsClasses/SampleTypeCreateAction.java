@@ -29,7 +29,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -52,7 +52,7 @@ public class SampleTypeCreateAction extends BaseAction {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
         for( TypeOfSample typeOfSample : typeOfSamples){
-            builder.append(LocalizationService.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
+            builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
             builder.append(NAME_SEPARATOR);
         }
 

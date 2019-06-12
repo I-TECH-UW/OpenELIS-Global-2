@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
+import spring.service.dictionary.DictionaryService;
+import spring.util.SpringContext;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -42,6 +42,8 @@ import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
  * bugzilla 2062 modifications
  */
 public class DictionaryAutocompleteProvider extends BaseAutocompleteProvider {
+	
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
 	/**
 	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
@@ -55,8 +57,8 @@ public class DictionaryAutocompleteProvider extends BaseAutocompleteProvider {
 		String dictionaryCategory = request.getParameter("dictionaryCategory");
 		
 		
-		DictionaryDAO dictDAO = new DictionaryDAOImpl();
-		List list = dictDAO.getDictionaryEntrysByCategoryAbbreviation(dictionaryEntry, dictionaryCategory);
+//		DictionaryDAO dictDAO = new DictionaryDAOImpl();
+		List list = dictionaryService.getDictionaryEntrysByCategoryAbbreviation(dictionaryEntry, dictionaryCategory);
 		
 		
 		return list;

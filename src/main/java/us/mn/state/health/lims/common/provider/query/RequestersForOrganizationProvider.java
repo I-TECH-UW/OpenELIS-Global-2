@@ -24,17 +24,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.service.organization.OrganizationContactService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationContactDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 public class RequestersForOrganizationProvider extends BaseQueryProvider {
+	
+	protected OrganizationContactService organizationContactService = SpringContext.getBean(OrganizationContactService.class);
 
-
-	private static OrganizationContactDAO orgContactDAO = new OrganizationContactDAOImpl();
 	protected AjaxServlet ajaxServlet = null;
 
 	@Override
@@ -51,7 +51,7 @@ public class RequestersForOrganizationProvider extends BaseQueryProvider {
 	}
 
 	private void createXMLOfRequesters(String orgId, StringBuilder xml) {
-		List<OrganizationContact> orgContactList = orgContactDAO.getListForOrganizationId(orgId);
+		List<OrganizationContact> orgContactList = organizationContactService.getListForOrganizationId(orgId);
 		xml.append("<requesters>");
 		for( OrganizationContact orgContact : orgContactList){
 			createXMLOfRequester( orgContact.getPerson(), xml);

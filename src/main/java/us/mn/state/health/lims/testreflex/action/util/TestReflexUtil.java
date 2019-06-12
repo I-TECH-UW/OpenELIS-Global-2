@@ -456,7 +456,7 @@ public class TestReflexUtil {
 				currentAnalysis.setTriggeredReflex(Boolean.TRUE);
 
 				analysisService.insert(newAnalysis);
-				analysisService.updateData(currentAnalysis);
+				analysisService.update(currentAnalysis);
 			}
 		}
 	}
@@ -490,7 +490,7 @@ public class TestReflexUtil {
 		for (Analysis analysis : parentAnalysisList) {
 			analysis.setSysUserId(currentUserId);
 			analysis.setTriggeredReflex(Boolean.TRUE);
-			analysisService.updateData(analysis);
+			analysisService.update(analysis);
 		}
 
 	}

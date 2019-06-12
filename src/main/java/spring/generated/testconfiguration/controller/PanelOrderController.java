@@ -68,9 +68,6 @@ public class PanelOrderController extends BaseController {
 				.createTypeOfSamplePanelMap(true);
 		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(false);
-//		List<Panel> panels = new PanelDAOImpl().getAllPanels();
-//		gnr: local var panels is never used
-//		List<Panel> panels = panelService.getAllPanels();
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
@@ -119,7 +116,6 @@ public class PanelOrderController extends BaseController {
 		List<Panel> panels = new ArrayList<>();
 
 		String currentUserId = getSysUserId(request);
-//		PanelDAO panelDAO = new PanelDAOImpl();
 		for (ActivateSet sets : orderSet) {
 			Panel panel = panelService.getPanelById(sets.id);
 			panel.setSortOrderInt(sets.sortOrder);

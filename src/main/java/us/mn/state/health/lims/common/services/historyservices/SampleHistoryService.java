@@ -22,32 +22,32 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.history.HistoryService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.service.sampleitem.SampleItemService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 
-public class SampleHistoryService extends HistoryService {
-	private static String SAMPLE_ITEM_TABLE_ID;
-	private static SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-		
-	static {
-		ReferenceTablesDAO tableDAO = new ReferenceTablesDAOImpl();
-		SAMPLE_ITEM_TABLE_ID = tableDAO.getReferenceTableByName("SAMPLE_ITEM").getId();
-	}
+public class SampleHistoryService extends AbstractHistoryService {
 	
+	protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
+	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+	
+	private static String SAMPLE_ITEM_TABLE_ID;
+		
 	public SampleHistoryService(Sample sample) {
+		SAMPLE_ITEM_TABLE_ID = referenceTablesService.getReferenceTableByName("SAMPLE_ITEM").getId();
 		setUpForSample( sample );
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setUpForSample(Sample sample) {
-		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleId(sample.getId()); 
+		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId()); 
 		
 		History searchHistory = new History();
 		searchHistory.setReferenceTable(SAMPLE_ITEM_TABLE_ID);
@@ -55,7 +55,7 @@ public class SampleHistoryService extends HistoryService {
 		
 		for( SampleItem item : sampleItems){
 			searchHistory.setReferenceId(item.getId());
-			historyList.addAll(auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory));
+			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
 		}
 		
 		newValueMap = new HashMap<String, String>();
@@ -63,13 +63,13 @@ public class SampleHistoryService extends HistoryService {
 
 	@Override
 	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		identifier = sampleItemDAO.getData(history.getReferenceId()).getTypeOfSample().getDescription();
+		identifier = sampleItemService.getData(history.getReferenceId()).getTypeOfSample().getDescription();
 		items.add(getCoreTrail(history));
 	}
 
 	@Override
 	protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
-		SampleItem item = sampleItemDAO.getData(history.getReferenceId());
+		SampleItem item = sampleItemService.getData(history.getReferenceId());
 		String statusId = item.getStatusId();
 		if( statusId != null){
 			identifier = item.getTypeOfSample().getDescription();

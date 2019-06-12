@@ -32,35 +32,35 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.testreflex.TestReflexService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
-import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
-import us.mn.state.health.lims.testreflex.daoimpl.TestReflexDAOImpl;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class TestReflexUserChoiceProvider extends BaseQueryProvider {
 
     private static final String ID_SEPERATOR = ",";
 	protected AjaxServlet ajaxServlet = null;
-    private static final AnalysisDAO ANALYSIS_DAO = new AnalysisDAOImpl();
-    private static final TestReflexDAO TEST_REFLEX_DAO = new TestReflexDAOImpl();
-    private static final TestResultDAO TEST_RESULT_DAO = new TestResultDAOImpl();
-    private static final ResultDAO RESULT_DAO = new ResultDAOImpl();
+	
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected TestReflexService testReflexService = SpringContext.getBean(TestReflexService.class);
+	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
     @Override
 	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -149,10 +149,10 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
             // which is currently satisfied
             // get their common sample
 
-            Sample sample = getSampleForKnownTest(analysisIds, accessionNumber, ANALYSIS_DAO );
-            Dictionary dictionaryResult = new DictionaryDAOImpl().getDictionaryById( resultIds );
+            Sample sample = getSampleForKnownTest(analysisIds, accessionNumber, analysisService );
+            Dictionary dictionaryResult = dictionaryService.getDictionaryById( resultIds );
 
-            List<Analysis> analysisList = ANALYSIS_DAO.getAnalysesBySampleId( sample.getId() );
+            List<Analysis> analysisList = analysisService.getAnalysesBySampleId( sample.getId() );
 
             List<TestReflex> candidateReflexList = reflexUtil.getTestReflexsForDictioanryResultTestId(resultIds, testIds, true);
 
@@ -167,18 +167,18 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                         TestReflex sibTestReflex = new TestReflex();
                         sibTestReflex.setId(candidateReflex.getSiblingReflexId() );
 
-                        TEST_REFLEX_DAO.getData( sibTestReflex );
+                        testReflexService.getData( sibTestReflex );
 
                         TestResult sibTestResult = new TestResult();
                         sibTestResult.setId(sibTestReflex.getTestResultId());
-                        TEST_RESULT_DAO.getData( sibTestResult );
+                        testResultService.getData( sibTestResult );
 
                         for (Analysis analysis : analysisList) {
-                            List<Result> resultList = RESULT_DAO.getResultsByAnalysis( analysis );
+                            List<Result> resultList = resultService.getResultsByAnalysis( analysis );
                             Test test = analysis.getTest();
 
                             for (Result result : resultList) {
-                                TestResult testResult = TEST_RESULT_DAO.getTestResultsByTestAndDictonaryResult( test.getId(),
+                                TestResult testResult = testResultService.getTestResultsByTestAndDictonaryResult( test.getId(),
                                         result.getValue() );
                                 if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
                                     selectableReflexes.add(candidateReflex);
@@ -229,14 +229,14 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
         jsonResult.put( "triggerIds", triggers.deleteCharAt( triggers.length() -1 ).toString() );
     }
 
-    private Sample getSampleForKnownTest(String analysisIds, String accessionNumber, AnalysisDAO analysisDAO) {
+    private Sample getSampleForKnownTest(String analysisIds, String accessionNumber, AnalysisService analysisService) {
 		//We use the analysisId for logbook results and accessionNumber for analysis results, we should accessionNumber for both.
 		if( GenericValidator.isBlankOrNull(analysisIds)){
-			return new SampleDAOImpl().getSampleByAccessionNumber(accessionNumber);
+			return sampleService.getSampleByAccessionNumber(accessionNumber);
 		}else{
 			Analysis knownAnalysis = new Analysis();
 			knownAnalysis.setId(analysisIds);
-			analysisDAO.getData(knownAnalysis);
+			analysisService.getData(knownAnalysis);
 
 			return knownAnalysis.getSampleItem().getSample();
 		}
