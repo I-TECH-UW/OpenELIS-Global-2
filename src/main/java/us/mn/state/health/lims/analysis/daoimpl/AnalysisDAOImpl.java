@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import spring.service.analysis.AnalysisService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestService;
 import spring.util.SpringContext;
@@ -61,7 +60,6 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @Transactional
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements AnalysisDAO {
 
-	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected TestService testService = SpringContext.getBean(TestService.class);
 	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	@Autowired
@@ -1527,7 +1525,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
 
 //		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
+		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
 				statusList);
 
 		if (analysisList == null || analysisList.isEmpty()) {

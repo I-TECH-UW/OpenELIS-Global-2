@@ -77,7 +77,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	protected ResultLimitDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
-
+	
 	@Override
 	public ResultLimit getResultLimitForTestAndPatient(Test test, Patient patient) {
 		return getResultLimitForTestAndPatient(test.getId(), patient);
@@ -399,6 +399,8 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getAllResultLimitsForTest(testId);
 	}
+	
+	
 
 	@Override
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {

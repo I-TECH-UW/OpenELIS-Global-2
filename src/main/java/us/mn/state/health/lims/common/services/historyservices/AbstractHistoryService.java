@@ -30,11 +30,11 @@ import org.apache.commons.validator.GenericValidator;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.dictionary.DictionaryService;
 import spring.service.systemuser.SystemUserService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.result.valueholder.Result;
@@ -189,7 +189,7 @@ public abstract class AbstractHistoryService {
 	}
 
 	protected String getViewableValue(String value, Result result) {
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
 			Dictionary dictionaryValue = dictionaryService.getDictionaryById(value);
 			value = dictionaryValue != null ? dictionaryValue.getDictEntry()

@@ -22,16 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.history.HistoryService;
 import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
+import spring.service.sample.SampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.services.CommonAnalysisService;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
@@ -62,9 +62,9 @@ public class NoteHistoryService extends AbstractHistoryService {
     private void addAnalysisNotes( Sample sample ){
         History searchHistory = new History();
         searchHistory.setReferenceTable( NoteServiceImpl.TABLE_REFERENCE_ID);
-        List<Analysis> analysisList = new SampleService( sample).getAnalysis();
+        List<Analysis> analysisList = new SampleServiceImpl( sample).getAnalysis();
         Note searchNote = new Note();
-        searchNote.setReferenceTableId( CommonAnalysisService.TABLE_REFERENCE_ID );
+        searchNote.setReferenceTableId( AnalysisServiceImpl.TABLE_REFERENCE_ID );
         for( Analysis analysis : analysisList){
             searchNote.setReferenceId(analysis.getId());
 
@@ -83,7 +83,7 @@ public class NoteHistoryService extends AbstractHistoryService {
         searchHistory.setReferenceTable( NoteServiceImpl.TABLE_REFERENCE_ID);
 
         Note searchNote = new Note();
-        searchNote.setReferenceTableId( SampleService.TABLE_REFERENCE_ID );
+        searchNote.setReferenceTableId( SampleServiceImpl.TABLE_REFERENCE_ID );
         searchNote.setReferenceId( sample.getId() );
 
         List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
@@ -102,7 +102,7 @@ public class NoteHistoryService extends AbstractHistoryService {
         Note searchNote = new Note();
         searchNote.setReferenceTableId( QAService.TABLE_REFERENCE_ID );
 
-        List<SampleQaEvent> qaEventList =  new SampleService( sample ).getSampleQAEventList();
+        List<SampleQaEvent> qaEventList =  new SampleServiceImpl( sample ).getSampleQAEventList();
 
         for( SampleQaEvent qaEvent : qaEventList){
             searchNote.setReferenceId(qaEvent.getId());

@@ -45,7 +45,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 	protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
-	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
+	protected static ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
 	private static final String INCREMENT_STARTING_VALUE  = "00001";
 	private static final int UPPER_INC_RANGE = 99999;
@@ -291,7 +291,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
         return SAMPLE_STATUS_FAIL;  // the sample was entered on a different form!
     }
 
-    public String findStudyFormName(String accessionNumber) {
+    public static String findStudyFormName(String accessionNumber) {
         StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
         Patient p = new Patient();
         p.setId(statusSet.getPatientId());

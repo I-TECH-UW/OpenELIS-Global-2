@@ -51,7 +51,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  */
 public class SampleItemTestProvider extends BaseQueryProvider {
 	
-	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected static AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
 
 	/**
@@ -131,7 +131,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
 	 */
 	// TODO PAHill - refactor - needs to be moved to some type of a utility
 	// class.
-	public List<Analysis> findAnalysis(String sampleKey, String projectFormName, ProjectData projectData) {
+	public static List<Analysis> findAnalysis(String sampleKey, String projectFormName, ProjectData projectData) {
 		IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName, null);
 		projectFormMapper.setProjectData(projectData);
 		List<TypeOfSampleTests> typeOfSampleTestsList = projectFormMapper.getTypeOfSampleTests();

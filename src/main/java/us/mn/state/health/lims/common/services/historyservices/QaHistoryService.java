@@ -7,12 +7,12 @@ import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.history.HistoryService;
+import spring.service.sample.SampleServiceImpl;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
@@ -27,7 +27,7 @@ public class QaHistoryService extends AbstractHistoryService {
 
 	@SuppressWarnings("unchecked")
 	private void setUpForSample(Sample sample) {
-		List<SampleQaEvent> qaEventList =  new SampleService( sample ).getSampleQAEventList();
+		List<SampleQaEvent> qaEventList =  new SampleServiceImpl( sample ).getSampleQAEventList();
 		
 		History searchHistory = new History();
 		searchHistory.setReferenceTable( QAService.TABLE_REFERENCE_ID);
