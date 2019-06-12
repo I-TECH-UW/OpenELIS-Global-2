@@ -20,16 +20,12 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
@@ -43,114 +39,113 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  */
 @Component
 @Transactional
-public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, String> implements SampleOrganizationDAO {
-
-	@Autowired
-	AuditTrailDAO auditDAO;
+public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, String>
+		implements SampleOrganizationDAO {
 
 	public SampleOrganizationDAOImpl() {
 		super(SampleOrganization.class);
 	}
 
-	@Override
-	public void deleteData(List sampleOrgss) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List sampleOrgss) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < sampleOrgss.size(); i++) {
+//				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
+//
+//				SampleOrganization oldData = readSampleOrganization(data.getId());
+//				SampleOrganization newData = new SampleOrganization();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SAMPLE_ORGANIZATION";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < sampleOrgss.size(); i++) {
+//				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
+//				// bugzilla 2206
+//				data = readSampleOrganization(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleOrganizationDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < sampleOrgss.size(); i++) {
-				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
+//	@Override
+//	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(sampleOrg);
+//			sampleOrg.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = sampleOrg.getSysUserId();
+//			String tableName = "SAMPLE_ORGANIZATION";
+//			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleOrganizationDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleOrganization insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				SampleOrganization oldData = readSampleOrganization(data.getId());
-				SampleOrganization newData = new SampleOrganization();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SAMPLE_ORGANIZATION";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < sampleOrgss.size(); i++) {
-				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
-				// bugzilla 2206
-				data = readSampleOrganization(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(sampleOrg);
-			sampleOrg.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = sampleOrg.getSysUserId();
-			String tableName = "SAMPLE_ORGANIZATION";
-			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
-
-		SampleOrganization oldData = readSampleOrganization(sampleOrg.getId());
-		SampleOrganization newData = sampleOrg;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = sampleOrg.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SAMPLE_ORGANIZATION";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(sampleOrg);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleOrg);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleOrg);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
+//
+//		SampleOrganization oldData = readSampleOrganization(sampleOrg.getId());
+//		SampleOrganization newData = sampleOrg;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = sampleOrg.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SAMPLE_ORGANIZATION";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(sampleOrg);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleOrg);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleOrg);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleOrganization updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 		try {
-			SampleOrganization data = sessionFactory.getCurrentSession().get(SampleOrganization.class, sampleOrg.getId());
+			SampleOrganization data = sessionFactory.getCurrentSession().get(SampleOrganization.class,
+					sampleOrg.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (data != null) {

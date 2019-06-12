@@ -24,13 +24,13 @@ import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 public interface ResultSignatureDAO extends BaseDAO<ResultSignature, String> {
 
-	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException;
+//	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException;
 
-	public void deleteData(List<ResultSignature> results) throws LIMSRuntimeException;
+//	public void deleteData(List<ResultSignature> results) throws LIMSRuntimeException;
 
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException;
 
-	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException;
+//	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException;
 
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException;
 

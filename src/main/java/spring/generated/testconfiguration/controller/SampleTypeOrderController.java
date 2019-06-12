@@ -35,7 +35,7 @@ public class SampleTypeOrderController extends BaseController {
 	SampleTypeOrderFormValidator formValidator;
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
-	
+
 	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeOrder(HttpServletRequest request) {
 		SampleTypeOrderForm form = new SampleTypeOrderForm();
@@ -84,19 +84,11 @@ public class SampleTypeOrderController extends BaseController {
 			typeOfSamples.add(typeOfSample);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			for (TypeOfSample typeOfSample : typeOfSamples) {
-				typeOfSampleService.update(typeOfSample);
-			}
-//			tx.commit();
+			typeOfSampleService.updateAll(typeOfSamples);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//			finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

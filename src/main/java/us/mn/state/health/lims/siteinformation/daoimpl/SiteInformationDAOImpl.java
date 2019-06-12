@@ -25,101 +25,95 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Component
-@Transactional 
+@Transactional
 public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String> implements SiteInformationDAO {
 
 	public SiteInformationDAOImpl() {
 		super(SiteInformation.class);
 	}
 
-	@Override
-	public void deleteData(String siteInformationId, String currentUserId) throws LIMSRuntimeException {
+//	@Override
+//	public void deleteData(String siteInformationId, String currentUserId) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			SiteInformation oldData = readSiteInformation(siteInformationId);
+//			SiteInformation newData = new SiteInformation();
+//
+//			auditDAO.saveHistory(newData, oldData, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+//					"SITE_INFORMATION");
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			SiteInformation siteInformation = readSiteInformation(siteInformationId);
+//			sessionFactory.getCurrentSession().delete(siteInformation);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("SiteInformationsDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SiteInformation deleteData()", e);
+//		}
+//	}
 
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+//	@Override
+//	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(siteInformation);
+//			siteInformation.setId(id);
+//
+//			auditDAO.saveNewHistory(siteInformation, siteInformation.getSysUserId(), "SITE_INFORMATION");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("SiteInformationDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SiteInformation insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			SiteInformation oldData = readSiteInformation(siteInformationId);
-			SiteInformation newData = new SiteInformation();
-
-			auditDAO.saveHistory(newData, oldData, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-					"SITE_INFORMATION");
-
-		} catch (Exception e) {
-			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail deleteData()", e);
-		}
-
-		try {
-			SiteInformation siteInformation = readSiteInformation(siteInformationId);
-			sessionFactory.getCurrentSession().delete(siteInformation);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("SiteInformationsDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SiteInformation deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(siteInformation);
-			siteInformation.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(siteInformation, siteInformation.getSysUserId(), "SITE_INFORMATION");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("SiteInformationDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SiteInformation insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException {
-
-		SiteInformation oldData = readSiteInformation(siteInformation.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-
-			auditDAO.saveHistory(siteInformation, oldData, siteInformation.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, "SITE_INFORMATION");
-		} catch (Exception e) {
-			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(siteInformation);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(siteInformation);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(siteInformation);
-		} catch (Exception e) {
-			LogEvent.logError("SiteInformationsDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SiteInformation updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException {
+//
+//		SiteInformation oldData = readSiteInformation(siteInformation.getId());
+//
+//		try {
+//
+//			auditDAO.saveHistory(siteInformation, oldData, siteInformation.getSysUserId(),
+//					IActionConstants.AUDIT_TRAIL_UPDATE, "SITE_INFORMATION");
+//		} catch (Exception e) {
+//			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(siteInformation);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(siteInformation);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(siteInformation);
+//		} catch (Exception e) {
+//			LogEvent.logError("SiteInformationsDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SiteInformation updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SiteInformation siteInformation) throws LIMSRuntimeException {

@@ -26,9 +26,9 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
  */
 public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
-	public boolean insertData(SystemModule systemModule) throws LIMSRuntimeException;
+//	public boolean insertData(SystemModule systemModule) throws LIMSRuntimeException;
 
-	public void deleteData(List systemModule) throws LIMSRuntimeException;
+//	public void deleteData(List systemModule) throws LIMSRuntimeException;
 
 	public List getAllSystemModules() throws LIMSRuntimeException;
 
@@ -36,7 +36,7 @@ public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
 	public void getData(SystemModule systemModule) throws LIMSRuntimeException;
 
-	public void updateData(SystemModule systemModule) throws LIMSRuntimeException;
+//	public void updateData(SystemModule systemModule) throws LIMSRuntimeException;
 
 	public List getNextSystemModuleRecord(String id) throws LIMSRuntimeException;
 

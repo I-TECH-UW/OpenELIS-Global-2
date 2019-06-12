@@ -25,15 +25,15 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public interface SiteInformationDAO extends BaseDAO<SiteInformation, String> {
 
-	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException;
+//	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
-	public void deleteData(String siteInformationId, String currentUserId) throws LIMSRuntimeException;
+//	public void deleteData(String siteInformationId, String currentUserId) throws LIMSRuntimeException;
 
 	public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException;
 
 	public void getData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
-	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException;
+//	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
 	public List<SiteInformation> getNextSiteInformationRecord(String id) throws LIMSRuntimeException;
 

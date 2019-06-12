@@ -33,9 +33,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  */
 public interface SampleItemDAO extends BaseDAO<SampleItem, String> {
 
-	public boolean insertData(SampleItem sampleItem) throws LIMSRuntimeException;
+//	public boolean insertData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-	public void deleteData(List<SampleItem> sampleItems) throws LIMSRuntimeException;
+//	public void deleteData(List<SampleItem> sampleItems) throws LIMSRuntimeException;
 
 	public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException;
 
@@ -43,7 +43,7 @@ public interface SampleItemDAO extends BaseDAO<SampleItem, String> {
 
 	public void getData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-	public void updateData(SampleItem sampleItem) throws LIMSRuntimeException;
+//	public void updateData(SampleItem sampleItem) throws LIMSRuntimeException;
 
 	public List<SampleItem> getNextSampleItemRecord(String id) throws LIMSRuntimeException;
 

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -27,6 +26,7 @@ import spring.generated.testconfiguration.form.PanelOrderForm;
 import spring.generated.testconfiguration.validator.PanelOrderFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.panel.PanelService;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -43,7 +43,6 @@ public class PanelOrderController extends BaseController {
 	PanelService panelService;
 	@Autowired
 	PanelTestConfigurationUtil panelTestConfigurationUtil;
-
 
 	@RequestMapping(value = "/PanelOrder", method = RequestMethod.GET)
 	public ModelAndView showPanelOrder(HttpServletRequest request) {
@@ -72,7 +71,8 @@ public class PanelOrderController extends BaseController {
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
-		for (IdValuePair typeOfSample : DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
+		for (IdValuePair typeOfSample : DisplayListService.getInstance()
+				.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
 			SampleTypePanel sampleTypePanel = new SampleTypePanel(typeOfSample.getValue());
 			sampleTypePanel.setPanels(existingSampleTypePanelMap.get(typeOfSample.getValue()));
 			if (sampleTypePanel.getPanels() != null && sampleTypePanel.getPanels().size() > 0) {
@@ -124,12 +124,10 @@ public class PanelOrderController extends BaseController {
 		}
 
 		try {
-			for (Panel panel : panels) {
-				panelService.update(panel);
-			}
-		} catch (HibernateException e) {
+			panelService.updateAll(panels);
+		} catch (LIMSRuntimeException e) {
 			e.printStackTrace();
-		} 
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);

@@ -11,7 +11,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
+import us.mn.state.health.lims.audittrail.dao.AuditTrailService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -22,7 +22,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 		implements BaseObjectService<T, PK> {
 
 	@Autowired
-	protected AuditTrailDAO auditTrailDAO;
+	protected AuditTrailService auditTrailDAO;
 
 	private final Class<T> classType;
 
@@ -181,7 +181,6 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public PK insert(T baseObject) {
-
 		PK id = getBaseObjectDAO().insert(baseObject);
 		baseObject.setId(id);
 		if (auditTrailLog) {
@@ -233,11 +232,15 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public T update(T baseObject) {
+		return update(baseObject, IActionConstants.AUDIT_TRAIL_UPDATE);
+	}
+
+	protected T update(T baseObject, String auditTrailType) {
 		T oldObject = getBaseObjectDAO().get(baseObject.getId())
 				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
+					getBaseObjectDAO().getTableName());
 		}
 		return getBaseObjectDAO().save(baseObject);
 
@@ -251,6 +254,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			resultObjects.add(update(baseObject));
 		}
 		return resultObjects;
+	}
+
+	// used for "deleting" an object but operation is actually an update
+	protected void updateDelete(T baseObject) {
+		update(baseObject, IActionConstants.AUDIT_TRAIL_DELETE);
 	}
 
 	@Override
@@ -274,7 +282,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 					getBaseObjectDAO().getTableName());
 		}
-		getBaseObjectDAO().delete(oldObject);
+		delete(oldObject);
 	}
 
 	@Override

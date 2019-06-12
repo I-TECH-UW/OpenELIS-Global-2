@@ -7,9 +7,6 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 
 public interface ReferralService extends BaseObjectService<Referral, String> {
-	void updateData(Referral referral);
-
-	boolean insertData(Referral referral);
 
 	Referral getReferralById(String referralId);
 

@@ -17,22 +17,17 @@ package us.mn.state.health.lims.inventory.daoimpl;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 
 @Component
-@Transactional 
+@Transactional
 public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> implements InventoryItemDAO {
 
 	public InventoryItemDAOImpl() {
@@ -57,103 +52,102 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 		return inventoryItems;
 	}
 
-	@Override
-	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (InventoryItem data : inventoryItems) {
+//	@Override
+//	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
+//		try {
+//
+//			for (InventoryItem data : inventoryItems) {
+//
+//				InventoryItem oldData = readInventoryItem(data.getId());
+//				InventoryItem newData = new InventoryItem();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "INVENTORY_ITEM";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//
+//			for (InventoryItem data : inventoryItems) {
+//
+//				data = readInventoryItem(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem deleteData()", e);
+//		}
+//	}
 
-				InventoryItem oldData = readInventoryItem(data.getId());
-				InventoryItem newData = new InventoryItem();
+//	@Override
+//	public boolean insertData(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
+//			inventoryItem.setId(id);
+//
+//			String sysUserId = inventoryItem.getSysUserId();
+//			String tableName = "INVENTORY_ITEM";
+//			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "INVENTORY_ITEM";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
+//	@Override
+//	public void updateData(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		InventoryItem oldData = readInventoryItem(inventoryItem.getId());
+//		InventoryItem newData = inventoryItem;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = inventoryItem.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "INVENTORY_ITEM";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//
+//			sessionFactory.getCurrentSession().merge(inventoryItem);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryItem);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryItem);
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem updateData()", e);
+//		}
+//	}
 
-			for (InventoryItem data : inventoryItems) {
-
-				data = readInventoryItem(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
-			inventoryItem.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = inventoryItem.getSysUserId();
-			String tableName = "INVENTORY_ITEM";
-			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		InventoryItem oldData = readInventoryItem(inventoryItem.getId());
-		InventoryItem newData = inventoryItem;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = inventoryItem.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "INVENTORY_ITEM";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-
-			sessionFactory.getCurrentSession().merge(inventoryItem);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryItem);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryItem);
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem updateData()", e);
-		}
-	}
-
-	@Override
-	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		try {
-			InventoryItem tmpInventoryItem = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class,
-					inventoryItem.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (tmpInventoryItem != null) {
-				PropertyUtils.copyProperties(inventoryItem, tmpInventoryItem);
-			} else {
-				inventoryItem.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem getData()", e);
-		}
-	}
+//	@Override
+//	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			InventoryItem tmpInventoryItem = sessionFactory.getCurrentSession().get(InventoryItem.class,
+//					inventoryItem.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (tmpInventoryItem != null) {
+//				PropertyUtils.copyProperties(inventoryItem, tmpInventoryItem);
+//			} else {
+//				inventoryItem.setId(null);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem getData()", e);
+//		}
+//	}
 
 	@Override
 	public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
 		InventoryItem data = null;
 		try {
-			data = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class, idString);
+			data = sessionFactory.getCurrentSession().get(InventoryItem.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -164,18 +158,17 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 		return data;
 	}
 
-	@Override
-	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		try {
-			InventoryItem re = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class,
-					inventoryItem.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return re;
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "getInventoryItemById()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem getInventoryItemById()", e);
-		}
-	}
+//	@Override
+//	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			InventoryItem re = sessionFactory.getCurrentSession().get(InventoryItem.class, inventoryItem.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return re;
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "getInventoryItemById()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem getInventoryItemById()", e);
+//		}
+//	}
 
 }

@@ -24,15 +24,15 @@ import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
 public interface ResultInventoryDAO extends BaseDAO<ResultInventory, String> {
 
-	public boolean insertData(ResultInventory resultInventory) throws LIMSRuntimeException;
+//	public boolean insertData(ResultInventory resultInventory) throws LIMSRuntimeException;
 
-	public void deleteData(List results) throws LIMSRuntimeException;
+//	public void deleteData(List results) throws LIMSRuntimeException;
 
 	public List getAllResultInventoryss() throws LIMSRuntimeException;
 
 	public void getData(ResultInventory resultInventory) throws LIMSRuntimeException;
 
-	public void updateData(ResultInventory resultInventory) throws LIMSRuntimeException;
+//	public void updateData(ResultInventory resultInventory) throws LIMSRuntimeException;
 
 	public ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException;
 

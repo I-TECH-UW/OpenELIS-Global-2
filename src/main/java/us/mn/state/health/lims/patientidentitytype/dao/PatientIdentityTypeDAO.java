@@ -25,9 +25,11 @@ import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityTy
 
 public interface PatientIdentityTypeDAO extends BaseDAO<PatientIdentityType, String> {
 
-	public void insertData(PatientIdentityType patientIdenityType) throws LIMSRuntimeException;
+//	public void insertData(PatientIdentityType patientIdenityType) throws LIMSRuntimeException;
 
 	public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException;
 
 	public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException;
+
+	boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) throws LIMSRuntimeException;
 }

@@ -8,12 +8,6 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 public interface TestSectionService extends BaseObjectService<TestSection, String> {
 	void getData(TestSection testSection);
 
-	void deleteData(List testSections);
-
-	void updateData(TestSection testSection);
-
-	boolean insertData(TestSection testSection);
-
 	List getTestSections(String filter);
 
 	TestSection getTestSectionByName(String testSection);

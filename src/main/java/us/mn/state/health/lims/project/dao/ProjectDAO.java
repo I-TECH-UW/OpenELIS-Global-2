@@ -31,9 +31,9 @@ import us.mn.state.health.lims.project.valueholder.Project;
  */
 public interface ProjectDAO extends BaseDAO<Project, String> {
 
-	public boolean insertData(Project project) throws LIMSRuntimeException;
+//	public boolean insertData(Project project) throws LIMSRuntimeException;
 
-	public void deleteData(List projects) throws LIMSRuntimeException;
+//	public void deleteData(List projects) throws LIMSRuntimeException;
 
 	public List<Project> getAllProjects() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface ProjectDAO extends BaseDAO<Project, String> {
 
 	public void getData(Project project) throws LIMSRuntimeException;
 
-	public void updateData(Project project) throws LIMSRuntimeException;
+//	public void updateData(Project project) throws LIMSRuntimeException;
 
 	public List getNextProjectRecord(String id) throws LIMSRuntimeException;
 
@@ -61,4 +61,6 @@ public interface ProjectDAO extends BaseDAO<Project, String> {
 	public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) throws LIMSRuntimeException;
 
 	public Project getProjectById(String id) throws LIMSRuntimeException;
+
+	boolean duplicateProjectExists(Project project) throws LIMSRuntimeException;
 }

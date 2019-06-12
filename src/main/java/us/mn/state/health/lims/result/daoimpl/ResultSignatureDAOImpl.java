@@ -26,114 +26,110 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 @Component
-@Transactional 
+@Transactional
 public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String> implements ResultSignatureDAO {
 
 	public ResultSignatureDAOImpl() {
 		super(ResultSignature.class);
 	}
 
-	@Override
-	public void deleteData(List<ResultSignature> resultSignatures) throws LIMSRuntimeException {
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (ResultSignature resultSig : resultSignatures) {
+//	@Override
+//	public void deleteData(List<ResultSignature> resultSignatures) throws LIMSRuntimeException {
+//		try {
+//
+//			for (ResultSignature resultSig : resultSignatures) {
+//
+//				ResultSignature oldData = readResultSignature(resultSig.getId());
+//
+//				String sysUserId = resultSig.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "RESULT_SIGNATURE";
+//				auditDAO.saveHistory(resultSig, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < resultSignatures.size(); i++) {
+//				ResultSignature data = resultSignatures.get(i);
+//
+//				data = readResultSignature(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultSignatureDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultSignature deleteData()", e);
+//		}
+//	}
 
-				ResultSignature oldData = readResultSignature(resultSig.getId());
+//	@Override
+//	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(resultSignature);
+//			resultSignature.setId(id);
+//
+//			String sysUserId = resultSignature.getSysUserId();
+//			String tableName = "RESULT_SIGNATURE";
+//			auditDAO.saveNewHistory(resultSignature, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultSignatureDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultSignature insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = resultSig.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "RESULT_SIGNATURE";
-				auditDAO.saveHistory(resultSig, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < resultSignatures.size(); i++) {
-				ResultSignature data = resultSignatures.get(i);
-
-				data = readResultSignature(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(resultSignature);
-			resultSignature.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = resultSignature.getSysUserId();
-			String tableName = "RESULT_SIGNATURE";
-			auditDAO.saveNewHistory(resultSignature, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException {
-		ResultSignature oldData = readResultSignature(resultSignature.getId());
-		ResultSignature newData = resultSignature;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = resultSignature.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "RESULT_SIGNATURE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(resultSignature);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(resultSignature);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(resultSignature);
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException {
+//		ResultSignature oldData = readResultSignature(resultSignature.getId());
+//		ResultSignature newData = resultSignature;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = resultSignature.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "RESULT_SIGNATURE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(resultSignature);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(resultSignature);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(resultSignature);
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultSignature updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature tmpResultSignature = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class,
+			ResultSignature tmpResultSignature = sessionFactory.getCurrentSession().get(ResultSignature.class,
 					resultSignature.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -173,7 +169,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	public ResultSignature readResultSignature(String idString) {
 		ResultSignature data = null;
 		try {
-			data = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class, idString);
+			data = sessionFactory.getCurrentSession().get(ResultSignature.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -187,8 +183,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	@Override
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature re = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class,
-					resultSignature.getId());
+			ResultSignature re = sessionFactory.getCurrentSession().get(ResultSignature.class, resultSignature.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return re;

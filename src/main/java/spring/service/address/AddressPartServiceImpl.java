@@ -2,6 +2,7 @@ package spring.service.address;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
@@ -22,7 +23,8 @@ public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart, S
 	}
 
 	@Override
+	@Transactional
 	public AddressPart getAddresPartByName(String name) {
-		return getBaseObjectDAO().getAddresPartByName(name);
+		return getMatch("partName", name).orElse(null);
 	}
 }

@@ -33,21 +33,19 @@ import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
  */
 public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
-	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException;
+//	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException;
 
-	public void deleteData(List dictionarys) throws LIMSRuntimeException;
+//	public List getAllDictionarys() throws LIMSRuntimeException;
 
-	public List getAllDictionarys() throws LIMSRuntimeException;
-
-	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException;
 
-	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException;
+//	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException;
 
-	public List getNextDictionaryRecord(String id) throws LIMSRuntimeException;
-
-	public List getPreviousDictionaryRecord(String id) throws LIMSRuntimeException;
+//	public List getNextDictionaryRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousDictionaryRecord(String id) throws LIMSRuntimeException;
 
 	/**
 	 * Finds some dictionary values where
@@ -71,8 +69,8 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 	 * @return a list of matches
 	 * @throws LIMSRuntimeException
 	 */
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String dictionaryCategory)
-			throws LIMSRuntimeException;
+//	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String dictionaryCategory)
+//			throws LIMSRuntimeException;
 
 	/**
 	 * Find Dictionary entites by DictionaryCategory.categoryName, sorted by
@@ -101,27 +99,27 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 			boolean orderByDictEntry);
 
 	// bugzilla 1411
-	public Integer getTotalDictionaryCount() throws LIMSRuntimeException;
+//	public Integer getTotalDictionaryCount() throws LIMSRuntimeException;
 
 	// bugzilla 1367
-	public Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase) throws LIMSRuntimeException;
+//	public Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase) throws LIMSRuntimeException;
 
-	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException;
-
-	// bugzilla 1413
-	public List getPagesOfSearchedDictionarys(int startRecNo, String searchString) throws LIMSRuntimeException;
+//	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException;
 
 	// bugzilla 1413
-	public Integer getTotalSearchedDictionaryCount(String searchString) throws LIMSRuntimeException;
+//	public List getPagesOfSearchedDictionarys(int startRecNo, String searchString) throws LIMSRuntimeException;
 
-	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException;
+	// bugzilla 1413
+//	public Integer getTotalSearchedDictionaryCount(String searchString) throws LIMSRuntimeException;
+
+//	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException;
 
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException;
 
-	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription)
-			throws LIMSRuntimeException;
+//	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription)
+//			throws LIMSRuntimeException;
 
-	public Dictionary getDictionaryByDictEntry(String dictEntry) throws LIMSRuntimeException;
+//	public Dictionary getDictionaryByDictEntry(String dictEntry) throws LIMSRuntimeException;
 
 	public Dictionary getDataForId(String dictId) throws LIMSRuntimeException;
 

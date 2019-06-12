@@ -9,12 +9,6 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
 public interface ProviderService extends BaseObjectService<Provider, String> {
 	void getData(Provider provider);
 
-	void deleteData(List providers);
-
-	void updateData(Provider provider);
-
-	boolean insertData(Provider provider);
-
 	List getPageOfProviders(int startingRecNo);
 
 	List getAllProviders();

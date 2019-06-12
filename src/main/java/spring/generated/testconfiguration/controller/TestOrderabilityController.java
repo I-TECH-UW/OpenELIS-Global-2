@@ -151,21 +151,11 @@ public class TestOrderabilityController extends BaseController {
 		List<Test> tests = getTests(unorderableTestIds, false);
 		tests.addAll(getTests(orderableTestIds, true));
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for (Test test : tests) {
-				testService.update(test);
-			}
-
-//			tx.commit();
+			testService.updateAll(tests);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		TypeOfSampleServiceImpl.getInstance().clearCache();
 

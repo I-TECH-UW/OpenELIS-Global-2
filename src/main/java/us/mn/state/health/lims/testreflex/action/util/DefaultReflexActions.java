@@ -22,17 +22,15 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
+import spring.service.analyte.AnalyteService;
+import spring.service.dictionary.DictionaryService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 
 public class DefaultReflexActions extends ReflexAction {
-
 
 	private static final String HIV_N_SCRIPT = "HIV N";
 	private static final String HIV_INDETERMINATE_SCRIPT = "HIV Indeterminate";
@@ -41,29 +39,28 @@ public class DefaultReflexActions extends ReflexAction {
 	private static Analyte ANALYTE_CONCLUSION;
 	private static Map<String, String> hivStatusToDictionaryIDMap;
 
-
 	static {
 
-		hivStatusToDictionaryIDMap = new HashMap<String, String>();
+		hivStatusToDictionaryIDMap = new HashMap<>();
 
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+		DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-		List<Dictionary> dictionaryList = dictionaryDAO.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
+		List<Dictionary> dictionaryList = dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
 
 		for (Dictionary dictionary : dictionaryList) {
 			if (dictionary.getDictEntry().equals("Positive")) {
-				hivStatusToDictionaryIDMap.put( HIV_POSITIVE_SCRIPT, dictionary.getId() );
+				hivStatusToDictionaryIDMap.put(HIV_POSITIVE_SCRIPT, dictionary.getId());
 			} else if (dictionary.getDictEntry().equals("Negative")) {
-				hivStatusToDictionaryIDMap.put( HIV_N_SCRIPT, dictionary.getId() );
+				hivStatusToDictionaryIDMap.put(HIV_N_SCRIPT, dictionary.getId());
 			} else if (dictionary.getDictEntry().equals("Indeterminate")) {
-				hivStatusToDictionaryIDMap.put( HIV_INDETERMINATE_SCRIPT, dictionary.getId() );
+				hivStatusToDictionaryIDMap.put(HIV_INDETERMINATE_SCRIPT, dictionary.getId());
 			}
 		}
 
-		AnalyteDAO analyteDAO = new AnalyteDAOImpl();
+		AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
-		ANALYTE_CONCLUSION = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_CONCLUSION = analyteService.getAnalyteByName(analyte, false);
 	}
 
 	@Override
@@ -75,7 +72,8 @@ public class DefaultReflexActions extends ReflexAction {
 				return;
 			}
 
-			if (action.equals(HIV_INDETERMINATE_SCRIPT) || action.equals(HIV_N_SCRIPT) || action.equals(HIV_POSITIVE_SCRIPT) ) {
+			if (action.equals(HIV_INDETERMINATE_SCRIPT) || action.equals(HIV_N_SCRIPT)
+					|| action.equals(HIV_POSITIVE_SCRIPT)) {
 				addHIVConclusion(action);
 			}
 		}
@@ -84,7 +82,7 @@ public class DefaultReflexActions extends ReflexAction {
 	private void addHIVConclusion(String action) {
 
 		finalResult = new Result();
-		finalResult.setValue( hivStatusToDictionaryIDMap.get( action ) );
+		finalResult.setValue(hivStatusToDictionaryIDMap.get(action));
 		finalResult.setResultType("D");
 		finalResult.setIsReportable("T");
 		finalResult.setAnalyte(ANALYTE_CONCLUSION);

@@ -31,9 +31,9 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
  */
 public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 
-	public boolean insertData(ReferenceTables referenceTables) throws LIMSRuntimeException;
+//	public boolean insertData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
-	public void deleteData(List referenceTableses) throws LIMSRuntimeException;
+//	public void deleteData(List referenceTableses) throws LIMSRuntimeException;
 
 	public List getAllReferenceTables() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
-	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException;
+//	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
 	public List getNextReferenceTablesRecord(String id) throws LIMSRuntimeException;
 
@@ -56,5 +56,7 @@ public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 	public ReferenceTables getReferenceTableByName(String tableName) throws LIMSRuntimeException;
 
 	public Integer getTotalReferenceTableCount() throws LIMSRuntimeException;
+
+	boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew) throws LIMSRuntimeException;
 
 }

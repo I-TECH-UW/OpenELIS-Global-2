@@ -11,7 +11,8 @@ import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 
 @Service
-public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralResult, String> implements ReferralResultService {
+public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralResult, String>
+		implements ReferralResultService {
 	@Autowired
 	protected ReferralResultDAO baseObjectDAO;
 
@@ -31,29 +32,12 @@ public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralRes
 	}
 
 	@Override
-	public void deleteData(ReferralResult referralResult) {
-        getBaseObjectDAO().deleteData(referralResult);
-
-	}
-
-	@Override
-	public void updateData(ReferralResult referralResult) {
-        getBaseObjectDAO().updateData(referralResult);
-
-	}
-
-	@Override
-	public boolean insertData(ReferralResult referralResult) {
-        return getBaseObjectDAO().insertData(referralResult);
-	}
-
-	@Override
 	public ReferralResult getReferralResultById(String referralResultId) {
-        return getBaseObjectDAO().getReferralResultById(referralResultId);
+		return getBaseObjectDAO().getReferralResultById(referralResultId);
 	}
 
 	@Override
 	public List<ReferralResult> getReferralsByResultId(String resultId) {
-        return getBaseObjectDAO().getReferralsByResultId(resultId);
+		return getBaseObjectDAO().getReferralsByResultId(resultId);
 	}
 }

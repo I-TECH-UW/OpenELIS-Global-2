@@ -15,14 +15,11 @@
 */
 package us.mn.state.health.lims.reports.valueholder.resultsreport;
 
-import us.mn.state.health.lims.common.valueholder.BaseObject;
-
 /**
  * @author benzd1 bugzilla 2264
  *
  */
-//TODO should this be a BaseObject?
-public class ResultsReportLabProject extends BaseObject<String> {
+public class ResultsReportLabProject {
 
 	private String labProject;
 

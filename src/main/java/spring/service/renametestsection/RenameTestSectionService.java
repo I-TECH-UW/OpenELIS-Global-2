@@ -8,12 +8,6 @@ import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 public interface RenameTestSectionService extends BaseObjectService<RenameTestSection, String> {
 	void getData(RenameTestSection testSection);
 
-	void deleteData(List testSections);
-
-	void updateData(RenameTestSection testSection);
-
-	boolean insertData(RenameTestSection testSection);
-
 	List getTestSections(String filter);
 
 	RenameTestSection getTestSectionByName(RenameTestSection testSection);
@@ -27,6 +21,6 @@ public interface RenameTestSectionService extends BaseObjectService<RenameTestSe
 	List getPreviousTestSectionRecord(String id);
 
 	List getAllTestSections();
-	
+
 	RenameTestSection getTestSectionById(String id);
 }

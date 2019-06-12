@@ -26,7 +26,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomCreateController extends BaseController {
-	
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@Autowired
@@ -51,7 +51,7 @@ public class UomCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<UnitOfMeasure> uoms = unitOfMeasureService.getAllUnitOfMeasures();
+		List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
@@ -92,19 +92,11 @@ public class UomCreateController extends BaseController {
 
 		UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			unitOfMeasureService.insert(unitOfMeasure);
-//			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);

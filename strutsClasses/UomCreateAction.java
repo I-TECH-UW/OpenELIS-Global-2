@@ -13,7 +13,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 //import spring.service.test.TestSectionServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -40,7 +40,7 @@ public class UomCreateAction extends BaseAction {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
         for( UnitOfMeasure uom : uoms){
-            builder.append(LocalizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
+            builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, uom.getLocalization()));
             builder.append(NAME_SEPARATOR);
         }
 

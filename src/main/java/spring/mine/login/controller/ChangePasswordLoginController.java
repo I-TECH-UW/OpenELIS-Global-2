@@ -67,7 +67,7 @@ public class ChangePasswordLoginController extends BaseController {
 			} else {
 				login = matchedLogin.get();
 				// update fields of login before validating again
-				loginService.updatePassword(login, form.getNewPassword());
+				loginService.hashPassword(login, form.getNewPassword());
 				Errors loginResult = new BeanPropertyBindingResult(login, "loginInfo");
 				loginValidator.unauthenticatedPasswordUpdateValidate(login, loginResult);
 

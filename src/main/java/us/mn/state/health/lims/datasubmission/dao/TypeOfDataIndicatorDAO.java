@@ -14,7 +14,7 @@ public interface TypeOfDataIndicatorDAO extends BaseDAO<TypeOfDataIndicator, Str
 
 	public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() throws LIMSRuntimeException;
 
-	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
+//	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
 
-	public void updateData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
+//	public void updateData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
 }

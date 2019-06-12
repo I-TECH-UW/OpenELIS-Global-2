@@ -8,7 +8,7 @@
 
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				 us.mn.state.health.lims.common.services.LocalizationService,
+				spring.service.localization.LocalizationServiceImpl,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 				 spring.mine.internationalization.MessageUtil,
@@ -103,7 +103,7 @@ function displayHelp(){
 			<%
 				}
 			%>
-  	  		<div id="oe-title" onclick="navigateToHomePage();"><%= Encode.forHtmlContent(LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BANNER_TEXT ) )) %></div>
+  	  		<div id="oe-title" onclick="navigateToHomePage();"><%= Encode.forHtmlContent(LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BANNER_TEXT ) )) %></div>
   		</div>  
   		<div id="oe-version" style="display: block">
     		<div id="appVersion">

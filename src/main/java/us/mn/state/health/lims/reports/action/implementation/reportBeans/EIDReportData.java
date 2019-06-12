@@ -23,16 +23,18 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public class EIDReportData {
+
+	SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
 
 	private String hiv_status = "X";
 	private String pcr_type = "X";
@@ -54,25 +56,28 @@ public class EIDReportData {
 	private String clinic;
 	private String status;
 	private Boolean duplicateReport = Boolean.FALSE;
-	
+
 	private List<SampleQaEvent> sampleQAEventList;
 	List<QaEventItem> qaEventItems;
-	
-	private String allQaEvents=null;
-	private String receptionQaEvent=null;
-	private String virologyEidQaEvent=null;
-	
-	private Map<String, String> previousResultMap = new HashMap<String, String>();
+
+	private String allQaEvents = null;
+	private String receptionQaEvent = null;
+	private String virologyEidQaEvent = null;
+
+	private Map<String, String> previousResultMap = new HashMap<>();
 
 	public String getHiv_status() {
 		return hiv_status;
 	}
+
 	public void setHiv_status(String hivStatus) {
 		hiv_status = hivStatus;
 	}
+
 	public String getPcr_type() {
 		return pcr_type;
 	}
+
 	public void setPcr_type(String pcrType) {
 		pcr_type = pcrType;
 	}
@@ -80,18 +85,23 @@ public class EIDReportData {
 	public String getSubjectno() {
 		return subjectno;
 	}
+
 	public void setSubjectno(String subjectno) {
 		this.subjectno = subjectno;
 	}
+
 	public String getSitesubjectno() {
 		return sitesubjectno;
 	}
+
 	public void setSitesubjectno(String sitesubjectno) {
 		this.sitesubjectno = sitesubjectno;
 	}
+
 	public String getBirth_date() {
 		return birth_date;
 	}
+
 	public void setBirth_date(String birthDate) {
 		birth_date = birthDate;
 	}
@@ -99,143 +109,183 @@ public class EIDReportData {
 	public String getAgeMonth() {
 		return ageMonth;
 	}
+
 	public void setAgeMonth(String agemonth) {
-		this.ageMonth = agemonth;
+		ageMonth = agemonth;
 	}
+
 	public String getAgeWeek() {
 		return ageWeek;
 	}
+
 	public void setAgeWeek(String ageWeek) {
 		this.ageWeek = ageWeek;
 	}
+
 	public String getGender() {
 		return gender;
 	}
+
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+
 	public String getCollectiondate() {
 		return collectiondate;
 	}
+
 	public void setCollectiondate(String collectiondate) {
 		this.collectiondate = collectiondate;
 	}
+
 	public String getAccession_number() {
 		return accession_number;
 	}
+
 	public void setAccession_number(String accessionNumber) {
 		accession_number = accessionNumber;
 	}
+
 	public String getServicename() {
 		return servicename;
 	}
+
 	public void setServicename(String servicename) {
 		this.servicename = servicename;
 	}
+
 	public String getDoctor() {
 		return doctor;
 	}
+
 	public void setDoctor(String doctor) {
 		this.doctor = doctor;
 	}
+
 	public String getCompleationdate() {
 		return compleationdate;
 	}
+
 	public void setCompleationdate(String compleationdate) {
 		this.compleationdate = compleationdate;
 	}
+
 	public void setSubjectNumber(String subjectNumber) {
 		this.subjectNumber = subjectNumber;
 	}
+
 	public String getSubjectNumber() {
 		return subjectNumber;
 	}
+
 	public String getPTME() {
 		return PTME;
 	}
+
 	public void setPTME(String pTME) {
 		PTME = pTME;
 	}
+
 	public String getClinicDistrict() {
 		return clinicDistrict;
 	}
+
 	public void setClinicDistrict(String clinicDistrict) {
 		this.clinicDistrict = clinicDistrict;
 	}
+
 	public String getClinic() {
 		return clinic;
 	}
+
 	public void setClinic(String clinic) {
 		this.clinic = clinic;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
 	public String getStatus() {
 		return status;
 	}
-	public String getReceptiondate(){
+
+	public String getReceptiondate() {
 		return receptiondate;
 	}
-	public void setReceptiondate(String receptiondate){
+
+	public void setReceptiondate(String receptiondate) {
 		this.receptiondate = receptiondate;
 	}
+
 	public Boolean getDuplicateReport() {
 		return duplicateReport;
 	}
+
 	public void setDuplicateReport(Boolean duplicateReport) {
 		this.duplicateReport = duplicateReport;
 	}
+
 	public String getVirologyEidQaEvent() {
 		return virologyEidQaEvent;
 	}
+
 	public void setVirologyEidQaEvent(String virologyEidQaEvent) {
 		this.virologyEidQaEvent = virologyEidQaEvent;
 	}
-	public String getAllQaEvents(){
+
+	public String getAllQaEvents() {
 		return allQaEvents;
 	}
-	public void setAllQaEvents(String  allQaEvents){
-		this.allQaEvents=allQaEvents;
+
+	public void setAllQaEvents(String allQaEvents) {
+		this.allQaEvents = allQaEvents;
 	}
+
 	public String getReceptionQaEvent() {
 		return receptionQaEvent;
 	}
+
 	public void setReceptionQaEvent(String receptionQaEvent) {
 		this.receptionQaEvent = receptionQaEvent;
 	}
-	public Map<String, String>  getPreviousResultMap(){
+
+	public Map<String, String> getPreviousResultMap() {
 		return previousResultMap;
 	}
-	public void setPreviousResultMap(Map<String, String> previousResultMap){
-		this.previousResultMap=previousResultMap;
+
+	public void setPreviousResultMap(Map<String, String> previousResultMap) {
+		this.previousResultMap = previousResultMap;
 	}
-	public void getSampleQaEventItems(Sample sample){
-	    qaEventItems = new ArrayList<QaEventItem>();
-		if(sample != null){
+
+	public void getSampleQaEventItems(Sample sample) {
+		qaEventItems = new ArrayList<>();
+		if (sample != null) {
 			getSampleQaEvents(sample);
-			for(SampleQaEvent event : sampleQAEventList){
+			for (SampleQaEvent event : sampleQAEventList) {
 				QAService qa = new QAService(event);
 				QaEventItem item = new QaEventItem();
 				item.setId(qa.getEventId());
 				item.setQaEvent(qa.getQAEvent().getId());
 				SampleItem sampleItem = qa.getSampleItem();
-                // -1 is the index for "all samples"
-				String sampleType=(sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
-				allQaEvents=allQaEvents==null?sampleType+":"+qa.getQAEvent().getNameKey():allQaEvents+";"+sampleType+":"+qa.getQAEvent().getNameKey();
-				
-				if(!GenericValidator.isBlankOrNull(qa.getObservationValue( QAObservationType.SECTION )) && qa.getObservationValue( QAObservationType.SECTION ).equals("testSection.EID"))
-					virologyEidQaEvent=virologyEidQaEvent==null ? qa.getQAEvent().getLocalizedName() : virologyEidQaEvent+" , "+qa.getQAEvent().getLocalizedName();
-	
-				
+				// -1 is the index for "all samples"
+				String sampleType = (sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
+				allQaEvents = allQaEvents == null ? sampleType + ":" + qa.getQAEvent().getNameKey()
+						: allQaEvents + ";" + sampleType + ":" + qa.getQAEvent().getNameKey();
+
+				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+						&& qa.getObservationValue(QAObservationType.SECTION).equals("testSection.EID")) {
+					virologyEidQaEvent = virologyEidQaEvent == null ? qa.getQAEvent().getLocalizedName()
+							: virologyEidQaEvent + " , " + qa.getQAEvent().getLocalizedName();
+				}
+
 			}
 		}
 
 	}
-	public void getSampleQaEvents(Sample sample){
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		sampleQAEventList = sampleQaEventDAO.getSampleQaEventsBySample(sample);
-	}
 
+	public void getSampleQaEvents(Sample sample) {
+		sampleQAEventList = sampleQaEventService.getSampleQaEventsBySample(sample);
+	}
 
 }

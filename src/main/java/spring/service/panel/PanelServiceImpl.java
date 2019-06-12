@@ -32,23 +32,6 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 	}
 
 	@Override
-	public void deleteData(List panels) {
-		getBaseObjectDAO().deleteData(panels);
-
-	}
-
-	@Override
-	public void updateData(Panel panel) {
-		getBaseObjectDAO().updateData(panel);
-
-	}
-
-	@Override
-	public boolean insertData(Panel panel) {
-		return getBaseObjectDAO().insertData(panel);
-	}
-
-	@Override
 	public String getIdForPanelName(String name) {
 		return getBaseObjectDAO().getIdForPanelName(name);
 	}
@@ -104,25 +87,6 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 	}
 
 	@Override
-	public String insert(Panel panel) {
-		return (String) super.insert(panel);
-	}
-
-	@Override
-	public Panel update(Panel panel) {
-		if (baseObjectDAO.duplicatePanelExists(panel)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
-		}
-		// AIS - bugzilla 1563
-		if (baseObjectDAO.duplicatePanelDescriptionExists(panel)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
-		}
-		panel = super.update(panel);
-		baseObjectDAO.clearIDMaps();
-		return panel;
-	}
-
-	@Override
 	public List<Panel> getAllPanels() {
 		return baseObjectDAO.getAllPanels();
 	}
@@ -130,5 +94,47 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 	@Override
 	public Panel getPanelById(String id) {
 		return baseObjectDAO.getPanelById(id);
+	}
+
+	@Override
+	public String insert(Panel panel) {
+		if (getBaseObjectDAO().duplicatePanelExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
+		}
+		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
+		}
+		baseObjectDAO.clearIDMaps();
+		return super.insert(panel);
+	}
+
+	@Override
+	public Panel save(Panel panel) {
+		if (getBaseObjectDAO().duplicatePanelExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
+		}
+		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
+		}
+		baseObjectDAO.clearIDMaps();
+		return super.save(panel);
+	}
+
+	@Override
+	public Panel update(Panel panel) {
+		if (getBaseObjectDAO().duplicatePanelExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
+		}
+		if (getBaseObjectDAO().duplicatePanelDescriptionExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
+		}
+		baseObjectDAO.clearIDMaps();
+		return super.update(panel);
+	}
+
+	@Override
+	public void delete(Panel panel) {
+		super.delete(panel);
+		baseObjectDAO.clearIDMaps();
 	}
 }

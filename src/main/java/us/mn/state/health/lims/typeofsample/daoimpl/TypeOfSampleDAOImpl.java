@@ -29,16 +29,11 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -47,7 +42,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> implements TypeOfSampleDAO {
 
 	public TypeOfSampleDAOImpl() {
@@ -57,104 +52,109 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	private static Map<String, String> ID_NAME_MAP = null;
 
 	@Override
-	public void deleteData(List typeOfSamples) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < typeOfSamples.size(); i++) {
-				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
-
-				TypeOfSample oldData = readTypeOfSample(data.getId());
-				TypeOfSample newData = new TypeOfSample();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TYPE_OF_SAMPLE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < typeOfSamples.size(); i++) {
-				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
-				// bugzilla 2206
-				data = readTypeOfSample(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSample deleteData()", e);
-		}
-
+	public void clearMap() {
 		ID_NAME_MAP = null;
 	}
 
-	@Override
-	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
+//	@Override
+//	public void deleteData(List typeOfSamples) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < typeOfSamples.size(); i++) {
+//				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
+//
+//				TypeOfSample oldData = readTypeOfSample(data.getId());
+//				TypeOfSample newData = new TypeOfSample();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TYPE_OF_SAMPLE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < typeOfSamples.size(); i++) {
+//				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
+//				// bugzilla 2206
+//				data = readTypeOfSample(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSample deleteData()", e);
+//		}
+//
+//		clearMap();
+//	}
 
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateTypeOfSampleExists(typeOfSample)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
-			}
+//	@Override
+//	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
+//
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateTypeOfSampleExists(typeOfSample)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(typeOfSample);
+//			typeOfSample.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = typeOfSample.getSysUserId();
+//			String tableName = "TYPE_OF_SAMPLE";
+//			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSample insertData()", e);
+//		}
+//
+//		clearMap();
+//
+//		return true;
+//	}
 
-			String id = (String) sessionFactory.getCurrentSession().save(typeOfSample);
-			typeOfSample.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = typeOfSample.getSysUserId();
-			String tableName = "TYPE_OF_SAMPLE";
-			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSample insertData()", e);
-		}
-
-		ID_NAME_MAP = null;
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
-
-		TypeOfSample oldData = readTypeOfSample(typeOfSample.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(typeOfSample);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfSample);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfSample);
-		} catch (Exception e) {
-
-			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSample updateData()", e);
-		}
-
-		ID_NAME_MAP = null;
-	}
+//	@Override
+//	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
+//
+//		TypeOfSample oldData = readTypeOfSample(typeOfSample.getId());
+//
+//		try {
+//
+//			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
+//					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(typeOfSample);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfSample);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfSample);
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSample updateData()", e);
+//		}
+//
+//		clearMap();
+//	}
 
 	@Override
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
@@ -509,7 +509,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	// bugzilla 1482
-	private boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

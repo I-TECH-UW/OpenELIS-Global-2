@@ -20,6 +20,8 @@ package us.mn.state.health.lims.common.daoimpl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,15 +29,18 @@ import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional
-public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, String> implements DatabaseChangeLogDAO {
+//public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, String> implements DatabaseChangeLogDAO {
+public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
 
-	public DatabaseChangeLogDAOImpl() {
-		super(DatabaseChangeLog.class);
-	}
+//	public DatabaseChangeLogDAOImpl() {
+//		super(DatabaseChangeLog.class);
+//	}
+
+	@Autowired
+	SessionFactory sessionFactory;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -61,7 +66,5 @@ public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, Str
 
 		return null;
 	}
-
-	// SHOULD NOT NEED BELOW METHODS! Override to hide!
 
 }

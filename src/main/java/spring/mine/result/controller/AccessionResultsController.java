@@ -44,15 +44,15 @@ public class AccessionResultsController extends BaseController {
 
 	private String accessionNumber;
 	private Sample sample;
-	private InventoryUtility inventoryUtility = new InventoryUtility();
+	private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 	@Autowired
 	SampleService sampleService;
 	@Autowired
 	SampleHumanService sampleHumanService;
 	@Autowired
-	RoleService roleService;
+	private RoleService roleService;
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 
 	@PostConstruct
 	private void initializeGlobalVariables() {
@@ -141,8 +141,6 @@ public class AccessionResultsController extends BaseController {
 		if (userModuleService.isUserAdmin(request)) {
 			return false;
 		}
-
-//		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
 
 		List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
 

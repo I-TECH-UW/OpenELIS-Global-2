@@ -11,12 +11,14 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
 @Service
-public class ReportExternalExportServiceImpl extends BaseObjectServiceImpl<ReportExternalExport, String> implements ReportExternalExportService {
+public class ReportExternalExportServiceImpl extends BaseObjectServiceImpl<ReportExternalExport, String>
+		implements ReportExternalExportService {
 	@Autowired
 	protected ReportExternalExportDAO baseObjectDAO;
 
 	ReportExternalExportServiceImpl() {
 		super(ReportExternalExport.class);
+		disableLogging();
 	}
 
 	@Override
@@ -26,63 +28,52 @@ public class ReportExternalExportServiceImpl extends BaseObjectServiceImpl<Repor
 
 	@Override
 	public Timestamp getLastCollectedTimestamp() {
-        return getBaseObjectDAO().getLastCollectedTimestamp();
+		return getBaseObjectDAO().getLastCollectedTimestamp();
 	}
 
 	@Override
 	public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report) {
-        return getBaseObjectDAO().getReportByEventDateAndType(report);
+		return getBaseObjectDAO().getReportByEventDateAndType(report);
 	}
 
 	@Override
-	public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId) {
-        return getBaseObjectDAO().getReportsInDateRange(lower,upper,reportQueueTypeId);
+	public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper,
+			String reportQueueTypeId) {
+		return getBaseObjectDAO().getReportsInDateRange(lower, upper, reportQueueTypeId);
 	}
 
 	@Override
 	public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId) {
-        return getBaseObjectDAO().getLatestSentReportExport(reportQueueTypeId);
-	}
-
-	@Override
-	public void insertReportExternalExport(ReportExternalExport report) {
-        getBaseObjectDAO().insertReportExternalExport(report);
-
+		return getBaseObjectDAO().getLatestSentReportExport(reportQueueTypeId);
 	}
 
 	@Override
 	public ReportExternalExport readReportExternalExport(String idString) {
-        return getBaseObjectDAO().readReportExternalExport(idString);
+		return getBaseObjectDAO().readReportExternalExport(idString);
 	}
 
 	@Override
 	public ReportExternalExport getLatestEventReportExport(String reportQueueTypeId) {
-        return getBaseObjectDAO().getLatestEventReportExport(reportQueueTypeId);
+		return getBaseObjectDAO().getLatestEventReportExport(reportQueueTypeId);
 	}
 
 	@Override
 	public Timestamp getLastSentTimestamp() {
-        return getBaseObjectDAO().getLastSentTimestamp();
-	}
-
-	@Override
-	public void updateReportExternalExport(ReportExternalExport report) {
-        getBaseObjectDAO().updateReportExternalExport(report);
-
+		return getBaseObjectDAO().getLastSentTimestamp();
 	}
 
 	@Override
 	public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) {
-        return getBaseObjectDAO().getUnsentReportExports(reportQueueTypeId);
+		return getBaseObjectDAO().getUnsentReportExports(reportQueueTypeId);
 	}
 
 	@Override
 	public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId) {
-        return getBaseObjectDAO().getRecalculateReportExports(reportQueueTypeId);
+		return getBaseObjectDAO().getRecalculateReportExports(reportQueueTypeId);
 	}
 
 	@Override
 	public ReportExternalExport loadReport(ReportExternalExport report) {
-        return getBaseObjectDAO().loadReport(report);
+		return getBaseObjectDAO().loadReport(report);
 	}
 }

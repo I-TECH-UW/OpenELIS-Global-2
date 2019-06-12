@@ -17,54 +17,58 @@
 package us.mn.state.health.lims.common.util;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import us.mn.state.health.lims.menu.daoimpl.MenuDAOImpl;
+import spring.service.menu.MenuService;
+import spring.service.role.RoleService;
+import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.menu.util.MenuUtil;
 import us.mn.state.health.lims.menu.valueholder.Menu;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
+@Service
 public class ConfigurationSideEffects {
-	private static final RoleDAO roleDAO = new RoleDAOImpl();
-	private static final SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+	@Autowired
+	private RoleService roleService;
+	@Autowired
+	private SiteInformationService siteInformationService;
+	@Autowired
+	private MenuService menuService;
 
 	public void siteInformationChanged(SiteInformation siteInformation) {
 		if ("modify results role".equals(siteInformation.getName())) {
-			Role modifierRole = roleDAO.getRoleByName("Results modifier");
+			Role modifierRole = roleService.getRoleByName("Results modifier");
 
 			if (modifierRole != null && modifierRole.getId() != null) {
 				modifierRole.setActive("true".equals(siteInformation.getValue()));
 				modifierRole.setSysUserId(siteInformation.getSysUserId());
-				roleDAO.updateData(modifierRole);
+				roleService.update(modifierRole);
 			}
 
 		}
 
 		if ("siteNumber".equals(siteInformation.getName())) {
-			SiteInformation accessionFormat = siteInformationDAO.getSiteInformationByName("acessionFormat");
+			SiteInformation accessionFormat = siteInformationService.getSiteInformationByName("acessionFormat");
 			if ("SiteYearNum".equals(accessionFormat.getValue())) {
-				SiteInformation accessionPrefix = siteInformationDAO
+				SiteInformation accessionPrefix = siteInformationService
 						.getSiteInformationByName("Accession number prefix");
 				if (GenericValidator.isBlankOrNull(accessionPrefix.getValue())) {
 					accessionPrefix.setValue(siteInformation.getValue());
 					accessionPrefix.setSysUserId(siteInformation.getSysUserId());
-					siteInformationDAO.updateData(accessionPrefix);
+					siteInformationService.update(accessionPrefix);
 				}
 			}
 		}
 
 		if ("Non Conformity tab".equals(siteInformation.getName())) {
-			MenuDAOImpl menuDAO = new MenuDAOImpl();
 			boolean active = "true".equals(siteInformation.getValue());
 
-			Menu parentMenu = menuDAO.getMenuByElementId("menu_nonconformity");
+			Menu parentMenu = menuService.getMenuByElementId("menu_nonconformity");
 			if (parentMenu != null) {
 				parentMenu.setIsActive(active);
-				menuDAO.updateData(parentMenu);
+				menuService.update(parentMenu);
 			}
 
 			MenuUtil.forceRebuild();
@@ -72,54 +76,53 @@ public class ConfigurationSideEffects {
 
 //--------------------------
 		if ("Patient management tab".equals(siteInformation.getName())) {
-			MenuDAOImpl menuDAO = new MenuDAOImpl();
 			boolean active = "true".equals(siteInformation.getValue());
 
-			Menu parentMenu = menuDAO.getMenuByElementId("menu_patient");
+			Menu parentMenu = menuService.getMenuByElementId("menu_patient");
 			if (parentMenu != null) {
 				parentMenu.setIsActive(active);
-				menuDAO.updateData(parentMenu);
+				menuService.update(parentMenu);
 			}
 
-			Menu menu = menuDAO.getMenuByElementId("menu_patient_add_or_edit");
+			Menu menu = menuService.getMenuByElementId("menu_patient_add_or_edit");
 			if (menu != null) {
 				menu.setIsActive(active);
-				menuDAO.updateData(menu);
+				menuService.update(menu);
 			}
 
-			Menu parentmenustudy = menuDAO.getMenuByElementId("menu_patient_study");
+			Menu parentmenustudy = menuService.getMenuByElementId("menu_patient_study");
 			if (parentmenustudy != null) {
 				parentmenustudy.setIsActive(active);
-				menuDAO.updateData(parentmenustudy);
+				menuService.update(parentmenustudy);
 			}
 
-			Menu menustudycreate = menuDAO.getMenuByElementId("menu_patient_create");
+			Menu menustudycreate = menuService.getMenuByElementId("menu_patient_create");
 			if (menustudycreate != null) {
 				menustudycreate.setIsActive(active);
-				menuDAO.updateData(menustudycreate);
+				menuService.update(menustudycreate);
 			}
 
-			Menu menustudycreateinitial = menuDAO.getMenuByElementId("menu_patient_create_initial");
+			Menu menustudycreateinitial = menuService.getMenuByElementId("menu_patient_create_initial");
 			if (menustudycreateinitial != null) {
 				menustudycreateinitial.setIsActive(active);
-				menuDAO.updateData(menustudycreateinitial);
+				menuService.update(menustudycreateinitial);
 			}
 
-			Menu menustudycreatedouble = menuDAO.getMenuByElementId("menu_patient_create_double");
+			Menu menustudycreatedouble = menuService.getMenuByElementId("menu_patient_create_double");
 			if (menustudycreatedouble != null) {
 				menustudycreatedouble.setIsActive(active);
-				menuDAO.updateData(menustudycreatedouble);
+				menuService.update(menustudycreatedouble);
 			}
 
-			Menu menustudyedit = menuDAO.getMenuByElementId("menu_patient_edit");
+			Menu menustudyedit = menuService.getMenuByElementId("menu_patient_edit");
 			if (menustudyedit != null) {
 				menustudyedit.setIsActive(active);
-				menuDAO.updateData(menustudyedit);
+				menuService.update(menustudyedit);
 			}
-			Menu menustudyconsult = menuDAO.getMenuByElementId("menu_patient_consult");
+			Menu menustudyconsult = menuService.getMenuByElementId("menu_patient_consult");
 			if (menustudyconsult != null) {
 				menustudyconsult.setIsActive(active);
-				menuDAO.updateData(menustudyconsult);
+				menuService.update(menustudyconsult);
 			}
 
 			MenuUtil.forceRebuild();
@@ -129,303 +132,306 @@ public class ConfigurationSideEffects {
 		// ------sample----
 
 		if ("Study Management tab".equals(siteInformation.getName())) {
-			MenuDAOImpl menuDAO = new MenuDAOImpl();
 			boolean active = "true".equals(siteInformation.getValue());
 
-			Menu parentMenuStudy = menuDAO.getMenuByElementId("menu_sample_create");
+			Menu parentMenuStudy = menuService.getMenuByElementId("menu_sample_create");
 			if (parentMenuStudy != null) {
 				parentMenuStudy.setIsActive(active);
-				menuDAO.updateData(parentMenuStudy);
+				menuService.update(parentMenuStudy);
 			}
 
-			Menu menusamplecreateinitial = menuDAO.getMenuByElementId("menu_sample_create_initial");
+			Menu menusamplecreateinitial = menuService.getMenuByElementId("menu_sample_create_initial");
 			if (menusamplecreateinitial != null) {
 				menusamplecreateinitial.setIsActive(active);
-				menuDAO.updateData(menusamplecreateinitial);
+				menuService.update(menusamplecreateinitial);
 			}
 
-			Menu menusamplecreatedouble = menuDAO.getMenuByElementId("menu_sample_create_double");
+			Menu menusamplecreatedouble = menuService.getMenuByElementId("menu_sample_create_double");
 			if (menusamplecreatedouble != null) {
 				menusamplecreatedouble.setIsActive(active);
-				menuDAO.updateData(menusamplecreatedouble);
+				menuService.update(menusamplecreatedouble);
 			}
 
-			Menu menusampleconsult = menuDAO.getMenuByElementId("menu_sample_consult");
+			Menu menusampleconsult = menuService.getMenuByElementId("menu_sample_consult");
 			if (menusampleconsult != null) {
 				menusampleconsult.setIsActive(active);
-				menuDAO.updateData(menusampleconsult);
+				menuService.update(menusampleconsult);
 			}
 
 			// ------Patient----
 
-			Menu menustudycreate2 = menuDAO.getMenuByElementId("menu_patient_create");
+			Menu menustudycreate2 = menuService.getMenuByElementId("menu_patient_create");
 			if (menustudycreate2 != null) {
 				menustudycreate2.setIsActive(active);
-				menuDAO.updateData(menustudycreate2);
+				menuService.update(menustudycreate2);
 			}
 
-			Menu menustudycreateinitial2 = menuDAO.getMenuByElementId("menu_patient_create_initial");
+			Menu menustudycreateinitial2 = menuService.getMenuByElementId("menu_patient_create_initial");
 			if (menustudycreateinitial2 != null) {
 				menustudycreateinitial2.setIsActive(active);
-				menuDAO.updateData(menustudycreateinitial2);
+				menuService.update(menustudycreateinitial2);
 			}
 
-			Menu menustudycreatedouble2 = menuDAO.getMenuByElementId("menu_patient_create_double");
+			Menu menustudycreatedouble2 = menuService.getMenuByElementId("menu_patient_create_double");
 			if (menustudycreatedouble2 != null) {
 				menustudycreatedouble2.setIsActive(active);
-				menuDAO.updateData(menustudycreatedouble2);
+				menuService.update(menustudycreatedouble2);
 			}
 
-			Menu menustudyedit2 = menuDAO.getMenuByElementId("menu_patient_edit");
+			Menu menustudyedit2 = menuService.getMenuByElementId("menu_patient_edit");
 			if (menustudyedit2 != null) {
 				menustudyedit2.setIsActive(active);
-				menuDAO.updateData(menustudyedit2);
+				menuService.update(menustudyedit2);
 			}
 
-			Menu menustudyconsult2 = menuDAO.getMenuByElementId("menu_patient_consult");
+			Menu menustudyconsult2 = menuService.getMenuByElementId("menu_patient_consult");
 			if (menustudyconsult2 != null) {
 				menustudyconsult2.setIsActive(active);
-				menuDAO.updateData(menustudyconsult2);
+				menuService.update(menustudyconsult2);
 			}
 			// ------report----
 
-			Menu menureportstudy = menuDAO.getMenuByElementId("menu_reports_study");
+			Menu menureportstudy = menuService.getMenuByElementId("menu_reports_study");
 			if (menureportstudy != null) {
 				menureportstudy.setIsActive(active);
-				menuDAO.updateData(menureportstudy);
+				menuService.update(menureportstudy);
 			}
 
-			Menu menureportspatients = menuDAO.getMenuByElementId("menu_reports_patients");
+			Menu menureportspatients = menuService.getMenuByElementId("menu_reports_patients");
 			if (menureportspatients != null) {
 				menureportspatients.setIsActive(active);
-				menuDAO.updateData(menureportspatients);
+				menuService.update(menureportspatients);
 			}
 
-			Menu menureportsarv = menuDAO.getMenuByElementId("menu_reports_arv");
+			Menu menureportsarv = menuService.getMenuByElementId("menu_reports_arv");
 			if (menureportsarv != null) {
 				menureportsarv.setIsActive(active);
-				menuDAO.updateData(menureportsarv);
+				menuService.update(menureportsarv);
 			}
 
-			Menu menureportsarvinitial1 = menuDAO.getMenuByElementId("menu_reports_arv_initial1");
+			Menu menureportsarvinitial1 = menuService.getMenuByElementId("menu_reports_arv_initial1");
 			if (menureportsarvinitial1 != null) {
 				menureportsarvinitial1.setIsActive(active);
-				menuDAO.updateData(menureportsarvinitial1);
+				menuService.update(menureportsarvinitial1);
 			}
 
-			Menu menureportsarvinitial2 = menuDAO.getMenuByElementId("menu_reports_arv_initial2");
+			Menu menureportsarvinitial2 = menuService.getMenuByElementId("menu_reports_arv_initial2");
 			if (menureportsarvinitial2 != null) {
 				menureportsarvinitial2.setIsActive(active);
-				menuDAO.updateData(menureportsarvinitial2);
+				menuService.update(menureportsarvinitial2);
 			}
 
-			Menu menureportarvfollowup1 = menuDAO.getMenuByElementId("menu_reports_arv_followup1");
+			Menu menureportarvfollowup1 = menuService.getMenuByElementId("menu_reports_arv_followup1");
 			if (menureportarvfollowup1 != null) {
 				menureportarvfollowup1.setIsActive(active);
-				menuDAO.updateData(menureportarvfollowup1);
+				menuService.update(menureportarvfollowup1);
 			}
 
-			Menu menureportarvfollowup2 = menuDAO.getMenuByElementId("menu_reports_arv_followup2");
+			Menu menureportarvfollowup2 = menuService.getMenuByElementId("menu_reports_arv_followup2");
 			if (menureportarvfollowup2 != null) {
 				menureportarvfollowup2.setIsActive(active);
-				menuDAO.updateData(menureportarvfollowup2);
+				menuService.update(menureportarvfollowup2);
 			}
 
-			Menu menureportseid = menuDAO.getMenuByElementId("menu_reports_eid");
+			Menu menureportseid = menuService.getMenuByElementId("menu_reports_eid");
 			if (menureportseid != null) {
 				menureportseid.setIsActive(active);
-				menuDAO.updateData(menureportseid);
+				menuService.update(menureportseid);
 			}
 
-			Menu menureporteidversion1 = menuDAO.getMenuByElementId("menu_reports_eid_version1");
+			Menu menureporteidversion1 = menuService.getMenuByElementId("menu_reports_eid_version1");
 			if (menureporteidversion1 != null) {
 				menureporteidversion1.setIsActive(active);
-				menuDAO.updateData(menureporteidversion1);
+				menuService.update(menureporteidversion1);
 			}
 
-			Menu menureporteidversion2 = menuDAO.getMenuByElementId("menu_reports_eid_version2");
+			Menu menureporteidversion2 = menuService.getMenuByElementId("menu_reports_eid_version2");
 			if (menureporteidversion2 != null) {
 				menureporteidversion2.setIsActive(active);
-				menuDAO.updateData(menureporteidversion2);
+				menuService.update(menureporteidversion2);
 			}
 
-			Menu menureportsindeterminate = menuDAO.getMenuByElementId("menu_reports_indeterminate");
+			Menu menureportsindeterminate = menuService.getMenuByElementId("menu_reports_indeterminate");
 			if (menureportsindeterminate != null) {
 				menureportsindeterminate.setIsActive(active);
-				menuDAO.updateData(menureportsindeterminate);
+				menuService.update(menureportsindeterminate);
 			}
 
-			Menu menureportsindeterminateversion1 = menuDAO.getMenuByElementId("menu_reports_indeterminate_version1");
+			Menu menureportsindeterminateversion1 = menuService
+					.getMenuByElementId("menu_reports_indeterminate_version1");
 			if (menureportsindeterminateversion1 != null) {
 				menureportsindeterminateversion1.setIsActive(active);
-				menuDAO.updateData(menureportsindeterminateversion1);
+				menuService.update(menureportsindeterminateversion1);
 			}
 
-			Menu menureportsindeterminateversion2 = menuDAO.getMenuByElementId("menu_reports_indeterminate_version2");
+			Menu menureportsindeterminateversion2 = menuService
+					.getMenuByElementId("menu_reports_indeterminate_version2");
 			if (menureportsindeterminateversion2 != null) {
 				menureportsindeterminateversion2.setIsActive(active);
-				menuDAO.updateData(menureportsindeterminateversion2);
+				menuService.update(menureportsindeterminateversion2);
 			}
 
-			Menu menureportsindeterminatelocation = menuDAO.getMenuByElementId("menu_reports_indeterminate_location");
+			Menu menureportsindeterminatelocation = menuService
+					.getMenuByElementId("menu_reports_indeterminate_location");
 			if (menureportsindeterminatelocation != null) {
 				menureportsindeterminatelocation.setIsActive(active);
-				menuDAO.updateData(menureportsindeterminatelocation);
+				menuService.update(menureportsindeterminatelocation);
 			}
 
-			Menu menureportspecial = menuDAO.getMenuByElementId("menu_reports_special");
+			Menu menureportspecial = menuService.getMenuByElementId("menu_reports_special");
 			if (menureportspecial != null) {
 				menureportspecial.setIsActive(active);
-				menuDAO.updateData(menureportspecial);
+				menuService.update(menureportspecial);
 			}
 
-			Menu menureportspatientcollection = menuDAO.getMenuByElementId("menu_reports_patient_collection");
+			Menu menureportspatientcollection = menuService.getMenuByElementId("menu_reports_patient_collection");
 			if (menureportspatientcollection != null) {
 				menureportspatientcollection.setIsActive(active);
-				menuDAO.updateData(menureportspatientcollection);
+				menuService.update(menureportspatientcollection);
 			}
 
-			Menu menureportsassociated = menuDAO.getMenuByElementId("menu_reports_patient_associated");
+			Menu menureportsassociated = menuService.getMenuByElementId("menu_reports_patient_associated");
 			if (menureportsassociated != null) {
 				menureportsassociated.setIsActive(active);
-				menuDAO.updateData(menureportsassociated);
+				menuService.update(menureportsassociated);
 			}
 
-			Menu menureportsindicator = menuDAO.getMenuByElementId("menu_reports_indicator");
+			Menu menureportsindicator = menuService.getMenuByElementId("menu_reports_indicator");
 			if (menureportsindicator != null) {
 				menureportsindicator.setIsActive(active);
-				menuDAO.updateData(menureportsindicator);
+				menuService.update(menureportsindicator);
 			}
 
-			Menu menureportsindicatorperformance = menuDAO.getMenuByElementId("menu_reports_indicator_performance");
+			Menu menureportsindicatorperformance = menuService.getMenuByElementId("menu_reports_indicator_performance");
 			if (menureportsindicatorperformance != null) {
 				menureportsindicatorperformance.setIsActive(active);
-				menuDAO.updateData(menureportsindicatorperformance);
+				menuService.update(menureportsindicatorperformance);
 			}
 
-			Menu menureportsvalidationbacklog = menuDAO.getMenuByElementId("menu_reports_validation_backlog.study");
+			Menu menureportsvalidationbacklog = menuService.getMenuByElementId("menu_reports_validation_backlog.study");
 			if (menureportsvalidationbacklog != null) {
 				menureportsvalidationbacklog.setIsActive(active);
-				menuDAO.updateData(menureportsvalidationbacklog);
+				menuService.update(menureportsvalidationbacklog);
 			}
 
-			Menu menureportsnonconformitystudy = menuDAO.getMenuByElementId("menu_reports_nonconformity.study");
+			Menu menureportsnonconformitystudy = menuService.getMenuByElementId("menu_reports_nonconformity.study");
 			if (menureportsnonconformitystudy != null) {
 				menureportsnonconformitystudy.setIsActive(active);
-				menuDAO.updateData(menureportsnonconformitystudy);
+				menuService.update(menureportsnonconformitystudy);
 			}
 
-			Menu menureportnonconformitydatestudy = menuDAO.getMenuByElementId("menu_reports_nonconformity_date.study");
+			Menu menureportnonconformitydatestudy = menuService
+					.getMenuByElementId("menu_reports_nonconformity_date.study");
 			if (menureportnonconformitydatestudy != null) {
 				menureportnonconformitydatestudy.setIsActive(active);
-				menuDAO.updateData(menureportnonconformitydatestudy);
+				menuService.update(menureportnonconformitydatestudy);
 			}
 
-			Menu menureportsnonconformitysection = menuDAO
+			Menu menureportsnonconformitysection = menuService
 					.getMenuByElementId("menu_reports_nonconformity_section.study");
 			if (menureportsnonconformitysection != null) {
 				menureportsnonconformitysection.setIsActive(active);
-				menuDAO.updateData(menureportsnonconformitysection);
+				menuService.update(menureportsnonconformitysection);
 			}
 
-			Menu menureportsnonconformitynotification = menuDAO
+			Menu menureportsnonconformitynotification = menuService
 					.getMenuByElementId("menu_reports_nonconformity_notification.study");
 			if (menureportsnonconformitynotification != null) {
 				menureportsnonconformitynotification.setIsActive(active);
-				menuDAO.updateData(menureportsnonconformitynotification);
+				menuService.update(menureportsnonconformitynotification);
 			}
 
-			Menu menureportsfolowrequired = menuDAO
+			Menu menureportsfolowrequired = menuService
 					.getMenuByElementId("menu_reports_followupRequired_ByLocation.study");
 			if (menureportsfolowrequired != null) {
 				menureportsfolowrequired.setIsActive(active);
-				menuDAO.updateData(menureportsfolowrequired);
+				menuService.update(menureportsfolowrequired);
 			}
 
-			Menu menureportsexport = menuDAO.getMenuByElementId("menu_reports_export");
+			Menu menureportsexport = menuService.getMenuByElementId("menu_reports_export");
 			if (menureportsexport != null) {
 				menureportsexport.setIsActive(active);
-				menuDAO.updateData(menureportsexport);
+				menuService.update(menureportsexport);
 			}
 
-			Menu menureportsauditTrail = menuDAO.getMenuByElementId("menu_reports_auditTrail.study");
+			Menu menureportsauditTrail = menuService.getMenuByElementId("menu_reports_auditTrail.study");
 			if (menureportsauditTrail != null) {
 				menureportsauditTrail.setIsActive(active);
-				menuDAO.updateData(menureportsauditTrail);
+				menuService.update(menureportsauditTrail);
 			}
 
-			Menu menureportsarvall = menuDAO.getMenuByElementId("menu_reports_arv_all");
+			Menu menureportsarvall = menuService.getMenuByElementId("menu_reports_arv_all");
 			if (menureportsarvall != null) {
 				menureportsarvall.setIsActive(active);
-				menuDAO.updateData(menureportsarvall);
+				menuService.update(menureportsarvall);
 			}
 
-			Menu menureportsvl = menuDAO.getMenuByElementId("menu_reports_vl");
+			Menu menureportsvl = menuService.getMenuByElementId("menu_reports_vl");
 			if (menureportsvl != null) {
 				menureportsvl.setIsActive(active);
-				menuDAO.updateData(menureportsvl);
+				menuService.update(menureportsvl);
 			}
 
-			Menu menureportsvlversion1 = menuDAO.getMenuByElementId("menu_reports_vl_version1");
+			Menu menureportsvlversion1 = menuService.getMenuByElementId("menu_reports_vl_version1");
 			if (menureportsvlversion1 != null) {
 				menureportsvlversion1.setIsActive(active);
-				menuDAO.updateData(menureportsvlversion1);
+				menuService.update(menureportsvlversion1);
 			}
 
-			Menu menunonconformitylabno = menuDAO.getMenuByElementId("menu_reports_nonconformity.Labno");
+			Menu menunonconformitylabno = menuService.getMenuByElementId("menu_reports_nonconformity.Labno");
 			if (menunonconformitylabno != null) {
 				menunonconformitylabno.setIsActive(active);
-				menuDAO.updateData(menunonconformitylabno);
+				menuService.update(menunonconformitylabno);
 			}
 
 			// ------validation----
 
-			Menu menuvalidationstudy = menuDAO.getMenuByElementId("menu_resultvalidation_study");
+			Menu menuvalidationstudy = menuService.getMenuByElementId("menu_resultvalidation_study");
 			if (menuvalidationstudy != null) {
 				menuvalidationstudy.setIsActive(active);
-				menuDAO.updateData(menuvalidationstudy);
+				menuService.update(menuvalidationstudy);
 			}
 
-			Menu menuvalidationimmuno = menuDAO.getMenuByElementId("menu_resultvalidation_immunology");
+			Menu menuvalidationimmuno = menuService.getMenuByElementId("menu_resultvalidation_immunology");
 			if (menuvalidationimmuno != null) {
 				menuvalidationimmuno.setIsActive(active);
-				menuDAO.updateData(menuvalidationimmuno);
+				menuService.update(menuvalidationimmuno);
 			}
 
-			Menu menuvalidationbio = menuDAO.getMenuByElementId("menu_resultvalidation_biochemistry");
+			Menu menuvalidationbio = menuService.getMenuByElementId("menu_resultvalidation_biochemistry");
 			if (menuvalidationbio != null) {
 				menuvalidationbio.setIsActive(active);
-				menuDAO.updateData(menuvalidationbio);
+				menuService.update(menuvalidationbio);
 			}
 
-			Menu menuvalidationsero = menuDAO.getMenuByElementId("menu_resultvalidation_serology");
+			Menu menuvalidationsero = menuService.getMenuByElementId("menu_resultvalidation_serology");
 			if (menuvalidationsero != null) {
 				menuvalidationsero.setIsActive(active);
-				menuDAO.updateData(menuvalidationsero);
+				menuService.update(menuvalidationsero);
 			}
 
-			Menu menuvalidationdnapcr = menuDAO.getMenuByElementId("menu_resultvalidation_dnapcr");
+			Menu menuvalidationdnapcr = menuService.getMenuByElementId("menu_resultvalidation_dnapcr");
 			if (menuvalidationdnapcr != null) {
 				menuvalidationdnapcr.setIsActive(active);
-				menuDAO.updateData(menuvalidationdnapcr);
+				menuService.update(menuvalidationdnapcr);
 			}
 
-			Menu menuvalidationvirology = menuDAO.getMenuByElementId("menu_resultvalidation_virology");
+			Menu menuvalidationvirology = menuService.getMenuByElementId("menu_resultvalidation_virology");
 			if (menuvalidationvirology != null) {
 				menuvalidationvirology.setIsActive(active);
-				menuDAO.updateData(menuvalidationvirology);
+				menuService.update(menuvalidationvirology);
 			}
 
-			Menu menuvalidationVL = menuDAO.getMenuByElementId("menu_resultvalidation_viralload");
+			Menu menuvalidationVL = menuService.getMenuByElementId("menu_resultvalidation_viralload");
 			if (menuvalidationVL != null) {
 				menuvalidationVL.setIsActive(active);
-				menuDAO.updateData(menuvalidationVL);
+				menuService.update(menuvalidationVL);
 			}
 
-			Menu menuvalidationgeno = menuDAO.getMenuByElementId("menu_resultvalidation_genotyping");
+			Menu menuvalidationgeno = menuService.getMenuByElementId("menu_resultvalidation_genotyping");
 			if (menuvalidationgeno != null) {
 				menuvalidationgeno.setIsActive(active);
-				menuDAO.updateData(menuvalidationgeno);
+				menuService.update(menuvalidationgeno);
 			}
 
 			MenuUtil.forceRebuild();

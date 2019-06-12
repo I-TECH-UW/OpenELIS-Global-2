@@ -23,19 +23,15 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.dao.ResultDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -49,122 +45,119 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 @Transactional
 public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements ResultDAO {
 
-	@Autowired
-	AuditTrailDAO auditDAO;
-
 	public ResultDAOImpl() {
 		super(Result.class);
 	}
 
-	@Override
-	public void deleteData(List results) throws LIMSRuntimeException {
+//	@Override
+//	public void deleteData(List results) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			for (Object result : results) {
+//				Result data = (Result) result;
+//				Result oldData = readResult(data.getId());
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "RESULT";
+//				auditDAO.saveHistory(new Result(), oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Result AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (Object result : results) {
+//				Result data = (Result) result;
+//				data = readResult(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Result deleteData()", e);
+//		}
+//	}
 
-		try {
+//	@Override
+//	public void deleteData(Result result) throws LIMSRuntimeException {
+//		Result oldData = readResult(result.getId());
+//
+//		try {
+//
+//			auditDAO.saveHistory(new Result(), oldData, result.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
+//					"RESULT");
+//		} catch (HibernateException e) {
+//			handleException(e, "AuditTrail deleteData");
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().delete(oldData);
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "deleteData");
+//		}
+//	}
 
-			for (Object result : results) {
-				Result data = (Result) result;
-				Result oldData = readResult(data.getId());
+//	@Override
+//	public boolean insertData(Result result) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(result);
+//			result.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = result.getSysUserId();
+//			String tableName = "RESULT";
+//			auditDAO.saveNewHistory(result, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Result insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "RESULT";
-				auditDAO.saveHistory(new Result(), oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Result AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (Object result : results) {
-				Result data = (Result) result;
-				data = readResult(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Result deleteData()", e);
-		}
-	}
-
-	@Override
-	public void deleteData(Result result) throws LIMSRuntimeException {
-		Result oldData = readResult(result.getId());
-
-		try {
-
-			auditDAO.saveHistory(new Result(), oldData, result.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
-					"RESULT");
-		} catch (HibernateException e) {
-			handleException(e, "AuditTrail deleteData");
-		}
-
-		try {
-			sessionFactory.getCurrentSession().delete(oldData);
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "deleteData");
-		}
-	}
-
-	@Override
-	public boolean insertData(Result result) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(result);
-			result.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = result.getSysUserId();
-			String tableName = "RESULT";
-			auditDAO.saveNewHistory(result, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Result insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Result result) throws LIMSRuntimeException {
-
-		Result oldData = readResult(result.getId());
-
-		try {
-
-			String sysUserId = result.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "RESULT";
-			auditDAO.saveHistory(result, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultDAOImpl", "AuditTrail insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Result AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(result);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(result);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(result);
-		} catch (Exception e) {
-
-			LogEvent.logError("ResultDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Result updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Result result) throws LIMSRuntimeException {
+//
+//		Result oldData = readResult(result.getId());
+//
+//		try {
+//
+//			String sysUserId = result.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "RESULT";
+//			auditDAO.saveHistory(result, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultDAOImpl", "AuditTrail insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Result AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(result);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(result);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(result);
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("ResultDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Result updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Result result) throws LIMSRuntimeException {

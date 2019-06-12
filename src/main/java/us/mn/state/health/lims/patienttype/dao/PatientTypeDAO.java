@@ -15,9 +15,9 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 
-	public boolean insertData(PatientType patientType) throws LIMSRuntimeException;
+//	public boolean insertData(PatientType patientType) throws LIMSRuntimeException;
 
-	public void deleteData(List patientType) throws LIMSRuntimeException;
+//	public void deleteData(List patientType) throws LIMSRuntimeException;
 
 	public List getAllPatientTypes() throws LIMSRuntimeException;
 
@@ -25,7 +25,7 @@ public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 
 	public void getData(PatientType patientType) throws LIMSRuntimeException;
 
-	public void updateData(PatientType patientType) throws LIMSRuntimeException;
+//	public void updateData(PatientType patientType) throws LIMSRuntimeException;
 
 	public List getPatientTypes(String filter) throws LIMSRuntimeException;
 
@@ -36,4 +36,6 @@ public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 	public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
 
 	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
+
+	public boolean duplicatePatientTypeExists(PatientType patientType);
 }

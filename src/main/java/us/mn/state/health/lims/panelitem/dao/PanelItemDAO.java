@@ -19,7 +19,6 @@ import java.util.List;
 
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 /**
@@ -32,9 +31,9 @@ import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
  */
 public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
-	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
+//	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
 
-	public void deleteData(List panelItems) throws LIMSRuntimeException;
+//	public void deleteData(List panelItems) throws LIMSRuntimeException;
 
 	public List getAllPanelItems() throws LIMSRuntimeException;
 
@@ -42,7 +41,7 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException;
 
-	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
+//	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
 
 	public List getPanelItems(String filter) throws LIMSRuntimeException;
 
@@ -54,7 +53,7 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 
-	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+//	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
 	public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
 
@@ -62,4 +61,6 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
 			throws LIMSRuntimeException;
+
+	boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException;
 }

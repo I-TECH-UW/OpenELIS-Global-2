@@ -23,78 +23,75 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String> implements SampleRequesterDAO {
 
 	public SampleRequesterDAOImpl() {
 		super(SampleRequester.class);
 	}
 
-	@Override
-	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
-		try {
-			sessionFactory.getCurrentSession().save(sampleRequester);
+//	@Override
+//	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
+//		try {
+//			sessionFactory.getCurrentSession().save(sampleRequester);
+//
+//			auditDAO.saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//	@Override
+//	public void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException {
+//		SampleRequester oldData = readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
+//
+//		try {
+//
+//			String sysUserId = sampleRequester.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SAMPLE_REQUESTER";
+//			auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(sampleRequester);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleRequester);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(sampleRequester);
+//		} catch (Exception e) {
+//			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
+//		}
+//	}
 
-		} catch (Exception e) {
-			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException {
-		SampleRequester oldData = readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = sampleRequester.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SAMPLE_REQUESTER";
-			auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(sampleRequester);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleRequester);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleRequester);
-		} catch (Exception e) {
-			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
-		}
-	}
-
-	@Override
-	public void insertOrUpdateData(SampleRequester samplePersonRequester) throws LIMSRuntimeException {
-		if (samplePersonRequester.getLastupdated() == null) {
-			insertData(samplePersonRequester);
-		} else {
-			updateData(samplePersonRequester);
-		}
-	}
+//	@Override
+//	public void insertOrUpdateData(SampleRequester samplePersonRequester) throws LIMSRuntimeException {
+//		if (samplePersonRequester.getLastupdated() == null) {
+//			insertData(samplePersonRequester);
+//		} else {
+//			updateData(samplePersonRequester);
+//		}
+//	}
 
 	@Override
 	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {

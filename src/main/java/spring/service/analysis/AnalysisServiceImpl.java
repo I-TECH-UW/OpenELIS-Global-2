@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,13 @@ import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -298,12 +299,6 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional
-	public void insert(Analysis analysis, boolean duplicateCheck) {
-		baseObjectDAO.insertData(analysis, duplicateCheck);
-	}
-
-	@Override
-	@Transactional
 	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) {
 		return baseObjectDAO.getAnalysisByAccessionAndTestId(accessionNumber, testId);
 	}
@@ -352,7 +347,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 		for (Analysis analysis : newAnalysis) {
 			analysis.setSysUserId(sysUserId);
-			insert(analysis, false);
+			insert(analysis);
 		}
 	}
 
@@ -393,36 +388,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	}
 
 	@Override
-	public void deleteData(List analysiss) {
-		getBaseObjectDAO().deleteData(analysiss);
-
-	}
-
-	@Override
-	public List getAllAnalyses() {
-		return getBaseObjectDAO().getAllAnalyses();
-	}
-
-	@Override
-	public void updateData(Analysis analysis) {
-		getBaseObjectDAO().updateData(analysis);
-
-	}
-
-	@Override
-	public void updateData(Analysis analysis, boolean skipAuditTrail) {
-		getBaseObjectDAO().updateData(analysis, skipAuditTrail);
-
-	}
-
-	@Override
-	public List getAnalyses(String filter) {
-		return getBaseObjectDAO().getAnalyses(filter);
-	}
-
-	@Override
-	public boolean insertData(Analysis analysis, boolean duplicateCheck) {
-		return getBaseObjectDAO().insertData(analysis, duplicateCheck);
+	public void update(Analysis analysis, boolean skipAuditTrail) {
+		Analysis oldObject = getBaseObjectDAO().get(analysis.getId())
+				.orElseThrow(() -> new ObjectNotFoundException(analysis.getId(), "Analysis"));
+		if (auditTrailLog && !skipAuditTrail) {
+			auditTrailDAO.saveHistory(analysis, oldObject, analysis.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					getBaseObjectDAO().getTableName());
+		}
+		getBaseObjectDAO().save(analysis);
 	}
 
 	@Override
@@ -461,11 +434,6 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	@Override
 	public List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
 		return getBaseObjectDAO().getMaxRevisionAnalysesBySampleIncludeCanceled(sampleItem);
-	}
-
-	@Override
-	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
-		return getBaseObjectDAO().getPatientPreviousAnalysisForTestName(patient, currentSample, testName);
 	}
 
 	@Override
@@ -593,27 +561,15 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	}
 
 	@Override
-	public List getAllAnalysesPerTest(Test test) {
-		return getBaseObjectDAO().getAllAnalysesPerTest(test);
-	}
-
-	@Override
-	public List getPreviousAnalysisRecord(String id) {
-		return getBaseObjectDAO().getPreviousAnalysisRecord(id);
-	}
-
-	@Override
 	public List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) {
 		return getBaseObjectDAO().getAnalysesBySampleItem(sampleItem);
 	}
 
 	@Override
-	public List getPageOfAnalyses(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfAnalyses(startingRecNo);
-	}
-
-	@Override
-	public List getNextAnalysisRecord(String id) {
-		return getBaseObjectDAO().getNextAnalysisRecord(id);
+	@Transactional
+	public void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
+		for (Analysis analysis : updatedAnalysis) {
+			update(analysis, skipAuditTrail);
+		}
 	}
 }

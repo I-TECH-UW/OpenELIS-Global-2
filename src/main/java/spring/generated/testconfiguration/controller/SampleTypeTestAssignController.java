@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.SampleTypeTestAssignForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
+import spring.service.testconfiguration.SampleTypeTestAssignService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -36,9 +36,11 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 public class SampleTypeTestAssignController extends BaseController {
 
 	@Autowired
-	TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
-	TypeOfSampleTestService typeOfSampleTestService;
+	private TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	private SampleTypeTestAssignService sampleTypeTestAssignService;
 
 	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeTestAssign(HttpServletRequest request) {
@@ -113,7 +115,7 @@ public class SampleTypeTestAssignController extends BaseController {
 		String sampleTypeId = form.getString("sampleTypeId");
 		String deactivateSampleTypeId = form.getString("deactivateSampleTypeId");
 		boolean updateTypeOfSample = false;
-		String currentUser = getSysUserId(request);
+		String systemUserId = getSysUserId(request);
 
 		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(sampleTypeId);
 		TypeOfSample deActivateTypeOfSample = null;
@@ -143,46 +145,24 @@ public class SampleTypeTestAssignController extends BaseController {
 		// Boolean value = false;
 		if (typeOfSample.getIsActive() == false) {
 			typeOfSample.setIsActive(true);
-			typeOfSample.setSysUserId(currentUser);
+			typeOfSample.setSysUserId(systemUserId);
 			updateTypeOfSample = true;
 		}
 
 //------------------------------------------
 		if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
-			deActivateTypeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(deactivateSampleTypeId);
+			deActivateTypeOfSample = TypeOfSampleServiceImpl.getInstance()
+					.getTransientTypeOfSampleById(deactivateSampleTypeId);
 			deActivateTypeOfSample.setIsActive(false);
-			deActivateTypeOfSample.setSysUserId(currentUser);
+			deActivateTypeOfSample.setSysUserId(systemUserId);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			if (deleteExistingTypeOfSampleTest) {
-				typeOfSampleTestService.delete(typeOfSamplesTestID, currentUser);
-			}
-
-			if (updateTypeOfSample) {
-				typeOfSampleService.update(typeOfSample);
-			}
-
-			TypeOfSampleTest typeOfSampleTest = new TypeOfSampleTest();
-			typeOfSampleTest.setTestId(testId);
-			typeOfSampleTest.setTypeOfSampleId(sampleTypeId);
-			typeOfSampleTest.setSysUserId(currentUser);
-			typeOfSampleTest.setLastupdatedFields();
-
-			typeOfSampleTestService.insert(typeOfSampleTest);
-
-			if (deActivateTypeOfSample != null) {
-				typeOfSampleService.update(deActivateTypeOfSample);
-			}
-//			tx.commit();
+			sampleTypeTestAssignService.update(typeOfSample, testId, typeOfSamplesTestID, sampleTypeId,
+					deleteExistingTypeOfSampleTest, updateTypeOfSample, deActivateTypeOfSample, systemUserId);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//			finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

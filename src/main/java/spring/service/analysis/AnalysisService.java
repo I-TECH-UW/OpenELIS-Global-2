@@ -8,7 +8,6 @@ import java.util.Set;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -20,18 +19,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 	void getData(Analysis analysis);
 
 	Analysis getAnalysisById(String analysisId);
-
-	void deleteData(List analysiss);
-
-	List getAllAnalyses();
-
-	void updateData(Analysis analysis);
-
-	void updateData(Analysis analysis, boolean skipAuditTrail);
-
-	List getAnalyses(String filter);
-
-	boolean insertData(Analysis analysis, boolean duplicateCheck);
 
 	List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date sqlDayOne,
 			Date sqlDayTwo);
@@ -53,8 +40,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 			boolean sortedByDateAndAccession);
 
 	List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
-
-	Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName);
 
 	List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate);
 
@@ -121,21 +106,11 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	List<Analysis> getAnalysisCollectedOn(Date collectionDate);
 
-	List getAllAnalysesPerTest(Test test);
-
 	List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList);
-
-	List getPreviousAnalysisRecord(String id);
 
 	List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem);
 
-	List getPageOfAnalyses(int startingRecNo);
-
-	List getNextAnalysisRecord(String id);
-
 	List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList);
-
-	void insert(Analysis analysis, boolean duplicateCheck);
 
 	String getCompletedDateForDisplay();
 
@@ -181,5 +156,9 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 	Analysis getAnalysis();
 
 	List<Result> getResults();
+
+	void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+
+	void update(Analysis analysis, boolean skipAuditTrail);
 
 }

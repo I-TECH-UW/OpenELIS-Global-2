@@ -9,12 +9,6 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 public interface SampleService extends BaseObjectService<Sample, String> {
 	void getData(Sample sample);
 
-	void deleteData(List samples);
-
-	void updateData(Sample sample);
-
-	boolean insertData(Sample sample);
-
 	List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd);
 
 	List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
@@ -59,4 +53,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 	List getPageOfSamples(int startingRecNo);
 
 	List<Sample> getSamplesForPatient(String patientID);
+
+	String generateAccessionNumberAndInsert(Sample sample);
 }

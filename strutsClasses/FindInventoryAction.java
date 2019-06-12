@@ -52,7 +52,7 @@ public class FindInventoryAction extends BaseAction {
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
 
-		InventoryUtility utility = new InventoryUtility();
+		InventoryUtility utility = SpringContext.getBean(InventoryUtility.class);
 		List<InventoryKitItem> list = utility.getExistingInventory();
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", list);
 

@@ -31,9 +31,9 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
  */
 public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
-	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException;
+//	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-	public void deleteData(List scriptlets) throws LIMSRuntimeException;
+//	public void deleteData(List scriptlets) throws LIMSRuntimeException;
 
 	public List getAllScriptlets() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException;
+//	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
 	public List getScriptlets(String filter) throws LIMSRuntimeException;
 
@@ -54,4 +54,6 @@ public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 	public Integer getTotalScriptletCount() throws LIMSRuntimeException;
 
 	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException;
+
+	boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException;
 }

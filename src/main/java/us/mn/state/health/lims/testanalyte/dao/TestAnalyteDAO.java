@@ -34,13 +34,13 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
  */
 public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
 
-	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+//	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
 	/**
 	 * @param testAnalytes
 	 * @throws LIMSRuntimeException
 	 */
-	public void deleteData(List testAnalytes) throws LIMSRuntimeException;
+//	public void deleteData(List testAnalytes) throws LIMSRuntimeException;
 
 	/**
 	 * @return
@@ -65,7 +65,7 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
 	 * @param testAnalyte
 	 * @throws LIMSRuntimeException
 	 */
-	public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+//	public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
 	/**
 	 * @param filter

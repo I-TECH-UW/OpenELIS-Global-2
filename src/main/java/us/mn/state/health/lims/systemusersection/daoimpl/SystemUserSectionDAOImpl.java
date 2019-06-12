@@ -23,16 +23,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 
@@ -40,128 +35,130 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, String> implements SystemUserSectionDAO {
 
 	public SystemUserSectionDAOImpl() {
 		super(SystemUserSection.class);
 	}
 
-	@Override
-	public void deleteData(List systemUserSections) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < systemUserSections.size(); i++) {
-				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
+//	@Override
+//	public void deleteData(List systemUserSections) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < systemUserSections.size(); i++) {
+//				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
+//
+//				SystemUserSection oldData = readSystemUserSection(data.getId());
+//				SystemUserSection newData = new SystemUserSection();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SYSTEM_USER_SECTION";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < systemUserSections.size(); i++) {
+//				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
+//				// bugzilla 2206
+//				data = readSystemUserSection(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection deleteData()", e);
+//		}
+//	}
 
-				SystemUserSection oldData = readSystemUserSection(data.getId());
-				SystemUserSection newData = new SystemUserSection();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SYSTEM_USER_SECTION";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < systemUserSections.size(); i++) {
-				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
-				// bugzilla 2206
-				data = readSystemUserSection(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateSystemUserSectionExists(systemUserSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUserSection.getSysUserId());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(systemUserSection);
-			systemUserSection.setId(id);
-
-			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = systemUserSection.getSysUserId();
-			String tableName = "SYSTEM_USER_SECTION";
-			auditDAO.saveNewHistory(systemUserSection, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateSystemUserSectionExists(systemUserSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + systemUserSection.getSystemUserId());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
-		}
-
-		SystemUserSection oldData = readSystemUserSection(systemUserSection.getId());
-		SystemUserSection newData = systemUserSection;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = systemUserSection.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SYSTEM_USER_SECTION";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(systemUserSection);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserSection);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUserSection);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
-		}
-	}
+//	@Override
+//	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateSystemUserSectionExists(systemUserSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUserSection.getSysUserId());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(systemUserSection);
+//			systemUserSection.setId(id);
+//
+//			// add to audit trail
+//
+//			String sysUserId = systemUserSection.getSysUserId();
+//			String tableName = "SYSTEM_USER_SECTION";
+//			auditDAO.saveNewHistory(systemUserSection, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection insertData()", e);
+//		}
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateSystemUserSectionExists(systemUserSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + systemUserSection.getSystemUserId());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
+//		}
+//
+//		SystemUserSection oldData = readSystemUserSection(systemUserSection.getId());
+//		SystemUserSection newData = systemUserSection;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = systemUserSection.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SYSTEM_USER_SECTION";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(systemUserSection);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove
+//			// old(systemUserSection);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(systemUserSection);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
 		try {
-			SystemUserSection sysUserSection = (SystemUserSection) sessionFactory.getCurrentSession()
-					.get(SystemUserSection.class, systemUserSection.getId());
+			SystemUserSection sysUserSection = sessionFactory.getCurrentSession().get(SystemUserSection.class,
+					systemUserSection.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sysUserSection != null) {
@@ -240,7 +237,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 	public SystemUserSection readSystemUserSection(String idString) {
 		SystemUserSection sysUserSection = null;
 		try {
-			sysUserSection = (SystemUserSection) sessionFactory.getCurrentSession().get(SystemUserSection.class, idString);
+			sysUserSection = sessionFactory.getCurrentSession().get(SystemUserSection.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -323,7 +320,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 		return list;
 	}
 
-	private boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

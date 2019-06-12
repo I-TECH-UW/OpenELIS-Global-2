@@ -15,24 +15,21 @@
 */
 package us.mn.state.health.lims.inventory.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
 public interface InventoryLocationDAO extends BaseDAO<InventoryLocation, String> {
 
-	public boolean insertData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
+//	public boolean insertData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
 
-	public void deleteData(List<InventoryLocation> inventory) throws LIMSRuntimeException;
+//	public void deleteData(List<InventoryLocation> inventory) throws LIMSRuntimeException;
 
-	public List<InventoryLocation> getAllInventoryLocations() throws LIMSRuntimeException;
+//	public List<InventoryLocation> getAllInventoryLocations() throws LIMSRuntimeException;
 
-	public void getData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
+//	public void getData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
 
-	public void updateData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
+//	public void updateData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
 
-	public InventoryLocation getInventoryLocationById(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
+//	public InventoryLocation getInventoryLocationById(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
 
 }

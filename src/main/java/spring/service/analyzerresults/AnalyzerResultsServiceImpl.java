@@ -19,6 +19,8 @@ import spring.service.sampleitem.SampleItemService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.note.valueholder.Note;
@@ -29,7 +31,8 @@ import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 
 @Service
-public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String> implements AnalyzerResultsService {
+public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String>
+		implements AnalyzerResultsService {
 	@Autowired
 	protected AnalyzerResultsDAO baseObjectDAO;
 
@@ -62,26 +65,57 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 	}
 
 	@Override
-	public void getData(AnalyzerResults results) {
-		getBaseObjectDAO().getData(results);
-
-	}
-
-	@Override
-	public void updateData(AnalyzerResults results) {
-		getBaseObjectDAO().updateData(results);
-
-	}
-
-	@Override
 	public AnalyzerResults readAnalyzerResults(String idString) {
 		return getBaseObjectDAO().readAnalyzerResults(idString);
 	}
 
 	@Override
 	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) {
-		getBaseObjectDAO().insertAnalyzerResults(results, sysUserId);
+		try {
+			for (AnalyzerResults result : results) {
+				boolean duplicateByAccessionAndTestOnly = false;
+				List<AnalyzerResults> previousResults = baseObjectDAO.getDuplicateResultByAccessionAndTest(result);
+				AnalyzerResults previousResult = null;
 
+				// This next block may seem more complicated then it need be but it covers the
+				// case where there may be a third duplicate
+				// and it covers rereading the same file
+				if (previousResults != null) {
+					duplicateByAccessionAndTestOnly = true;
+					for (AnalyzerResults foundResult : previousResults) {
+						previousResult = foundResult;
+						if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
+							duplicateByAccessionAndTestOnly = false;
+							break;
+						}
+					}
+				}
+
+				if (duplicateByAccessionAndTestOnly) {
+					result.setDuplicateAnalyzerResultId(previousResult.getId());
+					result.setReadOnly(true);
+				}
+
+				if (previousResults == null || duplicateByAccessionAndTestOnly) {
+
+					String id = insert(result);
+					result.setId(id);
+
+					if (duplicateByAccessionAndTestOnly) {
+						previousResult.setDuplicateAnalyzerResultId(id);
+						previousResult.setSysUserId(sysUserId);
+					}
+
+					if (duplicateByAccessionAndTestOnly) {
+						update(previousResult);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
+			throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
+		}
 	}
 
 	@Override
@@ -140,7 +174,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 				Analysis analysis = grouping.analysisList.get(i);
 				if (GenericValidator.isBlankOrNull(analysis.getId())) {
 					analysis.setSampleItem(grouping.sampleItem);
-					analysisService.insert(analysis, false);
+					analysisService.insert(analysis);
 				} else {
 					analysisService.update(analysis);
 				}

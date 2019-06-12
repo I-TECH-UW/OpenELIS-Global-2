@@ -17,22 +17,13 @@ package us.mn.state.health.lims.typeoftestresult.daoimpl;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeoftestresult.dao.TypeOfTestResultDAO;
 import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 
@@ -40,260 +31,262 @@ import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, String> implements TypeOfTestResultDAO {
 
 	public TypeOfTestResultDAOImpl() {
 		super(TypeOfTestResult.class);
 	}
 
-	@Override
-	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < typeOfTestResults.size(); i++) {
-				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
+//	@Override
+//	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < typeOfTestResults.size(); i++) {
+//				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
+//
+//				TypeOfTestResult oldData = readTypeOfTestResult(data.getId());
+//				TypeOfTestResult newData = new TypeOfTestResult();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TYPE_OF_TEST_RESULT";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < typeOfTestResults.size(); i++) {
+//				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
+//
+//				data = readTypeOfTestResult(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult deleteData()", e);
+//		}
+//	}
 
-				TypeOfTestResult oldData = readTypeOfTestResult(data.getId());
-				TypeOfTestResult newData = new TypeOfTestResult();
+//	@Override
+//	public boolean insertData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateTypeOfTestResultExists(typeOfTestResult)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + typeOfTestResult.getDescription());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(typeOfTestResult);
+//			typeOfTestResult.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = typeOfTestResult.getSysUserId();
+//			String tableName = "TYPE_OF_TEST_RESULT";
+//			auditDAO.saveNewHistory(typeOfTestResult, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TYPE_OF_TEST_RESULT";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfTestResultDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult AuditTrail deleteData()", e);
-		}
+//	@Override
+//	public void updateData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateTypeOfTestResultExists(typeOfTestResult)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + typeOfTestResult.getDescription());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult updateData()", e);
+//		}
+//
+//		TypeOfTestResult oldData = readTypeOfTestResult(typeOfTestResult.getId());
+//
+//		try {
+//
+//			String sysUserId = typeOfTestResult.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TYPE_OF_TEST_RESULT";
+//			auditDAO.saveHistory(typeOfTestResult, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(typeOfTestResult);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfTestResult);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(typeOfTestResult);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult updateData()", e);
+//		}
+//	}
 
-		try {
-			for (int i = 0; i < typeOfTestResults.size(); i++) {
-				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
+//	@Override
+//	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+//		try {
+//			TypeOfTestResult sc = sessionFactory.getCurrentSession().get(TypeOfTestResult.class,
+//					typeOfTestResult.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (sc != null) {
+//				PropertyUtils.copyProperties(typeOfTestResult, sc);
+//			} else {
+//				typeOfTestResult.setId(null);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult getData()", e);
+//		}
+//	}
 
-				data = readTypeOfTestResult(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfTestResultDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult deleteData()", e);
-		}
-	}
+//	@Override
+//	public List getAllTypeOfTestResults() throws LIMSRuntimeException {
+//		List list;
+//		try {
+//			String sql = "from TypeOfTestResult";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			// query.setMaxResults(10);
+//			// query.setFirstResult(3);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "getAllTypeOfTestResults()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult getAllTypeOfTestResults()", e);
+//		}
+//
+//		return list;
+//	}
 
-	@Override
-	public boolean insertData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateTypeOfTestResultExists(typeOfTestResult)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + typeOfTestResult.getDescription());
-			}
+//	@Override
+//	public List getPageOfTypeOfTestResults(int startingRecNo) throws LIMSRuntimeException {
+//		List list;
+//		try {
+//			// calculate maxRow to be one more than the page size
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//
+//			String sql = "from TypeOfTestResult t order by t.description";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "getPageOfTypeOfTestResults()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult getPageOfTypeOfTestResults()", e);
+//		}
+//
+//		return list;
+//	}
 
-			String id = (String) sessionFactory.getCurrentSession().save(typeOfTestResult);
-			typeOfTestResult.setId(id);
+//	public TypeOfTestResult readTypeOfTestResult(String idString) {
+//		TypeOfTestResult data;
+//		try {
+//			data = sessionFactory.getCurrentSession().get(TypeOfTestResult.class, idString);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "readTypeOfTestResult()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfTestResult readTypeOfTestResult()", e);
+//		}
+//
+//		return data;
+//	}
 
-			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = typeOfTestResult.getSysUserId();
-			String tableName = "TYPE_OF_TEST_RESULT";
-			auditDAO.saveNewHistory(typeOfTestResult, sysUserId, tableName);
+//	@Override
+//	public List getNextTypeOfTestResultRecord(String id) throws LIMSRuntimeException {
+//
+//		return getNextRecord(id, "TypeOfTestResult", TypeOfTestResult.class);
+//
+//	}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateTypeOfTestResultExists(typeOfTestResult)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + typeOfTestResult.getDescription());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult updateData()", e);
-		}
-
-		TypeOfTestResult oldData = readTypeOfTestResult(typeOfTestResult.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = typeOfTestResult.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TYPE_OF_TEST_RESULT";
-			auditDAO.saveHistory(typeOfTestResult, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfTestResultDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(typeOfTestResult);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfTestResult);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfTestResult);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult updateData()", e);
-		}
-	}
-
-	@Override
-	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
-		try {
-			TypeOfTestResult sc = (TypeOfTestResult) sessionFactory.getCurrentSession().get(TypeOfTestResult.class,
-					typeOfTestResult.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (sc != null) {
-				PropertyUtils.copyProperties(typeOfTestResult, sc);
-			} else {
-				typeOfTestResult.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult getData()", e);
-		}
-	}
-
-	@Override
-	public List getAllTypeOfTestResults() throws LIMSRuntimeException {
-		List list;
-		try {
-			String sql = "from TypeOfTestResult";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getAllTypeOfTestResults()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult getAllTypeOfTestResults()", e);
-		}
-
-		return list;
-	}
-
-	@Override
-	public List getPageOfTypeOfTestResults(int startingRecNo) throws LIMSRuntimeException {
-		List list;
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-			String sql = "from TypeOfTestResult t order by t.description";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getPageOfTypeOfTestResults()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult getPageOfTypeOfTestResults()", e);
-		}
-
-		return list;
-	}
-
-	public TypeOfTestResult readTypeOfTestResult(String idString) {
-		TypeOfTestResult data;
-		try {
-			data = (TypeOfTestResult) sessionFactory.getCurrentSession().get(TypeOfTestResult.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "readTypeOfTestResult()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfTestResult readTypeOfTestResult()", e);
-		}
-
-		return data;
-	}
-
-	@Override
-	public List getNextTypeOfTestResultRecord(String id) throws LIMSRuntimeException {
-
-		return getNextRecord(id, "TypeOfTestResult", TypeOfTestResult.class);
-
-	}
-
-	@Override
-	public List getPreviousTypeOfTestResultRecord(String id) throws LIMSRuntimeException {
-
-		return getPreviousRecord(id, "TypeOfTestResult", TypeOfTestResult.class);
-	}
+//	@Override
+//	public List getPreviousTypeOfTestResultRecord(String id) throws LIMSRuntimeException {
+//
+//		return getPreviousRecord(id, "TypeOfTestResult", TypeOfTestResult.class);
+//	}
 
 	// bugzilla 1411
-	@Override
-	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException {
-		return getTotalCount("TypeOfTestResult", TypeOfTestResult.class);
-	}
+//	@Override
+//	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException {
+//		return getTotalCount("TypeOfTestResult", TypeOfTestResult.class);
+//	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	@Override
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-		List list;
-		try {
-			String sql = "from " + table + " t where description >= " + enquote(id) + " order by t.description";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(1);
-			query.setMaxResults(2);
-
-			list = query.list();
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
-
-		return list;
-	}
-
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	@Override
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-		List list;
-		try {
-			String sql = "from " + table + " t order by t.description desc where description <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(1);
-			query.setMaxResults(2);
-
-			list = query.list();
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//
+//		List list;
+//		try {
+//			String sql = "from " + table + " t where description >= " + enquote(id) + " order by t.description";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(1);
+//			query.setMaxResults(2);
+//
+//			list = query.list();
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "getNextRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
+//
+//	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+//	@Override
+//	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//
+//		List list;
+//		try {
+//			String sql = "from " + table + " t order by t.description desc where description <= " + enquote(id);
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(1);
+//			query.setMaxResults(2);
+//
+//			list = query.list();
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TypeOfTestResultDAOImpl", "getPreviousRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
 
 	// bugzilla 1482
-	private boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
 		try {
 
 			List list;
@@ -352,19 +345,19 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 		return totr;
 	}
 
-	@Override
-	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException {
-		String sql = "from TypeOfTestResult ttr where ttr.testResultType = :type";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("type", type);
-			TypeOfTestResult typeOfTestResult = (TypeOfTestResult) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return typeOfTestResult;
-		} catch (HibernateException e) {
-			handleException(e, "getTypeOfTestResultByType");
-		}
-
-		return null;
-	}
+//	@Override
+//	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException {
+//		String sql = "from TypeOfTestResult ttr where ttr.testResultType = :type";
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("type", type);
+//			TypeOfTestResult typeOfTestResult = (TypeOfTestResult) query.uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return typeOfTestResult;
+//		} catch (HibernateException e) {
+//			handleException(e, "getTypeOfTestResultByType");
+//		}
+//
+//		return null;
+//	}
 }

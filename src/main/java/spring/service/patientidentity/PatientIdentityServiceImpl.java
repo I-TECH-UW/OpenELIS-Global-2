@@ -11,7 +11,8 @@ import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
 @Service
-public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity, String> implements PatientIdentityService {
+public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity, String>
+		implements PatientIdentityService {
 	@Autowired
 	protected PatientIdentityDAO baseObjectDAO;
 
@@ -31,23 +32,12 @@ public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIde
 	}
 
 	@Override
-	public void updateData(PatientIdentity patientIdentity) {
-        getBaseObjectDAO().updateData(patientIdentity);
-
-	}
-
-	@Override
-	public boolean insertData(PatientIdentity patientIdentity) {
-        return getBaseObjectDAO().insertData(patientIdentity);
-	}
-
-	@Override
 	public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId) {
-        return getBaseObjectDAO().getPatitentIdentityForPatientAndType(patientId,identityTypeId);
+		return getBaseObjectDAO().getPatitentIdentityForPatientAndType(patientId, identityTypeId);
 	}
 
 	@Override
 	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType) {
-        return getBaseObjectDAO().getPatientIdentitiesByValueAndType(value,identityType);
+		return getBaseObjectDAO().getPatientIdentitiesByValueAndType(value, identityType);
 	}
 }

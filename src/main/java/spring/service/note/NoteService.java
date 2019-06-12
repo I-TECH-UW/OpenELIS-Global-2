@@ -7,25 +7,12 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.note.valueholder.Note;
 
 public interface NoteService extends BaseObjectService<Note, String> {
-	void getData(Note note);
 
 	Note getData(String noteId);
-
-	void deleteData(List notes);
-
-	void updateData(Note note);
-
-	boolean insertData(Note note);
 
 	List<Note> getNotesByNoteTypeRefIdRefTable(Note note);
 
 	List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId);
-
-	List getPreviousNoteRecord(String id);
-
-	List getNextNoteRecord(String id);
-
-	Integer getTotalNoteCount();
 
 	List getAllNotesByRefIdRefTable(Note note);
 
@@ -35,7 +22,4 @@ public interface NoteService extends BaseObjectService<Note, String> {
 
 	List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject);
 
-	List getPageOfNotes(int startingRecNo);
-
-	List<Note> getAllNotes();
 }

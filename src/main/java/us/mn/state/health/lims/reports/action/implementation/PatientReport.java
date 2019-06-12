@@ -70,6 +70,7 @@ import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -114,7 +115,7 @@ public abstract class PatientReport extends Report {
 	protected NoteService noteService = SpringContext.getBean(NoteService.class);
 	protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
 	protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
-	
+
 	private List<String> handledOrders;
 	private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -245,12 +246,13 @@ public abstract class PatientReport extends Report {
 
 		if (!updatedAnalysis.isEmpty()) {
 			try {
-				for (Analysis analysis : updatedAnalysis) {
-					analysisService.updateData(analysis, true);
-				}
+				analysisService.updateAll(updatedAnalysis, true);
+//				for (Analysis analysis : updatedAnalysis) {
+//					analysisService.update(analysis, true);
+//				}
 
 			} catch (LIMSRuntimeException lre) {
-				lre.printStackTrace();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", lre);
 			}
 		}
 	}

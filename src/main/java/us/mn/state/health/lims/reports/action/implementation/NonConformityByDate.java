@@ -26,6 +26,10 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.qaevent.service.NonConformityHelper;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.sample.SampleService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TableIdService;
@@ -33,19 +37,13 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.NonConformityReportData;
 import us.mn.state.health.lims.reports.action.util.ReportUtil;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public abstract class NonConformityByDate extends Report implements IReportCreator {
@@ -54,10 +52,9 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	private DateRange dateRange;
 	private ArrayList<NonConformityReportData> reportItems;
 
-	private ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-	private SampleDAO sampleDAO = new SampleDAOImpl();
-
-	private SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
+	private ObservationHistoryService observationService = SpringContext.getBean(ObservationHistoryService.class);
+	private SampleService sampleService = SpringContext.getBean(SampleService.class);
+	private SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
 
 	private Sample sample;
 	private Project project;
@@ -108,7 +105,7 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	 *
 	 */
 	private void createReportItems() {
-		List<Sample> samples = sampleDAO.getSamplesReceivedInDateRange(lowDateStr, highDateStr);
+		List<Sample> samples = sampleService.getSamplesReceivedInDateRange(lowDateStr, highDateStr);
 		for (Sample sample : samples) {
 			this.sample = sample;
 			patient = ReportUtil.findPatient(sample);
@@ -148,7 +145,8 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	 */
 	private String findService() {
 		String service = "";
-		List<ObservationHistory> oh = observationDAO.getAll(null, sample, TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID);
+		List<ObservationHistory> oh = observationService.getAll(null, sample,
+				TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID);
 		if (oh.size() > 0) {
 			service = oh.get(0).getValue();
 		}
@@ -161,7 +159,7 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	private List<SampleQaEvent> findSampleQaEvents() {
 		SampleQaEvent sampleQaEvent = new SampleQaEvent();
 		sampleQaEvent.setSample(sample);
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	@Override

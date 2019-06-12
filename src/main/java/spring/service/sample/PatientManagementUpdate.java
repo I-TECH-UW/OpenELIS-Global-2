@@ -290,7 +290,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 							|| (listIdentity.getIdentityData() != null
 									&& !listIdentity.getIdentityData().equals(paramValue))) {
 						listIdentity.setIdentityData(paramValue);
-						identityService.updateData(listIdentity);
+						identityService.update(listIdentity);
 					}
 
 					break;
@@ -306,7 +306,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 			identity.setSysUserId(currentUserId);
 			identity.setIdentityData(paramValue);
 			identity.setLastupdatedFields();
-			identityService.insertData(identity);
+			identityService.insert(identity);
 		}
 	}
 
@@ -331,11 +331,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 				patientPatientType.setSysUserId(currentUserId);
 				patientPatientType.setPatientId(patient.getId());
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeService.insertData(patientPatientType);
+				patientPatientTypeService.insert(patientPatientType);
 			} else {
 				patientPatientType.setSysUserId(currentUserId);
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeService.updateData(patientPatientType);
+				patientPatientTypeService.update(patientPatientType);
 			}
 		}
 	}
@@ -385,16 +385,16 @@ public class PatientManagementUpdate implements IPatientUpdate {
 	public void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException {
 
 		if (patientUpdateStatus == PatientUpdateStatus.ADD) {
-			personService.insertData(person);
+			personService.insert(person);
 		} else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
-			personService.updateData(person);
+			personService.update(person);
 		}
 		patient.setPerson(person);
 
 		if (patientUpdateStatus == PatientUpdateStatus.ADD) {
-			patientService.insertData(patient);
+			patientService.insert(patient);
 		} else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
-			patientService.updateData(patient);
+			patientService.update(patient);
 		}
 
 		persistPatientRelatedInformation(patientInfo);

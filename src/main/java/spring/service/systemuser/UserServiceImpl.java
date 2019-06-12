@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
 	public void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
 			List<String> selectedRoles, String loggedOnUserId) {
 		if (loginUserNew) {
-			loginService.updatePassword(loginUser, loginUser.getPassword());
+			loginService.hashPassword(loginUser, loginUser.getPassword());
 			loginService.insert(loginUser);
 		} else {
-			loginService.updatePassword(loginUser, loginUser.getPassword());
+			loginService.hashPassword(loginUser, loginUser.getPassword());
 			loginService.update(loginUser);
 		}
 

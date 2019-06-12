@@ -23,33 +23,35 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.analyte.AnalyteService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.result.ResultService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class RetroCIReflexActions extends ReflexAction {
 
-	private static TestDAO testDAO = new TestDAOImpl();
+	private static ResultService resultService = SpringContext.getBean(ResultService.class);
+	private static ObservationHistoryTypeService typeService = SpringContext
+			.getBean(ObservationHistoryTypeService.class);
+	private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
+	private static TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+	private static TestService testService = SpringContext.getBean(TestService.class);
+
 	private static final String HIV_D = "HIV D";
 	private static final String HIV_2 = "HIV 2";
 	private static final String HIV_1 = "HIV 1";
@@ -72,15 +74,12 @@ public class RetroCIReflexActions extends ReflexAction {
 	private static Map<String, String> hivStatusToDictonaryIDMap;
 
 	static {
-		ObservationHistoryTypeDAO typeDAO = new ObservationHistoryTypeDAOImpl();
-		ObservationHistoryType observationHistoryType = typeDAO.getByName(HIV_NAME);
+		ObservationHistoryType observationHistoryType = typeService.getByName(HIV_NAME);
 		OBSERVATION_HIV_STATUS_ID = observationHistoryType == null ? null : observationHistoryType.getId();
 
 		hivStatusToDictonaryIDMap = new HashMap<>();
 
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-
-		List<Dictionary> dictionaryList = dictionaryDAO.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
+		List<Dictionary> dictionaryList = dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
 
 		for (Dictionary dictionary : dictionaryList) {
 			if (dictionary.getDictEntry().equals("HIV1")) {
@@ -98,36 +97,34 @@ public class RetroCIReflexActions extends ReflexAction {
 			}
 		}
 
-		AnalyteDAO analyteDAO = new AnalyteDAOImpl();
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
-		ANALYTE_CONCLUSION = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_CONCLUSION = analyteService.getAnalyteByName(analyte, false);
 		analyte = new Analyte();
 		analyte.setAnalyteName("CD4 percentage count Result");
-		ANALYTE_CD4_PER_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_CD4_PER_RESULT = analyteService.getAnalyteByName(analyte, false);
 		analyte = new Analyte();
 		analyte.setAnalyteName("GB Result");
-		ANALYTE_GB_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_GB_RESULT = analyteService.getAnalyteByName(analyte, false);
 		analyte = new Analyte();
 		analyte.setAnalyteName("Lymph % Result");
-		ANALYTE_LYMPH_PER_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_LYMPH_PER_RESULT = analyteService.getAnalyteByName(analyte, false);
 		analyte = new Analyte();
 		analyte.setAnalyteName("generated CD4 Count");
-		ANALYTE_CD4_CT_GENERATED = analyteDAO.getAnalyteByName(analyte, false);
+		ANALYTE_CD4_CT_GENERATED = analyteService.getAnalyteByName(analyte, false);
 
 		CD4_RESULT_TEST_DEPENDANCIES = new ArrayList<>();
 
-		Test test = testDAO.getTestByName("GB");
+		Test test = testService.getTestByName("GB");
 		CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-		test = testDAO.getTestByName("Lymph %");
+		test = testService.getTestByName("Lymph %");
 		CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-		test = testDAO.getTestByName("CD4 percentage count");
+		test = testService.getTestByName("CD4 percentage count");
 		CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-		test = testDAO.getTestByName("CD4 absolute count");
+		test = testService.getTestByName("CD4 absolute count");
 
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
 		@SuppressWarnings("unchecked")
-		List<TestResult> resultList = testResultDAO.getAllActiveTestResultsPerTest(test);
+		List<TestResult> resultList = testResultService.getAllActiveTestResultsPerTest(test);
 		TEST_RESULT_CD4_CALCULATED = resultList.get(0);
 	}
 
@@ -147,9 +144,9 @@ public class RetroCIReflexActions extends ReflexAction {
 			} else if (action.equals("Calc CD4")) {
 				finalResult = getCD4CalculationResult(result.getAnalysis().getSampleItem().getSample());
 			} else if (action.equals(VIRONOSTIKA_OR_INNOLIA)) {
-				Test test = testDAO.getTestByName(VIRONOSTIKA);
+				Test test = testService.getTestByName(VIRONOSTIKA);
 				if (!test.isActive()) {
-					test = testDAO.getTestByName(INNOLIA);
+					test = testService.getTestByName(INNOLIA);
 				}
 				createReflexedAnalysis(test);
 			}
@@ -159,7 +156,7 @@ public class RetroCIReflexActions extends ReflexAction {
 
 	public Result getCD4CalculationResult(Sample sample) {
 		Result calculatedResult = null;
-		List<Analysis> analysisList = ANALYSIS_DAO.getAnalysisBySampleAndTestIds(sample.getId(),
+		List<Analysis> analysisList = analysisService.getAnalysisBySampleAndTestIds(sample.getId(),
 				CD4_RESULT_TEST_DEPENDANCIES);
 
 		List<Integer> analysisIDList = new ArrayList<>();
@@ -167,11 +164,10 @@ public class RetroCIReflexActions extends ReflexAction {
 			analysisIDList.add(Integer.parseInt(analysis.getId()));
 		}
 
-		ResultDAO resultDAO = new ResultDAOImpl();
-
-		Result CD4Result = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_PER_RESULT.getId(), analysisIDList);
-		Result GBResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_GB_RESULT.getId(), analysisIDList);
-		Result LymphResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_LYMPH_PER_RESULT.getId(),
+		Result CD4Result = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_PER_RESULT.getId(),
+				analysisIDList);
+		Result GBResult = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_GB_RESULT.getId(), analysisIDList);
+		Result LymphResult = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_LYMPH_PER_RESULT.getId(),
 				analysisIDList);
 
 		if (CD4Result != null && GBResult != null && LymphResult != null) {
@@ -180,7 +176,7 @@ public class RetroCIReflexActions extends ReflexAction {
 						* Double.parseDouble(LymphResult.getValue()) * 0.1;
 				result = Math.rint(result);
 
-				calculatedResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(),
+				calculatedResult = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(),
 						analysisIDList);
 				if (calculatedResult == null) {
 					calculatedResult = new Result();

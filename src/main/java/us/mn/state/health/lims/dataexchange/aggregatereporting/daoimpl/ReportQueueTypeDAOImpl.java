@@ -25,7 +25,6 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 

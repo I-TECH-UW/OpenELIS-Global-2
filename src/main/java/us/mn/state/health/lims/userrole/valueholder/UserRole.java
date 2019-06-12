@@ -19,7 +19,6 @@ package us.mn.state.health.lims.userrole.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 public class UserRole extends BaseObject<UserRolePK> {

@@ -10,12 +10,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, String> {
 	void getData(TypeOfSample typeOfSample);
 
-	void deleteData(List typeOfSamples);
-
-	void updateData(TypeOfSample typeOfSample);
-
-	boolean insertData(TypeOfSample typeOfSample);
-
 	String getNameForTypeOfSampleId(String id);
 
 	List getAllTypeOfSamples();

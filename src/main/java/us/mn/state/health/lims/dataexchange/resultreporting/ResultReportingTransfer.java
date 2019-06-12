@@ -115,16 +115,10 @@ public class ResultReportingTransfer {
 			report.setBookkeepingData(getResultIdListString() == null ? "" : getResultIdListString());
 			report.setSend(true);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-				SpringContext.getBean(ReportExternalExportService.class).insertReportExternalExport(report);
-
-//				tx.commit();
-
+				SpringContext.getBean(ReportExternalExportService.class).insert(report);
 			} catch (LIMSRuntimeException lre) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "bufferResults()", lre);
-//				tx.rollback();
 			}
 		}
 
@@ -162,18 +156,13 @@ public class ResultReportingTransfer {
 
 			DocumentTrackService trackService = SpringContext.getBean(DocumentTrackService.class);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				trackService.insertAll(documents);
 //				for (DocumentTrack document : documents) {
-//					trackService.insertData(document);
+//					trackService.insert(document);
 //				}
-
-//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "markFinalResultsAsSent()", lre);
-//				tx.rollback();
 			}
 		}
 	}

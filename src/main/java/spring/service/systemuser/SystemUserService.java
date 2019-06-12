@@ -8,12 +8,6 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 public interface SystemUserService extends BaseObjectService<SystemUser, String> {
 	void getData(SystemUser systemUser);
 
-	void deleteData(List systemUsers);
-
-	void updateData(SystemUser systemUser);
-
-	boolean insertData(SystemUser systemUser);
-
 	List getPageOfSystemUsers(int startingRecNo);
 
 	List getAllSystemUsers();

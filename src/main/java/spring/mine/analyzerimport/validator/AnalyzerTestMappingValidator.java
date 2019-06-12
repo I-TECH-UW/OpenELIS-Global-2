@@ -13,8 +13,9 @@ import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Component
 public class AnalyzerTestMappingValidator implements Validator {
-	
-	protected AnalyzerTestMappingService analyzerTestMappingService = SpringContext.getBean(AnalyzerTestMappingService.class);
+
+	protected AnalyzerTestMappingService analyzerTestMappingService = SpringContext
+			.getBean(AnalyzerTestMappingService.class);
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -37,7 +38,7 @@ public class AnalyzerTestMappingValidator implements Validator {
 	public void preInsertValidate(AnalyzerTestMapping analyzerTestMapping, Errors errors) {
 		validate(analyzerTestMapping, errors);
 
-		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAllAnalyzerTestMappings();
+		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAll();
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerTestMapping.getAnalyzerId().equals(testMapping.getAnalyzerId())
 					&& analyzerTestMapping.getAnalyzerTestName().equals(testMapping.getAnalyzerTestName())) {

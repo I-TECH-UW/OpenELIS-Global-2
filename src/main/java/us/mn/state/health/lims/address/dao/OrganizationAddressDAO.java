@@ -16,19 +16,12 @@
 */
 package us.mn.state.health.lims.address.dao;
 
-import java.util.List;
-import java.util.Optional;
-
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 public interface OrganizationAddressDAO extends BaseDAO<OrganizationAddress, AddressPK> {
-	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException;
+//	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException;
 
-	@Override
-	public AddressPK insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
-
-	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
+//	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress);
 }

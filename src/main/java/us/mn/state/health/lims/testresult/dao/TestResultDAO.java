@@ -33,9 +33,9 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  */
 public interface TestResultDAO extends BaseDAO<TestResult, String> {
 
-	public boolean insertData(TestResult testResult) throws LIMSRuntimeException;
+//	public boolean insertData(TestResult testResult) throws LIMSRuntimeException;
 
-	public void deleteData(List testResults) throws LIMSRuntimeException;
+//	public void deleteData(List testResults) throws LIMSRuntimeException;
 
 	public List getAllTestResults() throws LIMSRuntimeException;
 
@@ -43,7 +43,7 @@ public interface TestResultDAO extends BaseDAO<TestResult, String> {
 
 	public void getData(TestResult testResult) throws LIMSRuntimeException;
 
-	public void updateData(TestResult testResult) throws LIMSRuntimeException;
+//	public void updateData(TestResult testResult) throws LIMSRuntimeException;
 
 	public List getNextTestResultRecord(String id) throws LIMSRuntimeException;
 

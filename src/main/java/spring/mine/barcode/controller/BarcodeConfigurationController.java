@@ -27,7 +27,7 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class BarcodeConfigurationController extends BaseController {
-	
+
 	@Autowired
 	SiteInformationService siteInformationService;
 
@@ -155,11 +155,11 @@ public class BarcodeConfigurationController extends BaseController {
 			siteInformation.setValue(value);
 			siteInformation.setValueType(valueType);
 			siteInformation.setSysUserId(getSysUserId(request));
-			siteInformationService.insertData(siteInformation);
+			siteInformationService.insert(siteInformation);
 		} else {
 			siteInformation.setValue(value);
 			siteInformation.setSysUserId(getSysUserId(request));
-			siteInformationService.updateData(siteInformation);
+			siteInformationService.update(siteInformation);
 		}
 
 	}

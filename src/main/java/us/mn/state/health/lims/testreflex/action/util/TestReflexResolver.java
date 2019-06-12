@@ -20,17 +20,18 @@ package us.mn.state.health.lims.testreflex.action.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import spring.service.analysis.AnalysisService;
+import spring.service.result.ResultService;
+import spring.service.testreflex.TestReflexService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
-import us.mn.state.health.lims.testreflex.daoimpl.TestReflexDAOImpl;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 
 /*
@@ -38,11 +39,16 @@ import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
  * a sample based on the results of previous tests.  There can be the case that more
  * than one test result can trigger a new test or more than one new test is created
  */
+@Service
+@Scope("prototype")
 public class TestReflexResolver {
 
-	private static TestReflexDAO TEST_REFLEX_DAO = new TestReflexDAOImpl();
-	private static AnalysisDAO ANALYSIS_DAO = new AnalysisDAOImpl();
-	private static ResultDAO RESULT_DAO = new ResultDAOImpl();
+	@Autowired
+	private TestReflexService testReflexService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private ResultService resultService;
 
 	private Analysis lastValidAnalysis = null;
 
@@ -50,12 +56,11 @@ public class TestReflexResolver {
 		return lastValidAnalysis;
 	}
 
-
 	/*
-	 * Gets the test reflex associated with this test. Depends on the analyte,
-	 * test result and test. This could return zero or more reflexes. More than
-	 * one reflexes will be returned when there is more than one reflex for a
-	 * test, analyte and result combo
+	 * Gets the test reflex associated with this test. Depends on the analyte, test
+	 * result and test. This could return zero or more reflexes. More than one
+	 * reflexes will be returned when there is more than one reflex for a test,
+	 * analyte and result combo
 	 */
 	public List<TestReflex> getTestReflexesForResult(Result result) {
 		String testResultId = null;
@@ -67,28 +72,28 @@ public class TestReflexResolver {
 			testId = result.getTestResult().getTest() == null ? null : result.getTestResult().getTest().getId();
 		}
 
-		List<TestReflex> reflexes = TEST_REFLEX_DAO.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId, testId); 
-		return reflexes != null ? reflexes : new ArrayList<TestReflex>();
+		List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
+				testId);
+		return reflexes != null ? reflexes : new ArrayList<>();
 	}
 
-	
-	public ReflexAction getReflexAction(){
+	public ReflexAction getReflexAction() {
 		return ReflexActionFactory.getReflexAction();
 	}
-	
-	
+
 	public boolean isSatisfied(TestReflex reflex, Sample sample) {
 
-		List<Analysis> analysisList = ANALYSIS_DAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
 		for (Analysis analysis : analysisList) {
-			if (!StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected).equals(analysis.getStatusId())) {
-				List<Result> resultList = RESULT_DAO.getResultsByAnalysis(analysis);
+			if (!StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)
+					.equals(analysis.getStatusId())) {
+				List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
 				for (Result result : resultList) {
 					if (result.getTestResult() != null
-                            && reflex.getTestResultId().equals(result.getTestResult().getId())
-                            && result.getAnalyte() != null
+							&& reflex.getTestResultId().equals(result.getTestResult().getId())
+							&& result.getAnalyte() != null
 							&& reflex.getTestAnalyte().getAnalyte().getId().equals(result.getAnalyte().getId())
 							&& reflex.getTestId().equals(analysis.getTest().getId())) {
 

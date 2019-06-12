@@ -23,8 +23,6 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
@@ -38,8 +36,6 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact,
 	public OrganizationContactDAOImpl() {
 		super(OrganizationContact.class);
 	}
-
-	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -56,20 +52,6 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact,
 		}
 
 		return null;
-	}
-
-	@Override
-	public String insert(OrganizationContact contact) throws LIMSRuntimeException {
-		String id = null;
-		try {
-			id = (String) sessionFactory.getCurrentSession().save(contact);
-			contact.setId(id);
-			auditDAO.saveNewHistory(contact, contact.getSysUserId(), "organization_contact");
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insert");
-		}
-		return id;
 	}
 
 }

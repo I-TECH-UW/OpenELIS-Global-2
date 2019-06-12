@@ -18,15 +18,13 @@ package us.mn.state.health.lims.reports.valueholder.resultsreport;
 import java.util.List;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
 
 /**
  * @author benzd1 bugzilla 2264
  *
  */
-//TODO should this be a BaseObject?
-public class ResultsReportTest extends BaseObject<String> {
+public class ResultsReportTest {
 
 	private Analysis analysis;
 

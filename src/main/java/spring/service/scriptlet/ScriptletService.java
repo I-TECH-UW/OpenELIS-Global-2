@@ -8,12 +8,6 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 public interface ScriptletService extends BaseObjectService<Scriptlet, String> {
 	void getData(Scriptlet scriptlet);
 
-	void deleteData(List scriptlets);
-
-	void updateData(Scriptlet scriptlet);
-
-	boolean insertData(Scriptlet scriptlet);
-
 	List getPreviousScriptletRecord(String id);
 
 	Integer getTotalScriptletCount();

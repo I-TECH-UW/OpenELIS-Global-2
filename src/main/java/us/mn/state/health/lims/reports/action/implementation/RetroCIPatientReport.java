@@ -25,41 +25,43 @@ import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 
 public abstract class RetroCIPatientReport extends RetroCIReport {
 
 	protected static String ANALYSIS_FINALIZED_STATUS_ID;
 
 	protected static List<Integer> READY_FOR_REPORT_STATUS_IDS;
-	private static ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
 	protected Patient reportPatient;
 	protected Sample reportSample;
-	private SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
+
+	private static ObservationHistoryService observationService = SpringContext
+			.getBean(ObservationHistoryService.class);
+	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	private SampleService sampleService = SpringContext.getBean(SampleService.class);
+
 	private String lowerNumber;
 	private String upperNumber;
 	private List<String> handledOrders;
 
-	static{
-		READY_FOR_REPORT_STATUS_IDS = new ArrayList<Integer>();
-		READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Finished)));
+	static {
+		READY_FOR_REPORT_STATUS_IDS = new ArrayList<>();
+		READY_FOR_REPORT_STATUS_IDS
+				.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Finished)));
 		READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Started)));
 
 		ANALYSIS_FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
 	}
-
 
 	@Override
 	public void initializeReport(BaseForm form) {
@@ -69,8 +71,8 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 		lowerNumber = form.getString("accessionDirect");
 		upperNumber = form.getString("highAccessionDirect");
 
-		handledOrders = new ArrayList<String>();
-		
+		handledOrders = new ArrayList<>();
+
 		createReportParameters();
 
 		boolean valid = validateAccessionNumbers();
@@ -85,12 +87,13 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 				errorMsgs.add(msgs);
 			}
 
-			Collections.sort(reportSampleList, new Comparator<Sample>(){
+			Collections.sort(reportSampleList, new Comparator<Sample>() {
 				@Override
 				public int compare(Sample o1, Sample o2) {
 					return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-				}});
-			
+				}
+			});
+
 			initializeReportItems();
 
 			for (Sample sample : reportSampleList) {
@@ -107,7 +110,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 	private boolean validateAccessionNumbers() {
 
 		if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
-		    add1LineErrorMessage("report.error.message.noParameters");
+			add1LineErrorMessage("report.error.message.noParameters");
 			return false;
 		}
 
@@ -121,7 +124,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 		int highIndex = findFirstNumber(upperNumber);
 
 		if (lowIndex == lowerNumber.length() || highIndex == upperNumber.length()) {
-		    add1LineErrorMessage("report.error.message.noParameters");
+			add1LineErrorMessage("report.error.message.noParameters");
 			return false;
 		}
 
@@ -146,17 +149,16 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 	}
 
 	/*
-	 * Until the ARV study has a initial and followup project we have to let
-	 * each study figure out which one the patient is in
+	 * Until the ARV study has a initial and followup project we have to let each
+	 * study figure out which one the patient is in
 	 */
 	protected boolean allowSample() {
 		return true;
 	}
 
 	private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
-		SampleDAO sampleDAO = new SampleDAOImpl();
-		return sampleDAO.getSamplesByProjectAndStatusIDAndAccessionRange(getProjIdsList(getProjectId()), READY_FOR_REPORT_STATUS_IDS, lowerNumber,
-				upperNumber);
+		return sampleService.getSamplesByProjectAndStatusIDAndAccessionRange(getProjIdsList(getProjectId()),
+				READY_FOR_REPORT_STATUS_IDS, lowerNumber, upperNumber);
 	}
 
 	protected abstract String getProjectId();
@@ -166,12 +168,12 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 	protected abstract void createReportItems();
 
 	protected void findPatientFromSample() {
-		reportPatient = sampleHumanDAO.getPatientForSample(reportSample);
+		reportPatient = sampleHumanService.getPatientForSample(reportSample);
 	}
 
 	@Override
 	protected void createReportParameters() {
-	    super.createReportParameters();
+		super.createReportParameters();
 		reportParameters.put("studyName", getReportNameForReport());
 	}
 
@@ -187,22 +189,23 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 	}
 
 	protected String getObservationValues(String observationTypeId) {
-		List<ObservationHistory> observationList = observationDAO.getAll(reportPatient, reportSample, observationTypeId);
+		List<ObservationHistory> observationList = observationService.getAll(reportPatient, reportSample,
+				observationTypeId);
 		return observationList.size() > 0 ? observationList.get(0).getValue() : "";
 	}
-	
+
 	@Override
-	public List<String> getReportedOrders(){
-	    	return handledOrders;
+	public List<String> getReportedOrders() {
+		return handledOrders;
 	}
-	
-    protected List<Integer> getProjIdsList(String projID){
-		
+
+	protected List<Integer> getProjIdsList(String projID) {
+
 		String[] fields = projID.split(":");
-		List<Integer> projIDList= new ArrayList<Integer>();
-		for (int i=0;i<fields.length;i++){
+		List<Integer> projIDList = new ArrayList<>();
+		for (int i = 0; i < fields.length; i++) {
 			projIDList.add(Integer.parseInt(fields[i]));
-		}	
+		}
 		return projIDList;
 	}
 }

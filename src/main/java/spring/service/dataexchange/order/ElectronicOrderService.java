@@ -6,15 +6,9 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 
 public interface ElectronicOrderService extends BaseObjectService<ElectronicOrder, String> {
-	void updateData(ElectronicOrder eOrder);
-
-	void insertData(ElectronicOrder eOrder);
 
 	List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
 
-	List<ElectronicOrder> getAllElectronicOrders();
-
 	List<ElectronicOrder> getElectronicOrdersByExternalId(String id);
 
-	List<ElectronicOrder> getElectronicOrdersByPatientId(String id);
 }

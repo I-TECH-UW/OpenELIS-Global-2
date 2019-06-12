@@ -178,10 +178,11 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 		try {
-
-			for (String siteInformationId : selectedIDs) {
-				siteInformationService.delete(siteInformationId, getSysUserId(request));
-			}
+			siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
+//			for (String siteInformationId : selectedIDs) {
+//				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
+//				siteInformationService.delete(siteInformationId, getSysUserId(request));
+//			}
 
 		} catch (LIMSRuntimeException lre) {
 			String errorMsg;

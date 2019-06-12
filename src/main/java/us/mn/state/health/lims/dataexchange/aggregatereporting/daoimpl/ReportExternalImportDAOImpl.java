@@ -24,18 +24,15 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalImportDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
-public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport, String> implements ReportExternalImportDAO {
+@Transactional
+public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport, String>
+		implements ReportExternalImportDAO {
 
 	public ReportExternalImportDAOImpl() {
 		super(ReportExternalImport.class);
@@ -64,43 +61,41 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		return null;
 	}
 
-	@Override
-	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(report);
-			report.setId(id);
-			new AuditTrailDAOImpl().saveNewHistory(report, report.getSysUserId(), "REPORT_EXTERNAL_IMPORT");
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertReportExternalImport");
-		}
-	}
+//	@Override
+//	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(report);
+//			report.setId(id);
+//			auditDAO.saveNewHistory(report, report.getSysUserId(), "REPORT_EXTERNAL_IMPORT");
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertReportExternalImport");
+//		}
+//	}
 
-	@Override
-	public void updateReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
-		ReportExternalImport oldData = readReportExternalImport(report.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-
-			auditDAO.saveHistory(report, oldData, report.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-					"REPORT_EXTERNAL_IMPORT");
-
-			sessionFactory.getCurrentSession().merge(report);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
-		} catch (Exception e) {
-			handleException(e, "updateReportExternalImport");
-		}
-	}
+//	@Override
+//	public void updateReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
+//		ReportExternalImport oldData = readReportExternalImport(report.getId());
+//
+//		try {
+//
+//			auditDAO.saveHistory(report, oldData, report.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+//					"REPORT_EXTERNAL_IMPORT");
+//
+//			sessionFactory.getCurrentSession().merge(report);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
+//		} catch (Exception e) {
+//			handleException(e, "updateReportExternalImport");
+//		}
+//	}
 
 	public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalImport data = (ReportExternalImport) sessionFactory.getCurrentSession()
-					.get(ReportExternalImport.class, idString);
+			ReportExternalImport data = sessionFactory.getCurrentSession().get(ReportExternalImport.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {

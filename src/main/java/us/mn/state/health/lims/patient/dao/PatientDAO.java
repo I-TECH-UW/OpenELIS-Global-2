@@ -32,9 +32,9 @@ import us.mn.state.health.lims.person.valueholder.Person;
  */
 public interface PatientDAO extends BaseDAO<Patient, String> {
 
-	public boolean insertData(Patient patient) throws LIMSRuntimeException;
+//	public boolean insertData(Patient patient) throws LIMSRuntimeException;
 
-	public void deleteData(List patients) throws LIMSRuntimeException;
+//	public void deleteData(List patients) throws LIMSRuntimeException;
 
 	public List getAllPatients() throws LIMSRuntimeException;
 
@@ -42,7 +42,7 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 	public void getData(Patient patient) throws LIMSRuntimeException;
 
-	public void updateData(Patient patient) throws LIMSRuntimeException;
+//	public void updateData(Patient patient) throws LIMSRuntimeException;
 
 	public List getNextPatientRecord(String id) throws LIMSRuntimeException;
 

@@ -17,7 +17,6 @@ package us.mn.state.health.lims.citystatezip.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,6 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author diane benz
@@ -39,17 +37,17 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  *
  */
 @Component
-@Transactional 
+@Transactional
 public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> implements CityStateZipDAO {
 
 	public CityStateZipDAOImpl() {
 		super(CityStateZip.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List getCities(String filter) throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+	public List<CityStateZip> getCities(String filter) throws LIMSRuntimeException {
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 
 		try {
 			String sql = "from CityView csz where upper(csz.city) like upper(:param) order by upper(csz.city)";
@@ -58,13 +56,13 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			query.setParameter("param", filter + "%");
 			// for performance
 			query.setMaxResults(100);
-			list = query.list();
+			List<CityView> list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
 				CityStateZip csz = new CityStateZip();
 				csz.setId(String.valueOf(i));
 				CityView c = new CityView();
-				c = (CityView) list.get(i);
+				c = list.get(i);
 				csz.setCity(c.getCity());
 				cityStateZips.add(csz);
 			}
@@ -81,8 +79,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
-	public List getZipCodesByCity(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List cityStateZips = new ArrayList();
+	public List<CityStateZip> getZipCodesByCity(CityStateZip cityStateZip) throws LIMSRuntimeException {
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
 
 			String sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param";
@@ -121,15 +119,14 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
-	public List getCitiesByZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+	public List<CityStateZip> getCitiesByZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
 			String sql = "select distinct csz.city, csz.zipCode from CityStateZip csz where csz.zipCode = :param";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", cityStateZip.getZipCode().trim());
 
-			list = query.list();
+			List list = query.list();
 			// different behavior using select distinct...we need to put data
 			// into valueholder manually and load up the list to return
 			for (int i = 0; i < list.size(); i++) {
@@ -155,14 +152,13 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
-	public List getAllStateCodes() throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+	public List<CityStateZip> getAllStateCodes() throws LIMSRuntimeException {
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
 			// bugzilla 1908 postgres error on order by
 			String sql = "select distinct upper(csz.state) from CityStateZip csz order by upper(csz.state)";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
+			List list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
 				String state = ((String) list.get(i)).trim();
@@ -182,6 +178,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		return cityStateZips;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		CityStateZip csz = null;
@@ -191,10 +188,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 			query.setParameter("param2", cityStateZip.getZipCode());
 
-			List list = query.list();
+			List<CityStateZip> list = query.list();
 
 			if (list != null && list.size() > 0) {
-				csz = (CityStateZip) list.get(0);
+				csz = list.get(0);
 			}
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
@@ -211,15 +208,14 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	@Override
 	public CityStateZip getState(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.state from CityStateZip csz where upper(csz.state) = :param";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getState().trim().toUpperCase());
-			list = query.list();
+			List list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
 				String state = ((String) list.get(i)).trim();
@@ -231,8 +227,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				cityStateZips.add(cszip);
 			}
 
-			if (cityStateZips != null && cityStateZips.size() > 0) {
-				csz = (CityStateZip) cityStateZips.get(0);
+			if (!cityStateZips.isEmpty()) {
+				csz = cityStateZips.get(0);
 			}
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
@@ -249,15 +245,14 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	// bugzilla 1765
 	@Override
 	public CityStateZip getCity(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.city from CityStateZip csz where upper(csz.city) = :param";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
-			list = query.list();
+			List list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
 				String city = ((String) list.get(i)).trim();
@@ -269,8 +264,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				cityStateZips.add(cszip);
 			}
 
-			if (cityStateZips != null && cityStateZips.size() > 0) {
-				csz = (CityStateZip) cityStateZips.get(0);
+			if (!cityStateZips.isEmpty()) {
+				csz = cityStateZips.get(0);
 			}
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
@@ -287,15 +282,14 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	// bugzilla 1765
 	@Override
 	public CityStateZip getZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List list = new Vector();
-		List cityStateZips = new ArrayList();
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.zipCode from CityStateZip csz where upper(csz.zipCode) = :param";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getZipCode().trim().toUpperCase());
-			list = query.list();
+			List list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
 				String zipCode = ((String) list.get(i)).trim();
@@ -307,8 +301,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				cityStateZips.add(cszip);
 			}
 
-			if (cityStateZips != null && cityStateZips.size() > 0) {
-				csz = (CityStateZip) cityStateZips.get(0);
+			if (!cityStateZips.isEmpty()) {
+				csz = cityStateZips.get(0);
 			}
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
@@ -331,7 +325,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			String state = cityStateZip.getState();
 			String city = cityStateZip.getCity();
 			String zipCode = cityStateZip.getZipCode();
-			List list = new Vector();
+			List list = new ArrayList();
 
 			if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
@@ -385,7 +379,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				isValid = true;
 			}
 
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				isValid = true;
 			}
 
@@ -403,17 +397,18 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	// bugzilla 1765 - validate city state zip combination
 	@Override
-	public List getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip) throws LIMSRuntimeException {
+	public List<CityStateZip> getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip)
+			throws LIMSRuntimeException {
 
-		List cityStateZips = new ArrayList();
+		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
 			String sql = null;
 			String state = cityStateZip.getState();
 			String city = cityStateZip.getCity();
 			String zipCode = cityStateZip.getZipCode();
-			List listByCity = new Vector();
-			List listByZip = new Vector();
-			List list = new Vector();
+			List listByCity;
+			List listByZip;
+			List list;
 
 			// 1) ALL THREE PARAMETERS NEED TO BE SEARCHED (CITY, STATE, ZIP)
 			if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
@@ -609,15 +604,14 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	// bugzilla 2393
 	@Override
 	public String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
-		List list = new Vector();
 		String countyCode = null;
 		try {
 
-			list = sessionFactory.getCurrentSession().getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
+			List list = sessionFactory.getCurrentSession().getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
 					.setParameter("param", cityStateZip.getState().trim().toUpperCase())
 					.setParameter("param2", cityStateZip.getZipCode().trim()).list();
 
-			if (list != null && list.size() > 0) {
+			if (list != null && !list.isEmpty()) {
 				countyCode = (String) list.get(0);
 			}
 

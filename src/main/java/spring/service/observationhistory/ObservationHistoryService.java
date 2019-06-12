@@ -11,15 +11,9 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 public interface ObservationHistoryService extends BaseObjectService<ObservationHistory, String> {
 	ObservationHistory getById(ObservationHistory observation);
 
-	void updateData(ObservationHistory observation);
-
-	boolean insertData(ObservationHistory observation);
-
 	List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId);
 
 	List<ObservationHistory> getAll(Patient patient, Sample sample);
-
-	void insertOrUpdateData(ObservationHistory observation);
 
 	ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId, String observationHistoryTypeId);
 

@@ -18,11 +18,9 @@
 /**
  * This file is the result of the Capstone project five for the Cote d'Ivoire OpenElis software developer course
  * made by Kone Constant
- * 
+ *
  *
  */
-
-
 
 package us.mn.state.health.lims.reports.action.implementation;
 
@@ -37,9 +35,11 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -47,15 +47,12 @@ import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.IPCIRealisationTest;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public class  IPCIRealisationReport  extends Report {
-	
+public class IPCIRealisationReport extends Report {
+
 	protected List<IPCIRealisationTest> reportItems;
-	
+
 	protected String lowerDateRange;
 	protected String upperDateRange;
 	protected Date lowDate;
@@ -66,32 +63,34 @@ public class  IPCIRealisationReport  extends Report {
 	private HashMap<String, TestBucket> concatSection_TestToBucketMap;
 
 	private ArrayList<TestBucket> testBucketList;
-	
+
 	private static final String NOT_STARTED_STATUS_ID;
 	private static final String FINALIZED_STATUS_ID;
 	private static final String TECH_ACCEPT_ID;
 	private static final String TECH_REJECT_ID;
 	private static final String BIOLOGIST_REJECT_ID;
 	private static final String USER_TEST_SECTION_ID;
-	
+
+	private static TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+	private TestService testService = SpringContext.getBean(TestService.class);
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+
 	static {
 		NOT_STARTED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
 		FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
 		TECH_ACCEPT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
 		TECH_REJECT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
 		BIOLOGIST_REJECT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected);
-		USER_TEST_SECTION_ID = new TestSectionDAOImpl().getTestSectionByName("user").getId();
+		USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
 	}
 
-	
 	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
-		errorFound = false;	
-		
-		lowerDateRange = form.getString("lowerDateRange");		   
+		errorFound = false;
+
+		lowerDateRange = form.getString("lowerDateRange");
 		upperDateRange = form.getString("upperDateRange");
-		  
 
 		if (GenericValidator.isBlankOrNull(lowerDateRange)) {
 			errorFound = true;
@@ -113,56 +112,53 @@ public class  IPCIRealisationReport  extends Report {
 			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
 			errorMsgs.add(msgs);
 		}
-		
-		createReportParameters();
-		
-		initializeReportItems();
-		 					
-		setTestMapForAllTests();
-		
-		setAnalysisForDateRange();
-		
-		setTestAggregates();
-		 
-		 
-		 
-	}
-	
-	protected void initializeReportItems() {
-		reportItems = new ArrayList<IPCIRealisationTest>();
-	}
-	
-	private void setTestMapForAllTests() {
-		testIdToBucketList = new HashMap<String, TestBucket>();
-		concatSection_TestToBucketMap = new HashMap<String, TestBucket>();
-		testBucketList = new ArrayList<TestBucket>();
 
-		TestDAO testDAO = new TestDAOImpl();
-		List<Test> testList = testDAO.getAllActiveTests(false);
+		createReportParameters();
+
+		initializeReportItems();
+
+		setTestMapForAllTests();
+
+		setAnalysisForDateRange();
+
+		setTestAggregates();
+
+	}
+
+	protected void initializeReportItems() {
+		reportItems = new ArrayList<>();
+	}
+
+	private void setTestMapForAllTests() {
+		testIdToBucketList = new HashMap<>();
+		concatSection_TestToBucketMap = new HashMap<>();
+		testBucketList = new ArrayList<>();
+
+		List<Test> testList = testService.getAllActiveTests(false);
 
 		for (Test test : testList) {
 			TestBucket bucket = new TestBucket();
-             			   						 
-			bucket.testName = TestServiceImpl.getUserLocalizedTestName( test );
+
+			bucket.testName = TestServiceImpl.getUserLocalizedTestName(test);
 			bucket.testSection = test.getTestSection().getLocalizedName();
-			
+
 			testIdToBucketList.put(test.getId(), bucket);
 			testBucketList.add(bucket);
-			
+
 		}
 
 	}
-	
+
 	private void setTestAggregates() {
-		reportItems = new ArrayList<IPCIRealisationTest>();
+		reportItems = new ArrayList<>();
 		for (TestBucket bucket : testBucketList) {
 			if ((bucket.finishedCount + bucket.notStartedCount + bucket.inProgressCount) > 0) {
-		
+
 				IPCIRealisationTest data = new IPCIRealisationTest();
 
 				data.setPerformed(bucket.finishedCount);
-				data.setRequired(bucket.notStartedCount +  bucket.inProgressCount + bucket.finishedCount);
-				 
+				data.setRequired(bucket.notStartedCount + bucket.inProgressCount + bucket.finishedCount);
+
 				data.setTestName(bucket.testName);
 				data.setSectionName(bucket.testSection);
 				data.setNoPerformed(data.getRequired() - data.getPerformed());
@@ -170,10 +166,9 @@ public class  IPCIRealisationReport  extends Report {
 			}
 		}
 	}
-	
+
 	private void setAnalysisForDateRange() {
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
+		List<Analysis> analysisList = analysisService.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
 
 		for (Analysis analysis : analysisList) {
 			Test test = analysis.getTest();
@@ -182,11 +177,11 @@ public class  IPCIRealisationReport  extends Report {
 				TestBucket testBucket = null;
 				if (USER_TEST_SECTION_ID.equals(analysis.getTestSection().getId())) {
 					String concatedName = analysis.getTestSection().getLocalizedName()
-							+ TestServiceImpl.getUserLocalizedTestName( analysis.getTest() );
+							+ TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 					testBucket = concatSection_TestToBucketMap.get(concatedName);
 					if (testBucket == null) {
 						testBucket = new TestBucket();
-						testBucket.testName = TestServiceImpl.getUserLocalizedReportingTestName( test );
+						testBucket.testName = TestServiceImpl.getUserLocalizedReportingTestName(test);
 						testBucket.testSection = analysis.getTestSection().getLocalizedName();
 						concatSection_TestToBucketMap.put(concatedName, testBucket);
 					}
@@ -206,15 +201,12 @@ public class  IPCIRealisationReport  extends Report {
 			}
 		}
 	}
-	
-	
 
 	private boolean inProgress(Analysis analysis) {
-		return TECH_ACCEPT_ID.equals(analysis.getStatusId()) ||
-			   TECH_REJECT_ID.equals(analysis.getStatusId()) ||
-			   BIOLOGIST_REJECT_ID.equals(analysis.getStatusId());
+		return TECH_ACCEPT_ID.equals(analysis.getStatusId()) || TECH_REJECT_ID.equals(analysis.getStatusId())
+				|| BIOLOGIST_REJECT_ID.equals(analysis.getStatusId());
 	}
-	
+
 	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
@@ -228,16 +220,15 @@ public class  IPCIRealisationReport  extends Report {
 
 	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
-		return errorFound ? new JRBeanCollectionDataSource(errorMsgs)
-		: new JRBeanCollectionDataSource(reportItems);
+		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
- 
+
 	@Override
 	protected String reportFileName() {
-		 
+
 		return "IPCIRealisationTest";
-	}   
-	
+	}
+
 	private class TestBucket {
 		public String testName = "";
 		public String testSection = "";

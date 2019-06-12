@@ -24,14 +24,12 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 public interface SampleRequesterDAO extends BaseDAO<SampleRequester, String> {
 
-	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+//	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
 	public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException;
 
-	void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+//	void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
-	void insertOrUpdateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+//	void insertOrUpdateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
-	@Override
-	void delete(SampleRequester sampleRequester) throws LIMSRuntimeException;
 }

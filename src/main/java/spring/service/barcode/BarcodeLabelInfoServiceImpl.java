@@ -8,7 +8,8 @@ import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 
 @Service
-public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoService {
+public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLabelInfo, String>
+		implements BarcodeLabelInfoService {
 	@Autowired
 	protected BarcodeLabelInfoDAO baseObjectDAO;
 
@@ -22,18 +23,7 @@ public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLa
 	}
 
 	@Override
-	public void updateData(BarcodeLabelInfo barcodeLabelInfo) {
-        getBaseObjectDAO().updateData(barcodeLabelInfo);
-
-	}
-
-	@Override
-	public boolean insertData(BarcodeLabelInfo barcodeLabelInfo) {
-        return getBaseObjectDAO().insertData(barcodeLabelInfo);
-	}
-
-	@Override
 	public BarcodeLabelInfo getDataByCode(String code) {
-        return getBaseObjectDAO().getDataByCode(code);
+		return getMatch("code", code).orElse(null);
 	}
 }

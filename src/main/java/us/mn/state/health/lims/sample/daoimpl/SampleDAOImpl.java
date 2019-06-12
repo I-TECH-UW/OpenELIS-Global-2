@@ -28,18 +28,14 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
@@ -50,76 +46,73 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 @Transactional
 public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements SampleDAO {
 
-	@Autowired
-	AuditTrailDAO auditDAO;
-
 	public SampleDAOImpl() {
 		super(Sample.class);
 	}
 
 	private static final String ACC_NUMBER_SEQ_BEGIN = "000001";
 
-	@Override
-	public void deleteData(List samples) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-
-			for (int i = 0; i < samples.size(); i++) {
-				Sample data = (Sample) samples.get(i);
-
-				Sample oldData = readSample(data.getId());
-				Sample newData = new Sample();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SAMPLE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < samples.size(); i++) {
-				Sample data = (Sample) samples.get(i);
-				// bugzilla 2206
-				data = readSample(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample deleteData()", e);
-		}
-	}
+//	@Override
+//	public void deleteData(List samples) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < samples.size(); i++) {
+//				Sample data = (Sample) samples.get(i);
+//
+//				Sample oldData = readSample(data.getId());
+//				Sample newData = new Sample();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SAMPLE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < samples.size(); i++) {
+//				Sample data = (Sample) samples.get(i);
+//				// bugzilla 2206
+//				data = readSample(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample deleteData()", e);
+//		}
+//	}
 
 	// Note: the accession number is a business rule and should be externalized
-	@Override
-	public boolean insertData(Sample sample) throws LIMSRuntimeException {
-
-		try {
-			sample.setAccessionNumber(getNextAccessionNumber());
-			String id = (String) sessionFactory.getCurrentSession().save(sample);
-			sample.setId(id);
-
-			String sysUserId = sample.getSysUserId();
-			String tableName = "SAMPLE";
-			auditDAO.saveNewHistory(sample, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(Sample sample) throws LIMSRuntimeException {
+//
+//		try {
+//			sample.setAccessionNumber(getNextAccessionNumber());
+//			String id = (String) sessionFactory.getCurrentSession().save(sample);
+//			sample.setId(id);
+//
+//			String sysUserId = sample.getSysUserId();
+//			String tableName = "SAMPLE";
+//			auditDAO.saveNewHistory(sample, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	/**
 	 * Insert the specified Sample, which has already been assigned an accession
@@ -129,57 +122,57 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	 *
 	 * @return boolean True if the insert was successful.
 	 */
-	@Override
-	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException {
-		try {
+//	@Override
+//	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException {
+//		try {
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(sample);
+//			sample.setId(id);
+//
+//			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample insertData()", e);
+//		}
+//		return true;
+//	}
 
-			String id = (String) sessionFactory.getCurrentSession().save(sample);
-			sample.setId(id);
-
-			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample insertData()", e);
-		}
-		return true;
-	}
-
-	@Override
-	public void updateData(Sample sample) throws LIMSRuntimeException {
-
-		Sample oldData = readSample(sample.getId());
-		Sample newData = sample;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = sample.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SAMPLE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(sample);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(sample);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(sample);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Sample updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Sample sample) throws LIMSRuntimeException {
+//
+//		Sample oldData = readSample(sample.getId());
+//		Sample newData = sample;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = sample.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SAMPLE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(sample);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(sample);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sample);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Sample updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Sample sample) throws LIMSRuntimeException {
@@ -295,7 +288,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 		return samp;
 	}
 
-	public String getNextAccessionNumber() throws LIMSRuntimeException {
+	@Override
+	public String getNextAccessionNumber() {
 		String accessionNumber = null;
 		String lastAccessionNumber = null;
 

@@ -25,115 +25,109 @@ import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
 @Component
-@Transactional 
+@Transactional
 public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> implements ResultLimitDAO {
 
 	public ResultLimitDAOImpl() {
 		super(ResultLimit.class);
 	}
 
-	@Override
-	public void deleteData(List resultLimits) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+//	@Override
+//	public void deleteData(List resultLimits) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (Object limitObj : resultLimits) {
+//				ResultLimit data = (ResultLimit) limitObj;
+//
+//				ResultLimit oldData = readResultLimit(data.getId());
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "RESULT_LIMITS";
+//				auditDAO.saveHistory(new ResultLimit(), oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (Object resultLimit : resultLimits) {
+//				ResultLimit data = (ResultLimit) resultLimit;
+//				data = readResultLimit(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultLimitsDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultLimit deleteData()", e);
+//		}
+//	}
+//
+//	@Override
+//	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(resultLimit);
+//			resultLimit.setId(id);
+//
+//			String sysUserId = resultLimit.getSysUserId();
+//			String tableName = "RESULT_LIMITS";
+//			auditDAO.saveNewHistory(resultLimit, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultLimitsDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultLimit insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			for (Object limitObj : resultLimits) {
-				ResultLimit data = (ResultLimit) limitObj;
-
-				ResultLimit oldData = readResultLimit(data.getId());
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "RESULT_LIMITS";
-				auditDAO.saveHistory(new ResultLimit(), oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (Object resultLimit : resultLimits) {
-				ResultLimit data = (ResultLimit) resultLimit;
-				data = readResultLimit(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ResultLimitsDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultLimit deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(resultLimit);
-			resultLimit.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = resultLimit.getSysUserId();
-			String tableName = "RESULT_LIMITS";
-			auditDAO.saveNewHistory(resultLimit, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("ResultLimitsDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultLimit insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(ResultLimit resultLimit) throws LIMSRuntimeException {
-
-		ResultLimit oldData = readResultLimit(resultLimit.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = resultLimit.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "RESULT_LIMITS";
-			auditDAO.saveHistory(resultLimit, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(resultLimit);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(resultLimit);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(resultLimit);
-		} catch (Exception e) {
-			LogEvent.logError("ResultLimitsDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultLimit updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(ResultLimit resultLimit) throws LIMSRuntimeException {
+//
+//		ResultLimit oldData = readResultLimit(resultLimit.getId());
+//
+//		try {
+//
+//			String sysUserId = resultLimit.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "RESULT_LIMITS";
+//			auditDAO.saveHistory(resultLimit, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(resultLimit);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(resultLimit);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(resultLimit);
+//		} catch (Exception e) {
+//			LogEvent.logError("ResultLimitsDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in ResultLimit updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		try {
-			ResultLimit tmpLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
+			ResultLimit tmpLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpLimit != null) {
@@ -190,7 +184,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	public ResultLimit readResultLimit(String idString) {
 		ResultLimit recoveredLimit;
 		try {
-			recoveredLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, idString);
+			recoveredLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -237,7 +231,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	@Override
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
 		try {
-			ResultLimit resultLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);
+			ResultLimit resultLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);
 			// closeSession(); // CSL remove old
 			return resultLimit;
 		} catch (Exception e) {

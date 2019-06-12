@@ -35,9 +35,9 @@ public interface ReportExternalExportDAO extends BaseDAO<ReportExternalExport, S
 	public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId)
 			throws LIMSRuntimeException;
 
-	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException;
+//	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException;
 
-	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException;
+//	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException;
 
 	public Timestamp getLastSentTimestamp() throws LIMSRuntimeException;
 
@@ -49,6 +49,4 @@ public interface ReportExternalExportDAO extends BaseDAO<ReportExternalExport, S
 
 	public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException;
 
-	@Override
-	public void delete(ReportExternalExport report) throws LIMSRuntimeException;
 }

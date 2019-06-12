@@ -5,11 +5,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.test.valueholder.TestSection;
 
-public interface UserTestSectionService  extends BaseObjectService<TestSection, String> {
+public interface UserTestSectionService {
 	public List<Object> getAllUserTestSectionsByName(HttpServletRequest request, String testSectionName)
 			throws LIMSRuntimeException;
 
@@ -23,8 +21,8 @@ public interface UserTestSectionService  extends BaseObjectService<TestSection, 
 	public List<Object> getAllUserTests(HttpServletRequest request, boolean onlyTestsFullySetup)
 			throws LIMSRuntimeException;
 
-	public List<Object> getSampleTestAnalytes(HttpServletRequest request, List<Object> sample_Tas,
-			List<Object> testSections) throws LIMSRuntimeException;
+//	public List<Object> getSampleTestAnalytes(HttpServletRequest request, List<Object> sample_Tas,
+//			List<Object> testSections) throws LIMSRuntimeException;
 
 	public List<Object> getSamplePdfList(HttpServletRequest request, Locale locale, String sampStatus,
 			String humanDomain) throws LIMSRuntimeException;

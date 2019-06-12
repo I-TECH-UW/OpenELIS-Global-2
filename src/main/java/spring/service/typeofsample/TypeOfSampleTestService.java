@@ -8,10 +8,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleTest, String> {
 	void getData(TypeOfSampleTest typeOfSampleTest);
 
-	void deleteData(String[] typeOfSampleTestIds, String currentUserId);
-
-	boolean insertData(TypeOfSampleTest typeOfSample);
-
 	List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId);
 
 	List getPageOfTypeOfSampleTests(int startingRecNo);

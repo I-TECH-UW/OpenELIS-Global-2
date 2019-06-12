@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -23,48 +23,48 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
+import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
 import spring.service.result.ResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.IResultSaveService;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportQueueTypeDAOImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.action.util.ResultSet;
 import us.mn.state.health.lims.result.valueholder.Result;
 
 public class TestUsageUpdate implements IResultUpdate {
 
 	private static String TEST_USAGE_TYPE_ID;
-	private ReportExternalExportDAO queueDAO = new ReportExternalExportDAOImpl();
-	private static ContainerFactory CONTAINER_FACTORY; 
-	
-	static {
-		ReportQueueType queueType = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("labIndicator");
+	private ReportExternalExportService queueService = SpringContext.getBean(ReportExternalExportService.class);
+	private ReportQueueTypeService reportQueueTypeService = SpringContext.getBean(ReportQueueTypeService.class);
+	private static ContainerFactory CONTAINER_FACTORY;
+
+	public TestUsageUpdate() {
+		ReportQueueType queueType = reportQueueTypeService.getReportQueueTypeByName("labIndicator");
 		if (queueType != null) {
 			TEST_USAGE_TYPE_ID = queueType.getId();
 		}
-		
+
 		CONTAINER_FACTORY = new ContainerFactory() {
+			@Override
 			@SuppressWarnings("rawtypes")
 			public List creatArrayContainer() {
 				return new ArrayList();
 			}
 
+			@Override
 			public Map<String, Long> createObjectContainer() {
-				return new HashMap<String, Long>();
+				return new HashMap<>();
 			}
 
 		};
@@ -79,8 +79,8 @@ public class TestUsageUpdate implements IResultUpdate {
 
 	@Override
 	public void postTransactionalCommitUpdate(IResultSaveService resultSaveService) {
-		Map<String, Map<String, Integer>> dateTestMap = new HashMap<String, Map<String, Integer>>();
-		List<ReportExternalExport> exports = new ArrayList<ReportExternalExport>();
+		Map<String, Map<String, Integer>> dateTestMap = new HashMap<>();
+		List<ReportExternalExport> exports = new ArrayList<>();
 		List<Result> results = getAllResults(resultSaveService);
 
 		createMaps(dateTestMap, results);
@@ -91,7 +91,7 @@ public class TestUsageUpdate implements IResultUpdate {
 	}
 
 	private List<Result> getAllResults(IResultSaveService resultSaveService) {
-		List<Result> results = new ArrayList<Result>();
+		List<Result> results = new ArrayList<>();
 
 		for (ResultSet resultSet : resultSaveService.getNewResults()) {
 			results.add(resultSet.result);
@@ -102,23 +102,23 @@ public class TestUsageUpdate implements IResultUpdate {
 		}
 		return results;
 	}
-	
+
 	private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
 		for (Result result : results) {
 			ResultServiceImpl resultService = new ResultServiceImpl(result);
 			String testDate = resultService.getTestTime();
-			if( testDate == null){
+			if (testDate == null) {
 				testDate = resultService.getLastUpdatedTime();
 			}
 			Map<String, Integer> testCountMap = dateTestMap.get(testDate);
 
 			if (testCountMap == null) {
-				testCountMap = new HashMap<String, Integer>();
+				testCountMap = new HashMap<>();
 				dateTestMap.put(testDate, testCountMap);
 			}
 
 			String testDescription = resultService.getTestDescription();
-			
+
 			Integer count = testCountMap.get(testDescription);
 			testCountMap.put(testDescription, count == null ? 1 : count + 1);
 		}
@@ -129,12 +129,12 @@ public class TestUsageUpdate implements IResultUpdate {
 			ReportExternalExport export = new ReportExternalExport();
 			export.setTypeId(TEST_USAGE_TYPE_ID);
 			export.setEventDate(DateUtil.convertStringDateToTruncatedTimestamp(date));
-			export = queueDAO.getReportByEventDateAndType(export);
+			export = queueService.getReportByEventDateAndType(export);
 
 			updateExport(export, dateTestMap.get(date));
 
 			export.setCollectionDate(DateUtil.getNowAsTimestamp());
-			
+
 			exports.add(export);
 		}
 	}
@@ -144,14 +144,15 @@ public class TestUsageUpdate implements IResultUpdate {
 		JSONParser parser = new JSONParser();
 		Map<String, Long> databaseTestCountList = null;
 
-		if( export.getData() == null){
+		if (export.getData() == null) {
 			export.setData("{}");
 		}
-		
+
 		export.setSend(true);
-		
-		try {	
-			databaseTestCountList = (Map<String, Long>) parser.parse(export.getData().replace("\n", ""), CONTAINER_FACTORY);
+
+		try {
+			databaseTestCountList = (Map<String, Long>) parser.parse(export.getData().replace("\n", ""),
+					CONTAINER_FACTORY);
 
 			for (String test : testCountMap.keySet()) {
 				Long count = databaseTestCountList.get(test);
@@ -163,7 +164,7 @@ public class TestUsageUpdate implements IResultUpdate {
 
 		JSONObject json = new JSONObject();
 		for (String name : databaseTestCountList.keySet()) {
-				json.put(name, databaseTestCountList.get(name));
+			json.put(name, databaseTestCountList.get(name));
 		}
 
 		StringWriter buffer = new StringWriter();
@@ -172,25 +173,22 @@ public class TestUsageUpdate implements IResultUpdate {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		String data = buffer.toString().replace("\n", "");
 		export.setData(data);
 	}
 
 	private void applyUpdatesToDB(List<ReportExternalExport> exports) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for( ReportExternalExport export : exports){
-				if( export.getId() == null){
-					queueDAO.insertReportExternalExport(export);
-				}else{
-					queueDAO.updateReportExternalExport(export);
-				}
-			}
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
+			queueService.saveAll(exports);
+//			for (ReportExternalExport export : exports) {
+//				if (export.getId() == null) {
+//					queueService.insertReportExternalExport(export);
+//				} else {
+//					queueService.updateReportExternalExport(export);
+//				}
+//			}
+		} catch (LIMSRuntimeException e) {
 			LogEvent.logError("TestUsageUpdate", "applyUpdatesToDB", e.toString());
 		}
 	}

@@ -17,8 +17,6 @@
 */
 package us.mn.state.health.lims.siteinformation.valueholder;
 
-import java.io.Serializable;
-
 import org.hibernate.validator.constraints.URL;
 
 import spring.mine.datasubmission.form.DataSubmissionForm;

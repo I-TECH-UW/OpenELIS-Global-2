@@ -25,7 +25,7 @@ import us.mn.state.health.lims.referral.valueholder.Referral;
 
 public interface ReferralDAO extends BaseDAO<Referral, String> {
 
-	public boolean insertData(Referral referral) throws LIMSRuntimeException;
+//	public boolean insertData(Referral referral) throws LIMSRuntimeException;
 
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException;
 
@@ -33,7 +33,7 @@ public interface ReferralDAO extends BaseDAO<Referral, String> {
 
 	public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException;
 
-	public void updateData(Referral referral) throws LIMSRuntimeException;
+//	public void updateData(Referral referral) throws LIMSRuntimeException;
 
 	public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException;
 

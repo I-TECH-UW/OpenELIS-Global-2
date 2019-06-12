@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Service
-public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables, String> implements ReferenceTablesService {
+public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables, String>
+		implements ReferenceTablesService {
 	@Autowired
 	protected ReferenceTablesDAO baseObjectDAO;
 
@@ -32,64 +34,75 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 
 	@Override
 	public void getData(ReferenceTables referenceTables) {
-        getBaseObjectDAO().getData(referenceTables);
+		getBaseObjectDAO().getData(referenceTables);
 
-	}
-
-	@Override
-	public void deleteData(List referenceTableses) {
-        getBaseObjectDAO().deleteData(referenceTableses);
-
-	}
-
-	@Override
-	public void updateData(ReferenceTables referenceTables) {
-        getBaseObjectDAO().updateData(referenceTables);
-
-	}
-
-	@Override
-	public boolean insertData(ReferenceTables referenceTables) {
-        return getBaseObjectDAO().insertData(referenceTables);
 	}
 
 	@Override
 	public List getAllReferenceTablesForHl7Encoding() {
-        return getBaseObjectDAO().getAllReferenceTablesForHl7Encoding();
+		return getBaseObjectDAO().getAllReferenceTablesForHl7Encoding();
 	}
 
 	@Override
 	public List getAllReferenceTables() {
-        return getBaseObjectDAO().getAllReferenceTables();
+		return getBaseObjectDAO().getAllReferenceTables();
 	}
 
 	@Override
 	public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) {
-        return getBaseObjectDAO().getReferenceTableByName(referenceTables);
+		return getBaseObjectDAO().getReferenceTableByName(referenceTables);
 	}
 
 	@Override
 	public Integer getTotalReferenceTableCount() {
-        return getBaseObjectDAO().getTotalReferenceTableCount();
+		return getBaseObjectDAO().getTotalReferenceTableCount();
 	}
 
 	@Override
 	public List getPreviousReferenceTablesRecord(String id) {
-        return getBaseObjectDAO().getPreviousReferenceTablesRecord(id);
+		return getBaseObjectDAO().getPreviousReferenceTablesRecord(id);
 	}
 
 	@Override
 	public List getPageOfReferenceTables(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfReferenceTables(startingRecNo);
+		return getBaseObjectDAO().getPageOfReferenceTables(startingRecNo);
 	}
 
 	@Override
 	public List getNextReferenceTablesRecord(String id) {
-        return getBaseObjectDAO().getNextReferenceTablesRecord(id);
+		return getBaseObjectDAO().getNextReferenceTablesRecord(id);
 	}
 
 	@Override
 	public Integer getTotalReferenceTablesCount() {
-        return getBaseObjectDAO().getTotalReferenceTablesCount();
+		return getBaseObjectDAO().getTotalReferenceTablesCount();
+	}
+
+	@Override
+	public String insert(ReferenceTables referenceTables) {
+		if (duplicateReferenceTablesExists(referenceTables, true)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
+		}
+		return super.insert(referenceTables);
+	}
+
+	@Override
+	public ReferenceTables save(ReferenceTables referenceTables) {
+		if (duplicateReferenceTablesExists(referenceTables, false)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
+		}
+		return super.save(referenceTables);
+	}
+
+	@Override
+	public ReferenceTables update(ReferenceTables referenceTables) {
+		if (duplicateReferenceTablesExists(referenceTables, false)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
+		}
+		return super.update(referenceTables);
+	}
+
+	private boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew) {
+		return baseObjectDAO.duplicateReferenceTablesExists(referenceTables, isNew);
 	}
 }

@@ -3,22 +3,31 @@ package us.mn.state.health.lims.inventory.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import spring.service.inventory.InventoryLocationService;
+import spring.service.inventory.InventoryReceiptService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
-import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryLocationDAOImpl;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryReceiptDAOImpl;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
+@Service
+@Scope("prototype")
 public class InventoryUtility {
 
 	public static final String HIV = "HIV";
 	public static final String SYPHILIS = "SYPHILIS";
 
 	private boolean onlyActiveInventory = false;
+
+	@Autowired
+	InventoryReceiptService receiptService;
+	@Autowired
+	InventoryLocationService locationService;
 
 	public List<InventoryKitItem> getExistingActiveInventory() {
 		onlyActiveInventory = true;
@@ -32,18 +41,16 @@ public class InventoryUtility {
 	}
 
 	public List<InventoryKitItem> getExistingInventory() {
-		List<InventoryKitItem> list = new ArrayList<InventoryKitItem>();
+		List<InventoryKitItem> list = new ArrayList<>();
 
-		InventoryReceiptDAO receiptDAO = new InventoryReceiptDAOImpl();
-		InventoryLocationDAO locationDAO = new InventoryLocationDAOImpl();
-		List<InventoryLocation> inventoryList = locationDAO.getAllInventoryLocations();
+		List<InventoryLocation> inventoryList = locationService.getAll();
 
 		for (InventoryLocation location : inventoryList) {
 
 			InventoryItem inventoryItem = location.getInventoryItem();
 
 			if (!onlyActiveInventory || isActive(inventoryItem)) {
-				InventoryReceipt receipt = receiptDAO.getInventoryReceiptByInventoryItemId(inventoryItem.getId());
+				InventoryReceipt receipt = receiptService.getInventoryReceiptByInventoryItemId(inventoryItem.getId());
 				InventoryKitItem item = createInventoryItem(inventoryItem, location, receipt);
 				list.add(item);
 			}
@@ -76,5 +83,4 @@ public class InventoryUtility {
 		return "Y".equals(inventoryItem.getIsActive());
 	}
 
-	
 }

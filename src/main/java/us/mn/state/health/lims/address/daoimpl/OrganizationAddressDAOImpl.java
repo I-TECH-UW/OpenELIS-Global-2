@@ -16,22 +16,13 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
 @Transactional
@@ -42,25 +33,23 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 		super(OrganizationAddress.class);
 	}
 
-	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
-			throws LIMSRuntimeException {
-		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("organizationId", Integer.parseInt(organizationId));
-			List<OrganizationAddress> addressPartList = query.list();
-			return addressPartList;
-		} catch (HibernateException e) {
-			handleException(e, "getAddressPartsByOrganizationId");
-		}
-
-		return null;
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
+//			throws LIMSRuntimeException {
+//		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("organizationId", Integer.parseInt(organizationId));
+//			List<OrganizationAddress> addressPartList = query.list();
+//			return addressPartList;
+//		} catch (HibernateException e) {
+//			handleException(e, "getAddressPartsByOrganizationId");
+//		}
+//
+//		return null;
+//	}
 
 //	@Override
 //	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
@@ -74,38 +63,38 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 //		return null;
 //	}
 
-	@Override
-	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
+//	@Override
+//	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
+//
+//		OrganizationAddress oldData = readOrganizationAddress(organizationAddress);
+//
+//		try {
+//			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(),
+//					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
+//
+//			sessionFactory.getCurrentSession().merge(organizationAddress);
+//			// closeSession(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove
+//			// old(organizationAddress);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(organizationAddress);
+//		} catch (HibernateException e) {
+//			handleException(e, "update");
+//		}
+//		return Optional.ofNullable(organizationAddress);
+//	}
 
-		OrganizationAddress oldData = readOrganizationAddress(organizationAddress);
-
-		try {
-			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
-
-			sessionFactory.getCurrentSession().merge(organizationAddress);
-			// closeSession(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove
-			// old(organizationAddress);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(organizationAddress);
-		} catch (HibernateException e) {
-			handleException(e, "update");
-		}
-		return Optional.ofNullable(organizationAddress);
-	}
-
-	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
-		try {
-			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession()
-					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
-			// closeSession(); // CSL remove old
-
-			return oldOrganizationAddress;
-		} catch (HibernateException e) {
-			handleException(e, "readOrganizationAddress");
-		}
-
-		return null;
-	}
+//	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
+//		try {
+//			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession()
+//					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
+//			// closeSession(); // CSL remove old
+//
+//			return oldOrganizationAddress;
+//		} catch (HibernateException e) {
+//			handleException(e, "readOrganizationAddress");
+//		}
+//
+//		return null;
+//	}
 }

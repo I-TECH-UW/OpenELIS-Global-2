@@ -23,15 +23,15 @@ import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 public interface InventoryReceiptDAO extends BaseDAO<InventoryReceipt, String> {
 
-	public boolean insertData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException;
+//	public boolean insertData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException;
 
-	public void deleteData(List<InventoryReceipt> inventory) throws LIMSRuntimeException;
+//	public void deleteData(List<InventoryReceipt> inventory) throws LIMSRuntimeException;
 
 	public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException;
 
 	public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException;
 
-	public void updateData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException;
+//	public void updateData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException;
 
 	public InventoryReceipt getInventoryReceiptById(String id) throws LIMSRuntimeException;
 

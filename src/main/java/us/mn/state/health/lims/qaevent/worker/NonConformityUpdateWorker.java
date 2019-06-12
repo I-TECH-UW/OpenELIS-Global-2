@@ -193,13 +193,11 @@ public class NonConformityUpdateWorker {
 			updateArtifacts();
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			if (insertPatient) {
-				patientService.insertData(patient);
+				patientService.insert(patient);
 			} else if (updatePatient) {
-				patientService.updateData(patient);
+				patientService.update(patient);
 			}
 
 			if (insertProvider) {
@@ -209,18 +207,18 @@ public class NonConformityUpdateWorker {
 			if (subjectNoPatientIdentity != null) {
 				subjectNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(subjectNoPatientIdentity.getId())) {
-					patientIdentityService.insertData(subjectNoPatientIdentity);
+					patientIdentityService.insert(subjectNoPatientIdentity);
 				} else {
-					patientIdentityService.updateData(subjectNoPatientIdentity);
+					patientIdentityService.update(subjectNoPatientIdentity);
 				}
 			}
 
 			if (STNoPatientIdentity != null) {
 				STNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(STNoPatientIdentity.getId())) {
-					patientIdentityService.insertData(STNoPatientIdentity);
+					patientIdentityService.insert(STNoPatientIdentity);
 				} else {
-					patientIdentityService.updateData(STNoPatientIdentity);
+					patientIdentityService.update(STNoPatientIdentity);
 				}
 			}
 
@@ -230,9 +228,9 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setPatient(patient);
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
-				sampleHumanService.insertData(sampleHuman);
+				sampleHumanService.insert(sampleHuman);
 			} else {
-				sampleService.updateData(sample);
+				sampleService.update(sample);
 			}
 
 			if (updateSampleHuman) {
@@ -240,33 +238,33 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setPatient(patient);
 				sampleHuman.setSysUserId(webData.getCurrentSysUserId());
-				sampleHumanService.updateData(sampleHuman);
+				sampleHumanService.update(sampleHuman);
 			}
 
 			if (insertSampleItems) {
 				for (SampleItem si : sampleItemsByType.values()) {
-					sampleItemService.insertData(si);
+					sampleItemService.insert(si);
 				}
 			}
 
 			if (insertSampleProject) {
-				sampleProjectService.insertData(sampleProject);
+				sampleProjectService.insert(sampleProject);
 			}
 
 			if (insertDoctorObservation) {
 				doctorObservation.setPatientId(patient.getId());
 				doctorObservation.setSampleId(sample.getId());
-				observationService.insertData(doctorObservation);
+				observationService.insert(doctorObservation);
 			}
 
 			if (insertServiceObservation) {
 				serviceObservation.setPatientId(patient.getId());
 				serviceObservation.setSampleId(sample.getId());
-				observationService.insertData(serviceObservation);
+				observationService.insert(serviceObservation);
 			}
 
 			if (insertNewOrganizaiton) {
-				orgService.insertData(newOrganization);
+				orgService.insert(newOrganization);
 				orgService.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			}
 
@@ -275,12 +273,12 @@ public class NonConformityUpdateWorker {
 					sampleRequester.setRequesterId(newOrganization.getId());
 				}
 				sampleRequester.setSampleId(Long.parseLong(sample.getId()));
-				sampleRequesterService.insertData(sampleRequester);
+				sampleRequesterService.insert(sampleRequester);
 			}
 
 			for (SampleQaEvent event : sampleQAEventInsertList) {
 				event.setSample(sample);
-				sampleQaEventService.insertData(event);
+				sampleQaEventService.insert(event);
 			}
 
 			for (NoteSet noteSet : insertableNotes) {
@@ -291,28 +289,26 @@ public class NonConformityUpdateWorker {
 				} else {
 					continue;
 				}
-				noteService.insertData(noteSet.note);
+				noteService.insert(noteSet.note);
 			}
 
 			for (Note note : updateableNotes) {
-				noteService.updateData(note);
+				noteService.update(note);
 			}
 
-			noteService.deleteData(deleteableNotes);
-			sampleQaEventService.deleteData(sampleQAEventDeleteList);
+			noteService.deleteAll(deleteableNotes);
+			sampleQaEventService.deleteAll(sampleQAEventDeleteList);
 
 			for (QaObservation qa : qaObservationMap.keySet()) {
 				if (qa.getId() == null) {
 					qa.setObservedId(qaObservationMap.get(qa).getId());
-					qaObservationService.insertData(qa);
+					qaObservationService.insert(qa);
 				} else {
-					qaObservationService.updateData(qa);
+					qaObservationService.update(qa);
 				}
 			}
 
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
@@ -322,9 +318,6 @@ public class NonConformityUpdateWorker {
 			throw lre;
 
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		return IActionConstants.FWD_SUCCESS_INSERT;
 	}
@@ -489,14 +482,14 @@ public class NonConformityUpdateWorker {
 	private void persistProviderData() {
 		if (providerPerson != null) {
 			providerPerson.setSysUserId(webData.getCurrentSysUserId());
-			personService.insertData(providerPerson);
+			personService.insert(providerPerson);
 		}
 		if (provider != null) {
 			provider.setSysUserId(webData.getCurrentSysUserId());
 			if (providerPerson != null) {
 				provider.setPerson(providerPerson);
 			}
-			providerService.insertData(provider);
+			providerService.insert(provider);
 		}
 
 		if (providerPerson != null) {

@@ -23,16 +23,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testtrailer.dao.TestTrailerDAO;
 import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
 
@@ -40,127 +35,127 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> implements TestTrailerDAO {
 
 	public TestTrailerDAOImpl() {
 		super(TestTrailer.class);
 	}
 
-	@Override
-	public void deleteData(List testTrailers) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < testTrailers.size(); i++) {
-				TestTrailer data = (TestTrailer) testTrailers.get(i);
+//	@Override
+//	public void deleteData(List testTrailers) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < testTrailers.size(); i++) {
+//				TestTrailer data = (TestTrailer) testTrailers.get(i);
+//
+//				TestTrailer oldData = readTestTrailer(data.getId());
+//				TestTrailer newData = new TestTrailer();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TEST_TRAILER";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < testTrailers.size(); i++) {
+//				TestTrailer data = (TestTrailer) testTrailers.get(i);
+//				// bugzilla 2206
+//				data = readTestTrailer(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer deleteData()", e);
+//		}
+//	}
 
-				TestTrailer oldData = readTestTrailer(data.getId());
-				TestTrailer newData = new TestTrailer();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TEST_TRAILER";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < testTrailers.size(); i++) {
-				TestTrailer data = (TestTrailer) testTrailers.get(i);
-				// bugzilla 2206
-				data = readTestTrailer(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException {
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateTestTrailerExists(testTrailer)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testTrailer.getTestTrailerName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(testTrailer);
-			testTrailer.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = testTrailer.getSysUserId();
-			String tableName = "TEST_TRAILER";
-			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateTestTrailerExists(testTrailer)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testTrailer.getTestTrailerName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
-		}
-
-		TestTrailer oldData = readTestTrailer(testTrailer.getId());
-		TestTrailer newData = testTrailer;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = testTrailer.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TEST_TRAILER";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(testTrailer);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(testTrailer);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(testTrailer);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
-		}
-	}
+//	@Override
+//	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException {
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateTestTrailerExists(testTrailer)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testTrailer.getTestTrailerName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(testTrailer);
+//			testTrailer.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = testTrailer.getSysUserId();
+//			String tableName = "TEST_TRAILER";
+//			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer insertData()", e);
+//		}
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateTestTrailerExists(testTrailer)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testTrailer.getTestTrailerName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
+//		}
+//
+//		TestTrailer oldData = readTestTrailer(testTrailer.getId());
+//		TestTrailer newData = testTrailer;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = testTrailer.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TEST_TRAILER";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(testTrailer);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(testTrailer);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testTrailer);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
-			TestTrailer uom = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
+			TestTrailer uom = sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
@@ -223,7 +218,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	public TestTrailer readTestTrailer(String idString) {
 		TestTrailer tr = null;
 		try {
-			tr = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
+			tr = sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -342,7 +337,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	}
 
 	// bugzilla 1482
-	private boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

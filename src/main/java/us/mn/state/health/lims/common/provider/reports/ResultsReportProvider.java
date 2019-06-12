@@ -98,14 +98,15 @@ public class ResultsReportProvider extends BaseReportsProvider {
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 	protected ResultService resultService = SpringContext.getBean(ResultService.class);
 	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	
+
 	protected PatientService patientService = SpringContext.getBean(PatientService.class);
 	protected PersonService personService = SpringContext.getBean(PersonService.class);
 	protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
 	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
 	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	protected SampleOrganizationService sampleOrganizationService = SpringContext.getBean(SampleOrganizationService.class);
-	
+	protected SampleOrganizationService sampleOrganizationService = SpringContext
+			.getBean(SampleOrganizationService.class);
+
 	private String dateAsText;
 	private String originalMessage;
 	private String amendedMessage;
@@ -276,7 +277,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
 					TypeOfSample typeOfSample = new TypeOfSample();
 					SourceOfSample sourceOfSample = new SourceOfSample();
 					String sourceOther = null;
-
 
 					sample.setAccessionNumber(accessionNumber);
 					sampleService.getSampleByAccessionNumber(sample);
@@ -546,7 +546,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 				Analysis analysis = (Analysis) analysesPrinted.get(i);
 				analysis.setSysUserId(sysUserId);
 				analysis.setPrintedDateForDisplay(dateAsText);
-				analysisService.updateData(analysis);
+				analysisService.update(analysis);
 			}
 			tx.commit();
 		} catch (Exception e) {

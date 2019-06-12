@@ -28,11 +28,11 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
-public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport, String> implements ReportExternalExportDAO {
+@Transactional
+public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport, String>
+		implements ReportExternalExportDAO {
 	public ReportExternalExportDAOImpl() {
 		super(ReportExternalExport.class);
 	}
@@ -94,37 +94,36 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		return null;
 	}
 
-	@Override
-	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(report);
-			report.setId(id);
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertReportExternalExport");
-		}
-	}
+//	@Override
+//	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(report);
+//			report.setId(id);
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertReportExternalExport");
+//		}
+//	}
 
-	@Override
-	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
-
-		try {
-			sessionFactory.getCurrentSession().merge(report);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
-		} catch (Exception e) {
-			handleException(e, "updateReportExternalExport");
-		}
-	}
+//	@Override
+//	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(report);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
+//		} catch (Exception e) {
+//			handleException(e, "updateReportExternalExport");
+//		}
+//	}
 
 	@Override
 	public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalExport data = (ReportExternalExport) sessionFactory.getCurrentSession()
-					.get(ReportExternalExport.class, idString);
+			ReportExternalExport data = sessionFactory.getCurrentSession().get(ReportExternalExport.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
@@ -224,13 +223,13 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		return readReportExternalExport(report.getId());
 	}
 
-	@Override
-	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
-		try {
-			sessionFactory.getCurrentSession().delete(readReportExternalExport(report.getId()));
-			// closeSession(); // CSL remove old
-		} catch (Exception e) {
-			handleException(e, "delete");
-		}
-	}
+//	@Override
+//	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
+//		try {
+//			sessionFactory.getCurrentSession().delete(readReportExternalExport(report.getId()));
+//			// closeSession(); // CSL remove old
+//		} catch (Exception e) {
+//			handleException(e, "delete");
+//		}
+//	}
 }

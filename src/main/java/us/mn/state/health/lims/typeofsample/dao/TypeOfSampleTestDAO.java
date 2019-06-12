@@ -23,9 +23,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest, String> {
 
-	public boolean insertData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException;
+//	public boolean insertData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException;
 
-	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) throws LIMSRuntimeException;
+//	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) throws LIMSRuntimeException;
 
 	public List getAllTypeOfSampleTests() throws LIMSRuntimeException;
 

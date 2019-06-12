@@ -29,12 +29,14 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.HaitiAggregateReportData;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
@@ -60,10 +62,12 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 	private Map<String, TestBucket> concatSection_TestToBucketMap;
 	private List<TestBucket> testBucketList;
 
+	private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+	private TestService testService = SpringContext.getBean(TestService.class);
 	private static final String USER_TEST_SECTION_ID;
 
 	static {
-		USER_TEST_SECTION_ID = new TestSectionDAOImpl().getTestSectionByName("user").getId();
+		USER_TEST_SECTION_ID = SpringContext.getBean(TestSectionService.class).getTestSectionByName("user").getId();
 	}
 
 	@Override
@@ -98,7 +102,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		concatSection_TestToBucketMap = new HashMap<>();
 		testBucketList = new ArrayList<>();
 
-		List<Test> testList = TestServiceImpl.getAllActiveTests();
+		List<Test> testList = testService.getAllActiveTests(false);
 
 		for (Test test : testList) {
 
@@ -336,7 +340,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 	}
 
 	private Map<String, TestSection> getTestSectionNameMap() {
-		List<TestSection> allTestSections = new TestSectionDAOImpl().getAllActiveTestSections();
+		List<TestSection> allTestSections = testSectionService.getAllActiveTestSections();
 		Map<String, TestSection> testSectionMap = new HashMap<>();
 		for (TestSection section : allTestSections) {
 			testSectionMap.put(section.getLocalizedName(), section);

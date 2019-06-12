@@ -88,7 +88,7 @@ public class AnalyzerTestNameController extends BaseController {
 	}
 
 	private List<Analyzer> getAllAnalyzers() {
-		return analyzerService.getAllAnalyzers();
+		return analyzerService.getAll();
 	}
 
 	private List<Test> getAllTests() {
@@ -133,7 +133,7 @@ public class AnalyzerTestNameController extends BaseController {
 			analyzerTestNameMapping.setAnalyzerId(analyzerId);
 			analyzerTestNameMapping.setAnalyzerTestName(analyzerTestName);
 			analyzerTestNameMapping.setTestId(testId);
-			analyzerTestNameMapping.setSysUserId(getSysUserId(request));;
+			analyzerTestNameMapping.setSysUserId(getSysUserId(request));
 		} else {
 			analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
 		}
@@ -153,7 +153,8 @@ public class AnalyzerTestNameController extends BaseController {
 					saveErrors(errors);
 					return FWD_FAIL_INSERT;
 				}
-				analyzerTestMappingService.updateMapping(analyzerTestNameMapping, getSysUserId(request));
+				analyzerTestNameMapping.setSysUserId(getSysUserId(request));
+				analyzerTestMappingService.update(analyzerTestNameMapping);
 			}
 
 		} catch (LIMSRuntimeException lre) {
@@ -170,7 +171,7 @@ public class AnalyzerTestNameController extends BaseController {
 
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
-		} 
+		}
 //		finally {
 //			if (!tx.wasRolledBack()) {
 //				tx.commit();
@@ -186,7 +187,7 @@ public class AnalyzerTestNameController extends BaseController {
 	private AnalyzerTestMapping getAnalyzerAndTestName(String analyzerId, String analyzerTestName, String testId) {
 
 		AnalyzerTestMapping existingMapping = null;
-		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAllAnalyzerTestMappings();
+		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAll();
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerId.equals(testMapping.getAnalyzerId())
 					&& analyzerTestName.equals(testMapping.getAnalyzerTestName())) {

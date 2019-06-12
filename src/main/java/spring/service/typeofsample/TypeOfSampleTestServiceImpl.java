@@ -11,7 +11,8 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
-public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest, String> implements TypeOfSampleTestService {
+public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest, String>
+		implements TypeOfSampleTestService {
 	@Autowired
 	protected TypeOfSampleTestDAO baseObjectDAO;
 
@@ -46,17 +47,6 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 	public void getData(TypeOfSampleTest typeOfSampleTest) {
 		getBaseObjectDAO().getData(typeOfSampleTest);
 
-	}
-
-	@Override
-	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) {
-		getBaseObjectDAO().deleteData(typeOfSampleTestIds, currentUserId);
-
-	}
-
-	@Override
-	public boolean insertData(TypeOfSampleTest typeOfSample) {
-		return getBaseObjectDAO().insertData(typeOfSample);
 	}
 
 	@Override

@@ -31,27 +31,29 @@ import us.mn.state.health.lims.method.valueholder.Method;
  */
 public interface MethodDAO extends BaseDAO<Method, String> {
 
-	public boolean insertData(Method method) throws LIMSRuntimeException;
+//	public boolean insertData(Method method) throws LIMSRuntimeException;
 
-	public void deleteData(List methods) throws LIMSRuntimeException;
+//	public void deleteData(List methods) throws LIMSRuntimeException;
 
-	public List getAllMethods() throws LIMSRuntimeException;
+//	public List getAllMethods() throws LIMSRuntimeException;
 
-	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException;
 
 	public List getMethods(String filter) throws LIMSRuntimeException;
 
-	public void getData(Method method) throws LIMSRuntimeException;
+//	public void getData(Method method) throws LIMSRuntimeException;
 
-	public void updateData(Method method) throws LIMSRuntimeException;
+//	public void updateData(Method method) throws LIMSRuntimeException;
 
-	public List getNextMethodRecord(String id) throws LIMSRuntimeException;
+//	public List getNextMethodRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousMethodRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousMethodRecord(String id) throws LIMSRuntimeException;
-
-	public Method getMethodByName(Method method) throws LIMSRuntimeException;
+//	public Method getMethodByName(Method method) throws LIMSRuntimeException;
 
 	// bugzilla 1411
-	public Integer getTotalMethodCount() throws LIMSRuntimeException;
+//	public Integer getTotalMethodCount() throws LIMSRuntimeException;
+
+	boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
 
 }

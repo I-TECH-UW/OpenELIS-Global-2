@@ -27,115 +27,109 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
 @Component
-@Transactional 
+@Transactional
 public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	public RoleDAOImpl() {
 		super(Role.class);
 	}
 
-	@Override
-	public void deleteData(List<Role> roles) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-
-			for (Role data : roles) {
-
-				Role oldData = readRole(data.getId());
-				Role newData = new Role();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "SYSTEM_ROLE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (Role data : roles) {
-				data = readRole(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Role role) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(role);
-			role.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = role.getSysUserId();
-			String tableName = "SYSTEM_ROLE";
-			auditDAO.saveNewHistory(role, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Role role) throws LIMSRuntimeException {
-
-		Role oldData = readRole(role.getId());
-		Role newData = role;
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = role.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "SYSTEM_ROLE";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(role);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(role);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(role);
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role updateData()", e);
-		}
-	}
+//	@Override
+//	public void deleteData(List<Role> roles) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (Role data : roles) {
+//
+//				Role oldData = readRole(data.getId());
+//				Role newData = new Role();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "SYSTEM_ROLE";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("RolesDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Role AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (Role data : roles) {
+//				data = readRole(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Role deleteData()", e);
+//		}
+//	}
+//
+//	@Override
+//	public boolean insertData(Role role) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(role);
+//			role.setId(id);
+//
+//			String sysUserId = role.getSysUserId();
+//			String tableName = "SYSTEM_ROLE";
+//			auditDAO.saveNewHistory(role, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Role insertData()", e);
+//		}
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(Role role) throws LIMSRuntimeException {
+//
+//		Role oldData = readRole(role.getId());
+//		Role newData = role;
+//
+//		try {
+//
+//			String sysUserId = role.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "SYSTEM_ROLE";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("RolesDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Role AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(role);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(role);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(role);
+//		} catch (Exception e) {
+//			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Role updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
-			Role tmpRole = (Role) sessionFactory.getCurrentSession().get(Role.class, role.getId());
+			Role tmpRole = sessionFactory.getCurrentSession().get(Role.class, role.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpRole != null) {
@@ -208,7 +202,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	public Role readRole(String idString) {
 		Role recoveredRole = null;
 		try {
-			recoveredRole = (Role) sessionFactory.getCurrentSession().get(Role.class, idString);
+			recoveredRole = sessionFactory.getCurrentSession().get(Role.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

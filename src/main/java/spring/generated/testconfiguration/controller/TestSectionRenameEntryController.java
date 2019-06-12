@@ -22,7 +22,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionRenameEntryController extends BaseController {
-	
+
 	@Autowired
 	LocalizationService localizationService;
 	@Autowired
@@ -79,18 +79,11 @@ public class TestSectionRenameEntryController extends BaseController {
 			name.setFrench(nameFrench.trim());
 			name.setSysUserId(userId);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				localizationService.update(name);
-//				tx.commit();
 			} catch (HibernateException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
-			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
+			}
 
 		}
 

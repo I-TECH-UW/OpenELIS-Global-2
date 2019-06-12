@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,19 +29,15 @@ import spring.generated.testconfiguration.form.TestAddForm;
 import spring.generated.testconfiguration.validator.TestAddFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
-import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
-import spring.service.panelitem.PanelItemService;
-import spring.service.resultlimit.ResultLimitService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
-import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testconfiguration.TestAddService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -67,25 +62,17 @@ public class TestAddController extends BaseController {
 	@Autowired
 	TestAddFormValidator formValidator;
 	@Autowired
-	DictionaryService dictionaryService;
+	private DictionaryService dictionaryService;
 	@Autowired
-	PanelService panelService;
+	private PanelService panelService;
 	@Autowired
-	TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
-	TypeOfSampleTestService typeOfSampleTestService;
+	private TestResultService testResultService;
 	@Autowired
-	LocalizationService localizationService;
+	private UnitOfMeasureService unitOfMeasureService;
 	@Autowired
-	PanelItemService panelItemService;
-	@Autowired
-	TestService testService;
-	@Autowired
-	ResultLimitService resultLimitService;
-	@Autowired
-	TestResultService testResultService;
-	@Autowired
-	UnitOfMeasureService unitOfMeasureService;
+	private TestAddService testAddService;
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
 	public ModelAndView showTestAdd(HttpServletRequest request) {
@@ -145,56 +132,11 @@ public class TestAddController extends BaseController {
 		Localization nameLocalization = createNameLocalization(testAddParams);
 		Localization reportingNameLocalization = createReportingNameLocalization(testAddParams);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-
-			nameLocalization.setSysUserId(currentUserId);
-			localizationService.insert(nameLocalization);
-			reportingNameLocalization.setSysUserId(currentUserId);
-			localizationService.insert(reportingNameLocalization);
-
-			for (TestSet set : testSets) {
-				set.test.setSysUserId(currentUserId);
-				set.test.setLocalizedTestName(nameLocalization);
-				set.test.setLocalizedReportingName(reportingNameLocalization);
-				testService.insert(set.test);
-
-				for (Test test : set.sortedTests) {
-					test.setSysUserId(currentUserId);
-					testService.update(test);
-				}
-
-				set.sampleTypeTest.setSysUserId(currentUserId);
-				set.sampleTypeTest.setTestId(set.test.getId());
-				typeOfSampleTestService.insert(set.sampleTypeTest);
-
-				for (PanelItem item : set.panelItems) {
-					item.setSysUserId(currentUserId);
-					item.setTest(set.test);
-					panelItemService.insert(item);
-				}
-
-				for (TestResult testResult : set.testResults) {
-					testResult.setSysUserId(currentUserId);
-					testResult.setTest(set.test);
-					testResultService.insert(testResult);
-				}
-
-				for (ResultLimit resultLimit : set.resultLimits) {
-					resultLimit.setSysUserId(currentUserId);
-					resultLimit.setTestId(set.test.getId());
-					resultLimitService.insert(resultLimit);
-				}
-			}
-
-//			tx.commit();
+			testAddService.addTests(testSets, nameLocalization, reportingNameLocalization, currentUserId);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		TestServiceImpl.refreshTestNames();
 		TypeOfSampleServiceImpl.getInstance().clearCache();
@@ -232,7 +174,8 @@ public class TestAddController extends BaseController {
 		}
 		// The number of test sets depend on the number of sampleTypes
 		for (int i = 0; i < testAddParams.sampleList.size(); i++) {
-			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
+			TypeOfSample typeOfSample = typeOfSampleService
+					.getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
 			if (typeOfSample == null) {
 				continue;
 			}
@@ -567,12 +510,12 @@ public class TestAddController extends BaseController {
 	}
 
 	public class TestSet {
-		Test test;
-		TypeOfSampleTest sampleTypeTest;
-		ArrayList<Test> sortedTests = new ArrayList<>();
-		ArrayList<PanelItem> panelItems = new ArrayList<>();
-		ArrayList<TestResult> testResults = new ArrayList<>();
-		ArrayList<ResultLimit> resultLimits = new ArrayList<>();
+		public Test test;
+		public TypeOfSampleTest sampleTypeTest;
+		public ArrayList<Test> sortedTests = new ArrayList<>();
+		public ArrayList<PanelItem> panelItems = new ArrayList<>();
+		public ArrayList<TestResult> testResults = new ArrayList<>();
+		public ArrayList<ResultLimit> resultLimits = new ArrayList<>();
 	}
 
 	public class SampleTypeListAndTestOrder {

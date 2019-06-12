@@ -29,7 +29,7 @@ import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.HibernateProxy;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @SuppressWarnings("unused")
 public class SysmexReader extends AnalyzerLineInserter {
@@ -349,7 +349,7 @@ public class SysmexReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-			Transaction tx = HibernateProxy.beginTransaction();
+			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
 
@@ -361,7 +361,7 @@ public class SysmexReader extends AnalyzerLineInserter {
 				tx.rollback();
 				successful = false;
 			} finally {
-				HibernateProxy.closeSession();
+				HibernateUtil.closeSession();
 			}
 		}
 

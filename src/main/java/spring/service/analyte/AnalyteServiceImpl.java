@@ -1,13 +1,13 @@
 package spring.service.analyte;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
+import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 
 @Service
 public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> implements AnalyteService {
@@ -24,70 +24,44 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
 	}
 
 	@Override
-	public void getData(Analyte analyte) {
-		getBaseObjectDAO().getData(analyte);
-
-	}
-
-	@Override
-	public List getAnalytes(String filter) {
-		return getBaseObjectDAO().getAnalytes(filter);
-	}
-
-	@Override
 	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) {
 		return getBaseObjectDAO().getAnalyteByName(analyte, ignoreCase);
 	}
 
 	@Override
-	public List getAllAnalytes() {
-		return getBaseObjectDAO().getAllAnalytes();
+	public String insert(Analyte analyte) {
+		if (duplicateAnalyteExists(analyte)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
+		}
+		return super.insert(analyte);
 	}
 
 	@Override
-	public void deleteData(List analytes) {
-		getBaseObjectDAO().deleteData(analytes);
-
+	public Analyte save(Analyte analyte) {
+		if (duplicateAnalyteExists(analyte)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
+		}
+		return super.save(analyte);
 	}
 
 	@Override
-	public void updateData(Analyte analyte) {
-		getBaseObjectDAO().updateData(analyte);
+	public Analyte update(Analyte analyte) {
+		if (duplicateAnalyteExists(analyte)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
+		}
+		return super.update(analyte);
+	}
 
+	private boolean duplicateAnalyteExists(Analyte analyte) {
+		return duplicateAnalyteExists(analyte);
 	}
 
 	@Override
-	public boolean insertData(Analyte analyte) {
-		return getBaseObjectDAO().insertData(analyte);
+	public void delete(Analyte analyte) {
+		Analyte oldData = get(analyte.getId());
+		oldData.setIsActive(IActionConstants.NO);
+		oldData.setSysUserId(analyte.getSysUserId());
+		updateDelete(oldData);
 	}
 
-	@Override
-	public List getPageOfAnalytes(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfAnalytes(startingRecNo);
-	}
-
-	@Override
-	public Integer getTotalAnalyteCount() {
-		return getBaseObjectDAO().getTotalAnalyteCount();
-	}
-
-	@Override
-	public Integer getTotalSearchedAnalyteCount(String searchString) {
-		return getBaseObjectDAO().getTotalSearchedAnalyteCount(searchString);
-	}
-
-	@Override
-	public List getPreviousAnalyteRecord(String id) {
-		return getBaseObjectDAO().getPreviousAnalyteRecord(id);
-	}
-
-	@Override
-	public List getNextAnalyteRecord(String id) {
-		return getBaseObjectDAO().getNextAnalyteRecord(id);
-	}
-
-	@Override
-	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) {
-		return getBaseObjectDAO().getPagesOfSearchedAnalytes(startRecNo, searchString);
-	}
 }

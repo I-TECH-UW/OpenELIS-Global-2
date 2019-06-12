@@ -26,13 +26,11 @@ public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException;
 
-	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException;
+//	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException;
 
-	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException;
+//	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException;
 
-	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException;
-
-	public List<ElectronicOrder> getAllElectronicOrders();
+//	public List<ElectronicOrder> getAllElectronicOrders();
 
 	List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
 

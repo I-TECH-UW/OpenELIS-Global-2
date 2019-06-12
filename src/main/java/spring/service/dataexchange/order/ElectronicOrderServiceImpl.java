@@ -11,7 +11,8 @@ import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
 @Service
-public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String> implements ElectronicOrderService {
+public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String>
+		implements ElectronicOrderService {
 	@Autowired
 	protected ElectronicOrderDAO baseObjectDAO;
 
@@ -25,34 +26,13 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
 	}
 
 	@Override
-	public void updateData(ElectronicOrder eOrder) {
-        getBaseObjectDAO().updateData(eOrder);
-
-	}
-
-	@Override
-	public void insertData(ElectronicOrder eOrder) {
-        getBaseObjectDAO().insertData(eOrder);
-
-	}
-
-	@Override
 	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
-        return getBaseObjectDAO().getAllElectronicOrdersOrderedBy(order);
-	}
-
-	@Override
-	public List<ElectronicOrder> getAllElectronicOrders() {
-        return getBaseObjectDAO().getAllElectronicOrders();
+		return getBaseObjectDAO().getAllElectronicOrdersOrderedBy(order);
 	}
 
 	@Override
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) {
-        return getBaseObjectDAO().getElectronicOrdersByExternalId(id);
+		return getBaseObjectDAO().getElectronicOrdersByExternalId(id);
 	}
 
-	@Override
-	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) {
-        return getBaseObjectDAO().getElectronicOrdersByPatientId(id);
-	}
 }

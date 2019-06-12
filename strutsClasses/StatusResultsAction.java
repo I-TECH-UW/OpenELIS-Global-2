@@ -65,7 +65,7 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private final SampleDAO sampleDAO = new SampleDAOImpl();
 	private ResultsLoadUtility resultsUtility;
-	private final InventoryUtility inventoryUtility = new InventoryUtility();
+	private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 	private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
 
 	private static Set<Integer> excludedStatusIds;

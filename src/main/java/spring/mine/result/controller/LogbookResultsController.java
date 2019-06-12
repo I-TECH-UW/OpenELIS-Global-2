@@ -186,7 +186,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			boolean isHaitiClinical = ConfigurationProperties.getInstance()
 					.isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
 			if (resultsLoadUtility.inventoryNeeded() || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) {
-				InventoryUtility inventoryUtility = new InventoryUtility();
+				InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 				inventoryList = inventoryUtility.getExistingActiveInventory();
 
 				PropertyUtils.setProperty(form, "displayTestKit", true);
@@ -245,16 +245,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		createResultsFromItems(actionDataSet);
 		createAnalysisOnlyUpdates(actionDataSet);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
-
-//			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";

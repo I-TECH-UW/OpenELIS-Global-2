@@ -17,7 +17,6 @@ package us.mn.state.health.lims.reports.valueholder.resultsreport;
 
 import java.util.List;
 
-import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
@@ -27,10 +26,10 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
  *
  */
 /**
- * @author benzd1 //TODO should this be a BaseObject?
+ * @author benzd1
  *
  */
-public class ResultsReportSample extends BaseObject<String> {
+public class ResultsReportSample {
 
 	private String accessionNumber;
 

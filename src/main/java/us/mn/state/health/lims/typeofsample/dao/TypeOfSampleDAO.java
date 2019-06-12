@@ -38,9 +38,9 @@ public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
 	public String getNameForTypeOfSampleId(String id);
 
-	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+//	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
-	public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
+//	public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
 
 	public List getAllTypeOfSamples() throws LIMSRuntimeException;
 
@@ -50,7 +50,7 @@ public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
-	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+//	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
 	public List getTypes(String filter, String domain) throws LIMSRuntimeException;
 
@@ -73,4 +73,8 @@ public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 			throws LIMSRuntimeException;
 
 	public TypeOfSample getSampleTypeFromTest(Test test);
+
+	void clearMap();
+
+	boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 }

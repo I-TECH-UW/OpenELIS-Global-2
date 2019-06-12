@@ -18,17 +18,17 @@ package us.mn.state.health.lims.testreflex.action.util;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.scriptlet.ScriptletService;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.scriptlet.daoimpl.ScriptletDAOImpl;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 
@@ -45,12 +45,13 @@ public abstract class ReflexAction {
 	protected Result result;
 	protected Result finalResult;
 
-	protected static AnalysisDAO ANALYSIS_DAO = new AnalysisDAOImpl();
+	protected static AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private TestService testService = SpringContext.getBean(TestService.class);
+	private ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
 
 	/*
-	 * Creates a new Analysis from a testReflex based on the current analysis of
-	 * the result. Points to the same sample, and sets parent child
-	 * relationship.
+	 * Creates a new Analysis from a testReflex based on the current analysis of the
+	 * result. Points to the same sample, and sets parent child relationship.
 	 */
 	public void handleReflex(TestReflex reflex, Result result, String actionSelectionId) {
 		this.reflex = reflex;
@@ -77,13 +78,13 @@ public abstract class ReflexAction {
 	}
 
 	private void handleTestAction(String testId) {
-		createReflexedAnalysis(new TestDAOImpl().getActiveTestById(Integer.parseInt(testId)));
+		createReflexedAnalysis(testService.getActiveTestById(Integer.parseInt(testId)));
 	}
-	
+
 	protected void createReflexedAnalysis(Test test) {
 		if (test != null) {
 			Analysis currentAnalysis = result.getAnalysis();
-			ANALYSIS_DAO.getData(currentAnalysis);
+			analysisService.getData(currentAnalysis);
 
 			generatedAnalysis = new Analysis();
 			generatedAnalysis.setTest(test);
@@ -96,7 +97,7 @@ public abstract class ReflexAction {
 			generatedAnalysis.setParentResult(result);
 			generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());
 			generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
-            generatedAnalysis.setSampleTypeName( currentAnalysis.getSampleTypeName() );
+			generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
 		}
 	}
 
@@ -104,21 +105,22 @@ public abstract class ReflexAction {
 	 * This method should respond to directions from the flag
 	 */
 	protected void handleFlagAction(TestReflex reflex, String actionSelectionId) {
-		if (TestReflexUtil.isUserChoiceReflex( reflex ) && actionSelectionId != null) {
+		if (TestReflexUtil.isUserChoiceReflex(reflex) && actionSelectionId != null) {
 			String[] parsedSelection = actionSelectionId.split("_");
-			
-			if( "script".equals(parsedSelection[0])){
+
+			if ("script".equals(parsedSelection[0])) {
 				handleScriptletAction(parsedSelection[1]);
-			}else if( "test".equals(parsedSelection[0])){
+			} else if ("test".equals(parsedSelection[0])) {
 				handleTestAction(parsedSelection[1]);
 			}
 		}
 	}
 
 	private void handleScriptletAction(String scriptletId) {
-		handleScriptletAction(new ScriptletDAOImpl().getScriptletById(scriptletId));
-		
+		handleScriptletAction(scriptletService.getScriptletById(scriptletId));
+
 	}
+
 	abstract protected void handleScriptletAction(Scriptlet scriptlet);
 
 	public Analysis getNewAnalysis() {
@@ -141,7 +143,7 @@ public abstract class ReflexAction {
 		return reflex;
 	}
 
-	public Result getFinalResult(){
+	public Result getFinalResult() {
 		return finalResult;
 	}
 

@@ -25,18 +25,12 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
@@ -46,133 +40,133 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz 11/17/2007 instead of printing StackTrace log error
  */
 @Component
-@Transactional 
+@Transactional
 public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implements TestReflexDAO {
 
 	public TestReflexDAOImpl() {
 		super(TestReflex.class);
 	}
 
-	@Override
-	public void deleteData(List testReflexs) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < testReflexs.size(); i++) {
-				TestReflex data = (TestReflex) testReflexs.get(i);
+//	@Override
+//	public void deleteData(List testReflexs) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < testReflexs.size(); i++) {
+//				TestReflex data = (TestReflex) testReflexs.get(i);
+//
+//				TestReflex oldData = readTestReflex(data.getId());
+//				TestReflex newData = new TestReflex();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TEST_REFLEX";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < testReflexs.size(); i++) {
+//				TestReflex data = (TestReflex) testReflexs.get(i);
+//				// bugzilla 2206
+//				data = readTestReflex(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex deleteData()", e);
+//		}
+//	}
 
-				TestReflex oldData = readTestReflex(data.getId());
-				TestReflex newData = new TestReflex();
+//	@Override
+//	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException {
+//		try {
+//			// bugzilla 1482 throw Exception if record already exists
+//			if (duplicateTestReflexExists(testReflex)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
+//								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
+//								+ testReflex.getTestResult().getValue() + BLANK
+//								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(testReflex);
+//			testReflex.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = testReflex.getSysUserId();
+//			String tableName = "TEST_REFLEX";
+//			auditDAO.saveNewHistory(testReflex, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TEST_REFLEX";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < testReflexs.size(); i++) {
-				TestReflex data = (TestReflex) testReflexs.get(i);
-				// bugzilla 2206
-				data = readTestReflex(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException {
-		try {
-			// bugzilla 1482 throw Exception if record already exists
-			if (duplicateTestReflexExists(testReflex)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
-								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
-								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(testReflex);
-			testReflex.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = testReflex.getSysUserId();
-			String tableName = "TEST_REFLEX";
-			auditDAO.saveNewHistory(testReflex, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TestReflex testReflex) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateTestReflexExists(testReflex)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
-								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
-								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
-		}
-
-		TestReflex oldData = readTestReflex(testReflex.getId());
-		TestReflex newData = testReflex;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = testReflex.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TEST_REFLEX";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(testReflex);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(testReflex);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(testReflex);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(TestReflex testReflex) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateTestReflexExists(testReflex)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
+//								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
+//								+ testReflex.getTestResult().getValue() + BLANK
+//								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
+//		}
+//
+//		TestReflex oldData = readTestReflex(testReflex.getId());
+//		TestReflex newData = testReflex;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = testReflex.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TEST_REFLEX";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(testReflex);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(testReflex);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testReflex);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
-			TestReflex tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
+			TestReflex tr = sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tr != null) {
@@ -362,7 +356,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	public TestReflex readTestReflex(String idString) {
 		TestReflex tr = null;
 		try {
-			tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, idString);
+			tr = sessionFactory.getCurrentSession().get(TestReflex.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -461,7 +455,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	}
 
 	// bugzilla 1482
-	private boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

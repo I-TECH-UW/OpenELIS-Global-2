@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.qaevent.dao.QaObservationTypeDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
 

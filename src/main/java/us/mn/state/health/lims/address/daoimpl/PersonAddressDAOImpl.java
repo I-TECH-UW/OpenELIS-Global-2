@@ -16,22 +16,13 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
 @Transactional
@@ -41,87 +32,84 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 		super(PersonAddress.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
+//		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("personId", Integer.parseInt(personId));
+//			List<PersonAddress> addressPartList = query.list();
+//			return addressPartList;
+//		} catch (HibernateException e) {
+//			handleException(e, "getAddressPartsByPersonId");
+//		}
+//
+//		return null;
+//	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
-		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
+//	@Override
+//	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
+//		try {
+//			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
+//			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
+//			// closeSession(); // CSL remove old
+//			return id;
+//		} catch (HibernateException e) {
+//			handleException(e, "insert");
+//		}
+//		return null;
+//	}
 
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("personId", Integer.parseInt(personId));
-			List<PersonAddress> addressPartList = query.list();
-			return addressPartList;
-		} catch (HibernateException e) {
-			handleException(e, "getAddressPartsByPersonId");
-		}
+//	@Override
+//	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException {
+//
+//		PersonAddress oldData = readPersonAddress(personAddress);
+//
+//		try {
+//			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
+//					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
+//
+//			sessionFactory.getCurrentSession().merge(personAddress);
+//			// closeSession(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(personAddress);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(personAddress);
+//		} catch (HibernateException e) {
+//			handleException(e, "update");
+//		}
+//		return Optional.ofNullable(personAddress);
+//	}
 
-		return null;
-	}
+//	public PersonAddress readPersonAddress(PersonAddress personAddress) {
+//		try {
+//			PersonAddress oldPersonAddress = sessionFactory.getCurrentSession().get(PersonAddress.class,
+//					personAddress.getCompoundId());
+//			// closeSession(); // CSL remove old
+//
+//			return oldPersonAddress;
+//		} catch (HibernateException e) {
+//			handleException(e, "readPersonAddress");
+//		}
+//
+//		return null;
+//	}
 
-	@Override
-	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
-		try {
-			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
-			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
-			// closeSession(); // CSL remove old
-			return id;
-		} catch (HibernateException e) {
-			handleException(e, "insert");
-		}
-		return null;
-	}
-
-	@Override
-	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException {
-
-		PersonAddress oldData = readPersonAddress(personAddress);
-
-		try {
-			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
-
-			sessionFactory.getCurrentSession().merge(personAddress);
-			// closeSession(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(personAddress);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(personAddress);
-		} catch (HibernateException e) {
-			handleException(e, "update");
-		}
-		return Optional.ofNullable(personAddress);
-	}
-
-	public PersonAddress readPersonAddress(PersonAddress personAddress) {
-		try {
-			PersonAddress oldPersonAddress = sessionFactory.getCurrentSession().get(PersonAddress.class,
-					personAddress.getCompoundId());
-			// closeSession(); // CSL remove old
-
-			return oldPersonAddress;
-		} catch (HibernateException e) {
-			handleException(e, "readPersonAddress");
-		}
-
-		return null;
-	}
-
-	@Override
-	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
-		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("personId", Integer.parseInt(personId));
-			query.setInteger("partId", Integer.parseInt(addressPartId));
-			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return addressPart;
-		} catch (HibernateException e) {
-			handleException(e, "getByPersonIdAndPartId");
-		}
-
-		return null;
-	}
+//	@Override
+//	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
+//		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("personId", Integer.parseInt(personId));
+//			query.setInteger("partId", Integer.parseInt(addressPartId));
+//			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return addressPart;
+//		} catch (HibernateException e) {
+//			handleException(e, "getByPersonIdAndPartId");
+//		}
+//
+//		return null;
+//	}
 }

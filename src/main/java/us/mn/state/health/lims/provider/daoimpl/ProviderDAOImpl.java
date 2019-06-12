@@ -20,17 +20,13 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.provider.dao.ProviderDAO;
 import us.mn.state.health.lims.provider.valueholder.Provider;
@@ -42,104 +38,101 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
 @Transactional
 public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements ProviderDAO {
 
-	@Autowired
-	AuditTrailDAO auditDAO;
-
 	public ProviderDAOImpl() {
 		super(Provider.class);
 	}
 
-	@Override
-	public void deleteData(List providers) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List providers) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < providers.size(); i++) {
+//				Provider data = (Provider) providers.get(i);
+//
+//				Provider oldData = readProvider(data.getId());
+//				Provider newData = new Provider();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "PROVIDER";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProviderDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Provider AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < providers.size(); i++) {
+//				Provider data = (Provider) providers.get(i);
+//				// bugzilla 2206
+//				data = readProvider(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProviderDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Provider deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < providers.size(); i++) {
-				Provider data = (Provider) providers.get(i);
+//	@Override
+//	public boolean insertData(Provider provider) throws LIMSRuntimeException {
+//
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(provider);
+//			provider.setId(id);
+//
+//			String sysUserId = provider.getSysUserId();
+//			String tableName = "PROVIDER";
+//			auditDAO.saveNewHistory(provider, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("ProviderDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Provider insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				Provider oldData = readProvider(data.getId());
-				Provider newData = new Provider();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PROVIDER";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProviderDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Provider AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < providers.size(); i++) {
-				Provider data = (Provider) providers.get(i);
-				// bugzilla 2206
-				data = readProvider(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProviderDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Provider deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Provider provider) throws LIMSRuntimeException {
-
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(provider);
-			provider.setId(id);
-
-			String sysUserId = provider.getSysUserId();
-			String tableName = "PROVIDER";
-			auditDAO.saveNewHistory(provider, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("ProviderDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Provider insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Provider provider) throws LIMSRuntimeException {
-
-		Provider oldData = readProvider(provider.getId());
-		Provider newData = provider;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = provider.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PROVIDER";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProviderDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Provider AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(provider);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(provider);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(provider);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProviderDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Provider updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Provider provider) throws LIMSRuntimeException {
+//
+//		Provider oldData = readProvider(provider.getId());
+//		Provider newData = provider;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = provider.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PROVIDER";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProviderDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Provider AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(provider);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(provider);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(provider);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProviderDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Provider updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Provider provider) throws LIMSRuntimeException {

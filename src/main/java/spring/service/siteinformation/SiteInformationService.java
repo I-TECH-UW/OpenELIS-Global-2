@@ -8,12 +8,6 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 public interface SiteInformationService extends BaseObjectService<SiteInformation, String> {
 	void getData(SiteInformation siteInformation);
 
-	void deleteData(String siteInformationId, String currentUserId);
-
-	void updateData(SiteInformation siteInformation);
-
-	boolean insertData(SiteInformation siteInformation);
-
 	SiteInformation getSiteInformationByName(String siteName);
 
 	List<SiteInformation> getAllSiteInformation();
@@ -29,4 +23,6 @@ public interface SiteInformationService extends BaseObjectService<SiteInformatio
 	List<SiteInformation> getPreviousSiteInformationRecord(String id);
 
 	List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
+
+	void persistData(SiteInformation siteInformation, boolean newSiteInformation);
 }

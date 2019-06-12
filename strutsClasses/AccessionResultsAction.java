@@ -60,7 +60,7 @@ public class AccessionResultsAction extends BaseAction {
 
 	private String accessionNumber;
 	private Sample sample;
-	private InventoryUtility inventoryUtility = new InventoryUtility();
+	private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
 	private static userModuleService userModuleService = new userModuleServiceImpl();
 	private static String RESULT_EDIT_ROLE_ID;

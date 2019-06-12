@@ -25,6 +25,4 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 public interface OrganizationContactDAO extends BaseDAO<OrganizationContact, String> {
 	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException;
 
-	@Override
-	public String insert(OrganizationContact contact) throws LIMSRuntimeException;
 }

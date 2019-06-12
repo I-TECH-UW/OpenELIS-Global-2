@@ -8,9 +8,6 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 
 public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport, String> {
 
-	@Override
-	public void delete(ReportExternalExport report);
-
 	Timestamp getLastCollectedTimestamp();
 
 	ReportExternalExport getReportByEventDateAndType(ReportExternalExport report);
@@ -19,15 +16,11 @@ public interface ReportExternalExportService extends BaseObjectService<ReportExt
 
 	ReportExternalExport getLatestSentReportExport(String reportQueueTypeId);
 
-	void insertReportExternalExport(ReportExternalExport report);
-
 	ReportExternalExport readReportExternalExport(String idString);
 
 	ReportExternalExport getLatestEventReportExport(String reportQueueTypeId);
 
 	Timestamp getLastSentTimestamp();
-
-	void updateReportExternalExport(ReportExternalExport report);
 
 	List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId);
 

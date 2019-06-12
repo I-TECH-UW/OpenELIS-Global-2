@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.test.TestService;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestComparator;
@@ -27,7 +28,8 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
 @DependsOn({ "springContext" })
-public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample, String> implements TypeOfSampleService {
+public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample, String>
+		implements TypeOfSampleService {
 
 	private static TypeOfSampleService INSTANCE;
 
@@ -255,23 +257,6 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
-	public void deleteData(List typeOfSamples) {
-		getBaseObjectDAO().deleteData(typeOfSamples);
-
-	}
-
-	@Override
-	public void updateData(TypeOfSample typeOfSample) {
-		getBaseObjectDAO().updateData(typeOfSample);
-
-	}
-
-	@Override
-	public boolean insertData(TypeOfSample typeOfSample) {
-		return getBaseObjectDAO().insertData(typeOfSample);
-	}
-
-	@Override
 	public String getNameForTypeOfSampleId(String id) {
 		return getBaseObjectDAO().getNameForTypeOfSampleId(id);
 	}
@@ -334,5 +319,42 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	@Override
 	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain) {
 		return getBaseObjectDAO().getTypeOfSampleByLocalAbbrevAndDomain(localAbbrev, domain);
+	}
+
+	@Override
+	public void delete(TypeOfSample typeOfSample) {
+		super.delete(typeOfSample);
+		getBaseObjectDAO().clearMap();
+	}
+
+	@Override
+	public String insert(TypeOfSample typeOfSample) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
+		}
+		baseObjectDAO.clearMap();
+		return super.insert(typeOfSample);
+	}
+
+	@Override
+	public TypeOfSample save(TypeOfSample typeOfSample) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
+		}
+		baseObjectDAO.clearMap();
+		return super.save(typeOfSample);
+	}
+
+	@Override
+	public TypeOfSample update(TypeOfSample typeOfSample) {
+		if (duplicateTypeOfSampleExists(typeOfSample)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
+		}
+		baseObjectDAO.clearMap();
+		return super.update(typeOfSample);
+	}
+
+	private boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) {
+		return baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample);
 	}
 }

@@ -1,171 +1,140 @@
 package us.mn.state.health.lims.datasubmission.daoimpl;
 
-import java.util.List;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.datasubmission.dao.DataIndicatorDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
-import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> implements DataIndicatorDAO {
 
 	public DataIndicatorDAOImpl() {
 		super(DataIndicator.class);
 	}
 
-	@Override
-	public void getData(DataIndicator indicator) throws LIMSRuntimeException {
-		try {
-			DataIndicator indicatorClone = (DataIndicator) sessionFactory.getCurrentSession().get(DataIndicator.class,
-					indicator.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (indicatorClone != null) {
-				PropertyUtils.copyProperties(indicator, indicatorClone);
-			} else {
-				indicator.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
-		}
-	}
+//	@Override
+//	public void getData(DataIndicator indicator) throws LIMSRuntimeException {
+//		try {
+//			DataIndicator indicatorClone = sessionFactory.getCurrentSession().get(DataIndicator.class,
+//					indicator.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (indicatorClone != null) {
+//				PropertyUtils.copyProperties(indicator, indicatorClone);
+//			} else {
+//				indicator.setId(null);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
+//		}
+//	}
 
-	@Override
-	public DataIndicator getIndicator(String id) throws LIMSRuntimeException {
-		try {
-			DataIndicator indicator = (DataIndicator) sessionFactory.getCurrentSession().get(DataIndicator.class, id);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return indicator;
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
-		}
-	}
+//	@Override
+//	public DataIndicator getIndicator(String id) throws LIMSRuntimeException {
+//		try {
+//			DataIndicator indicator = sessionFactory.getCurrentSession().get(DataIndicator.class, id);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return indicator;
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
+//		}
+//	}
 
-	@Override
-	public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month)
-			throws LIMSRuntimeException {
-		String sql = "From DataIndicator di where di.typeOfIndicator.id = :todiid and di.year = :year and di.month = :month";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("todiid", Integer.parseInt(type.getId()));
-			query.setInteger("year", year);
-			query.setInteger("month", month);
-			DataIndicator indicator = (DataIndicator) query.uniqueResult();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (indicator == null) {
-				return null;
-			}
-			return indicator;
-		} catch (HibernateException e) {
-			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByTypeYearMonth()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator getIndicatorByTypeYearMonth()", e);
-		}
-	}
+//	@Override
+//	public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month)
+//			throws LIMSRuntimeException {
+//		String sql = "From DataIndicator di where di.typeOfIndicator.id = :todiid and di.year = :year and di.month = :month";
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("todiid", Integer.parseInt(type.getId()));
+//			query.setInteger("year", year);
+//			query.setInteger("month", month);
+//			DataIndicator indicator = (DataIndicator) query.uniqueResult();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (indicator == null) {
+//				return null;
+//			}
+//			return indicator;
+//		} catch (HibernateException e) {
+//			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByTypeYearMonth()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator getIndicatorByTypeYearMonth()", e);
+//		}
+//	}
 
-	@Override
-	public List<DataIndicator> getIndicatorsByStatus(String status) throws LIMSRuntimeException {
-		String sql = "From DataIndicator di where di.status = :status";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("status", status);
-			List<DataIndicator> indicators = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return indicators;
-		} catch (HibernateException e) {
-			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByStatus()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator getIndicatorByStatus()", e);
-		}
-	}
+//	@Override
+//	public List<DataIndicator> getIndicatorsByStatus(String status) throws LIMSRuntimeException {
+//		String sql = "From DataIndicator di where di.status = :status";
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("status", status);
+//			List<DataIndicator> indicators = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return indicators;
+//		} catch (HibernateException e) {
+//			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByStatus()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator getIndicatorByStatus()", e);
+//		}
+//	}
 
-	@Override
-	public boolean insertData(DataIndicator dataIndicator) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(dataIndicator);
-			dataIndicator.setId(id);
+//	@Override
+//	public boolean insertData(DataIndicator dataIndicator) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(dataIndicator);
+//			dataIndicator.setId(id);
+//
+//			String sysUserId = dataIndicator.getSysUserId();
+//			String tableName = "DATA_INDICATOR";
+//			// auditDAO.saveNewHistory(dataIndicator, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DataIndicatorDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = dataIndicator.getSysUserId();
-			String tableName = "DATA_INDICATOR";
-			// auditDAO.saveNewHistory(dataIndicator, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DataIndicatorDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(DataIndicator dataIndicator) throws LIMSRuntimeException {
-
-		DataIndicator oldData = getIndicator(dataIndicator.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = dataIndicator.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "DATA_INDICATOR";
-			// auditDAO.saveHistory(dataIndicator, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			LogEvent.logError("DataIndicatorDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(dataIndicator);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(dataIndicator);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(dataIndicator);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DataIndicatorDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in DataIndicator updateData()", e);
-		}
-	}
-
-	@Override
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public void updateData(DataIndicator dataIndicator) throws LIMSRuntimeException {
+//
+//		DataIndicator oldData = getIndicator(dataIndicator.getId());
+//
+//		try {
+//
+//			String sysUserId = dataIndicator.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "DATA_INDICATOR";
+//			// auditDAO.saveHistory(dataIndicator, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			LogEvent.logError("DataIndicatorDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(dataIndicator);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(dataIndicator);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(dataIndicator);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DataIndicatorDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in DataIndicator updateData()", e);
+//		}
+//	}
 
 }

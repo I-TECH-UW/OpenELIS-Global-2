@@ -1,7 +1,5 @@
 package spring.service.sampleorganization;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +9,8 @@ import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 @Service
-public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleOrganization, String> implements SampleOrganizationService {
+public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleOrganization, String>
+		implements SampleOrganizationService {
 	@Autowired
 	protected SampleOrganizationDAO baseObjectDAO;
 
@@ -26,35 +25,18 @@ public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleO
 
 	@Override
 	public void getData(SampleOrganization sampleOrg) {
-        getBaseObjectDAO().getData(sampleOrg);
+		getBaseObjectDAO().getData(sampleOrg);
 
-	}
-
-	@Override
-	public void deleteData(List sampleOrgs) {
-        getBaseObjectDAO().deleteData(sampleOrgs);
-
-	}
-
-	@Override
-	public void updateData(SampleOrganization sampleOrg) {
-        getBaseObjectDAO().updateData(sampleOrg);
-
-	}
-
-	@Override
-	public boolean insertData(SampleOrganization sampleOrg) {
-        return getBaseObjectDAO().insertData(sampleOrg);
 	}
 
 	@Override
 	public void getDataBySample(SampleOrganization sampleOrg) {
-        getBaseObjectDAO().getDataBySample(sampleOrg);
+		getBaseObjectDAO().getDataBySample(sampleOrg);
 
 	}
 
 	@Override
 	public SampleOrganization getDataBySample(Sample sample) {
-        return getBaseObjectDAO().getDataBySample(sample);
+		return getBaseObjectDAO().getDataBySample(sample);
 	}
 }

@@ -9,12 +9,6 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 public interface TestAnalyteService extends BaseObjectService<TestAnalyte, String> {
 	TestAnalyte getData(TestAnalyte testAnalyte);
 
-	void deleteData(List testAnalytes);
-
-	void updateData(TestAnalyte testAnalyte);
-
-	boolean insertData(TestAnalyte testAnalyte);
-
 	List getAllTestAnalytes();
 
 	List getPageOfTestAnalytes(int startingRecNo);

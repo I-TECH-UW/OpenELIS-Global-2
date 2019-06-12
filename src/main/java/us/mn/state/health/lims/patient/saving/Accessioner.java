@@ -312,7 +312,6 @@ public abstract class Accessioner {
 	 */
 	@Transactional // only works if this class is autowired in
 	public String save() throws Exception {
-//		Transaction tx = null;
 		try {
 			if (!canAccession()) {
 				return null;
@@ -334,7 +333,6 @@ public abstract class Accessioner {
 			populateSampleHuman();
 			populateObservationHistory();
 
-//			tx = HibernateUtil.getSession().beginTransaction();
 			// all of the following methods are assumed to only write when
 			// necessary
 			persistPatient();
@@ -352,18 +350,11 @@ public abstract class Accessioner {
 			persistRecordStatus();
 			deleteOldPatient();
 			populateAndPersistUnderInvestigationNote();
-//			tx.commit();
 			return IActionConstants.FWD_SUCCESS_INSERT;
 		} catch (Exception e) {
-//			if (null != tx) {
-//				tx.rollback();
-//			}
 			logAndAddMessage("save()", "errors.InsertException", e);
 			throw e;
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 	}
 
 	private void populateAndPersistUnderInvestigationNote() {
@@ -397,9 +388,9 @@ public abstract class Accessioner {
 			note.setSystemUser(NoteServiceImpl.createSystemUser(sysUserId));
 
 			if (note.getId() == null) {
-				noteService.insertData(note);
+				noteService.insert(note);
 			} else {
-				noteService.updateData(note);
+				noteService.update(note);
 			}
 		}
 	}
@@ -417,10 +408,11 @@ public abstract class Accessioner {
 	 * default
 	 */
 	private void persisteSampleItemsChanged() {
-		analysisService.deleteData(analysisToDelete);
-		sampleItemService.deleteData(sampleItemsToDelete);
+//		analysisService.delete(analysisToDelete);
+		analysisService.deleteAll(analysisToDelete);
+		sampleItemService.deleteAll(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
-			analysisService.updateData(analysis);
+			analysisService.update(analysis);
 		}
 	}
 
@@ -909,9 +901,9 @@ public abstract class Accessioner {
 //			sampleService.getData(sample);
 			so.setSample(sample);
 			if (so.getId() == null) {
-				sampleOrganizationService.insertData(so);
+				sampleOrganizationService.insert(so);
 			} else {
-				sampleOrganizationService.updateData(so);
+				sampleOrganizationService.update(so);
 			}
 		}
 	}
@@ -937,7 +929,7 @@ public abstract class Accessioner {
 				item.setSortOrder(Integer.toString(nextSortOrder++));
 				item.setSysUserId(sysUserId);
 
-				sampleItemService.insertData(item);
+				sampleItemService.insert(item);
 			} else {
 				sampleTestPair.item = item = existingSampleItem;
 			}
@@ -948,7 +940,7 @@ public abstract class Accessioner {
 				testService.getData(newTest);
 				if (!existingTests.contains(newTest.getId())) {
 					Analysis analysis = buildAnalysis(analysisRevision, sampleTestPair, newTest);
-					analysisService.insertData(analysis, false);
+					analysisService.insert(analysis);
 					newAnalysis = true;
 				}
 			}
@@ -1015,7 +1007,7 @@ public abstract class Accessioner {
 				.equals(sample.getStatus())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
 			sample.setSysUserId(sysUserId);
-			sampleService.updateData(sample);
+			sampleService.update(sample);
 		}
 	}
 
@@ -1059,13 +1051,13 @@ public abstract class Accessioner {
 			person.setSysUserId(sysUserId);
 			patientInDB.setSysUserId(sysUserId);
 			if (patientInDB.getId() == null) {
-				personService.insertData(person);
-				patientService.insertData(patientInDB);
+				personService.insert(person);
+				patientService.insert(patientInDB);
 			} else {
 				// The reason for the explicit person update is to capture the
 				// history.
-				personService.updateData(person);
-				patientService.updateData(patientInDB);
+				personService.update(person);
+				patientService.update(patientInDB);
 			}
 		}
 	}
@@ -1083,7 +1075,7 @@ public abstract class Accessioner {
 		for (PatientIdentity identity : patientIdentities) {
 			identity.setPatientId(patientInDB.getId());
 			identity.setSysUserId(sysUserId);
-			identityService.insertData(identity);
+			identityService.insert(identity);
 		}
 	}
 
@@ -1091,7 +1083,7 @@ public abstract class Accessioner {
 		if (null != sample) {
 			sample.setSysUserId(sysUserId);
 			if (sample.getId() != null) {
-				sampleService.updateData(sample);
+				sampleService.update(sample);
 				HibernateUtil.getSession().evict(sample);
 			} else {
 				sampleService.insertDataWithAccessionNumber(sample);
@@ -1103,7 +1095,7 @@ public abstract class Accessioner {
 		if (null != sampleProject) {
 			sampleProject.setSample(sample);
 			sampleProject.setSysUserId(sysUserId);
-			sampleProjectService.insertData(sampleProject);
+			sampleProjectService.insert(sampleProject);
 		}
 	}
 
@@ -1117,9 +1109,9 @@ public abstract class Accessioner {
 			// we do not store any doctor name as a provider in SampleHuman
 			sampleHuman.setSysUserId(sysUserId);
 			if (null == sampleHuman.getId()) {
-				sampleHumanService.insertData(sampleHuman);
+				sampleHumanService.insert(sampleHuman);
 			} else {
-				sampleHumanService.updateData(sampleHuman);
+				sampleHumanService.update(sampleHuman);
 			}
 		}
 	}
@@ -1135,7 +1127,7 @@ public abstract class Accessioner {
 				oldOh.setSampleId(sample.getId());
 				oldOh.setPatientId(patientInDB.getId());
 				oldOh.setSysUserId(sysUserId);
-				observationHistoryService.updateData(oldOh);
+				observationHistoryService.update(oldOh);
 			}
 		}
 
@@ -1163,7 +1155,7 @@ public abstract class Accessioner {
 			newOh.setSampleId(sample.getId());
 			newOh.setPatientId(patientInDB.getId());
 			newOh.setSysUserId(sysUserId);
-			observationHistoryService.insertData(newOh);
+			observationHistoryService.insert(newOh);
 		}
 	}
 
@@ -1176,8 +1168,7 @@ public abstract class Accessioner {
 	 * observationHistoryService.getAll(knownPatientTemplate(),
 	 * knownSampleTemplate()); for (ObservationHistory oldOh : oldOHes) {
 	 * oldOh.setSampleId(sample.getId()); oldOh.setPatientId(patientInDB.getId());
-	 * oldOh.setSysUserId(sysUserId); observationHistoryService.updateData(oldOh); }
-	 * }
+	 * oldOh.setSysUserId(sysUserId); observationHistoryService.update(oldOh); } }
 	 *
 	 * for (ObservationHistory newOh : observationHistories) { boolean machedInDB =
 	 * false; List<ObservationHistory> existingTypeOHes =
@@ -1193,14 +1184,14 @@ public abstract class Accessioner {
 	 * (oh.getValueType().equals(newValueType)) { machedInDB = true; if
 	 * (oh.getValue() != null && !oh.getValue().equals(newOh.getValue())) {
 	 * oh.setSysUserId(sysUserId); oh.setValue(newOh.getValue());
-	 * observationHistoryService.updateData(oh);
+	 * observationHistoryService.update(oh);
 	 *
 	 * } } } // if (deleteTypeOHes.size() > 0) { //
 	 * observationHistoryService.delete(deleteTypeOHes); // }
 	 *
 	 * if (!machedInDB) { newOh.setSampleId(sample.getId());
 	 * newOh.setPatientId(patientInDB.getId()); newOh.setSysUserId(sysUserId);
-	 * observationHistoryService.insertData(newOh); } } }
+	 * observationHistoryService.insert(newOh); } } }
 	 */
 	/**
 	 *
@@ -1234,7 +1225,7 @@ public abstract class Accessioner {
 				newOH.setPatientId(patientInDB.getId());
 				newOH.setSampleId(sample.getId());
 
-				observationHistoryService.insertData(newOH);
+				observationHistoryService.insert(newOH);
 			}
 		}
 	}
@@ -1269,9 +1260,9 @@ public abstract class Accessioner {
 			}
 			Person personToDelete = patientToDelete.getPerson();
 			patientToDelete.setSysUserId(sysUserId);
-			patientService.deleteData(Arrays.asList(patientToDelete));
+			patientService.deleteAll(Arrays.asList(patientToDelete));
 			personToDelete.setSysUserId(sysUserId);
-			personService.deleteData(Arrays.asList(personToDelete));
+			personService.deleteAll(Arrays.asList(personToDelete));
 		}
 	}
 
@@ -1337,7 +1328,7 @@ public abstract class Accessioner {
 						observation.setSampleItemId(sampleItemId);
 						observation.setPatientId(patientInDB.getId());
 						observation.setSysUserId(sysUserId);
-						observationHistoryService.insertData(observation);
+						observationHistoryService.insert(observation);
 					}
 				}
 			}

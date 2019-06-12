@@ -11,7 +11,8 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 @Service
-public class ResultSignatureServiceImpl extends BaseObjectServiceImpl<ResultSignature, String> implements ResultSignatureService {
+public class ResultSignatureServiceImpl extends BaseObjectServiceImpl<ResultSignature, String>
+		implements ResultSignatureService {
 	@Autowired
 	protected ResultSignatureDAO baseObjectDAO;
 
@@ -26,39 +27,22 @@ public class ResultSignatureServiceImpl extends BaseObjectServiceImpl<ResultSign
 
 	@Override
 	public void getData(ResultSignature resultSignature) {
-        getBaseObjectDAO().getData(resultSignature);
+		getBaseObjectDAO().getData(resultSignature);
 
-	}
-
-	@Override
-	public void deleteData(List<ResultSignature> results) {
-        getBaseObjectDAO().deleteData(results);
-
-	}
-
-	@Override
-	public void updateData(ResultSignature resultSignature) {
-        getBaseObjectDAO().updateData(resultSignature);
-
-	}
-
-	@Override
-	public boolean insertData(ResultSignature resultSignature) {
-        return getBaseObjectDAO().insertData(resultSignature);
 	}
 
 	@Override
 	public List<ResultSignature> getResultSignaturesByResult(Result result) {
-        return getBaseObjectDAO().getResultSignaturesByResult(result);
+		return getBaseObjectDAO().getResultSignaturesByResult(result);
 	}
 
 	@Override
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) {
-        return getBaseObjectDAO().getResultSignatureById(resultSignature);
+		return getBaseObjectDAO().getResultSignatureById(resultSignature);
 	}
 
 	@Override
 	public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) {
-        return getBaseObjectDAO().getResultSignaturesByResults(resultList);
+		return getBaseObjectDAO().getResultSignaturesByResults(resultList);
 	}
 }

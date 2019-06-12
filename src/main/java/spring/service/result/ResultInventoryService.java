@@ -9,12 +9,6 @@ import us.mn.state.health.lims.result.valueholder.ResultInventory;
 public interface ResultInventoryService extends BaseObjectService<ResultInventory, String> {
 	void getData(ResultInventory resultInventory);
 
-	void deleteData(List results);
-
-	void updateData(ResultInventory resultInventory);
-
-	boolean insertData(ResultInventory resultInventory);
-
 	ResultInventory getResultInventoryById(ResultInventory resultInventory);
 
 	List getAllResultInventoryss();

@@ -51,7 +51,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 public class ResultsLogbookEntryAction extends ResultsLogbookBaseAction {
 
-	private InventoryUtility inventoryUtility = new InventoryUtility();
+	private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 
 	@Override
 	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,

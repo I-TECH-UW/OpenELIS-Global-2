@@ -22,7 +22,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeRenameEntryController extends BaseController {
-	
+
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
 	@Autowired
@@ -32,7 +32,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 	public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
 		SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
 
-		form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+		form.setSampleTypeList(
+				DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
 		return findForward(FWD_SUCCESS, form);
 	}
@@ -55,7 +56,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 			@ModelAttribute("form") @Valid SampleTypeRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+			form.setSampleTypeList(
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -66,7 +68,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 
 		updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
 
-		form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+		form.setSampleTypeList(
+				DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
@@ -81,19 +84,11 @@ public class SampleTypeRenameEntryController extends BaseController {
 			name.setFrench(nameFrench.trim());
 			name.setSysUserId(userId);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				localizationService.update(name);
-//				tx.commit();
 			} catch (HibernateException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
-			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
-
+			}
 		}
 
 		// Refresh SampleType names

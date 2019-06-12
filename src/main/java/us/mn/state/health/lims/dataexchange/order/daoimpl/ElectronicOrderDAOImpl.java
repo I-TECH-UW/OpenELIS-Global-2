@@ -25,17 +25,13 @@ import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String> implements ElectronicOrderDAO {
 
 	public ElectronicOrderDAOImpl() {
@@ -59,88 +55,87 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
-		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
+//		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//
+//			query.setString("patientid", id);
+//			List<ElectronicOrder> eorders = query.list();
+//			// closeSession(); // CSL remove old
+//
+//			return eorders;
+//		} catch (HibernateException e) {
+//			handleException(e, "getElectronicOrdersByPatientId");
+//		}
+//		return null;
+//	}
 
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//	@Override
+//	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(eOrder);
+//			eOrder.setId(id);
+//
+//			auditDAO.saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
+//
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertData");
+//		}
+//	}
 
-			query.setString("patientid", id);
-			List<ElectronicOrder> eorders = query.list();
-			// closeSession(); // CSL remove old
+//	@Override
+//	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException {
+//
+//		ElectronicOrder oldOrder = readOrder(eOrder.getId());
+//
+//		try {
+//			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+//					"ELECTROINIC_ORDER");
+//
+//			sessionFactory.getCurrentSession().merge(eOrder);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(eOrder);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(eOrder);
+//		} catch (HibernateException e) {
+//			handleException(e, "updateData");
+//		}
+//	}
 
-			return eorders;
-		} catch (HibernateException e) {
-			handleException(e, "getElectronicOrdersByPatientId");
-		}
-		return null;
-	}
+//	public ElectronicOrder readOrder(String idString) {
+//		try {
+//			ElectronicOrder eOrder = sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
+//			// closeSession(); // CSL remove old
+//			return eOrder;
+//		} catch (HibernateException e) {
+//			handleException(e, "readOrder");
+//		}
+//
+//		return null;
+//	}
 
-	@Override
-	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(eOrder);
-			eOrder.setId(id);
-
-			new AuditTrailDAOImpl().saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
-
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertData");
-		}
-	}
-
-	@Override
-	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException {
-
-		ElectronicOrder oldOrder = readOrder(eOrder.getId());
-
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-					"ELECTROINIC_ORDER");
-
-			sessionFactory.getCurrentSession().merge(eOrder);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(eOrder);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(eOrder);
-		} catch (HibernateException e) {
-			handleException(e, "updateData");
-		}
-	}
-
-	public ElectronicOrder readOrder(String idString) {
-		try {
-			ElectronicOrder eOrder = (ElectronicOrder) sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
-			// closeSession(); // CSL remove old
-			return eOrder;
-		} catch (HibernateException e) {
-			handleException(e, "readOrder");
-		}
-
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ElectronicOrder> getAllElectronicOrders() {
-		List<ElectronicOrder> list = new Vector<>();
-		try {
-			String sql = "from ElectronicOrder";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			handleException(e, "getAllElectronicOrders");
-		}
-
-		return list;
-
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<ElectronicOrder> getAllElectronicOrders() {
+//		List<ElectronicOrder> list = new Vector<>();
+//		try {
+//			String sql = "from ElectronicOrder";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			handleException(e, "getAllElectronicOrders");
+//		}
+//
+//		return list;
+//
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -88,7 +88,7 @@ public class ReportTrackingService {
 			if (parent != null) {
 				docTrack.setParent(parent);
 			}
-			documentTrackService.insertData(docTrack);
+			documentTrackService.insert(docTrack);
 
 		}
 
@@ -174,6 +174,6 @@ public class ReportTrackingService {
 	}
 
 	public DocumentTrack getDocumentForId(String id) {
-		return documentTrackService.readEntity(id);
+		return documentTrackService.get(id);
 	}
 }

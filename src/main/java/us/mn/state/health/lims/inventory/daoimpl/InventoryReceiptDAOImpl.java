@@ -24,18 +24,14 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 @Component
-@Transactional 
+@Transactional
 public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, String> implements InventoryReceiptDAO {
 
 	public InventoryReceiptDAOImpl() {
@@ -59,86 +55,86 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 
 		return inventoryReceipts;
 	}
+//
+//	@Override
+//	public void deleteData(List<InventoryReceipt> inventoryReceipts) throws LIMSRuntimeException {
+//		try {
+//
+//			for (InventoryReceipt data : inventoryReceipts) {
+//
+//				InventoryReceipt oldData = getInventoryReceiptById(data.getId());
+//				InventoryReceipt newData = new InventoryReceipt();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "INVENTORY_RECEIPT";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//
+//			for (InventoryReceipt data : inventoryReceipts) {
+//
+//				data = getInventoryReceiptById(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryReceiptDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryReceipt deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List<InventoryReceipt> inventoryReceipts) throws LIMSRuntimeException {
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (InventoryReceipt data : inventoryReceipts) {
+//	@Override
+//	public boolean insertData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(inventoryReceipt);
+//			inventoryReceipt.setId(id);
+//
+//			String sysUserId = inventoryReceipt.getSysUserId();
+//			String tableName = "INVENTORY_RECEIPT";
+//			auditDAO.saveNewHistory(inventoryReceipt, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryReceiptDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryReceipt insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				InventoryReceipt oldData = getInventoryReceiptById(data.getId());
-				InventoryReceipt newData = new InventoryReceipt();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "INVENTORY_RECEIPT";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-
-			for (InventoryReceipt data : inventoryReceipts) {
-
-				data = getInventoryReceiptById(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("InventoryReceiptDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryReceipt deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(inventoryReceipt);
-			inventoryReceipt.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = inventoryReceipt.getSysUserId();
-			String tableName = "INVENTORY_RECEIPT";
-			auditDAO.saveNewHistory(inventoryReceipt, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("InventoryReceiptDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryReceipt insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
-		InventoryReceipt oldData = getInventoryReceiptById(inventoryReceipt.getId());
-		InventoryReceipt newData = inventoryReceipt;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = inventoryReceipt.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "INVENTORY_RECEIPT";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-
-			sessionFactory.getCurrentSession().merge(inventoryReceipt);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryReceipt);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryReceipt);
-		} catch (Exception e) {
-			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
+//		InventoryReceipt oldData = getInventoryReceiptById(inventoryReceipt.getId());
+//		InventoryReceipt newData = inventoryReceipt;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = inventoryReceipt.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "INVENTORY_RECEIPT";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//
+//			sessionFactory.getCurrentSession().merge(inventoryReceipt);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryReceipt);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(inventoryReceipt);
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
 		try {
-			InventoryReceipt tmpInventoryReceipt = (InventoryReceipt) sessionFactory.getCurrentSession()
-					.get(InventoryReceipt.class, inventoryReceipt.getId());
+			InventoryReceipt tmpInventoryReceipt = sessionFactory.getCurrentSession().get(InventoryReceipt.class,
+					inventoryReceipt.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpInventoryReceipt != null) {
@@ -156,7 +152,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	public InventoryReceipt getInventoryReceiptById(String idString) throws LIMSRuntimeException {
 		InventoryReceipt data = null;
 		try {
-			data = (InventoryReceipt) sessionFactory.getCurrentSession().get(InventoryReceipt.class, idString);
+			data = sessionFactory.getCurrentSession().get(InventoryReceipt.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

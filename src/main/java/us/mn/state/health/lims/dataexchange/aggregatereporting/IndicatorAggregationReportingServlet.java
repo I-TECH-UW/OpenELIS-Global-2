@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -32,22 +32,19 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.hibernate.Transaction;
 
+import spring.service.dataexchange.aggregatereporting.ReportExternalImportService;
+import spring.service.login.LoginService;
+import spring.util.SpringContext;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalImportDAO;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalImportDAOImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 
 public class IndicatorAggregationReportingServlet extends HttpServlet {
-	private static ReportExternalImportDAO reportImportDAO = new ReportExternalImportDAOImpl();
-	private static LoginDAO loginDAO = new LoginDAOImpl();
+	private ReportExternalImportService reportImportService = SpringContext.getBean(ReportExternalImportService.class);
+	private LoginService loginService = SpringContext.getBean(LoginService.class);
 	private final String DATE_PATTERN = "yyyy-MM-dd";
-	
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -55,15 +52,16 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 //		LogEvent.logFatal("IndicatorAggregationReportingServlet", "size", String.valueOf(request.getContentLength()));
 		ServletInputStream inputStream = request.getInputStream();
 
-		List<ReportExternalImport> insertableImportReports = new ArrayList<ReportExternalImport>();
-		List<ReportExternalImport> updatableImportReports = new ArrayList<ReportExternalImport>();
+		List<ReportExternalImport> insertableImportReports = new ArrayList<>();
+		List<ReportExternalImport> updatableImportReports = new ArrayList<>();
 
-		Document sentIndicators = getDocument( inputStream, request.getContentLength());
+		Document sentIndicators = getDocument(inputStream, request.getContentLength());
 
 		if (sentIndicators == null) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -75,37 +73,39 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 			return;
 		}
 
-        /*
-        This is too handle the problem where either
-        1. The same lab sends a report quickly enough to cause a race condition
-        2. Two different labs send a report at the same time but one is miss-configured and uses the same site id
-         
-         In both cases createReportItems considers the report a new one rather than a modification of an existing report
-         */
-        synchronized( this ){
-            createReportItems( sentIndicators, insertableImportReports, updatableImportReports );
+		/*
+		 * This is too handle the problem where either 1. The same lab sends a report
+		 * quickly enough to cause a race condition 2. Two different labs send a report
+		 * at the same time but one is miss-configured and uses the same site id
+		 *
+		 * In both cases createReportItems considers the report a new one rather than a
+		 * modification of an existing report
+		 */
+		synchronized (this) {
+			createReportItems(sentIndicators, insertableImportReports, updatableImportReports);
 
-            updateReports( insertableImportReports, updatableImportReports );
-        }
-        
-        response.setStatus(HttpServletResponse.SC_OK);
+			updateReports(insertableImportReports, updatableImportReports);
+		}
+
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	private Document getDocument(ServletInputStream inputStream, int contentLength) {
 		int charCount = 0;
 		byte[] byteBuffer = new byte[contentLength];
 
-		while( true){
+		while (true) {
 			try {
 				int readLength = inputStream.readLine(byteBuffer, charCount, 1024);
-				//LogEvent.logFatal("IndicatorAggregationReportingServlet", String.valueOf(readLength), new String(byteBuffer).trim());
+				// LogEvent.logFatal("IndicatorAggregationReportingServlet",
+				// String.valueOf(readLength), new String(byteBuffer).trim());
 
-				if( readLength == -1){
+				if (readLength == -1) {
 					return DocumentHelper.parseText(new String(byteBuffer).trim());
-				}else{
+				} else {
 					charCount += readLength;
 				}
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				return null;
@@ -116,22 +116,13 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 		}
 	}
 
-
-	private void updateReports(List<ReportExternalImport> insertableImportReports, List<ReportExternalImport> updatableImportReports) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+	private void updateReports(List<ReportExternalImport> insertableImportReports,
+			List<ReportExternalImport> updatableImportReports) {
 
 		try {
-			for (ReportExternalImport importReport : insertableImportReports) {
-				reportImportDAO.insertReportExternalImport(importReport);
-			}
-
-			for (ReportExternalImport importReport : updatableImportReports) {
-				reportImportDAO.updateReportExternalImport(importReport);
-			}
-
-			tx.commit();
+			reportImportService.updateReports(insertableImportReports, updatableImportReports);
 		} catch (Exception e) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateReports()", e);
 		}
 	}
 
@@ -140,8 +131,8 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 
 		String sendingSiteId = (String) aggregateDoc.getRootElement().element("site-id").getData();
 
-		Set<String> eventDateSet = new HashSet<String>(); // to make sure no
-															// duplicates
+		Set<String> eventDateSet = new HashSet<>(); // to make sure no
+													// duplicates
 
 		for (Object reportObj : aggregateDoc.getRootElement().elements("reports")) {
 			Element report = (Element) reportObj;
@@ -178,7 +169,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 		login.setLoginName(user);
 		login.setPassword(password);
 
-		Login loginInfo = loginDAO.getValidateLogin(login);
+		Login loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
 
 		return loginInfo != null;
 	}
@@ -190,7 +181,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 		importReport.setSendingSite(sendingSiteId);
 		importReport.setReportType("testIndicators");
 
-		ReportExternalImport rei = reportImportDAO.getReportByEventDateSiteType(importReport);
+		ReportExternalImport rei = reportImportService.getReportByEventDateSiteType(importReport);
 
 		if (rei != null) {
 			importReport = rei;

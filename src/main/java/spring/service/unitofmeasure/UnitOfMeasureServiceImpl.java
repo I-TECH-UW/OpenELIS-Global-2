@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -22,7 +23,8 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String> implements UnitOfMeasureService, LocaleChangeListener {
+public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String>
+		implements UnitOfMeasureService, LocaleChangeListener {
 
 	private static UnitOfMeasureServiceImpl INSTANCE;
 
@@ -115,7 +117,7 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	private static void createTestIdToNameMap() {
 		unitOfMeasureIdToNameMap = new HashMap<>();
 
-		List<UnitOfMeasure> UnitOfMeasures = unitOfMeasureDAO.getAllUnitOfMeasures();
+		List<UnitOfMeasure> UnitOfMeasures = unitOfMeasureDAO.getAll();
 
 		for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
 			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(),
@@ -124,7 +126,7 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	}
 
 	private static String buildUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
-//        Localization localization = unitOfMeasure.getLocalization();
+//       Localization localization = unitOfMeasure.getLocalization();
 //
 //        if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){
 //            return localization.getFrench();
@@ -139,65 +141,40 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	}
 
 	@Override
-	public void getData(UnitOfMeasure unitOfMeasure) {
-		getBaseObjectDAO().getData(unitOfMeasure);
-
-	}
-
-	@Override
-	public void deleteData(List unitOfMeasures) {
-		getBaseObjectDAO().deleteData(unitOfMeasures);
-
-	}
-
-	@Override
-	public void updateData(UnitOfMeasure unitOfMeasure) {
-		getBaseObjectDAO().updateData(unitOfMeasure);
-
-	}
-
-	@Override
-	public boolean insertData(UnitOfMeasure unitOfMeasure) {
-		return getBaseObjectDAO().insertData(unitOfMeasure);
-	}
-
-	@Override
-	public List getPageOfUnitOfMeasures(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfUnitOfMeasures(startingRecNo);
-	}
-
-	@Override
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) {
 		return getBaseObjectDAO().getUnitOfMeasureById(uomId);
 	}
 
 	@Override
-	public List getPreviousUnitOfMeasureRecord(String id) {
-		return getBaseObjectDAO().getPreviousUnitOfMeasureRecord(id);
-	}
-
-	@Override
-	public Integer getTotalUnitOfMeasureCount() {
-		return getBaseObjectDAO().getTotalUnitOfMeasureCount();
-	}
-
-	@Override
-	public List getNextUnitOfMeasureRecord(String id) {
-		return getBaseObjectDAO().getNextUnitOfMeasureRecord(id);
-	}
-
-	@Override
 	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) {
-		return getBaseObjectDAO().getUnitOfMeasureByName(unitOfMeasure);
+		return getMatch("unitOfMeasureName", unitOfMeasure.getUnitOfMeasureName()).orElse(null);
 	}
 
 	@Override
-	public List getAllUnitOfMeasures() {
-		return unitOfMeasureDAO.getAllUnitOfMeasures();
+	public String insert(UnitOfMeasure unitOfMeasure) {
+		if (getBaseObjectDAO().duplicateUnitOfMeasureExists(unitOfMeasure)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
+		}
+		return super.insert(unitOfMeasure);
 	}
 
 	@Override
-	public List<UnitOfMeasure> getAllActiveUnitOfMeasures() {
-		return unitOfMeasureDAO.getAllActiveUnitOfMeasures();
+	public UnitOfMeasure save(UnitOfMeasure unitOfMeasure) {
+		if (getBaseObjectDAO().duplicateUnitOfMeasureExists(unitOfMeasure)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
+		}
+		return super.save(unitOfMeasure);
 	}
+
+	@Override
+	public UnitOfMeasure update(UnitOfMeasure unitOfMeasure) {
+		if (getBaseObjectDAO().duplicateUnitOfMeasureExists(unitOfMeasure)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
+		}
+		return super.update(unitOfMeasure);
+	}
+
 }

@@ -26,58 +26,41 @@ public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte, S
 
 	@Override
 	public TestAnalyte getData(TestAnalyte testAnalyte) {
-        return getBaseObjectDAO().getData(testAnalyte);
-	}
-
-	@Override
-	public void deleteData(List testAnalytes) {
-        getBaseObjectDAO().deleteData(testAnalytes);
-
-	}
-
-	@Override
-	public void updateData(TestAnalyte testAnalyte) {
-        getBaseObjectDAO().updateData(testAnalyte);
-
-	}
-
-	@Override
-	public boolean insertData(TestAnalyte testAnalyte) {
-        return getBaseObjectDAO().insertData(testAnalyte);
+		return getBaseObjectDAO().getData(testAnalyte);
 	}
 
 	@Override
 	public List getAllTestAnalytes() {
-        return getBaseObjectDAO().getAllTestAnalytes();
+		return getBaseObjectDAO().getAllTestAnalytes();
 	}
 
 	@Override
 	public List getPageOfTestAnalytes(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfTestAnalytes(startingRecNo);
+		return getBaseObjectDAO().getPageOfTestAnalytes(startingRecNo);
 	}
 
 	@Override
 	public List getNextTestAnalyteRecord(String id) {
-        return getBaseObjectDAO().getNextTestAnalyteRecord(id);
+		return getBaseObjectDAO().getNextTestAnalyteRecord(id);
 	}
 
 	@Override
 	public List getPreviousTestAnalyteRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestAnalyteRecord(id);
+		return getBaseObjectDAO().getPreviousTestAnalyteRecord(id);
 	}
 
 	@Override
 	public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) {
-        return getBaseObjectDAO().getTestAnalyteById(testAnalyte);
+		return getBaseObjectDAO().getTestAnalyteById(testAnalyte);
 	}
 
 	@Override
 	public List getAllTestAnalytesPerTest(Test test) {
-        return getBaseObjectDAO().getAllTestAnalytesPerTest(test);
+		return getBaseObjectDAO().getAllTestAnalytesPerTest(test);
 	}
 
 	@Override
 	public List getTestAnalytes(String filter) {
-        return getBaseObjectDAO().getTestAnalytes(filter);
+		return getBaseObjectDAO().getTestAnalytes(filter);
 	}
 }

@@ -7,13 +7,12 @@
 			us.mn.state.health.lims.common.util.IdValuePair,
 			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.common.util.Versioning,
-			us.mn.state.health.lims.common.services.TypeOfTestResultService.ResultType,
+			spring.service.typeoftestresult.TypeOfTestResultServiceImpl.ResultType,
 		    java.text.DecimalFormat,
 			java.util.List,
 			us.mn.state.health.lims.resultvalidation.bean.AnalysisItem,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			us.mn.state.health.lims.common.services.TypeOfTestResultService,
 			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
@@ -529,7 +528,7 @@ function /*boolean*/ handleEnterEvent(){
 						               ${(resultList.multiSelectResultValues) ? "showNote( " += iter.index += ");" : ""}
 						               ${(resultList.qualifiedDictionaryId != null) ? "showQuanitiy( this, " += iter.index += ", " += resultList.qualifiedDictionaryId += ", \\"M\\" );" :""}' >
                         <form:options items="${resultList.dictionaryResults}" itemValue="id" itemLabel="value"/>
-                    </form:select>
+                    </form:select> 
                         <input class='addMultiSelect${iter.index}' type="button" value="+" onclick='addNewMultiSelect(${iter.index}, this);showNewNote( ${iter.index});'/>
                         <input class='removeMultiSelect${iter.index}' type="button" value="-" onclick='removeMultiSelect(\"target\");showNewNote( ${iter.index});' style="display: none" />
                         <form:hidden path="resultList[${iter.index}].multiSelectResultValues" id='multiresultId_${iter.index}'  cssClass="multiSelectValues" />

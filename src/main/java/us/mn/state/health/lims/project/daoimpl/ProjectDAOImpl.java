@@ -26,17 +26,12 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.valueholder.Project;
 
@@ -44,131 +39,131 @@ import us.mn.state.health.lims.project.valueholder.Project;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements ProjectDAO {
 
 	public ProjectDAOImpl() {
 		super(Project.class);
 	}
 
-	@Override
-	public void deleteData(List projects) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < projects.size(); i++) {
-				Project data = (Project) projects.get(i);
+//	@Override
+//	public void deleteData(List projects) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < projects.size(); i++) {
+//				Project data = (Project) projects.get(i);
+//
+//				Project oldData = readProject(data.getId());
+//				Project newData = new Project();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "PROJECT";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < projects.size(); i++) {
+//				Project data = (Project) projects.get(i);
+//				Project cloneData = readProject(data.getId());
+//
+//				// Make the change to the object.
+//				cloneData.setIsActive(IActionConstants.NO);
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project deleteData()", e);
+//		}
+//	}
 
-				Project oldData = readProject(data.getId());
-				Project newData = new Project();
+//	@Override
+//	public boolean insertData(Project project) throws LIMSRuntimeException {
+//
+//		try {
+//			// bugzilla 1482 throw Exception if active record already exists
+//			if (duplicateProjectExists(project)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(project);
+//			project.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = project.getSysUserId();
+//			String tableName = "PROJECT";
+//			auditDAO.saveNewHistory(project, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "PROJECT";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < projects.size(); i++) {
-				Project data = (Project) projects.get(i);
-				Project cloneData = readProject(data.getId());
-
-				// Make the change to the object.
-				cloneData.setIsActive(IActionConstants.NO);
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Project project) throws LIMSRuntimeException {
-
-		try {
-			// bugzilla 1482 throw Exception if active record already exists
-			if (duplicateProjectExists(project)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(project);
-			project.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = project.getSysUserId();
-			String tableName = "PROJECT";
-			auditDAO.saveNewHistory(project, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Project project) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if active record already exists
-		try {
-			if (duplicateProjectExists(project)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project updateData()", e);
-		}
-
-		Project oldData = readProject(project.getId());
-		Project newData = project;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = project.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "PROJECT";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(project);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(project);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(project);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Project updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Project project) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if active record already exists
+//		try {
+//			if (duplicateProjectExists(project)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project updateData()", e);
+//		}
+//
+//		Project oldData = readProject(project.getId());
+//		Project newData = project;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = project.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "PROJECT";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(project);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(project);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(project);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Project updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
-			Project proj = (Project) sessionFactory.getCurrentSession().get(Project.class, project.getId());
+			Project proj = sessionFactory.getCurrentSession().get(Project.class, project.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
@@ -237,7 +232,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	public Project readProject(String idString) {
 		Project pro = null;
 		try {
-			pro = (Project) sessionFactory.getCurrentSession().get(Project.class, idString);
+			pro = sessionFactory.getCurrentSession().get(Project.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -382,7 +377,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	// bugzilla 1482
-	private boolean duplicateProjectExists(Project project) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateProjectExists(Project project) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();

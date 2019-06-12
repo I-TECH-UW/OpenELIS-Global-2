@@ -330,25 +330,6 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	}
 
 	@Override
-	public void deleteData(List permissionModules) {
-		getActivePermissionModule().deleteData(permissionModules);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void updateData(PermissionModule permissionModule) {
-		getActivePermissionModule().updateData(permissionModule);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean insertData(PermissionModule permissionModule) {
-		return getActivePermissionModule().insertData(permissionModule);
-	}
-
-	@Override
 	public List getAllPermissionModules() {
 		return getActivePermissionModule().getAllPermissionModules();
 	}
@@ -361,11 +342,6 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	@Override
 	public List getPageOfPermissionModules(int startingRecNo) {
 		return getActivePermissionModule().getPageOfPermissionModules(startingRecNo);
-	}
-
-	@Override
-	public boolean isAgentAllowedAccordingToName(String id, String string) {
-		return getActivePermissionModule().isAgentAllowedAccordingToName(id, string);
 	}
 
 	@Override

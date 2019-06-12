@@ -26,28 +26,30 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
+import spring.service.sampleorganization.SampleOrganizationService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ARVReportData;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 public abstract class PatientARVReport extends RetroCIPatientReport {
 	private List<ARVReportData> reportItems;
 	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
+
+	private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
 
 	@Override
 	protected void initializeReportItems() {
@@ -55,8 +57,6 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 	}
 
 	protected void setPatientInfo(ARVReportData data) {
-
-		SampleOrganizationDAO orgDAO = new SampleOrganizationDAOImpl();
 
 		String subjectNumber = reportPatient.getNationalId();
 		if (GenericValidator.isBlankOrNull(subjectNumber)) {
@@ -73,7 +73,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
-		orgDAO.getDataBySample(sampleOrg);
+		orgService.getDataBySample(sampleOrg);
 		data.setOrgname(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
 
 		data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
@@ -104,13 +104,10 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 
 	protected void setTestInfo(ARVReportData data) {
 		boolean atLeastOneAnalysisNotValidated = false;
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
 		Timestamp lastReport = ReportTrackingService.getInstance().getTimeOfLastNamedReport(reportSample,
 				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
-		ResultDAO resultDAO = new ResultDAOImpl();
 		Date maxCompleationDate = null;
 		long maxCompleationTime = 0L;
 
@@ -125,7 +122,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 
 			if (!analysis.getStatusId().equals(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled))) {
 				String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
-				List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+				List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 				String resultValue = null;
 
 				boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
@@ -140,7 +137,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 						if (result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)) {
 							Dictionary dictionary = new Dictionary();
 							dictionary.setId(result.getValue());
-							dictionaryDAO.getData(dictionary);
+							dictionaryService.getData(dictionary);
 							data.setVih(valid ? dictionary.getDictEntry() : invalidValue);
 							data.setShowSerologie(Boolean.TRUE);
 						} else if (result.getAnalyte() != null

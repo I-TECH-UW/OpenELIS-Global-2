@@ -23,20 +23,22 @@ import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory
 
 public class PatientARVInitialVersion2Report extends PatientARVReport implements IReportCreator {
 	@Override
-    protected String reportFileName(){
-    	return "Patient_ARV_Version2";
-    }
+	protected String reportFileName() {
+		return "Patient_ARV_Version2";
+	}
 
-
-	protected String getReportNameForReport(){
+	@Override
+	protected String getReportNameForReport() {
 		return MessageUtil.getMessage("sample.entry.project.initialARV.title");
 	}
 
-	protected boolean allowSample(){
-		List<ObservationHistory> historyList = observationHistoryDAO.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
+	@Override
+	protected boolean allowSample() {
+		List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+				OBSERVATION_PROJECT_ID);
 
-		for( ObservationHistory history : historyList){
-			if( "InitialARV_Id".equals(history.getValue())){
+		for (ObservationHistory history : historyList) {
+			if ("InitialARV_Id".equals(history.getValue())) {
 				return true;
 			}
 		}
@@ -44,13 +46,15 @@ public class PatientARVInitialVersion2Report extends PatientARVReport implements
 		return false;
 	}
 
+	@Override
 	protected String getProjectId() {
 		return ANTIRETROVIRAL_STUDY_ID;
 	}
-	
+
 	@Override
 	protected void createReportParameters() {
-	    super.createReportParameters();
-		reportParameters.put("contact", "CHU de Treichville, 01 BP 1712 Tel : 21-21-42-50/21-25-4189 Fax : 21-24-29-69/ 21-25-10-63");
+		super.createReportParameters();
+		reportParameters.put("contact",
+				"CHU de Treichville, 01 BP 1712 Tel : 21-21-42-50/21-25-4189 Fax : 21-24-29-69/ 21-25-10-63");
 	}
 }

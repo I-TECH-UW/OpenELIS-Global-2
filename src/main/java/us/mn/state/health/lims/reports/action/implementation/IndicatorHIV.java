@@ -28,25 +28,21 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.analyte.AnalyteService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.HaitiHIVSummaryData;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 
 public class IndicatorHIV extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 
@@ -65,66 +61,72 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 	protected List<Analysis> analysisList;
 	protected static List<String> HIV_TESTS;
 
+	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
+	private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+
 	static {
 
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Dictionary dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positive", "Conclusion");
+		Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positive",
+				"Conclusion");
 		if (dictionary != null) {
 			HIV_POSITIVE_ID = dictionary.getId();
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Negative", "Conclusion");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Negative", "Conclusion");
 		if (dictionary != null) {
 			HIV_NEGATIVE_ID = dictionary.getId();
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Indeterminate", "Conclusion");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Indeterminate", "Conclusion");
 		if (dictionary != null) {
 			HIV_INDETERMINATE_ID = dictionary.getId();
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("POSITIF", "Haiti Lab");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("POSITIF", "Haiti Lab");
 		if (dictionary != null) {
 			TEST_HIV_POS_ID = dictionary.getId();
-		}else{
-		
-			dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positif", "Haiti Lab");
+		} else {
+
+			dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif", "Haiti Lab");
 			if (dictionary != null) {
 				TEST_HIV_POS_ID = dictionary.getId();
 			}
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("NEGATIF", "Haiti Lab");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("NEGATIF", "Haiti Lab");
 		if (dictionary != null) {
 			TEST_HIV_NEG_ID = dictionary.getId();
-		}else{
-			dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Negatif", "Haiti Lab");
+		} else {
+			dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Negatif", "Haiti Lab");
 			if (dictionary != null) {
 				TEST_HIV_NEG_ID = dictionary.getId();
-			}	
+			}
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("INDETERMINE", "Haiti Lab");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("INDETERMINE", "Haiti Lab");
 		if (dictionary != null) {
 			TEST_HIV_IND_ID = dictionary.getId();
-		}else{
-			dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Indeterminé", "Haiti Lab");
+		} else {
+			dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Indeterminé", "Haiti Lab");
 			if (dictionary != null) {
 				TEST_HIV_IND_ID = dictionary.getId();
-			}	
+			}
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positif", "CLINICAL GENERAL");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif", "CLINICAL GENERAL");
 		if (dictionary != null) {
 			CLINICAL_POSITIVE_ID = dictionary.getId();
 		}
 
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Négatif", "CLINICAL GENERAL");
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Négatif", "CLINICAL GENERAL");
 		if (dictionary != null) {
 			CLINICAL_NEGATIVE_ID = dictionary.getId();
 		}
 
-		HIV_TESTS = new ArrayList<String>();
+		HIV_TESTS = new ArrayList<>();
 		HIV_TESTS.add("CD4 en mm3");
 		HIV_TESTS.add("CD4 en %");
 		HIV_TESTS.add("Colloidal Gold / Shangai Kehua");
@@ -135,12 +137,10 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 		HIV_TESTS.add("Test rapide HIV 1 + HIV 2");
 		HIV_TESTS.add("Dénombrement des lymphocytes CD4 (mm3)");
 		HIV_TESTS.add("Dénombrement des lymphocytes  CD4 (%)");
-		
 
-		AnalyteDAO analyteDAO = new AnalyteDAOImpl();
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
-		analyte = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = analyteService.getAnalyteByName(analyte, false);
 		ANALYTE_CONCULSION_ID = analyte.getId();
 	}
 
@@ -149,11 +149,13 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 		return "HIVSummary";
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(testData);
 	}
 
+	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		setDateRange(form);
@@ -166,19 +168,17 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 	}
 
 	protected void findAnalysis() {
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		analysisList = analysisDAO.getAnalysisByTestNamesAndCompletedDateRange(HIV_TESTS, lowDate, highDate);
+		analysisList = analysisService.getAnalysisByTestNamesAndCompletedDateRange(HIV_TESTS, lowDate, highDate);
 	}
 
 	protected void setHIVByTest() {
-		testData = new ArrayList<HaitiHIVSummaryData>();
+		testData = new ArrayList<>();
 
-		ResultDAO resultDAO = new ResultDAOImpl();
-		Map<String, TestBucket> testBuckets = new HashMap<String, TestBucket>();
+		Map<String, TestBucket> testBuckets = new HashMap<>();
 
 		for (Analysis analysis : analysisList) {
 
-			String testName = TestServiceImpl.getUserLocalizedTestName( analysis.getTest() );
+			String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 
 			TestBucket bucket = testBuckets.get(testName);
 
@@ -187,51 +187,45 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 				testBuckets.put(testName, bucket);
 			}
 
-			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
-			
-			if(  resultList.isEmpty()){
+			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+
+			if (resultList.isEmpty()) {
 				continue;
 			}
-			
+
 			Result firstResult = resultList.get(0);
-		
-			if( testName.equals("CD4 en mm3") ||
-				testName.equals("CD4 en %") ||
-				testName.equals("CD4  Compte Abs") ||
-				testName.equals("CD4 Compte en %") ||
-				testName.equals("Dénombrement des lymphocytes CD4 (mm3)") ||
-				testName.equals("Dénombrement des lymphocytes  CD4 (%)") ){
-				if( firstResult.getMinNormal() == firstResult.getMaxNormal() ){
+
+			if (testName.equals("CD4 en mm3") || testName.equals("CD4 en %") || testName.equals("CD4  Compte Abs")
+					|| testName.equals("CD4 Compte en %") || testName.equals("Dénombrement des lymphocytes CD4 (mm3)")
+					|| testName.equals("Dénombrement des lymphocytes  CD4 (%)")) {
+				if (firstResult.getMinNormal() == firstResult.getMaxNormal()) {
 					continue;
 				}
-				
+
 				try {
-					Double value = Double.valueOf(firstResult.getValue());	
-				
-					if( value >= firstResult.getMinNormal() &&
-							value <= firstResult.getMaxNormal()){
+					Double value = Double.valueOf(firstResult.getValue());
+
+					if (value >= firstResult.getMinNormal() && value <= firstResult.getMaxNormal()) {
 						bucket.negative++;
-					}else{
+					} else {
 						bucket.positive++;
 					}
 				} catch (NumberFormatException e) {
 					continue;
 				}
-				
-			}else if (testName.equals("Colloidal Gold / Shangai Kehua") || 
-					  testName.equals("Determine") ||
-					  testName.equals("HIV test rapide") ||
-					  testName.equals("Test Rapide VIH") ||
-					  testName.equals("Test rapide HIV 1 + HIV 2")) {
+
+			} else if (testName.equals("Colloidal Gold / Shangai Kehua") || testName.equals("Determine")
+					|| testName.equals("HIV test rapide") || testName.equals("Test Rapide VIH")
+					|| testName.equals("Test rapide HIV 1 + HIV 2")) {
 				String value = firstResult.getValue();
-				if( isPositive(value)){
+				if (isPositive(value)) {
 					bucket.positive++;
-				}else if( TEST_HIV_NEG_ID.equals(value)){
+				} else if (TEST_HIV_NEG_ID.equals(value)) {
 					bucket.negative++;
-				}else if(isIndeterminate(value)){
+				} else if (isIndeterminate(value)) {
 					bucket.indeterminate++;
 				}
-				
+
 			} else if (testName.equals("Test de VIH")) {
 				Result result = resultList.get(0);
 				String analyteName = result.getAnalyte() == null ? "" : result.getAnalyte().getAnalyteName();
@@ -294,18 +288,17 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 	}
 
 	protected double percentage(double total, int value) {
-		return value == 0 ? 0.0 : ((int) ((double) value / total * 10000.0)) / 100.0;
+		return value == 0 ? 0.0 : ((int) (value / total * 10000.0)) / 100.0;
 	}
 
 	protected void setReportParameters() {
 		super.createReportParameters();
 
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		Set<String> patientSet = new HashSet<String>();
-		List<PatientTestDate> patientTestList = new ArrayList<PatientTestDate>();
+		Set<String> patientSet = new HashSet<>();
+		List<PatientTestDate> patientTestList = new ArrayList<>();
 
 		for (Analysis analysis : analysisList) {
-			Patient patient = sampleHumanDAO.getPatientForSample(analysis.getSampleItem().getSample());
+			Patient patient = sampleHumanService.getPatientForSample(analysis.getSampleItem().getSample());
 			if (!patientSet.contains(patient.getId())) {
 				patientSet.add(patient.getId());
 				patientTestList.add(new PatientTestDate(patient, analysis.getCompletedDate()));

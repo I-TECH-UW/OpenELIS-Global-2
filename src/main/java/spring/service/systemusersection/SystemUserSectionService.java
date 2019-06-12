@@ -8,12 +8,6 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 public interface SystemUserSectionService extends BaseObjectService<SystemUserSection, String> {
 	void getData(SystemUserSection systemUserSection);
 
-	void deleteData(List systemUserSection);
-
-	void updateData(SystemUserSection systemUserSection);
-
-	boolean insertData(SystemUserSection systemUserSection);
-
 	List getAllSystemUserSections();
 
 	List getPageOfSystemUserSections(int startingRecNo);

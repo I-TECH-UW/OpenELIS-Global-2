@@ -12,7 +12,8 @@ import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 @Service
-public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEvent, String> implements SampleQaEventService {
+public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEvent, String>
+		implements SampleQaEventService {
 	@Autowired
 	protected SampleQaEventDAO baseObjectDAO;
 
@@ -39,23 +40,6 @@ public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEven
 	@Override
 	public SampleQaEvent getData(String sampleQaEventId) {
 		return getBaseObjectDAO().getData(sampleQaEventId);
-	}
-
-	@Override
-	public void deleteData(List sampleQaEvents) {
-		getBaseObjectDAO().deleteData(sampleQaEvents);
-
-	}
-
-	@Override
-	public void updateData(SampleQaEvent sampleQaEvent) {
-		getBaseObjectDAO().updateData(sampleQaEvent);
-
-	}
-
-	@Override
-	public boolean insertData(SampleQaEvent sampleQaEvent) {
-		return getBaseObjectDAO().insertData(sampleQaEvent);
 	}
 
 	@Override

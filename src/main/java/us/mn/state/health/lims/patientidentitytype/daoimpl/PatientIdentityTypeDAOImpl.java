@@ -25,18 +25,15 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
 @Component
-@Transactional 
-public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String> implements PatientIdentityTypeDAO {
+@Transactional
+public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String>
+		implements PatientIdentityTypeDAO {
 
 	public PatientIdentityTypeDAOImpl() {
 		super(PatientIdentityType.class);
@@ -63,32 +60,32 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 		return list;
 	}
 
-	@Override
-	public void insertData(PatientIdentityType patientIdentityType) throws LIMSRuntimeException {
-		try {
-
-			if (duplicatePatientIdentityTypeExists(patientIdentityType)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + patientIdentityType.getIdentityType());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(patientIdentityType);
-			patientIdentityType.setId(id);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertData");
-		} catch (LIMSDuplicateRecordException e) {
-			handleException(e, "insertData");
-		}
-	}
+//	@Override
+//	public void insertData(PatientIdentityType patientIdentityType) throws LIMSRuntimeException {
+//		try {
+//
+//			if (duplicatePatientIdentityTypeExists(patientIdentityType)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + patientIdentityType.getIdentityType());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(patientIdentityType);
+//			patientIdentityType.setId(id);
+//
+//			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertData");
+//		} catch (LIMSDuplicateRecordException e) {
+//			handleException(e, "insertData");
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
-	private boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
+	@Override
+	public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
 			throws LIMSRuntimeException {
 		try {
 			String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";

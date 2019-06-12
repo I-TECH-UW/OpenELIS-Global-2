@@ -53,6 +53,7 @@ import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.unitofmeasure.UnitOfMeasureService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -144,7 +145,7 @@ public class InventoryController extends BaseController {
 		request.setAttribute(NEXT_DISABLED, "true");
 		request.getSession().setAttribute(SAVE_DISABLED, FALSE);
 
-		InventoryUtility utility = new InventoryUtility();
+		InventoryUtility utility = SpringContext.getBean(InventoryUtility.class);
 		List<InventoryKitItem> list = utility.getExistingInventory();
 		List<String> kitTypes = getTestKitTypes();
 		List<IdValuePair> sources = getSources();
@@ -204,23 +205,23 @@ public class InventoryController extends BaseController {
 
 		try {
 			for (InventorySet inventory : modifiedInventory) {
-				inventoryItemService.updateData(inventory.getItem());
+				inventoryItemService.update(inventory.getItem());
 
 				inventory.getLocation().setInventoryItem(inventory.getItem());
-				inventoryLocationService.updateData(inventory.getLocation());
+				inventoryLocationService.update(inventory.getLocation());
 
-				inventoryReceiptService.updateData(inventory.getReceipt());
+				inventoryReceiptService.update(inventory.getReceipt());
 			}
 
 			for (InventorySet inventory : newInventory) {
-				inventoryItemService.insertData(inventory.getItem());
+				inventoryItemService.insert(inventory.getItem());
 
 				String id = inventory.getItem().getId();
 				inventory.getLocation().setInventoryItem(inventory.getItem());
 				inventory.getReceipt().setInventoryItemId(id);
 
-				inventoryLocationService.insertData(inventory.getLocation());
-				inventoryReceiptService.insertData(inventory.getReceipt());
+				inventoryLocationService.insert(inventory.getLocation());
+				inventoryReceiptService.insert(inventory.getReceipt());
 			}
 
 //			tx.commit();
@@ -414,7 +415,7 @@ public class InventoryController extends BaseController {
 
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(val);
-				List dictionarys = dictionaryService.getAllDictionarys();
+				List dictionarys = dictionaryService.getAll();
 
 				boolean found = false;
 				for (int i = 0; i < dictionarys.size(); i++) {

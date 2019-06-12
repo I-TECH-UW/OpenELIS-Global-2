@@ -26,41 +26,35 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referral.dao.ReferralDAO;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements ReferralDAO {
 
 	public ReferralDAOImpl() {
 		super(Referral.class);
 	}
 
-	private AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-
-	@Override
-	public boolean insertData(Referral referral) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(referral);
-			referral.setId(id);
-
-			auditDAO.saveNewHistory(referral, referral.getSysUserId(), "referral");
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "insertData");
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(Referral referral) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(referral);
+//			referral.setId(id);
+//
+//			auditDAO.saveNewHistory(referral, referral.getSysUserId(), "referral");
+//			// closeSession(); // CSL remove old
+//		} catch (HibernateException e) {
+//			handleException(e, "insertData");
+//		}
+//
+//		return true;
+//	}
 
 	@Override
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
@@ -123,28 +117,28 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 		return null;
 	}
 
-	@Override
-	public void updateData(Referral referral) throws LIMSRuntimeException {
-		Referral oldData = readResult(referral.getId());
-
-		try {
-			auditDAO.saveHistory(referral, oldData, referral.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-					"referral");
-		} catch (HibernateException e) {
-			handleException(e, "updateData");
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(referral);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(referral);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(referral);
-		} catch (HibernateException e) {
-			handleException(e, "updateData");
-		}
-
-	}
+//	@Override
+//	public void updateData(Referral referral) throws LIMSRuntimeException {
+//		Referral oldData = readResult(referral.getId());
+//
+//		try {
+//			auditDAO.saveHistory(referral, oldData, referral.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+//					"referral");
+//		} catch (HibernateException e) {
+//			handleException(e, "updateData");
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(referral);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(referral);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(referral);
+//		} catch (HibernateException e) {
+//			handleException(e, "updateData");
+//		}
+//
+//	}
 
 	@Override
 	@SuppressWarnings("unchecked")

@@ -18,8 +18,6 @@
 */
 package us.mn.state.health.lims.dictionarycategory.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
@@ -34,25 +32,27 @@ import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory
  */
 public interface DictionaryCategoryDAO extends BaseDAO<DictionaryCategory, String> {
 
-	public boolean insertData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+//	public boolean insertData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException;
+//	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException;
 
-	public List getAllDictionaryCategorys() throws LIMSRuntimeException;
+//	public List getAllDictionaryCategorys() throws LIMSRuntimeException;
 
-	public List getPageOfDictionaryCategorys(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfDictionaryCategorys(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+//	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public void updateData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+//	public void updateData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public List getNextDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
+//	public List getNextDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
+//
+//	// bugzilla 1411
+//	public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException;
 
-	public List getPreviousDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
+//	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException;
-
-	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;
+	boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
 }

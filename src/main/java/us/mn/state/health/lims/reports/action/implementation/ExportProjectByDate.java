@@ -30,8 +30,8 @@ import org.jfree.util.Log;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
+import spring.service.project.ProjectService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ARVFollowupColumnBuilder;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
@@ -46,15 +46,16 @@ import us.mn.state.health.lims.reports.action.implementation.reportBeans.VLColum
  * @since Jan 26, 2011
  */
 public class ExportProjectByDate extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
-	protected final ProjectDAO projectDAO = new ProjectDAOImpl();
+	protected final ProjectService projectService = SpringContext.getBean(ProjectService.class);
 	private String projectStr;
 	private Project project;
-	
+
 	@Override
-	protected String reportFileName(){
+	protected String reportFileName() {
 		return "ExportProjectByDate";
 	}
 
+	@Override
 	public void setRequestParameters(BaseForm form) {
 		try {
 			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
@@ -72,11 +73,13 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 				+ MessageUtil.getContextualMessage("sample.collectionDate");
 	}
 
+	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
 		reportParameters.put("studyName", (project == null) ? null : project.getLocalizedName());
 	}
 
+	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
@@ -85,14 +88,14 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 		highDateStr = form.getString("upperDateRange");
 		projectStr = form.getString("projectCode");
 		dateRange = new DateRange(lowDateStr, highDateStr);
-		
+
 		createReportParameters();
-		
+
 		errorFound = !validateSubmitParameters();
 		if (errorFound) {
 			return;
 		}
-		
+
 		createReportItems();
 	}
 
@@ -104,16 +107,15 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 	}
 
 	/**
-	 * @return true, if location is not blank or "0" is is found in the DB;
-	 *         false otherwise
+	 * @return true, if location is not blank or "0" is is found in the DB; false
+	 *         otherwise
 	 */
 	private boolean validateProject() {
 		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr))) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
 		}
-		ProjectDAO dao = new ProjectDAOImpl();
-		project = dao.getProjectById(projectStr);
+		project = projectService.getProjectById(projectStr);
 		if (project == null) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
@@ -134,8 +136,10 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 		}
 	}
 
-	protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception, IOException, UnsupportedEncodingException {
-	
+	@Override
+	protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
+			throws Exception, IOException, UnsupportedEncodingException {
+
 		String currentAccessionNumber = null;
 		String[] splitBase = null;
 		while (csvColumnBuilder.next()) {
@@ -143,7 +147,7 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 			String[] splitLine = line.split(",");
 
 			if (splitLine[0].equals(currentAccessionNumber)) {
-				merge( splitBase, splitLine);
+				merge(splitBase, splitLine);
 			} else {
 				if (currentAccessionNumber != null) {
 					writeConsolidatedBaseToBuffer(buffer, splitBase);
@@ -152,20 +156,20 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 				currentAccessionNumber = splitBase[0];
 			}
 		}
-		
+
 		writeConsolidatedBaseToBuffer(buffer, splitBase);
 	}
 
 	private void merge(String[] base, String[] line) {
-		for( int i = 0; i < base.length; ++i){
-			if( GenericValidator.isBlankOrNull(base[i])){
+		for (int i = 0; i < base.length; ++i) {
+			if (GenericValidator.isBlankOrNull(base[i])) {
 				base[i] = line[i];
 			}
 		}
 	}
 
-	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException,
-			UnsupportedEncodingException {
+	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
+			throws IOException, UnsupportedEncodingException {
 
 		if (splitBase != null) {
 			StringBuffer consolidatedLine = new StringBuffer();
@@ -201,20 +205,20 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 	 * @return a list of the correct projects for display
 	 */
 	protected List<Project> getProjectList() {
-		List<Project> projects = new ArrayList<Project>();
+		List<Project> projects = new ArrayList<>();
 		Project project = new Project();
 		project.setProjectName("Antiretroviral Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		project.setProjectName("Antiretroviral Followup Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		project.setProjectName("Routine HIV Testing");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		project.setProjectName("Early Infant Diagnosis for HIV Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		project.setProjectName("Viral Load Results");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		project.setProjectName("Indeterminate Results");
-		projects.add(projectDAO.getProjectByName(project, false, false));
+		projects.add(projectService.getProjectByName(project, false, false));
 		return projects;
 	}
 }

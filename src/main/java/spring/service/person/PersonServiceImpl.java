@@ -65,14 +65,17 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 		return baseObjectDAO;
 	}
 
+	@Override
 	public String getFirstName() {
 		return person != null ? person.getFirstName() : "";
 	}
 
+	@Override
 	public String getLastName() {
 		return person != null ? person.getLastName() : "";
 	}
 
+	@Override
 	public String getLastFirstName() {
 		String lastName = getLastName();
 		String firstName = getFirstName();
@@ -86,6 +89,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	}
 
+	@Override
 	public Map<String, String> getAddressComponents() {
 		String value;
 		Map<String, String> addressMap = new HashMap<>();
@@ -120,6 +124,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 		return addressMap;
 	}
 
+	@Override
 	public String getPhone() {
 		if (person == null) {
 			return "";
@@ -158,6 +163,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 		return person.getEmail();
 	}
 
+	@Override
 	public Person getPerson() {
 		return person;
 	}
@@ -166,23 +172,6 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	public void getData(Person person) {
 		getBaseObjectDAO().getData(person);
 
-	}
-
-	@Override
-	public void deleteData(List persons) {
-		getBaseObjectDAO().deleteData(persons);
-
-	}
-
-	@Override
-	public void updateData(Person person) {
-		getBaseObjectDAO().updateData(person);
-
-	}
-
-	@Override
-	public boolean insertData(Person person) {
-		return getBaseObjectDAO().insertData(person);
 	}
 
 	@Override

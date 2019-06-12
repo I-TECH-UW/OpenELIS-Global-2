@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.systemusermodule.dao.SystemUserModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
@@ -22,28 +23,12 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
 	@Override
 	protected SystemUserModuleDAO getBaseObjectDAO() {
-		// TODO Auto-generated method stub
-		return null;
+		return baseObjectDAO;
 	}
 
 	@Override
 	public void getData(SystemUserModule systemUserModule) {
 		baseObjectDAO.getData(systemUserModule);
-	}
-
-	@Override
-	public void deleteData(List systemUserModules) {
-		baseObjectDAO.deleteData(systemUserModules);
-	}
-
-	@Override
-	public void updateData(SystemUserModule systemUserModule) {
-		baseObjectDAO.updateData(systemUserModule);
-	}
-
-	@Override
-	public boolean insertData(SystemUserModule systemUserModule) {
-		return baseObjectDAO.insertData(systemUserModule);
 	}
 
 	@Override
@@ -59,11 +44,6 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 	@Override
 	public List getPageOfPermissionModules(int startingRecNo) {
 		return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
-	}
-
-	@Override
-	public boolean isAgentAllowedAccordingToName(String id, String string) {
-		return baseObjectDAO.isAgentAllowedAccordingToName(id, string);
 	}
 
 	@Override
@@ -84,6 +64,37 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 	@Override
 	public List getPreviousPermissionModuleRecord(String id) {
 		return baseObjectDAO.getPreviousPermissionModuleRecord(id);
+	}
+
+	@Override
+	public String insert(SystemUserModule systemUserModule) {
+		if (duplicateSystemUserModuleExists(systemUserModule)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+		}
+		return super.insert(systemUserModule);
+	}
+
+	@Override
+	public SystemUserModule save(SystemUserModule systemUserModule) {
+		if (duplicateSystemUserModuleExists(systemUserModule)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+		}
+		return super.save(systemUserModule);
+	}
+
+	@Override
+	public SystemUserModule update(SystemUserModule systemUserModule) {
+		if (duplicateSystemUserModuleExists(systemUserModule)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+		}
+		return super.update(systemUserModule);
+	}
+
+	private boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) {
+		return baseObjectDAO.duplicateSystemUserModuleExists(systemUserModule);
 	}
 
 }

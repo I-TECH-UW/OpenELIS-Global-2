@@ -23,8 +23,14 @@ public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> i
 	protected HistoryDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
-	
+
+	@Override
 	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
 		return baseObjectDAO.getHistoryByRefIdAndRefTableId(history);
+	}
+
+	@Override
+	public List getHistoryByRefIdAndRefTableId(String id, String table) throws LIMSRuntimeException {
+		return baseObjectDAO.getHistoryByRefIdAndRefTableId(id, table);
 	}
 }

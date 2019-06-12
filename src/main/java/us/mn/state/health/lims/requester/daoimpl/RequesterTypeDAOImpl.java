@@ -29,7 +29,7 @@ import us.mn.state.health.lims.requester.valueholder.RequesterType;
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> implements RequesterTypeDAO {
 
 	public RequesterTypeDAOImpl() {
@@ -50,11 +50,6 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> imp
 		}
 
 		return null;
-	}
-
-	private void handleException(HibernateException e, String string) {
-		// TODO Auto-generated method stub
-		e.printStackTrace();
 	}
 
 }

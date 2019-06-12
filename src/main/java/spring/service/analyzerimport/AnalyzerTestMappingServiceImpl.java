@@ -1,7 +1,5 @@
 package spring.service.analyzerimport;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,26 +23,4 @@ public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<Analyz
 		return baseObjectDAO;
 	}
 
-	@Override
-	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) {
-		getBaseObjectDAO().updateMapping(analyzerTestNameMapping, currentUserId);
-
-	}
-
-	@Override
-	public void deleteData(List<AnalyzerTestMapping> testMappingList, String currentUserId) {
-		getBaseObjectDAO().deleteData(testMappingList, currentUserId);
-
-	}
-
-	@Override
-	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) {
-		analyzerTestMapping.setSysUserId(currentUserId);
-		insert(analyzerTestMapping);
-	}
-
-	@Override
-	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() {
-		return getBaseObjectDAO().getAllAnalyzerTestMappings();
-	}
 }

@@ -166,7 +166,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 				Analysis analysis = populateAnalysis(analysisRevision, sampleTestCollection, test,
 						sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
 						sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
-				analysisService.insert(analysis, false); // false--do not check for duplicates
+				analysisService.insert(analysis);
 			}
 
 		}

@@ -11,17 +11,11 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 public interface ResultLimitService extends BaseObjectService<ResultLimit, String> {
 
-	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
-
-	void deleteData(List resultLimits) throws LIMSRuntimeException;
-
 	List getAllResultLimits() throws LIMSRuntimeException;
 
 	List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
 
 	void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
-
-	void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
 	List getNextResultLimitRecord(String id) throws LIMSRuntimeException;
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.services.LocalizationService,
+			spring.service.localization.LocalizationServiceImpl,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			org.owasp.encoder.Encode,
 			us.mn.state.health.lims.common.util.Versioning"%>
@@ -189,7 +189,7 @@ if (document.layers) {
 		<c:out value="${title}" />
 	</c:if> 
 	<c:if test="${empty title}">
-		<%=LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
+		<%=LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
 	</c:if>
 </title>
 <tiles:insertAttribute name="banner" />

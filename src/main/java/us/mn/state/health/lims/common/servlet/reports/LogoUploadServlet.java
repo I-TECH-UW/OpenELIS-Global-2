@@ -31,32 +31,32 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.common.servlet.reports.LogoUploadService;
+import spring.service.image.ImageService;
+import spring.service.siteinformation.SiteInformationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.image.dao.ImageDAO;
-import us.mn.state.health.lims.image.daoimpl.ImageDAOImpl;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.image.valueholder.Image;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class LogoUploadServlet extends HttpServlet {
 
 	static final long serialVersionUID = 1L;
 
-	private ImageDAO imageDAO = new ImageDAOImpl();
+	private ImageService imageService = SpringContext.getBean(ImageService.class);
+	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+	private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+	private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
 	private static final String PREVIEW_FILE_PATH = File.separator + "images" + File.separator;
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// check for authentication
-		UserModuleService userModuleService = new UserModuleServiceImpl();
 		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
@@ -89,8 +89,7 @@ public class LogoUploadServlet extends HttpServlet {
 		File previewFile = new File(uploadPreviewPath);
 		previewFile.delete();
 
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-		SiteInformation logoInformation = siteInformationDAO.getSiteInformationByName(logoName);
+		SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
 		if (logoInformation == null) {
 			return;
@@ -99,19 +98,12 @@ public class LogoUploadServlet extends HttpServlet {
 		String imageId = logoInformation.getValue();
 
 		if (!GenericValidator.isBlankOrNull(imageId)) {
-			Image image = imageDAO.getImage(imageId);
-
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+			Image image = imageService.get(imageId);
 
 			try {
-				imageDAO.deleteImage(image);
-				logoInformation.setValue("");
-				logoInformation.setSysUserId("1");
-				siteInformationDAO.updateData(logoInformation);
-
-				tx.commit();
+				logoUploadService.removeImage(image, logoInformation);
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", lre);
 			}
 
 		}
@@ -156,8 +148,7 @@ public class LogoUploadServlet extends HttpServlet {
 	}
 
 	private void writeToDatabase(File file, String logoName) {
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-		SiteInformation logoInformation = siteInformationDAO.getSiteInformationByName(logoName);
+		SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
 		if (logoInformation == null) {
 			return;
@@ -177,27 +168,14 @@ public class LogoUploadServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		Image image = new Image();
 		image.setImage(imageData);
 		image.setDescription(logoName);
 
 		try {
-			if (!newImage) {
-				// The reason the old image is deleted and a new one added is because updating
-				// the image
-				// doesn't work.
-				imageDAO.deleteImage(imageDAO.getImage(imageId));
-			}
-			imageDAO.saveImage(image);
-
-			logoInformation.setValue(image.getId());
-			logoInformation.setSysUserId("1");
-			siteInformationDAO.updateData(logoInformation);
-
-			tx.commit();
+			logoUploadService.saveImage(image, newImage, imageId, logoInformation);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", lre);
 		}
 	}
 

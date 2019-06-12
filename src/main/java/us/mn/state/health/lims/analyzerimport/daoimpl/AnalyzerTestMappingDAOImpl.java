@@ -17,22 +17,13 @@
  */
 package us.mn.state.health.lims.analyzerimport.daoimpl;
 
-import java.util.List;
-
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMappingPK;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
 
 @Component
 @Transactional
@@ -43,93 +34,91 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 		super(AnalyzerTestMapping.class);
 	}
 
-	@Override
-	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId)
-			throws LIMSRuntimeException {
+//	@Override
+//	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId)
+//			throws LIMSRuntimeException {
+//
+//		try {
+//			for (AnalyzerTestMapping analyzerTestMapping : analyzerTestMappingList) {
+//				analyzerTestMapping = readAnalyzerTestMapping(analyzerTestMapping.getCompoundId());
+//
+//				auditDAO.saveHistory(new Analysis(), analyzerTestMapping, currentUserId,
+//						IActionConstants.AUDIT_TRAIL_DELETE, "ANALYZER_TEST_MAP");
+//
+//				sessionFactory.getCurrentSession().delete(analyzerTestMapping);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerTestMappingDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl deleteData()", e);
+//		}
+//	}
 
-		try {
-			for (AnalyzerTestMapping analyzerTestMapping : analyzerTestMappingList) {
-				analyzerTestMapping = readAnalyzerTestMapping(analyzerTestMapping.getCompoundId());
+//	private AnalyzerTestMapping readAnalyzerTestMapping(AnalyzerTestMappingPK mappingPK) {
+//		AnalyzerTestMapping mapping = null;
+//		try {
+//			mapping = sessionFactory.getCurrentSession().get(AnalyzerTestMapping.class, mappingPK);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerTestMappingDAOImpl", "readAnalyzerTestMapping()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl readAnalyzerTestMapping()", e);
+//		}
+//
+//		return mapping;
+//	}
 
-				AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-				auditDAO.saveHistory(new Analysis(), analyzerTestMapping, currentUserId,
-						IActionConstants.AUDIT_TRAIL_DELETE, "ANALYZER_TEST_MAP");
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException {
+//		List<AnalyzerTestMapping> list = null;
+//		try {
+//			String sql = "from AnalyzerTestMapping";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerTestMappingDAOImpl", "getAnalyzerTestMappings()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerTestMapping getAllAnalyzerTestMappings()", e);
+//		}
+//
+//		return list;
+//	}
 
-				sessionFactory.getCurrentSession().delete(analyzerTestMapping);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
+//	@Override
+//	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) throws LIMSRuntimeException {
+//		try {
+//			sessionFactory.getCurrentSession().save(analyzerTestMapping);
+//
+//			auditDAO.saveNewHistory(analyzerTestMapping, currentUserId, "ANALYZER_TEST_MAP");
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerTestMappingDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl insertData()", e);
+//		}
+//	}
 
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl deleteData()", e);
-		}
-	}
-
-	private AnalyzerTestMapping readAnalyzerTestMapping(AnalyzerTestMappingPK mappingPK) {
-		AnalyzerTestMapping mapping = null;
-		try {
-			mapping = sessionFactory.getCurrentSession().get(AnalyzerTestMapping.class, mappingPK);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl", "readAnalyzerTestMapping()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl readAnalyzerTestMapping()", e);
-		}
-
-		return mapping;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException {
-		List<AnalyzerTestMapping> list = null;
-		try {
-			String sql = "from AnalyzerTestMapping";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl", "getAnalyzerTestMappings()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerTestMapping getAllAnalyzerTestMappings()", e);
-		}
-
-		return list;
-	}
-
-	@Override
-	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) throws LIMSRuntimeException {
-		try {
-			sessionFactory.getCurrentSession().save(analyzerTestMapping);
-
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(analyzerTestMapping, currentUserId, "ANALYZER_TEST_MAP");
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl insertData()", e);
-		}
-	}
-
-	@Override
-	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId)
-			throws LIMSRuntimeException {
-
-		try {
-			sessionFactory.getCurrentSession().merge(analyzerTestNameMapping);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove
-			// old(analyzerTestNameMapping);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(analyzerTestNameMapping);
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId)
+//			throws LIMSRuntimeException {
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(analyzerTestNameMapping);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove
+//			// old(analyzerTestNameMapping);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(analyzerTestNameMapping);
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);
+//		}
+//	}
 
 }

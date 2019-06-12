@@ -31,9 +31,9 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  */
 public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
-	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException;
+//	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-	public void deleteData(List qaEvents) throws LIMSRuntimeException;
+//	public void deleteData(List qaEvents) throws LIMSRuntimeException;
 
 	public List getAllQaEvents() throws LIMSRuntimeException;
 
@@ -43,7 +43,7 @@ public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
+//	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
 
 	public List getNextQaEventRecord(String id) throws LIMSRuntimeException;
 
@@ -52,5 +52,7 @@ public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 	public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
 
 	public Integer getTotalQaEventCount() throws LIMSRuntimeException;
+
+	boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException;
 
 }

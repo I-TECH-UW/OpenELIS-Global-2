@@ -24,7 +24,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 public interface ReferringTestResultDAO extends BaseDAO<ReferringTestResult, String> {
 
-	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException;
+//	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException;
 
 	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
 			throws LIMSRuntimeException;

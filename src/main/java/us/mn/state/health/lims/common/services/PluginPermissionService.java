@@ -88,19 +88,17 @@ public class PluginPermissionService {
 		if (role == null || module == null) {
 			return false;
 		}
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-//		try {
 		if (role.getId() == null) {
 			role.setActive(true);
-			roleService.insertData(role);
+			roleService.insert(role);
 		} else if (!role.isActive()) {
 			role.setActive(true);
-			roleService.updateData(role);
+			roleService.update(role);
 		}
 
 		if (module.getId() == null) {
-			moduleService.insertData(module);
+			moduleService.insert(module);
 		}
 
 		RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
@@ -113,15 +111,9 @@ public class PluginPermissionService {
 			roleModule.setHasDelete("Y");
 			roleModule.setHasSelect("Y");
 			roleModule.setHasUpdate("Y");
-			roleModuleService.insertData(roleModule);
+			roleModuleService.insert(roleModule);
 		}
 
-//			tx.commit();
-//
-//		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-//			return false;
-//		}
 		return true;
 	}
 }

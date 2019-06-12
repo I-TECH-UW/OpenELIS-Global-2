@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +25,7 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
 import spring.service.login.LoginService;
 import spring.service.systemuser.SystemUserService;
+import spring.service.systemuser.UnifiedSystemUserService;
 import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -44,6 +44,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 	LoginService loginService;
 	@Autowired
 	UserRoleService userRoleService;
+	@Autowired
+	UnifiedSystemUserService unifiedSystemUserService;
 
 	@RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
 	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -186,7 +188,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 		}
 
 		try {
-			deleteData(userRoles, systemUsers, loginUsers);
+			unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
 		} catch (LIMSRuntimeException lre) {
 
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -200,22 +202,6 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 		}
 
 		return findForward(FWD_SUCCESS_DELETE, form);
-	}
-
-	@Transactional 
-	public void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<Login> loginUsers) {
-		String sysUserId = getSysUserId(request);
-
-		userRoleService.deleteAll(userRoles);
-
-		for (SystemUser systemUser : systemUsers) {
-			// we're not going to actually delete them to preserve auditing
-			systemUser = systemUserService.get(systemUser.getId());
-			systemUser.setSysUserId(sysUserId);
-			systemUserService.delete(systemUser);
-		}
-
-		loginService.deleteAll(loginUsers);
 	}
 
 	@Override

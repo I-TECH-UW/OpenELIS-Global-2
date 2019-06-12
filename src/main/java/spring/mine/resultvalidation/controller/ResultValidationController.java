@@ -213,17 +213,11 @@ public class ResultValidationController extends BaseResultValidationController {
 					resultSaveService, areListeners);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
 					sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
-
-//			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
 			LogEvent.logErrorStack(this.getClass().getSimpleName(), "showResultValidationSave()", lre);
-//			tx.rollback();
 		}
 
 		for (IResultUpdate updater : updaters) {

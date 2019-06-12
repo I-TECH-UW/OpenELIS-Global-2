@@ -8,7 +8,8 @@ import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 @Service
-public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservation, String> implements QaObservationService {
+public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservation, String>
+		implements QaObservationService {
 	@Autowired
 	protected QaObservationDAO baseObjectDAO;
 
@@ -22,19 +23,7 @@ public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservatio
 	}
 
 	@Override
-	public void updateData(QaObservation qaObservation) {
-        getBaseObjectDAO().updateData(qaObservation);
-
-	}
-
-	@Override
-	public void insertData(QaObservation qaObservation) {
-        getBaseObjectDAO().insertData(qaObservation);
-
-	}
-
-	@Override
 	public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId) {
-        return getBaseObjectDAO().getQaObservationByTypeAndObserved(typeName,observedType,observedId);
+		return getBaseObjectDAO().getQaObservationByTypeAndObserved(typeName, observedType, observedId);
 	}
 }

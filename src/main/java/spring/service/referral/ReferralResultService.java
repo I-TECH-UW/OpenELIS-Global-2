@@ -6,11 +6,6 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 
 public interface ReferralResultService extends BaseObjectService<ReferralResult, String> {
-	void deleteData(ReferralResult referralResult);
-
-	void updateData(ReferralResult referralResult);
-
-	boolean insertData(ReferralResult referralResult);
 
 	ReferralResult getReferralResultById(String referralResultId);
 

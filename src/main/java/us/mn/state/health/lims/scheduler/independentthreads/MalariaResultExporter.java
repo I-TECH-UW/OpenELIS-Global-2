@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,19 +34,21 @@ import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.reports.DocumentTrackService;
 import spring.service.reports.DocumentTypeService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
-import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
+import us.mn.state.health.lims.dataexchange.common.IRowTransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission.HTTP_TYPE;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Service
+@Scope("prototype")
 public class MalariaResultExporter extends Thread {
 
 	private long sleepTime;
@@ -103,8 +106,9 @@ public class MalariaResultExporter extends Thread {
 			boolean sendAsychronously = false;
 
 			for (ReportExternalExport report : reportList) {
-				transmitter.sendRawReport(report.getData(), url, sendAsychronously,
-						new SuccessReportHandler(report.getId()), HTTP_TYPE.POST);
+				IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("malariaSuccessReportHandler");
+				responseHandler.setRowId(report.getId());
+				transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
 			}
 		}
 	}
@@ -115,10 +119,21 @@ public class MalariaResultExporter extends Thread {
 		return ("true".equals(reportResults) || "enable".equals(reportResults));
 	}
 
-	class SuccessReportHandler implements ITransmissionResponseHandler {
+	@Service("malariaSuccessReportHandler")
+	@Scope("prototype")
+	class SuccessReportHandler implements IRowTransmissionResponseHandler {
 		String externalExportRowId;
 
 		public SuccessReportHandler(String rowId) {
+			setRowId(rowId);
+		}
+
+		public SuccessReportHandler() {
+
+		}
+
+		@Override
+		public void setRowId(String rowId) {
 			externalExportRowId = rowId;
 		}
 
@@ -130,19 +145,15 @@ public class MalariaResultExporter extends Thread {
 				ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
 				List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
 
-//				Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 				try {
 					for (DocumentTrack document : documents) {
-						documentTrackService.insertData(document);
+						documentTrackService.insert(document);
 					}
 					reportExternalExportService.delete(report);
 
-//					tx.commit();
-
 				} catch (LIMSRuntimeException lre) {
-//					tx.rollback();
 					LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
+					throw lre;
 				}
 
 			}

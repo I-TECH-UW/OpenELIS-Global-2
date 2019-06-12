@@ -254,7 +254,7 @@ public class DisplayListService implements LocaleChangeListener {
 
 	private List<IdValuePair> createUOMList() {
 		List<IdValuePair> list = new ArrayList<>();
-		List<UnitOfMeasure> uomList = unitOfMeasureService.getAllUnitOfMeasures();
+		List<UnitOfMeasure> uomList = unitOfMeasureService.getAll();
 		for (UnitOfMeasure uom : uomList) {
 			list.add(new IdValuePair(uom.getId(), uom.getLocalizedName()));
 		}
@@ -265,7 +265,7 @@ public class DisplayListService implements LocaleChangeListener {
 	private List<IdValuePair> createLocalizedResultTypeList() {
 		List<IdValuePair> typeList = new ArrayList<>();
 
-		List<TypeOfTestResult> typeOfTestResultList = typeOfTestResultService.getAllTypeOfTestResults();
+		List<TypeOfTestResult> typeOfTestResultList = typeOfTestResultService.getAll();
 		for (TypeOfTestResult typeOfTestResult : typeOfTestResultList) {
 			String description = typeOfTestResult.getDescription();
 			if ("Dictionary".equals(description)) {
@@ -291,7 +291,7 @@ public class DisplayListService implements LocaleChangeListener {
 	private List<IdValuePair> createRawResultTypeList() {
 		List<IdValuePair> typeList = new ArrayList<>();
 
-		List<TypeOfTestResult> typeOfTestResultList = typeOfTestResultService.getAllTypeOfTestResults();
+		List<TypeOfTestResult> typeOfTestResultList = typeOfTestResultService.getAll();
 		for (TypeOfTestResult typeOfTestResult : typeOfTestResultList) {
 			typeList.add(new IdValuePair(typeOfTestResult.getId(), typeOfTestResult.getDescription()));
 		}
@@ -410,8 +410,7 @@ public class DisplayListService implements LocaleChangeListener {
 	private List<IdValuePair> createGenderList() {
 		List<IdValuePair> genders = new ArrayList<>();
 
-		@SuppressWarnings("unchecked")
-		List<Gender> genderList = genderService.getAllGenders();
+		List<Gender> genderList = genderService.getAll();
 
 		for (Gender gender : genderList) {
 			genders.add(new IdValuePair(gender.getGenderType(), MessageUtil.getContextualMessage(gender.getNameKey())));
@@ -604,7 +603,8 @@ public class DisplayListService implements LocaleChangeListener {
 
 	private List<IdValuePair> createUnitOfMeasureList() {
 		List<IdValuePair> unitOfMeasuresPairs = new ArrayList<>();
-		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAllActiveUnitOfMeasures();
+//		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAllActiveUnitOfMeasures();
+		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAll();
 
 		for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
 			unitOfMeasuresPairs.add(new IdValuePair(unitOfMeasure.getId(), unitOfMeasure.getLocalizedName()));

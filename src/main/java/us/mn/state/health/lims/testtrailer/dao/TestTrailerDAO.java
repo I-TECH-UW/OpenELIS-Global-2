@@ -31,9 +31,9 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  */
 public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
-	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException;
+//	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-	public void deleteData(List testTrailers) throws LIMSRuntimeException;
+//	public void deleteData(List testTrailers) throws LIMSRuntimeException;
 
 	public List getAllTestTrailers() throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
+//	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
 	public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException;
 
@@ -53,4 +53,6 @@ public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
 	// bugzilla 1411
 	public Integer getTotalTestTrailerCount() throws LIMSRuntimeException;
+
+	boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException;
 }

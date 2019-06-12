@@ -3,10 +3,8 @@ package spring.mine.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +16,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import spring.service.localization.LocalizationService;
 import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -92,8 +91,8 @@ public class TestRenameEntryController extends BaseController {
 			reportingName.setSysUserId(userId);
 
 			try {
-				updateTestNames(name, reportingName);
-			} catch (HibernateException e) {
+				localizationService.updateTestNames(name, reportingName);
+			} catch (LIMSRuntimeException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateTestNames()", e);
 			}
 
@@ -102,12 +101,6 @@ public class TestRenameEntryController extends BaseController {
 		// Refresh test names
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
-	}
-
-	@Transactional 
-	public void updateTestNames(Localization name, Localization reportingName) {
-		localizationService.update(name);
-		localizationService.update(reportingName);
 	}
 
 	@Override

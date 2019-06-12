@@ -23,9 +23,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel, String> {
 
-	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
+//	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
 
-	public void deleteData(String[] typeOfSamplePanelIds, String currentUserId) throws LIMSRuntimeException;
+//	public void deleteData(String[] typeOfSamplePanelIds, String currentUserId) throws LIMSRuntimeException;
 
 	public List getAllTypeOfSamplePanels() throws LIMSRuntimeException;
 

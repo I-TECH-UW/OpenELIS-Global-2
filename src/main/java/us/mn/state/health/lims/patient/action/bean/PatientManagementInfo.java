@@ -30,17 +30,17 @@ import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidDate;
+import spring.service.dictionary.DictionaryService;
+import spring.service.patient.PatientTypeService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientTypeDAOImpl;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 public class PatientManagementInfo implements Serializable {
@@ -334,8 +334,7 @@ public class PatientManagementInfo implements Serializable {
 	@SuppressWarnings("unchecked")
 	public List<PatientType> getPatientTypes() {
 		if (patientTypes == null) {
-			PatientTypeDAO patientTypeDAOs = new PatientTypeDAOImpl();
-			patientTypes = patientTypeDAOs.getAllPatientTypes();
+			patientTypes = SpringContext.getBean(PatientTypeService.class).getAllPatientTypes();
 		}
 		return patientTypes;
 	}
@@ -350,8 +349,8 @@ public class PatientManagementInfo implements Serializable {
 
 	public List<Dictionary> getAddressDepartments() {
 		if (addressDepartments == null) {
-			addressDepartments = new DictionaryDAOImpl().getDictionaryEntrysByCategoryAbbreviation("description",
-					"haitiDepartment", true);
+			addressDepartments = SpringContext.getBean(DictionaryService.class)
+					.getDictionaryEntrysByCategoryAbbreviation("description", "haitiDepartment", true);
 		}
 
 		return addressDepartments;

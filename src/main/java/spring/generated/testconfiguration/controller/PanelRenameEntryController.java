@@ -3,7 +3,6 @@ package spring.generated.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,18 +15,18 @@ import spring.generated.testconfiguration.form.PanelRenameEntryForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.localization.LocalizationService;
 import spring.service.panel.PanelService;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Controller
 public class PanelRenameEntryController extends BaseController {
-	
+
 	@Autowired
 	PanelService panelService;
 	@Autowired
 	LocalizationService localizationService;
-	
 
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
@@ -81,9 +80,9 @@ public class PanelRenameEntryController extends BaseController {
 
 			try {
 				localizationService.update(name);
-			} catch (HibernateException e) {
+			} catch (LIMSRuntimeException e) {
 				e.printStackTrace();
-			} 
+			}
 		}
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
 	}

@@ -306,15 +306,15 @@ public class ResultSaveService {
 				signature.setSysUserId(currentUserId);
 			}
 
-			resultSigService.deleteData(signatures);
+			resultSigService.deleteAll(signatures);
 
 			for (ReferralResult referral : referrals) {
 				referral.setSysUserId(currentUserId);
-				referralResultService.deleteData(referral);
+				referralResultService.delete(referral);
 			}
 
 			result.setSysUserId(currentUserId);
-			resultService.deleteData(result);
+			resultService.delete(result);
 		}
 
 	}

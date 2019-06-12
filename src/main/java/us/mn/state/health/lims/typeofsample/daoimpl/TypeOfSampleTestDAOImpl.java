@@ -24,64 +24,60 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Component
-@Transactional 
+@Transactional
 public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, String> implements TypeOfSampleTestDAO {
 
 	public TypeOfSampleTestDAOImpl() {
 		super(TypeOfSampleTest.class);
 	}
 
-	@Override
-	public void deleteData(String[] typeOfSamplesTestIDs, String currentUserId) throws LIMSRuntimeException {
+//	@Override
+//	public void deleteData(String[] typeOfSamplesTestIDs, String currentUserId) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			for (String id : typeOfSamplesTestIDs) {
+//				TypeOfSampleTest data = readTypeOfSample(id);
+//
+//				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+//						"SAMPLETYPE_TEST");
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//
+//		} catch (Exception e) {
+//
+//			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
+//		}
+//	}
 
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (String id : typeOfSamplesTestIDs) {
-				TypeOfSampleTest data = readTypeOfSample(id);
-
-				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-						"SAMPLETYPE_TEST");
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-
-		} catch (Exception e) {
-
-			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException {
-
-		try {
-
-			String id = (String) sessionFactory.getCurrentSession().save(typeOfSampleTest);
-			typeOfSampleTest.setId(id);
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException {
+//
+//		try {
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(typeOfSampleTest);
+//			typeOfSampleTest.setId(id);
+//
+//			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	@Override
 	public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {

@@ -16,18 +16,15 @@
 */
 package us.mn.state.health.lims.menu.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
 public interface MenuDAO extends BaseDAO<Menu, String> {
-	List<Menu> getAllMenus() throws LIMSRuntimeException;
+//	List<Menu> getAllMenus() throws LIMSRuntimeException;
 
-	List<Menu> getAllActiveMenus() throws LIMSRuntimeException;
+//	List<Menu> getAllActiveMenus() throws LIMSRuntimeException;
 
-	Menu getMenuByElementId(String elementId) throws LIMSRuntimeException;
+//	Menu getMenuByElementId(String elementId) throws LIMSRuntimeException;
 
-	void updateData(Menu menu) throws LIMSRuntimeException;
+//	void updateData(Menu menu) throws LIMSRuntimeException;
 }

@@ -13,12 +13,6 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
 	Patient getData(String patientId);
 
-	void deleteData(List patients);
-
-	void updateData(Patient patient);
-
-	boolean insertData(Patient patient);
-
 	Patient getPatientByNationalId(String subjectNumber);
 
 	List<Patient> getPatientsByNationalId(String nationalId);

@@ -8,10 +8,13 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.validator.BaseErrors;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.result.ResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -20,11 +23,10 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
+@Service
 public class ResultsValidation {
 
 	private static final String SPECIAL_CASE = "XXXX";
@@ -35,7 +37,8 @@ public class ResultsValidation {
 	private boolean useRejected = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.allowResultRejection, "true");
 
-	private static ResultDAO resultDAO = new ResultDAOImpl();
+	@Autowired
+	private ResultService resultService;
 
 	public Errors validateItem(TestResultItem item) {
 		Errors errors = new BaseErrors();
@@ -184,7 +187,7 @@ public class ResultsValidation {
 			}
 
 		} else {
-			Result dbResult = resultDAO.getResultById(item.getResultId());
+			Result dbResult = resultService.getResultById(item.getResultId());
 			return !item.getShadowResultValue().equals(dbResult.getValue())
 					&& !GenericValidator.isBlankOrNull(dbResult.getValue());
 		}
@@ -200,7 +203,7 @@ public class ResultsValidation {
 			return;
 		}
 
-		Result result = resultDAO.getResultById(item.getResultId());
+		Result result = resultService.getResultById(item.getResultId());
 
 		if (result != null && result.getAnalyte() != null
 				&& "Conclusion".equals(result.getAnalyte().getAnalyteName())) {

@@ -9,12 +9,6 @@ import us.mn.state.health.lims.result.valueholder.ResultSignature;
 public interface ResultSignatureService extends BaseObjectService<ResultSignature, String> {
 	void getData(ResultSignature resultSignature);
 
-	void deleteData(List<ResultSignature> results);
-
-	void updateData(ResultSignature resultSignature);
-
-	boolean insertData(ResultSignature resultSignature);
-
 	List<ResultSignature> getResultSignaturesByResult(Result result);
 
 	ResultSignature getResultSignatureById(ResultSignature resultSignature);

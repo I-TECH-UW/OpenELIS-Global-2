@@ -24,19 +24,11 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
-import us.mn.state.health.lims.systemusersection.daoimpl.SystemUserSectionDAOImpl;
-import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
@@ -44,124 +36,124 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> implements TestSectionDAO {
 
 	public TestSectionDAOImpl() {
 		super(TestSection.class);
 	}
 
-	@Override
-	public void deleteData(List testSections) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (int i = 0; i < testSections.size(); i++) {
-				TestSection data = (TestSection) testSections.get(i);
+//	@Override
+//	public void deleteData(List testSections) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < testSections.size(); i++) {
+//				TestSection data = (TestSection) testSections.get(i);
+//
+//				TestSection oldData = readTestSection(data.getId());
+//				TestSection newData = new TestSection();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "TEST_SECTION";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < testSections.size(); i++) {
+//				TestSection data = (TestSection) testSections.get(i);
+//				// bugzilla 2206
+//				data = readTestSection(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
+//		}
+//	}
 
-				TestSection oldData = readTestSection(data.getId());
-				TestSection newData = new TestSection();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "TEST_SECTION";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < testSections.size(); i++) {
-				TestSection data = (TestSection) testSections.get(i);
-				// bugzilla 2206
-				data = readTestSection(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(TestSection testSection) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateTestSectionExists(testSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testSection.getTestSectionName());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(testSection);
-			testSection.setId(id);
-
-			new AuditTrailDAOImpl().saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(TestSection testSection) throws LIMSRuntimeException {
-		// bugzilla 1482 throw Exception if record already exists
-		try {
-			if (duplicateTestSectionExists(testSection)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + testSection.getTestSectionName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
-		}
-
-		TestSection oldData = readTestSection(testSection.getId());
-		TestSection newData = testSection;
-
-		// add to audit trail
-		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = testSection.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "TEST_SECTION";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(testSection);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
-		}
-	}
+//	@Override
+//	public boolean insertData(TestSection testSection) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateTestSectionExists(testSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testSection.getTestSectionName());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(testSection);
+//			testSection.setId(id);
+//
+//			auditDAO.saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
+//		}
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public void updateData(TestSection testSection) throws LIMSRuntimeException {
+//		// bugzilla 1482 throw Exception if record already exists
+//		try {
+//			if (duplicateTestSectionExists(testSection)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record exists for " + testSection.getTestSectionName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
+//		}
+//
+//		TestSection oldData = readTestSection(testSection.getId());
+//		TestSection newData = testSection;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = testSection.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "TEST_SECTION";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(testSection);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
 		try {
-			TestSection testSec = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
+			TestSection testSec = sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (testSec != null) {
@@ -194,24 +186,23 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	/**
 	 * Get all the test sections assigned to this specific user
-	 * 
+	 *
 	 * @param sysUserId the user system id
 	 * @return list of tests
 	 */
 	@Override
-	public List getAllTestSectionsBySysUserId(int sysUserId) throws LIMSRuntimeException {
+	public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
 		List list = new Vector();
 
-		String sectionIdList = "";
 		String sql = "";
 
 		try {
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
+			// moved into service layer
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
 			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
 				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
 				sql = "from TestSection where id in (" + sectionIdList + ")";
@@ -259,7 +250,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	public TestSection readTestSection(String idString) {
 		TestSection ts = null;
 		try {
-			ts = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, idString);
+			ts = sessionFactory.getCurrentSession().get(TestSection.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -293,18 +284,18 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// this is for autocomplete
 	@Override
-	public List getTestSectionsBySysUserId(String filter, int sysUserId) throws LIMSRuntimeException {
+	public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+			throws LIMSRuntimeException {
 		List list = new Vector();
-		String sectionIdList = "";
 		String sql = "";
 
 		try {
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for (int i = 0; i < userTestSectionList.size(); i++) {
-				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-				sectionIdList += sus.getTestSection().getId() + ",";
-			}
+			// this part has been moved into the service layer
+//			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
+//			for (int i = 0; i < userTestSectionList.size(); i++) {
+//				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+//				sectionIdList += sus.getTestSection().getId() + ",";
+//			}
 			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
 				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
 				sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
@@ -438,7 +429,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 		return list;
 	}
 
-	private boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
 		try {
 
 			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
@@ -521,7 +513,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	@Override
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
-			TestSection testSection = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);
+			TestSection testSection = sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);
 			// closeSession(); // CSL remove old
 			return testSection;
 		} catch (HibernateException e) {

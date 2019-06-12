@@ -44,7 +44,7 @@ public abstract class AbstractHistoryService {
 
 	protected static final String STATUS_ATTRIBUTE = "status";
 	protected static final String VALUE_ATTRIBUTE = "value";
-	
+
 	protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 

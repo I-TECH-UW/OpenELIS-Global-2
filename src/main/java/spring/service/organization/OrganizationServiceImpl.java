@@ -1,21 +1,21 @@
 package spring.service.organization;
 
 import java.util.List;
-import java.util.Set;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Service
-public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization, String> implements OrganizationService {
+public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization, String>
+		implements OrganizationService {
 	@Autowired
 	protected OrganizationDAO baseObjectDAO;
 	@Autowired
@@ -69,38 +69,10 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	@Override
 	@Transactional
 	public void delete(Organization organization) {
-		Organization oldObject = getBaseObjectDAO().get(organization.getId())
-				.orElseThrow(() -> new ObjectNotFoundException(organization.getId(), Organization.class.getName()));
+		Organization oldObject = get(organization.getId());
 		oldObject.setIsActive(IActionConstants.NO);
 		oldObject.setSysUserId(organization.getSysUserId());
-		update(oldObject);
-	}
-
-	@Override
-	@Transactional
-	public void delete(String id, String sysUserId) {
-		Organization oldObject = getBaseObjectDAO().get(id)
-				.orElseThrow(() -> new ObjectNotFoundException(id, Organization.class.getName()));
-		oldObject.setIsActive(IActionConstants.NO);
-		oldObject.setSysUserId(sysUserId);
-		update(oldObject);
-	}
-
-	@Override
-	@Transactional
-	public void deleteAll(List<Organization> baseObjects) {
-		for (Organization organization : baseObjects) {
-			delete(organization);
-		}
-	}
-
-	@Override
-	@Transactional
-	public void deleteAll(List<String> ids, String sysUserId) {
-		for (String id : ids) {
-			delete(id, sysUserId);
-		}
-
+		updateDelete(oldObject);
 	}
 
 	@Override
@@ -111,26 +83,30 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	}
 
 	@Override
-	public void deleteData(List organizations) {
-		getBaseObjectDAO().deleteData(organizations);
-
+	public String insert(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.insert(organization);
 	}
 
 	@Override
-	public void updateData(Organization organization) {
-		getBaseObjectDAO().updateData(organization);
-
+	public Organization update(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.update(organization);
 	}
 
 	@Override
-	public boolean insertData(Organization organization) {
-		return getBaseObjectDAO().insertData(organization);
-	}
-
-	@Override
-	public void insertOrUpdateData(Organization organization) {
-		getBaseObjectDAO().insertOrUpdateData(organization);
-
+	public Organization save(Organization organization) {
+		if (organization.getIsActive().equals(IActionConstants.YES)
+				&& getBaseObjectDAO().duplicateOrganizationExists(organization)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + organization.getOrganizationName());
+		}
+		return super.save(organization);
 	}
 
 	@Override
@@ -149,12 +125,6 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName) {
 		return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty, typeName);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public Set<Organization> getOrganizationsByProjectName(String projectName) {
-		return getBaseObjectDAO().getOrganizationsByProjectName(projectName);
 	}
 
 	@Override

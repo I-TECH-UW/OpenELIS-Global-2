@@ -106,7 +106,7 @@ public class PatientResultsController extends BaseController {
 
 	private void addInventory(PatientResultsForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		InventoryUtility inventoryUtility = new InventoryUtility();
+		InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 		List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
 		PropertyUtils.setProperty(form, "inventoryItems", list);
 	}

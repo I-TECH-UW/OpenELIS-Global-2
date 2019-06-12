@@ -27,63 +27,57 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
 import spring.service.note.NoteServiceImpl;
+import spring.service.organization.OrganizationService;
+import spring.service.person.PersonService;
+import spring.service.referral.ReferringTestResultService;
+import spring.service.requester.RequesterTypeService;
+import spring.service.requester.SampleRequesterService;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
+import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferringTestResultDAOImpl;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ConfirmationData;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
-import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.RequesterTypeDAOImpl;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 
 public class ConfirmationReport extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 
 	private List<ConfirmationData> reportItems;
-	private static AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private static SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	private static SampleRequesterDAO requesterDAO = new SampleRequesterDAOImpl();
-	private static PersonDAO personDAO = new PersonDAOImpl();
-	private static ResultDAO resultDAO = new ResultDAOImpl();
-	private static DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	private static OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-    private static ReferringTestResultDAO referringTestResultDAO = new ReferringTestResultDAOImpl();
-    private static SampleDAO sampleDAO = new SampleDAOImpl();
-	private static long PERSON_REQUESTER_TYPE_ID;
-	private static long ORG_REQUESTER_TYPE_ID;
 
-	static {
-		RequesterTypeDAO requesterTypeDAO = new RequesterTypeDAOImpl();
-		PERSON_REQUESTER_TYPE_ID = Long.parseLong(requesterTypeDAO.getRequesterTypeByName("provider").getId());
-		ORG_REQUESTER_TYPE_ID = Long.parseLong(requesterTypeDAO.getRequesterTypeByName("organization").getId());
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
+	private SampleRequesterService requesterService = SpringContext.getBean(SampleRequesterService.class);
+	private PersonService personService = SpringContext.getBean(PersonService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
+	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	private ReferringTestResultService referringTestResultService = SpringContext
+			.getBean(ReferringTestResultService.class);
+	private SampleService sampleService = SpringContext.getBean(SampleService.class);
+	private RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
+
+	private long PERSON_REQUESTER_TYPE_ID;
+	private long ORG_REQUESTER_TYPE_ID;
+
+	public ConfirmationReport() {
+		PERSON_REQUESTER_TYPE_ID = Long.parseLong(requesterTypeService.getRequesterTypeByName("provider").getId());
+		ORG_REQUESTER_TYPE_ID = Long.parseLong(requesterTypeService.getRequesterTypeByName("organization").getId());
 	}
 
 	@Override
@@ -91,10 +85,12 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		return "ConfirmationSummary";
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
+	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		setDateRange(form);
@@ -105,9 +101,9 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private void setConfirmationData() {
-		reportItems = new ArrayList<ConfirmationData>();
+		reportItems = new ArrayList<>();
 
-        List<Sample> referredSamples = getReferredInSamples();
+		List<Sample> referredSamples = getReferredInSamples();
 
 		if (referredSamples.isEmpty()) {
 			errorFound = true;
@@ -135,27 +131,27 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		});
 	}
 
-
 	private List<Sample> getReferredInSamples() {
-		return  sampleDAO.getConfirmationSamplesReceivedInDateRange(lowDate, highDate);
+		return sampleService.getConfirmationSamplesReceivedInDateRange(lowDate, highDate);
 	}
 
 	private List<ConfirmationData> createConfirmationBeanFromSample(Sample sample) {
 
-		List<ConfirmationData> dataList = new ArrayList<ConfirmationData>();
+		List<ConfirmationData> dataList = new ArrayList<>();
 
 		String accessionNumber = sample.getAccessionNumber();
 		String orgName = getOrganizationNameForSample(sample);
 		Person requester = getRequesterForSample(sample);
 		String requestDate = DateUtil.convertSqlDateToStringDate(sample.getReceivedDate());
 
-		List<SampleItem> sampleItemList = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+		List<SampleItem> sampleItemList = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 		for (SampleItem sampleItem : sampleItemList) {
 			ConfirmationData data = new ConfirmationData();
 
 			data.setLabAccession(accessionNumber + "-" + sampleItem.getSortOrder());
-			data.setSampleType(TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+			data.setSampleType(
+					TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			data.setOrganizationName(StringUtil.replaceNullWithEmptyString(orgName));
 			data.setRequesterAccession(sampleItem.getExternalId());
 			data.setNote(getNoteForSampleItem(sampleItem));
@@ -173,11 +169,11 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private Person getRequesterForSample(Sample sample) {
-		List<SampleRequester> requesters = requesterDAO.getRequestersForSampleId(sample.getId());
+		List<SampleRequester> requesters = requesterService.getRequestersForSampleId(sample.getId());
 
 		for (SampleRequester requester : requesters) {
 			if (PERSON_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
-				return personDAO.getPersonById(String.valueOf(requester.getRequesterId()));
+				return personService.getPersonById(String.valueOf(requester.getRequesterId()));
 			}
 		}
 
@@ -185,11 +181,12 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getOrganizationNameForSample(Sample sample) {
-		List<SampleRequester> requesters = requesterDAO.getRequestersForSampleId(sample.getId());
+		List<SampleRequester> requesters = requesterService.getRequestersForSampleId(sample.getId());
 
 		for (SampleRequester requester : requesters) {
 			if (ORG_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
-				return organizationDAO.getOrganizationById(String.valueOf(requester.getRequesterId())).getOrganizationName();
+				return organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()))
+						.getOrganizationName();
 			}
 		}
 
@@ -197,37 +194,39 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getNoteForSampleItem(SampleItem sampleItem) {
-        String notes = new NoteServiceImpl( sampleItem ).getNotesAsString( null, null );
+		String notes = new NoteServiceImpl(sampleItem).getNotesAsString(null, null);
 		return notes == null ? "" : notes;
 	}
 
 	private void addResults(ConfirmationData data, SampleItem sampleItem) {
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItem(sampleItem);
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleItem(sampleItem);
 
-		List<String> requestTestList = new ArrayList<String>();
-		List<String> requestResultList = new ArrayList<String>();
-		List<String> labTestList = new ArrayList<String>();
-		List<String> labResultList = new ArrayList<String>();
-		List<String> completionDate = new ArrayList<String>();
+		List<String> requestTestList = new ArrayList<>();
+		List<String> requestResultList = new ArrayList<>();
+		List<String> labTestList = new ArrayList<>();
+		List<String> labResultList = new ArrayList<>();
+		List<String> completionDate = new ArrayList<>();
 
 		for (Analysis analysis : analysisList) {
-				labTestList.add(TestServiceImpl.getUserLocalizedTestName( analysis.getTest() ));
-				labResultList.add(getResultsForAnalysis(analysis));
-				completionDate.add( getCompleationDate( analysis ) );
+			labTestList.add(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+			labResultList.add(getResultsForAnalysis(analysis));
+			completionDate.add(getCompleationDate(analysis));
 		}
 
-        List<ReferringTestResult> referringTestResultList = referringTestResultDAO.getReferringTestResultsForSampleItem(sampleItem.getId());
-        if( referringTestResultList.isEmpty()){
-            requestTestList.add(MessageUtil.getMessage("test.name.notSpecified") );
-            requestResultList.add( "" );
-        }else {
-            for (ReferringTestResult result : referringTestResultList) {
-                String name = result.getTestName();
-                String resultValue = result.getResultValue();
-                requestTestList.add(GenericValidator.isBlankOrNull(name) ? MessageUtil.getMessage("test.name.notSpecified") : name );
-                requestResultList.add(resultValue == null ? "" : resultValue);
-            }
-        }
+		List<ReferringTestResult> referringTestResultList = referringTestResultService
+				.getReferringTestResultsForSampleItem(sampleItem.getId());
+		if (referringTestResultList.isEmpty()) {
+			requestTestList.add(MessageUtil.getMessage("test.name.notSpecified"));
+			requestResultList.add("");
+		} else {
+			for (ReferringTestResult result : referringTestResultList) {
+				String name = result.getTestName();
+				String resultValue = result.getResultValue();
+				requestTestList.add(
+						GenericValidator.isBlankOrNull(name) ? MessageUtil.getMessage("test.name.notSpecified") : name);
+				requestResultList.add(resultValue == null ? "" : resultValue);
+			}
+		}
 
 		data.setLabResult(labResultList);
 		data.setLabTest(labTestList);
@@ -237,12 +236,12 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getResultsForAnalysis(Analysis analysis) {
-		List<Result> results = resultDAO.getResultsByAnalysis(analysis);
+		List<Result> results = resultService.getResultsByAnalysis(analysis);
 
 		if (results != null && !results.isEmpty()) {
 			String type = results.get(0).getResultType();
 
-			if ( TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( type )) {
+			if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(type)) {
 				StringBuilder builder = new StringBuilder();
 				boolean firstNumber = true;
 				for (Result result : results) {
@@ -252,7 +251,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 					firstNumber = false;
 
 					if (!(GenericValidator.isBlankOrNull(result.getValue()) || "0".equals(result.getValue()))) {
-						builder.append(dictionaryDAO.getDictionaryById(result.getValue()).getLocalizedName());
+						builder.append(dictionaryService.getDictionaryById(result.getValue()).getLocalizedName());
 					}
 				}
 

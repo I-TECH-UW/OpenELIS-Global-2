@@ -33,13 +33,13 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  */
 public interface SampleProjectDAO extends BaseDAO<SampleProject, String> {
 
-	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException;
+//	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException;
 
-	public void deleteData(List sampleProjs) throws LIMSRuntimeException;
+//	public void deleteData(List sampleProjs) throws LIMSRuntimeException;
 
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException;
 
-	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException;
+//	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException;
 
 	public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException;
 

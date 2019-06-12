@@ -7,21 +7,22 @@ import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 
 @Service
-public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {
+//public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {
+public class DatabaseChangeLogServiceImpl implements DatabaseChangeLogService {
 	@Autowired
 	protected DatabaseChangeLogDAO baseObjectDAO;
 
-	DatabaseChangeLogServiceImpl() {
-		super(DatabaseChangeLog.class);
-	}
+//	public DatabaseChangeLogServiceImpl() {
+//		super(DatabaseChangeLog.class);
+//	}
 
-	@Override
+//	@Override
 	protected DatabaseChangeLogDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
 
 	@Override
 	public DatabaseChangeLog getLastExecutedChange() {
-        return getBaseObjectDAO().getLastExecutedChange();
+		return getBaseObjectDAO().getLastExecutedChange();
 	}
 }

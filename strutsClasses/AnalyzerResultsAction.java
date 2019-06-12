@@ -48,7 +48,7 @@ import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import us.mn.state.health.lims.common.services.PluginMenuService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
@@ -595,7 +595,7 @@ public class AnalyzerResultsAction extends BaseAction {
 	protected String getActualMessage(String messageKey) {
 		String actualMessage = null;
 		if (messageKey != null) {
-			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationService.getCurrentLocale(),
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationServiceImpl.getCurrentLocale(),
 					messageKey);
 		}
 		return actualMessage == null ? analyzer : actualMessage;

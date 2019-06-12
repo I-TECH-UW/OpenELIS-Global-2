@@ -12,12 +12,6 @@ public interface SampleQaEventService extends BaseObjectService<SampleQaEvent, S
 
 	SampleQaEvent getData(String sampleQaEventId);
 
-	void deleteData(List sampleQaEvents);
-
-	void updateData(SampleQaEvent sampleQaEvent);
-
-	boolean insertData(SampleQaEvent sampleQaEvent);
-
 	List<SampleQaEvent> getAllUncompleatedEvents();
 
 	List<SampleQaEvent> getSampleQaEventsBySample(Sample sample);

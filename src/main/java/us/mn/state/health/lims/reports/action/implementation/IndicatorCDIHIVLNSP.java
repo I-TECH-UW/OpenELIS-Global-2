@@ -17,43 +17,47 @@
 package us.mn.state.health.lims.reports.action.implementation;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
+import spring.service.dictionary.DictionaryService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
+
 //Note both Clinical and LNSP should extend common subclass
 public class IndicatorCDIHIVLNSP extends IndicatorHIV implements IReportCreator, IReportParameterSetter {
 	private static String HIV_POSITIVE1_ID = "undefined";
 	private static String HIV_POSITIVE2_ID = "undefined";
 	private static String HIV_POSITIVE12_ID = "undefined";
 	private static String HIV_INDETERMINATE_ID = "undefined";
-	
-	static{
+
+	private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+
+	static {
 		HIV_TESTS.add("Dénombrement des lymphocytes CD4 (mm3)");
 		HIV_TESTS.add("Dénombrement des lymphocytes  CD4 (%)");
 		HIV_TESTS.add("Test rapide HIV 1 + HIV 2");
-		
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Dictionary dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 1", "Haiti Lab");
+
+		Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 1",
+				"Haiti Lab");
 		if (dictionary != null) {
 			HIV_POSITIVE1_ID = dictionary.getId();
 		}
-		
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 2", "Haiti Lab");
+
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 2", "Haiti Lab");
 		if (dictionary != null) {
 			HIV_POSITIVE2_ID = dictionary.getId();
 		}
-		
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH1 et 2", "Haiti Lab");
+
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH1 et 2",
+				"Haiti Lab");
 		if (dictionary != null) {
 			HIV_POSITIVE12_ID = dictionary.getId();
 		}
-		
-		dictionary = dictionaryDAO.getDictionaryEntrysByNameAndCategoryDescription("Indetermine", "Haiti Lab");
+
+		dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Indetermine", "Haiti Lab");
 		if (dictionary != null) {
 			HIV_INDETERMINATE_ID = dictionary.getId();
 		}
 	}
-	
+
 	@Override
 	protected String getLabNameLine1() {
 		return MessageUtil.getContextualMessage("report.labName.one");
@@ -63,17 +67,15 @@ public class IndicatorCDIHIVLNSP extends IndicatorHIV implements IReportCreator,
 	protected String getLabNameLine2() {
 		return MessageUtil.getContextualMessage("report.labName.two");
 	}
-	
+
 	@Override
 	protected boolean isPositive(String value) {
-		return HIV_POSITIVE1_ID.equals(value) ||
-			HIV_POSITIVE2_ID.equals(value) ||
-			HIV_POSITIVE12_ID.equals(value);
+		return HIV_POSITIVE1_ID.equals(value) || HIV_POSITIVE2_ID.equals(value) || HIV_POSITIVE12_ID.equals(value);
 	}
-	
+
 	@Override
 	protected boolean isIndeterminate(String value) {
 		return HIV_INDETERMINATE_ID.equals(value);
 	}
-	
+
 }

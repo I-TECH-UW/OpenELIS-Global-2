@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.validation.Errors;
 
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IResultSaveService;
 import us.mn.state.health.lims.note.valueholder.Note;
@@ -40,7 +41,7 @@ public class ResultsUpdateDataSet implements IResultSaveService {
 	private List<Referral> savableReferrals = new ArrayList<>();
 	private List<String> referredAnalysisIds = new ArrayList<>();
 	private Analysis previousAnalysis = new Analysis();
-	private ResultsValidation resultValidation = new ResultsValidation();
+	private ResultsValidation resultValidation = SpringContext.getBean(ResultsValidation.class);
 	private List<Note> noteList = new ArrayList<>();
 
 	private final String currentUserId;

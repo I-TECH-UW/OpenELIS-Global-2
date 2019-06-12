@@ -11,12 +11,6 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 public interface SampleHumanService extends BaseObjectService<SampleHuman, String> {
 	void getData(SampleHuman sampleHuman);
 
-	void deleteData(List sampleHumans);
-
-	void updateData(SampleHuman sampleHuman);
-
-	boolean insertData(SampleHuman sampleHuman);
-
 	Provider getProviderForSample(Sample sample);
 
 	Patient getPatientForSample(Sample sample);

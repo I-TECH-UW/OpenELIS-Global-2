@@ -30,13 +30,13 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
 import spring.service.dictionary.DictionaryService;
+import spring.service.localization.LocalizationService;
 import spring.service.sample.SampleService;
 import spring.service.siteinformation.SiteInformationDomainService;
 import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationSideEffects;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
@@ -49,15 +49,15 @@ public class SiteInformationController extends BaseController {
 	@Autowired
 	SiteInformationFormValidator formValidator;
 	@Autowired
-	SiteInformationService siteInformationService;
+	private SiteInformationService siteInformationService;
 	@Autowired
-	spring.service.localization.LocalizationService localizationService;
+	private LocalizationService localizationService;
 	@Autowired
-	SiteInformationDomainService siteInformationDomainService;
+	private SiteInformationDomainService siteInformationDomainService;
 	@Autowired
-	DictionaryService dictionaryService;
+	private DictionaryService dictionaryService;
 	@Autowired
-	SampleService sampleService;
+	private SampleService sampleService;
 
 	@ModelAttribute("form")
 	public SiteInformationForm form(HttpServletRequest request) {
@@ -263,16 +263,15 @@ public class SiteInformationController extends BaseController {
 		String forward = FWD_SUCCESS_INSERT;
 		if (localizationService.languageChanged(localization, english, french)) {
 			Errors errors;
+			localization.setEnglish(english);
+			localization.setFrench(french);
 			try {
-				localization.setEnglish(english);
-				localization.setFrench(french);
 				localizationService.update(localization);
 			} catch (LIMSRuntimeException lre) {
 				errors = new BaseErrors();
 				errors.reject("errors.UpdateException");
 				saveErrors(errors);
 				forward = FWD_FAIL_INSERT;
-
 			}
 		}
 		return forward;
@@ -313,15 +312,7 @@ public class SiteInformationController extends BaseController {
 			siteInformation.setDomain(RESULT_CONFIG_DOMAIN);
 		}
 		try {
-
-			if (newSiteInformation) {
-				siteInformationService.insert(siteInformation);
-			} else {
-				siteInformationService.update(siteInformation);
-			}
-
-			new ConfigurationSideEffects().siteInformationChanged(siteInformation);
-
+			siteInformationService.persistData(siteInformation, newSiteInformation);
 		} catch (LIMSRuntimeException lre) {
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {

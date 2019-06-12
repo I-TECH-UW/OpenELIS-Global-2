@@ -81,7 +81,6 @@ public class LateStartScheduler {
 			scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			List<CronScheduler> schedulers = cronSchedulerService.getAll();
-			// new CronSchedulerDAOImpl().getAllCronSchedules();
 
 			for (CronScheduler schedule : schedulers) {
 				addOrRunSchedule(scheduler, schedule);

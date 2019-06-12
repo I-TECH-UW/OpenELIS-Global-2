@@ -27,6 +27,7 @@ import java.util.Vector;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -34,6 +35,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -73,9 +75,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@Override
 	public Optional<T> get(PK id) {
-		Session session = sessionFactory.getCurrentSession();
-		T object = session.get(classType, id);
-		return Optional.ofNullable(object);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			T object = session.get(classType, id);
+			return Optional.ofNullable(object);
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "get", e);
+		}
 	}
 
 	@Override
@@ -154,16 +160,20 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		Map<String, String> aliases = new HashMap<>();
-
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-			addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(classType);
+			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			}
+			for (String orderProperty : orderProperties) {
+				addOrder(criteria, orderProperty, descending, aliases);
+			}
+			return criteria.list();
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException(
+					"Error in " + this.getClass().getSimpleName() + " " + "getAllMatchingOrdered", e);
 		}
-		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending, aliases);
-		}
-		return criteria.list();
 	}
 
 	@Override
@@ -198,16 +208,20 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		Map<String, String> aliases = new HashMap<>();
-
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-			addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(classType);
+			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			}
+			for (String orderProperty : orderProperties) {
+				addOrder(criteria, orderProperty, descending, aliases);
+			}
+			return criteria.list();
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getAllLikeOrdered",
+					e);
 		}
-		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending, aliases);
-		}
-		return criteria.list();
 	}
 
 	@Override
@@ -286,18 +300,22 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
 		Map<String, String> aliases = new HashMap<>();
-
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-			addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(classType);
+			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			}
+			for (String orderProperty : orderProperties) {
+				addOrder(criteria, orderProperty, descending, aliases);
+			}
+			criteria.setFirstResult(startingRecNo - 1);
+			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			return criteria.list();
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException(
+					"Error in " + this.getClass().getSimpleName() + " " + "getMatchingOrderedPage", e);
 		}
-		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending, aliases);
-		}
-		criteria.setFirstResult(startingRecNo - 1);
-		criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-		return criteria.list();
 	}
 
 	@Override
@@ -335,17 +353,22 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			boolean descending, int startingRecNo) {
 		Map<String, String> aliases = new HashMap<>();
 
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-			addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(classType);
+			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			}
+			for (String orderProperty : orderProperties) {
+				addOrder(criteria, orderProperty, descending, aliases);
+			}
+			criteria.setFirstResult(startingRecNo - 1);
+			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			return criteria.list();
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getLikeOrderedPage",
+					e);
 		}
-		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending, aliases);
-		}
-		criteria.setFirstResult(startingRecNo - 1);
-		criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-		return criteria.list();
 	}
 
 	private void addRestriction(Criteria criteria, String propertyName, Object propertyValue,
@@ -376,16 +399,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			// multi nesting detected, need special consideration to generate multiple
 			// aliases unless there are only 2 levels and the third property is the id field
 			return createMultiNestedAliases(criteria, propertyName, aliases);
-		} else if (dotCount == 1) {
-			// alias needed, one level of nesting is used
-			String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
-			Optional<String> alias = createAlias(nestedProperty, aliases);
-			// alias is new and needs to be added
-			if (alias.isPresent()) {
-				criteria.createAlias(nestedProperty, alias.get());
-				aliases.put(nestedProperty, alias.get());
-			}
-			return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
+		} else if (dotCount == 1 || (dotCount == 2 && propertyName.endsWith(".id"))) {
+			// simple aliasing is required
+			return createSingleNestedAlias(criteria, propertyName, aliases);
 		} else {
 			// no aliasing needed, use the property name as is
 			return propertyName;
@@ -425,6 +441,22 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	private String createRandomAlias() {
 		return RandomStringUtils.randomAlphabetic(RANDOM_ALIAS_LENGTH);
+	}
+
+	private String createSingleNestedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
+		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
+		ClassMetadata metadata = sessionFactory.getClassMetadata(classType);
+		// check if composite-id, which doesn't require aliasing
+		if (nestedProperty.equals(metadata.getIdentifierPropertyName())) {
+			return propertyName;
+		}
+		Optional<String> alias = createAlias(nestedProperty, aliases);
+		// alias is new and needs to be added
+		if (alias.isPresent()) {
+			criteria.createAlias(nestedProperty, alias.get());
+			aliases.put(nestedProperty, alias.get());
+		}
+		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
 	}
 
 	private String createMultiNestedAliases(Criteria criteria, String propertyName, Map<String, String> aliases) {
@@ -500,43 +532,58 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public PK insert(T object) {
-		Session session = sessionFactory.getCurrentSession();
-		return (PK) session.save(object);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			return (PK) session.save(object);
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "insert", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public T save(T object) {
-		Session session = sessionFactory.getCurrentSession();
-		return (T) session.merge(object);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			return (T) session.merge(object);
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "save", e);
+		}
 	}
 
 	@Override
 	public void delete(T object) {
-		Session session = sessionFactory.getCurrentSession();
-		session.delete(object);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			session.delete(object);
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "delete", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Integer getCount() {
 		Integer rowCount = 0;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(classType);
+			criteria.setProjection(Projections.rowCount());
+			List<Long> results = criteria.list();
 
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(classType);
-		criteria.setProjection(Projections.rowCount());
-		List<Long> results = criteria.list();
-
-		if (results != null) {
-			rowCount = results.get(0).intValue();
-		} else {
-			LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
-					"could not count number of objects for class" + classType.getName());
-			rowCount = -1;
+			if (results != null) {
+				rowCount = results.get(0).intValue();
+			} else {
+				LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
+						"could not count number of objects for class" + classType.getName());
+				rowCount = -1;
+			}
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getCount", e);
 		}
-
 		return rowCount;
 	}
 
@@ -546,17 +593,21 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		int start = (Integer.valueOf(id)).intValue();
 		String table = getObjectName();
 
-		List<T> list = new ArrayList<>();
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "from " + table + " t order by t.id where id > " + start;
-		Query query = session.createQuery(sql);
-		query.setFirstResult(0);
-		query.setMaxResults(1);
-		list = query.list();
-		if (list.isEmpty()) {
-			return Optional.empty();
-		} else {
-			return Optional.of(list.get(0));
+		List<T> list;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			String sql = "from " + table + " t order by t.id where id > " + start;
+			Query query = session.createQuery(sql);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
+			list = query.list();
+			if (list.isEmpty()) {
+				return Optional.empty();
+			} else {
+				return Optional.of(list.get(0));
+			}
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getNext", e);
 		}
 
 	}
@@ -567,17 +618,21 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		int start = (Integer.valueOf(id)).intValue();
 		String table = getObjectName();
 
-		List<T> list = new ArrayList<>();
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "from " + table + " t order by t.id desc where id < " + start;
-		Query query = session.createQuery(sql);
-		query.setFirstResult(0);
-		query.setMaxResults(1);
-		list = query.list();
-		if (list.isEmpty()) {
-			return Optional.empty();
-		} else {
-			return Optional.of(list.get(0));
+		List<T> list;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			String sql = "from " + table + " t order by t.id desc where id < " + start;
+			Query query = session.createQuery(sql);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
+			list = query.list();
+			if (list.isEmpty()) {
+				return Optional.empty();
+			} else {
+				return Optional.of(list.get(0));
+			}
+		} catch (HibernateException e) {
+			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getPrevious", e);
 		}
 
 	}

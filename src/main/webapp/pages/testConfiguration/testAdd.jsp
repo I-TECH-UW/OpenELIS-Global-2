@@ -6,7 +6,7 @@
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.Versioning,
          		us.mn.state.health.lims.common.util.SystemConfiguration,
-         		us.mn.state.health.lims.common.services.TypeOfTestResultService" %>
+         		spring.service.typeoftestresult.TypeOfTestResultServiceImpl" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -598,23 +598,23 @@
             $jq("#step2BreadCrumb").hide();
             $jq("#step2Guide").hide();
             makeSortListsReadOnly();
-            if (resultTypeId == '<%= TypeOfTestResultService.ResultType.ALPHA.getId()%>' ||
-                    resultTypeId == '<%= TypeOfTestResultService.ResultType.REMARK.getId()%>') {
+            if (resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.ALPHA.getId()%>' ||
+                    resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.REMARK.getId()%>') {
                 $jq("#sampleTypeSelectionDiv").hide();
                 $jq("#sortTitleDiv").text("Sample type and test sort order");
                 $jq(".confirmShow").show();
                 $jq(".selectShow").hide();
                 $jq("#step2Confirm").show();
                 createJSON();
-            } else if (resultTypeId == '<%= TypeOfTestResultService.ResultType.NUMERIC.getId() %>') {
+            } else if (resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.NUMERIC.getId() %>') {
                 step = "step3Numeric";
                 $jq("#normalRangeDiv").show();
                 $jq("#sampleTypeSelectionDiv").hide();
                 $jq(".resultLimits").show();
                 resetResultLimits();
-            } else if (resultTypeId == '<%= TypeOfTestResultService.ResultType.DICTIONARY.getId()%>' ||
-                    resultTypeId == '<%= TypeOfTestResultService.ResultType.MULTISELECT.getId()%>' ||
-                    resultTypeId == '<%= TypeOfTestResultService.ResultType.CASCADING_MULTISELECT.getId()%>') {
+            } else if (resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.DICTIONARY.getId()%>' ||
+                    resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getId()%>' ||
+                    resultTypeId == '<%= TypeOfTestResultServiceImpl.ResultType.CASCADING_MULTISELECT.getId()%>') {
                 step = 'step3Dictionary';
                 $jq("#sampleTypeSelectionDiv").hide();
                 $jq(".dictionarySelect").show();

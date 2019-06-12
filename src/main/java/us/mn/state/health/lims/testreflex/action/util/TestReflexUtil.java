@@ -68,7 +68,7 @@ public class TestReflexUtil {
 	private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
 	private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
 
-	private TestReflexResolver reflexResolver = new TestReflexResolver();
+	private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
 	private String currentUserId;
 
@@ -423,7 +423,7 @@ public class TestReflexUtil {
 				observation.setPatientId(patientId);
 				observation.setSampleId(sample.getId());
 				observation.setSysUserId(currentUserId);
-				observationService.insertData(observation);
+				observationService.insert(observation);
 			}
 
 			Analysis newAnalysis = reflexAction.getNewAnalysis();
@@ -442,9 +442,9 @@ public class TestReflexUtil {
 				finalResult.setAnalysis(result.getAnalysis());
 				finalResult.setSysUserId(currentUserId);
 				if (finalResult.getId() == null) {
-					resultService.insertData(finalResult);
+					resultService.insert(finalResult);
 				} else {
-					resultService.updateData(finalResult);
+					resultService.update(finalResult);
 				}
 			}
 
@@ -455,8 +455,8 @@ public class TestReflexUtil {
 				currentAnalysis.setSysUserId(currentUserId);
 				currentAnalysis.setTriggeredReflex(Boolean.TRUE);
 
-				analysisService.insertData(newAnalysis, false);
-				analysisService.updateData(currentAnalysis);
+				analysisService.insert(newAnalysis);
+				analysisService.update(currentAnalysis);
 			}
 		}
 	}
@@ -490,7 +490,7 @@ public class TestReflexUtil {
 		for (Analysis analysis : parentAnalysisList) {
 			analysis.setSysUserId(currentUserId);
 			analysis.setTriggeredReflex(Boolean.TRUE);
-			analysisService.updateData(analysis);
+			analysisService.update(analysis);
 		}
 
 	}
@@ -553,9 +553,9 @@ public class TestReflexUtil {
 							cd4Result.setSysUserId(currentUserId);
 
 							if (cd4Result.getId() == null) {
-								resultService.insertData(cd4Result);
+								resultService.insert(cd4Result);
 							} else {
-								resultService.updateData(cd4Result);
+								resultService.update(cd4Result);
 							}
 						}
 					} // else It is a HIV conclusion
