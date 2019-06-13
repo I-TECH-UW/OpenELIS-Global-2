@@ -34,8 +34,6 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @DependsOn({ "springContext" })
 public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, String> implements ResultLimitService {
 
-	private static ResultLimitServiceImpl INSTANCE;
-
 	private final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
 	private String NUMERIC_RESULT_TYPE_ID;
 	private String SELECT_LIST_RESULT_TYPE_IDS;
@@ -61,23 +59,18 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 
 	public ResultLimitServiceImpl() {
 		super(ResultLimit.class);
-		initializeGlobalVariables();
 	}
 
 	@PostConstruct
 	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	public static ResultLimitService getInstance() {
-		return INSTANCE;
+		initializeGlobalVariables();
 	}
 
 	@Override
 	protected ResultLimitDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
-	
+
 	@Override
 	public ResultLimit getResultLimitForTestAndPatient(Test test, Patient patient) {
 		return getResultLimitForTestAndPatient(test.getId(), patient);
@@ -384,8 +377,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getAllResultLimitsForTest(testId);
 	}
-	
-	
 
 	@Override
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {

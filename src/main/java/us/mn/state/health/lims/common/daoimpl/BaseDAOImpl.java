@@ -24,6 +24,15 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Vector;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -58,6 +67,10 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 @Transactional
 public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializable>
 		implements BaseDAO<T, PK>, IActionConstants {
+
+	private enum DBComparison {
+		EQ, LIKE, IN
+	}
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 	private static final int RANDOM_ALIAS_LENGTH = 5;
@@ -159,8 +172,22 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
-		Map<String, String> aliases = new HashMap<>();
 		try {
+//			uncomment for Hibernate version >= 5.2
+//			Session session = this.sessionFactory.getCurrentSession();
+//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+//	        Root<T> root = criteriaQuery.from(this.classType);
+//	        criteriaQuery.select(root);
+//	        for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+//	                    DBComparison.EQ);
+//	        }
+//	        for (String orderProperty : orderProperties) {
+//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+//	        }
+//	        return session.createQuery(criteriaQuery).list();
+			Map<String, String> aliases = new HashMap<>();
 			Session session = sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(classType);
 			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
@@ -207,8 +234,22 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, List<String> orderProperties,
 			boolean descending) {
-		Map<String, String> aliases = new HashMap<>();
 		try {
+//			uncomment for Hibernate version >= 5.2
+//			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+//			Root<T> root = criteriaQuery.from(classType);
+//			criteriaQuery.select(root);
+//
+//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+//				addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue());
+//			}
+//			for (String orderProperty : orderProperties) {
+//				addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+//			}
+//			return entityManager.createQuery(criteriaQuery).getResultList();
+
+			Map<String, String> aliases = new HashMap<>();
 			Session session = sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(classType);
 			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
@@ -299,8 +340,26 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
-		Map<String, String> aliases = new HashMap<>();
 		try {
+//			uncomment for Hibernate version >= 5.2
+//	        Session session = this.sessionFactory.getCurrentSession();
+//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+//	        Root<T> root = criteriaQuery.from(this.classType);
+//	        criteriaQuery.select(root);
+//	        for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+//	                    DBComparison.EQ);
+//	        }
+//	        for (String orderProperty : orderProperties) {
+//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+//	        }
+//	        TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
+//	        typedQuery.setFirstResult(startingRecNo - 1);
+//	        typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+//	        return typedQuery.getResultList();
+
+			Map<String, String> aliases = new HashMap<>();
 			Session session = sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(classType);
 			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
@@ -351,9 +410,26 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	public List<T> getLikeOrderedPage(Map<String, String> propertyValues, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
-		Map<String, String> aliases = new HashMap<>();
-
 		try {
+//			uncomment for Hibernate version >= 5.2
+//	        Session session = this.sessionFactory.getCurrentSession();
+//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+//	        Root<T> root = criteriaQuery.from(this.classType);
+//	        criteriaQuery.select(root);
+//	        for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+//	                    DBComparison.LIKE);
+//	        }
+//	        for (String orderProperty : orderProperties) {
+//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+//	        }
+//	        TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
+//	        typedQuery.setFirstResult(startingRecNo - 1);
+//	        typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+//	        return typedQuery.getResultList();
+
+			Map<String, String> aliases = new HashMap<>();
 			Session session = sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(classType);
 			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
@@ -569,6 +645,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	public Integer getCount() {
 		Integer rowCount = 0;
 		try {
+//			uncomment for Hibernate version >= 5.2
+//	        Session session = this.sessionFactory.getCurrentSession();
+//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//	        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+//	        criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.classType)));
+//	        return session.createQuery(criteriaQuery).getSingleResult().intValue();
+
 			Session session = sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(classType);
 			criteria.setProjection(Projections.rowCount());
@@ -634,7 +717,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getPrevious", e);
 		}
-
 	}
 
 	/**
@@ -649,6 +731,77 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		AbstractEntityPersister persister = (AbstractEntityPersister) sessionFactory.getClassMetadata(classType);
 		String tableName = persister.getTableName();
 		return tableName.substring(tableName.indexOf('.') + 1);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<T> root,
+			String propertyName, Object propertyValue, DBComparison comparison) {
+		Path path;
+		if (this.needsJoins(propertyName)) {
+			// the path leading to the final property
+			String dottedPropertyPath = propertyName.substring(0, propertyName.lastIndexOf('.'));
+			Join finalJoin = this.createJoinsOnDot(root, dottedPropertyPath);
+			String finalPropertyName = this.getFinalPropertyName(propertyName);
+			path = finalJoin.get(finalPropertyName);
+		} else {
+			path = root.get(propertyName);
+		}
+		criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
+
+		switch (comparison) {
+		case EQ:
+			criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
+			break;
+		case LIKE:
+			criteriaQuery.where(criteriaBuilder.like((Expression<String>) path, (String) propertyValue));
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected void addOrder(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<T> root,
+			String orderProperty, boolean descending) {
+		Path path;
+		if (this.needsJoins(orderProperty)) {
+			// the path leading to the final property
+			String dottedPropertyPath = orderProperty.substring(0, orderProperty.lastIndexOf('.'));
+			Join finalJoin = this.createJoinsOnDot(root, dottedPropertyPath);
+			String finalPropertyName = this.getFinalPropertyName(orderProperty);
+			path = finalJoin.get(finalPropertyName);
+		} else {
+			path = root.get(orderProperty);
+		}
+		if (descending) {
+			criteriaQuery.orderBy(criteriaBuilder.desc(path));
+		} else {
+			criteriaQuery.orderBy(criteriaBuilder.asc(path));
+		}
+	}
+
+	private boolean needsJoins(String propertyName) {
+		return propertyName.contains(".");
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Join createJoinsOnDot(From from, String dottedPropertyPath) {
+		String[] propertyPaths = dottedPropertyPath.split("\\.");
+		Join join = null;
+		for (int i = 0; i < propertyPaths.length; ++i) {
+			String propertyPath = propertyPaths[i];
+			join = from.join(propertyPath, JoinType.LEFT);
+		}
+		return join;
+	}
+
+	private String getFinalPropertyName(String propertyName) {
+		int endIndex = propertyName.lastIndexOf('.');
+		if (endIndex > 0) {
+			return propertyName.substring(endIndex + 1);
+		} else {
+			return propertyName;
+		}
 	}
 
 	// end of new methods, below this point are legacy methods

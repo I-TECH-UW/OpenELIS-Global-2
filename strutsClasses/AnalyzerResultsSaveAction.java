@@ -570,7 +570,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				test = testDAO.getTestById(test);
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis

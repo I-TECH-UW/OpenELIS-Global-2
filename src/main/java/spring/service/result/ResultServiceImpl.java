@@ -19,7 +19,6 @@ import spring.service.common.BaseObjectServiceImpl;
 import spring.service.dictionary.DictionaryService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -373,7 +372,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			if (result.getMinNormal() != null && result.getMaxNormal() != null
 					&& !result.getMinNormal().equals(result.getMaxNormal())) {
-				range = ResultLimitServiceImpl.getInstance().getDisplayNormalRange(result.getMinNormal(),
+				range = SpringContext.getBean(ResultLimitService.class).getDisplayNormalRange(result.getMinNormal(),
 						result.getMaxNormal(), String.valueOf(result.getSignificantDigits()), "-");
 			}
 		} else if (includeSelectList

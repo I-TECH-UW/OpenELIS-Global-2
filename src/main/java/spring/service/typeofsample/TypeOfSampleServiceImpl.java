@@ -31,8 +31,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample, String>
 		implements TypeOfSampleService {
 
-	private static TypeOfSampleService INSTANCE;
-
 	private Map<String, List<Test>> sampleIdTestMap = new HashMap<>();
 	private Map<String, String> typeOfSampleIdToNameMap;
 	private Map<String, String> typeOfSampleWellKnownNameToIdMap;
@@ -56,11 +54,6 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	private PanelService panelService;
 
 	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	@PostConstruct
 	private void initializeGlobalVariables() {
 		if (typeOfSampleIdtoTypeOfSampleMap == null) {
 			createTypeOfSampleIdentityMap();
@@ -69,10 +62,6 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
 	TypeOfSampleServiceImpl() {
 		super(TypeOfSample.class);
-	}
-
-	public static TypeOfSampleService getInstance() {
-		return INSTANCE;
 	}
 
 	@Override

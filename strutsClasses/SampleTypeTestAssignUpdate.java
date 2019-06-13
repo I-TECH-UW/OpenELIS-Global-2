@@ -47,7 +47,7 @@ public class SampleTypeTestAssignUpdate extends BaseAction {
         boolean updateTypeOfSample = false;
         String currentUser = getSysUserId(request);
         
-        TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(sampleTypeId);
+        TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTransientTypeOfSampleById(sampleTypeId);
         TypeOfSample deActivateTypeOfSample = null;
         
         //Test test = new TestService(testId).getTest();
@@ -85,7 +85,7 @@ public class SampleTypeTestAssignUpdate extends BaseAction {
         
 //------------------------------------------
         if( !GenericValidator.isBlankOrNull(deactivateSampleTypeId) ){
-        	deActivateTypeOfSample  = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(deactivateSampleTypeId);
+        	deActivateTypeOfSample  = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTransientTypeOfSampleById(deactivateSampleTypeId);
         	deActivateTypeOfSample.setIsActive(false);
         	deActivateTypeOfSample.setSysUserId(currentUser);
         }

@@ -21,7 +21,7 @@ import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.DICT;
 import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.TEST_RESULT;
 
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.ReturningWork;
 
 import spring.service.analyte.AnalyteService;
 import spring.service.observationhistorytype.ObservationHistoryTypeService;
@@ -46,7 +48,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -195,10 +196,20 @@ abstract public class CSVRoutineColumnBuilder {
 		// chunked out only because Eclipse thinks printing really big strings to the
 		// console must be wrong, so it truncates them
 		// System.out.println("===2===\n" + sql.substring(7000));
-		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
-		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
-				ResultSet.CONCUR_READ_ONLY);
-		resultSet = stmt.executeQuery();
+//		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
+//		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
+//				ResultSet.CONCUR_READ_ONLY);
+//		resultSet = stmt.executeQuery();
+		Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+		resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
+
+			@Override
+			public ResultSet execute(Connection connection) throws SQLException {
+				return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
+						.executeQuery();
+			}
+
+		});
 	}
 
 	/**

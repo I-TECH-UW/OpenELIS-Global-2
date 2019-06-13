@@ -20,7 +20,6 @@ import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +110,7 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 	 *         otherwise
 	 */
 	private boolean validateProject() {
-		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr))) {
+		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr).toString())) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
 		}
@@ -137,8 +136,7 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 	}
 
 	@Override
-	protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-			throws Exception, IOException, UnsupportedEncodingException {
+	protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception {
 
 		String currentAccessionNumber = null;
 		String[] splitBase = null;
@@ -168,11 +166,10 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 		}
 	}
 
-	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
-			throws IOException, UnsupportedEncodingException {
+	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException {
 
 		if (splitBase != null) {
-			StringBuffer consolidatedLine = new StringBuffer();
+			StringBuilder consolidatedLine = new StringBuilder();
 			for (String value : splitBase) {
 				consolidatedLine.append(value);
 				consolidatedLine.append(",");
@@ -206,19 +203,19 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
 	 */
 	protected List<Project> getProjectList() {
 		List<Project> projects = new ArrayList<>();
-		Project project = new Project();
-		project.setProjectName("Antiretroviral Study");
-		projects.add(projectService.getProjectByName(project, false, false));
-		project.setProjectName("Antiretroviral Followup Study");
-		projects.add(projectService.getProjectByName(project, false, false));
-		project.setProjectName("Routine HIV Testing");
-		projects.add(projectService.getProjectByName(project, false, false));
-		project.setProjectName("Early Infant Diagnosis for HIV Study");
-		projects.add(projectService.getProjectByName(project, false, false));
-		project.setProjectName("Viral Load Results");
-		projects.add(projectService.getProjectByName(project, false, false));
-		project.setProjectName("Indeterminate Results");
-		projects.add(projectService.getProjectByName(project, false, false));
+		Project curProject = new Project();
+		curProject.setProjectName("Antiretroviral Study");
+		projects.add(projectService.getProjectByName(curProject, false, false));
+		curProject.setProjectName("Antiretroviral Followup Study");
+		projects.add(projectService.getProjectByName(curProject, false, false));
+		curProject.setProjectName("Routine HIV Testing");
+		projects.add(projectService.getProjectByName(curProject, false, false));
+		curProject.setProjectName("Early Infant Diagnosis for HIV Study");
+		projects.add(projectService.getProjectByName(curProject, false, false));
+		curProject.setProjectName("Viral Load Results");
+		projects.add(projectService.getProjectByName(curProject, false, false));
+		curProject.setProjectName("Indeterminate Results");
+		projects.add(projectService.getProjectByName(curProject, false, false));
 		return projects;
 	}
 }

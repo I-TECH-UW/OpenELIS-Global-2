@@ -64,7 +64,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
 	public void initializeGlobalVariables() {
 		USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
-		VARIABLE_SAMPLE_TYPE_ID = TypeOfSampleServiceImpl.getInstance()
+		VARIABLE_SAMPLE_TYPE_ID = SpringContext.getBean(TypeOfSampleServiceImpl.class)
 				.getTypeOfSampleIdForLocalAbbreviation("Variable");
 	}
 

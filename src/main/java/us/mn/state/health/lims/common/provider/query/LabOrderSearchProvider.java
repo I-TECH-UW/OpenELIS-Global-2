@@ -193,7 +193,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx) {
 		String loinc = orc.getOrderType().getIdentifier().toString();
 		String testName = testService.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance()
+		tests.add(new Request(testName, loinc, SpringContext.getBean(TypeOfSampleServiceImpl.class)
 				.getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
@@ -218,14 +218,14 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 			List<Test> tests = testService.getActiveTestsByLoinc(testRequest.getLoinc());
 
 			Test singleTest = tests.get(0);
-			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getInstance()
+			TypeOfSample singleSampleType = SpringContext.getBean(TypeOfSampleServiceImpl.class)
 					.getTypeOfSampleForTest(singleTest.getId());
 			boolean hasSingleSampleType = tests.size() == 1;
 
 			if (tests.size() > 1) {
 				if (!GenericValidator.isBlankOrNull(testRequest.getSampleType())) {
 					for (Test test : tests) {
-						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance()
+						TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
 								.getTypeOfSampleForTest(test.getId());
 						if (typeOfSample.getDescription().equals(testRequest.getSampleType())) {
 							hasSingleSampleType = true;
@@ -246,7 +246,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
 					for (Test test : tests) {
 						testSampleTypeList.add(new TestSampleType(test,
-								TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId())));
+								SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId())));
 					}
 				}
 			}
@@ -268,7 +268,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 			Panel panel = panelService.getPanelByName(panelRequest.getName());
 
 			if (panel != null) {
-				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getInstance()
+				List<TypeOfSample> typeOfSamples = SpringContext.getBean(TypeOfSampleServiceImpl.class)
 						.getTypeOfSampleForPanelId(panel.getId());
 				boolean hasSingleSampleType = typeOfSamples.size() == 1;
 				TypeOfSample singleTypeOfSample = typeOfSamples.get(0);

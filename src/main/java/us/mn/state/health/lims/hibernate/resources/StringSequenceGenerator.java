@@ -16,7 +16,6 @@ public class StringSequenceGenerator extends SequenceStyleGenerator {
 
 	@Override
 	public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
-
 		Long id = (Long) super.generate(session, object);
 		return String.format(numberFormat, id);
 	}

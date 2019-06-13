@@ -29,6 +29,7 @@ import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
@@ -157,7 +158,7 @@ public class TestOrderabilityController extends BaseController {
 			lre.printStackTrace();
 		}
 
-		TypeOfSampleServiceImpl.getInstance().clearCache();
+		SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
 
 		List<TestActivationBean> orderableTestList = createTestList(true);
 		form.setOrderableTestList(orderableTestList);

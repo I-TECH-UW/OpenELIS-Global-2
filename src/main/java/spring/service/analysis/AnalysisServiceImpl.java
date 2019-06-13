@@ -92,10 +92,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 		Test test = getTest();
 		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
-		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId());
+		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId());
 
 		if (typeOfSample != null && typeOfSample.getId()
-				.equals(TypeOfSampleServiceImpl.getInstance().getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+				.equals(SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}
 
