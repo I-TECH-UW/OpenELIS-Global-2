@@ -29,6 +29,7 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Analyzer getAnalyzerByName(String name) {
 		return getMatch("name", name).orElse(null);
 	}

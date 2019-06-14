@@ -73,7 +73,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
 	@PostConstruct
 	public void initializeGlobalVariables() {
 		List<AddressPart> partList = addressPartService.getAll();
-
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
 				ADDRESS_PART_DEPT_ID = addressPart.getId();
@@ -83,6 +82,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 				ADDRESS_PART_VILLAGE_ID = addressPart.getId();
 			}
 		}
+
 	}
 
 	protected String getSysUserId(HttpServletRequest request) {

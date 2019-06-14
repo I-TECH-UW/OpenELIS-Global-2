@@ -70,12 +70,13 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample typeOfSample, boolean ignoreCase) {
 		return baseObjectDAO.getTypeOfSampleByDescriptionAndDomain(typeOfSample, ignoreCase);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getActiveTestsBySampleTypeId(String sampleTypeId, boolean orderableOnly) {
 
 		List<Test> testList = sampleIdTestMap.get(sampleTypeId);
@@ -92,6 +93,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllTestsBySampleTypeId(String sampleTypeId) {
 		List<Test> testList = new ArrayList<>();
 
@@ -106,6 +108,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTransientTypeOfSampleById(String id) {
 		return baseObjectDAO.getTypeOfSampleById(id);
 	}
@@ -123,6 +126,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleForTest(String testId) {
 		if (testIdToTypeOfSampleMap == null) {
 			createTestIdToTypeOfSampleMap();
@@ -188,6 +192,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getTypeOfSampleNameForId(String id) {
 		if (typeOfSampleIdToNameMap == null) {
 			createSampleNameIDMaps();
@@ -197,6 +202,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getTypeOfSampleIdForLocalAbbreviation(String name) {
 		if (typeOfSampleWellKnownNameToIdMap == null) {
 			createSampleNameIDMaps();
@@ -218,6 +224,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSample> getTypeOfSampleForPanelId(String id) {
 		if (panelIdToTypeOfSampleMap == null) {
 			panelIdToTypeOfSampleMap = new HashMap<>();
@@ -240,72 +247,86 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSample typeOfSample) {
 		getBaseObjectDAO().getData(typeOfSample);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getNameForTypeOfSampleId(String id) {
 		return getBaseObjectDAO().getNameForTypeOfSampleId(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTypeOfSamples() {
 		return baseObjectDAO.getAllTypeOfSamples();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() {
 		return getBaseObjectDAO().getAllTypeOfSamplesSortOrdered();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTypesForDomain(SampleDomain domain) {
 		return getBaseObjectDAO().getTypesForDomain(domain);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSampleRecord(String id) {
 		return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSampleCount() {
 		return getBaseObjectDAO().getTotalTypeOfSampleCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSampleRecord(String id) {
 		return getBaseObjectDAO().getNextTypeOfSampleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) {
 		return getBaseObjectDAO().getTypeOfSampleById(typeOfSampleId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getSampleTypeFromTest(Test test) {
 		return getBaseObjectDAO().getSampleTypeFromTest(test);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) {
 		return getBaseObjectDAO().getTypesForDomainBySortOrder(human);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSamples(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTypeOfSamples(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTypes(String filter, String domain) {
 		return getBaseObjectDAO().getTypes(filter, domain);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain) {
 		return getBaseObjectDAO().getTypeOfSampleByLocalAbbrevAndDomain(localAbbrev, domain);
 	}

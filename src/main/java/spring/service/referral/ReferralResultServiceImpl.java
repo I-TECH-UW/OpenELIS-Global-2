@@ -26,17 +26,19 @@ public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralRes
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<ReferralResult> getReferralResultsForReferral(String id) {
 		return baseObjectDAO.getAllMatchingOrdered("referralId", id, "id", false);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferralResult getReferralResultById(String referralResultId) {
 		return getBaseObjectDAO().getReferralResultById(referralResultId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReferralResult> getReferralsByResultId(String resultId) {
 		return getBaseObjectDAO().getReferralsByResultId(resultId);
 	}

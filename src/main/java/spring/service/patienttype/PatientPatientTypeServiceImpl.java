@@ -28,12 +28,13 @@ public class PatientPatientTypeServiceImpl extends BaseObjectServiceImpl<Patient
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public PatientPatientType getPatientPatientTypeForPatient(String id) {
 		return getMatch("patientId", id).orElse(null);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientType getPatientTypeForPatient(String id) {
 		PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
 

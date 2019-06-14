@@ -158,6 +158,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Organization organization) throws LIMSRuntimeException {
 		try {
 			Organization org = sessionFactory.getCurrentSession().get(Organization.class, organization.getId());
@@ -177,6 +178,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllOrganizations() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -195,6 +197,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfOrganizations(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -221,6 +224,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 //	 bugzilla 2372
 	@Override
+	@Transactional(readOnly = true)
 	public List getPagesOfSearchedOrganizations(int startingRecNo, String searchString) throws LIMSRuntimeException {
 		List list = new Vector();
 		String wildCard = "*";
@@ -273,6 +277,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getOrganizations(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -294,6 +299,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextOrganizationRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Organization", Organization.class);
@@ -301,12 +307,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousOrganizationRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Organization", Organization.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
 			throws LIMSRuntimeException {
 		String sql = null;
@@ -343,6 +351,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	// bugzilla 2069
 	@Override
+	@Transactional(readOnly = true)
 	public Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase)
 			throws LIMSRuntimeException {
 		String sql = null;
@@ -379,12 +388,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalOrganizationCount() throws LIMSRuntimeException {
 		return getTotalCount("Organization", Organization.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -407,6 +418,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -476,6 +488,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 //	 bugzilla 2372 get total searched results
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSearchedOrganizationCount(String searchString) throws LIMSRuntimeException {
 
 		String wildCard = "*";
@@ -532,6 +545,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	 */
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String... typeNames) {
 		String sql = null;
 		try {
@@ -545,8 +559,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			@SuppressWarnings("unchecked")
 			List<Organization> orgs = query.list();
 
-			session.flush();
-			session.clear();
+//			session.flush();
+//			session.clear();
 
 			return orgs;
 		} catch (Exception e) {
@@ -556,6 +570,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName) {
 
 		try {
@@ -577,6 +592,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Organization getOrganizationById(String organizationId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(organizationId)) {
 			String sql = "from Organization o where o.id = :organizationId";
@@ -610,6 +626,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(parentId)) {
 			return new ArrayList<>();

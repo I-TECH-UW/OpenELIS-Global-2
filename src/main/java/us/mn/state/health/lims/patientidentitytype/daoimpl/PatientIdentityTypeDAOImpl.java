@@ -44,6 +44,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
 		List<PatientIdentityType> list = null;
 		try {
@@ -106,6 +107,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
 		String sql = "from PatientIdentityType t where t.identityType = :identityType";
 

@@ -133,6 +133,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
 		try {
 			PatientType cityvns = sessionFactory.getCurrentSession().get(PatientType.class, patientType.getId());
@@ -150,6 +151,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPatientTypes() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -169,6 +171,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -207,6 +210,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getPatientTypes(String description) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -226,6 +230,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "PatientType", PatientType.class);
@@ -233,12 +238,14 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "PatientType", PatientType.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException {
 		try {
 			String sql = "from PatientType l where l.type = :param";
@@ -262,11 +269,13 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException {
 		return getTotalCount("PatientType", PatientType.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		int currentId = (Integer.valueOf(id)).intValue();
@@ -292,6 +301,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		int currentId = (Integer.valueOf(id)).intValue();

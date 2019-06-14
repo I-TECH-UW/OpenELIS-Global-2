@@ -145,6 +145,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 		try {
 			SampleHuman sampHuman = sessionFactory.getCurrentSession().get(SampleHuman.class, sampleHuman.getId());
@@ -178,6 +179,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
 		try {
@@ -200,6 +202,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
 		Patient patient = null;
 		try {
@@ -216,6 +219,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "select provider from Provider as provider, SampleHuman as sampleHuman where sampleHuman.providerId = provider.id and sampleHuman.sampleId = :sId";
@@ -234,6 +238,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException {
 
 		List<Sample> samples;

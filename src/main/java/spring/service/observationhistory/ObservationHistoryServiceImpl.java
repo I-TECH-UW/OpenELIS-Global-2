@@ -39,7 +39,8 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 			this.dbName = dbName;
 		}
 
-		public String getDatabaseName() {
+		@Transactional(readOnly = true)
+	public String getDatabaseName() {
 			return dbName;
 		}
 
@@ -76,12 +77,13 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getAll(Patient patient, Sample sample) {
 		return baseObjectDAO.getAll(patient, sample);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getObservationTypeIdForType(ObservationType type) {
 		if (observationTypeToIdMap.isEmpty()) {
 			initialize();
@@ -90,6 +92,7 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationsByTypeAndValue(ObservationType type, String value) {
 		if (observationTypeToIdMap.isEmpty()) {
 			initialize();
@@ -104,6 +107,7 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getValueForSample(ObservationType type, String sampleId) {
 		ObservationHistory observation = getObservationForSample(type, sampleId);
 		return getValueForObservation(observation);
@@ -124,18 +128,21 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getMostRecentValueForPatient(ObservationType type, String patientId) {
 		ObservationHistory observation = getLastObservationForPatient(type, patientId);
 		return getValueForObservation(observation);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getRawValueForSample(ObservationType type, String sampleId) {
 		ObservationHistory observation = getObservationForSample(type, sampleId);
 		return observation != null ? observation.getValue() : null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getObservationForSample(ObservationType type, String sampleId) {
 		if (observationTypeToIdMap.isEmpty()) {
 			initialize();
@@ -151,6 +158,7 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getLastObservationForPatient(ObservationType type, String patientId) {
 		if (observationTypeToIdMap.isEmpty()) {
 			initialize();
@@ -181,44 +189,52 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getById(ObservationHistory observation) {
 		return getBaseObjectDAO().getById(observation);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
 		return getBaseObjectDAO().getAll(patient, sample, observationHistoryTypeId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId,
 			String observationHistoryTypeId) {
 		return getBaseObjectDAO().getObservationHistoriesBySampleIdAndType(sampleId, observationHistoryTypeId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesByPatientIdAndType(String patientId,
 			String observationHistoryTypeId) {
 		return getBaseObjectDAO().getObservationHistoriesByPatientIdAndType(patientId, observationHistoryTypeId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue) {
 		return getBaseObjectDAO().getObservationHistoryByDictonaryValues(dictionaryValue);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId) {
 		return getBaseObjectDAO().getObservationHistoriesBySampleItemId(sampleItemId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesByValueAndType(String value, String typeId,
 			String valueType) {
 		return getBaseObjectDAO().getObservationHistoriesByValueAndType(value, typeId, valueType);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) {
 		return getBaseObjectDAO().getObservationHistoriesBySampleId(sampleId);
 	}

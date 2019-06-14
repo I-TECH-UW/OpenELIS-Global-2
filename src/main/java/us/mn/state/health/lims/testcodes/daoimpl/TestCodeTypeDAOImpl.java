@@ -35,6 +35,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
 		String sql = "from TestCodeType et where et.schemaName = :name";
 
@@ -51,6 +52,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
 		String sql = "from TestCodeType et where et.id = :id";
 

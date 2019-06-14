@@ -101,6 +101,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 

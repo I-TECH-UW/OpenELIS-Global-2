@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisServiceImpl;
@@ -52,7 +53,8 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 			DBCode = dbCode;
 		}
 
-		public String getDBCode() {
+		@Transactional(readOnly = true)
+	public String getDBCode() {
 			return DBCode;
 		}
 	}
@@ -128,12 +130,14 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		return baseObjectDAO;
 	}
 
+	@Transactional(readOnly = true)
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
 			boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
 				EncodeContext.HTML);
 	}
 
+	@Transactional(readOnly = true)
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
 			boolean excludeExternPrefix, EncodeContext context) {
 		boolean includeNoneConformity = false;
@@ -212,11 +216,13 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		return notes;
 	}
 
+	@Transactional(readOnly = true)
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
 	}
 
+	@Transactional(readOnly = true)
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix, EncodeContext context) {
 		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
@@ -258,6 +264,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		return builder.toString();
 	}
 
+	@Transactional(readOnly = true)
 	public String getNotesAsString(String prefix, String noteSeparator) {
 		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
@@ -280,6 +287,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		return builder.toString();
 	}
 
+	@Transactional(readOnly = true)
 	public Note getMostRecentNoteFilteredBySubject(String filter) {
 		List<Note> noteList;
 		if (GenericValidator.isBlankOrNull(filter)) {
@@ -367,11 +375,13 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Note getData(String noteId) {
 		return getBaseObjectDAO().getData(noteId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("referenceId", note.getReferenceId());
@@ -381,17 +391,20 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType,
 			String referenceTableId) {
 		return getBaseObjectDAO().getNotesInDateRangeAndType(lowDate, highDate, noteType, referenceTableId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllNotesByRefIdRefTable(Note note) {
 		return getBaseObjectDAO().getAllNotesByRefIdRefTable(note);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("referenceId", refId);
@@ -400,12 +413,14 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
 			List<String> filter) {
 		return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId, filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("referenceId", refId);

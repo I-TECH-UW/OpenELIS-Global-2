@@ -30,7 +30,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TestResult> getAllActiveTestResultsPerTest(Test test) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		List<String> orderProperties = new ArrayList<>();
@@ -42,7 +42,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TestResult> getActiveTestResultsByTest(String testId) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("test.id", testId);
@@ -51,43 +51,50 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public TestResult getTestResultsByTestAndDictonaryResult(String id, String value) {
 		return baseObjectDAO.getTestResultsByTestAndDictonaryResult(id, value);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestResult testResult) {
 		getBaseObjectDAO().getData(testResult);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestResultRecord(String id) {
 		return getBaseObjectDAO().getNextTestResultRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestResult getTestResultById(TestResult testResult) {
 		return getBaseObjectDAO().getTestResultById(testResult);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestResults(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestResultRecord(String id) {
 		return getBaseObjectDAO().getPreviousTestResultRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestResults() {
 		return getBaseObjectDAO().getAllTestResults();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
 		return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
 	}

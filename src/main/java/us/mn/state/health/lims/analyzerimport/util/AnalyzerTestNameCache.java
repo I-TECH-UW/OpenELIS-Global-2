@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analyzer.AnalyzerService;
 import spring.service.analyzerimport.AnalyzerTestMappingService;
@@ -41,23 +39,22 @@ public class AnalyzerTestNameCache {
 			.getBean(AnalyzerTestMappingService.class);
 	protected TestService testService = SpringContext.getBean(TestService.class);
 
-	public static final String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
-	public static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
-	public static final String FACSCALIBUR = "Facscalibur";
-	public static final String EVOLIS = "Evolis";
-	public static final String COBAS_TAQMAN = "Cobas Taqman";
-	public static final String FACSCANTO = "FacsCanto";
-	public static final String COBAS_DBS = "CobasDBS";
-	public static final String COBAS_C311 = "Cobas C311";
 	private static final Object lock = new Object();
-	private static final HashMap<String, Map<String, MappedTestName>> analyzerNameToTestNameMap = new HashMap<>();
 	private static AnalyzerTestNameCache instance;
-	private static Map<String, String> analyzerNameToIdMap;
-	private static Map<String, String> requestTODBName = new HashMap<>();
-	private static boolean isMapped = false;
+	public final static String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
+	public final static String COBAS_INTEGRA400_NAME = "Cobas Integra";
+	public final static String FACSCALIBUR = "Facscalibur";
+	public final static String EVOLIS = "Evolis";
+	public final static String COBAS_TAQMAN = "Cobas Taqman";
+	public final static String FACSCANTO = "FacsCanto";
+	public final static String COBAS_DBS = "CobasDBS";
+	public final static String COBAS_C311 = "Cobas C311";
+	private final HashMap<String, Map<String, MappedTestName>> analyzerNameToTestNameMap = new HashMap<>();
+	private Map<String, String> analyzerNameToIdMap;
+	private Map<String, String> requestTODBName = new HashMap<>();
+	private boolean isMapped = false;
 
-	@PostConstruct
-	private void initialize() {
+	private AnalyzerTestNameCache() {
 		requestTODBName.put("sysmex", SYSMEX_XT2000_NAME);
 		requestTODBName.put("cobas_integra", COBAS_INTEGRA400_NAME);
 		requestTODBName.put("facscalibur", FACSCALIBUR);

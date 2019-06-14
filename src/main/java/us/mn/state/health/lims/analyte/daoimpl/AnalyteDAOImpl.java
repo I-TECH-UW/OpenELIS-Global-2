@@ -312,6 +312,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
 	// bugzilla 1367 added ignoreCase
 	@Override
+	@Transactional(readOnly = true)
 	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException {
 		try {
 

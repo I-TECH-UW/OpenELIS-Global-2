@@ -40,6 +40,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
 		List<ResultInventory> resultInventories;
 		try {
@@ -144,6 +145,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(ResultInventory resultInventory) throws LIMSRuntimeException {
 		try {
 			ResultInventory tmpResultInventory = sessionFactory.getCurrentSession().get(ResultInventory.class,
@@ -163,6 +165,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
 		List<ResultInventory> resultInventories = null;
 		try {
@@ -198,6 +201,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException {
 		try {
 			ResultInventory re = sessionFactory.getCurrentSession().get(ResultInventory.class, resultInventory.getId());

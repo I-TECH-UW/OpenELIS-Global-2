@@ -46,6 +46,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<CityStateZip> getCities(String filter) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 
@@ -79,6 +80,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CityStateZip> getZipCodesByCity(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
@@ -119,6 +121,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CityStateZip> getCitiesByZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
@@ -152,6 +155,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CityStateZip> getAllStateCodes() throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
@@ -180,6 +184,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		CityStateZip csz = null;
 		try {
@@ -207,6 +212,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public CityStateZip getState(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
@@ -244,6 +250,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	// bugzilla 1765
 	@Override
+	@Transactional(readOnly = true)
 	public CityStateZip getCity(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
@@ -281,6 +288,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	// bugzilla 1765
 	@Override
+	@Transactional(readOnly = true)
 	public CityStateZip getZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		CityStateZip csz = null;
@@ -397,6 +405,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	// bugzilla 1765 - validate city state zip combination
 	@Override
+	@Transactional(readOnly = true)
 	public List<CityStateZip> getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip)
 			throws LIMSRuntimeException {
 
@@ -603,6 +612,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 	// bugzilla 2393
 	@Override
+	@Transactional(readOnly = true)
 	public String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {
 		String countyCode = null;
 		try {

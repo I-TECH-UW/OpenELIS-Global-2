@@ -67,7 +67,6 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 		return login;
 	}
 
-	@Transactional
 	private void inferExtraData(Login login) {
 		login.setSystemUserId(baseObjectDAO.getSystemUserId(login));
 		login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
@@ -91,7 +90,6 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	@Transactional
 	public void hashPassword(Login login, String newPassword) {
 		PasswordUtil passUtil = new PasswordUtil();
 		login.setPassword(passUtil.hashPassword(newPassword));
@@ -131,6 +129,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
+	@Transactional
 	public int getPasswordExpiredDayNo(Login login) {
 		return getBaseObjectDAO().getPasswordExpiredDayNo(login);
 	}
@@ -142,6 +141,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
+	@Transactional
 	public int getSystemUserId(Login login) {
 		return getBaseObjectDAO().getSystemUserId(login);
 	}

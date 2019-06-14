@@ -19,6 +19,7 @@ package us.mn.state.health.lims.userrole.daoimpl;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -207,22 +208,22 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		return getPreviousRecord(id, "UserRole", UserRole.class);
 //	}
 
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
-//		List<String> userRoles;
-//
-//		try {
-//			String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
-//			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
-//			query.setInteger("userId", Integer.parseInt(userId));
-//			userRoles = query.list();
-//		} catch (Exception e) {
-//			LogEvent.logError("UserRoleDAOImpl", "getUserRolesForUser()", e.toString());
-//			throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
-//		}
-//		return userRoles;
-//	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
+		List<String> userRoles;
+
+		try {
+			String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			query.setInteger("userId", Integer.parseInt(userId));
+			userRoles = query.list();
+		} catch (Exception e) {
+			LogEvent.logError("UserRoleDAOImpl", "getUserRolesForUser()", e.toString());
+			throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
+		}
+		return userRoles;
+	}
 
 	@Override
 	public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException {

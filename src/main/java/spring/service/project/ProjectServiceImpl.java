@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -26,52 +27,62 @@ public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> i
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Project project) {
 		getBaseObjectDAO().getData(project);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfProjects(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfProjects(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousProjectRecord(String id) {
 		return getBaseObjectDAO().getPreviousProjectRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalProjectCount() {
 		return getBaseObjectDAO().getTotalProjectCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) {
 		return getBaseObjectDAO().getProjectByLocalAbbreviation(project, activeOnly);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextProjectRecord(String id) {
 		return getBaseObjectDAO().getNextProjectRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectById(String id) {
 		return getBaseObjectDAO().getProjectById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getProjects(String filter, boolean activeOnly) {
 		return getBaseObjectDAO().getProjects(filter, activeOnly);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Project> getAllProjects() {
 		return getBaseObjectDAO().getAllProjects();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly) {
 		return getBaseObjectDAO().getProjectByName(project, ignoreCase, activeOnly);
 	}

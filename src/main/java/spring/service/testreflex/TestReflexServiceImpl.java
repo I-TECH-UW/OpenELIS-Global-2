@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.test.TestServiceImpl;
@@ -30,42 +31,50 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestReflex testReflex) {
 		getBaseObjectDAO().getData(testReflex);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestReflexs(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTestReflexs(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestReflexesByTestResult(TestResult testResult) {
 		return getBaseObjectDAO().getTestReflexesByTestResult(testResult);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestReflexRecord(String id) {
 		return getBaseObjectDAO().getPreviousTestReflexRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) {
 		return getBaseObjectDAO().getTestReflexsByTestAndFlag(testId, flag);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestReflexRecord(String id) {
 		return getBaseObjectDAO().getNextTestReflexRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestReflexCount() {
 		return getBaseObjectDAO().getTotalTestReflexCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestReflexs() {
 		return getBaseObjectDAO().getAllTestReflexs();
 	}
@@ -76,16 +85,19 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag) {
 		return getBaseObjectDAO().getFlaggedTestReflexesByTestResult(testResult, flag);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte) {
 		return getBaseObjectDAO().getTestReflexesByTestResultAndTestAnalyte(testResult, testAnalyte);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId,
 			String testId) {
 		return getBaseObjectDAO().getTestReflexsByTestResultAnalyteTest(testResultId, analyteId, testId);

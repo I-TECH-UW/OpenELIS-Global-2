@@ -140,8 +140,10 @@ public class AnalyzerResultsController extends BaseController {
 
 	private TestReflexUtil reflexUtil = new TestReflexUtil();
 
-	private static Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
-	static {
+	private Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
+
+	@PostConstruct
+	public void InitializeGlobalVariables() {
 		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_INTEGRA400_NAME, "banner.menu.results.cobas.integra");
 		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, "banner.menu.results.sysmex");
 		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCALIBUR, "banner.menu.results.facscalibur");
@@ -966,7 +968,8 @@ public class AnalyzerResultsController extends BaseController {
 				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
+						.getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
@@ -1199,7 +1202,7 @@ public class AnalyzerResultsController extends BaseController {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = new ResultLimitServiceImpl()
+			ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class)
 					.getResultLimitForTestAndPatient(resultItem.getTestId(), patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

@@ -27,7 +27,7 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
 		return baseObjectDAO.getAllMatching("compoundId.targetId", organizationId);
 	}

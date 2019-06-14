@@ -44,6 +44,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
 	// bugzilla 1942
 	@Override
+	@Transactional(readOnly = true)
 	public StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) throws LIMSRuntimeException {
 
 		try {
@@ -178,6 +179,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @throws LIMSRuntimeException
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
 
 		try {
@@ -203,6 +205,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @throws LIMSRuntimeException
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllStatusOfSamples() throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -230,6 +233,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @throws LIMSRuntimeException
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -288,6 +292,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @throws LIMSRuntimeException
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextStatusOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "StatusOfSample", StatusOfSample.class);
@@ -302,6 +307,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @throws LIMSRuntimeException
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousStatusOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "StatusOfSample", StatusOfSample.class);
@@ -314,6 +320,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 *
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException {
 		return getTotalCount("StatusOfSample", StatusOfSample.class);
 	}
@@ -328,6 +335,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 * @return List
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		int currentId = (Integer.valueOf(id)).intValue();
@@ -372,6 +380,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	 *
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		int currentId = (Integer.valueOf(id)).intValue();

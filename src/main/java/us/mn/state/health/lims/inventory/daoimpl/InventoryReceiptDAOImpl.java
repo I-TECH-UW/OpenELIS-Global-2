@@ -40,6 +40,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException {
 		List<InventoryReceipt> inventoryReceipts;
 		try {
@@ -131,6 +132,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
 		try {
 			InventoryReceipt tmpInventoryReceipt = sessionFactory.getCurrentSession().get(InventoryReceipt.class,
@@ -149,6 +151,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InventoryReceipt getInventoryReceiptById(String idString) throws LIMSRuntimeException {
 		InventoryReceipt data = null;
 		try {
@@ -164,6 +167,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InventoryReceipt getInventoryReceiptByInventoryItemId(String id) throws LIMSRuntimeException {
 		InventoryReceipt inventory = null;
 

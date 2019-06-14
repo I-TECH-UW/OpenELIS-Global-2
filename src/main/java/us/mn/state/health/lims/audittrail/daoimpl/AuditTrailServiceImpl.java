@@ -1213,6 +1213,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @return xml string
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getXML(String table, String id) throws LIMSRuntimeException {
 //		org.hibernate.Session session = sessionFactory.getCurrentSession();
 //		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
@@ -1247,6 +1248,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @return xml string
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getXMLData(String table, String id) throws LIMSRuntimeException {
 //		StringBuffer xml;
 //
@@ -1274,11 +1276,13 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @return list of history objects
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
 		return getHistoryByRefIdAndRefTableId(history.getReferenceId(), history.getReferenceTable());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
 		List list;
 
@@ -1301,6 +1305,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
 			throws LIMSRuntimeException {
 		String sql = "from History h where h.referenceTable = :tableId and (h.timestamp between :start and :end)  order by h.referenceId, h.timestamp desc";
@@ -1329,6 +1334,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @return list of history objects
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException {
 		List list;
 

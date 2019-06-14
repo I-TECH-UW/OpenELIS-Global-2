@@ -679,7 +679,7 @@ public class ReferredOutTestsController extends BaseController {
 		Test test = testService.get(referredTest.getReferredTestId());
 		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		ResultLimit limit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(test, patient);
+		ResultLimit limit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(test, patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
 		result.setGrouping(grouping);

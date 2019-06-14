@@ -36,42 +36,50 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemUser systemUser) {
 		getBaseObjectDAO().getData(systemUser);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSystemUsers(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfSystemUsers(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllSystemUsers() {
 		return getBaseObjectDAO().getAllSystemUsers();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSystemUserRecord(String id) {
 		return getBaseObjectDAO().getNextSystemUserRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSystemUserRecord(String id) {
 		return getBaseObjectDAO().getPreviousSystemUserRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSystemUserCount() {
 		return getBaseObjectDAO().getTotalSystemUserCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SystemUser getDataForLoginUser(String name) {
 		return getBaseObjectDAO().getDataForLoginUser(name);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SystemUser getUserById(String userId) {
 		return getBaseObjectDAO().getUserById(userId);
 	}

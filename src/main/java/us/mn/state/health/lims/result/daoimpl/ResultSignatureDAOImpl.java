@@ -127,6 +127,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
 			ResultSignature tmpResultSignature = sessionFactory.getCurrentSession().get(ResultSignature.class,
@@ -146,6 +147,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
 		List<ResultSignature> resultSignatures = null;
 		try {
@@ -181,6 +183,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
 			ResultSignature re = sessionFactory.getCurrentSession().get(ResultSignature.class, resultSignature.getId());
@@ -195,6 +198,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {
 		if (resultList.isEmpty()) {
 			return new ArrayList<>();

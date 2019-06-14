@@ -52,6 +52,7 @@ public class TestUsageBacklogImpl extends Thread implements TestUsageBacklog {
 	private AnalysisService analysisService;
 	@Autowired
 	private ReportQueueTypeService reportQueueTypeService;
+
 	private static String TEST_UTALIZATION_ID;
 
 	@PostConstruct

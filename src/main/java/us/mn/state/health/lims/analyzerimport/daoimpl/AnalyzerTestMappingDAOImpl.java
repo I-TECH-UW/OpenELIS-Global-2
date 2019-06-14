@@ -32,6 +32,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 
 	public AnalyzerTestMappingDAOImpl() {
 		super(AnalyzerTestMapping.class);
+		defaultSortOrder = "testId";
 	}
 
 //	@Override

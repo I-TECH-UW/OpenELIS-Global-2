@@ -178,6 +178,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
 			Dictionary d = sessionFactory.getCurrentSession().get(Dictionary.class, dictionary.getId());
@@ -310,6 +311,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	// this is for autocomplete
 	// modified for 2062
 	@Override
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String categoryFilter)
 			throws LIMSRuntimeException {
 		try {
@@ -375,6 +377,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String categoryName)
 			throws LIMSRuntimeException {
 		List<Dictionary> entries = getDictionaryEntrysByCategoryAbbreviation("categoryName", categoryName, false);
@@ -387,6 +390,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	 *      boolean)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
 			boolean orderByDictEntry) throws LIMSRuntimeException {
 		try {
@@ -702,6 +706,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
 		try {
 			Dictionary dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, dictionaryId);
@@ -753,6 +758,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
 		String sql = "from Dictionary d where d.id = :id";
 		try {

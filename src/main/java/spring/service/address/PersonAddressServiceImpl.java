@@ -29,12 +29,13 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<PersonAddress> getAddressPartsByPersonId(String personId) {
 		return baseObjectDAO.getAllMatching("compoundId.targetId", personId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) {
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("compoundId.targetId", personId);

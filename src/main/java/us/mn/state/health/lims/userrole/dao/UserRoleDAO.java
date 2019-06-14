@@ -18,6 +18,7 @@
 package us.mn.state.health.lims.userrole.dao;
 
 import java.util.Collection;
+import java.util.List;
 
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -47,5 +48,7 @@ public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 	public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException;
 
 	public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException;
+
+	List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
 
 }

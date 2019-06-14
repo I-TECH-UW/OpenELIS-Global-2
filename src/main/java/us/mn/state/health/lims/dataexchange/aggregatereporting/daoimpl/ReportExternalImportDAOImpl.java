@@ -40,6 +40,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
 			throws LIMSRuntimeException {
 		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
@@ -106,6 +107,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getUniqueSites() throws LIMSRuntimeException {
 		String sql = "select distinct sending_site from clinlims.report_external_import ";
 		try {
@@ -122,6 +124,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
 			throws LIMSRuntimeException {
 		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
@@ -146,6 +149,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
 			throws LIMSRuntimeException {
 		String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";

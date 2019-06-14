@@ -324,27 +324,32 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(PermissionModule permissionModule) {
 		getActivePermissionModule().getData(permissionModule);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModules() {
 		return getActivePermissionModule().getAllPermissionModules();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPermissionModuleCount() {
 		return getActivePermissionModule().getTotalPermissionModuleCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPermissionModules(int startingRecNo) {
 		return getActivePermissionModule().getPageOfPermissionModules(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPermissionModuleRecord(String id) {
 		return getActivePermissionModule().getNextPermissionModuleRecord(id);
 	}
@@ -355,6 +360,7 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPermissionModuleRecord(String id) {
 		return getActivePermissionModule().getPreviousPermissionModuleRecord(id);
 	}

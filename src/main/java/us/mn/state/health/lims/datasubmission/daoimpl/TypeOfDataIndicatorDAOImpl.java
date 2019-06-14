@@ -22,6 +22,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 		try {
 			TypeOfDataIndicator typeOfIndicatorClone = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class,
@@ -41,6 +42,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() throws LIMSRuntimeException {
 		List<TypeOfDataIndicator> list;
 		try {
@@ -58,6 +60,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException {
 		try {
 			TypeOfDataIndicator dataValue = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class, id);
@@ -125,18 +128,21 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
 		// TODO Auto-generated method stub
 		return null;

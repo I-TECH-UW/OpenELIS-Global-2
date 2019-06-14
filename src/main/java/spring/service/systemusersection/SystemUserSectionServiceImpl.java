@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -26,37 +27,44 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemUserSection systemUserSection) {
 		getBaseObjectDAO().getData(systemUserSection);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllSystemUserSections() {
 		return getBaseObjectDAO().getAllSystemUserSections();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSystemUserSections(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfSystemUserSections(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSystemUserSectionRecord(String id) {
 		return getBaseObjectDAO().getNextSystemUserSectionRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSystemUserSectionCount() {
 		return getBaseObjectDAO().getTotalSystemUserSectionCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSystemUserSectionRecord(String id) {
 		return getBaseObjectDAO().getPreviousSystemUserSectionRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllSystemUserSectionsBySystemUserId(int systemUserId) {
 		return getBaseObjectDAO().getAllSystemUserSectionsBySystemUserId(systemUserId);
 	}

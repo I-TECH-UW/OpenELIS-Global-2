@@ -87,6 +87,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Sample getSampleByAccessionNumber(String labNumber) {
 		return getMatch("accessionNumber", labNumber).orElse(null);
 	}
@@ -99,13 +100,13 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesReceivedOn(String recievedDate) {
 		return sampleDAO.getSamplesReceivedOn(recievedDate);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesForPatient(String patientID) {
 		return sampleHumanService.getSamplesForPatient(patientID);
 	}
@@ -115,6 +116,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	 *
 	 * @return The date of when it was completed, null if it was not yet completed
 	 */
+	@Transactional(readOnly = true)
 	public Date getCompletedDate() {
 		Date date = null;
 		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
@@ -138,6 +140,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 				.equals(analysis.getStatusId());
 	}
 
+	@Transactional(readOnly = true)
 	public Timestamp getOrderedDate() {
 		if (sample == null) {
 			return null;
@@ -151,28 +154,34 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public String getAccessionNumber() {
 		return sample.getAccessionNumber();
 	}
 
+	@Transactional(readOnly = true)
 	public String getReceivedDateForDisplay() {
 		return sample.getReceivedDateForDisplay();
 	}
 
+	@Transactional(readOnly = true)
 	public String getTwoYearReceivedDateForDisplay() {
 		String fourYearDate = getReceivedDateForDisplay();
 		int lastSlash = fourYearDate.lastIndexOf("/");
 		return fourYearDate.substring(0, lastSlash + 1) + fourYearDate.substring(lastSlash + 3);
 	}
 
+	@Transactional(readOnly = true)
 	public String getReceivedDateWithTwoYearDisplay() {
 		return DateUtil.convertTimestampToTwoYearStringDate(sample.getReceivedTimestamp());
 	}
 
+	@Transactional(readOnly = true)
 	public String getReceivedTimeForDisplay() {
 		return sample.getReceivedTimeForDisplay();
 	}
 
+	@Transactional(readOnly = true)
 	public String getReceived24HourTimeForDisplay() {
 		return sample.getReceived24HourTimeForDisplay();
 	}
@@ -181,26 +190,32 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		return sample != null && sample.getIsConfirmation();
 	}
 
+	@Transactional(readOnly = true)
 	public Sample getSample() {
 		return sample;
 	}
 
+	@Transactional(readOnly = true)
 	public String getId() {
 		return sample.getId();
 	}
 
+	@Transactional(readOnly = true)
 	public Patient getPatient() {
 		return sampleHumanService.getPatientForSample(sample);
 	}
 
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysis() {
 		return sample == null ? new ArrayList<>() : analysisService.getAnalysesBySampleId(sample.getId());
 	}
 
+	@Transactional(readOnly = true)
 	public List<SampleQaEvent> getSampleQAEventList() {
 		return sample == null ? new ArrayList<>() : sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
+	@Transactional(readOnly = true)
 	public Person getPersonRequester() {
 		if (sample == null) {
 			return null;
@@ -220,6 +235,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		return null;
 	}
 
+	@Transactional(readOnly = true)
 	public Organization getOrganizationRequester() {
 		if (sample == null) {
 			return null;
@@ -237,6 +253,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		return null;
 	}
 
+	@Transactional(readOnly = true)
 	public Sample getPatientPreviousSampleForTestName(Patient patient, String testName) {
 		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
 		Sample previousSample = null;
@@ -286,17 +303,20 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Sample sample) {
 		getBaseObjectDAO().getData(sample);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd) {
 		return getBaseObjectDAO().getConfirmationSamplesReceivedInDateRange(receivedDateStart, receivedDateEnd);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
 			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
 		return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(inclusiveProjectIdList,
@@ -304,6 +324,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
 			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
 		return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(projectId, inclusiveStatusIdList,
@@ -311,41 +332,49 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumberWithPrefix(String prefix) {
 		return getBaseObjectDAO().getLargestAccessionNumberWithPrefix(prefix);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumberMatchingPattern(String startingWith, int size) {
 		return getBaseObjectDAO().getLargestAccessionNumberMatchingPattern(startingWith, size);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) {
 		return getBaseObjectDAO().getSamplesWithPendingQaEventsByService(serviceId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getSamplesByStatusAndDomain(List statuses, String domain) {
 		return getBaseObjectDAO().getSamplesByStatusAndDomain(statuses, domain);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSampleRecord(String id) {
 		return getBaseObjectDAO().getPreviousSampleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesCollectedOn(String collectionDate) {
 		return getBaseObjectDAO().getSamplesCollectedOn(collectionDate);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumber() {
 		return getBaseObjectDAO().getLargestAccessionNumber();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId,
 			boolean filterByDomain) {
 		return getBaseObjectDAO().getSamplesWithPendingQaEvents(sample, filterByCategory, qaEventCategoryId,
@@ -353,32 +382,38 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSampleRecord(String id) {
 		return getBaseObjectDAO().getNextSampleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Sample getSampleByReferringId(String referringId) {
 		return getBaseObjectDAO().getSampleByReferringId(referringId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd) {
 		return getBaseObjectDAO().getSamplesReceivedInDateRange(receivedDateStart, receivedDateEnd);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession) {
 		return getBaseObjectDAO().getSamplesByAccessionRange(minAccession, maxAccession);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getSampleByAccessionNumber(Sample sample) {
 		getBaseObjectDAO().getSampleByAccessionNumber(sample);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSamples(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfSamples(startingRecNo);
 	}

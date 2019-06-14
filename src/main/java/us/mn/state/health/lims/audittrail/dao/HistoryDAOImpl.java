@@ -25,6 +25,7 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
 	  return getHistoryByRefIdAndRefTableId(history);
   }
   
+	@Transactional(readOnly = true)
 	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
 		String refId = history.getReferenceId(); 
 		String tableId = history.getReferenceTable();

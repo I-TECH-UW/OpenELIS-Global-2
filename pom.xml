@@ -13,7 +13,7 @@
 		<apachetiles.version>3.0.8</apachetiles.version>
 		<castor.version>1.4.1</castor.version>
 		<hapi.version>2.3</hapi.version>
-		<hibernate.version>5.1.12.Final</hibernate.version>
+		<hibernate.version>5.4.3.Final</hibernate.version>
 		<hibernate-validator.version>6.0.16.Final</hibernate-validator.version>
 		<log4j.version>2.11.2</log4j.version>
 		<springframework.version>5.1.7.RELEASE</springframework.version>
@@ -302,7 +302,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>openElis</finalName>
+		<finalName>OpenElis</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

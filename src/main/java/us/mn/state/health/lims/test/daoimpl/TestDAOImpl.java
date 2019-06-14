@@ -153,6 +153,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Test test) throws LIMSRuntimeException {
 		try {
 			Test testClone = sessionFactory.getCurrentSession().get(Test.class, test.getId());
@@ -172,6 +173,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Test> getAllTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List<Test> list = new Vector<>();
 		try {
@@ -189,6 +191,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List<Test> list = new Vector<>();
 		try {
@@ -222,6 +225,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t WHERE t.isActive = 'Y'  and t.orderable = true Order by t.description";
@@ -279,6 +283,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -305,6 +310,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// bugzilla 2371
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException {
 		List list;
 		String wildCard = "*";
@@ -466,6 +472,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Test", Test.class);
@@ -473,6 +480,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Test", Test.class);
@@ -481,6 +489,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	// this is for autocomplete
 	// bugzilla 2291 added onlyTestsFullySetup
 	@Override
+	@Transactional(readOnly = true)
 	public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -501,11 +510,13 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByName(Test test) throws LIMSRuntimeException {
 		return getTestByName(test.getTestName());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByName(String testName) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testName = :testName";
@@ -531,6 +542,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
@@ -558,6 +570,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testName = :testName and t.isActive='Y'";
@@ -576,6 +589,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Test getActiveTestById(Integer testId) throws LIMSRuntimeException {
 		List<Test> list = null;
 
@@ -595,6 +609,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestById(Test test) throws LIMSRuntimeException {
 		Test returnTest;
 		try {
@@ -612,6 +627,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// this is for selectdropdown
 	@Override
+	@Transactional(readOnly = true)
 	public List getMethodsByTestSection(String filter) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testSection = :param";
@@ -649,6 +665,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// this is for selectdropdown
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByTestSection(String filter) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testSection = :param";
@@ -668,6 +685,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestSectionId(String id) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testSection.id = :id";
@@ -687,6 +705,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// this is for selectdropdown
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByMethod(String filter) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.method = :param";
@@ -707,6 +726,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// this is for selectdropdown
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
 		try {
 			String sql = "from Test t where t.testSection = :param1 and t.method = :param2";
@@ -728,12 +748,14 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestCount() throws LIMSRuntimeException {
 		return getTotalCount("Test", Test.class);
 	}
 
 	// bugzilla 2371
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSearchedTestCount(String searchString) throws LIMSRuntimeException {
 		String wildCard = "*";
 		String newSearchStr;
@@ -866,6 +888,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -900,6 +923,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -1000,6 +1024,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	// bugzilla 2443
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getNextAvailableSortOrderByTestSection(Test test) throws LIMSRuntimeException {
 		Integer result = null;
 
@@ -1038,6 +1063,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException {
 		List<Test> entities;
 		try {
@@ -1061,6 +1087,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestById(String testId) throws LIMSRuntimeException {
 		String sql = "From Test t where t.id = :id";
 		try {
@@ -1078,6 +1105,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByDescription(String description) {
 		String sql = "From Test t where t.description = :description";
 		try {
@@ -1095,6 +1123,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByGUID(String guid) {
 		String sql = "From Test t where t.guid = :guid";
 		try {
@@ -1113,6 +1142,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByLoincCode(String loincCode) {
 		String sql = "From Test t where t.loinc = :loinc";
 		try {
@@ -1130,6 +1160,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getActiveTestsByLoinc(String loincCode) {
 		String sql = "From Test t where t.loinc = :loinc and t.isActive='Y'";
 		try {

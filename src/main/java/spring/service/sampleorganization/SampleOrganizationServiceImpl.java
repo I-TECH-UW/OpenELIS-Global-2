@@ -2,6 +2,7 @@ package spring.service.sampleorganization;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -24,18 +25,21 @@ public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleOrganization sampleOrg) {
 		getBaseObjectDAO().getData(sampleOrg);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getDataBySample(SampleOrganization sampleOrg) {
 		getBaseObjectDAO().getDataBySample(sampleOrg);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SampleOrganization getDataBySample(Sample sample) {
 		return getBaseObjectDAO().getDataBySample(sample);
 	}

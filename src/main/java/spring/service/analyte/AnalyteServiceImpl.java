@@ -2,6 +2,7 @@ package spring.service.analyte;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
@@ -24,6 +25,7 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) {
 		return getBaseObjectDAO().getAnalyteByName(analyte, ignoreCase);
 	}

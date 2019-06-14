@@ -37,6 +37,7 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
 		String sql = "from RequesterType rt where rt.requesterType = :typeName";
 

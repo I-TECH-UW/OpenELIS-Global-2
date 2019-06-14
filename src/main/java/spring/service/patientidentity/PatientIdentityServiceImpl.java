@@ -26,17 +26,19 @@ public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIde
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 		return baseObjectDAO.getAllMatching("patientId", id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId) {
 		return getBaseObjectDAO().getPatitentIdentityForPatientAndType(patientId, identityTypeId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType) {
 		return getBaseObjectDAO().getPatientIdentitiesByValueAndType(value, identityType);
 	}

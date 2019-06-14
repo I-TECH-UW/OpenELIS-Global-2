@@ -269,11 +269,10 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
 	PK insert(T object);
 
 	/**
-	 * @param object the new data to update the database with. Will insert if it
-	 *               doesn't already exist
+	 * @param object the new data to update the database with.
 	 * @return the object as it was saved to the database
 	 */
-	T save(T object);
+	T update(T baseObject);
 
 	/**
 	 * @param object the data to delete from the database. Must have primary key

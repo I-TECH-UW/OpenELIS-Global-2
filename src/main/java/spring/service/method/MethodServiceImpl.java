@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -26,6 +27,7 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getMethods(String filter) {
 		return getBaseObjectDAO().getMethods(filter);
 	}

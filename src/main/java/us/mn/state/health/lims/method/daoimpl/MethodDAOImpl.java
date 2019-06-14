@@ -255,6 +255,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getMethods(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {

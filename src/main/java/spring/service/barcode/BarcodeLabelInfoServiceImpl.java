@@ -2,6 +2,7 @@ package spring.service.barcode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
@@ -23,6 +24,7 @@ public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public BarcodeLabelInfo getDataByCode(String code) {
 		return getMatch("code", code).orElse(null);
 	}

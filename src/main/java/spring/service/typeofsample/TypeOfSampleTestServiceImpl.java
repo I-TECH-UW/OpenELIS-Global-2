@@ -26,50 +26,56 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) {
 		return getMatch("testId", testId).orElse(null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String id) {
 		return baseObjectDAO.getAllMatching("testId", id);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String id) {
 		return baseObjectDAO.getAllMatching("typeOfSampleId", id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSampleTest typeOfSampleTest) {
 		getBaseObjectDAO().getData(typeOfSampleTest);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSampleTests(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTypeOfSampleTests(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSampleTestRecord(String id) {
 		return getBaseObjectDAO().getNextTypeOfSampleTestRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTypeOfSampleTests() {
 		return getBaseObjectDAO().getAllTypeOfSampleTests();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSampleTestCount() {
 		return getBaseObjectDAO().getTotalTypeOfSampleTestCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSampleRecord(String id) {
 		return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
 	}

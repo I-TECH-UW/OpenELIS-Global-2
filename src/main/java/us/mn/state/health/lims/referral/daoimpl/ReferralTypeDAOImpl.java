@@ -37,6 +37,7 @@ public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
 		String sql = "From ReferralType rt where rt.name = :name";
 

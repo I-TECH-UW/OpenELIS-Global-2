@@ -158,6 +158,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 		try {
 			SystemUserModule sysUserModule = sessionFactory.getCurrentSession().get(SystemUserModule.class,
@@ -177,6 +178,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModules() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -195,6 +197,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -213,6 +216,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -252,23 +256,27 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "SystemUserModule", SystemUserModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "SystemUserModule", SystemUserModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
 		return getTotalCount("SystemUserModule", SystemUserModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -296,6 +304,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);

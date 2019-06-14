@@ -202,21 +202,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public T save(T baseObject) {
-		if (auditTrailLog) {
-			Optional<T> oldObject = Optional.empty();
-			if (baseObject.getId() != null) {
-				oldObject = getBaseObjectDAO().get(baseObject.getId());
-			}
 
-			if (oldObject.isPresent()) {
-				auditTrailDAO.saveHistory(baseObject, oldObject.get(), baseObject.getSysUserId(),
-						IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
-			} else {
-				auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
-			}
+		if (baseObject.getId() == null) {
+			return get(insert(baseObject));
+		} else {
+			return update(baseObject);
 		}
 
-		return getBaseObjectDAO().save(baseObject);
 	}
 
 	@Override
@@ -242,7 +234,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
 					getBaseObjectDAO().getTableName());
 		}
-		return getBaseObjectDAO().save(baseObject);
+		return getBaseObjectDAO().update(baseObject);
 
 	}
 

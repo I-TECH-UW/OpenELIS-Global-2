@@ -137,6 +137,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Person person) throws LIMSRuntimeException {
 		try {
 			Person pers = sessionFactory.getCurrentSession().get(Person.class, person.getId());
@@ -156,6 +157,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPersons() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -174,6 +176,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -213,6 +216,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPersonRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Person", Person.class);
@@ -220,6 +224,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPersonRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Person", Person.class);
@@ -227,6 +232,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {
 		List<Person> list = null;
 		try {
@@ -250,6 +256,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Person getPersonById(String personId) throws LIMSRuntimeException {
 		String sql = "From Person p where id = :personId";
 		try {

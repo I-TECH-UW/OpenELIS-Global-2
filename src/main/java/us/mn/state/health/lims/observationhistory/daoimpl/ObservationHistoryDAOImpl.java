@@ -36,6 +36,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getAll(Patient patient, Sample sample) {
 		if (patient != null && sample != null) {
 			ObservationHistory dh = new ObservationHistory();
@@ -48,6 +49,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
 		ObservationHistory history = new ObservationHistory();
 		if (patient != null) {
@@ -62,6 +64,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
 			throws LIMSRuntimeException {
 		List<ObservationHistory> observationList;
@@ -85,6 +88,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId)
 			throws LIMSRuntimeException {
 		String sql = "from ObservationHistory oh where oh.sampleItemId = :sampleItemId";
@@ -106,6 +110,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) throws LIMSRuntimeException {
 		String sql = "from ObservationHistory oh where oh.sampleId = :sampleId";
 
@@ -125,6 +130,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesByPatientIdAndType(String patientId,
 			String observationHistoryTypeId) throws LIMSRuntimeException {
 		String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId = :ohTypeId order by oh.lastupdated desc";
@@ -147,6 +153,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId, String observationHistoryTypeId)
 			throws LIMSRuntimeException {
 
@@ -170,6 +177,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ObservationHistory> getObservationHistoriesByValueAndType(String value, String typeId, String valueType)
 			throws LIMSRuntimeException {
 		String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId = :typeId and oh.valueType = :valueType";
@@ -233,6 +241,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException {
 		return get(observation.getId()).get();
 	}

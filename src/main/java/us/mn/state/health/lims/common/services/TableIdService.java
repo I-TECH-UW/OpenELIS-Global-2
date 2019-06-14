@@ -118,6 +118,7 @@ public class TableIdService {
 
 		DOCTOR_OBSERVATION_TYPE_ID = getOHTypeIdByName("nameOfDoctor");
 		SERVICE_OBSERVATION_TYPE_ID = getOHTypeIdByName("service");
+
 	}
 
 	public static TableIdService getInstance() {

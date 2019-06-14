@@ -150,6 +150,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(RenameTestSection testSection) throws LIMSRuntimeException {
 		try {
 			RenameTestSection uom = sessionFactory.getCurrentSession().get(RenameTestSection.class,
@@ -169,6 +170,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestSections() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -189,6 +191,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -229,6 +232,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestSection", RenameTestSection.class);
@@ -236,12 +240,14 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestSection", RenameTestSection.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :param";
@@ -267,6 +273,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestSections(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -286,6 +293,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public RenameTestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException {
 		try {
 			RenameTestSection ts = sessionFactory.getCurrentSession().get(RenameTestSection.class, testSectionId);
@@ -300,12 +308,14 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
 		return getTotalCount("TestSection", RenameTestSection.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -328,6 +338,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();

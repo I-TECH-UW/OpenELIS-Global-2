@@ -2,6 +2,7 @@ package spring.service.gender;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -47,6 +48,7 @@ public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Gender getGenderByType(String type) {
 		return getMatch("genderType", type).orElse(null);
 	}

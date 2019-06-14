@@ -35,6 +35,7 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException {
 		String sql = "from ReportQueueType rqt where rqt.name = :name";
 

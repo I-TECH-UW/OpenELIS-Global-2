@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -26,42 +27,50 @@ public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent, String> i
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(QaEvent qaEvent) {
 		getBaseObjectDAO().getData(qaEvent);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public QaEvent getQaEventByName(QaEvent qaEvent) {
 		return getBaseObjectDAO().getQaEventByName(qaEvent);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getQaEvents(String filter) {
 		return getBaseObjectDAO().getQaEvents(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllQaEvents() {
 		return getBaseObjectDAO().getAllQaEvents();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalQaEventCount() {
 		return getBaseObjectDAO().getTotalQaEventCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfQaEvents(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfQaEvents(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextQaEventRecord(String id) {
 		return getBaseObjectDAO().getNextQaEventRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousQaEventRecord(String id) {
 		return getBaseObjectDAO().getPreviousQaEventRecord(id);
 	}

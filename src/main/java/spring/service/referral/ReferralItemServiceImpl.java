@@ -44,7 +44,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	AnalysisService analysisService;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<ReferralItem> getReferralItems() {
 		List<ReferralItem> referralItems = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		return referralItems;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public ReferralItem getReferralItem(Referral referral) {
 		boolean allReferralResultsHaveResults = true;
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());

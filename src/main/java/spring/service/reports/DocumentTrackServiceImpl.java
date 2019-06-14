@@ -28,7 +28,7 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("documentTypeId", typeId);
@@ -38,6 +38,7 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String tableId, String recordId,
 			String name) {
 		Map<String, Object> propertyValues = new HashMap<>();

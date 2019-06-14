@@ -43,7 +43,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 		int startupOrder = 0;
 		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
 
-		dispatcherContext.register(AppConfig.class);
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher",
 				new DispatcherServlet(dispatcherContext));
 		dispatcher.setLoadOnStartup(++startupOrder);

@@ -1,6 +1,5 @@
 package spring.service.userrole;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,14 +27,9 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<String> getRoleIdsForUser(String userId) {
-		List<UserRole> userRoles = baseObjectDAO.getAllMatching("compoundId.systemUserId", userId);
-		List<String> userRoleIds = new ArrayList<>();
-		for (UserRole userRole : userRoles) {
-			userRoleIds.add(userRole.getId().getRoleId());
-		}
-		return userRoleIds;
+		return baseObjectDAO.getRoleIdsForUser(userId);
 	}
 
 	@Override

@@ -164,6 +164,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
 			TestReflex tr = sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
@@ -182,6 +183,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestReflexs() throws LIMSRuntimeException {
 		List list = null;
 		try {
@@ -202,6 +204,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -237,6 +240,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	 * us.mn.state.health.lims.testresult.valueholder.TestResult)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId";
@@ -265,6 +269,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	 * us.mn.state.health.lims.testresult.valueholder.TestResult)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
 			throws LIMSRuntimeException {
 		try {
@@ -325,6 +330,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
 			throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(testResultId) && !GenericValidator.isBlankOrNull(analyteId)
@@ -368,6 +374,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestReflexRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestReflex", TestReflex.class);
@@ -375,6 +382,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestReflex", TestReflex.class);
@@ -382,12 +390,14 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestReflexCount() throws LIMSRuntimeException {
 		return getTotalCount("TestReflex", TestReflex.class);
 	}
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -422,6 +432,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -500,6 +511,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(testId)) {
 			return new ArrayList<>();
@@ -533,6 +545,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
 			throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(flag)) {

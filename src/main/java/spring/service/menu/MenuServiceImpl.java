@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.menu.dao.MenuDAO;
@@ -25,11 +26,13 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Menu getMenuByElementId(String elementId) {
 		return getMatch("elementId", elementId).orElse(null);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Menu> getAllActiveMenus() {
 		return getAllMatching("isActive", true);
 	}

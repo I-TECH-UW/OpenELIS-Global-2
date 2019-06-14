@@ -27,7 +27,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
@@ -43,7 +42,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author diane benz
  */
 @Component
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional
 public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> implements TypeOfSampleDAO {
 
 	public TypeOfSampleDAOImpl() {
@@ -158,6 +157,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 		try {
 			TypeOfSample tos = sessionFactory.getCurrentSession().get(TypeOfSample.class, typeOfSample.getId());
@@ -176,6 +176,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTypeOfSamples() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -196,6 +197,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException {
 		List<TypeOfSample> list = new ArrayList<>();
 		try {
@@ -213,6 +215,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -255,6 +258,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	// this is for autocomplete
 	// bugzilla 1387 added domain parm
 	@Override
+	@Transactional(readOnly = true)
 	public List getTypes(String filter, String domain) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -287,6 +291,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException {
 		List list = new Vector();
 		String key = getKeyForDomain(domain);
@@ -311,6 +316,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain domain) throws LIMSRuntimeException {
 		List<TypeOfSample> list = null;
 		String key = getKeyForDomain(domain);
@@ -335,6 +341,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
 			throws LIMSRuntimeException {
 		String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
@@ -376,6 +383,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TypeOfSample", TypeOfSample.class);
@@ -383,6 +391,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TypeOfSample", TypeOfSample.class);
@@ -390,12 +399,14 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException {
 		return getTotalCount("TypeOfSample", TypeOfSample.class);
 	}
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -429,6 +440,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -462,6 +474,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
 	// bugzilla 1367 also handles NO domain (then all domains are retrieved)
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
 			throws LIMSRuntimeException {
 		try {
@@ -554,6 +567,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getNameForTypeOfSampleId(String id) {
 		if (ID_NAME_MAP == null) {
 			List allTypes = getAllTypeOfSamples();
@@ -573,6 +587,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException {
 		try {
 			TypeOfSample tos = sessionFactory.getCurrentSession().get(TypeOfSample.class, typeOfSampleId);
@@ -586,6 +601,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfSample getSampleTypeFromTest(Test test) {
 		String sql = "select tos from TypeOfSample tos, Test test, TypeOfSampleTest tost " + "where tost.testId = :id "
 				+ "AND tos.id = tost.typeOfSampleId";

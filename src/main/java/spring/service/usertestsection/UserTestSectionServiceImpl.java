@@ -40,6 +40,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	private UserModuleService userModuleService;
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Object> getAllUserTestSectionsByName(HttpServletRequest request, String testSectionName)
 			throws LIMSRuntimeException {
 		List<Object> list = new ArrayList<>();
@@ -67,6 +68,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestsBySysUserId(HttpServletRequest request, int startingRecNo, String doingSearch,
 			String searchStr) throws LIMSRuntimeException {
 
@@ -114,6 +116,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllUserTestSections(HttpServletRequest request) throws LIMSRuntimeException {
 
 		List list = new ArrayList();
@@ -142,6 +145,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllUserTests(HttpServletRequest request, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List list = new ArrayList();
 		TestService testService = new TestServiceImpl();
@@ -169,6 +173,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 //	@Override
+//	@Transactional(readOnly = true)
 //	public List getSampleTestAnalytes(HttpServletRequest request, List sample_Tas, List testSections)
 //			throws LIMSRuntimeException {
 //
@@ -202,6 +207,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getSamplePdfList(HttpServletRequest request, Locale locale, String sampStatus, String humanDomain)
 			throws LIMSRuntimeException {
 
@@ -242,6 +248,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAnalyses(HttpServletRequest request, List analyses, List testSections) throws LIMSRuntimeException {
 
 		List newAnalyses = new ArrayList();
@@ -277,6 +284,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	}
 
 //	@Override
+//	@Transactional(readOnly = true)
 //	public List getSampleTestAnalytes(HttpServletRequest request, List sample_Tas, List testSections)
 //			throws LIMSRuntimeException {
 //

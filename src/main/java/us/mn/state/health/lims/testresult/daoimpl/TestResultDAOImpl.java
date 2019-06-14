@@ -139,6 +139,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			TestResult tr = sessionFactory.getCurrentSession().get(TestResult.class, testResult.getId());
@@ -157,6 +158,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestResults() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -175,6 +177,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -214,6 +217,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestResultRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestResult", TestResult.class);
@@ -221,12 +225,14 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestResultRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestResult", TestResult.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException {
 		TestResult newTestResult;
 		try {
@@ -243,6 +249,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -270,6 +277,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException {
 		if (test == null || (test.getId() == null) || (test.getId().length() == 0)) {
 			return null;
@@ -294,6 +302,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException {
 		if (StringUtil.isInteger(result)) {
 			List<TestResult> list;
@@ -321,6 +330,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException {
 		List<TestResult> list;
 		try {

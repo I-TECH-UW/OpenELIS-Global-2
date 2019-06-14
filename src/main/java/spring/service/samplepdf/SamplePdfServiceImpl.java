@@ -2,6 +2,7 @@ package spring.service.samplepdf;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.samplepdf.dao.SamplePdfDAO;
@@ -27,6 +28,7 @@ public class SamplePdfServiceImpl extends BaseObjectServiceImpl<SamplePdf, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) {
         return getBaseObjectDAO().getSamplePdfByAccessionNumber(samplePdf);
 	}

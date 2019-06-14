@@ -321,6 +321,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 
 	// bugzilla 1866 to get HL7 value
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
 		TypeOfTestResult totr = null;
 		try {

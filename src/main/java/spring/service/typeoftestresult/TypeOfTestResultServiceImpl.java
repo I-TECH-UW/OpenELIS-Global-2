@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -46,11 +47,13 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 			DBValue = dbValue;
 		}
 
-		public String getCharacterValue() {
+		@Transactional(readOnly = true)
+	public String getCharacterValue() {
 			return DBValue;
 		}
 
-		public String getId() {
+		@Transactional(readOnly = true)
+	public String getId() {
 			return id;
 		}
 
@@ -112,6 +115,7 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ResultType getResultTypeById(String id) {
 		for (ResultType type : ResultType.values()) {
 			if (type.getId().equals(id)) {
@@ -123,11 +127,13 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) {
 		return getBaseObjectDAO().getTypeOfTestResultByType(typeOfTestResult);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TypeOfTestResult getTypeOfTestResultByType(String type) {
 		return getMatch("testResultType", type).orElse(null);
 	}

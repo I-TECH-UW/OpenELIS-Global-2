@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
@@ -25,42 +26,50 @@ public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSamplePanel typeOfSamplePanel) {
 		getBaseObjectDAO().getData(typeOfSamplePanel);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTypeOfSamplePanels() {
 		return getBaseObjectDAO().getAllTypeOfSamplePanels();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSamplePanel(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTypeOfSamplePanel(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSamplePanelRecord(String id) {
 		return getBaseObjectDAO().getNextTypeOfSamplePanelRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSamplePanelCount() {
 		return getBaseObjectDAO().getTotalTypeOfSamplePanelCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) {
 		return getBaseObjectDAO().getTypeOfSamplePanelsForPanel(panelId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSamplePanelRecord(String id) {
 		return getBaseObjectDAO().getPreviousTypeOfSamplePanelRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
 		return getBaseObjectDAO().getTypeOfSamplePanelsForSampleType(sampleType);
 	}

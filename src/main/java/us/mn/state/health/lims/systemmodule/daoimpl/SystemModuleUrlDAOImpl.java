@@ -23,6 +23,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
 		String urlPath = request.getRequestURI();
 		urlPath = urlPath.substring(request.getContextPath().length());
@@ -34,6 +35,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SystemModuleUrl> getByUrlPath(String urlPath) {
 		List<SystemModuleUrl> list;
 		try {

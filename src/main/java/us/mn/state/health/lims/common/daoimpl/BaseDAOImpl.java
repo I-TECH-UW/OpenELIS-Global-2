@@ -24,6 +24,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Vector;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -42,7 +45,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
@@ -55,6 +57,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 /**
@@ -73,13 +76,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
+
 	private static final int RANDOM_ALIAS_LENGTH = 5;
 	private static final String MULTI_NESTED_MARKING = ",";
+
+	protected String defaultSortOrder = "id";
 
 	private final Class<T> classType;
 
 	@Autowired
 	protected SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
 	public BaseDAOImpl(Class<T> clazz) {
@@ -87,6 +95,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<T> get(PK id) {
 		try {
 			Session session = sessionFactory.getCurrentSession();
@@ -98,11 +107,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAll() {
-		return getAllOrdered("id", false);
+		return getAllOrdered(defaultSortOrder, false);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatching(String propertyName, Object propertyValue) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
@@ -111,11 +122,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatching(Map<String, Object> propertyValues) {
-		return getAllMatchingOrdered(propertyValues, "id", false);
+		return getAllMatchingOrdered(propertyValues, defaultSortOrder, false);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLike(String propertyName, String propertyValue) {
 		Map<String, String> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
@@ -124,11 +137,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLike(Map<String, String> propertyValues) {
-		return getAllLikeOrdered(propertyValues, "id", false);
+		return getAllLikeOrdered(propertyValues, defaultSortOrder, false);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllOrdered(String orderProperty, boolean descending) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add(orderProperty);
@@ -137,11 +152,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllOrdered(List<String> orderProperties, boolean descending) {
 		return getAllMatchingOrdered(new HashMap<>(), orderProperties, descending);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty,
 			boolean descending) {
 		Map<String, Object> propertyValues = new HashMap<>();
@@ -153,6 +170,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties,
 			boolean descending) {
 		Map<String, Object> propertyValues = new HashMap<>();
@@ -162,6 +180,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, String orderProperty, boolean descending) {
 		List<String> orderProperties = new ArrayList<>();
 
@@ -170,33 +189,34 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		try {
-//			uncomment for Hibernate version >= 5.2
-//			Session session = this.sessionFactory.getCurrentSession();
-//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
-//	        Root<T> root = criteriaQuery.from(this.classType);
-//	        criteriaQuery.select(root);
-//	        for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-//	                    DBComparison.EQ);
-//	        }
-//	        for (String orderProperty : orderProperties) {
-//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
-//	        }
-//	        return session.createQuery(criteriaQuery).list();
-			Map<String, String> aliases = new HashMap<>();
-			Session session = sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(classType);
+			Session session = this.sessionFactory.getCurrentSession();
+			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+			Root<T> root = criteriaQuery.from(this.classType);
+			criteriaQuery.select(root);
 			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+				this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+						DBComparison.EQ);
 			}
 			for (String orderProperty : orderProperties) {
-				addOrder(criteria, orderProperty, descending, aliases);
+				this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
 			}
-			return criteria.list();
+			return session.createQuery(criteriaQuery).list();
+
+//			Map<String, String> aliases = new HashMap<>();
+//			Session session = sessionFactory.getCurrentSession();
+//			Criteria criteria = session.createCriteria(classType);
+//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+//			}
+//			for (String orderProperty : orderProperties) {
+//				addOrder(criteria, orderProperty, descending, aliases);
+//			}
+//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException(
 					"Error in " + this.getClass().getSimpleName() + " " + "getAllMatchingOrdered", e);
@@ -204,6 +224,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLikeOrdered(String propertyName, String propertyValue, String orderProperty,
 			boolean descending) {
 		Map<String, String> propertyValues = new HashMap<>();
@@ -215,6 +236,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLikeOrdered(String propertyName, String propertyValue, List<String> orderProperties,
 			boolean descending) {
 		Map<String, String> propertyValues = new HashMap<>();
@@ -224,6 +246,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, String orderProperty, boolean descending) {
 		List<String> orderProperties = new ArrayList<>();
 
@@ -232,33 +255,33 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		try {
-//			uncomment for Hibernate version >= 5.2
-//			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
-//			Root<T> root = criteriaQuery.from(classType);
-//			criteriaQuery.select(root);
-//
-//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-//				addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue());
-//			}
-//			for (String orderProperty : orderProperties) {
-//				addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
-//			}
-//			return entityManager.createQuery(criteriaQuery).getResultList();
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+			Root<T> root = criteriaQuery.from(classType);
+			criteriaQuery.select(root);
 
-			Map<String, String> aliases = new HashMap<>();
-			Session session = sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(classType);
 			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+				addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(), DBComparison.EQ);
 			}
 			for (String orderProperty : orderProperties) {
-				addOrder(criteria, orderProperty, descending, aliases);
+				addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
 			}
-			return criteria.list();
+			return entityManager.createQuery(criteriaQuery).getResultList();
+
+//			Map<String, String> aliases = new HashMap<>();
+//			Session session = sessionFactory.getCurrentSession();
+//			Criteria criteria = session.createCriteria(classType);
+//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+//			}
+//			for (String orderProperty : orderProperties) {
+//				addOrder(criteria, orderProperty, descending, aliases);
+//			}
+//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getAllLikeOrdered",
 					e);
@@ -266,11 +289,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getPage(int startingRecNo) {
-		return getOrderedPage("id", false, startingRecNo);
+		return getOrderedPage(defaultSortOrder, false, startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(String propertyName, Object propertyValue, int startingRecNo) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
@@ -278,11 +303,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo) {
-		return getMatchingOrderedPage(propertyValues, "id", false, startingRecNo);
+		return getMatchingOrderedPage(propertyValues, defaultSortOrder, false, startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
@@ -290,11 +317,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikePage(Map<String, String> propertyValues, int startingRecNo) {
-		return getLikeOrderedPage(propertyValues, "id", false, startingRecNo);
+		return getLikeOrderedPage(propertyValues, defaultSortOrder, false, startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getOrderedPage(String orderProperty, boolean descending, int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add(orderProperty);
@@ -303,11 +332,13 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getOrderedPage(List<String> orderProperties, boolean descending, int startingRecNo) {
 		return getMatchingOrderedPage(new HashMap<>(), orderProperties, descending, startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
 			boolean descending, int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
@@ -319,6 +350,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
 		Map<String, Object> propertyValues = new HashMap<>();
@@ -328,6 +360,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
 			int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
@@ -338,39 +371,39 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
 		try {
-//			uncomment for Hibernate version >= 5.2
-//	        Session session = this.sessionFactory.getCurrentSession();
-//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
-//	        Root<T> root = criteriaQuery.from(this.classType);
-//	        criteriaQuery.select(root);
-//	        for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-//	                    DBComparison.EQ);
-//	        }
-//	        for (String orderProperty : orderProperties) {
-//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
-//	        }
-//	        TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
-//	        typedQuery.setFirstResult(startingRecNo - 1);
-//	        typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-//	        return typedQuery.getResultList();
-
-			Map<String, String> aliases = new HashMap<>();
-			Session session = sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(classType);
+			Session session = this.sessionFactory.getCurrentSession();
+			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+			Root<T> root = criteriaQuery.from(this.classType);
+			criteriaQuery.select(root);
 			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+				this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+						DBComparison.EQ);
 			}
 			for (String orderProperty : orderProperties) {
-				addOrder(criteria, orderProperty, descending, aliases);
+				this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
 			}
-			criteria.setFirstResult(startingRecNo - 1);
-			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-			return criteria.list();
+			TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
+			typedQuery.setFirstResult(startingRecNo - 1);
+			typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			return typedQuery.getResultList();
+
+//			Map<String, String> aliases = new HashMap<>();
+//			Session session = sessionFactory.getCurrentSession();
+//			Criteria criteria = session.createCriteria(classType);
+//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+//			}
+//			for (String orderProperty : orderProperties) {
+//				addOrder(criteria, orderProperty, descending, aliases);
+//			}
+//			criteria.setFirstResult(startingRecNo - 1);
+//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException(
 					"Error in " + this.getClass().getSimpleName() + " " + "getMatchingOrderedPage", e);
@@ -378,6 +411,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikeOrderedPage(String propertyName, String propertyValue, String orderProperty,
 			boolean descending, int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
@@ -389,6 +423,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikeOrderedPage(String propertyName, String propertyValue, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
 		Map<String, String> propertyValues = new HashMap<>();
@@ -398,6 +433,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikeOrderedPage(Map<String, String> propertyValues, String orderProperty, boolean descending,
 			int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
@@ -408,39 +444,39 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<T> getLikeOrderedPage(Map<String, String> propertyValues, List<String> orderProperties,
 			boolean descending, int startingRecNo) {
 		try {
-//			uncomment for Hibernate version >= 5.2
-//	        Session session = this.sessionFactory.getCurrentSession();
-//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-//	        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
-//	        Root<T> root = criteriaQuery.from(this.classType);
-//	        criteriaQuery.select(root);
-//	        for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-//	            this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-//	                    DBComparison.LIKE);
-//	        }
-//	        for (String orderProperty : orderProperties) {
-//	            this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
-//	        }
-//	        TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
-//	        typedQuery.setFirstResult(startingRecNo - 1);
-//	        typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-//	        return typedQuery.getResultList();
-
-			Map<String, String> aliases = new HashMap<>();
-			Session session = sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(classType);
+			Session session = this.sessionFactory.getCurrentSession();
+			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+			Root<T> root = criteriaQuery.from(this.classType);
+			criteriaQuery.select(root);
 			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+				this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
+						DBComparison.LIKE);
 			}
 			for (String orderProperty : orderProperties) {
-				addOrder(criteria, orderProperty, descending, aliases);
+				this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
 			}
-			criteria.setFirstResult(startingRecNo - 1);
-			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-			return criteria.list();
+			TypedQuery<T> typedQuery = session.createQuery(criteriaQuery);
+			typedQuery.setFirstResult(startingRecNo - 1);
+			typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			return typedQuery.getResultList();
+
+//			Map<String, String> aliases = new HashMap<>();
+//			Session session = sessionFactory.getCurrentSession();
+//			Criteria criteria = session.createCriteria(classType);
+//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+//			}
+//			for (String orderProperty : orderProperties) {
+//				addOrder(criteria, orderProperty, descending, aliases);
+//			}
+//			criteria.setFirstResult(startingRecNo - 1);
+//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getLikeOrderedPage",
 					e);
@@ -608,23 +644,25 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public PK insert(T object) {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			return (PK) session.save(object);
+			PK id = (PK) session.save(object);
+			session.flush();
+			return id;
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "insert", e);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public T save(T object) {
+	public T update(T object) {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			return (T) session.merge(object);
+			T dbObject = (T) session.merge(object);
+			session.flush();
+			return dbObject;
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "save", e);
 		}
@@ -635,6 +673,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			session.delete(object);
+			session.flush();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "delete", e);
 		}
@@ -642,36 +681,37 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getCount() {
 		Integer rowCount = 0;
 		try {
-//			uncomment for Hibernate version >= 5.2
-//	        Session session = this.sessionFactory.getCurrentSession();
-//	        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-//	        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-//	        criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.classType)));
-//	        return session.createQuery(criteriaQuery).getSingleResult().intValue();
+			Session session = this.sessionFactory.getCurrentSession();
+			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+			criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.classType)));
+			return session.createQuery(criteriaQuery).getSingleResult().intValue();
 
-			Session session = sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(classType);
-			criteria.setProjection(Projections.rowCount());
-			List<Long> results = criteria.list();
-
-			if (results != null) {
-				rowCount = results.get(0).intValue();
-			} else {
-				LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
-						"could not count number of objects for class" + classType.getName());
-				rowCount = -1;
-			}
+//			Session session = sessionFactory.getCurrentSession();
+//			Criteria criteria = session.createCriteria(classType);
+//			criteria.setProjection(Projections.rowCount());
+//			List<Long> results = criteria.list();
+//
+//			if (results != null) {
+//				rowCount = results.get(0).intValue();
+//			} else {
+//				LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
+//						"could not count number of objects for class" + classType.getName());
+//				rowCount = -1;
+//			}
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getCount", e);
 		}
-		return rowCount;
+//		return rowCount;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<T> getNext(String id) {
 		int start = (Integer.valueOf(id)).intValue();
 		String table = getObjectName();
@@ -697,6 +737,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<T> getPrevious(String id) {
 		int start = (Integer.valueOf(id)).intValue();
 		String table = getObjectName();
@@ -727,6 +768,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getTableName() {
 		AbstractEntityPersister persister = (AbstractEntityPersister) sessionFactory.getClassMetadata(classType);
 		String tableName = persister.getTableName();
@@ -746,9 +788,16 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		} else {
 			path = root.get(propertyName);
 		}
+		if ((propertyName.endsWith("id") || propertyName.endsWith("Id")) && propertyValue instanceof String
+				&& GenericValidator.isInt((String) propertyValue)) {
+			propertyValue = Integer.valueOf((String) propertyValue);
+
+		}
 		criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
 
-		switch (comparison) {
+		switch (comparison)
+
+		{
 		case EQ:
 			criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
 			break;
@@ -808,6 +857,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@Override
 	@Deprecated
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
@@ -831,6 +881,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	@Override
 	@Deprecated
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
@@ -854,6 +905,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	// bugzilla 1411
 	@Override
 	@Deprecated
+	@Transactional(readOnly = true)
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
 		Integer count = null;
 		try {
@@ -891,6 +943,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	// bugzilla 1427
 	@Deprecated
+	@Transactional(readOnly = true)
 	public String getTablePrefix(String table) {
 		return table.toLowerCase() + ".";
 	}

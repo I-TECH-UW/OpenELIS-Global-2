@@ -80,6 +80,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
 		try {
 			TypeOfSampleTest tos = sessionFactory.getCurrentSession().get(TypeOfSampleTest.class, typeOfSample.getId());
@@ -99,6 +100,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException {
 
 		List<TypeOfSampleTest> list;
@@ -121,6 +123,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -158,6 +161,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSampleTestRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TypeOfSampleTest", TypeOfSampleTest.class);
@@ -165,17 +169,20 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TypeOfSampleTest", TypeOfSampleTest.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException {
 		return getTotalCount("TypeOfSampleTest", TypeOfSampleTest.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -209,6 +216,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -238,6 +246,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException {
 		String sql = "from TypeOfSampleTest tt where tt.typeOfSampleId = :sampleId";
 
@@ -260,6 +269,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException {
 
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
@@ -280,6 +290,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException {
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 

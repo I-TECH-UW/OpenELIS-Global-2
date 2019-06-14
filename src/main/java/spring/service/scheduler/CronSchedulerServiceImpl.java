@@ -2,6 +2,7 @@ package spring.service.scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
@@ -23,6 +24,7 @@ public class CronSchedulerServiceImpl extends BaseObjectServiceImpl<CronSchedule
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public CronScheduler getCronScheduleByJobName(String jobName) {
 		return getMatch("jobName", jobName).orElse(null);
 	}

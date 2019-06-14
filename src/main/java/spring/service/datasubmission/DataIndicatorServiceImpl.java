@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.datasubmission.dao.DataIndicatorDAO;
@@ -28,6 +29,7 @@ public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicato
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month) {
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("typeOfDataIndicator.id", type.getId());
@@ -37,6 +39,7 @@ public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicato
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DataIndicator> getIndicatorsByStatus(String status) {
 		return getBaseObjectDAO().getAllMatching("status", status);
 	}

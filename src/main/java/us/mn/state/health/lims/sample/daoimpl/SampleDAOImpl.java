@@ -175,6 +175,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Sample sample) throws LIMSRuntimeException {
 		try {
 			Sample samp = sessionFactory.getCurrentSession().get(Sample.class, sample.getId());
@@ -203,6 +204,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSamples(int startingRecNo) throws LIMSRuntimeException {
 		List samples = new Vector();
 		try {
@@ -239,6 +241,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getSampleByAccessionNumber(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "from Sample s where s.accessionNumber = :param";
@@ -289,6 +292,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getNextAccessionNumber() {
 		String accessionNumber = null;
 		String lastAccessionNumber = null;
@@ -366,6 +370,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Sample", Sample.class);
@@ -373,6 +378,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Sample", Sample.class);
@@ -388,6 +394,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Sample getSampleByAccessionNumber(String accessionNumber) throws LIMSRuntimeException {
 		Sample sample = null;
 		try {
@@ -408,6 +415,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	// ==============================================================
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getSamplesByStatusAndDomain(List statuses, String domain) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -430,6 +438,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByQaEventCategory,
 			String qaEventCategoryId, boolean filterByDomain) throws LIMSRuntimeException {
 		List<Sample> list;
@@ -513,6 +522,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesReceivedOn(String receivedDate) throws LIMSRuntimeException {
 		// covers full day so handles time stamps
 		return getSamplesReceivedInDateRange(receivedDate, receivedDate);
@@ -524,6 +534,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd)
 			throws LIMSRuntimeException {
 		List<Sample> list;
@@ -554,6 +565,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesCollectedOn(String collectionDate) throws LIMSRuntimeException {
 		List<Sample> list = null;
 
@@ -587,6 +599,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
 			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
 
@@ -614,6 +627,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
 			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
 
@@ -641,6 +655,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession)
 			throws LIMSRuntimeException {
 
@@ -663,6 +678,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumber() throws LIMSRuntimeException {
 		String greatestAccessionNumber = null;
 
@@ -681,6 +697,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumberWithPrefix(String prefix) throws LIMSRuntimeException {
 		String greatestAccessionNumber = null;
 
@@ -699,6 +716,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLargestAccessionNumberMatchingPattern(String startingWith, int accessionSize)
 			throws LIMSRuntimeException {
 		String greatestAccessionNumber = null;
@@ -718,6 +736,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) throws LIMSRuntimeException {
 		String sql = "Select sqa.sample From SampleQaEvent sqa where sqa.sample.id IN (select sa.sample.id from SampleOrganization sa where sa.organization.id = :serviceId) ";
 
@@ -735,6 +754,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd)
 			throws LIMSRuntimeException {
 		String sql = "from Sample s where s.isConfirmation = true and s.receivedTimestamp BETWEEN :lowDate AND :highDate";
@@ -754,6 +774,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesBySampleItem(Integer sampleitemId) throws LIMSRuntimeException {
 
 		String sql = "from Sample s where s.id in (select si.sample.id from SampleItem si where si.id = :sampleitemId)";
@@ -773,6 +794,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Sample getSampleByReferringId(String referringId) throws LIMSRuntimeException {
 
 		String sql = "from Sample s where s.referringId = :referringId";

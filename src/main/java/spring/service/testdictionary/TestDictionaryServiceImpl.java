@@ -2,6 +2,7 @@ package spring.service.testdictionary;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
@@ -22,6 +23,7 @@ public class TestDictionaryServiceImpl extends BaseObjectServiceImpl<TestDiction
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestDictionary getTestDictionaryForTestId(String testId) {
         return getBaseObjectDAO().getTestDictionaryForTestId(testId);
 	}

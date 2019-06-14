@@ -153,6 +153,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
 			TestTrailer uom = sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
@@ -171,6 +172,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestTrailers() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -191,6 +193,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -231,6 +234,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestTrailer", TestTrailer.class);
@@ -238,12 +242,14 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestTrailerRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestTrailer", TestTrailer.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestTrailer t where t.testTrailerName = :param";
@@ -269,6 +275,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestTrailers(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -289,12 +296,14 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestTrailerCount() throws LIMSRuntimeException {
 		return getTotalCount("TestTrailer", TestTrailer.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -317,6 +326,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();

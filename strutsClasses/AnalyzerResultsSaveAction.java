@@ -805,7 +805,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(resultItem.getTestId(),
+			ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(resultItem.getTestId(),
 					patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

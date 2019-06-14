@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -26,37 +27,44 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemModule systemModule) {
 		getBaseObjectDAO().getData(systemModule);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSystemModuleCount() {
 		return getBaseObjectDAO().getTotalSystemModuleCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSystemModules(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfSystemModules(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSystemModuleRecord(String id) {
 		return getBaseObjectDAO().getNextSystemModuleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllSystemModules() {
 		return getBaseObjectDAO().getAllSystemModules();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSystemModuleRecord(String id) {
 		return getBaseObjectDAO().getPreviousSystemModuleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SystemModule getSystemModuleByName(String name) {
 		return getBaseObjectDAO().getSystemModuleByName(name);
 	}

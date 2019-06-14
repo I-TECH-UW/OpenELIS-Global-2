@@ -441,6 +441,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @return type integer the password expiration day
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
@@ -466,6 +467,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @return type integer the system user id
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public int getSystemUserId(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {

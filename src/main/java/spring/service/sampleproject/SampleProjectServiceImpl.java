@@ -27,23 +27,26 @@ public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProjec
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public SampleProject getSampleProjectBySampleId(String id) {
 		return getMatch("sample.id", id).orElse(null);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleProject sampleProj) {
 		getBaseObjectDAO().getData(sampleProj);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getSampleProjectsByProjId(String projId) {
 		return getBaseObjectDAO().getSampleProjectsByProjId(projId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
 			Date lowDate, Date highDate) {
 		return getBaseObjectDAO().getByOrganizationProjectAndReceivedOnRange(organizationId, projectName, lowDate,
