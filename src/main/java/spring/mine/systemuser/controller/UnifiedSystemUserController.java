@@ -19,7 +19,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -362,8 +361,6 @@ public class UnifiedSystemUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
-	@Transactional // TODO csl -remove this transactional and rely on services transactionals
-					// (which doesn't work right now for some reason)
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") @Valid UnifiedSystemUserForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {

@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,7 @@ import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.valueholder.Login;
@@ -21,8 +25,14 @@ import us.mn.state.health.lims.security.PasswordUtil;
 
 @Service
 public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> implements LoginService {
+
 	@Autowired
 	protected LoginDAO baseObjectDAO;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}"); // make sure this
+																								// variable is current
 
 	LoginServiceImpl() {
 		super(Login.class);
@@ -34,12 +44,13 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isUserAdmin(Login login) throws LIMSRuntimeException {
 		return login.getIsAdmin().equalsIgnoreCase(IActionConstants.YES);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Login get(String id) {
 		Login login = super.get(id);
 		inferExtraData(login);
@@ -48,7 +59,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Optional<Login> getMatch(String propertyName, Object propertyValue) {
 		Optional<Login> login = super.getMatch(propertyName, propertyValue);
 		if (login.isPresent()) {
@@ -58,7 +69,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Optional<Login> getMatch(Map<String, Object> propertyValues) {
 		Optional<Login> login = super.getMatch(propertyValues);
 		if (login.isPresent()) {
@@ -73,7 +84,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Optional<Login> getValidatedLogin(String loginName, String password) {
 		PasswordUtil passUtil = new PasswordUtil();
 		List<Login> logins = baseObjectDAO.getAllMatching("loginName", loginName);
@@ -106,7 +117,12 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
 		}
-		// TODO csl check to make sure password is a valid hash
+		if (!isHashedPassword(login.getPassword())) {
+			LogEvent.logWarn(this.getClass().getSimpleName(), "insert",
+					"The password saved does not look like a valid hashed password."
+							+ " Ensure that passwords are being hashed before they are stored"
+							+ " because storing encrypted or plaintext passwords is disallowed");
+		}
 		return super.insert(login);
 	}
 
@@ -115,7 +131,12 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
 		}
-		// TODO csl check to make sure password is a valid hash
+		if (!isHashedPassword(login.getPassword())) {
+			LogEvent.logWarn(this.getClass().getSimpleName(), "insert",
+					"The password saved does not look like a valid hashed password."
+							+ " Ensure that passwords are being hashed before they are stored"
+							+ " because storing encrypted or plaintext passwords is disallowed");
+		}
 		return super.save(login);
 	}
 
@@ -124,26 +145,35 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
 		}
-		// TODO csl check to make sure password is a valid hash
+		if (!isHashedPassword(login.getPassword())) {
+			LogEvent.logWarn(this.getClass().getSimpleName(), "insert",
+					"The password saved does not look like a valid hashed password."
+							+ " Ensure that passwords are being hashed before they are stored"
+							+ " because storing encrypted or plaintext passwords is disallowed");
+		}
 		return super.update(login);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public int getPasswordExpiredDayNo(Login login) {
 		return getBaseObjectDAO().getPasswordExpiredDayNo(login);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Login getUserProfile(String loginName) {
 		return getMatch("loginName", loginName).orElse(null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public int getSystemUserId(Login login) {
 		return getBaseObjectDAO().getSystemUserId(login);
+	}
+
+	private boolean isHashedPassword(String password) {
+		return BCryptPasswordEncoder.class.isInstance(passwordEncoder) && BCRYPT_PATTERN.matcher(password).matches();
 	}
 
 }
