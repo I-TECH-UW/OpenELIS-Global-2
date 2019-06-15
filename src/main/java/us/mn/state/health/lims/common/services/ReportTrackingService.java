@@ -34,12 +34,10 @@ import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Service
-public class ReportTrackingService {
+public class ReportTrackingService implements IReportTrackingService {
 	public enum ReportType {
 		PATIENT, NON_CONFORMITY_NOTIFICATION, RESULT_EXPORT, MALARIA_CASE
 	}
-
-	private static ReportTrackingService INSTANCE;
 
 	@Autowired
 	private DocumentTrackService documentTrackService;
@@ -54,11 +52,6 @@ public class ReportTrackingService {
 	private String MALARIA_CASE_DOCUMENT_TYPE_ID;
 
 	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	@PostConstruct
 	private void initialize() {
 		PATIENT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("patientReport").getId();
 		NON_CONFORMITY_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("nonConformityNotification")
@@ -67,10 +60,7 @@ public class ReportTrackingService {
 		MALARIA_CASE_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("malariaCase").getId();
 	}
 
-	public static ReportTrackingService getInstance() {
-		return INSTANCE;
-	}
-
+	@Override
 	@Transactional
 	public void addReports(List<String> refIds, ReportType type, String name, String currentSystemUserId) {
 
@@ -139,21 +129,25 @@ public class ReportTrackingService {
 		return null;
 	}
 
+	@Override
 	public List<DocumentTrack> getReportsForSample(Sample sample, ReportType type) {
 		return documentTrackService.getByTypeRecordAndTable(getReportTypeId(type), getReferenceTable(type),
 				sample.getId());
 	}
 
+	@Override
 	public List<DocumentTrack> getReportsForSampleAndReportName(Sample sample, ReportType type, String name) {
 		return documentTrackService.getByTypeRecordAndTableAndName(getReportTypeId(type), getReferenceTable(type),
 				sample.getId(), name);
 	}
 
+	@Override
 	public DocumentTrack getLastReportForSample(Sample sample, ReportType type) {
 		List<DocumentTrack> reports = getReportsForSample(sample, type);
 		return reports.isEmpty() ? null : reports.get(reports.size() - 1);
 	}
 
+	@Override
 	public DocumentTrack getLastNamedReportForSample(Sample sample, ReportType type, String name) {
 		if (sample == null || type == null || GenericValidator.isBlankOrNull(name)) {
 			return null;
@@ -163,16 +157,19 @@ public class ReportTrackingService {
 		return reports.isEmpty() ? null : reports.get(reports.size() - 1);
 	}
 
+	@Override
 	public Timestamp getTimeOfLastReport(Sample sample, ReportType type) {
 		DocumentTrack report = getLastReportForSample(sample, type);
 		return report == null ? null : report.getReportTime();
 	}
 
+	@Override
 	public Timestamp getTimeOfLastNamedReport(Sample sample, ReportType type, String name) {
 		DocumentTrack report = getLastNamedReportForSample(sample, type, name);
 		return report == null ? null : report.getReportTime();
 	}
 
+	@Override
 	public DocumentTrack getDocumentForId(String id) {
 		return documentTrackService.get(id);
 	}

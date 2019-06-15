@@ -188,8 +188,14 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
 		// using the string.
 		@Override
 		public int compare(BaseObject o0, BaseObject o1) {
-			String ln0 = o0.getLocalizedName();
-			String ln1 = o1.getLocalizedName();
+			String ln0 = o0 == null ? null : o0.getLocalizedName();
+			String ln1 = o1 == null ? null : o1.getLocalizedName();
+			if (ln0 == null) {
+				return -1;
+			}
+			if (ln1 == null) {
+				return 1;
+			}
 			Scanner s0 = new Scanner(ln0);
 			Scanner s1 = new Scanner(ln1);
 			if (s0.hasNextInt() && s1.hasNextInt()) {

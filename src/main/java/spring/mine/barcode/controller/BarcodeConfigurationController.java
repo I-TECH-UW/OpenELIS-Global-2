@@ -18,18 +18,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.barcode.form.BarcodeConfigurationForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.service.siteinformation.SiteInformationService;
+import spring.service.barcode.BarcodeInformationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class BarcodeConfigurationController extends BaseController {
-
 	@Autowired
-	SiteInformationService siteInformationService;
+	private BarcodeInformationService barcodeInformationService;
 
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
 	public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
@@ -103,27 +100,12 @@ public class BarcodeConfigurationController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
+		// ensure transaction block
 		try {
-			updateSiteInfo("heightOrderLabels", Float.toString(form.getHeightOrderLabels()), "text");
-			updateSiteInfo("widthOrderLabels", Float.toString(form.getWidthOrderLabels()), "text");
-			updateSiteInfo("heightSpecimenLabels", Float.toString(form.getHeightSpecimenLabels()), "text");
-			updateSiteInfo("widthSpecimenLabels", Float.toString(form.getWidthSpecimenLabels()), "text");
-
-			updateSiteInfo("numOrderLabels", Integer.toString(form.getNumOrderLabels()), "text");
-			updateSiteInfo("numSpecimenLabels", Integer.toString(form.getNumSpecimenLabels()), "text");
-
-			updateSiteInfo("collectionDateCheck", Boolean.toString(form.getCollectionDateCheck()), "boolean");
-			updateSiteInfo("patientSexCheck", Boolean.toString(form.getPatientSexCheck()), "boolean");
-			updateSiteInfo("testsCheck", Boolean.toString(form.getTestsCheck()), "boolean");
-
-//			tx.commit();
+			barcodeInformationService.updateBarcodeInfoFromForm(form, getSysUserId(request));
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			result.reject("barcode.config.error.insert");
 		} finally {
-			HibernateUtil.closeSession();
 			ConfigurationProperties.forceReload();
 		}
 
@@ -134,34 +116,6 @@ public class BarcodeConfigurationController extends BaseController {
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
-	}
-
-	/**
-	 * Persist a bar code configuration value in the database under site_information
-	 *
-	 * @param errors    For error tracking on inserts
-	 * @param name      The name in the database
-	 * @param value     The new value to save
-	 * @param valueType The type of the value to save
-	 */
-	private void updateSiteInfo(String name, String value, String valueType) {
-		if ("boolean".equals(valueType)) {
-			value = "true".equalsIgnoreCase(value) ? "true" : "false";
-		}
-		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(name);
-		if (siteInformation == null) {
-			siteInformation = new SiteInformation();
-			siteInformation.setName(name);
-			siteInformation.setValue(value);
-			siteInformation.setValueType(valueType);
-			siteInformation.setSysUserId(getSysUserId(request));
-			siteInformationService.insert(siteInformation);
-		} else {
-			siteInformation.setValue(value);
-			siteInformation.setSysUserId(getSysUserId(request));
-			siteInformationService.update(siteInformation);
-		}
-
 	}
 
 	@Override

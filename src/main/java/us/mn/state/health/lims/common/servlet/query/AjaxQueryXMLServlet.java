@@ -1,5 +1,5 @@
 package us.mn.state.health.lims.common.servlet.query;
-        
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -7,28 +7,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.BaseQueryProvider;
 import us.mn.state.health.lims.common.provider.query.QueryProviderFactory;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.security.SecureXmlHttpServletRequest;
 
 public class AjaxQueryXMLServlet extends AjaxServlet {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -7346331231442794642L;
 
-	public void sendData(String field, String message,
-			HttpServletRequest request, HttpServletResponse response)
+	@Override
+	public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
-        response.setCharacterEncoding("utf-8");
-        
+		response.setCharacterEncoding("utf-8");
+
 		if (!StringUtil.isNullorNill(field)) {
 			response.setContentType("text/xml");
 			response.setHeader("Cache-Control", "no-cache");
@@ -41,10 +41,11 @@ public class AjaxQueryXMLServlet extends AjaxServlet {
 		}
 	}
 
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException, LIMSRuntimeException {
-		//check for authentication
-		UserModuleService userModuleService = new UserModuleServiceImpl();
+		// check for authentication
+		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
@@ -53,8 +54,7 @@ public class AjaxQueryXMLServlet extends AjaxServlet {
 		}
 
 		String queryProvider = request.getParameter("provider");
-		BaseQueryProvider provider = (BaseQueryProvider) QueryProviderFactory
-				.getInstance().getQueryProvider(queryProvider);
+		BaseQueryProvider provider = QueryProviderFactory.getInstance().getQueryProvider(queryProvider);
 		provider.setServlet(this);
 		provider.processRequest(new SecureXmlHttpServletRequest(request), response);
 	}

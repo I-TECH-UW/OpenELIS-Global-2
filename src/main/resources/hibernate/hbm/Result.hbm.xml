@@ -12,13 +12,13 @@
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="analysis" class="us.mn.state.health.lims.analysis.valueholder.Analysis" fetch="select">
+        <many-to-one name="analysis" class="us.mn.state.health.lims.analysis.valueholder.Analysis" fetch="select" lazy="false">
             <column name="ANALYSIS_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="analyte" class="us.mn.state.health.lims.analyte.valueholder.Analyte" fetch="select">
+        <many-to-one name="analyte" class="us.mn.state.health.lims.analyte.valueholder.Analyte" fetch="select" lazy="false">
             <column name="ANALYTE_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="testResult" class="us.mn.state.health.lims.testresult.valueholder.TestResult" fetch="select">
+        <many-to-one name="testResult" class="us.mn.state.health.lims.testresult.valueholder.TestResult" fetch="select" lazy="false">
             <column name="TEST_RESULT_ID" precision="10" scale="0" />
         </many-to-one>
         <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">

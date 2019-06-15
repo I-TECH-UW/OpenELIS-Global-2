@@ -362,8 +362,8 @@ public class UnifiedSystemUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
-	@Transactional // TODO remove this transactional and rely on services transactionals (which
-					// doesn't work right now)
+	@Transactional // TODO csl -remove this transactional and rely on services transactionals
+					// (which doesn't work right now for some reason)
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") @Valid UnifiedSystemUserForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {

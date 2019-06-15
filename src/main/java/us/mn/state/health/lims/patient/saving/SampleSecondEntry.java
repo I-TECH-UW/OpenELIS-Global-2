@@ -35,14 +35,21 @@ import us.mn.state.health.lims.common.action.IActionConstants;
  */
 @Service
 @Scope("prototype")
-public class SampleSecondEntry extends SampleEntry implements IActionConstants {
+public class SampleSecondEntry extends SampleEntry implements ISampleSecondEntry, IActionConstants {
 
 	/**
 	 * @param dynaBean
 	 * @param sysUserId
 	 */
 	public SampleSecondEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
-		super(form, sysUserId, request);
+		this();
+		super.setFieldsFromForm(form);
+		super.setSysUserId(sysUserId);
+		super.setRequest(request);
+	}
+
+	public SampleSecondEntry() {
+		super();
 		newPatientStatus = null; // no change
 		newSampleStatus = ValidationRegistration;
 	}

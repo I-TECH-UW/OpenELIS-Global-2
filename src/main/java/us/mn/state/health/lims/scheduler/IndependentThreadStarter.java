@@ -23,19 +23,19 @@ import org.springframework.stereotype.Service;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.scheduler.independentthreads.MalariaResultExporter;
-import us.mn.state.health.lims.scheduler.independentthreads.ResultExporter;
-import us.mn.state.health.lims.scheduler.independentthreads.TestUsageBacklog;
+import us.mn.state.health.lims.scheduler.independentthreads.IMalariaResultExporter;
+import us.mn.state.health.lims.scheduler.independentthreads.IResultExporter;
+import us.mn.state.health.lims.scheduler.independentthreads.ITestUsageBacklog;
 
 @Service
 public class IndependentThreadStarter {
 
 	@Autowired
-	private ResultExporter resultExporter;
+	private IResultExporter resultExporter;
 	@Autowired
-	private MalariaResultExporter malariaResultExporter;
+	private IMalariaResultExporter malariaResultExporter;
 	@Autowired
-	private TestUsageBacklog testUsageBacklog;
+	private ITestUsageBacklog testUsageBacklog;
 
 	public void startThreads() {
 		String reportInterval = ConfigurationProperties.getInstance().getPropertyValue(Property.resultsResendTime);

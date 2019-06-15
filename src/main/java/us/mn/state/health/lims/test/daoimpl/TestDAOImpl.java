@@ -869,7 +869,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			} else {
 //				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 //
-//				UserModuleService userModuleService = new UserModuleServiceImpl();
+//				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 //				if (!userModuleService.isUserAdmin(request)) {
 //					count = getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
 //				} else {

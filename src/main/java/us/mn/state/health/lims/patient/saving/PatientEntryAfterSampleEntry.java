@@ -36,7 +36,7 @@ import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 
 @Service
 @Scope("prototype")
-public class PatientEntryAfterSampleEntry extends PatientEntry {
+public class PatientEntryAfterSampleEntry extends PatientEntry implements IPatientEntryAfterSampleEntry {
 
 	public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws Exception {

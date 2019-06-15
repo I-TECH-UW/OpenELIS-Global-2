@@ -14,6 +14,7 @@ import org.springframework.validation.ObjectError;
 
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.barcode.BarcodeLabelMaker;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
@@ -21,7 +22,6 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.Versioning;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
@@ -42,7 +42,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		// check for authentication
-		UserModuleService userModuleService = new UserModuleServiceImpl();
+		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");

@@ -22,11 +22,11 @@ import spring.mine.patient.validator.PatientEntryByProjectFormValidator;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
-import us.mn.state.health.lims.patient.saving.PatientEntry;
-import us.mn.state.health.lims.patient.saving.PatientEntryAfterAnalyzer;
-import us.mn.state.health.lims.patient.saving.PatientEntryAfterSampleEntry;
-import us.mn.state.health.lims.patient.saving.PatientSecondEntry;
+import us.mn.state.health.lims.patient.saving.IPatientEditUpdate;
+import us.mn.state.health.lims.patient.saving.IPatientEntry;
+import us.mn.state.health.lims.patient.saving.IPatientEntryAfterAnalyzer;
+import us.mn.state.health.lims.patient.saving.IPatientEntryAfterSampleEntry;
+import us.mn.state.health.lims.patient.saving.IPatientSecondEntry;
 import us.mn.state.health.lims.patient.saving.RequestType;
 
 @Controller
@@ -77,7 +77,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
 		String sysUserId = getSysUserId(request);
 		addAllPatientFormLists(form);
-		PatientEditUpdate patientEditUpdateAccessioner = SpringContext.getBean(PatientEditUpdate.class);
+		IPatientEditUpdate patientEditUpdateAccessioner = SpringContext.getBean(IPatientEditUpdate.class);
 		patientEditUpdateAccessioner.setRequest(request);
 		patientEditUpdateAccessioner.setFieldsFromForm(form);
 		patientEditUpdateAccessioner.setSysUserId(sysUserId);
@@ -86,30 +86,30 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 			forward = handleSave(request, patientEditUpdateAccessioner);
 		}
 
-		PatientSecondEntry patientSecondEntryAccessioner = SpringContext.getBean(PatientSecondEntry.class);
+		IPatientSecondEntry patientSecondEntryAccessioner = SpringContext.getBean(IPatientSecondEntry.class);
 		patientSecondEntryAccessioner.setRequest(request);
 		patientSecondEntryAccessioner.setFieldsFromForm(form);
 		patientSecondEntryAccessioner.setSysUserId(sysUserId);
 		if (patientSecondEntryAccessioner.canAccession()) {
 			forward = handleSave(request, patientSecondEntryAccessioner);
 		}
-		PatientEntry patientEntryAccessioner = SpringContext.getBean("patientEntry");
+		IPatientEntry patientEntryAccessioner = SpringContext.getBean(IPatientEntry.class);
 		patientEntryAccessioner.setRequest(request);
 		patientEntryAccessioner.setFieldsFromForm(form);
 		patientEntryAccessioner.setSysUserId(sysUserId);
 		if (patientEntryAccessioner.canAccession()) {
 			forward = handleSave(request, patientEntryAccessioner);
 		}
-		PatientEntryAfterSampleEntry patientEntryAfterSampleEntryAccessioner = SpringContext
-				.getBean(PatientEntryAfterSampleEntry.class);
+		IPatientEntryAfterSampleEntry patientEntryAfterSampleEntryAccessioner = SpringContext
+				.getBean(IPatientEntryAfterSampleEntry.class);
 		patientEntryAfterSampleEntryAccessioner.setRequest(request);
 		patientEntryAfterSampleEntryAccessioner.setFieldsFromForm(form);
 		patientEntryAfterSampleEntryAccessioner.setSysUserId(sysUserId);
 		if (patientEntryAfterSampleEntryAccessioner.canAccession()) {
 			forward = handleSave(request, patientEntryAfterSampleEntryAccessioner);
 		}
-		PatientEntryAfterAnalyzer patientEntryAfterAnalyzerAccessioner = SpringContext
-				.getBean(PatientEntryAfterAnalyzer.class);
+		IPatientEntryAfterAnalyzer patientEntryAfterAnalyzerAccessioner = SpringContext
+				.getBean(IPatientEntryAfterAnalyzer.class);
 		patientEntryAfterAnalyzerAccessioner.setRequest(request);
 		patientEntryAfterAnalyzerAccessioner.setFieldsFromForm(form);
 		patientEntryAfterAnalyzerAccessioner.setSysUserId(sysUserId);

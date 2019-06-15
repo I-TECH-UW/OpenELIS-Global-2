@@ -206,7 +206,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
 		Patient patient = null;
 		try {
-			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
+			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patient.id = patient.id and sampleHuman.sampleId = :sId";
 			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			patient = (Patient) query.uniqueResult();

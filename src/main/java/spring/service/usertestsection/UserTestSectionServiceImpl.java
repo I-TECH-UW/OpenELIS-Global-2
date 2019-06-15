@@ -17,6 +17,7 @@ import spring.service.test.TestSectionService;
 import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -25,7 +26,6 @@ import us.mn.state.health.lims.common.util.LabelValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -87,7 +87,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 				UserSessionData usd = (UserSessionData) request.getSession()
 						.getAttribute(IActionConstants.USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleService userModuleService = new UserModuleServiceImpl();
+				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 				if (!userModuleService.isUserAdmin(request)) {
 					if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(IActionConstants.YES)) {
 
@@ -129,7 +129,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 				UserSessionData usd = (UserSessionData) request.getSession()
 						.getAttribute(IActionConstants.USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleService userModuleService = new UserModuleServiceImpl();
+				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 				if (!userModuleService.isUserAdmin(request)) {
 					list = testSectService.getAllTestSectionsBySysUserId(usd.getSystemUserId());
 				} else {
@@ -157,7 +157,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 				UserSessionData usd = (UserSessionData) request.getSession()
 						.getAttribute(IActionConstants.USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleService userModuleService = new UserModuleServiceImpl();
+				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 				if (!userModuleService.isUserAdmin(request)) {
 					list = testService.getAllTestsBySysUserId(usd.getSystemUserId(), onlyTestsFullySetup);
 				} else {
@@ -182,7 +182,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //				return sample_Tas;
 //			} else {
 //				// bugzilla 2160
-//				UserModuleService userModuleService = new UserModuleServiceImpl();
+//				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 //				if (!userModuleService.isUserAdmin(request)) {
 //					for (int i = 0; i < sample_Tas.size(); i++) {
 //						Sample_TestAnalyte sample_ta = (Sample_TestAnalyte) sample_Tas.get(i);
@@ -256,7 +256,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
 				return newAnalyses;
 			} else {
-				UserModuleService userModuleService = new UserModuleServiceImpl();
+				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 				if (!userModuleService.isUserAdmin(request)) {
 					newAnalyses = new ArrayList();
 					for (int i = 0; i < analyses.size(); i++) {
@@ -293,7 +293,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //				return sample_Tas;
 //			} else {
 //				// bugzilla 2160
-//				UserModuleService userModuleService = new UserModuleServiceImpl();
+//				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 //				if (!userModuleService.isUserAdmin(request)) {
 //					for (int i = 0; i < sample_Tas.size(); i++) {
 //						Sample_TestAnalyte sample_ta = (Sample_TestAnalyte) sample_Tas.get(i);

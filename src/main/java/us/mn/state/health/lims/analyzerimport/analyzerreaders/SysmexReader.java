@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @SuppressWarnings("unused")
 public class SysmexReader extends AnalyzerLineInserter {
@@ -235,12 +233,12 @@ public class SysmexReader extends AnalyzerLineInserter {
 		testNameIndex[CCMH_g_L] = "CCMH_g_L";
 		testNameIndex[PLQ_10_3_uL] = "PLQ_10_3_uL";
 
-	/*	testNameIndex[NEUT_COUNT_10_uL] = "NE#";
-		testNameIndex[MONO_COUNT_10_uL] = "MO#";
-		testNameIndex[BASO_COUNT_10_uL] = "BA#";
-		testNameIndex[LYMPH_COUNT_10_uL] = "LY#";
-		testNameIndex[EO_COUNT_10_uL] = "EO#";
-	 */
+		/*
+		 * testNameIndex[NEUT_COUNT_10_uL] = "NE#"; testNameIndex[MONO_COUNT_10_uL] =
+		 * "MO#"; testNameIndex[BASO_COUNT_10_uL] = "BA#";
+		 * testNameIndex[LYMPH_COUNT_10_uL] = "LY#"; testNameIndex[EO_COUNT_10_uL] =
+		 * "EO#";
+		 */
 
 		unitsIndex[GB_10_uL] = "10^3/ul";
 		unitsIndex[GR_100000_uL] = "10^6/ul";
@@ -256,22 +254,22 @@ public class SysmexReader extends AnalyzerLineInserter {
 		unitsIndex[CCMH_g_L] = "g/l";
 		unitsIndex[PLQ_10_3_uL] = "10^3/ul";
 
-	/*	unitsIndex[NEUT_COUNT_10_uL] = " ";
-		unitsIndex[MONO_COUNT_10_uL] = " ";
-		unitsIndex[BASO_COUNT_10_uL] = " ";
-		unitsIndex[LYMPH_COUNT_10_uL] = " ";
-		unitsIndex[EO_COUNT_10_uL] = " ";
-    */
-		for( int i = 0; i < readOnlyIndex.length; i++){
+		/*
+		 * unitsIndex[NEUT_COUNT_10_uL] = " "; unitsIndex[MONO_COUNT_10_uL] = " ";
+		 * unitsIndex[BASO_COUNT_10_uL] = " "; unitsIndex[LYMPH_COUNT_10_uL] = " ";
+		 * unitsIndex[EO_COUNT_10_uL] = " ";
+		 */
+		for (int i = 0; i < readOnlyIndex.length; i++) {
 			readOnlyIndex[i] = Boolean.FALSE;
 		}
 
-	/*	readOnlyIndex[NEUT_COUNT_10_uL] = Boolean.TRUE;
-		readOnlyIndex[MONO_COUNT_10_uL] = Boolean.TRUE;
-		readOnlyIndex[BASO_COUNT_10_uL] = Boolean.TRUE;
-		readOnlyIndex[LYMPH_COUNT_10_uL] = Boolean.TRUE;
-		readOnlyIndex[EO_COUNT_10_uL] = Boolean.TRUE;
-   */
+		/*
+		 * readOnlyIndex[NEUT_COUNT_10_uL] = Boolean.TRUE;
+		 * readOnlyIndex[MONO_COUNT_10_uL] = Boolean.TRUE;
+		 * readOnlyIndex[BASO_COUNT_10_uL] = Boolean.TRUE;
+		 * readOnlyIndex[LYMPH_COUNT_10_uL] = Boolean.TRUE;
+		 * readOnlyIndex[EO_COUNT_10_uL] = Boolean.TRUE;
+		 */
 		scaleIndex[GB_10_uL] = 100;
 		scaleIndex[GR_100000_uL] = 100;
 		scaleIndex[NEUT_PER_10_NEG_1_PER] = 10;
@@ -285,14 +283,13 @@ public class SysmexReader extends AnalyzerLineInserter {
 		scaleIndex[BASO_PER_10_NEG_1_PER] = 10;
 		scaleIndex[CCMH_g_L] = 10;
 		scaleIndex[PLQ_10_3_uL] = 1;
-	/*	scaleIndex[NEUT_COUNT_10_uL] = 100;
-		scaleIndex[MONO_COUNT_10_uL] = 100;
-		scaleIndex[BASO_COUNT_10_uL] = 10;
-		scaleIndex[LYMPH_COUNT_10_uL] = 100;
-		scaleIndex[EO_COUNT_10_uL] = 100;
-    */
+		/*
+		 * scaleIndex[NEUT_COUNT_10_uL] = 100; scaleIndex[MONO_COUNT_10_uL] = 100;
+		 * scaleIndex[BASO_COUNT_10_uL] = 10; scaleIndex[LYMPH_COUNT_10_uL] = 100;
+		 * scaleIndex[EO_COUNT_10_uL] = 100;
+		 */
 
-		orderedTestIndexs[0] =GB_10_uL;
+		orderedTestIndexs[0] = GB_10_uL;
 		orderedTestIndexs[6] = GR_100000_uL;
 		orderedTestIndexs[1] = NEUT_PER_10_NEG_1_PER;
 		orderedTestIndexs[7] = HBG_g_L;
@@ -311,28 +308,16 @@ public class SysmexReader extends AnalyzerLineInserter {
 		orderedTestIndexs[17] = BASO_COUNT_10_uL;
 		orderedTestIndexs[14] = LYMPH_COUNT_10_uL;
 		orderedTestIndexs[16] = EO_COUNT_10_uL;
-    
 
 		/*
-		GB_10_uL              WBC   100
-		GR_100000_uL          RBC   100
-		NEUT_PER_10_NEG_1_PER NE%    10
-		HBG_g_L               HGB    10
-		LYMPH_PER_10_NEG_1_PER LY%   10
-		HCT_10_NEG_1_PER      HCT    10
-		MONO_PER_10_NEG_1_PER MO%    10
-		VGM_10_NEG_1_fL       MVC    10
-		EO_PER_10_NEG_1_PER   EO%    10
-		TCMH_10_NEG_1_pg      MCH    10
-		BASO_PER_10_NEG_1_PER BA%    10
-		CCMH_g_L              MCHC   10
-		PLQ_10_3_uL           PLT     1
-
-		NEUT_COUNT_10_uL      NE#   100
-		MONO_COUNT_10_uL      MO#   100
-		BASO_COUNT_10_uL      BA#    10
-		LYMPH_COUNT_10_uL     LY#   100
-		EO_COUNT_10_uL        EO#   100
+		 * GB_10_uL WBC 100 GR_100000_uL RBC 100 NEUT_PER_10_NEG_1_PER NE% 10 HBG_g_L
+		 * HGB 10 LYMPH_PER_10_NEG_1_PER LY% 10 HCT_10_NEG_1_PER HCT 10
+		 * MONO_PER_10_NEG_1_PER MO% 10 VGM_10_NEG_1_fL MVC 10 EO_PER_10_NEG_1_PER EO%
+		 * 10 TCMH_10_NEG_1_pg MCH 10 BASO_PER_10_NEG_1_PER BA% 10 CCMH_g_L MCHC 10
+		 * PLQ_10_3_uL PLT 1
+		 *
+		 * NEUT_COUNT_10_uL NE# 100 MONO_COUNT_10_uL MO# 100 BASO_COUNT_10_uL BA# 10
+		 * LYMPH_COUNT_10_uL LY# 100 EO_COUNT_10_uL EO# 100
 		 */
 	}
 
@@ -341,27 +326,17 @@ public class SysmexReader extends AnalyzerLineInserter {
 
 		boolean successful = true;
 
-		List<AnalyzerResults> results = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> results = new ArrayList<>();
 
 		for (int i = 1; i < lines.size(); i++) {
 			addAnalyzerResultFromLine(results, lines.get(i));
 		}
 
 		if (results.size() > 0) {
-
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-
 				persistResults(results, currentUserId);
-
-				tx.commit();
-
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
 				successful = false;
-			} finally {
-				HibernateUtil.closeSession();
 			}
 		}
 
@@ -373,19 +348,22 @@ public class SysmexReader extends AnalyzerLineInserter {
 
 		AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 		String analyzerAccessionNumber = fields[ACCESSION];
-		Timestamp timestamp = DateUtil.convertStringDateToTimestampWithPattern(fields[DATE] + " " + fields[TIME], DATE_PATTERN);
+		Timestamp timestamp = DateUtil.convertStringDateToTimestampWithPattern(fields[DATE] + " " + fields[TIME],
+				DATE_PATTERN);
 
-		List<AnalyzerResults> readOnlyResults = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> readOnlyResults = new ArrayList<>();
 
-		//the reason for the indirection is to get the order of tests correct
+		// the reason for the indirection is to get the order of tests correct
 		for (int i = 0; i < orderedTestIndexs.length; i++) {
 			int testIndex = orderedTestIndexs[i];
 
 			if (!GenericValidator.isBlankOrNull(testNameIndex[testIndex])) {
-				MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
+				MappedTestName mappedName = AnalyzerTestNameCache.instance()
+						.getMappedTest(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
 
-				if( mappedName == null){
-					mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
+				if (mappedName == null) {
+					mappedName = AnalyzerTestNameCache.instance()
+							.getEmptyMappedTestName(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
 				}
 
 				AnalyzerResults analyzerResults = new AnalyzerResults();
@@ -394,10 +372,10 @@ public class SysmexReader extends AnalyzerLineInserter {
 
 				double result = Double.NaN;
 
-				try{
-					result = Double.parseDouble(fields[testIndex])/scaleIndex[testIndex];
-				}catch( NumberFormatException nfe){
-					//no-op -- defaults to NAN
+				try {
+					result = Double.parseDouble(fields[testIndex]) / scaleIndex[testIndex];
+				} catch (NumberFormatException nfe) {
+					// no-op -- defaults to NAN
 				}
 
 				analyzerResults.setResult(String.valueOf(result));
@@ -414,14 +392,14 @@ public class SysmexReader extends AnalyzerLineInserter {
 					analyzerResults.setIsControl(false);
 				}
 
-				if( analyzerResults.isReadOnly()){
+				if (analyzerResults.isReadOnly()) {
 					readOnlyResults.add(analyzerResults);
-				}else{
+				} else {
 					results.add(analyzerResults);
 				}
 
 				AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(analyzerResults);
-				if( resultFromDB != null){
+				if (resultFromDB != null) {
 					results.add(resultFromDB);
 				}
 			}

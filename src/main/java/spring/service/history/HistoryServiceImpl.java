@@ -18,6 +18,7 @@ public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> i
 
 	HistoryServiceImpl() {
 		super(History.class);
+		disableLogging();
 	}
 
 	@Override

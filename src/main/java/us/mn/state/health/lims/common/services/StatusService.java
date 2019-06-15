@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,7 @@ import spring.service.observationhistorytype.ObservationHistoryTypeService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.statusofsample.StatusOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -47,7 +46,7 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
 @Service
-public class StatusService {
+public class StatusService implements IStatusService {
 	public enum OrderStatus {
 		Entered, Started, Finished, NonConforming_depricated
 	}
@@ -72,8 +71,6 @@ public class StatusService {
 	public enum ExternalOrderStatus {
 		Entered, Cancelled, Realized
 	}
-
-	private static StatusService instance;
 
 	private Map<String, OrderStatus> idToOrderStatusMap = null;
 	private Map<String, SampleStatus> idToSampleStatusMap = null;
@@ -107,121 +104,135 @@ public class StatusService {
 	@Autowired
 	SampleHumanService sampleHumanService;
 
-	@PostConstruct
-	private void registerInstance() {
-		// Makes this a singelton when spring automatically creates this object
-		instance = this;
+	public static IStatusService getInstance() {
+		return SpringContext.getBean(IStatusService.class);
 	}
 
-	public static StatusService getInstance() {
-		return instance;
-	}
-
+	@Override
 	public boolean matches(String id, SampleStatus sampleStatus) {
 		insureMapsAreBuilt();
 		return getStatusID(sampleStatus).equals(id);
 	}
 
+	@Override
 	public boolean matches(String id, AnalysisStatus analysisStatus) {
 		insureMapsAreBuilt();
 		return getStatusID(analysisStatus).equals(id);
 	}
 
+	@Override
 	public boolean matches(String id, OrderStatus orderStatus) {
 		insureMapsAreBuilt();
 		return getStatusID(orderStatus).equals(id);
 	}
 
+	@Override
 	public boolean matches(String id, ExternalOrderStatus externalOrderStatus) {
 		insureMapsAreBuilt();
 		return getStatusID(externalOrderStatus).equals(id);
 	}
 
+	@Override
 	public String getStatusID(OrderStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = orderStatusToObjectMap.get(statusType);
 		return status == null ? "-1" : status.getId();
 	}
 
+	@Override
 	public String getStatusID(SampleStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = sampleStatusToObjectMap.get(statusType);
 		return status == null ? "-1" : status.getId();
 	}
 
+	@Override
 	public String getStatusID(AnalysisStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = analysisStatusToObjectMap.get(statusType);
 		return status == null ? "-1" : status.getId();
 	}
 
+	@Override
 	public String getStatusID(ExternalOrderStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = externalOrderStatusToObjectMap.get(statusType);
 		return status == null ? "-1" : status.getId();
 	}
 
+	@Override
 	public String getStatusName(RecordStatus statusType) {
 		insureMapsAreBuilt();
 		Dictionary dictionary = recordStatusToObjectMap.get(statusType);
 		return dictionary == null ? "unknown" : dictionary.getLocalizedName();
 	}
 
+	@Override
 	public String getStatusName(OrderStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = orderStatusToObjectMap.get(statusType);
 		return status == null ? "unknown" : status.getLocalizedName();
 	}
 
+	@Override
 	public String getStatusName(SampleStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = sampleStatusToObjectMap.get(statusType);
 		return status == null ? "unknown" : status.getLocalizedName();
 	}
 
+	@Override
 	public String getStatusName(AnalysisStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = analysisStatusToObjectMap.get(statusType);
 		return status == null ? "unknown" : status.getLocalizedName();
 	}
 
+	@Override
 	public String getStatusName(ExternalOrderStatus statusType) {
 		insureMapsAreBuilt();
 		StatusOfSample status = externalOrderStatusToObjectMap.get(statusType);
 		return status == null ? "unknown" : status.getLocalizedName();
 	}
 
+	@Override
 	public String getDictionaryID(RecordStatus statusType) {
 		insureMapsAreBuilt();
 		Dictionary dictionary = recordStatusToObjectMap.get(statusType);
 		return dictionary == null ? "-1" : dictionary.getId();
 	}
 
+	@Override
 	public OrderStatus getOrderStatusForID(String id) {
 		insureMapsAreBuilt();
 		return idToOrderStatusMap.get(id);
 	}
 
+	@Override
 	public SampleStatus getSampleStatusForID(String id) {
 		insureMapsAreBuilt();
 		return idToSampleStatusMap.get(id);
 	}
 
+	@Override
 	public AnalysisStatus getAnalysisStatusForID(String id) {
 		insureMapsAreBuilt();
 		return idToAnalysisStatusMap.get(id);
 	}
 
+	@Override
 	public ExternalOrderStatus getExternalOrderStatusForID(String id) {
 		insureMapsAreBuilt();
 		return idToExternalOrderStatusMap.get(id);
 	}
 
+	@Override
 	public RecordStatus getRecordStatusForID(String id) {
 		insureMapsAreBuilt();
 		return idToRecordStatusMap.get(id);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public StatusSet getStatusSetForSampleId(String sampleId) {
 		Sample sample = new Sample();
@@ -232,6 +243,7 @@ public class StatusService {
 		return buildStatusSet(sample);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public StatusSet getStatusSetForAccessionNumber(String accessionNumber) {
 		if (GenericValidator.isBlankOrNull(accessionNumber)) {
@@ -250,7 +262,8 @@ public class StatusService {
 	 * For now it will fail silently Either sampleStatus or patient status may be
 	 * null
 	 */
-	@Transactional(readOnly = true)
+	@Override
+	@Transactional
 	public void persistRecordStatusForSample(Sample sample, RecordStatus recordStatus, Patient patient,
 			RecordStatus patientStatus, String sysUserId) {
 		insureMapsAreBuilt();
@@ -281,7 +294,6 @@ public class StatusService {
 		}
 	}
 
-	@Transactional
 	private void insertOrUpdateStatus(Sample sample, Patient patient, RecordStatus status, String sysUserId,
 			ObservationHistory record, String historyTypeId) {
 
@@ -301,6 +313,7 @@ public class StatusService {
 		}
 	}
 
+	@Override
 	@Transactional
 	public void deleteRecordStatus(Sample sample, Patient patient, String sysUserId) {
 		insureMapsAreBuilt();
@@ -324,6 +337,7 @@ public class StatusService {
 		observationHistoryService.deleteAll(records);
 	}
 
+	@Override
 	public String getStatusNameFromId(String id) {
 		insureMapsAreBuilt();
 		if (idToAnalysisStatusMap.get(id) != null) {
@@ -370,7 +384,6 @@ public class StatusService {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
 	private void buildStatusToIdMaps() {
 
 		List<StatusOfSample> statusList = statusOfSampleService.getAllStatusOfSamples();

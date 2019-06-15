@@ -55,7 +55,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 	private String ADDRESS_PART_COMMUNE_ID;
 	private String ADDRESS_PART_DEPT_ID;
 
-	private PatientSearchPopulateProvider() {
+	public PatientSearchPopulateProvider() {
 		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
@@ -93,7 +93,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 
 	/**
 	 * building the XML and the status return.
-	 * 
+	 *
 	 * @return
 	 */
 	private String createSearchResultXML(Patient patient, StringBuilder xml) {
@@ -180,7 +180,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 	/**
 	 * Fake the unknown patient by never return whatever happens to be in last name
 	 * field.
-	 * 
+	 *
 	 * @param person
 	 * @return
 	 */

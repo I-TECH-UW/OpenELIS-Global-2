@@ -51,7 +51,7 @@ import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Service
 @Scope("prototype")
-public class ResultExporter extends Thread {
+public class ResultExporter extends Thread implements IResultExporter {
 
 	private long sleepTime;
 	private boolean running = true;

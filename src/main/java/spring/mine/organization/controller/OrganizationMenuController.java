@@ -27,7 +27,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Controller
@@ -163,8 +162,6 @@ public class OrganizationMenuController extends BaseMenuController {
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
 			return findForward(FWD_FAIL_DELETE, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
 		redirectAttributes.addAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_DELETE, form);

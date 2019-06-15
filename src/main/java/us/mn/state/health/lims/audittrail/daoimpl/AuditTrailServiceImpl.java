@@ -19,38 +19,31 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Vector;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.history.HistoryService;
 import spring.service.referencetables.ReferenceTablesService;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailService;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.LabelValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
 @Transactional
-public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implements AuditTrailService {
+public class AuditTrailServiceImpl implements AuditTrailService {
 
 	@Autowired
 	ReferenceTablesService referenceTablesService;
-
-	public AuditTrailServiceImpl() {
-		super(History.class);
-	}
+	@Autowired
+	HistoryService historyService;
 
 	// For an insert log the id, sys_user_id, ref id, reftable, timestamp, activity
 	// (='I'). The change column would be blank, since the
@@ -64,7 +57,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 		ReferenceTables referenceTable = referenceTablesService.getReferenceTableByName(referenceTables);
 
 		// bugzilla 2111: if keepHistory is N then return - don't throw exception
-		if (referenceTable != null && !referenceTable.getKeepHistory().equals(YES)) {
+		if (referenceTable != null && !referenceTable.getKeepHistory().equals(IActionConstants.YES)) {
 			LogEvent.logDebug("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: REF TABLE KEEP_HISTORY IS N");
 			return;
 		}
@@ -122,7 +115,7 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 		ReferenceTables rt = referenceTablesService.getReferenceTableByName(referenceTables);
 
 //		bugzilla 2111: if keepHistory is N then return - don't throw exception
-		if (rt != null && !rt.getKeepHistory().equals(YES)) {
+		if (rt != null && !rt.getKeepHistory().equals(IActionConstants.YES)) {
 			// bugzilla 2154
 			LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: REF TABLE KEEP_HISTORY IS N");
 			return;
@@ -1275,57 +1268,57 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @param history valueholder
 	 * @return list of history objects
 	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
-		return getHistoryByRefIdAndRefTableId(history.getReferenceId(), history.getReferenceTable());
-	}
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
+//		return getHistoryByRefIdAndRefTableId(history.getReferenceId(), history.getReferenceTable());
+//	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
-		List list;
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
+//		List list;
+//
+//		try {
+//
+//			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("refId", Integer.parseInt(refId));
+//			query.setInteger("tableId", Integer.parseInt(tableId));
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (HibernateException e) {
+//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
+//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
+//		}
+//		return list;
+//	}
 
-		try {
-
-			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("refId", Integer.parseInt(refId));
-			query.setInteger("tableId", Integer.parseInt(tableId));
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (HibernateException e) {
-			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
-			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
-		}
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
-			throws LIMSRuntimeException {
-		String sql = "from History h where h.referenceTable = :tableId and (h.timestamp between :start and :end)  order by h.referenceId, h.timestamp desc";
-
-		try {
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("tableId", Integer.parseInt(referenceTableId));
-			query.setTimestamp("start", start);
-			query.setTimestamp("end", end);
-
-			List<History> list = query.list();
-			// closeSession(); // CSL remove old
-			return list;
-		} catch (Exception e) {
-			handleException(e, "getHistoryByRefTableIdAndDateRange");
-		}
-
-		return null;
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
+//			throws LIMSRuntimeException {
+//		String sql = "from History h where h.referenceTable = :tableId and (h.timestamp between :start and :end)  order by h.referenceId, h.timestamp desc";
+//
+//		try {
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("tableId", Integer.parseInt(referenceTableId));
+//			query.setTimestamp("start", start);
+//			query.setTimestamp("end", end);
+//
+//			List<History> list = query.list();
+//			// closeSession(); // CSL remove old
+//			return list;
+//		} catch (Exception e) {
+//			handleException(e, "getHistoryByRefTableIdAndDateRange");
+//		}
+//
+//		return null;
+//	}
 
 	/**
 	 * Get list of history records by systemUser, date and referenceTableId
@@ -1333,68 +1326,68 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @param history valueholder
 	 * @return list of history objects
 	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException {
-		List list;
-
-		try {
-
-			String sql;
-			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
-				if (!StringUtil.isNullorNill(history.getSysUserId())) {
-					if (history.getTimestamp() != null) {
-						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-					} else {
-						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
-					}
-				} else {
-					if (history.getTimestamp() != null) {
-						sql = "from History h where h.referenceTable = :param1 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY')order by h.sysUserId asc, h.timestamp desc";
-					} else {
-						sql = "from History h where h.referenceTable = :param1 order by h.sysUserId asc, h.timestamp desc";
-					}
-				}
-			} else {
-				if (!StringUtil.isNullorNill(history.getSysUserId())) {
-					if (history.getTimestamp() != null) {
-						sql = "from History h where h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-					} else {
-						sql = "from History h where h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
-					}
-				} else {
-					if (history.getTimestamp() != null) {
-						sql = "from History h where trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-					} else {
-						sql = "from History h order by h.sysUserId asc, h.timestamp desc";
-					}
-				}
-			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-
-			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
-				query.setParameter("param1", history.getReferenceTable());
-			}
-			if (!StringUtil.isNullorNill(history.getSysUserId())) {
-				query.setParameter("param2", history.getSysUserId());
-			}
-
-			if (history.getTimestamp() != null) {
-				query.setParameter("param3", DateUtil.convertTimestampToStringDate(history.getTimestamp()));
-			}
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
-					"getting History List");
-
-		} catch (Exception e) {
-			LogEvent.logError("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()", e.toString());
-			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
-		}
-		return list;
-	}
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException {
+//		List list;
+//
+//		try {
+//
+//			String sql;
+//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
+//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
+//					if (history.getTimestamp() != null) {
+//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+//					} else {
+//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
+//					}
+//				} else {
+//					if (history.getTimestamp() != null) {
+//						sql = "from History h where h.referenceTable = :param1 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY')order by h.sysUserId asc, h.timestamp desc";
+//					} else {
+//						sql = "from History h where h.referenceTable = :param1 order by h.sysUserId asc, h.timestamp desc";
+//					}
+//				}
+//			} else {
+//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
+//					if (history.getTimestamp() != null) {
+//						sql = "from History h where h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+//					} else {
+//						sql = "from History h where h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
+//					}
+//				} else {
+//					if (history.getTimestamp() != null) {
+//						sql = "from History h where trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+//					} else {
+//						sql = "from History h order by h.sysUserId asc, h.timestamp desc";
+//					}
+//				}
+//			}
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//
+//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
+//				query.setParameter("param1", history.getReferenceTable());
+//			}
+//			if (!StringUtil.isNullorNill(history.getSysUserId())) {
+//				query.setParameter("param2", history.getSysUserId());
+//			}
+//
+//			if (history.getTimestamp() != null) {
+//				query.setParameter("param3", DateUtil.convertTimestampToStringDate(history.getTimestamp()));
+//			}
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
+//					"getting History List");
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()", e.toString());
+//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
+//		}
+//		return list;
+//	}
 
 	/**
 	 * Read the blob and convert to xml string
@@ -1402,21 +1395,21 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @param id the primary id
 	 * @return a string
 	 */
-	@Override
-	public String retrieveBlobData(String id) throws LIMSRuntimeException {
-		byte[] bindata = new byte[1024];
-		try {
-			History history = sessionFactory.getCurrentSession().get(History.class, id);
-			if (history != null) {
-				bindata = history.getChanges();
-			}
-		} catch (Exception e) {
-			// buzilla 2154
-			LogEvent.logError("AuditTrailDAOImpl", "retrieveBlobData()", e.toString());
-			throw new LIMSRuntimeException("Error in AuditTrail retrieveBlobData()", e);
-		}
-		return new String(bindata);
-	}
+//	@Override
+//	public String retrieveBlobData(String id) throws LIMSRuntimeException {
+//		byte[] bindata = new byte[1024];
+//		try {
+//			History history = sessionFactory.getCurrentSession().get(History.class, id);
+//			if (history != null) {
+//				bindata = history.getChanges();
+//			}
+//		} catch (Exception e) {
+//			// buzilla 2154
+//			LogEvent.logError("AuditTrailDAOImpl", "retrieveBlobData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AuditTrail retrieveBlobData()", e);
+//		}
+//		return new String(bindata);
+//	}
 
 	/**
 	 * Save the object into history table
@@ -1424,16 +1417,17 @@ public class AuditTrailServiceImpl extends BaseDAOImpl<History, String> implemen
 	 * @param history the history object being saved
 	 */
 	private void insertData(History history) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(history);
-			history.setId(id);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// buzilla 2154
-			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in AuditTrail insertData()", e);
-		}
+		historyService.insert(history);
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(history);
+//			history.setId(id);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// buzilla 2154
+//			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AuditTrail insertData()", e);
+//		}
 	}
 
 }

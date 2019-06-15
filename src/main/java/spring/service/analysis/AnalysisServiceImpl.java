@@ -27,6 +27,7 @@ import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.services.IReportTrackingService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -249,8 +250,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	@Override
 	public boolean patientReportHasBeenDone() {
 		return analysis == null ? false
-				: ReportTrackingService.getInstance().getLastReportForSample(analysis.getSampleItem().getSample(),
-						ReportTrackingService.ReportType.PATIENT) != null;
+				: SpringContext.getBean(IReportTrackingService.class).getLastReportForSample(
+						analysis.getSampleItem().getSample(), ReportTrackingService.ReportType.PATIENT) != null;
 	}
 
 	@Override

@@ -15,18 +15,13 @@
 */
 package us.mn.state.health.lims.audittrail.dao;
 
-import java.sql.Date;
-import java.util.List;
-
-import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 /**
  * @author Hung Nguyen
  * @date created 09/12/2006
  */
-public interface AuditTrailService extends BaseDAO<History, String> {
+public interface AuditTrailService {
 
 	public void saveHistory(Object newObject, Object existingObject, String sysUserId, String event, String tableName)
 			throws LIMSRuntimeException;
@@ -37,14 +32,14 @@ public interface AuditTrailService extends BaseDAO<History, String> {
 
 	public String getXMLData(String table, String id) throws LIMSRuntimeException;
 
-	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException;
+//	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException;
 
-	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException;
+//	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException;
 
-	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException;
+//	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException;
 
-	public String retrieveBlobData(String id) throws LIMSRuntimeException;
+//	public String retrieveBlobData(String id) throws LIMSRuntimeException;
 
-	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
-			throws LIMSRuntimeException;
+//	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
+//			throws LIMSRuntimeException;
 }

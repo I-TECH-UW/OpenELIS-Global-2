@@ -16,6 +16,7 @@ import spring.service.sampleorganization.SampleOrganizationService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.services.IReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -70,8 +71,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 	protected void setTestInfo(VLReportData data) {
 		boolean atLeastOneAnalysisNotValidated = false;
 		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
-		Timestamp lastReport = ReportTrackingService.getInstance().getTimeOfLastNamedReport(reportSample,
-				ReportTrackingService.ReportType.PATIENT, requestedReport);
+		Timestamp lastReport = SpringContext.getBean(IReportTrackingService.class)
+				.getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
 
 		Date maxCompleationDate = null;

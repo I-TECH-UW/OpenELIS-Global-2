@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.sample.form.SampleEntryByProjectForm;
 import spring.mine.sample.controller.BaseSampleEntryController;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -31,10 +32,9 @@ import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.SampleEntry;
-import us.mn.state.health.lims.patient.saving.SampleEntryAfterPatientEntry;
-import us.mn.state.health.lims.patient.saving.SampleSecondEntry;
+import us.mn.state.health.lims.patient.saving.ISampleEntry;
+import us.mn.state.health.lims.patient.saving.ISampleEntryAfterPatientEntry;
+import us.mn.state.health.lims.patient.saving.ISampleSecondEntry;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -69,10 +69,12 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 
 		String forward;
 
-		Accessioner accessioner;
-		accessioner = new SampleSecondEntry(form, getSysUserId(request), request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner, form);
+		ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);
+		sampleSecondEntry.setFieldsFromForm(form);
+		sampleSecondEntry.setSysUserId(getSysUserId(request));
+		sampleSecondEntry.setRequest(request);
+		if (sampleSecondEntry.canAccession()) {
+			forward = handleSave(request, sampleSecondEntry, form);
 			if (forward != null) {
 				if (FWD_SUCCESS_INSERT.equals(forward)) {
 					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
@@ -82,9 +84,12 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				return findForward(forward, form);
 			}
 		}
-		accessioner = new SampleEntry(form, getSysUserId(request), request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner, form);
+		ISampleEntry sampleEntry = SpringContext.getBean(ISampleEntry.class);
+		sampleEntry.setFieldsFromForm(form);
+		sampleEntry.setSysUserId(getSysUserId(request));
+		sampleEntry.setRequest(request);
+		if (sampleEntry.canAccession()) {
+			forward = handleSave(request, sampleEntry, form);
 			if (forward != null) {
 				if (FWD_SUCCESS_INSERT.equals(forward)) {
 					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
@@ -94,9 +99,13 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				return findForward(forward, form);
 			}
 		}
-		accessioner = new SampleEntryAfterPatientEntry(form, getSysUserId(request), request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner, form);
+		ISampleEntryAfterPatientEntry sampleEntryAfterPatientEntry = SpringContext
+				.getBean(ISampleEntryAfterPatientEntry.class);
+		sampleEntryAfterPatientEntry.setFieldsFromForm(form);
+		sampleEntryAfterPatientEntry.setSysUserId(getSysUserId(request));
+		sampleEntryAfterPatientEntry.setRequest(request);
+		if (sampleEntryAfterPatientEntry.canAccession()) {
+			forward = handleSave(request, sampleEntryAfterPatientEntry, form);
 			if (forward != null) {
 				if (FWD_SUCCESS_INSERT.equals(forward)) {
 					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

@@ -16,8 +16,6 @@
 
 package us.mn.state.health.lims.common.services;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
@@ -35,30 +33,25 @@ import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
  */
 @Service
 @DependsOn({ "springContext" })
-public class PluginPermissionService {
-
-	private static PluginPermissionService INSTANCE;
+public class PluginPermissionService implements IPluginPermissionService {
 
 	@Autowired
-	private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
+	private SystemModuleService moduleService;
 	@Autowired
-	private RoleService roleService = SpringContext.getBean(RoleService.class);
+	private RoleService roleService;
 	@Autowired
-	private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
+	private RoleModuleService roleModuleService;
 
-	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
+	public static IPluginPermissionService getInstance() {
+		return SpringContext.getBean(IPluginPermissionService.class);
 	}
 
-	public static PluginPermissionService getInstance() {
-		return INSTANCE;
-	}
-
+	@Override
 	public SystemModule getOrCreateSystemModule(String action, String description) {
 		return getOrCreateSystemModuleByName(action, description);
 	}
 
+	@Override
 	public SystemModule getOrCreateSystemModule(String action, String type, String description) {
 		return getOrCreateSystemModuleByName(action + ":" + type, description);
 	}
@@ -79,10 +72,12 @@ public class PluginPermissionService {
 		return module;
 	}
 
+	@Override
 	public Role getSystemRole(String name) {
 		return roleService.getRoleByName(name);
 	}
 
+	@Override
 	@Transactional
 	public boolean bindRoleToModule(Role role, SystemModule module) {
 		if (role == null || module == null) {

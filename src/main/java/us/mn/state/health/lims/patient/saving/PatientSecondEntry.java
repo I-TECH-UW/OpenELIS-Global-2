@@ -38,7 +38,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  */
 @Service
 @Scope("prototype")
-public class PatientSecondEntry extends PatientEntry implements IActionConstants {
+public class PatientSecondEntry extends PatientEntry implements IPatientSecondEntry, IActionConstants {
 
 	/**
 	 * @param form

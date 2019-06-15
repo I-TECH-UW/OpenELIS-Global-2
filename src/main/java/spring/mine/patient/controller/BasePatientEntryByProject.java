@@ -16,7 +16,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
-import us.mn.state.health.lims.patient.saving.Accessioner;
+import us.mn.state.health.lims.patient.saving.IAccessioner;
 import us.mn.state.health.lims.patient.saving.RequestType;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
@@ -79,7 +79,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
 	 *                   internally an appropriate message is added and a forward
 	 *                   fail is returned.
 	 */
-	protected String handleSave(HttpServletRequest request, Accessioner accessioner) throws Exception {
+	protected String handleSave(HttpServletRequest request, IAccessioner accessioner) throws Exception {
 		String forward;
 		try {
 			forward = accessioner.save();

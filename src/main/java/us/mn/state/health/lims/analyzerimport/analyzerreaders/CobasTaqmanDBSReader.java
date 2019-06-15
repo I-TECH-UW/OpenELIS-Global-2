@@ -19,8 +19,6 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Transaction;
-
 import spring.service.dictionary.DictionaryService;
 import spring.service.test.TestService;
 import spring.service.testresult.TestResultService;
@@ -31,7 +29,6 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
@@ -97,17 +94,11 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 		}
 
 		if (results.size() > 0) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				persistResults(results, currentUserId);
-				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
 				error = "Cobas Taqman DBS analyzer: Unable to save to database";
 				successful = false;
-			} finally {
-				HibernateUtil.closeSession();
 			}
 		}
 		return successful;

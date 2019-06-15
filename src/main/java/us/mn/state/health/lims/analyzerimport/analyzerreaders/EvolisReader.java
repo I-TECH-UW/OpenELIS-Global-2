@@ -87,19 +87,14 @@ public class EvolisReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-//			Transaction tx = HibernateProxy.beginTransaction();
+			// ensure transaction block
 			try {
 				persistResults(results, currentUserId);
-//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
 				successful = false;
 			}
 
-//			finally {
-//				HibernateProxy.closeSession();
-//			}
 		}
 		return successful;
 

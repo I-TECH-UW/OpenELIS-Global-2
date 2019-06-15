@@ -64,8 +64,8 @@ import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
+import us.mn.state.health.lims.qaevent.worker.INonConformityUpdateWorker;
 import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateData;
-import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateWorker;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
@@ -445,7 +445,7 @@ public class NonConformityController extends BaseController {
 
 		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
 //		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
-		NonConformityUpdateWorker worker = SpringContext.getBean(NonConformityUpdateWorker.class);
+		INonConformityUpdateWorker worker = SpringContext.getBean(INonConformityUpdateWorker.class);
 		worker.setWebData(data);
 		try {
 			worker.update();

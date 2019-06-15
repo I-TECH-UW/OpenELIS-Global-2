@@ -99,7 +99,7 @@ public class CommonReportPrintAction extends BaseAction {
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType reportType) {
-		ReportTrackingService.getInstance().addReports(reportCreator.getReportedOrders(), reportType, reportName,
+		SpringContext.getBean(IReportTrackingService.class).addReports(reportCreator.getReportedOrders(), reportType, reportName,
 				currentUserId);
 	}
 

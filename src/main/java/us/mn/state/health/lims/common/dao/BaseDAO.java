@@ -307,20 +307,20 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
 	 * @deprecated (simpler method replacing this one, call getNext(id) instead
 	 */
 	@Deprecated
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
+	public List<T> getNextRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException;
 
 	/**
 	 * @deprecated (simpler method replacing this one, call getPrevious(id) instead
 	 */
 	@Deprecated
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
+	public List<T> getPreviousRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException;
 
 	/**
 	 * @deprecated (simpler method replacing this one, call getCount() instead
 	 */
 	@Deprecated
 	// bugzilla 1411
-	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException;
+	public Integer getTotalCount(String table, Class<T> clazz) throws LIMSRuntimeException;
 
 	List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo);
 

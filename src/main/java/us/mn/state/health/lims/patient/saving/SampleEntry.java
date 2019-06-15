@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.patient.saving;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +25,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.SampleItemTestProvider;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -44,25 +47,46 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Service
 @Scope("prototype")
-public class SampleEntry extends Accessioner {
+@Primary
+public class SampleEntry extends Accessioner implements ISampleEntry {
 
 	protected BaseForm form;
 	protected HttpServletRequest request;
 
 	public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
-		super((String) form.get("labNo"), (String) form.get("subjectNumber"), (String) form.get("siteSubjectNumber"),
-				sysUserId);
+		this();
+		setFieldsFromForm(form);
+		setRequest(request);
+		super.setSysUserId(sysUserId);
+	}
 
+	public SampleEntry() {
+		super();
+		newPatientStatus = RecordStatus.NotRegistered;
+		newSampleStatus = RecordStatus.InitialRegistration;
+	}
+
+	@Override
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	@Override
+	public void setFieldsFromForm(BaseForm form)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		setAccessionNumber((String) form.get("labNo"));
+		setPatientIdentifier((String) form.get("subjectNumber"));
+		setProjectFormMapperFromForm(form);
+		this.form = form;
+	}
+
+	public void setProjectFormMapperFromForm(BaseForm form)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		projectFormMapper = getProjectFormMapper(form);
 		projectFormMapper.setPatientForm(false);
 		projectForm = projectFormMapper.getProjectForm();
 		findStatusSet();
 
-		this.form = form;
-		this.request = request;
-
-		newPatientStatus = RecordStatus.NotRegistered;
-		newSampleStatus = RecordStatus.InitialRegistration;
 	}
 
 	@Override

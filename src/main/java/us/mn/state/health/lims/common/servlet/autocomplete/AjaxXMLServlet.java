@@ -23,17 +23,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.ajaxtags.helpers.AjaxXmlBuilder;
 import org.ajaxtags.servlets.BaseAjaxServlet;
 
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.provider.autocomplete.AutocompleteProviderFactory;
 import us.mn.state.health.lims.common.provider.autocomplete.BaseAutocompleteProvider;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
-	public String getXmlContent(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		//check for authentication
-		UserModuleService userModuleService = new UserModuleServiceImpl();
+	@Override
+	public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// check for authentication
+		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 		if (userModuleService.isSessionExpired(request)) {
 			return new AjaxXmlBuilder().toString();
 		}
@@ -42,13 +42,13 @@ public class AjaxXMLServlet extends BaseAjaxServlet {
 		String autocompleteFieldName = request.getParameter("fieldName");
 		String autocompleteId = request.getParameter("idName");
 
-		BaseAutocompleteProvider provider = (BaseAutocompleteProvider) AutocompleteProviderFactory
-				.getInstance().getAutocompleteProvider(autocompleteProvider);
+		BaseAutocompleteProvider provider = AutocompleteProviderFactory.getInstance()
+				.getAutocompleteProvider(autocompleteProvider);
 
 		provider.setServlet(this);
 		List list = provider.processRequest(request, response);
 
-		return  new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
+		return new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
 	}
 
 }

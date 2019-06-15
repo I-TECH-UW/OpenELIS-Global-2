@@ -138,7 +138,6 @@ public class AnalyzerTestNameController extends BaseController {
 			analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			if (newMapping) {
 				analyzerTestMappingValidator.preInsertValidate(analyzerTestNameMapping, errors);
@@ -158,8 +157,6 @@ public class AnalyzerTestNameController extends BaseController {
 			}
 
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-
 			String errorMsg = null;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";
@@ -172,12 +169,6 @@ public class AnalyzerTestNameController extends BaseController {
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
 		}
-//		finally {
-//			if (!tx.wasRolledBack()) {
-//				tx.commit();
-//			}
-//			HibernateUtil.closeSession();
-//		}
 
 		AnalyzerTestNameCache.instance().reloadCache();
 
