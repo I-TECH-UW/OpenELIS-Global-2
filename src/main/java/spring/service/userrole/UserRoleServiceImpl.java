@@ -1,5 +1,6 @@
 package spring.service.userrole;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
 	UserRoleServiceImpl() {
 		super(UserRole.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override

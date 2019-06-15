@@ -68,8 +68,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 
-	protected String defaultSortOrder = "id";
-
 	private final Class<T> classType;
 
 	@Autowired
@@ -97,7 +95,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAll() {
-		return getAllOrdered(defaultSortOrder, false);
+		return getAllMatchingOrdered(new HashMap<>(), new ArrayList<>(), false);
 	}
 
 	@Override
@@ -112,7 +110,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAllMatching(Map<String, Object> propertyValues) {
-		return getAllMatchingOrdered(propertyValues, defaultSortOrder, false);
+		return getAllMatchingOrdered(propertyValues, new ArrayList<>(), false);
 	}
 
 	@Override
@@ -127,7 +125,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAllLike(Map<String, String> propertyValues) {
-		return getAllLikeOrdered(propertyValues, defaultSortOrder, false);
+		return getAllLikeOrdered(propertyValues, new ArrayList<>(), false);
 	}
 
 	@Override
@@ -277,7 +275,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getPage(int startingRecNo) {
-		return getOrderedPage(defaultSortOrder, false, startingRecNo);
+		return getOrderedPage(new ArrayList<>(), false, startingRecNo);
 	}
 
 	@Override
@@ -291,7 +289,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo) {
-		return getMatchingOrderedPage(propertyValues, defaultSortOrder, false, startingRecNo);
+		return getMatchingOrderedPage(propertyValues, new ArrayList<>(), false, startingRecNo);
 	}
 
 	@Override
@@ -305,7 +303,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getLikePage(Map<String, String> propertyValues, int startingRecNo) {
-		return getLikeOrderedPage(propertyValues, defaultSortOrder, false, startingRecNo);
+		return getLikeOrderedPage(propertyValues, new ArrayList<>(), false, startingRecNo);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package spring.service.address;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 
 	PersonAddressServiceImpl() {
 		super(PersonAddress.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override

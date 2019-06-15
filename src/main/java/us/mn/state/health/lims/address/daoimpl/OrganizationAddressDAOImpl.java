@@ -16,6 +16,10 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
 @Transactional
@@ -33,23 +38,23 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 		super(OrganizationAddress.class);
 	}
 
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
-//			throws LIMSRuntimeException {
-//		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
-//
-//		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//			query.setInteger("organizationId", Integer.parseInt(organizationId));
-//			List<OrganizationAddress> addressPartList = query.list();
-//			return addressPartList;
-//		} catch (HibernateException e) {
-//			handleException(e, "getAddressPartsByOrganizationId");
-//		}
-//
-//		return null;
-//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
+			throws LIMSRuntimeException {
+		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			query.setInteger("organizationId", Integer.parseInt(organizationId));
+			List<OrganizationAddress> addressPartList = query.list();
+			return addressPartList;
+		} catch (HibernateException e) {
+			handleException(e, "getAddressPartsByOrganizationId");
+		}
+
+		return null;
+	}
 
 //	@Override
 //	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {

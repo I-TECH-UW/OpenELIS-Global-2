@@ -1,5 +1,7 @@
 package spring.service.analyzerimport;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<Analyz
 
 	AnalyzerTestMappingServiceImpl() {
 		super(AnalyzerTestMapping.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override
