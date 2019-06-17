@@ -33,56 +33,67 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<PanelItem> getPanelItemsForPanel(String panelId) {
 		return baseObjectDAO.getPanelItemsForPanel(panelId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(PanelItem panelItem) {
 		getBaseObjectDAO().getData(panelItem);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPanelItemCount() {
 		return getBaseObjectDAO().getTotalPanelItemCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList) {
 		return getBaseObjectDAO().getPanelItemsForPanelAndItemList(panelId, testList);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPanelItemRecord(String id) {
 		return getBaseObjectDAO().getPreviousPanelItemRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPanelItems(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfPanelItems(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPanelItemRecord(String id) {
 		return getBaseObjectDAO().getNextPanelItemRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean getDuplicateSortOrderForPanel(PanelItem panelItem) {
 		return getBaseObjectDAO().getDuplicateSortOrderForPanel(panelItem);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<PanelItem> getPanelItemByTestId(String id) {
 		return getBaseObjectDAO().getPanelItemByTestId(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPanelItems() {
 		return getBaseObjectDAO().getAllPanelItems();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPanelItems(String filter) {
 		return getBaseObjectDAO().getPanelItems(filter);
 	}

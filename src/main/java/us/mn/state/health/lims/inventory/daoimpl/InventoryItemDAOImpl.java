@@ -36,6 +36,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
 		List<InventoryItem> inventoryItems;
 		try {

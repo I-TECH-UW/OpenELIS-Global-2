@@ -1,5 +1,6 @@
 package spring.service.address;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 
 	OrganizationAddressServiceImpl() {
 		super(OrganizationAddress.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override
@@ -27,8 +29,8 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
-		return baseObjectDAO.getAllMatching("compoundId.targetId", organizationId);
+		return baseObjectDAO.getAddressPartsByOrganizationId(organizationId);
 	}
 }

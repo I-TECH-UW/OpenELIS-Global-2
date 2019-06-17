@@ -28,13 +28,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
 
 import net.sf.jasperreports.engine.JRException;
@@ -60,12 +63,12 @@ import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSResultsReportHasNoDataException;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.valueholder.Patient;
@@ -92,7 +95,11 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  *         sort tests (parent/child recursive by sort order of test) add section
  *         previously reported tests
  */
+//TODO csl - this class is the only one that uses TransactionTemplate,
+//this should be changed so it uses @Transactional  for transaction management like every other class
 public class ResultsReportProvider extends BaseReportsProvider {
+
+	private final TransactionTemplate transactionTemplate;
 
 	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
@@ -120,6 +127,12 @@ public class ResultsReportProvider extends BaseReportsProvider {
 	private final static int CURRENT_SECTION = 1;
 	private final static int PREVIOUS_SECTION = 2;
 
+	public ResultsReportProvider() {
+		PlatformTransactionManager transactionManager = SpringContext.getBean(PlatformTransactionManager.class);
+		Assert.notNull(transactionManager, "transactionManager must not be null");
+		transactionTemplate = new TransactionTemplate(transactionManager);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -141,15 +154,12 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
 		// bugzilla 1900 for preview we may have one to many accession numbers (samples)
 		// for which we need to preview report
-		List accessionNumbers = new ArrayList();
+		final List accessionNumbers = new ArrayList();
 		if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
 			if (request.getAttribute(ACCESSION_NUMBERS) != null) {
-				accessionNumbers = (ArrayList) request.getAttribute(ACCESSION_NUMBERS);
+				accessionNumbers.addAll((ArrayList) request.getAttribute(ACCESSION_NUMBERS));
 			}
 		}
-
-		HttpSession session = request.getSession();
-		ServletContext context = session.getServletContext();
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		File mainReportFile = new File(classLoader.getResource("/reports/rslts_main_report.jasper").getFile());
@@ -180,409 +190,417 @@ public class ResultsReportProvider extends BaseReportsProvider {
 		Date today = Calendar.getInstance().getTime();
 		dateAsText = DateUtil.formatDateAsText(today);
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
-		Errors errors = new BaseErrors();
+		// doInTransaction used instead of beginTransaction
+		// TODO csl - refactor class to use @Transactional transaction management
+		// would involve extracting this block to a new method annotated with
+		// @Transactional in a @Service class wired in as an interface
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
-		try {
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				try {
+					parameters.put(JRParameter.REPORT_LOCALE, locale);
+					parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE,
+							ResourceBundle.getBundle("languages/message", locale));
 
-			parameters.put(JRParameter.REPORT_LOCALE, locale);
-			parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle("languages/message", locale));
+					// turn subreport jasper files into JasperReport objects to pass in as
+					// parameters
+					JasperReport providerDetailsReport = (JasperReport) JRLoader
+							.loadObject(providerDetailsReportFile.getPath());
+					JasperReport projectDetailsReport = (JasperReport) JRLoader
+							.loadObject(projectDetailsReportFile.getPath());
+					JasperReport sourceTypeDetailsReport = (JasperReport) JRLoader
+							.loadObject(sourceTypeDetailsReportFile.getPath());
+					JasperReport patientDetailsReport = (JasperReport) JRLoader
+							.loadObject(patientDetailsReportFile.getPath());
+					JasperReport testResultsReport = (JasperReport) JRLoader
+							.loadObject(testResultsReportFile.getPath());
+					JasperReport resultValueReport = (JasperReport) JRLoader
+							.loadObject(resultValueReportFile.getPath());
 
-			// turn subreport jasper files into JasperReport objects to pass in as
-			// parameters
-			JasperReport providerDetailsReport = (JasperReport) JRLoader
-					.loadObject(providerDetailsReportFile.getPath());
-			JasperReport projectDetailsReport = (JasperReport) JRLoader.loadObject(projectDetailsReportFile.getPath());
-			JasperReport sourceTypeDetailsReport = (JasperReport) JRLoader
-					.loadObject(sourceTypeDetailsReportFile.getPath());
-			JasperReport patientDetailsReport = (JasperReport) JRLoader.loadObject(patientDetailsReportFile.getPath());
-			JasperReport testResultsReport = (JasperReport) JRLoader.loadObject(testResultsReportFile.getPath());
-			JasperReport resultValueReport = (JasperReport) JRLoader.loadObject(resultValueReportFile.getPath());
+					parameters.put("Provider_Details", providerDetailsReport);
+					parameters.put("Project_Details", projectDetailsReport);
+					parameters.put("Sourcetype_Details", sourceTypeDetailsReport);
+					parameters.put("Patient_Details", patientDetailsReport);
+					parameters.put("Test_Results", testResultsReport);
+					parameters.put("Result_Value", resultValueReport);
+					parameters.put("Logo", logoGifFile);
+					// bugzilla 1900
+					parameters.put("PreviewWaterMark", previewWaterMark);
 
-			parameters.put("Provider_Details", providerDetailsReport);
-			parameters.put("Project_Details", projectDetailsReport);
-			parameters.put("Sourcetype_Details", sourceTypeDetailsReport);
-			parameters.put("Patient_Details", patientDetailsReport);
-			parameters.put("Test_Results", testResultsReport);
-			parameters.put("Result_Value", resultValueReport);
-			parameters.put("Logo", logoGifFile);
-			// bugzilla 1900
-			parameters.put("PreviewWaterMark", previewWaterMark);
-
-			// bugzilla 2227 find out if there are amended results
-			List unfilteredListOfCurrentAnalyses = new ArrayList();
-			// bugzilla 1900
-			if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-				unfilteredListOfCurrentAnalyses = analysisService
-						.getMaxRevisionAnalysesReadyForReportPreviewBySample(accessionNumbers);
-			} else {
-				unfilteredListOfCurrentAnalyses = analysisService.getMaxRevisionAnalysesReadyToBeReported();
-			}
-
-			List analysesPrinted = new ArrayList();
-
-			HashMap samples = new HashMap();
-			ResultsReportSample reportSample = new ResultsReportSample();
-			List currentTests = new ArrayList();
-			List previousTests = new ArrayList();
-			List currentTestsToReport = new ArrayList();
-			List previousTestsToReport = new ArrayList();
-			List currentAnalyteResults = new ArrayList();
-			List previousAnalyteResults = new ArrayList();
-			reportAnalyteResult = new ResultsReportAnalyteResult();
-
-			amendedMessage = getMessageForKey(request, "label.jasper.results.report.amended");
-			originalMessage = getMessageForKey(request, "label.jasper.results.report.original");
-			sourceMessage = getMessageForKey(request, "label.jasper.results.report.sourceofsample");
-			typeMessage = getMessageForKey(request, "label.jasper.results.report.typeofsample");
-			sourceOtherMessage = getMessageForKey(request, "label.jasper.results.report.sourceother");
-			notApplicableMessage = getMessageForKey(request, "label.jasper.results.report.notapplicable");
-			testingPendingMessage = getMessageForKey(request, "label.jasper.results.report.testing.pending");
-
-			currentTestsToReport = populateTests(unfilteredListOfCurrentAnalyses, CURRENT_SECTION);
-
-			// bugzilla 1900
-			if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)
-					&& (currentTestsToReport == null || currentTestsToReport.size() == 0)) {
-				// throw Exception
-				throw new LIMSResultsReportHasNoDataException("No data to display");
-			}
-
-			// based on currentTestsToReport find and populate sample information for
-			// reporting
-			for (int i = 0; i < currentTestsToReport.size(); i++) {
-				ResultsReportTest reportTest = (ResultsReportTest) currentTestsToReport.get(i);
-				String id = reportTest.getAnalysisId();
-				Analysis analysis = new Analysis();
-				analysis.setId(id);
-				analysisService.getData(analysis);
-
-				String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
-				if (samples.containsKey(accessionNumber)) {
-					// get existing sample object
-					reportSample = (ResultsReportSample) samples.get(accessionNumber);
-					if (!analysis.getRevision().equals("0")) {
-						reportSample.setSampleHasTestRevisions(TRUE);
+					// bugzilla 2227 find out if there are amended results
+					List unfilteredListOfCurrentAnalyses = new ArrayList();
+					// bugzilla 1900
+					if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
+						unfilteredListOfCurrentAnalyses = analysisService
+								.getMaxRevisionAnalysesReadyForReportPreviewBySample(accessionNumbers);
+					} else {
+						unfilteredListOfCurrentAnalyses = analysisService.getMaxRevisionAnalysesReadyToBeReported();
 					}
-					currentTests = reportSample.getTests();
-				} else {
-					Patient patient = new Patient();
-					Person person = new Person();
-					Provider provider = new Provider();
-					Person providerPerson = new Person();
-					Sample sample = new Sample();
-					SampleHuman sampleHuman = new SampleHuman();
-					SampleOrganization sampleOrganization = new SampleOrganization();
-					SampleItem sampleItem = new SampleItem();
-					TypeOfSample typeOfSample = new TypeOfSample();
-					SourceOfSample sourceOfSample = new SourceOfSample();
-					String sourceOther = null;
 
-					sample.setAccessionNumber(accessionNumber);
-					sampleService.getSampleByAccessionNumber(sample);
-					if (!StringUtil.isNullorNill(sample.getId())) {
-						reportSample = new ResultsReportSample();
-						// initialize this value to false
-						reportSample.setSampleHasTestRevisions(FALSE);
-						// bugzilla 1900
-						if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-							reportSample.setSampleIsForPreview(TRUE);
-						}
+					List analysesPrinted = new ArrayList();
 
-						reportSample.setSample(analysis.getSampleItem().getSample());
+					HashMap samples = new HashMap();
+					ResultsReportSample reportSample = new ResultsReportSample();
+					List currentTests = new ArrayList();
+					List previousTests = new ArrayList();
+					List currentTestsToReport = new ArrayList();
+					List previousTestsToReport = new ArrayList();
+					List currentAnalyteResults = new ArrayList();
+					List previousAnalyteResults = new ArrayList();
+					reportAnalyteResult = new ResultsReportAnalyteResult();
 
-						sampleHuman.setSampleId(sample.getId());
-						sampleHumanService.getDataBySample(sampleHuman);
-						sampleOrganization.setSample(sample);
-						sampleOrganizationService.getDataBySample(sampleOrganization);
-						sampleItem.setSample(sample);
-						sampleItemService.getDataBySample(sampleItem);
-						patient.setId(sampleHuman.getPatientId());
-						patientService.getData(patient);
-						person = patient.getPerson();
-						personService.getData(person);
+					amendedMessage = getMessageForKey(request, "label.jasper.results.report.amended");
+					originalMessage = getMessageForKey(request, "label.jasper.results.report.original");
+					sourceMessage = getMessageForKey(request, "label.jasper.results.report.sourceofsample");
+					typeMessage = getMessageForKey(request, "label.jasper.results.report.typeofsample");
+					sourceOtherMessage = getMessageForKey(request, "label.jasper.results.report.sourceother");
+					notApplicableMessage = getMessageForKey(request, "label.jasper.results.report.notapplicable");
+					testingPendingMessage = getMessageForKey(request, "label.jasper.results.report.testing.pending");
 
-						provider.setId(sampleHuman.getProviderId());
-						providerService.getData(provider);
-						providerPerson = provider.getPerson();
-						personService.getData(providerPerson);
+					currentTestsToReport = populateTests(unfilteredListOfCurrentAnalyses, CURRENT_SECTION);
 
-						sourceOfSample = sampleItem.getSourceOfSample();
-						typeOfSample = sampleItem.getTypeOfSample();
-						sourceOther = sampleItem.getSourceOther();
+					// bugzilla 1900
+					if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)
+							&& (currentTestsToReport == null || currentTestsToReport.size() == 0)) {
+						// throw Exception
+						throw new LIMSResultsReportHasNoDataException("No data to display");
+					}
 
-						// now populate the reportSample
-						Organization organization = sampleOrganization.getOrganization();
-						String patientName = " " + StringUtil.trim(person.getLastName()) + ", "
-								+ StringUtil.trim(person.getFirstName()) + "  "
-								+ StringUtil.trim(person.getMiddleName());
-						reportSample.setPatientName(patientName);
-						String patientStreetAddress = " " + StringUtil.trim(person.getStreetAddress()) + "  "
-								+ StringUtil.trim(person.getMultipleUnit());
-						reportSample.setPatientStreetAddress(patientStreetAddress);
-						// bugzilla 1852 splip out individual patient address fields
-						String patientCity = "" + StringUtil.trim(person.getCity());
-						String patientState = "" + StringUtil.trim(person.getState());
-						String patientZip = "" + StringUtil.trim(person.getZipCode());
-						String patientCountry = "" + StringUtil.trim(person.getCountry());
-						reportSample.setPatientCity(patientCity);
-						reportSample.setPatientState(patientState);
-						reportSample.setPatientZip(patientZip);
-						reportSample.setPatientCountry(patientCountry);
-						String patientGender = patient.getGender();
-						reportSample.setPatientGender(patientGender);
-						String patientExternalId = patient.getExternalId();
-						reportSample.setPatientExternalId(patientExternalId);
-						String patientDateOfBirth = patient.getBirthDateForDisplay();
-						reportSample.setPatientDateOfBirth(patientDateOfBirth);
+					// based on currentTestsToReport find and populate sample information for
+					// reporting
+					for (int i = 0; i < currentTestsToReport.size(); i++) {
+						ResultsReportTest reportTest = (ResultsReportTest) currentTestsToReport.get(i);
+						String id = reportTest.getAnalysisId();
+						Analysis analysis = new Analysis();
+						analysis.setId(id);
+						analysisService.getData(analysis);
 
-						reportSample.setSampleItem(sampleItem);
-						reportSample.setAccessionNumber(sample.getAccessionNumber());
-						// bugzilla 2633
-						if (organization != null) {
-							reportSample.setOrganizationId(organization.getId());
-							reportSample.setOrganizationName(organization.getOrganizationName());
-							reportSample
-									.setOrganizationStreetAddress(" " + StringUtil.trim(organization.getStreetAddress())
-											+ " " + StringUtil.trim(organization.getMultipleUnit()));
-							reportSample.setOrganizationCityStateZip(" " + StringUtil.trim(organization.getCity()) + " "
-									+ StringUtil.trim(organization.getState()) + " "
-									+ StringUtil.trim(organization.getZipCode()));
-						}
-						reportSample.setSampleCollectionDate(
-								sample.getCollectionDateForDisplay() + " " + sample.getCollectionTimeForDisplay());
-						reportSample.setSampleReceivedDate(sample.getReceivedDateForDisplay());
-						reportSample.setSampleClientReferenceNumber(sample.getClientReference());
-						reportSample.setClinicianName(" " + StringUtil.trim(providerPerson.getLastName()) + " "
-								+ StringUtil.trim(providerPerson.getFirstName()));
+						String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
+						if (samples.containsKey(accessionNumber)) {
+							// get existing sample object
+							reportSample = (ResultsReportSample) samples.get(accessionNumber);
+							if (!analysis.getRevision().equals("0")) {
+								reportSample.setSampleHasTestRevisions(TRUE);
+							}
+							currentTests = reportSample.getTests();
+						} else {
+							Patient patient = new Patient();
+							Person person = new Person();
+							Provider provider = new Provider();
+							Person providerPerson = new Person();
+							Sample sample = new Sample();
+							SampleHuman sampleHuman = new SampleHuman();
+							SampleOrganization sampleOrganization = new SampleOrganization();
+							SampleItem sampleItem = new SampleItem();
+							TypeOfSample typeOfSample = new TypeOfSample();
+							SourceOfSample sourceOfSample = new SourceOfSample();
+							String sourceOther = null;
 
-						SampleProject project1 = null;
-						SampleProject project2 = null;
-						List sampleProjects = sample.getSampleProjects();
-						if (sampleProjects != null && sampleProjects.size() > 0) {
-							project1 = (SampleProject) sampleProjects.get(0);
-							if (sampleProjects.size() > 1) {
-								project2 = (SampleProject) sampleProjects.get(1);
+							sample.setAccessionNumber(accessionNumber);
+							sampleService.getSampleByAccessionNumber(sample);
+							if (!StringUtil.isNullorNill(sample.getId())) {
+								reportSample = new ResultsReportSample();
+								// initialize this value to false
+								reportSample.setSampleHasTestRevisions(FALSE);
+								// bugzilla 1900
+								if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
+									reportSample.setSampleIsForPreview(TRUE);
+								}
+
+								reportSample.setSample(analysis.getSampleItem().getSample());
+
+								sampleHuman.setSampleId(sample.getId());
+								sampleHumanService.getDataBySample(sampleHuman);
+								sampleOrganization.setSample(sample);
+								sampleOrganizationService.getDataBySample(sampleOrganization);
+								sampleItem.setSample(sample);
+								sampleItemService.getDataBySample(sampleItem);
+								patient.setId(sampleHuman.getPatientId());
+								patientService.getData(patient);
+								person = patient.getPerson();
+								personService.getData(person);
+
+								provider.setId(sampleHuman.getProviderId());
+								providerService.getData(provider);
+								providerPerson = provider.getPerson();
+								personService.getData(providerPerson);
+
+								sourceOfSample = sampleItem.getSourceOfSample();
+								typeOfSample = sampleItem.getTypeOfSample();
+								sourceOther = sampleItem.getSourceOther();
+
+								// now populate the reportSample
+								Organization organization = sampleOrganization.getOrganization();
+								String patientName = " " + StringUtil.trim(person.getLastName()) + ", "
+										+ StringUtil.trim(person.getFirstName()) + "  "
+										+ StringUtil.trim(person.getMiddleName());
+								reportSample.setPatientName(patientName);
+								String patientStreetAddress = " " + StringUtil.trim(person.getStreetAddress()) + "  "
+										+ StringUtil.trim(person.getMultipleUnit());
+								reportSample.setPatientStreetAddress(patientStreetAddress);
+								// bugzilla 1852 splip out individual patient address fields
+								String patientCity = "" + StringUtil.trim(person.getCity());
+								String patientState = "" + StringUtil.trim(person.getState());
+								String patientZip = "" + StringUtil.trim(person.getZipCode());
+								String patientCountry = "" + StringUtil.trim(person.getCountry());
+								reportSample.setPatientCity(patientCity);
+								reportSample.setPatientState(patientState);
+								reportSample.setPatientZip(patientZip);
+								reportSample.setPatientCountry(patientCountry);
+								String patientGender = patient.getGender();
+								reportSample.setPatientGender(patientGender);
+								String patientExternalId = patient.getExternalId();
+								reportSample.setPatientExternalId(patientExternalId);
+								String patientDateOfBirth = patient.getBirthDateForDisplay();
+								reportSample.setPatientDateOfBirth(patientDateOfBirth);
+
+								reportSample.setSampleItem(sampleItem);
+								reportSample.setAccessionNumber(sample.getAccessionNumber());
+								// bugzilla 2633
+								if (organization != null) {
+									reportSample.setOrganizationId(organization.getId());
+									reportSample.setOrganizationName(organization.getOrganizationName());
+									reportSample.setOrganizationStreetAddress(
+											" " + StringUtil.trim(organization.getStreetAddress()) + " "
+													+ StringUtil.trim(organization.getMultipleUnit()));
+									reportSample
+											.setOrganizationCityStateZip(" " + StringUtil.trim(organization.getCity())
+													+ " " + StringUtil.trim(organization.getState()) + " "
+													+ StringUtil.trim(organization.getZipCode()));
+								}
+								reportSample.setSampleCollectionDate(sample.getCollectionDateForDisplay() + " "
+										+ sample.getCollectionTimeForDisplay());
+								reportSample.setSampleReceivedDate(sample.getReceivedDateForDisplay());
+								reportSample.setSampleClientReferenceNumber(sample.getClientReference());
+								reportSample.setClinicianName(" " + StringUtil.trim(providerPerson.getLastName()) + " "
+										+ StringUtil.trim(providerPerson.getFirstName()));
+
+								SampleProject project1 = null;
+								SampleProject project2 = null;
+								List sampleProjects = sample.getSampleProjects();
+								if (sampleProjects != null && sampleProjects.size() > 0) {
+									project1 = (SampleProject) sampleProjects.get(0);
+									if (sampleProjects.size() > 1) {
+										project2 = (SampleProject) sampleProjects.get(1);
+									}
+								}
+
+								ResultsReportLabProject labProject = null;
+								List labProjects = new ArrayList();
+								if (project1 != null) {
+									// add a labProject object
+									String project = " " + project1.getProject().getId() + "/"
+											+ project1.getProject().getProjectName();
+									labProject = new ResultsReportLabProject();
+									labProject.setLabProject(project);
+									labProjects.add(labProject);
+								}
+								if (project2 != null) {
+									// add a labProject object
+									String project = " " + project2.getProject().getId() + "/"
+											+ project2.getProject().getProjectName();
+									labProject = new ResultsReportLabProject();
+									labProject.setLabProject(project);
+									labProjects.add(labProject);
+								}
+								JRHibernateDataSource resultsReport_Projects = new JRHibernateDataSource(labProjects);
+								reportSample.setResultsReportProjects(resultsReport_Projects);
+
+								// source of sample
+								if (sampleItem.getSourceOfSample() != null
+										&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
+									reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription()
+											+ "," + sourceOtherMessage + ":" + sourceOther);
+								} else if (sampleItem.getSourceOfSample() != null
+										&& StringUtil.isNullorNill(sampleItem.getSourceOther())) {
+									reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription()
+											+ "," + sourceOtherMessage + ":" + notApplicableMessage);
+								} else if (sampleItem.getSourceOfSample() == null
+										&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
+									reportSample.setSourceOfSample(sourceMessage + ":" + notApplicableMessage + ","
+											+ sourceOtherMessage + ":" + sourceOther);
+								} else if (sampleItem.getSourceOfSample() == null
+										&& StringUtil.isNullorNill(sampleItem.getSourceOther())) {
+									reportSample.setSourceOfSample(sourceMessage + ":" + notApplicableMessage + ","
+											+ sourceOtherMessage + ":" + notApplicableMessage);
+								}
+								// type of sample
+								reportSample.setTypeOfSample(typeMessage + ":" + typeOfSample.getDescription());
+
+								if (!analysis.getRevision().equals("0")) {
+									reportSample.setSampleHasTestRevisions(TRUE);
+								}
+								currentTests = new ArrayList();
 							}
 						}
+						currentTests.add(reportTest);
+						reportSample.setTests(currentTests);
+						samples.put(accessionNumber, reportSample);
 
-						ResultsReportLabProject labProject = null;
-						List labProjects = new ArrayList();
-						if (project1 != null) {
-							// add a labProject object
-							String project = " " + project1.getProject().getId() + "/"
-									+ project1.getProject().getProjectName();
-							labProject = new ResultsReportLabProject();
-							labProject.setLabProject(project);
-							labProjects.add(labProject);
-						}
-						if (project2 != null) {
-							// add a labProject object
-							String project = " " + project2.getProject().getId() + "/"
-									+ project2.getProject().getProjectName();
-							labProject = new ResultsReportLabProject();
-							labProject.setLabProject(project);
-							labProjects.add(labProject);
-						}
-						JRHibernateDataSource resultsReport_Projects = new JRHibernateDataSource(labProjects);
-						reportSample.setResultsReportProjects(resultsReport_Projects);
-
-						// source of sample
-						if (sampleItem.getSourceOfSample() != null
-								&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
-							reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription() + ","
-									+ sourceOtherMessage + ":" + sourceOther);
-						} else if (sampleItem.getSourceOfSample() != null
-								&& StringUtil.isNullorNill(sampleItem.getSourceOther())) {
-							reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription() + ","
-									+ sourceOtherMessage + ":" + notApplicableMessage);
-						} else if (sampleItem.getSourceOfSample() == null
-								&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
-							reportSample.setSourceOfSample(sourceMessage + ":" + notApplicableMessage + ","
-									+ sourceOtherMessage + ":" + sourceOther);
-						} else if (sampleItem.getSourceOfSample() == null
-								&& StringUtil.isNullorNill(sampleItem.getSourceOther())) {
-							reportSample.setSourceOfSample(sourceMessage + ":" + notApplicableMessage + ","
-									+ sourceOtherMessage + ":" + notApplicableMessage);
-						}
-						// type of sample
-						reportSample.setTypeOfSample(typeMessage + ":" + typeOfSample.getDescription());
-
-						if (!analysis.getRevision().equals("0")) {
-							reportSample.setSampleHasTestRevisions(TRUE);
-						}
-						currentTests = new ArrayList();
 					}
-				}
-				currentTests.add(reportTest);
-				reportSample.setTests(currentTests);
-				samples.put(accessionNumber, reportSample);
 
-			}
+					// JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(samples);
+					// convert hashmap to list
+					List samplesList = new ArrayList();
+					for (Iterator entryIter = samples.entrySet().iterator(); entryIter.hasNext();) {
+						Map.Entry entry = (Map.Entry) entryIter.next();
 
-			// JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(samples);
-			// convert hashmap to list
-			List samplesList = new ArrayList();
-			for (Iterator entryIter = samples.entrySet().iterator(); entryIter.hasNext();) {
-				Map.Entry entry = (Map.Entry) entryIter.next();
+						ResultsReportSample samp = (ResultsReportSample) entry.getValue();
 
-				ResultsReportSample samp = (ResultsReportSample) entry.getValue();
-
-				// are we printing this sample?
-				if ((samp.getSampleHasTestRevisions().equals(TRUE)
-						&& resultsReportType.equals(RESULTS_REPORT_TYPE_AMENDED))
-						|| (samp.getSampleHasTestRevisions().equals(FALSE)
-								&& resultsReportType.equals(RESULTS_REPORT_TYPE_ORIGINAL))
+						// are we printing this sample?
+						if ((samp.getSampleHasTestRevisions().equals(TRUE)
+								&& resultsReportType.equals(RESULTS_REPORT_TYPE_AMENDED))
+								|| (samp.getSampleHasTestRevisions().equals(FALSE)
+										&& resultsReportType.equals(RESULTS_REPORT_TYPE_ORIGINAL))
 						// bugzilla 1900
-						|| (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW))) {
-					// then this sample will print
-				} else {
-					// skip this sample
-					continue;
-				}
-
-				// also make JRHibernateDataSource objects out of subreport lists
-				currentTests = samp.getTests();
-
-				// get this list of analyses BEFORE adding the pending tests to list (pending
-				// tests should not get a printed date)
-				// bugzilla 1900 do not update printedDate on preview
-				if (!resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-					for (int i = 0; i < currentTests.size(); i++) {
-						ResultsReportTest test = (ResultsReportTest) currentTests.get(i);
-						// don't overwrite printed date on previously reported (amended) tests
-						// but collect ones that are printed today (printed date is equal to today's
-						// date)
-						// so we can update the database with the date also
-						if (test.getPrintedDate() != null && test.getPrintedDate().equals(dateAsText)) {
-							analysesPrinted.add(test.getAnalysis());
+								|| (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW))) {
+							// then this sample will print
+						} else {
+							// skip this sample
+							continue;
 						}
+
+						// also make JRHibernateDataSource objects out of subreport lists
+						currentTests = samp.getTests();
+
+						// get this list of analyses BEFORE adding the pending tests to list (pending
+						// tests should not get a printed date)
+						// bugzilla 1900 do not update printedDate on preview
+						if (!resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
+							for (int i = 0; i < currentTests.size(); i++) {
+								ResultsReportTest test = (ResultsReportTest) currentTests.get(i);
+								// don't overwrite printed date on previously reported (amended) tests
+								// but collect ones that are printed today (printed date is equal to today's
+								// date)
+								// so we can update the database with the date also
+								if (test.getPrintedDate() != null && test.getPrintedDate().equals(dateAsText)) {
+									analysesPrinted.add(test.getAnalysis());
+								}
+							}
+						}
+						// get the pending tests as well for this sample:
+						List pendingAnalyses = null;
+						// bugzilla 1900
+						if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
+							pendingAnalyses = analysisService
+									.getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(samp.getSample());
+						} else {
+							pendingAnalyses = analysisService
+									.getMaxRevisionPendingAnalysesReadyToBeReportedBySample(samp.getSample());
+						}
+
+						List pendingReportTests = populatePendingTests(pendingAnalyses);
+
+						// bugzilla 2027
+						List previouslyReportedTests = analysisService
+								.getAnalysesAlreadyReportedBySample(samp.getSample());
+						previouslyReportedTests = populateTests(previouslyReportedTests, PREVIOUS_SECTION);
+
+						// sort the pending tests
+						pendingReportTests = completeHierarchyOfTestsForSorting(pendingReportTests);
+						List totalList = sortTests(pendingReportTests);
+						totalList = removePhantomTests(totalList);
+
+						// sort the tests with results to report
+						// first bring over any possible parent test hierarchies from
+						// previouslyReportedTests
+						moveParentTestsOfCurrentTestsFromPreviouslyReportedTests(currentTests, previouslyReportedTests);
+						currentTests = completeHierarchyOfTestsForSorting(currentTests);
+						currentTests = sortTests(currentTests);
+						currentTests = removePhantomTests(currentTests);
+						// bugzilla 1900
+						if (resultsReportType.equals(RESULTS_REPORT_TYPE_AMENDED)
+								|| resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
+							currentTests = addPreviouslyReportedForAmendedTests(currentTests);
+						}
+						// bugzilla 1900
+						populateTestsWithResults(currentTests);
+						totalList.addAll(currentTests);
+
+						// sort the previously reported tests
+						previouslyReportedTests = completeHierarchyOfTestsForSorting(previouslyReportedTests);
+						previouslyReportedTests = sortTests(previouslyReportedTests);
+						previouslyReportedTests = removePhantomTests(previouslyReportedTests);
+						// bugzilla 1900
+						populateTestsWithResults(previouslyReportedTests);
+						totalList.addAll(previouslyReportedTests);
+
+						JRHibernateDataSource testsDS = new JRHibernateDataSource(totalList);
+						samp.setResultsReportTests(testsDS);
+
+						samplesList.add(samp);
+
 					}
+
+					// sort samples by organization id and accessionNumber
+					Collections.sort(samplesList, ResultsReportSampleComparator.VALUE_COMPARATOR);
+
+					JRHibernateDataSource ds = new JRHibernateDataSource(samplesList);
+
+					parameters.put("Report_Datasource", ds);
+
+					// Finally, we have to be able to call the Hibernate data source from
+					// JasperReports. To do so, we start by looking at the JasperManager
+					// fillReport()
+					// method, which takes a JRDataSource object as its third parameter and uses it
+					// to generate the report :
+
+					// bugzilla 1900 moved this to here
+					byte[] bytes = null;
+					bytes = JasperRunManager.runReportToPdf(mainReportFile.getPath(), parameters, ds);
+
+					// bugzilla 1900 moved this to here to fix java.lang.IllegalStateException:
+					// getOutputStream() has already been called
+					ServletOutputStream servletOutputStream = response.getOutputStream();
+					response.setContentType("application/pdf");
+					response.setContentLength(bytes.length);
+
+					servletOutputStream.write(bytes, 0, bytes.length);
+					servletOutputStream.flush();
+					servletOutputStream.close();
+
+					UserSessionData usd = (UserSessionData) request.getSession()
+							.getAttribute(IActionConstants.USER_SESSION_DATA);
+					String sysUserId = String.valueOf(usd.getSystemUserId());
+					for (int i = 0; i < analysesPrinted.size(); i++) {
+						Analysis analysis = (Analysis) analysesPrinted.get(i);
+						analysis.setSysUserId(sysUserId);
+						analysis.setPrintedDateForDisplay(dateAsText);
+						analysisService.update(analysis);
+					}
+					return true;
+
+				} catch (Exception e) {
+					Errors errors = new BaseErrors();
+					// bugzilla 2154
+					LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
+
+					if (e instanceof JRException) {
+						errors.reject("errors.jasperreport.general");
+						// bugzilla 2154
+						LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
+						// bugzilla 1900
+					} else if (e instanceof LIMSResultsReportHasNoDataException) {
+						if (accessionNumbers.size() > 1) {
+							// message if report is for several samples
+							errors.reject("errors.jasperreport.resultsreports.nodata");
+						} else {
+							// message if report is for one sample
+							errors.reject("errors.jasperreport.resultsreport.nodata");
+						}
+					} else if (e instanceof org.hibernate.StaleObjectStateException) {
+						errors.reject("errors.OptimisticLockException");
+					} else {
+						errors.reject("errors.jasperreport.general");
+					}
+					request.setAttribute(Constants.REQUEST_ERRORS, errors);
+
+					// rethrow an exception so transaction management detects it and rolls back
+					throw new LIMSRuntimeException(e);
 				}
-				// get the pending tests as well for this sample:
-				List pendingAnalyses = null;
-				// bugzilla 1900
-				if (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-					pendingAnalyses = analysisService
-							.getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(samp.getSample());
-				} else {
-					pendingAnalyses = analysisService
-							.getMaxRevisionPendingAnalysesReadyToBeReportedBySample(samp.getSample());
-				}
-
-				List pendingReportTests = populatePendingTests(pendingAnalyses);
-
-				// bugzilla 2027
-				List previouslyReportedTests = analysisService.getAnalysesAlreadyReportedBySample(samp.getSample());
-				previouslyReportedTests = populateTests(previouslyReportedTests, PREVIOUS_SECTION);
-
-				// sort the pending tests
-				pendingReportTests = completeHierarchyOfTestsForSorting(pendingReportTests);
-				List totalList = sortTests(pendingReportTests);
-				totalList = removePhantomTests(totalList);
-
-				// sort the tests with results to report
-				// first bring over any possible parent test hierarchies from
-				// previouslyReportedTests
-				moveParentTestsOfCurrentTestsFromPreviouslyReportedTests(currentTests, previouslyReportedTests);
-				currentTests = completeHierarchyOfTestsForSorting(currentTests);
-				currentTests = sortTests(currentTests);
-				currentTests = removePhantomTests(currentTests);
-				// bugzilla 1900
-				if (resultsReportType.equals(RESULTS_REPORT_TYPE_AMENDED)
-						|| resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
-					currentTests = addPreviouslyReportedForAmendedTests(currentTests);
-				}
-				// bugzilla 1900
-				populateTestsWithResults(currentTests);
-				totalList.addAll(currentTests);
-
-				// sort the previously reported tests
-				previouslyReportedTests = completeHierarchyOfTestsForSorting(previouslyReportedTests);
-				previouslyReportedTests = sortTests(previouslyReportedTests);
-				previouslyReportedTests = removePhantomTests(previouslyReportedTests);
-				// bugzilla 1900
-				populateTestsWithResults(previouslyReportedTests);
-				totalList.addAll(previouslyReportedTests);
-
-				JRHibernateDataSource testsDS = new JRHibernateDataSource(totalList);
-				samp.setResultsReportTests(testsDS);
-
-				samplesList.add(samp);
-
 			}
-
-			// sort samples by organization id and accessionNumber
-			Collections.sort(samplesList, ResultsReportSampleComparator.VALUE_COMPARATOR);
-
-			JRHibernateDataSource ds = new JRHibernateDataSource(samplesList);
-
-			parameters.put("Report_Datasource", ds);
-
-			// Finally, we have to be able to call the Hibernate data source from
-			// JasperReports. To do so, we start by looking at the JasperManager
-			// fillReport()
-			// method, which takes a JRDataSource object as its third parameter and uses it
-			// to generate the report :
-
-			// bugzilla 1900 moved this to here
-			byte[] bytes = null;
-			bytes = JasperRunManager.runReportToPdf(mainReportFile.getPath(), parameters, ds);
-
-			// bugzilla 1900 moved this to here to fix java.lang.IllegalStateException:
-			// getOutputStream() has already been called
-			ServletOutputStream servletOutputStream = response.getOutputStream();
-			response.setContentType("application/pdf");
-			response.setContentLength(bytes.length);
-
-			servletOutputStream.write(bytes, 0, bytes.length);
-			servletOutputStream.flush();
-			servletOutputStream.close();
-
-			UserSessionData usd = (UserSessionData) request.getSession()
-					.getAttribute(IActionConstants.USER_SESSION_DATA);
-			String sysUserId = String.valueOf(usd.getSystemUserId());
-			for (int i = 0; i < analysesPrinted.size(); i++) {
-				Analysis analysis = (Analysis) analysesPrinted.get(i);
-				analysis.setSysUserId(sysUserId);
-				analysis.setPrintedDateForDisplay(dateAsText);
-				analysisService.update(analysis);
-			}
-			tx.commit();
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
-			tx.rollback();
-
-			if (e instanceof JRException) {
-				errors.reject("errors.jasperreport.general");
-				// bugzilla 2154
-				LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
-				// bugzilla 1900
-			} else if (e instanceof LIMSResultsReportHasNoDataException) {
-				if (accessionNumbers.size() > 1) {
-					// message if report is for several samples
-					errors.reject("errors.jasperreport.resultsreports.nodata");
-				} else {
-					// message if report is for one sample
-					errors.reject("errors.jasperreport.resultsreport.nodata");
-				}
-			} else if (e instanceof org.hibernate.StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException");
-			} else {
-				errors.reject("errors.jasperreport.general");
-			}
-			request.setAttribute(Constants.REQUEST_ERRORS, errors);
-
-		} finally {
-			HibernateUtil.closeSession();
-		}
-
-		if (errors.hasErrors()) {
-			return false;
-		} else {
-			return true;
-		}
+		});
 	}
 
 	// this is for current and previous tests

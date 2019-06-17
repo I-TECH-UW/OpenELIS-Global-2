@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -27,41 +28,49 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPatientTypes() throws LIMSRuntimeException {
 		return getBaseObjectDAO().getAllPatientTypes();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getPageOfPatientType(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
 		getBaseObjectDAO().getData(patientType);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPatientTypes(String filter) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getPatientTypes(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getNextPatientTypeRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getPreviousPatientTypeRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException {
 		return getBaseObjectDAO().getPatientTypeByName(patientType);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException {
 		return getBaseObjectDAO().getTotalPatientTypeCount();
 	}

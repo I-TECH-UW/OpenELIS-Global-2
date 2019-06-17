@@ -151,7 +151,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 
 			data.setLabAccession(accessionNumber + "-" + sampleItem.getSortOrder());
 			data.setSampleType(
-					TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+					SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			data.setOrganizationName(StringUtil.replaceNullWithEmptyString(orgName));
 			data.setRequesterAccession(sampleItem.getExternalId());
 			data.setNote(getNoteForSampleItem(sampleItem));

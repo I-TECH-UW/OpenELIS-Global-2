@@ -1,5 +1,7 @@
 package spring.service.testcodes;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ public class OrganizationHL7SchemaServiceImpl extends BaseObjectServiceImpl<Orga
 
 	OrganizationHL7SchemaServiceImpl() {
 		super(OrganizationHL7Schema.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override

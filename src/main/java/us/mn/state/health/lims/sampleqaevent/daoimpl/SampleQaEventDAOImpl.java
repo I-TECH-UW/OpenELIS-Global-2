@@ -143,6 +143,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
 		try {
 			SampleQaEvent data = sessionFactory.getCurrentSession().get(SampleQaEvent.class, sampleQaEventId);
@@ -155,6 +156,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		try {
 			SampleQaEvent data = sessionFactory.getCurrentSession().get(SampleQaEvent.class, sampleQaEvent.getId());
@@ -188,6 +190,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		List sampleQaEvents = new ArrayList();
 
@@ -211,6 +214,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException {
 		List<SampleQaEvent> sampleQaEvents;
 
@@ -231,6 +235,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		SampleQaEvent analQaEvent = null;
 		try {
@@ -262,6 +267,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException {
 		List<SampleQaEvent> sampleQaEvents = null;
 
@@ -282,6 +288,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException {
 		String sql = "From SampleQaEvent sqa where sqa.completedDate is null";
 

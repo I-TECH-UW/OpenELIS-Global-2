@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.address.AddressPartService;
 import spring.service.address.PersonAddressService;
@@ -66,16 +67,19 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getFirstName() {
 		return person != null ? person.getFirstName() : "";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLastName() {
 		return person != null ? person.getLastName() : "";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLastFirstName() {
 		String lastName = getLastName();
 		String firstName = getFirstName();
@@ -125,6 +129,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getPhone() {
 		if (person == null) {
 			return "";
@@ -143,63 +148,76 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 		return phone;
 	}
 
+	@Transactional(readOnly = true)
 	public String getWorkPhone() {
 		return person.getWorkPhone();
 	}
 
+	@Transactional(readOnly = true)
 	public String getCellPhone() {
 		return person.getCellPhone();
 	}
 
+	@Transactional(readOnly = true)
 	public String getHomePhone() {
 		return person.getHomePhone();
 	}
 
+	@Transactional(readOnly = true)
 	public String getFax() {
 		return person.getFax();
 	}
 
+	@Transactional(readOnly = true)
 	public String getEmail() {
 		return person.getEmail();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Person getPerson() {
 		return person;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Person person) {
 		getBaseObjectDAO().getData(person);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPersonRecord(String id) {
 		return getBaseObjectDAO().getNextPersonRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPersonRecord(String id) {
 		return getBaseObjectDAO().getPreviousPersonRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Person getPersonByLastName(String lastName) {
 		return getBaseObjectDAO().getPersonByLastName(lastName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPersons(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfPersons(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPersons() {
 		return getBaseObjectDAO().getAllPersons();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Person getPersonById(String personId) {
 		return getBaseObjectDAO().getPersonById(personId);
 	}

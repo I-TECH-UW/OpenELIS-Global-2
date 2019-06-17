@@ -82,6 +82,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
 		try {
@@ -101,6 +102,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -122,6 +124,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -160,23 +163,27 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TypeOfSamplePanel", TypeOfSamplePanel.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TypeOfSamplePanel", TypeOfSampleTest.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
 		return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -208,6 +215,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -241,6 +249,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
 		List<TypeOfSamplePanel> list;
 
@@ -266,6 +275,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
 		String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
 

@@ -51,6 +51,7 @@ import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.result.ResultSignatureService;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
@@ -445,7 +446,8 @@ public class ResultsLoadUtility {
 			TestResultItem resultItem = createTestResultItem(new AnalysisServiceImpl(analysis), testKit, notes,
 					sampleItem.getSortOrder(), result, sampleItem.getSample().getAccessionNumber(), patientName,
 					patientInfo, techSignature, techSignatureId, initialConditions,
-					TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+					SpringContext.getBean(TypeOfSampleServiceImpl.class)
+							.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			resultItem.setNationalId(nationalId);
 			testResultList.add(resultItem);
 
@@ -609,8 +611,8 @@ public class ResultsLoadUtility {
 			String sampleType) {
 
 		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
-		ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(testService.getTest(),
-				patientServiceImpl.getPatient());
+		ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class)
+				.getResultLimitForTestAndPatient(testService.getTest(), patientServiceImpl.getPatient());
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
 		String testMethodName = testService.getTestMethodName();
@@ -754,8 +756,8 @@ public class ResultsLoadUtility {
 					resultLimit.getHighValid() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighValid());
 			testItem.setValid(getIsValid(testItem.getResultValue(), resultLimit));
 			testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
-			testItem.setNormalRange(ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimit,
-					testResults.get(0).getSignificantDigits(), " - "));
+			testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class)
+					.getDisplayReferenceRange(resultLimit, testResults.get(0).getSignificantDigits(), " - "));
 		}
 	}
 

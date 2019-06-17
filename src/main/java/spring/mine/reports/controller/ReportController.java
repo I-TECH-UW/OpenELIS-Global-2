@@ -25,8 +25,9 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.reports.form.ReportForm;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.ReportTrackingService;
+import us.mn.state.health.lims.common.services.IReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService.ReportType;
 import us.mn.state.health.lims.reports.action.implementation.IReportCreator;
 import us.mn.state.health.lims.reports.action.implementation.IReportParameterSetter;
@@ -120,8 +121,8 @@ public class ReportController extends BaseController {
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
-		ReportTrackingService.getInstance().addReports(reportCreator.getReportedOrders(), type, reportName,
-				getSysUserId(request));
+		SpringContext.getBean(IReportTrackingService.class).addReports(reportCreator.getReportedOrders(), type,
+				reportName, getSysUserId(request));
 	}
 
 	public String getReportPath() {
@@ -134,7 +135,7 @@ public class ReportController extends BaseController {
 
 	public String getImagesPath() {
 		if (imagesPath == null) {
-			imagesPath = context.getRealPath("") + "images" + File.separator;
+			imagesPath = context.getRealPath("") + "static" + File.separator + "images" + File.separator;
 		}
 		return imagesPath;
 	}

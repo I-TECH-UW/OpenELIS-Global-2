@@ -27,22 +27,26 @@ public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<Repor
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp beginning, Timestamp end,
 			String site) {
 		return getBaseObjectDAO().getReportsInDateRangeSortedForSite(beginning, end, site);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper) {
 		return getBaseObjectDAO().getReportsInDateRangeSorted(lower, upper);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport) {
 		return getBaseObjectDAO().getReportByEventDateSiteType(importReport);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getUniqueSites() {
 		return getBaseObjectDAO().getUniqueSites();
 	}

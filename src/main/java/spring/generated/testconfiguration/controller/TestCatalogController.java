@@ -19,10 +19,11 @@ import spring.generated.testconfiguration.form.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -146,13 +147,13 @@ public class TestCatalogController extends BaseController {
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
+		List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
@@ -189,7 +190,7 @@ public class TestCatalogController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getInstance().getResultLimits(test);
+		List<ResultLimit> resultLimitList = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -200,10 +201,10 @@ public class TestCatalogController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(ResultLimitServiceImpl.getInstance().getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, significantDigits, "-"));
+			bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitServiceImpl.getInstance().getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;

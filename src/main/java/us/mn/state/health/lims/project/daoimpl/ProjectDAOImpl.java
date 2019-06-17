@@ -161,6 +161,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
 			Project proj = sessionFactory.getCurrentSession().get(Project.class, project.getId());
@@ -186,6 +187,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllProjects() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -204,6 +206,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfProjects(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -246,6 +249,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextProjectRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Project", Project.class);
@@ -253,6 +257,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousProjectRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Project", Project.class);
@@ -260,6 +265,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 	// bugzilla 1978: added param activeOnly
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly)
 			throws LIMSRuntimeException {
 		try {
@@ -304,6 +310,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	// this is for autocomplete
 	// bugzilla 1978: added param activeOnly
 	@Override
+	@Transactional(readOnly = true)
 	public List getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException {
 		try {
 			String sql = "";
@@ -329,12 +336,14 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalProjectCount() throws LIMSRuntimeException {
 		return getTotalCount("Project", Project.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -357,6 +366,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -418,6 +428,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 	// bugzilla 2438
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) throws LIMSRuntimeException {
 		try {
 			String sql = null;
@@ -446,6 +457,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProjectById(String id) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(id)) {
 			try {

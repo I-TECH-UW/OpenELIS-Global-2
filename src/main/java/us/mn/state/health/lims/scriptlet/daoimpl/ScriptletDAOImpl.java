@@ -151,6 +151,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
 			Scriptlet sc = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptlet.getId());
@@ -169,6 +170,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllScriptlets() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -189,6 +191,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -229,6 +232,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextScriptletRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Scriptlet", Scriptlet.class);
@@ -236,6 +240,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Scriptlet", Scriptlet.class);
@@ -243,6 +248,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getScriptlets(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -262,6 +268,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
 			String sql = "from Scriptlet s where s.scriptletName = :param";
@@ -287,12 +294,14 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalScriptletCount() throws LIMSRuntimeException {
 		return getTotalCount("Scriptlet", Scriptlet.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -315,6 +324,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -372,6 +382,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
 		try {
 			Scriptlet scriptlet = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptletId);

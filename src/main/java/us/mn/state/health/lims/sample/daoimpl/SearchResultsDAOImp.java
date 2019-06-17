@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
 import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
 
@@ -71,7 +70,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 			String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
 					queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid);
 
-			org.hibernate.Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 
 			if (queryFirstName) {
 				query.setString(FIRST_NAME_PARAM, firstName);
@@ -99,8 +98,6 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 				query.setString(GUID, guid);
 			}
 			queryResults = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);

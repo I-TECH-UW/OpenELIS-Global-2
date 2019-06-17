@@ -35,6 +35,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary, String> i
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException {
 		String sql = "FROM TestDictionary td where td.testId = :testId";
 		try {

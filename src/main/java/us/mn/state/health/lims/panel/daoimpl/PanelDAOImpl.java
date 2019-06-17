@@ -191,6 +191,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Panel panel) throws LIMSRuntimeException {
 		try {
 			Panel pan = sessionFactory.getCurrentSession().get(Panel.class, panel.getId());
@@ -210,6 +211,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Panel getPanelById(String panelId) throws LIMSRuntimeException {
 		try {
 			Panel panel = sessionFactory.getCurrentSession().get(Panel.class, panelId);
@@ -224,6 +226,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
 		try {
 			String sql = "from Panel p where p.isActive = 'Y' order by p.panelName";
@@ -242,6 +245,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Panel> getAllPanels() throws LIMSRuntimeException {
 		try {
 			String sql = "from Panel p order by p.sortOrderInt";
@@ -259,6 +263,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -300,6 +305,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getActivePanels(String filter) throws LIMSRuntimeException {
 		List list = null;
 		try {
@@ -319,26 +325,31 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPanelRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "Panel", Panel.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPanelRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "Panel", Panel.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Panel getPanelByName(Panel panel) throws LIMSRuntimeException {
 		return getPanelByName(panel.getPanelName());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPanelCount() throws LIMSRuntimeException {
 		return getTotalCount("Panel", Panel.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -359,6 +370,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -450,6 +462,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getNameForPanelId(String id) {
 		if (ID_NAME_MAP == null) {
 			loadMaps();
@@ -459,6 +472,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getDescriptionForPanelId(String id) {
 		if (ID_DESCRIPTION_MAP == null) {
 			loadMaps();
@@ -468,6 +482,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getIdForPanelName(String name) {
 		if (NAME_ID_MAP == null) {
 			loadMaps();
@@ -500,6 +515,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Panel getPanelByName(String panelName) {
 		try {
 			String sql = "from Panel p where p.panelName = :name";

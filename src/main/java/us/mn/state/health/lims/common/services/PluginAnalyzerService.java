@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.analyzer.AnalyzerService;
 import spring.service.analyzerimport.AnalyzerTestMappingService;
@@ -63,7 +62,6 @@ public class PluginAnalyzerService {
 		AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
 	}
 
-	@Transactional
 	public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
 		Analyzer analyzer = analyzerService.getAnalyzerByName(name);
 		if (analyzer != null && analyzer.getId() != null) {

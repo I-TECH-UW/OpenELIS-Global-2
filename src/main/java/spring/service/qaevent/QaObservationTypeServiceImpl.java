@@ -2,6 +2,7 @@ package spring.service.qaevent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.qaevent.dao.QaObservationTypeDAO;
@@ -22,6 +23,7 @@ public class QaObservationTypeServiceImpl extends BaseObjectServiceImpl<QaObserv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public QaObservationType getQaObservationTypeByName(String typeName) {
         return getBaseObjectDAO().getQaObservationTypeByName(typeName);
 	}

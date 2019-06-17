@@ -46,7 +46,7 @@ public class SampleTypeTestAssignAction extends BaseAction {
         for( IdValuePair sampleTypePair : typeOfSamples){
             List<IdValuePair> tests = new ArrayList<IdValuePair>();
             sampleTypesTestsMap.put(sampleTypePair, tests );
-            List<Test> testList = TypeOfSampleServiceImpl.getInstance().getAllTestsBySampleTypeId(sampleTypePair.getId());
+            List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getAllTestsBySampleTypeId(sampleTypePair.getId());
 
             for( Test test : testList){
                 if( test.isActive()) {

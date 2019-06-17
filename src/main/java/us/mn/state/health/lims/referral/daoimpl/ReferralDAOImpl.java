@@ -57,6 +57,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
 		try {
 			Referral referral = sessionFactory.getCurrentSession().get(Referral.class, referralId);
@@ -71,6 +72,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
 
 		if (!GenericValidator.isBlankOrNull(analysisId)) {
@@ -92,6 +94,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
 		String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
 
@@ -142,6 +145,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(id)) {
 			String sql = "FROM Referral r WHERE r.analysis.sampleItem.sample.id = :sampleId";
@@ -168,6 +172,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
 		String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
 

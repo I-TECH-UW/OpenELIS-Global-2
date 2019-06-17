@@ -36,6 +36,7 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SiteInformationDomain getByName(String name) throws LIMSRuntimeException {
 		String sql = "from SiteInformationDomain sid where sid.name = :name";
 

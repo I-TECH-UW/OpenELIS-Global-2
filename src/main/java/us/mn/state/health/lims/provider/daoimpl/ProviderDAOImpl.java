@@ -135,6 +135,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Provider provider) throws LIMSRuntimeException {
 		try {
 			Provider prov = sessionFactory.getCurrentSession().get(Provider.class, provider.getId());
@@ -153,6 +154,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllProviders() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -171,6 +173,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -211,6 +214,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextProviderRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Provider", Provider.class);
@@ -218,6 +222,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousProviderRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Provider", Provider.class);
@@ -225,6 +230,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
 		List<Provider> list = null;
 		try {

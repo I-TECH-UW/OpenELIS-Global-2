@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -21,14 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 public class CobasC311Reader extends AnalyzerLineInserter {
 
@@ -51,11 +49,12 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 	private String error;
 
+	@Override
 	public boolean insert(List<String> lines, String currentUserId) {
 		error = null;
 		boolean successful = true;
 
-		List<AnalyzerResults> results = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> results = new ArrayList<>();
 
 		boolean columnsFound = manageColumns(lines.get(0), lines.get(3));
 
@@ -69,13 +68,10 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 		}
 
 		if (results.size() > 0) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
 				persistResults(results, currentUserId);
-				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
 				error = "Cobas Taqman DBS analyzer: Unable to save to database";
 				successful = false;
 			}
@@ -175,8 +171,8 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 		analyzerResults.setResult(adjustResult(analyzerTestName, result));
 		analyzerResults.setCompleteDate(orderTimeStamp);
 		analyzerResults.setTestId(mappedName.getTestId());
-		analyzerResults.setIsControl(accessionNumber.length() < 9
-				|| !VALID_PREFIXES.contains(accessionNumber.subSequence(0, 3)));
+		analyzerResults.setIsControl(
+				accessionNumber.length() < 9 || !VALID_PREFIXES.contains(accessionNumber.subSequence(0, 3)));
 		analyzerResults.setTestName(mappedName.getOpenElisTestName());
 		analyzerResults.setResultType("N");
 
@@ -186,21 +182,21 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 	}
 
 	private String adjustResult(String analyzerTestName, String result) {
-		
+
 		if (ALTL_NAME.equals(analyzerTestName)) {
-			return String.valueOf(Math.rint(Double.parseDouble(result) + ROUND_UP_KICKER ) ).split("\\.")[0];
+			return String.valueOf(Math.rint(Double.parseDouble(result) + ROUND_UP_KICKER)).split("\\.")[0];
 		}
 
 		if (ASTL_NAME.equals(analyzerTestName)) {
-			return String.valueOf(Math.rint(Double.parseDouble(result)  + ROUND_UP_KICKER )).split("\\.")[0];
+			return String.valueOf(Math.rint(Double.parseDouble(result) + ROUND_UP_KICKER)).split("\\.")[0];
 		}
 
 		if (CREATININ_NAME.equals(analyzerTestName)) {
-			return String.valueOf(Math.rint((Double.parseDouble(result)  + ROUND_UP_KICKER ) * 10.0)).split("\\.")[0];
+			return String.valueOf(Math.rint((Double.parseDouble(result) + ROUND_UP_KICKER) * 10.0)).split("\\.")[0];
 		}
 
 		if (GLYCEMIA_NAME.equals(analyzerTestName)) {
-			return String.valueOf(Math.rint((Double.parseDouble(result)  + ROUND_UP_KICKER ) * 100) / 100);
+			return String.valueOf(Math.rint((Double.parseDouble(result) + ROUND_UP_KICKER) * 100) / 100);
 		}
 
 		return result;

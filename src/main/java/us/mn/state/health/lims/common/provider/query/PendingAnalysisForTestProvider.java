@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import spring.service.analysis.AnalysisService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.services.IStatusService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 
@@ -45,7 +46,7 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
 	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
 	static {
-		StatusService statusService = StatusService.getInstance();
+		IStatusService statusService = StatusService.getInstance();
 		NOT_STARTED = new ArrayList<>();
 		NOT_STARTED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.NotStarted)));
 

@@ -23,7 +23,7 @@ public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart, S
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public AddressPart getAddresPartByName(String name) {
 		return getMatch("partName", name).orElse(null);
 	}

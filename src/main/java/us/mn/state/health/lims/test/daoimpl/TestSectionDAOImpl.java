@@ -151,6 +151,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
 		try {
 			TestSection testSec = sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
@@ -169,6 +170,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
 		List<TestSection> list = null;
 		try {
@@ -191,6 +193,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	 * @return list of tests
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
 		List list = new Vector();
 
@@ -223,6 +226,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -264,6 +268,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestSections(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -284,6 +289,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
 			throws LIMSRuntimeException {
 		List list = new Vector();
@@ -319,6 +325,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestSection", TestSection.class);
@@ -326,6 +333,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestSection", TestSection.class);
@@ -333,6 +341,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :param";
@@ -357,12 +366,14 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
 		return getTotalCount("TestSection", TestSection.class);
 	}
 
 //	bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -397,6 +408,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -457,6 +469,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllActiveTestSections() {
 		String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
 
@@ -473,6 +486,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllInActiveTestSections() {
 		String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
 
@@ -489,6 +503,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :name order by t.sortOrderInt";
@@ -511,6 +526,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
 			TestSection testSection = sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);

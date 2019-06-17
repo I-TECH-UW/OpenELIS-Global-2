@@ -1,8 +1,7 @@
 package spring.service.address;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 
 	PersonAddressServiceImpl() {
 		super(PersonAddress.class);
+		defaultSortOrder = new ArrayList<>();
 	}
 
 	@Override
@@ -29,17 +29,15 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<PersonAddress> getAddressPartsByPersonId(String personId) {
-		return baseObjectDAO.getAllMatching("compoundId.targetId", personId);
+		return baseObjectDAO.getAddressPartsByPersonId(personId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) {
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("compoundId.targetId", personId);
-		properties.put("compoundId.addressPartId", addressPartId);
-		return getMatch(properties).orElse(null);
+		return baseObjectDAO.getByPersonIdAndPartId(personId, addressPartId);
 	}
 
 	@Override

@@ -32,7 +32,7 @@ import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
@@ -42,6 +42,7 @@ import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -106,7 +107,7 @@ public class TestModifyEntryController extends BaseController {
 			PropertyUtils.setProperty(form, "labUnitList",
 					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "ageRangeList",
-					ResultLimitServiceImpl.getInstance().getPredefinedAgeRanges());
+					SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -205,7 +206,7 @@ public class TestModifyEntryController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getInstance().getResultLimits(test);
+		List<ResultLimit> resultLimitList = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -217,24 +218,24 @@ public class TestModifyEntryController extends BaseController {
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
 			bean.setNormalRange(
-					ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(limit, significantDigits, "-"));
+					SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, significantDigits, "-"));
 			bean.setValidRange(
-					ResultLimitServiceImpl.getInstance().getDisplayValidRange(limit, significantDigits, "-"));
+					SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitServiceImpl.getInstance().getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
+		List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
@@ -269,13 +270,13 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private String createReferenceIdForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
+		List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
 	}
 
 	private List<String> createDictionaryIds(TestServiceImpl testService) {
@@ -458,7 +459,7 @@ public class TestModifyEntryController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		TypeOfSampleServiceImpl.getInstance().clearCache();
+		SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

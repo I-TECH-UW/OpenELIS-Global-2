@@ -39,6 +39,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact,
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
 		String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
 		try {

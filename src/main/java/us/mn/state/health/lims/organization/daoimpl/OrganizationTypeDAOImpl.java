@@ -40,6 +40,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
 		List<OrganizationType> list = null;
 		try {
@@ -57,6 +58,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException {
 		String sql = null;
 		try {
@@ -79,6 +81,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names)
 			throws LIMSRuntimeException {
 		String sql = null;

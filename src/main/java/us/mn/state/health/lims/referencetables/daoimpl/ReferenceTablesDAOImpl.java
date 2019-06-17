@@ -194,6 +194,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
 		try {
 			ReferenceTables reftbl = sessionFactory.getCurrentSession().get(ReferenceTables.class,
@@ -213,6 +214,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllReferenceTables() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -233,6 +235,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -274,12 +277,14 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextReferenceTablesRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "ReferenceTables", ReferenceTables.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousReferenceTablesRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "ReferenceTables", ReferenceTables.class);
@@ -287,12 +292,14 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException {
 		return getTotalCount("ReferenceTables", ReferenceTables.class);
 	}
 
 //	bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -325,6 +332,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -407,6 +415,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
 	// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -427,16 +436,19 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) throws LIMSRuntimeException {
 		return getReferenceTableByName(referenceTables.getTableName());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalReferenceTableCount() throws LIMSRuntimeException {
 		return getTotalCount("ReferenceTables", ReferenceTables.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferenceTables getReferenceTableByName(String tableName) {
 		try {
 			String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";

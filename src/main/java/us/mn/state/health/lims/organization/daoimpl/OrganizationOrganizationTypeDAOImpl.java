@@ -70,6 +70,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
 		List<String> orgIdList = null;
 		String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
@@ -88,6 +89,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
 		List<String> orgIdList = null;
 		String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";

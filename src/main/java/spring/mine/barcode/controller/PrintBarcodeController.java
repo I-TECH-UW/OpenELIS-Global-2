@@ -35,6 +35,7 @@ import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IPatientService;
+import us.mn.state.health.lims.common.services.IStatusService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
@@ -56,7 +57,7 @@ public class PrintBarcodeController extends BaseController {
 	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
 	@Autowired
-	StatusService statusService;
+	IStatusService statusService;
 	@Autowired
 	SampleService sampleService;
 	@Autowired
@@ -67,7 +68,6 @@ public class PrintBarcodeController extends BaseController {
 	TypeOfSampleService typeOfSampleService;
 	@Autowired
 	SampleHumanService sampleHumanService;
-	
 
 	@PostConstruct
 	private void initialize() {

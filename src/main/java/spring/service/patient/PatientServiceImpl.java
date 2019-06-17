@@ -256,6 +256,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getGUID()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getGUID() {
 		return getIdentityInfo(PATIENT_GUID_IDENTITY);
 	}
@@ -266,6 +267,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getNationalId()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getNationalId() {
 		if (patient == null) {
 			return "";
@@ -284,6 +286,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getSTNumber()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getSTNumber() {
 		return getIdentityInfo(PATIENT_ST_IDENTITY);
 	}
@@ -295,6 +298,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * us.mn.state.health.lims.common.services.IPatientService#getSubjectNumber()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getSubjectNumber() {
 		return getIdentityInfo(PATIENT_SUBJECT_IDENTITY);
 	}
@@ -320,6 +324,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getFirstName()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getFirstName() {
 		return personService.getFirstName();
 	}
@@ -330,6 +335,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getLastName()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getLastName() {
 		return personService.getLastName();
 	}
@@ -341,6 +347,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * us.mn.state.health.lims.common.services.IPatientService#getLastFirstName()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getLastFirstName() {
 		return personService.getLastFirstName();
 	}
@@ -351,11 +358,13 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getGender()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getGender() {
 		return patient != null ? patient.getGender() : "";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getLocalizedGender() {
 		String genderType = getGender();
 
@@ -386,11 +395,13 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getEnteredDOB()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getEnteredDOB() {
 		return patient != null ? patient.getBirthDateForDisplay() : "";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Timestamp getDOB() {
 		return patient != null ? patient.getBirthDate() : null;
 	}
@@ -401,6 +412,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getPhone()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getPhone() {
 		return personService.getPhone();
 	}
@@ -411,6 +423,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getPerson()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Person getPerson() {
 		return personService.getPerson();
 	}
@@ -421,6 +434,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getPatientId()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getPatientId() {
 		return patient != null ? patient.getId() : null;
 	}
@@ -433,6 +447,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * ()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public String getBirthdayForDisplay() {
 		return patient != null ? DateUtil.convertTimestampToStringDate(patient.getBirthDate()) : "";
 	}
@@ -444,10 +459,12 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * us.mn.state.health.lims.common.services.IPatientService#getIdentityList()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<PatientIdentity> getIdentityList() {
 		return patient != null ? PatientUtil.getIdentityListForPatient(patient) : new ArrayList<>();
 	}
 
+	@Transactional(readOnly = true)
 	public String getExternalId() {
 		return patient == null ? "" : patient.getExternalId();
 	}
@@ -458,117 +475,140 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @see us.mn.state.health.lims.common.services.IPatientService#getPatient()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatient() {
 		return patient;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getAKA() {
 		return getIdentityInfo(PATIENT_AKA_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getMother() {
 		return getIdentityInfo(PATIENT_MOTHER_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getInsurance() {
 		return getIdentityInfo(PATIENT_INSURANCE_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getOccupation() {
 		return getIdentityInfo(PATIENT_OCCUPATION_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getOrgSite() {
 		return getIdentityInfo(PATIENT_ORG_SITE_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getMothersInitial() {
 		return getIdentityInfo(PATIENT_MOTHERS_INITIAL_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getEducation() {
 		return getIdentityInfo(PATIENT_EDUCATION_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getMaritalStatus() {
 		return getIdentityInfo(PATIENT_MARITAL_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getHealthDistrict() {
 		return getIdentityInfo(PATIENT_HEALTH_DISTRICT_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getHealthRegion() {
 		return getIdentityInfo(PATIENT_HEALTH_REGION_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getObNumber() {
 		return getIdentityInfo(PATIENT_OB_NUMBER_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getPCNumber() {
 		return getIdentityInfo(PATIENT_PC_NUMBER_IDENTITY);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Patient patient) {
 		getBaseObjectDAO().getData(patient);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getData(String patientId) {
 		return getBaseObjectDAO().getData(patientId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientByNationalId(String subjectNumber) {
 		return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Patient> getPatientsByNationalId(String nationalId) {
 		return getBaseObjectDAO().getPatientsByNationalId(nationalId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPatientRecord(String id) {
 		return getBaseObjectDAO().getPreviousPatientRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientByPerson(Person person) {
 		return getBaseObjectDAO().getPatientByPerson(person);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPatients(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfPatients(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPatientRecord(String id) {
 		return getBaseObjectDAO().getNextPatientRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientByExternalId(String externalId) {
 		return getBaseObjectDAO().getPatientByExternalId(externalId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPatients() {
 		return getBaseObjectDAO().getAllPatients();
 	}
@@ -584,6 +624,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
 			String study) {
 		return getBaseObjectDAO().getPatientIdentityBySampleStatusIdAndProject(inclusiveStatusIdList, study);

@@ -16,8 +16,6 @@ import spring.mine.dev.form.WebTestInfoForm;
 import spring.service.login.LoginService;
 import spring.service.patient.PatientService;
 import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Controller
 public class webtestInfoController extends BaseController {
@@ -47,7 +45,7 @@ public class webtestInfoController extends BaseController {
 		addUserInfo(xmlBuilder);
 		// addUserLocked(xmlBuilder);
 //		addNumberOfPatients(xmlBuilder);
-		addNumberOfSamples(xmlBuilder);
+//		addNumberOfSamples(xmlBuilder);
 
 		xmlBuilder.append("</webTestInfo>");
 		return xmlBuilder.toString();
@@ -81,14 +79,14 @@ public class webtestInfoController extends BaseController {
 //
 //	}
 
-	private void addNumberOfSamples(StringBuilder xmlBuilder) {
-		int count = new PatientDAOImpl().getTotalCount("Sample", Sample.class);
-
-		xmlBuilder.append("<sample-count>");
-		xmlBuilder.append(String.valueOf(count));
-		xmlBuilder.append("</sample-count>");
-
-	}
+//	private void addNumberOfSamples(StringBuilder xmlBuilder) {
+//		int count = new PatientDAOImpl().getTotalCount("Sample", Sample.class);
+//
+//		xmlBuilder.append("<sample-count>");
+//		xmlBuilder.append(String.valueOf(count));
+//		xmlBuilder.append("</sample-count>");
+//
+//	}
 
 	@Override
 	protected String findLocalForward(String forward) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
@@ -25,6 +26,7 @@ public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<Referr
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
 		return baseObjectDAO.getReferringTestResultsForSampleItem(id);
 	}

@@ -160,6 +160,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Result result) throws LIMSRuntimeException {
 		try {
 			Result re = sessionFactory.getCurrentSession().get(Result.class, result.getId());
@@ -178,6 +179,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta)
 			throws LIMSRuntimeException {
 		List results;
@@ -214,6 +216,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException {
 		try {
 
@@ -241,6 +244,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	 * us.mn.state.health.lims.testresult.valueholder.TestResult)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public void getResultByTestResult(Result result, TestResult testResult) throws LIMSRuntimeException {
 		List results;
 		try {
@@ -272,6 +276,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllResults() throws LIMSRuntimeException {
 		List results;
 		try {
@@ -290,6 +295,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfResults(int startingRecNo) throws LIMSRuntimeException {
 		List results;
 		try {
@@ -329,6 +335,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextResultRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Result", Result.class);
@@ -336,17 +343,20 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousResultRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Result", Result.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultById(Result result) throws LIMSRuntimeException {
 		return getResultById(result.getId());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultById(String resultId) throws LIMSRuntimeException {
 		try {
 			Result result = sessionFactory.getCurrentSession().get(Result.class, resultId);
@@ -363,6 +373,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getReportableResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException {
 		try {
 
@@ -384,6 +395,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList)
 			throws LIMSRuntimeException {
 
@@ -411,6 +423,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException {
 
 		try {
@@ -438,6 +451,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException {
 		if (analysisIdList.isEmpty()) {
 			return null;
@@ -463,6 +477,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestAndSample(String sampleId, String testId) {
 		String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id = :testId";
 
@@ -484,6 +499,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForSample(Sample sample) throws LIMSRuntimeException {
 		String sql = "From Result r where r.analysis.sampleItem.sample.id = :sampleId";
 
@@ -502,6 +518,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getChildResults(String resultId) throws LIMSRuntimeException {
 		String sql = "From Result r where r.parentResult.id = :parentId";
 
@@ -520,6 +537,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
 			throws LIMSRuntimeException {
 		String sql = "FROM Result r WHERE r.analysis.test.id = :testId AND r.lastupdated BETWEEN :lowDate AND :highDate";
@@ -543,6 +561,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
 			throws LIMSRuntimeException {
 		String sql = "FROM Result r WHERE r.analysis.panel.id = :panelId AND r.lastupdated BETWEEN :lowDate AND :highDate order by r.id";
@@ -566,6 +585,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
 			throws LIMSRuntimeException {
 		String sql = "FROM Result r WHERE r.analysis.testSection.id = :testSectionId AND r.lastupdated BETWEEN :lowDate AND :highDate";

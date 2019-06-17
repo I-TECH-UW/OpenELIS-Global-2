@@ -39,7 +39,7 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 
 @Service
 @Scope("prototype")
-public class PatientEntryAfterAnalyzer extends PatientEntry {
+public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientEntryAfterAnalyzer {
 
 	public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws Exception {

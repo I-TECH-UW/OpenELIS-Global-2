@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 
 import spring.service.dictionary.DictionaryService;
@@ -36,29 +34,27 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
-@SuppressWarnings("unused")
 public class EvolisReader extends AnalyzerLineInserter {
 
 	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 	protected TestService testService = SpringContext.getBean(TestService.class);
 	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
-	private static String NEGATIVE_DICTIONARY_ID = null;
-	private static String POSITIVE_DICTIONARY_ID = null;
-	private static String INDETERMINATE_DICTIONARY_ID = null;
-	private static String DELIMITER = "|";
-	private static int Id = 0;
-	private static int assay = 1;
-	private static int well = 2;
-	private static int flag = 3;
-	private static int value = 4;
-	private static int S_CO = 5;
-	private static int result = 6;
+	private String NEGATIVE_DICTIONARY_ID = null;
+	private String POSITIVE_DICTIONARY_ID = null;
+	private String INDETERMINATE_DICTIONARY_ID = null;
+	private String DELIMITER = "|";
+	private int Id = 0;
+	private int assay = 1;
+	private int well = 2;
+	private int flag = 3;
+	private int value = 4;
+	private int S_CO = 5;
+	private int result = 6;
 
-	private static AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
+	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
-	@PostConstruct
-	private void initialize() {
+	public EvolisReader() {
 		Test test = new Test();
 		test.setTestName("Integral"); // integral and murex use the same dictionary values
 		test = testService.getTestByName(test);
@@ -91,19 +87,14 @@ public class EvolisReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-//			Transaction tx = HibernateProxy.beginTransaction();
+			// ensure transaction block
 			try {
 				persistResults(results, currentUserId);
-//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
 				successful = false;
 			}
 
-//			finally {
-//				HibernateProxy.closeSession();
-//			}
 		}
 		return successful;
 

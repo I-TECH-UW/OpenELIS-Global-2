@@ -122,6 +122,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Note getData(String noteId) throws LIMSRuntimeException {
 		try {
 			Note note = sessionFactory.getCurrentSession().get(Note.class, noteId);
@@ -188,6 +189,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
 		try {
 
@@ -371,6 +373,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
 			List<String> filter) throws LIMSRuntimeException {
 		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType in ( :filter ) order by n.lastupdated asc";
@@ -393,6 +396,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
 			throws LIMSRuntimeException {
 		String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and n.lastupdated between :lowDate and :highDate";

@@ -49,7 +49,7 @@ import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Service
 @Scope("prototype")
-public class MalariaResultExporter extends Thread {
+public class MalariaResultExporter extends Thread implements IMalariaResultExporter {
 
 	private long sleepTime;
 	private boolean running = true;
@@ -68,7 +68,7 @@ public class MalariaResultExporter extends Thread {
 	private String resultReportTypeId;
 
 	@PostConstruct
-	public void initializeGlobalVariables() {
+	private void initializeGlobalVariables() {
 		resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
 	}
 

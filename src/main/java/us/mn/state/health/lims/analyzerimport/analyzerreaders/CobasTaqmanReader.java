@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -19,16 +19,13 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Transaction;
-
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class CobasTaqmanReader extends AnalyzerLineInserter{
+public class CobasTaqmanReader extends AnalyzerLineInserter {
 
 	private static final String UNDER_THREASHOLD = "< LL";
 	private static final double THREASHOLD = 20.0;
@@ -53,62 +50,60 @@ public class CobasTaqmanReader extends AnalyzerLineInserter{
 	private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
-	public boolean insert(List<String> lines, String currentUserId){
+	@Override
+	public boolean insert(List<String> lines, String currentUserId) {
 
 		boolean successful = true;
 
-		List<AnalyzerResults> results = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> results = new ArrayList<>();
 
-		for(int i = 1; i < lines.size(); ++i){
+		for (int i = 1; i < lines.size(); ++i) {
 			createAnalyzerResultFromLine(lines.get(i), results);
 		}
 
-		if(results.size() > 0){
+		if (results.size() > 0) {
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-			try{
+			try {
 				persistResults(results, currentUserId);
-				tx.commit();
-			}catch(LIMSRuntimeException lre){
-				tx.rollback();
+			} catch (LIMSRuntimeException lre) {
 				successful = false;
-			}finally{
-				HibernateUtil.closeSession();
 			}
 		}
 
 		return successful;
 	}
 
-	private void addValueToResults(List<AnalyzerResults> resultList, AnalyzerResults result){
+	private void addValueToResults(List<AnalyzerResults> resultList, AnalyzerResults result) {
 		resultList.add(result);
 
 		AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(result);
-		if(resultFromDB != null){
+		if (resultFromDB != null) {
 			resultList.add(resultFromDB);
 		}
 
 	}
 
-	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList){
+	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList) {
 		String[] fields = line.split(ALT_DELIMITER);
-		if(fields.length < 5){
+		if (fields.length < 5) {
 			fields = line.split(DELIMITER);
 		}
 
 		AnalyzerResults analyzerResults = new AnalyzerResults();
-		MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_TAQMAN, fields[TEST].replace("\"", "").trim());
+		MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_TAQMAN,
+				fields[TEST].replace("\"", "").trim());
 
-		if(mappedName == null){
-			mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_TAQMAN, fields[TEST].replace("\"", "").trim());
+		if (mappedName == null) {
+			mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_TAQMAN,
+					fields[TEST].replace("\"", "").trim());
 		}
 
 		String result = getAppropriateResults(fields[RESULT]);
 		analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
 		analyzerResults.setResult(result);
 		analyzerResults.setUnits(UNDER_THREASHOLD.equals(result) ? "" : fields[UNIT].replace("\"", "").trim());
-		analyzerResults.setCompleteDate(DateUtil.convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
+		analyzerResults.setCompleteDate(DateUtil
+				.convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
 		analyzerResults.setAccessionNumber(fields[SAMPLE_ID].replace("\"", "").trim());
 		analyzerResults.setTestId(mappedName.getTestId());
 		analyzerResults.setIsControl(!"S".equals(fields[SAMPLE_TYPE].replace("\"", "").trim()));
@@ -118,24 +113,25 @@ public class CobasTaqmanReader extends AnalyzerLineInserter{
 		addValueToResults(resultList, analyzerResults);
 	}
 
-	private String getAppropriateResults(String result){
+	private String getAppropriateResults(String result) {
 		result = result.replace("\"", "").trim();
-		if("Target Not Detected".equalsIgnoreCase(result) || "Below range".equalsIgnoreCase( result )){
+		if ("Target Not Detected".equalsIgnoreCase(result) || "Below range".equalsIgnoreCase(result)) {
 			result = UNDER_THREASHOLD;
-		}else{
+		} else {
 
 			String workingResult = result.split("\\(")[0].replace("<", "").replace("E", "");
 			String[] splitResult = workingResult.split("\\+");
 
-			try{
-				Double resultAsDouble = Double.parseDouble(splitResult[0]) * Math.pow(10, Double.parseDouble(splitResult[1]));
+			try {
+				Double resultAsDouble = Double.parseDouble(splitResult[0])
+						* Math.pow(10, Double.parseDouble(splitResult[1]));
 
-				if(resultAsDouble <= THREASHOLD){
+				if (resultAsDouble <= THREASHOLD) {
 					result = UNDER_THREASHOLD;
-				}else{
-					result = String.valueOf((int)(Math.round(resultAsDouble))) + result.substring(result.indexOf("("));
+				} else {
+					result = String.valueOf((int) (Math.round(resultAsDouble))) + result.substring(result.indexOf("("));
 				}
-			}catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				return "XXXX";
 			}
 		}
@@ -144,7 +140,7 @@ public class CobasTaqmanReader extends AnalyzerLineInserter{
 	}
 
 	@Override
-	public String getError(){
+	public String getError() {
 		return "Cobas Taqman unable to write to database";
 	}
 }

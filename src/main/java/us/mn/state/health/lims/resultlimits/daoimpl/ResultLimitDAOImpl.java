@@ -125,6 +125,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		try {
 			ResultLimit tmpLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
@@ -142,6 +143,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllResultLimits() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -159,6 +161,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -196,17 +199,20 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextResultLimitRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "ResultLimit", ResultLimit.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "ResultLimit", ResultLimit.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 
 		if (GenericValidator.isBlankOrNull(testId)) {
@@ -229,6 +235,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
 		try {
 			ResultLimit resultLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);

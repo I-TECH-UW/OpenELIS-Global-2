@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -27,37 +28,44 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(StatusOfSample sourceOfSample) {
 		getBaseObjectDAO().getData(sourceOfSample);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousStatusOfSampleRecord(String id) {
 		return getBaseObjectDAO().getPreviousStatusOfSampleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfStatusOfSamples(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfStatusOfSamples(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalStatusOfSampleCount() {
 		return getBaseObjectDAO().getTotalStatusOfSampleCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) {
 		return getBaseObjectDAO().getDataByStatusTypeAndStatusCode(statusofsample);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllStatusOfSamples() {
 		return getBaseObjectDAO().getAllStatusOfSamples();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextStatusOfSampleRecord(String id) {
 		return getBaseObjectDAO().getNextStatusOfSampleRecord(id);
 	}

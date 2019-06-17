@@ -139,6 +139,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleItem sampleItem) throws LIMSRuntimeException {
 		try {
 			SampleItem sampleIt = sessionFactory.getCurrentSession().get(SampleItem.class, sampleItem.getId());
@@ -156,6 +157,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SampleItem getData(String sampleItemId) throws LIMSRuntimeException {
 		try {
 			SampleItem sampleItem = sessionFactory.getCurrentSession().get(SampleItem.class, sampleItemId);
@@ -170,6 +172,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException {
 		List<SampleItem> list;
 		try {
@@ -188,6 +191,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException {
 		List<SampleItem> list;
 		try {
@@ -229,6 +233,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getNextSampleItemRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "SampleItem", SampleItem.class);
@@ -237,12 +242,14 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getPreviousSampleItemRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "SampleItem", SampleItem.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 		// Use an expression to read in the Sample_Item by SAMP_ID
 		try {
@@ -283,6 +290,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException {
 
 		try {
@@ -308,6 +316,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
 		try {
 			String sql = "from SampleItem si where si.sample.id = :sampleId and si.typeOfSample.id = :typeOfSampleId";
@@ -327,6 +336,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList)
 			throws LIMSRuntimeException {
 		if (includedStatusList.isEmpty()) {

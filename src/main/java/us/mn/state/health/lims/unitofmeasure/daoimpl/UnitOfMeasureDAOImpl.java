@@ -148,6 +148,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException {
 		String sql = "from UnitOfMeasure uom where id = :id";
 		try {

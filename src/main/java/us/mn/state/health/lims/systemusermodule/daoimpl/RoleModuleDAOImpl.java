@@ -152,6 +152,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(RoleModule systemUserModule) throws LIMSRuntimeException {
 		try {
 			RoleModule sysUserModule = sessionFactory.getCurrentSession().get(RoleModule.class,
@@ -170,6 +171,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModules() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -187,6 +189,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -205,6 +208,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -242,6 +246,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public RoleModule getRoleModuleByRoleAndModuleId(String roleId, String moduleId) {
 		String sql = "From RoleModule rm where rm.systemModule.id = :moduleId and rm.role.id = :roleId";
 
@@ -260,23 +265,27 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "RoleModule", RoleModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "RoleModule", RoleModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
 		return getTotalCount("RoleModule", RoleModule.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -303,6 +312,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);

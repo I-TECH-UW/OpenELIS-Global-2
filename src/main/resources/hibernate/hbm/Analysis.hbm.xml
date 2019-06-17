@@ -18,16 +18,16 @@
 		<many-to-one name="parentAnalysis" class="us.mn.state.health.lims.analysis.valueholder.Analysis" fetch="select">
             <column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select" lazy="false">
+        <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select" lazy="false" >
             <column name="TEST_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="sampleItem" class="us.mn.state.health.lims.sampleitem.valueholder.SampleItem" fetch="select">
+        <many-to-one name="sampleItem" class="us.mn.state.health.lims.sampleitem.valueholder.SampleItem" fetch="select" lazy="false">
             <column name="SAMPITEM_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select">
+        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select" lazy="false">
             <column name="TEST_SECT_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select">
+        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select" lazy="false">
             <column name="panel_id" precision="10" scale="0" />
         </many-to-one>
         <property name="revision" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">

@@ -84,7 +84,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Service
 @Scope("prototype")
-public class NonConformityUpdateWorker {
+public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 
 	private Sample sample;
 	private SampleHuman sampleHuman;
@@ -174,10 +174,12 @@ public class NonConformityUpdateWorker {
 
 	}
 
+	@Override
 	public void setWebData(NonConformityUpdateData data) {
 		webData = data;
 	}
 
+	@Override
 	@Transactional
 	public String update() {
 		useFullProviderInfo = FormFields.getInstance().useField(FormFields.Field.QA_FULL_PROVIDER_INFO);
@@ -322,6 +324,7 @@ public class NonConformityUpdateWorker {
 		return IActionConstants.FWD_SUCCESS_INSERT;
 	}
 
+	@Override
 	public Errors getErrors() {
 		return errors;
 	}

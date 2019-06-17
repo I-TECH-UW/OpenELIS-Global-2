@@ -28,29 +28,32 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman, S
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public SampleHuman getDataBySample(SampleHuman sampleHuman) {
 		return getMatch("sampleId", sampleHuman.getSampleId()).orElse(null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Patient getPatientForSample(Sample sample) {
 		return baseObjectDAO.getPatientForSample(sample);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleHuman sampleHuman) {
 		getBaseObjectDAO().getData(sampleHuman);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Provider getProviderForSample(Sample sample) {
 		return getBaseObjectDAO().getProviderForSample(sample);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sample> getSamplesForPatient(String patientID) {
 		return getBaseObjectDAO().getSamplesForPatient(patientID);
 	}

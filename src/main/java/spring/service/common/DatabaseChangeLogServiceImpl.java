@@ -2,6 +2,7 @@ package spring.service.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
@@ -22,6 +23,7 @@ public class DatabaseChangeLogServiceImpl implements DatabaseChangeLogService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public DatabaseChangeLog getLastExecutedChange() {
 		return getBaseObjectDAO().getLastExecutedChange();
 	}

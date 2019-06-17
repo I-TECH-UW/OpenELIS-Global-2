@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -27,31 +28,37 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemUserModule systemUserModule) {
 		baseObjectDAO.getData(systemUserModule);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModules() {
 		return baseObjectDAO.getAllPermissionModules();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPermissionModuleCount() {
 		return baseObjectDAO.getTotalPermissionModuleCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPermissionModules(int startingRecNo) {
 		return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPermissionModuleRecord(String id) {
 		return baseObjectDAO.getNextPermissionModuleRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPermissionModulesByAgentId(int systemUserId) {
 		return baseObjectDAO.getAllPermissionModulesByAgentId(systemUserId);
 	}
@@ -62,6 +69,7 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPermissionModuleRecord(String id) {
 		return baseObjectDAO.getPreviousPermissionModuleRecord(id);
 	}

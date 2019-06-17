@@ -19,7 +19,6 @@ import spring.service.common.BaseObjectServiceImpl;
 import spring.service.dictionary.DictionaryService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -87,27 +86,32 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Result> getResultsByAnalysis(Analysis analysis) {
 		return baseObjectDAO.getAllMatchingOrdered("analysis.id", analysis.getId(), "id", false);
 	}
 
+	@Transactional(readOnly = true)
 	public String getLabSectionName() {
 		return result.getAnalysis().getTestSection().getName();
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestName() {
 		return TestServiceImpl.getUserLocalizedTestName(test);
 	}
 
+	@Transactional(readOnly = true)
 	public String getReportingTestName() {
 		return TestServiceImpl.getUserLocalizedReportingTestName(test);
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestDescription() {
 		return TestServiceImpl.getLocalizedTestNameWithType(test);
 	}
 
+	@Transactional(readOnly = true)
 	public String getSampleType() {
 		if (test == null) {
 			return "";
@@ -122,14 +126,17 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return "";
 	}
 
+	@Transactional(readOnly = true)
 	public String getLOINCCode() {
 		return test != null ? test.getLoinc() : "";
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestTime() {
 		return result.getAnalysis().getCompletedDateForDisplay();
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestType() {
 		return result.getResultType();
 	}
@@ -140,6 +147,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *
 	 * @return The String value
 	 */
+	@Transactional(readOnly = true)
 	public String getSimpleResultValue() {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
@@ -184,10 +192,12 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *                  they will be suitable for a web form
 	 * @return A textual representation of the value
 	 */
+	@Transactional(readOnly = true)
 	public String getResultValue(boolean printable) {
 		return getResultValue(",", printable, false);
 	}
 
+	@Transactional(readOnly = true)
 	public String getResultValue(String separator, boolean printable, boolean includeUOM) {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
@@ -299,6 +309,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public String getMultiSelectSelectedIdValues() {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
@@ -327,14 +338,17 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return "";
 	}
 
+	@Transactional(readOnly = true)
 	public String getUOM() {
 		return test != null && test.getUnitOfMeasure() != null ? test.getUnitOfMeasure().getUnitOfMeasureName() : "";
 	}
 
+	@Transactional(readOnly = true)
 	public double getlowNormalRange() {
 		return result.getMinNormal();
 	}
 
+	@Transactional(readOnly = true)
 	public double getHighNormalRange() {
 		return result.getMaxNormal();
 	}
@@ -368,12 +382,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Transactional(readOnly = true)
 	public String getDisplayReferenceRange(boolean includeSelectList) {
 		String range = "";
 		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			if (result.getMinNormal() != null && result.getMaxNormal() != null
 					&& !result.getMinNormal().equals(result.getMaxNormal())) {
-				range = ResultLimitServiceImpl.getInstance().getDisplayNormalRange(result.getMinNormal(),
+				range = SpringContext.getBean(ResultLimitService.class).getDisplayNormalRange(result.getMinNormal(),
 						result.getMaxNormal(), String.valueOf(result.getSignificantDigits()), "-");
 			}
 		} else if (includeSelectList
@@ -406,10 +421,12 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Transactional(readOnly = true)
 	public String getLastUpdatedTime() {
 		return DateUtil.convertTimestampToStringDate(result.getLastupdated());
 	}
 
+	@Transactional(readOnly = true)
 	public String getSignature() {
 		List<ResultSignature> signatures = signatureService.getResultSignaturesByResult(result);
 		return signatures.isEmpty() ? "" : signatures.get(0).getNonUserName();
@@ -468,99 +485,118 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Result result) {
 		getBaseObjectDAO().getData(result);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate) {
 		return getBaseObjectDAO().getResultsForTestSectionInDateRange(testSectionId, lowDate, highDate);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextResultRecord(String id) {
 		return getBaseObjectDAO().getNextResultRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousResultRecord(String id) {
 		return getBaseObjectDAO().getPreviousResultRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta) {
 		getBaseObjectDAO().getResultByAnalysisAndAnalyte(result, analysis, ta);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) {
 		return getBaseObjectDAO().getResultsForAnalysisIdList(analysisIdList);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate) {
 		return getBaseObjectDAO().getResultsForPanelInDateRange(panelId, lowDate, highDate);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForSample(Sample sample) {
 		return getBaseObjectDAO().getResultsForSample(sample);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList) {
 		return getBaseObjectDAO().getResultForAnalyteInAnalysisSet(analyteId, analysisIDList);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate) {
 		return getBaseObjectDAO().getResultsForTestInDateRange(testId, startDate, endDate);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getResultByTestResult(Result result, TestResult testResult) {
 		getBaseObjectDAO().getResultByTestResult(result, testResult);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) {
 		return getBaseObjectDAO().getResultForAnalyteAndSampleItem(analyteId, sampleItemId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getResultsForTestAndSample(String sampleId, String testId) {
 		return getBaseObjectDAO().getResultsForTestAndSample(sampleId, testId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getReportableResultsByAnalysis(Analysis analysis) {
 		return getBaseObjectDAO().getReportableResultsByAnalysis(analysis);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Result> getChildResults(String resultId) {
 		return getBaseObjectDAO().getChildResults(resultId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllResults() {
 		return getBaseObjectDAO().getAllResults();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultById(Result result) {
 		return getBaseObjectDAO().getResultById(result);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Result getResultById(String resultId) {
 		return getBaseObjectDAO().getResultById(resultId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfResults(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfResults(startingRecNo);
 	}

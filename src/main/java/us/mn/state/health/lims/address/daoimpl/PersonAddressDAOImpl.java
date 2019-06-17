@@ -16,6 +16,10 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
 @Transactional
@@ -32,22 +37,22 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 		super(PersonAddress.class);
 	}
 
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
-//		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
-//
-//		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//			query.setInteger("personId", Integer.parseInt(personId));
-//			List<PersonAddress> addressPartList = query.list();
-//			return addressPartList;
-//		} catch (HibernateException e) {
-//			handleException(e, "getAddressPartsByPersonId");
-//		}
-//
-//		return null;
-//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
+		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			query.setInteger("personId", Integer.parseInt(personId));
+			List<PersonAddress> addressPartList = query.list();
+			return addressPartList;
+		} catch (HibernateException e) {
+			handleException(e, "getAddressPartsByPersonId");
+		}
+
+		return null;
+	}
 
 //	@Override
 //	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
@@ -95,21 +100,21 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 //		return null;
 //	}
 
-//	@Override
-//	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
-//		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
-//
-//		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//			query.setInteger("personId", Integer.parseInt(personId));
-//			query.setInteger("partId", Integer.parseInt(addressPartId));
-//			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
-//			// closeSession(); // CSL remove old
-//			return addressPart;
-//		} catch (HibernateException e) {
-//			handleException(e, "getByPersonIdAndPartId");
-//		}
-//
-//		return null;
-//	}
+	@Override
+	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
+		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			query.setInteger("personId", Integer.parseInt(personId));
+			query.setInteger("partId", Integer.parseInt(addressPartId));
+			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
+			// closeSession(); // CSL remove old
+			return addressPart;
+		} catch (HibernateException e) {
+			handleException(e, "getByPersonIdAndPartId");
+		}
+
+		return null;
+	}
 }

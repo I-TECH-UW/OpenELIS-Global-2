@@ -23,7 +23,7 @@ public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<Site
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public SiteInformationDomain getByName(String name) {
 		return getMatch("name", name).orElse(null);
 	}

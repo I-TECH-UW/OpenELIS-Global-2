@@ -35,6 +35,7 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException {
 		String sql = "FROM QaObservationType where name = :name";
 

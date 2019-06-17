@@ -56,6 +56,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
@@ -72,6 +73,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ReferralResult> getReferralResultsForReferral(String referralId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralId)) {
 			String sql = "from ReferralResult rr where rr.referralId = :referralId order by rr.id";
@@ -153,6 +155,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException {
 		String sql = "From ReferralResult rr where rr.result.id= :resultId";
 

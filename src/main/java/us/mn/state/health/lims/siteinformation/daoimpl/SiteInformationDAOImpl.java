@@ -116,6 +116,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SiteInformation siteInformation) throws LIMSRuntimeException {
 		try {
 			SiteInformation tmpSiteInformation = sessionFactory.getCurrentSession().get(SiteInformation.class,
@@ -135,6 +136,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException {
 		List<SiteInformation> list;
 		try {
@@ -153,6 +155,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
 			throws LIMSRuntimeException {
 		List<SiteInformation> list = null;
@@ -193,17 +196,20 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getNextSiteInformationRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "SiteInformation", SiteInformation.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getPreviousSiteInformationRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "SiteInformation", SiteInformation.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SiteInformation getSiteInformationByName(String siteName) throws LIMSRuntimeException {
 		String sql = "From SiteInformation si where name = :name";
 
@@ -221,6 +227,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public int getCountForDomainName(String domainName) throws LIMSRuntimeException {
 		String sql = "select count(*) from SiteInformation si where si.domain.name = :domainName";
 
@@ -237,6 +244,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SiteInformation getSiteInformationById(String id) throws LIMSRuntimeException {
 
 		try {
@@ -251,6 +259,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getSiteInformationByDomainName(String domainName) {
 		String sql = "From SiteInformation si where si.domain.name = :domainName";
 		try {

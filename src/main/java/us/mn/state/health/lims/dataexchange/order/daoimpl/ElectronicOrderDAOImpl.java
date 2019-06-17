@@ -39,6 +39,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
 		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
@@ -139,6 +140,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
 		List<ElectronicOrder> list = new Vector<>();
 		try {

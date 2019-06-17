@@ -16,9 +16,16 @@
 */
 package us.mn.state.health.lims.address.dao;
 
+import java.util.List;
+
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.dao.BaseDAO;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 public interface PersonAddressDAO extends BaseDAO<PersonAddress, AddressPK> {
+
+	List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException;
+
+	PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException;
 }

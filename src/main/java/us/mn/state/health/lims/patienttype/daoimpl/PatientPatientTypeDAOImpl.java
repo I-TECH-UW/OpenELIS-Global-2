@@ -88,6 +88,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //		}
 //	}
 
+	@Transactional(readOnly = true)
 	public PatientPatientType getCurrentPatientPatientType(String id) {
 		PatientPatientType current = null;
 		try {
@@ -120,6 +121,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException {
 		List<PatientPatientType> patientTypes;
 

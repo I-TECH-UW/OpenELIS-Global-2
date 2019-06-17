@@ -27,53 +27,62 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public ReferenceTables getReferenceTableByName(String tableName) {
 		return baseObjectDAO.getReferenceTableByName(tableName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(ReferenceTables referenceTables) {
 		getBaseObjectDAO().getData(referenceTables);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllReferenceTablesForHl7Encoding() {
 		return getBaseObjectDAO().getAllReferenceTablesForHl7Encoding();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllReferenceTables() {
 		return getBaseObjectDAO().getAllReferenceTables();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) {
 		return getBaseObjectDAO().getReferenceTableByName(referenceTables);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalReferenceTableCount() {
 		return getBaseObjectDAO().getTotalReferenceTableCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousReferenceTablesRecord(String id) {
 		return getBaseObjectDAO().getPreviousReferenceTablesRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfReferenceTables(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfReferenceTables(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextReferenceTablesRecord(String id) {
 		return getBaseObjectDAO().getNextReferenceTablesRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalReferenceTablesCount() {
 		return getBaseObjectDAO().getTotalReferenceTablesCount();
 	}

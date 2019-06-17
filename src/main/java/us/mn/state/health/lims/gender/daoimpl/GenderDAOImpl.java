@@ -226,6 +226,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Gender getGenderByType(String type) throws LIMSRuntimeException {
 		String sql = "From Gender g where g.genderType = :type";
 		try {

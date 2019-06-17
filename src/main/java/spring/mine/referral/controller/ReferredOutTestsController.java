@@ -49,6 +49,7 @@ import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -352,7 +353,7 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = TypeOfSampleServiceImpl.getInstance().getActiveTestsBySampleTypeId(typeOfSample.getId(),
+		List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(typeOfSample.getId(),
 				false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
@@ -678,7 +679,7 @@ public class ReferredOutTestsController extends BaseController {
 		Test test = testService.get(referredTest.getReferredTestId());
 		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		ResultLimit limit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(test, patient);
+		ResultLimit limit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(test, patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
 		result.setGrouping(grouping);

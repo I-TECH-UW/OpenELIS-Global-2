@@ -51,7 +51,8 @@ public class LogoUploadServlet extends HttpServlet {
 	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
 	private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 	private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
-	private static final String PREVIEW_FILE_PATH = File.separator + "images" + File.separator;
+	private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
+			+ File.separator;
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

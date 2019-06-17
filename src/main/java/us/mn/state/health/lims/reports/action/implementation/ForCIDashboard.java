@@ -20,8 +20,6 @@ import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	private String projectStr;
 	private Project project;
 	private String indicStr;
-	protected static final SimpleDateFormat postgresDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	protected final SimpleDateFormat postgresDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	// private String indicLabel;
 
 	@Override
@@ -71,7 +69,8 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	protected String getReportNameForParameterPage() {
-		return MessageUtil.getMessage("reports.label.project.export") + " " + "Date d'impression du rapport";// MessageUtil.getContextualMessage("sample.collectionDate");
+		return MessageUtil.getMessage("reports.label.project.export") + " " + "Date d'impression du rapport";
+		// MessageUtil.getContextualMessage("sample.collectionDate");
 	}
 
 	@Override
@@ -117,7 +116,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	 *         otherwise
 	 */
 	private boolean validateProject() {
-		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr))) {
+		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr).toString())) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
 		}
@@ -134,7 +133,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	 */
 	private void createReportItems() {
 		try {
-			csvColumnBuilder = getColumnBuilder(projectStr);
+			csvColumnBuilder = getColumnBuilder();
 			csvColumnBuilder.buildDataSource();
 		} catch (Exception e) {
 			Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
@@ -143,11 +142,10 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	@Override
-	protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-			throws Exception, IOException, UnsupportedEncodingException {
+	protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception {
 
 		String currentAccessionNumber = null;
-		String[] splitBase = null;
+		String[] splitBase = {};
 		while (csvColumnBuilder.next()) {
 			String line = csvColumnBuilder.nextLine();
 			String[] splitLine = line.split(",");
@@ -168,7 +166,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		}
 	}
 
-	private boolean writeAble(String result) throws ParseException {
+	private boolean writeAble(String result) {
 
 		String workingResult = result.split("\\(")[0].trim();
 		// System.out.println("result=" + result + " / workingResult= " +
@@ -196,11 +194,10 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		}
 	}
 
-	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
-			throws IOException, UnsupportedEncodingException {
+	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException {
 
 		if (splitBase != null) {
-			StringBuffer consolidatedLine = new StringBuffer();
+			StringBuilder consolidatedLine = new StringBuilder();
 			for (String value : splitBase) {
 				consolidatedLine.append(value);
 				consolidatedLine.append(",");
@@ -211,7 +208,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		}
 	}
 
-	private CSVColumnBuilder getColumnBuilder(String projectId) {
+	private CSVColumnBuilder getColumnBuilder() {
 		// String projectTag = CIColumnBuilder.translateProjectId(projectId);
 		return new ForCIDashboardColumnBuilder(dateRange, projectStr);
 
@@ -240,28 +237,27 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	 */
 	protected List<Project> getProjectList() {
 		List<Project> projects = new ArrayList<>();
-		Project project = new Project();
-		/*
-		 * project.setProjectName("Antiretroviral Study");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 * project.setProjectName("Antiretroviral Followup Study");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 * project.setProjectName("Routine HIV Testing");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 * project.setProjectName("Early Infant Diagnosis for HIV Study");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 * project.setProjectName("Viral Load Results");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 * project.setProjectName("Indeterminate Results");
-		 * projects.add(projectService.getProjectByName(project, false, false));
-		 */
+		Project curProject = new Project();
 
-		project.setId("28:Unsuppressed VL");
-		project.setProjectName("Unsuppressed VL");
+//		  project.setProjectName("Antiretroviral Study");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+//		  project.setProjectName("Antiretroviral Followup Study");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+//		  project.setProjectName("Routine HIV Testing");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+//		  project.setProjectName("Early Infant Diagnosis for HIV Study");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+//		  project.setProjectName("Viral Load Results");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+//		  project.setProjectName("Indeterminate Results");
+//		  projects.add(projectService.getProjectByName(project, false, false));
+
+		curProject.setId("28:Unsuppressed VL");
+		curProject.setProjectName("Unsuppressed VL");
 		projects.add(project);
-		project = new Project();
-		project.setId("28:Suppressed VL");
-		project.setProjectName("Suppressed VL");
+		curProject = new Project();
+		curProject.setId("28:Suppressed VL");
+		curProject.setProjectName("Suppressed VL");
 		projects.add(project);
 
 		return projects;

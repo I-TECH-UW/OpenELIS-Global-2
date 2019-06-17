@@ -16,7 +16,17 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 public class SampleEntryAfterPatientEntry extends SampleEntry {
 
 	public SampleEntryAfterPatientEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
-		super(form, sysUserId, request);
+		this();
+		super.setFieldsFromForm(form);
+		super.setSysUserId(sysUserId);
+		super.setRequest(request);
+
+		newPatientStatus = null; // leave it be
+		newSampleStatus = RecordStatus.InitialRegistration;
+	}
+
+	public SampleEntryAfterPatientEntry() {
+		super();
 		newPatientStatus = null; // leave it be
 		newSampleStatus = RecordStatus.InitialRegistration;
 	}

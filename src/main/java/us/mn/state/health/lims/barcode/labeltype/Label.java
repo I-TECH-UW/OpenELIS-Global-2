@@ -295,10 +295,9 @@ public abstract class Label {
 	 * Otherwise, create new meta data for the label
 	 */
 	public void linkBarcodeLabelInfo() {
-//		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		// ensure transaction block
 		try {
 			labelInfo = barcodeLabelService.getDataByCode(code);
-//			tx.commit();
 			newInfo = false;
 			if (labelInfo == null) {
 				newInfo = true;
@@ -306,9 +305,6 @@ public abstract class Label {
 			}
 		} catch (LIMSRuntimeException lre) {
 			LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
-//			tx.rollback();
-		} finally {
-//			HibernateUtil.closeSession();
 		}
 	}
 
@@ -318,7 +314,7 @@ public abstract class Label {
 	public void incrementNumPrinted() {
 		labelInfo.incrementNumPrinted();
 		labelInfo.setSysUserId(sysUserId);
-//		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		// ensure transaction block
 		try {
 			if (newInfo) {
 				barcodeLabelService.insert(labelInfo);
@@ -326,12 +322,8 @@ public abstract class Label {
 			} else {
 				barcodeLabelService.update(labelInfo);
 			}
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
-//			tx.rollback();
-		} finally {
-//			HibernateUtil.closeSession();
 		}
 	}
 

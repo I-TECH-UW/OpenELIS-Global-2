@@ -162,6 +162,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException {
 		try {
 			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, systemUser.getId());
@@ -183,6 +184,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllSystemUsers() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -201,6 +203,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -241,6 +244,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextSystemUserRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "SystemUser", SystemUser.class);
@@ -248,6 +252,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousSystemUserRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "SystemUser", SystemUser.class);
@@ -255,12 +260,14 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
 	// bugzilla 1411
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSystemUserCount() throws LIMSRuntimeException {
 		return getTotalCount("SystemUser", SystemUser.class);
 	}
 
 //	bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -294,6 +301,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
 	// bugzilla 1427
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -365,6 +373,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
 		List<SystemUser> list;
 		try {
@@ -383,6 +392,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SystemUser getUserById(String userId) throws LIMSRuntimeException {
 		try {
 			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, userId);

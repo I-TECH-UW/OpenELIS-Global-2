@@ -64,6 +64,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
 		try {
 

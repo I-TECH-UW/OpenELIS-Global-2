@@ -31,7 +31,7 @@ import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestAddService;
@@ -40,6 +40,7 @@ import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -94,7 +95,7 @@ public class TestAddController extends BaseController {
 			PropertyUtils.setProperty(form, "labUnitList",
 					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "ageRangeList",
-					ResultLimitServiceImpl.getInstance().getPredefinedAgeRanges());
+					SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -139,7 +140,7 @@ public class TestAddController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		TypeOfSampleServiceImpl.getInstance().clearCache();
+		SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

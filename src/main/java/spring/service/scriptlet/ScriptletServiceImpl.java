@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -25,47 +26,56 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Scriptlet scriptlet) {
 		getBaseObjectDAO().getData(scriptlet);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousScriptletRecord(String id) {
 		return getBaseObjectDAO().getPreviousScriptletRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalScriptletCount() {
 		return getBaseObjectDAO().getTotalScriptletCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfScriptlets(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfScriptlets(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Scriptlet getScriptletByName(Scriptlet scriptlet) {
 		return getBaseObjectDAO().getScriptletByName(scriptlet);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextScriptletRecord(String id) {
 		return getBaseObjectDAO().getNextScriptletRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Scriptlet getScriptletById(String scriptletId) {
 		return getBaseObjectDAO().getScriptletById(scriptletId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getScriptlets(String filter) {
 		return getBaseObjectDAO().getScriptlets(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllScriptlets() {
 		return getBaseObjectDAO().getAllScriptlets();
 	}

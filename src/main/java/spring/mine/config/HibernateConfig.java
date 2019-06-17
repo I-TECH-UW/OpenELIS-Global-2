@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -18,7 +20,7 @@ public class HibernateConfig {
 	private ApplicationContext context;
 
 	static HibernateTransactionManager transactionManager;
-	LocalSessionFactoryBean factoryBean;
+	static LocalSessionFactoryBean factoryBean;
 
 	@Bean
 	public LocalSessionFactoryBean getSessionFactory() {
@@ -26,12 +28,12 @@ public class HibernateConfig {
 			factoryBean = new LocalSessionFactoryBean();
 			factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
 		}
-//		factoryBean.setAnnotatedClasses(User.class);//
 		return factoryBean;
 	}
 
 	@Bean
-	public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
+	@Primary
+	public PlatformTransactionManager getTransactionManager(SessionFactory sessionFactory) {
 		if (transactionManager == null) {
 			transactionManager = new HibernateTransactionManager();
 			transactionManager.setSessionFactory(sessionFactory);

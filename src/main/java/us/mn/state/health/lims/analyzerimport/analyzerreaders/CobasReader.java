@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 
 import spring.service.test.TestService;
@@ -37,33 +35,32 @@ public class CobasReader extends AnalyzerLineInserter {
 
 	protected TestService testService = SpringContext.getBean(TestService.class);
 
-	private static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
-	private static String ASTL_ID;
-	private static String ALTL_ID;
-	private static String CRE_ID;
-	private static String GLU_ID;
-	private static Map<String, Integer> testIdToPresentation;
+	private final String COBAS_INTEGRA400_NAME = "Cobas Integra";
+	private String ASTL_ID;
+	private String ALTL_ID;
+	private String CRE_ID;
+	private String GLU_ID;
+	private Map<String, Integer> testIdToPresentation;
 
-	// private static final int ID = 0;
-	private static final int DATE = 1;
-	private static final int TEST = 2;
-	// private static final int BLANK1 = 3;
-	private static final int ACCESSION = 4;
-	// private static final int BLANK2 = 5;
-	// private static final int SAMPLE_TYPE = 6;
-	private static final int UNITS = 7;
-	// private static final int BLANK3 = 8;
-	private static final int MAJOR_RESULTS = 9;
-	// private static final int MINOR_RESULTS = 10;
-	// private static final int INDICATOR_1 = 11;
-	// private static final int INDICATOR_2 = 12;
+	// private final int ID = 0;
+	private final int DATE = 1;
+	private final int TEST = 2;
+	// private final int BLANK1 = 3;
+	private final int ACCESSION = 4;
+	// private final int BLANK2 = 5;
+	// private final int SAMPLE_TYPE = 6;
+	private final int UNITS = 7;
+	// private final int BLANK3 = 8;
+	private final int MAJOR_RESULTS = 9;
+	// private final int MINOR_RESULTS = 10;
+	// private final int INDICATOR_1 = 11;
+	// private final int INDICATOR_2 = 12;
 
-	private static final String DELIMITER = "\\t";
-	private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private final String DELIMITER = "\\t";
+	private final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
-	@PostConstruct
-	private void initialize() {
+	public CobasReader() {
 //		TestDAO testDAO = new TestDAOImpl();
 		ASTL_ID = testService.getActiveTestByName("Transaminases ASTL").get(0).getId();
 		ALTL_ID = testService.getActiveTestByName("Transaminases ALTL").get(0).getId();
@@ -116,18 +113,12 @@ public class CobasReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-//			Transaction tx = HibernateProxy.beginTransaction();
-
+			// ensure transaction block
 			try {
 				persistResults(results, currentUserId);
-//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-//				tx.rollback();
 				successful = false;
 			}
-//			finally {
-//				HibernateProxy.closeSession();
-//			}
 		}
 
 		return successful;

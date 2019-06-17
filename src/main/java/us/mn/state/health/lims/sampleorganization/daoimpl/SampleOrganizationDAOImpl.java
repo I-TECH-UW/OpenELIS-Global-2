@@ -142,6 +142,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 		try {
 			SampleOrganization data = sessionFactory.getCurrentSession().get(SampleOrganization.class,
@@ -176,6 +177,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
 
 		try {
@@ -199,6 +201,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
 		String sql = "From SampleOrganization so where so.sample.id = :sampleId";
 		try {

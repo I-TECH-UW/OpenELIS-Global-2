@@ -163,6 +163,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
@@ -298,6 +299,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	@SuppressWarnings("unchecked")
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList)
 			throws LIMSRuntimeException {
 		try {
@@ -316,6 +318,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList)
 			throws LIMSRuntimeException {
 		List<Integer> testList = new ArrayList<>();
@@ -338,6 +341,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList)
 			throws LIMSRuntimeException {
 		try {
@@ -357,6 +361,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
 			boolean sortedByDateAndAccession) throws LIMSRuntimeException {
 		try {
@@ -380,6 +385,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList)
 			throws LIMSRuntimeException {
 		try {
@@ -400,6 +406,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) throws LIMSRuntimeException {
 		List<Analysis> list = null;
 		try {
@@ -419,6 +426,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -446,6 +454,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String statusId, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -471,6 +480,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleStatusId(String statusId) throws LIMSRuntimeException {
 		List<Analysis> analysisList = null;
 
@@ -492,6 +502,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -516,6 +527,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -547,6 +559,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesReadyToBeReported() throws LIMSRuntimeException {
 		try {
 			List<String> analysisStatusesToInclude = new ArrayList<>();
@@ -571,6 +584,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException {
 		try {
 			String sql = "from Analysis a where a.parentResult = :param and a.status NOT IN (:param2)";
@@ -590,6 +604,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getMaxRevisionAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 		try {
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
@@ -615,6 +630,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	// bugzilla 2300 (separate method for sample tracking)
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem)
 			throws LIMSRuntimeException {
 		try {
@@ -636,6 +652,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 		try {
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) NOT IN "
@@ -659,6 +676,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
 			boolean includeLatestRevision) throws LIMSRuntimeException {
 		try {
@@ -691,6 +709,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test) throws LIMSRuntimeException {
 		try {
 			String sql = "from Analysis a where (a.sampleItem.id, a.revision) IN "
@@ -717,6 +736,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	// bugzilla 2227, 2258
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException {
 		try {
 			List<String> analysisStatusesToInclude = new ArrayList<>();
@@ -742,6 +762,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	// bugzilla 1900
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers)
 			throws LIMSRuntimeException {
 		List<Analysis> list = new Vector<>();
@@ -777,6 +798,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	// bugzilla 1856
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesAlreadyReportedBySample(Sample sample) throws LIMSRuntimeException {
 		try {
 			return sessionFactory.getCurrentSession().getNamedQuery("analysis.getAnalysesAlreadyReportedBySample")
@@ -793,6 +815,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	// bugzilla 2264
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample)
 			throws LIMSRuntimeException {
 		try {
@@ -821,6 +844,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	// bugzilla 1900
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Transactional(readOnly = true)
 	public List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) throws LIMSRuntimeException {
 		List list = new Vector();
 
@@ -852,6 +876,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Transactional(readOnly = true)
 	public Analysis getPreviousAnalysisForAmendedAnalysis(Analysis analysis) throws LIMSRuntimeException {
 		Analysis previousAnalysis = null;
 		try {
@@ -928,6 +953,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Transactional(readOnly = true)
 	public void getMaxRevisionAnalysisBySampleAndTest(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
@@ -963,6 +989,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Transactional(readOnly = true)
 	public List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -992,6 +1019,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesForStatusId(String statusId) throws LIMSRuntimeException {
 
 		List<Analysis> list = null;
@@ -1013,6 +1041,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -1038,6 +1067,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisStartedOn(Date collectionDate) throws LIMSRuntimeException {
 
 		try {
@@ -1057,6 +1087,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
@@ -1081,6 +1112,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisCollectedOn(Date collectionDate) throws LIMSRuntimeException {
 
 		try {
@@ -1105,6 +1137,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisBySampleAndTestIds(String sampleId, List<Integer> testIds) {
 		List<Analysis> list = null;
 		try {
@@ -1130,6 +1163,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate)
 			throws LIMSRuntimeException {
 
@@ -1153,6 +1187,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate)
 			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.startedDate BETWEEN :lowDate AND :highDate or a.completedDate BETWEEN :lowDate AND :highDate";
@@ -1175,6 +1210,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleId(String id) throws LIMSRuntimeException {
 		List<Analysis> list = null;
 		if (!GenericValidator.isBlankOrNull(id)) {
@@ -1194,6 +1230,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
 			List<Integer> sampleStatusList) throws LIMSRuntimeException {
 
@@ -1220,6 +1257,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID)
 			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.statusId = :statusID and a.startedDate BETWEEN :lowDate AND :highDate";
@@ -1243,6 +1281,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate)
 			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.completedDate >= :lowDate AND a.completedDate < :highDate";
@@ -1265,6 +1304,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisEnteredAfterDate(Timestamp date) throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.enteredDate > :date";
 
@@ -1285,6 +1325,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId)
 			throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(accessionNumber) || GenericValidator.isBlankOrNull(testId)) {
@@ -1308,6 +1349,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate,
 			Date highDate) throws LIMSRuntimeException {
 		if (testNames.isEmpty()) {
@@ -1334,6 +1376,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date lowDate,
 			Date highDate) throws LIMSRuntimeException {
 		if (descriptions.isEmpty()) {
@@ -1360,6 +1403,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String statusId)
 			throws LIMSRuntimeException {
 		try {
@@ -1380,6 +1424,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Analysis getAnalysisById(String analysisId) throws LIMSRuntimeException {
 		if (analysisId == null) {
 			return null;
@@ -1397,6 +1442,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList,
 			List<Integer> statusIdList) throws LIMSRuntimeException {
 

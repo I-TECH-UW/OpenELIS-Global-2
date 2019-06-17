@@ -19,10 +19,6 @@ package us.mn.state.health.lims.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.hibernate.Transaction;
-
 import spring.service.dictionary.DictionaryService;
 import spring.service.test.TestService;
 import spring.service.testresult.TestResultService;
@@ -33,7 +29,6 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
@@ -48,18 +43,17 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 	private int RESULT = 0;
 	private int SAMPLE_TYPE = 0;
 
-	private static final String TEST_NAME = "HIQCAP48";
-	private static final String DELIMITER = "\\t";
-	private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
-	private static final String VALID_PREFIXES = "LART,LDBS,LRTN,LIND,LSPE";
-	private static String NEGATIVE_ID;
-	private static String POSITIVE_ID;
+	private final String TEST_NAME = "HIQCAP48";
+	private final String DELIMITER = "\\t";
+	private final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
+	private final String VALID_PREFIXES = "LART,LDBS,LRTN,LIND,LSPE";
+	private String NEGATIVE_ID;
+	private String POSITIVE_ID;
 
 	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 	private String error;
 
-	@PostConstruct
-	private void initialize() {
+	public CobasTaqmanDBSReader() {
 		Test test = testService.getActiveTestByName("DNA PCR").get(0);
 		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 
@@ -100,17 +94,11 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 		}
 
 		if (results.size() > 0) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				persistResults(results, currentUserId);
-				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
 				error = "Cobas Taqman DBS analyzer: Unable to save to database";
 				successful = false;
-			} finally {
-				HibernateUtil.closeSession();
 			}
 		}
 		return successful;

@@ -151,6 +151,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
 			QaEvent qaEv = sessionFactory.getCurrentSession().get(QaEvent.class, qaEvent.getId());
@@ -170,6 +171,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllQaEvents() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -188,6 +190,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -228,6 +231,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextQaEventRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "QaEvent", QaEvent.class);
@@ -235,6 +239,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousQaEventRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "QaEvent", QaEvent.class);
@@ -242,6 +247,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
 	// this is for autocomplete
 	@Override
+	@Transactional(readOnly = true)
 	public List getQaEvents(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -262,6 +268,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
 			String sql = "from QaEvent qe where qe.qaEventName = :param";
@@ -286,11 +293,13 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalQaEventCount() throws LIMSRuntimeException {
 		return getTotalCount("QaEvent", QaEvent.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -312,6 +321,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();

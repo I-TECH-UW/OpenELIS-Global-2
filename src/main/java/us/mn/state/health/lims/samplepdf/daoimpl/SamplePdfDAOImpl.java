@@ -61,6 +61,7 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
 
 	// bugzilla 2529,2530,2531
 	@Override
+	@Transactional(readOnly = true)
 	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
 		try {
 			String sql = "from SamplePdf s where s.accessionNumber = :param";

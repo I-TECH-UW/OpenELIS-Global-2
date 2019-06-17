@@ -30,50 +30,56 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String dbDomainName) {
 		return siteInformationDAO.getMatchingOrderedPage("domain.name", dbDomainName, "name", false, startingRecNo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public int getCountForDomainName(String dbDomainName) {
 		return this.getCountMatching("domain.name", dbDomainName);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public SiteInformation getSiteInformationByName(String name) {
 		return getMatch("name", name).orElse(null);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SiteInformation siteInformation) {
 		getBaseObjectDAO().getData(siteInformation);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getAllSiteInformation() {
 		return getBaseObjectDAO().getAllSiteInformation();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public SiteInformation getSiteInformationById(String urlId) {
 		return getBaseObjectDAO().getSiteInformationById(urlId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getNextSiteInformationRecord(String id) {
 		return getBaseObjectDAO().getNextSiteInformationRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getSiteInformationByDomainName(String domainName) {
 		return getBaseObjectDAO().getSiteInformationByDomainName(domainName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SiteInformation> getPreviousSiteInformationRecord(String id) {
 		return getBaseObjectDAO().getPreviousSiteInformationRecord(id);
 	}

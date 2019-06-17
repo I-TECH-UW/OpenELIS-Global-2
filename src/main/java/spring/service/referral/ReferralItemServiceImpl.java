@@ -17,6 +17,7 @@ import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -43,7 +44,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	AnalysisService analysisService;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<ReferralItem> getReferralItems() {
 		List<ReferralItem> referralItems = new ArrayList<>();
 
@@ -61,7 +62,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		return referralItems;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public ReferralItem getReferralItem(Referral referral) {
 		boolean allReferralResultsHaveResults = true;
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
@@ -233,7 +234,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = TypeOfSampleServiceImpl.getInstance().getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 

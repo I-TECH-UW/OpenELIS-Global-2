@@ -35,7 +35,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Service
 @Scope("prototype")
-public class PatientEditUpdate extends PatientEntry {
+public class PatientEditUpdate extends PatientEntry implements IPatientEditUpdate {
 	/**
 	 * @param form
 	 * @param sysUserId
@@ -58,6 +58,7 @@ public class PatientEditUpdate extends PatientEntry {
 
 	public PatientEditUpdate() {
 		super();
+		// we are not updating the record status in either case
 		newPatientStatus = null;
 		newSampleStatus = null;
 	}

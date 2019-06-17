@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 	        us.mn.state.health.lims.common.formfields.FormFields,
-	        org.apache.commons.httpclient.NameValuePair,
 	        us.mn.state.health.lims.common.util.DateUtil"%>
 
 <%@ page isELIgnored="false" %>

@@ -26,7 +26,7 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.saving.Accessioner;
+import us.mn.state.health.lims.patient.saving.IAccessioner;
 import us.mn.state.health.lims.patient.saving.RequestType;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
@@ -145,14 +145,14 @@ public abstract class BaseSampleEntryController extends BaseController {
 	 * (PaHill) created. If someone comes up with a better API (Maybe inject a
 	 * messages list to be filled in?) then we can change this bit of plumbing.
 	 *
-	 * @param request     original request
-	 * @param accessioner the object to use to attempt to save.
+	 * @param request           original request
+	 * @param sampleSecondEntry the object to use to attempt to save.
 	 * @return a forward string or null; null => this attempt to save failed
 	 * @throws Exception if things go really bad. Normally, the errors are caught
 	 *                   internally an appropriate message is added and a forward
 	 *                   fail is returned.
 	 */
-	protected String handleSave(HttpServletRequest request, Accessioner accessioner, BaseForm form) throws Exception {
+	protected String handleSave(HttpServletRequest request, IAccessioner accessioner, BaseForm form) throws Exception {
 		String forward;
 		try {
 			forward = accessioner.save();

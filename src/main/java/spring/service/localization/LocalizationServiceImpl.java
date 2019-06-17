@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,8 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 			this.dbLabel = dbLabel;
 		}
 
-		public String getDBDescription() {
+		@Transactional(readOnly = true)
+	public String getDBDescription() {
 			return dbLabel;
 		}
 	}
@@ -49,7 +49,6 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 
-	@Autowired
 	private static LocalizationDAO baseObjectDAO = SpringContext.getBean(LocalizationDAO.class);
 
 	private Localization localization;
@@ -152,6 +151,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 		return true;
 	}
 
+	@Transactional(readOnly = true)
 	public Localization getLocalization() {
 		return localization;
 	}

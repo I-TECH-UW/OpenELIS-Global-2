@@ -208,7 +208,7 @@ public class ResultReportingCollator {
 		}
 
 		// For valid range min/max
-		ResultLimit validLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(
+		ResultLimit validLimit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(
 				result.getAnalysis().getTest(),
 				sampleHumanService.getPatientForSample(result.getAnalysis().getSampleItem().getSample()));
 		if (validLimit != null && (validLimit.getLowValid() != validLimit.getHighValid())) {

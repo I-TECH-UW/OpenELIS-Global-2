@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
@@ -27,11 +28,13 @@ public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModu
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
 		return baseObjectDAO.getByRequest(request);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SystemModuleUrl> getByUrlPath(String urlPath) {
 		return getBaseObjectDAO().getByUrlPath(urlPath);
 	}

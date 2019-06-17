@@ -138,6 +138,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getData(String patientId) throws LIMSRuntimeException {
 		try {
 			Patient pat = sessionFactory.getCurrentSession().get(Patient.class, patientId);
@@ -154,6 +155,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Patient patient) throws LIMSRuntimeException {
 		try {
 			Patient pat = sessionFactory.getCurrentSession().get(Patient.class, patient.getId());
@@ -186,6 +188,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPatients() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -204,6 +207,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
 		List patients = new Vector();
 		try {
@@ -245,6 +249,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPatientRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Patient", Patient.class);
@@ -252,6 +257,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPatientRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Patient", Patient.class);
@@ -298,12 +304,14 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientByNationalId(String nationalId) {
 		return getPatientByStringProperty("nationalId", nationalId);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
 		try {
 			String sql = "From Patient p where p.nationalId = :nationalId";
@@ -320,12 +328,14 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Patient getPatientByExternalId(String externalId) {
 		return getPatientByStringProperty("externalId", externalId);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
 		List<Patient> patients;
 
@@ -347,6 +357,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
 			String project) throws LIMSRuntimeException {
 

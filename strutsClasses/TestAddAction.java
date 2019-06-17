@@ -59,7 +59,7 @@ public class TestAddAction extends BaseAction {
         PropertyUtils.setProperty(form, "resultTypeList", DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
         PropertyUtils.setProperty(form, "uomList", DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
         PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getInstance().getPredefinedAgeRanges());
+        PropertyUtils.setProperty(form, "ageRangeList", SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
         PropertyUtils.setProperty(form, "dictionaryList", DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
         PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
 

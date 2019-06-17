@@ -141,6 +141,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		try {
 			TestAnalyte anal = sessionFactory.getCurrentSession().get(TestAnalyte.class, testAnalyte.getId());
@@ -161,6 +162,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestAnalytes() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -179,6 +181,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -221,6 +224,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	// this is for autocomplete
 	// TODO: need to convert to hibernate ( not in use??? )
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestAnalytes(String filter) throws LIMSRuntimeException {
 
 		return null;
@@ -249,6 +253,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestAnalyte", TestAnalyte.class);
@@ -256,12 +261,14 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestAnalyte", TestAnalyte.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		TestAnalyte newTestAnalyte;
 		try {
@@ -279,6 +286,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException {
 		List list;
 

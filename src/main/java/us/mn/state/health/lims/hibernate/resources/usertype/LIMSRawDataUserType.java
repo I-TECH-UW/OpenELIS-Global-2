@@ -31,7 +31,7 @@ import org.hibernate.MappingException;
 import org.hibernate.engine.jdbc.Size;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 //import org.hibernate.lob.BlobImpl;
 //import org.hibernate.lob.SerializableBlob;
 import org.hibernate.type.AbstractType;
@@ -56,7 +56,7 @@ public class LIMSRawDataUserType extends AbstractType {
 
 	// bugzilla 1908 modified this method. This seems to work for postgres (bytea)
 	// AND oracle (Blob)
-	public void set(PreparedStatement st, Object value, int index, SessionImplementor session)
+	public void set(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
 			throws HibernateException, SQLException {
 
 		if (value == null) {
@@ -79,7 +79,8 @@ public class LIMSRawDataUserType extends AbstractType {
 
 	// bugzilla 1908 modified this method. This seems to work for postgres (bytea)
 	// AND oracle (Blob)
-	public Object get(ResultSet rs, String name, SessionImplementor session) throws HibernateException, SQLException {
+	public Object get(ResultSet rs, String name, SharedSessionContractImplementor session)
+			throws HibernateException, SQLException {
 
 //		SerializableBlob serializableBlob = null;
 		InputStream is = rs.getBinaryStream(name);
@@ -121,7 +122,8 @@ public class LIMSRawDataUserType extends AbstractType {
 	}
 
 	@Override
-	public Serializable disassemble(Object value, SessionImplementor session, Object owner) throws HibernateException {
+	public Serializable disassemble(Object value, SharedSessionContractImplementor session, Object owner)
+			throws HibernateException {
 		throw new UnsupportedOperationException("Blobs are not cacheable");
 	}
 
@@ -144,34 +146,34 @@ public class LIMSRawDataUserType extends AbstractType {
 	}
 
 	@Override
-	public Object nullSafeGet(ResultSet rs, String name, SessionImplementor session, Object owner)
+	public Object nullSafeGet(ResultSet rs, String name, SharedSessionContractImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		return get(rs, name, session);
 	}
 
 	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
+	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		return get(rs, names[0], session);
 	}
 
 	@Override
 	public void nullSafeSet(PreparedStatement st, Object value, int index, boolean[] settable,
-			SessionImplementor session) throws HibernateException, SQLException {
+			SharedSessionContractImplementor session) throws HibernateException, SQLException {
 		if (settable[0]) {
 			set(st, value, index, session);
 		}
 	}
 
 	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
 			throws HibernateException, SQLException {
 		set(st, value, index, session);
 	}
 
 	@Override
-	public Object replace(Object original, Object target, SessionImplementor session, Object owner, Map copyCache)
-			throws HibernateException {
+	public Object replace(Object original, Object target, SharedSessionContractImplementor session, Object owner,
+			Map copyCache) throws HibernateException {
 		// Blobs are ignored by merge()
 		return target;
 	}
@@ -197,7 +199,7 @@ public class LIMSRawDataUserType extends AbstractType {
 	}
 
 	@Override
-	public boolean isDirty(Object old, Object current, boolean[] checkable, SessionImplementor session)
+	public boolean isDirty(Object old, Object current, boolean[] checkable, SharedSessionContractImplementor session)
 			throws HibernateException {
 		return checkable[0] && isDirty(old, current, session);
 	}

@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,8 @@ import us.mn.state.health.lims.common.util.DateUtil;
 
 @Service
 @Scope("prototype")
-public class PatientEntry extends Accessioner {
+@Primary
+public class PatientEntry extends Accessioner implements IPatientEntry {
 
 	protected HttpServletRequest request;
 
@@ -57,10 +59,12 @@ public class PatientEntry extends Accessioner {
 		newSampleStatus = RecordStatus.NotRegistered;
 	}
 
+	@Override
 	public void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
 
+	@Override
 	public void setFieldsFromForm(PatientEntryByProjectForm form)
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		setAccessionNumber((String) form.get("labNo"));

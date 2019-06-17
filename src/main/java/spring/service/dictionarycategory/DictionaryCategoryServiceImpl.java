@@ -2,6 +2,7 @@ package spring.service.dictionarycategory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -51,6 +52,7 @@ public class DictionaryCategoryServiceImpl extends BaseObjectServiceImpl<Diction
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public DictionaryCategory getDictionaryCategoryByName(String name) {
 		return getMatch("categoryName", name).orElse(null);
 	}

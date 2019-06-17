@@ -70,11 +70,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllActiveTestSections() {
 		return baseObjectDAO.getAllMatchingOrdered("isActive", "Y", "sortOrderInt", false);
 	}
 
+	@Transactional(readOnly = true)
 	public TestSection getTestSection() {
 		return testSection;
 	}
@@ -93,6 +94,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 		createTestIdToNameMap();
 	}
 
+	@Transactional(readOnly = true)
 	public String getSortOrder() {
 		return testSection == null ? "0" : testSection.getSortOrder();
 	}
@@ -135,52 +137,62 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(TestSection testSection) {
 		getBaseObjectDAO().getData(testSection);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestSections(String filter) {
 		return getBaseObjectDAO().getTestSections(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionByName(String testSection) {
 		return getBaseObjectDAO().getTestSectionByName(testSection);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionByName(TestSection testSection) {
 		return getBaseObjectDAO().getTestSectionByName(testSection);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestSectionRecord(String id) {
 		return getBaseObjectDAO().getNextTestSectionRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestSections(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestSectionCount() {
 		return getBaseObjectDAO().getTotalTestSectionCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestSectionRecord(String id) {
 		return getBaseObjectDAO().getPreviousTestSectionRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllTestSections() {
 		return baseObjectDAO.getAllTestSections();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestSectionsBySysUserId(String filter, int sysUserId) {
 		String sectionIdList = "";
 
@@ -192,6 +204,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestSectionsBySysUserId(int sysUserId) {
 		String sectionIdList = "";
 
@@ -204,11 +217,13 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TestSection getTestSectionById(String testSectionId) {
 		return getBaseObjectDAO().getTestSectionById(testSectionId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSection> getAllInActiveTestSections() {
 		return getBaseObjectDAO().getAllInActiveTestSections();
 	}

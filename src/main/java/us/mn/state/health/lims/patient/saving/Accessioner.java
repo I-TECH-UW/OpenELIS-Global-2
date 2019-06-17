@@ -86,7 +86,6 @@ import us.mn.state.health.lims.common.services.StatusSet;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
@@ -149,7 +148,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author pahill
  */
 
-public abstract class Accessioner {
+public abstract class Accessioner implements IAccessioner {
 
 	/**
 	 * a set of possible analysis status that means an analysis is done
@@ -310,6 +309,7 @@ public abstract class Accessioner {
 	 * @throws Exception
 	 * @throws Exception
 	 */
+	@Override
 	@Transactional // only works if this class is autowired in
 	public String save() throws Exception {
 		try {
@@ -1084,7 +1084,7 @@ public abstract class Accessioner {
 			sample.setSysUserId(sysUserId);
 			if (sample.getId() != null) {
 				sampleService.update(sample);
-				HibernateUtil.getSession().evict(sample);
+//				HibernateUtil.getSession().evict(sample);
 			} else {
 				sampleService.insertDataWithAccessionNumber(sample);
 			}
@@ -1274,6 +1274,7 @@ public abstract class Accessioner {
 		return new SampleServiceImpl();
 	}
 
+	@Override
 	public Errors getMessages() {
 		return messages;
 	}

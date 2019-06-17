@@ -146,6 +146,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
 		try {
 			SampleProject data = sessionFactory.getCurrentSession().get(SampleProject.class, sampleProj.getId());
@@ -181,6 +182,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 	// AIS - bugzilla 1851
 	// Diane - bugzilla 1920
 	@Override
+	@Transactional(readOnly = true)
 	public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
 		List sampleProjects = new ArrayList();
 
@@ -204,6 +206,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
 		List<SampleProject> sampleProjects = null;
 
@@ -224,6 +227,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
 			Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
 		List<SampleProject> list = null;

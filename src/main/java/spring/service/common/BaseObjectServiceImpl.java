@@ -2,6 +2,7 @@ package spring.service.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	private final Class<T> classType;
 
 	protected boolean auditTrailLog = true;
+	protected List<String> defaultSortOrder = new ArrayList<>(Arrays.asList("id"));
 
 	public BaseObjectServiceImpl(Class<T> clazz) {
 		classType = clazz;
@@ -64,19 +66,19 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAll() {
-		return getBaseObjectDAO().getAll();
+		return getBaseObjectDAO().getAllOrdered(defaultSortOrder, false);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAllMatching(String propertyName, Object propertyValue) {
-		return getBaseObjectDAO().getAllMatching(propertyName, propertyValue);
+		return getBaseObjectDAO().getAllMatchingOrdered(propertyName, propertyValue, defaultSortOrder, false);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getAllMatching(Map<String, Object> propertyValues) {
-		return getBaseObjectDAO().getAllMatching(propertyValues);
+		return getBaseObjectDAO().getAllMatchingOrdered(propertyValues, defaultSortOrder, false);
 	}
 
 	@Override
@@ -121,19 +123,20 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getPage(int pageNumber) {
-		return getBaseObjectDAO().getPage(pageNumber);
+		return getBaseObjectDAO().getOrderedPage(defaultSortOrder, false, pageNumber);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber) {
-		return getBaseObjectDAO().getMatchingPage(propertyName, propertyValue, pageNumber);
+		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, defaultSortOrder, false,
+				pageNumber);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber) {
-		return getBaseObjectDAO().getMatchingPage(propertyValues, pageNumber);
+		return getBaseObjectDAO().getMatchingOrderedPage(propertyValues, defaultSortOrder, false, pageNumber);
 	}
 
 	@Override
@@ -202,21 +205,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public T save(T baseObject) {
-		if (auditTrailLog) {
-			Optional<T> oldObject = Optional.empty();
-			if (baseObject.getId() != null) {
-				oldObject = getBaseObjectDAO().get(baseObject.getId());
-			}
 
-			if (oldObject.isPresent()) {
-				auditTrailDAO.saveHistory(baseObject, oldObject.get(), baseObject.getSysUserId(),
-						IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
-			} else {
-				auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
-			}
+		if (baseObject.getId() == null) {
+			return get(insert(baseObject));
+		} else {
+			return update(baseObject);
 		}
 
-		return getBaseObjectDAO().save(baseObject);
 	}
 
 	@Override
@@ -242,7 +237,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
 					getBaseObjectDAO().getTableName());
 		}
-		return getBaseObjectDAO().save(baseObject);
+		return getBaseObjectDAO().update(baseObject);
 
 	}
 

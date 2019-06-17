@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
@@ -79,6 +80,7 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 		return unitOfMeasureDAO;
 	}
 
+	@Transactional(readOnly = true)
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;
 	}
@@ -97,6 +99,7 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 		createTestIdToNameMap();
 	}
 
+	@Transactional(readOnly = true)
 	public String getSortOrder() {
 		return unitOfMeasure == null ? "0" : unitOfMeasure.getSortOrder();
 	}
@@ -141,11 +144,13 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) {
 		return getBaseObjectDAO().getUnitOfMeasureById(uomId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) {
 		return getMatch("unitOfMeasureName", unitOfMeasure.getUnitOfMeasureName()).orElse(null);
 	}

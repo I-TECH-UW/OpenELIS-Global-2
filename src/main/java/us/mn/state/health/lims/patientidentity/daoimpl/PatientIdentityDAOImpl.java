@@ -23,6 +23,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 
 		List<PatientIdentity> identities;
@@ -94,6 +95,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 //		}
 //	}
 
+	@Transactional(readOnly = true)
 	public PatientIdentity getCurrentPatientIdentity(String id) {
 		PatientIdentity current = null;
 		try {
@@ -147,6 +149,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
 			throws LIMSRuntimeException {
 		String sql = "From PatientIdentity pi where pi.identityData = :value and pi.identityTypeId = :identityType";
@@ -169,6 +172,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId)
 			throws LIMSRuntimeException {
 

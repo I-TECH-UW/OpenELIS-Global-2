@@ -88,7 +88,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add("dictionaryCategory.categoryName");
@@ -97,31 +97,33 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public int getCountSearchedDictionaries(String searchString) {
 		return getCountLike("dictEntry", searchString);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
 			boolean orderByDictEntry) {
 		return baseObjectDAO.getDictionaryEntrysByCategoryAbbreviation(fieldName, fieldValue, orderByDictEntry);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntriesByCategoryId(String dictionaryCategoryId) {
 		return baseObjectDAO.getAllMatching("dictionaryCategory.id", dictionaryCategoryId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Dictionary dictionary) {
 		getBaseObjectDAO().getData(dictionary);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) {
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("localAbbreviation", dictionary.getLocalAbbreviation());
@@ -130,6 +132,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDictionaryById(String dictionaryId) {
 		return getBaseObjectDAO().getDictionaryById(dictionaryId);
 	}
@@ -145,11 +148,13 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String dictionaryCategory) {
 		return getBaseObjectDAO().getDictionaryEntrysByCategoryAbbreviation(filter, dictionaryCategory);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName,
 			String categoryDescription) {
 		Map<String, Object> properties = new HashMap<>();
@@ -159,11 +164,13 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName) {
 		return getBaseObjectDAO().getDictionaryEntrysByCategoryNameLocalizedSort(dictionaryCategoryName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Dictionary getDataForId(String dictId) {
 		return getBaseObjectDAO().getDataForId(dictId);
 	}

@@ -127,6 +127,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
 			Role tmpRole = sessionFactory.getCurrentSession().get(Role.class, role.getId());
@@ -145,6 +146,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Role> getAllRoles() throws LIMSRuntimeException {
 		List<Role> list = null;
 		try {
@@ -161,6 +163,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
 		List<Role> list = null;
 		try {
@@ -177,6 +180,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
 		List<Role> list = null;
 		try {
@@ -215,18 +219,21 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	@Override
 	@SuppressWarnings("rawtypes")
+	@Transactional(readOnly = true)
 	public List getNextRoleRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "Role", Role.class);
 	}
 
 	@Override
 	@SuppressWarnings("rawtypes")
+	@Transactional(readOnly = true)
 	public List getPreviousRoleRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "Role", Role.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(role.getId())) {
 			return new ArrayList<>();
@@ -250,6 +257,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Role getRoleByName(String name) throws LIMSRuntimeException {
 		String sql = "from Role r where trim(r.name) = :name";
 
@@ -266,6 +274,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Role getRoleById(String roleId) throws LIMSRuntimeException {
 		String sql = "from Role r where r.id = :id";
 

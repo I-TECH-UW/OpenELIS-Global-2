@@ -140,6 +140,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
 			PanelItem data = sessionFactory.getCurrentSession().get(PanelItem.class, panelItem.getId());
@@ -157,6 +158,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllPanelItems() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -174,6 +176,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -211,6 +214,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPanelItems(String filter) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -230,6 +234,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -250,6 +255,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextPanelItemRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "PanelItem", PanelItem.class);
@@ -257,17 +263,20 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousPanelItemRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "PanelItem", PanelItem.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalPanelItemCount() throws LIMSRuntimeException {
 		return getTotalCount("PanelItem", PanelItem.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -295,6 +304,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = Integer.valueOf(id);
 		String tablePrefix = getTablePrefix(table);
@@ -355,6 +365,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean getDuplicateSortOrderForPanel(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
 			List list;
@@ -422,6 +433,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<PanelItem> getPanelItemByTestId(String testId) throws LIMSRuntimeException {
 		String sql = "From PanelItem pi where pi.test.id = :testId";
 
@@ -441,6 +453,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(readOnly = true)
 	public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
 			throws LIMSRuntimeException {
 		String sql = "From PanelItem pi where pi.panel.id = :panelId and pi.test.id in (:testList)";

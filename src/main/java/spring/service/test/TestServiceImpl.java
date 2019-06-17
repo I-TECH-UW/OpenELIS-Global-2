@@ -132,10 +132,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		entityToMap.put(Entity.TEST_REPORTING_NAME, createTestIdToReportingNameMap());
 	}
 
+	@Transactional(readOnly = true)
 	public Test getTest() {
 		return test;
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestMethodName() {
 		return (test != null && test.getMethod() != null) ? test.getMethod().getMethodName() : null;
 	}
@@ -145,11 +147,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TestResult> getPossibleTestResults() {
 		return TEST_RESULT_Service.getAllActiveTestResultsPerTest(test);
 	}
 
+	@Transactional(readOnly = true)
 	public String getUOM(boolean isCD4Conclusion) {
 		if (!isCD4Conclusion) {
 			if (test != null && test.getUnitOfMeasure() != null) {
@@ -164,10 +167,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return test != null && "Y".equals(test.getIsReportable());
 	}
 
+	@Transactional(readOnly = true)
 	public String getSortOrder() {
 		return test == null ? "0" : test.getSortOrder();
 	}
 
+	@Transactional(readOnly = true)
 	public ResultDisplayType getDisplayTypeForTestMethod() {
 		String methodName = getTestMethodName();
 
@@ -180,6 +185,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return TestResultItem.ResultDisplayType.TEXT;
 	}
 
+	@Transactional(readOnly = true)
 	public String getResultType() {
 		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
 		List<TestResult> testResults = getPossibleTestResults();
@@ -191,7 +197,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return testResultType;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSample() {
 		if (test == null) {
 			return null;
@@ -208,7 +214,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return TYPE_OF_SAMPLE_Service.getTypeOfSampleById(typeOfSampleId);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Panel> getPanels() {
 		List<Panel> panelList = new ArrayList<>();
 		if (test != null) {
@@ -221,15 +227,17 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return panelList;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Panel> getAllPanels() {
 		return panelService.getAllPanels();
 	}
 
+	@Transactional(readOnly = true)
 	public TestSection getTestSection() {
 		return test == null ? null : test.getTestSection();
 	}
 
+	@Transactional(readOnly = true)
 	public String getTestSectionName() {
 		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection());
 	}
@@ -391,98 +399,117 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void getData(Test test) {
 		getBaseObjectDAO().getData(test);
 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getActiveTestById(Integer id) {
 		return getBaseObjectDAO().getActiveTestById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByUserLocalizedName(String testName) {
 		return getBaseObjectDAO().getTestByUserLocalizedName(testName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalTestCount() {
 		return getBaseObjectDAO().getTotalTestCount();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getNextTestRecord(String id) {
 		return getBaseObjectDAO().getNextTestRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) {
 		List<Test> tests = getBaseObjectDAO().getAllActiveTests(onlyTestsFullySetup);
 		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByTestSectionAndMethod(String filter, String filter2) {
 		return getBaseObjectDAO().getTestsByTestSectionAndMethod(filter, filter2);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestSectionId(String id) {
 		return getBaseObjectDAO().getTestsByTestSectionId(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSearchedTestCount(String searchString) {
 		return getBaseObjectDAO().getTotalSearchedTestCount(searchString);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getActiveTestByName(String testName) {
 		return getBaseObjectDAO().getActiveTestByName(testName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPreviousTestRecord(String id) {
 		return getBaseObjectDAO().getPreviousTestRecord(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByTestSection(String filter) {
 		return getBaseObjectDAO().getTestsByTestSection(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfSearchedTests(int startingRecNo, String searchString) {
 		return getBaseObjectDAO().getPageOfSearchedTests(startingRecNo, searchString);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getMethodsByTestSection(String filter) {
 		return getBaseObjectDAO().getMethodsByTestSection(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getActiveTestsByLoinc(String loincCode) {
 		return getBaseObjectDAO().getActiveTestsByLoinc(loincCode);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllActiveOrderableTests() {
 		return getBaseObjectDAO().getAllActiveOrderableTests();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByDescription(String description) {
 		return getBaseObjectDAO().getTestByDescription(description);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByLoincCode(String loincCode) {
 		return getBaseObjectDAO().getTestsByLoincCode(loincCode);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllOrderBy(String columnName) {
 		return getBaseObjectDAO().getAllOrderBy(columnName);
 	}
@@ -518,53 +545,63 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestById(Test test) {
 		return getBaseObjectDAO().getTestById(test);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestById(String testId) {
 		return getBaseObjectDAO().getTestById(testId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTestsByMethod(String filter) {
 		return getBaseObjectDAO().getTestsByMethod(filter);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTests(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfTests(startingRecNo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getTests(String filter, boolean onlyTestsFullySetup) {
 		List<Test> tests = getBaseObjectDAO().getTests(filter, onlyTestsFullySetup);
 		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getAllTests(boolean onlyTestsFullySetup) {
 		List<Test> tests = getBaseObjectDAO().getAllTests(onlyTestsFullySetup);
 		return filterOnlyFullSetup(onlyTestsFullySetup, tests);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByName(Test test) {
 		return getBaseObjectDAO().getTestByName(test);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByName(String testName) {
 		return getBaseObjectDAO().getTestByName(testName);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Test getTestByGUID(String guid) {
 		return getBaseObjectDAO().getTestByGUID(guid);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getNextAvailableSortOrderByTestSection(Test test) {
 		return getBaseObjectDAO().getNextAvailableSortOrderByTestSection(test);
 	}
@@ -600,30 +637,35 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
 		// TODO Auto-generated method stub
 		return null;
