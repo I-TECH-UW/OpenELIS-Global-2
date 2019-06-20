@@ -3,6 +3,7 @@ package spring.mine.security;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -85,27 +86,24 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		// get permitted actions map (available modules for the current user)
 		if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-			HashSet<String> permittedPages = getPermittedForms(usd.getSystemUserId());
+			Set<String> permittedPages = getPermittedForms(usd.getSystemUserId());
 			request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
 			// showAdminMenu |= permittedPages.contains("MasterList");
 		}
 	}
 
-	private HashSet<String> getPermittedForms(int systemUserId) {
-		HashSet<String> permittedPages = new HashSet<>();
+	private Set<String> getPermittedForms(int systemUserId) {
+		Set<String> allPermittedPages = new HashSet<>();
 
 		List<String> roleIds = userRoleService.getRoleIdsForUser(Integer.toString(systemUserId));
 
 		for (String roleId : roleIds) {
-			List<PermissionModule> permissionModules = permissionModuleService
-					.getAllPermissionModulesByAgentId(Integer.parseInt(roleId));
-
-			for (PermissionModule permissionModule : permissionModules) {
-				permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
-			}
+			Set<String> permittedPagesForRole = permissionModuleService
+					.getAllPermittedPagesFromAgentId(Integer.parseInt(roleId));
+			allPermittedPages.addAll(permittedPagesForRole);
 		}
 
-		return permittedPages;
+		return allPermittedPages;
 	}
 
 	private boolean passwordExpiringSoon(Login loginInfo) {

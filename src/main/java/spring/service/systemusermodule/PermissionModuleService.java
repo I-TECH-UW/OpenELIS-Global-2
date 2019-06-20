@@ -1,6 +1,7 @@
 package spring.service.systemusermodule;
 
 import java.util.List;
+import java.util.Set;
 
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
@@ -21,4 +22,6 @@ public interface PermissionModuleService<T extends PermissionModule> extends Bas
 	boolean doesUserHaveAnyModules(int userId);
 
 	List getPreviousPermissionModuleRecord(String id);
+
+	Set<String> getAllPermittedPagesFromAgentId(int parseInt);
 }
