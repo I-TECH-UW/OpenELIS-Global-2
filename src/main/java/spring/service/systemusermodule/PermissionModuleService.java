@@ -23,5 +23,5 @@ public interface PermissionModuleService<T extends PermissionModule> extends Bas
 
 	List getPreviousPermissionModuleRecord(String id);
 
-	Set<String> getAllPermittedPagesFromAgentId(int parseInt);
+	Set<String> getAllPermittedPagesFromAgentId(int roleId);
 }
