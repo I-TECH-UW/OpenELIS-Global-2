@@ -1,6 +1,5 @@
 package spring.service.systemusermodule;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -370,12 +369,6 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	@Override
 	@Transactional(readOnly = true)
 	public Set<String> getAllPermittedPagesFromAgentId(int roleId) {
-		Set<String> permittedPages = new HashSet<>();
-		List<PermissionModule> permissionModules = getAllPermissionModulesByAgentId((roleId));
-
-		for (PermissionModule permissionModule : permissionModules) {
-			permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
-		}
-		return permittedPages;
+		return getActivePermissionModule().getAllPermittedPagesFromAgentId(roleId);
 	}
 }

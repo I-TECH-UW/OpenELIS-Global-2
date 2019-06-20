@@ -1,6 +1,8 @@
 package spring.service.rolemodule;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
+import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 
 @Service
@@ -101,6 +104,17 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, Str
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
 		}
 		return super.update(roleModule);
+	}
+
+	@Override
+	public Set<String> getAllPermittedPagesFromAgentId(int roleId) {
+		Set<String> permittedPages = new HashSet<>();
+		List<RoleModule> permissionModules = getAllPermissionModulesByAgentId((roleId));
+
+		for (PermissionModule permissionModule : permissionModules) {
+			permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
+		}
+		return permittedPages;
 	}
 
 }

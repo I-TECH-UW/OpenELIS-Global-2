@@ -1,6 +1,8 @@
 package spring.service.systemusermodule;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.systemusermodule.dao.SystemUserModuleDAO;
+import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
 @Service
@@ -103,6 +106,17 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
 	private boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) {
 		return baseObjectDAO.duplicateSystemUserModuleExists(systemUserModule);
+	}
+
+	@Override
+	public Set<String> getAllPermittedPagesFromAgentId(int roleId) {
+		Set<String> permittedPages = new HashSet<>();
+		List<SystemUserModule> permissionModules = getAllPermissionModulesByAgentId((roleId));
+
+		for (PermissionModule permissionModule : permissionModules) {
+			permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
+		}
+		return permittedPages;
 	}
 
 }
