@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.springframework.context.MessageSource;
-
 import us.mn.state.health.lims.common.log.LogEvent;
 
 /**
@@ -30,18 +28,16 @@ import us.mn.state.health.lims.common.log.LogEvent;
 public class ResourceLocator {
 	private static ResourceLocator me; // Holder for Singleton
 
-	private MessageSource messageResources = null;
-
 	// Name of file that contains resource mappings. This class loads this into
 	// the propertyFilePairs object
-	private final String RESOURCE_PROPERTIES = "Resources.properties";
+	private final String RESOURCE_PROPERTIES = "/Resources.properties";
 
-	public static final String AJAX_PROPERTIES = "AjaxResources.properties";
+	public static final String AJAX_PROPERTIES = "/AjaxResources.properties";
 
-	public static final String REPORTS_PROPERTIES = "Reports.properties";
+	public static final String REPORTS_PROPERTIES = "/Reports.properties";
 
 	// bugzilla 1550
-	public static final String XMIT_PROPERTIES = "Transmission.properties";
+	public static final String XMIT_PROPERTIES = "/Transmission.properties";
 
 	// RESOURCES_PROPERTIES is read into this Properties object
 	private Properties propertyFilePairs;
