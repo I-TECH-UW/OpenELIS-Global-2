@@ -52,7 +52,6 @@ import spring.service.result.ResultService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
@@ -60,7 +59,7 @@ import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.systemuser.SystemUserService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -446,7 +445,7 @@ public class ResultsLoadUtility {
 			TestResultItem resultItem = createTestResultItem(new AnalysisServiceImpl(analysis), testKit, notes,
 					sampleItem.getSortOrder(), result, sampleItem.getSample().getAccessionNumber(), patientName,
 					patientInfo, techSignature, techSignatureId, initialConditions,
-					SpringContext.getBean(TypeOfSampleServiceImpl.class)
+					SpringContext.getBean(TypeOfSampleService.class)
 							.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			resultItem.setNationalId(nationalId);
 			testResultList.add(resultItem);
@@ -611,7 +610,7 @@ public class ResultsLoadUtility {
 			String sampleType) {
 
 		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
-		ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class)
+		ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class)
 				.getResultLimitForTestAndPatient(testService.getTest(), patientServiceImpl.getPatient());
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();

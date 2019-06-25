@@ -168,7 +168,7 @@ public class TestModifyUpdate extends BaseAction {
         }
 
         TestServiceImpl.refreshTestNames();
-        SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
+        SpringContext.getBean(TypeOfSampleService.class).clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
     

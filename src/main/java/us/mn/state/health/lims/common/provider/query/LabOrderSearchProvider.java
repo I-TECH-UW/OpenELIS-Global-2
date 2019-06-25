@@ -43,7 +43,7 @@ import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
 import spring.service.patient.PatientServiceImpl;
 import spring.service.test.TestService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -67,6 +67,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
 	protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
 	protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
 
 	private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
 	private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
@@ -193,8 +194,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx) {
 		String loinc = orc.getOrderType().getIdentifier().toString();
 		String testName = testService.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, SpringContext.getBean(TypeOfSampleServiceImpl.class)
-				.getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
+		tests.add(new Request(testName, loinc,
+				typeOfSampleService.getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
 	private void createMaps(List<Request> testRequests, List<Request> panelNames) {
@@ -218,15 +219,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 			List<Test> tests = testService.getActiveTestsByLoinc(testRequest.getLoinc());
 
 			Test singleTest = tests.get(0);
-			TypeOfSample singleSampleType = SpringContext.getBean(TypeOfSampleServiceImpl.class)
-					.getTypeOfSampleForTest(singleTest.getId());
+			TypeOfSample singleSampleType = typeOfSampleService.getTypeOfSampleForTest(singleTest.getId());
 			boolean hasSingleSampleType = tests.size() == 1;
 
 			if (tests.size() > 1) {
 				if (!GenericValidator.isBlankOrNull(testRequest.getSampleType())) {
 					for (Test test : tests) {
-						TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
-								.getTypeOfSampleForTest(test.getId());
+						TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId());
 						if (typeOfSample.getDescription().equals(testRequest.getSampleType())) {
 							hasSingleSampleType = true;
 							singleSampleType = typeOfSample;
@@ -245,8 +244,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 					}
 
 					for (Test test : tests) {
-						testSampleTypeList.add(new TestSampleType(test,
-								SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId())));
+						testSampleTypeList.add(
+								new TestSampleType(test, typeOfSampleService.getTypeOfSampleForTest(test.getId())));
 					}
 				}
 			}
@@ -268,8 +267,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 			Panel panel = panelService.getPanelByName(panelRequest.getName());
 
 			if (panel != null) {
-				List<TypeOfSample> typeOfSamples = SpringContext.getBean(TypeOfSampleServiceImpl.class)
-						.getTypeOfSampleForPanelId(panel.getId());
+				List<TypeOfSample> typeOfSamples = typeOfSampleService.getTypeOfSampleForPanelId(panel.getId());
 				boolean hasSingleSampleType = typeOfSamples.size() == 1;
 				TypeOfSample singleTypeOfSample = typeOfSamples.get(0);
 

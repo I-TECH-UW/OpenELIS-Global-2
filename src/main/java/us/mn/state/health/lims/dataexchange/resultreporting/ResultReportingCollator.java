@@ -31,7 +31,7 @@ import spring.service.patient.PatientServiceImpl;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.result.ResultServiceImpl;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultService;
@@ -208,7 +208,7 @@ public class ResultReportingCollator {
 		}
 
 		// For valid range min/max
-		ResultLimit validLimit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(
+		ResultLimit validLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(
 				result.getAnalysis().getTest(),
 				sampleHumanService.getPatientForSample(result.getAnalysis().getSampleItem().getSample()));
 		if (validLimit != null && (validLimit.getLowValid() != validLimit.getHighValid())) {

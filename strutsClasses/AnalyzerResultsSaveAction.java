@@ -570,7 +570,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				test = testDAO.getTestById(test);
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
@@ -805,7 +805,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(resultItem.getTestId(),
+			ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(resultItem.getTestId(),
 					patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

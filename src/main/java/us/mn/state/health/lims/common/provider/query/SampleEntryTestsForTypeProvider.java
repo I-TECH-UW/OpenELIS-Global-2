@@ -38,7 +38,6 @@ import spring.service.test.TestServiceImpl;
 import spring.service.testdictionary.TestDictionaryService;
 import spring.service.typeofsample.TypeOfSamplePanelService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -64,8 +63,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
 	public void initializeGlobalVariables() {
 		USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
-		VARIABLE_SAMPLE_TYPE_ID = SpringContext.getBean(TypeOfSampleServiceImpl.class)
-				.getTypeOfSampleIdForLocalAbbreviation("Variable");
+		VARIABLE_SAMPLE_TYPE_ID = typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable");
 	}
 
 	public SampleEntryTestsForTypeProvider() {

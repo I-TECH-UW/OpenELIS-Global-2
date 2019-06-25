@@ -40,7 +40,6 @@ import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestModifyService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import spring.util.SpringContext;
@@ -464,7 +463,7 @@ public class TestModifyEntryController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
+		SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

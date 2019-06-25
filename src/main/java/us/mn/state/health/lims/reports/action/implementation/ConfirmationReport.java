@@ -39,7 +39,7 @@ import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestServiceImpl;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -150,8 +150,8 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 			ConfirmationData data = new ConfirmationData();
 
 			data.setLabAccession(accessionNumber + "-" + sampleItem.getSortOrder());
-			data.setSampleType(
-					SpringContext.getBean(TypeOfSampleServiceImpl.class).getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+			data.setSampleType(SpringContext.getBean(TypeOfSampleService.class)
+					.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			data.setOrganizationName(StringUtil.replaceNullWithEmptyString(orgName));
 			data.setRequesterAccession(sampleItem.getExternalId());
 			data.setNote(getNoteForSampleItem(sampleItem));

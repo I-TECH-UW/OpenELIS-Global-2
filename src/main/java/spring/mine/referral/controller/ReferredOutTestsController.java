@@ -42,12 +42,12 @@ import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
 import spring.service.referral.ReferralSetService;
 import spring.service.result.ResultServiceImpl;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -353,7 +353,7 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(typeOfSample.getId(),
+		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(typeOfSample.getId(),
 				false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
@@ -679,7 +679,7 @@ public class ReferredOutTestsController extends BaseController {
 		Test test = testService.get(referredTest.getReferredTestId());
 		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		ResultLimit limit = SpringContext.getBean(ResultLimitServiceImpl.class).getResultLimitForTestAndPatient(test, patient);
+		ResultLimit limit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test, patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
 		result.setGrouping(grouping);

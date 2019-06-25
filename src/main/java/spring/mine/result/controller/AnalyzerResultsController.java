@@ -34,7 +34,7 @@ import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
@@ -43,7 +43,6 @@ import spring.service.test.TestService;
 import spring.service.testreflex.TestReflexService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
@@ -970,7 +969,7 @@ public class AnalyzerResultsController extends BaseController {
 				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
+				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
 						.getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
@@ -1204,7 +1203,7 @@ public class AnalyzerResultsController extends BaseController {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class)
+			ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class)
 					.getResultLimitForTestAndPatient(resultItem.getTestId(), patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

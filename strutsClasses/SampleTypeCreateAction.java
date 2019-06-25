@@ -41,7 +41,7 @@ public class SampleTypeCreateAction extends BaseAction {
         ((DynaValidatorForm)form).initialize(mapping);
         PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         PropertyUtils.setProperty(form, "inactiveSampleTypeList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-        List<TypeOfSample> typeOfSamples = SpringContext.getBean(TypeOfSampleServiceImpl.class).getAllTypeOfSamples();
+        List<TypeOfSample> typeOfSamples = SpringContext.getBean(TypeOfSampleService.class).getAllTypeOfSamples();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.FRENCH));
 

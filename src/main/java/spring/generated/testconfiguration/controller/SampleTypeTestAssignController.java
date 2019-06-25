@@ -23,7 +23,6 @@ import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.SampleTypeTestAssignService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -118,7 +117,7 @@ public class SampleTypeTestAssignController extends BaseController {
 		boolean updateTypeOfSample = false;
 		String systemUserId = getSysUserId(request);
 
-		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTransientTypeOfSampleById(sampleTypeId);
+		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTransientTypeOfSampleById(sampleTypeId);
 		TypeOfSample deActivateTypeOfSample = null;
 
 		// Test test = new TestService(testId).getTest();
@@ -152,7 +151,7 @@ public class SampleTypeTestAssignController extends BaseController {
 
 //------------------------------------------
 		if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
-			deActivateTypeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
+			deActivateTypeOfSample = SpringContext.getBean(TypeOfSampleService.class)
 					.getTransientTypeOfSampleById(deactivateSampleTypeId);
 			deActivateTypeOfSample.setIsActive(false);
 			deActivateTypeOfSample.setSysUserId(systemUserId);

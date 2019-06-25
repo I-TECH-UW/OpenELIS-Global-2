@@ -27,7 +27,6 @@ import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestActivationService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -199,7 +198,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (String id : sampleTypeIds) {
-			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTransientTypeOfSampleById(id);
+			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTransientTypeOfSampleById(id);
 			typeOfSample.setActive(false);
 			typeOfSample.setSysUserId(getSysUserId(request));
 			sampleTypes.add(typeOfSample);
@@ -212,7 +211,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (ActivateSet set : sampleTypeSets) {
-			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class).getTransientTypeOfSampleById(set.id);
+			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTransientTypeOfSampleById(set.id);
 			typeOfSample.setActive(true);
 			typeOfSample.setSortOrder(set.sortOrder * 10);
 			typeOfSample.setSysUserId(getSysUserId(request));

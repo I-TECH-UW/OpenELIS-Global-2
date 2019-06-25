@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -43,7 +42,7 @@ public class TestActivationServiceImpl implements TestActivationService {
 		}
 
 		if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
-			SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
+			SpringContext.getBean(TypeOfSampleService.class).clearCache();
 		}
 	}
 

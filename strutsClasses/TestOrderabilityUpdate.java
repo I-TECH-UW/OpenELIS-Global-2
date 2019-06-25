@@ -75,7 +75,7 @@ public class TestOrderabilityUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
+        SpringContext.getBean(TypeOfSampleService.class).clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
 
