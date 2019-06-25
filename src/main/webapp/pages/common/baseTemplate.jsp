@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			spring.service.localization.LocalizationServiceImpl,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			org.owasp.encoder.Encode,
 			us.mn.state.health.lims.common.util.Versioning"%>
@@ -185,12 +184,7 @@ if (document.layers) {
 %>
 
 <title>
-	<c:if test="${!empty title}">
 		<c:out value="${title}" />
-	</c:if> 
-	<c:if test="${empty title}">
-		<%=LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
-	</c:if>
 </title>
 <tiles:insertAttribute name="banner" />
 <tiles:insertAttribute name="login" />

@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.successHandler(customAuthenticationSuccessHandler()).and()
 				// setup logout
 				.logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do").invalidateHttpSession(true).and()
-				.sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().newSession().and().csrf()
+				.sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().migrateSession().and().csrf()
 				.and().exceptionHandling().accessDeniedPage("/Access_denied").and()
 				// add security headers
 				.headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);

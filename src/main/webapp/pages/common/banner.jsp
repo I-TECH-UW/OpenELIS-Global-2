@@ -8,7 +8,6 @@
 
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				spring.service.localization.LocalizationServiceImpl,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 				 spring.mine.internationalization.MessageUtil,
@@ -36,17 +35,13 @@
 
 <script>
 function /*void*/ setLanguage( language ){
-
-	//this weirdness is because we want the language to which we are changing, not the one we are in
-	if( language == 'en_US'){
-	    update = confirm("Changing the language will affect all logged in users ");
-	} else if( language == 'fr_FR' ){
-		update = confirm( "Modification de la langue affectera tous les utilisateurs enregistrés");
-	}
-	
-	if( update ){
-		window.location.href = "LoginPage.do?lang=" + language;
-	}
+	var url = window.location.href;
+	if (url.indexOf('?') > -1){
+		   	url += "&lang=" + language;
+		} else {
+			url += "?lang=" + language;
+		}
+		window.location.href = url;
 }
 
 
@@ -103,7 +98,7 @@ function displayHelp(){
 			<%
 				}
 			%>
-  	  		<div id="oe-title" onclick="navigateToHomePage();"><%= Encode.forHtmlContent(LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BANNER_TEXT ) )) %></div>
+  	  		<div id="oe-title" onclick="navigateToHomePage();"><c:out value="${oeTitle}" /></div>
   		</div>  
   		<div id="oe-version" style="display: block">
     		<div id="appVersion">

@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
@@ -36,11 +36,13 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestCatalogController extends BaseController {
-	
+
 	@Autowired
 	TestService testService;
 	@Autowired
 	DictionaryService dictionaryService;
+	@Autowired
+	LocalizationService localizationService;
 
 	@RequestMapping(value = "/TestCatalog", method = RequestMethod.GET)
 	public ModelAndView showTestCatalog(HttpServletRequest request) {
@@ -153,7 +155,8 @@ public class TestCatalogController extends BaseController {
 			return "n/a";
 		}
 
-		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
+				null);
 
 	}
 
@@ -201,8 +204,10 @@ public class TestCatalogController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit,
+					significantDigits, "-"));
+			bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
+					significantDigits, "-"));
 			bean.setGender(limit.getGender());
 			bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
@@ -215,7 +220,7 @@ public class TestCatalogController extends BaseController {
 
 		List<Panel> panelList = testService.getPanels();
 		for (Panel panel : panelList) {
-			builder.append(LocalizationServiceImpl.getLocalizedValueById(panel.getLocalization().getId()));
+			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
 		}
 

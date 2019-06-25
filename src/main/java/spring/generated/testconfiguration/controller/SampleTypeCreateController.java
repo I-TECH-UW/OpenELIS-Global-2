@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.role.RoleService;
 import spring.service.testconfiguration.SampleTypeCreateService;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -41,6 +41,8 @@ public class SampleTypeCreateController extends BaseController {
 	private RoleService roleService;
 	@Autowired
 	private SampleTypeCreateService sampleTypeCreateService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	@RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -72,7 +74,7 @@ public class SampleTypeCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TypeOfSample typeOfSample : typeOfSamples) {
-			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
+			builder.append(localizationService.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

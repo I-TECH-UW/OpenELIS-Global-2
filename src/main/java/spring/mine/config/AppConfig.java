@@ -17,15 +17,17 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
-import spring.mine.interceptor.PageAttributesInterceptor;
+import spring.mine.interceptor.CommonPageAttributesInterceptor;
 import spring.mine.interceptor.UrlErrorsInterceptor;
+import spring.mine.internationalization.GlobalLocaleResolver;
 import spring.mine.security.SecurityConfig;
+import us.mn.state.health.lims.common.util.ConfigurationProperties;
+import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 
 @EnableWebMvc
 @Configuration
@@ -38,7 +40,7 @@ public class AppConfig implements WebMvcConfigurer {
 	@Autowired
 	UrlErrorsInterceptor urlLocatedErrorsInterceptor;
 	@Autowired
-	PageAttributesInterceptor pageAttributesInterceptor;
+	CommonPageAttributesInterceptor pageAttributesInterceptor;
 	@Autowired
 	RequestMappingHandlerMapping requestMappingHandlerMapping;
 
@@ -67,10 +69,11 @@ public class AppConfig implements WebMvcConfigurer {
 		return messageSource;
 	}
 
-	@Bean
+	@Bean("localeResolver")
 	public LocaleResolver localeResolver() {
-		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-		localeResolver.setDefaultLocale(Locale.US);
+		GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
+		String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
+		localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
 		return localeResolver;
 	}
 

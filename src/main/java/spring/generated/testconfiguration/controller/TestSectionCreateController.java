@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.role.RoleService;
 import spring.service.test.TestSectionService;
 import spring.service.testconfiguration.TestSectionCreateService;
@@ -41,6 +41,8 @@ public class TestSectionCreateController extends BaseController {
 	private RoleService roleService;
 	@Autowired
 	private TestSectionCreateService testSectionCreateService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	@RequestMapping(value = "/TestSectionCreate", method = RequestMethod.GET)
 	public ModelAndView showTestSectionCreate(HttpServletRequest request) {
@@ -72,7 +74,7 @@ public class TestSectionCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TestSection testSection : testSections) {
-			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, testSection.getLocalization()));
+			builder.append(localizationService.getLocalizationValueByLocal(locale, testSection.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

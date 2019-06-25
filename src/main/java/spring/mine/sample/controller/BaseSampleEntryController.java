@@ -17,6 +17,7 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.gender.GenderService;
+import spring.service.localization.LocalizationService;
 import spring.service.organization.OrganizationService;
 import spring.service.project.ProjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -40,11 +41,13 @@ public abstract class BaseSampleEntryController extends BaseController {
 	public static final String FWD_VL_ENTRY = "vl_entry";
 	private static int referenceLabParentId = 0;
 	@Autowired
-	GenderService genderService;
+	private GenderService genderService;
 	@Autowired
-	ProjectService projectService;
+	private ProjectService projectService;
 	@Autowired
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	@Override
 	protected String getPageTitleKey() {
@@ -54,6 +57,11 @@ public abstract class BaseSampleEntryController extends BaseController {
 	@Override
 	protected String getPageSubtitleKey() {
 		return MessageUtil.getContextualKey("sample.entry.title");
+	}
+
+	protected void addBillingLabel() {
+		request.setAttribute("billingReferenceNumberLabel", localizationService.getLocalizedValueById(
+				ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
 	}
 
 	protected void addGenderList(BaseForm form)

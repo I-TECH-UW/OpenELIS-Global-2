@@ -4,17 +4,35 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
+import spring.service.localization.LocalizationService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
+import us.mn.state.health.lims.common.util.ConfigurationProperties;
+import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 
-//TODO this class may be unnecessary. Unsure of what functionality relies on it since module authentication was changed
 @Component
-public class PageAttributesInterceptor implements HandlerInterceptor {
+public class CommonPageAttributesInterceptor implements HandlerInterceptor {
+
+	@Autowired
+	LocalizationService localizationService;
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		request.setAttribute("title", localizationService.getLocalizedValueById(
+				ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.BANNER_TEXT)));
+
+		request.setAttribute("oeTitle", localizationService
+				.getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
+
+		return true;
+	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,

@@ -31,7 +31,7 @@ import spring.mine.result.form.AnalyzerResultsForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.analyzerresults.AnalyzerResultsService;
 import spring.service.dictionary.DictionaryService;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
@@ -137,6 +137,8 @@ public class AnalyzerResultsController extends BaseController {
 	private ResultService resultService;
 	@Autowired
 	private SampleQaEventService sampleQaEventService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	private TestReflexUtil reflexUtil = new TestReflexUtil();
 
@@ -609,7 +611,7 @@ public class AnalyzerResultsController extends BaseController {
 	protected String getActualMessage(String messageKey) {
 		String actualMessage = null;
 		if (messageKey != null) {
-			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationServiceImpl.getCurrentLocale(),
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocale(),
 					messageKey);
 		}
 		return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;
