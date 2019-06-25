@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -74,6 +75,7 @@ public class AppConfig implements WebMvcConfigurer {
 		GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
 		String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
 		localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
+		LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
 		return localeResolver;
 	}
 
