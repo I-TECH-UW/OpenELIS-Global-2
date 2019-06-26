@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.panel.PanelService;
 import spring.service.role.RoleService;
 import spring.service.testconfiguration.PanelCreateService;
@@ -46,6 +46,8 @@ public class PanelCreateController extends BaseController {
 	private PanelTestConfigurationUtil panelTestConfigurationUtil;
 	@Autowired
 	private PanelCreateService panelCreateService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	public static final String NAME_SEPARATOR = "$";
 
@@ -106,7 +108,7 @@ public class PanelCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (Panel panel : panels) {
-			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, panel.getLocalization()));
+			builder.append(localizationService.getLocalizationValueByLocal(locale, panel.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

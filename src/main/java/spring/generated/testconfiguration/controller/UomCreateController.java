@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.UomCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -31,6 +31,8 @@ public class UomCreateController extends BaseController {
 
 	@Autowired
 	UnitOfMeasureService unitOfMeasureService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	@RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
 	public ModelAndView showUomCreate(HttpServletRequest request) {
@@ -67,7 +69,7 @@ public class UomCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (UnitOfMeasure uom : uoms) {
-			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, uom.getLocalization()));
+			builder.append(localizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

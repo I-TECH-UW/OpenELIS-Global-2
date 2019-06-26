@@ -30,6 +30,7 @@ import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
+import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.resultlimit.ResultLimitService;
@@ -39,7 +40,6 @@ import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestModifyService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import spring.util.SpringContext;
@@ -81,6 +81,8 @@ public class TestModifyEntryController extends BaseController {
 	private UnitOfMeasureService unitOfMeasureService;
 	@Autowired
 	private TestModifyService testModifyService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
 	public ModelAndView showTestModifyEntry(HttpServletRequest request) {
@@ -217,10 +219,10 @@ public class TestModifyEntryController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(
-					SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(
-					SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit,
+					significantDigits, "-"));
+			bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
+					significantDigits, "-"));
 			bean.setGender(limit.getGender());
 			bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
@@ -235,7 +237,8 @@ public class TestModifyEntryController extends BaseController {
 			return "n/a";
 		}
 
-		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
+				null);
 
 	}
 
@@ -276,7 +279,8 @@ public class TestModifyEntryController extends BaseController {
 			return "n/a";
 		}
 
-		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
+				null);
 	}
 
 	private List<String> createDictionaryIds(TestServiceImpl testService) {
@@ -329,7 +333,7 @@ public class TestModifyEntryController extends BaseController {
 
 		List<Panel> panelList = testService.getPanels();
 		for (Panel panel : panelList) {
-			builder.append(LocalizationServiceImpl.getLocalizedValueById(panel.getLocalization().getId()));
+			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
 		}
 
@@ -459,7 +463,7 @@ public class TestModifyEntryController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		SpringContext.getBean(TypeOfSampleServiceImpl.class).clearCache();
+		SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

@@ -2,7 +2,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			spring.service.localization.LocalizationServiceImpl,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
@@ -165,14 +164,7 @@ function setMenuAction(button, form, action, validate, parameters) {
 %>
 	
 	<title>
-	<c:choose>
-		<c:when test="${!empty title}">
-			<spring:message code="${title}" text="${title}" />
-		</c:when>
-		<c:otherwise> 
-			<%=LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.BANNER_TEXT ) )%>
-		</c:otherwise>
-	</c:choose>
+		<c:out value="${title}"/>
 	</title>
 <tiles:insertAttribute name="banner" />
 <tiles:insertAttribute name="login" />

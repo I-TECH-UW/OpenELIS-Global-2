@@ -10,8 +10,7 @@
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.DateUtil,
                  us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.formfields.FormFields,
-                 spring.service.localization.LocalizationServiceImpl" %>
+                 us.mn.state.health.lims.common.formfields.FormFields" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -509,7 +508,7 @@
 <tr>
 <% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){ %>
     <td><label for="billingReferenceNumber">
-        <%= LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BILLING_REFERENCE_NUMBER_LABEL ))%>
+    	<c:out value="${billingReferenceNumberLabel}"/>
     </label>
     </td>
     <td>

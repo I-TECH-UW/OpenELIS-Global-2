@@ -29,10 +29,11 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -82,8 +83,9 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
-		reportParameters.put("billingNumberLabel", LocalizationServiceImpl.getLocalizedValueById(
-				ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
+		reportParameters.put("billingNumberLabel",
+				SpringContext.getBean(LocalizationService.class).getLocalizedValueById(ConfigurationProperties
+						.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
 		reportParameters.put("footerName", getFooterName());
 	}
 

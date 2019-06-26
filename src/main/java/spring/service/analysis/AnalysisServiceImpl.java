@@ -21,7 +21,6 @@ import spring.service.result.ResultService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -95,10 +94,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 		Test test = getTest();
 		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
-		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
+		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
 				.getTypeOfSampleForTest(test.getId());
 
-		if (typeOfSample != null && typeOfSample.getId().equals(SpringContext.getBean(TypeOfSampleServiceImpl.class)
+		if (typeOfSample != null && typeOfSample.getId().equals(SpringContext.getBean(TypeOfSampleService.class)
 				.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}

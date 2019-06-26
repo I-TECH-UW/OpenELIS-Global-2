@@ -27,7 +27,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
@@ -38,6 +38,7 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 	protected AjaxServlet ajaxServlet = null;
 
 	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	private LocalizationService localizationService = SpringContext.getBean(LocalizationService.class);
 
 	@Override
 	public void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -80,7 +81,7 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 
 		for (Test test : tests) {
 			JSONObject testObject = new JSONObject();
-			testObject.put("name", LocalizationServiceImpl.getLocalizedValue(test.getLocalizedTestName()));
+			testObject.put("name", localizationService.getLocalizedValue(test.getLocalizedTestName()));
 			testObject.put("id", test.getId());
 			testObject.put("isActive", test.getIsActive());
 			testArray.add(testObject);

@@ -697,7 +697,7 @@ function /*void*/ setSave()
 //called from patientSearch.jsp
 function /*void*/ selectedPatientChangedForSample(firstName, lastName, gender, DOB, stNumber, subjectNumb, nationalID, mother, pk ){
     patientInfoChangedForSample( firstName, lastName, gender, DOB, stNumber, subjectNumb, nationalID, mother, pk );
-    $("patientPK").value = pk;
+    $("patientPK_ID").value = pk;
 
     setSave();
 }
@@ -711,7 +711,7 @@ function /*void*/ patientInfoChangedForSample( firstName, lastName, gender, DOB,
     if( useSTNumber){setPatientSummary( "st", stNumber );}
     setPatientSummary( "national", nationalID );
     if( useMothersName){setPatientSummary( "mother", mother );}
-    $("patientPK").value = pk;
+    $("patientPK_ID").value = pk;
 
     makeDirty();
     setSave();
@@ -730,7 +730,7 @@ function /*void*/ doSelectPatient(){
     $("dob").firstChild.firstChild.nodeValue = currentPatient["DOB"];
     $("national").firstChild.firstChild.nodeValue = currentPatient["national"];
     $("gender").firstChild.firstChild.nodeValue = currentPatient["gender"];
-    $("patientPK").value = currentPatient["pk"];
+    $("patientPK_ID").value = currentPatient["pk"];
 
     setSave();
 

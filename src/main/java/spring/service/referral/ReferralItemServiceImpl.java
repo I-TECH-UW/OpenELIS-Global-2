@@ -15,7 +15,7 @@ import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.dictionary.DictionaryService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -234,7 +234,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 

@@ -53,7 +53,7 @@ public class TestOrderabilityAction extends BaseAction {
         for( IdValuePair pair : sampleTypeList){
             TestActivationBean bean = new TestActivationBean();
 
-            List<Test> tests = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(pair.getId(), false);
+            List<Test> tests = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(pair.getId(), false);
             List<IdValuePair> orderableTests = new ArrayList<IdValuePair>();
             List<IdValuePair> unorderableTests = new ArrayList<IdValuePair>();
 

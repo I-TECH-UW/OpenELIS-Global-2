@@ -328,7 +328,7 @@ public class ReferredOutAction extends BaseAction {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = SpringContext.getBean(TypeOfSampleServiceImpl.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<IdValuePair>();
 

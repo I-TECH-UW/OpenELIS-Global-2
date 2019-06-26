@@ -31,10 +31,10 @@ import spring.mine.result.form.AnalyzerResultsForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.analyzerresults.AnalyzerResultsService;
 import spring.service.dictionary.DictionaryService;
-import spring.service.localization.LocalizationServiceImpl;
+import spring.service.localization.LocalizationService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultService;
-import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
@@ -43,7 +43,6 @@ import spring.service.test.TestService;
 import spring.service.testreflex.TestReflexService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
@@ -137,6 +136,8 @@ public class AnalyzerResultsController extends BaseController {
 	private ResultService resultService;
 	@Autowired
 	private SampleQaEventService sampleQaEventService;
+	@Autowired
+	private LocalizationService localizationService;
 
 	private TestReflexUtil reflexUtil = new TestReflexUtil();
 
@@ -609,7 +610,7 @@ public class AnalyzerResultsController extends BaseController {
 	protected String getActualMessage(String messageKey) {
 		String actualMessage = null;
 		if (messageKey != null) {
-			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationServiceImpl.getCurrentLocale(),
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocale(),
 					messageKey);
 		}
 		return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;
@@ -968,7 +969,7 @@ public class AnalyzerResultsController extends BaseController {
 				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleServiceImpl.class)
+				TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
 						.getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
@@ -1202,7 +1203,7 @@ public class AnalyzerResultsController extends BaseController {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = SpringContext.getBean(ResultLimitServiceImpl.class)
+			ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class)
 					.getResultLimitForTestAndPatient(resultItem.getTestId(), patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

@@ -70,6 +70,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		// }
 
 		addProjectList(form);
+		addBillingLabel();
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
 			PropertyUtils.setProperty(form, "initialSampleConditionList",
