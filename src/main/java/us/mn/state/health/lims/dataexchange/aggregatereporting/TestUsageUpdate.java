@@ -106,10 +106,9 @@ public class TestUsageUpdate implements IResultUpdate {
 	private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
 		for (Result result : results) {
 			ResultService resultResultService = SpringContext.getBean(ResultService.class);
-			resultResultService.setResult(result);
-			String testDate = resultResultService.getTestTime();
+			String testDate = resultResultService.getTestTime(result);
 			if (testDate == null) {
-				testDate = resultResultService.getLastUpdatedTime();
+				testDate = resultResultService.getLastUpdatedTime(result);
 			}
 			Map<String, Integer> testCountMap = dateTestMap.get(testDate);
 
@@ -118,7 +117,7 @@ public class TestUsageUpdate implements IResultUpdate {
 				dateTestMap.put(testDate, testCountMap);
 			}
 
-			String testDescription = resultResultService.getTestDescription();
+			String testDescription = resultResultService.getTestDescription(result);
 
 			Integer count = testCountMap.get(testDescription);
 			testCountMap.put(testDescription, count == null ? 1 : count + 1);

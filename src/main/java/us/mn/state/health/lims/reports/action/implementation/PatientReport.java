@@ -43,7 +43,6 @@ import spring.service.dictionary.DictionaryService;
 import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.observationhistory.ObservationHistoryService;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
@@ -541,8 +540,7 @@ public abstract class PatientReport extends Report {
 
 				if (data == null) {
 					ResultService resultResultService = SpringContext.getBean(ResultService.class);
-					resultResultService.setResult(result);
-					isAbnormal = resultResultService.isAbnormalDictionaryResult();
+					isAbnormal = resultResultService.isAbnormalDictionaryResult(result);
 				} else {
 					isAbnormal = data.getAbnormalResult();
 				}
@@ -574,8 +572,7 @@ public abstract class PatientReport extends Report {
 
 	protected String getRange(Result result) {
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
-		return resultResultService.getDisplayReferenceRange(true);
+		return resultResultService.getDisplayReferenceRange(result, true);
 	}
 
 	protected String getUnitOfMeasure(Test test) {
@@ -594,8 +591,7 @@ public abstract class PatientReport extends Report {
 					dictionary.setId(result.getValue());
 					dictionaryService.getData(dictionary);
 					ResultService resultResultService = SpringContext.getBean(ResultService.class);
-					resultResultService.setResult(result);
-					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult());
+					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult(result));
 
 					if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
 						currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
@@ -604,8 +600,7 @@ public abstract class PatientReport extends Report {
 					}
 				} else {
 					ResultService resultResultService = SpringContext.getBean(ResultService.class);
-					resultResultService.setResult(result);
-					reportResult = resultResultService.getResultValue(true);
+					reportResult = resultResultService.getResultValue(result, true);
 					// TODO - how is this used. Selection types can also have
 					// UOM and reference ranges
 					data.setHasRangeAndUOM(
@@ -616,10 +611,11 @@ public abstract class PatientReport extends Report {
 				// results with quantified other results or it can be a
 				// conclusion
 				ResultService resultResultService = SpringContext.getBean(ResultService.class);
-				resultResultService.setResult(resultList.get(0));
+				Result result = resultList.get(0);
 
-				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultResultService.getTestType())) {
-					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult());
+				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY
+						.matches(resultResultService.getTestType(result))) {
+					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult(result));
 					List<Result> dictionaryResults = new ArrayList<>();
 					Result quantification = null;
 					for (Result sibResult : resultList) {
@@ -647,7 +643,7 @@ public abstract class PatientReport extends Report {
 						}
 					}
 				} else if (TypeOfTestResultServiceImpl.ResultType
-						.isMultiSelectVariant(resultResultService.getTestType())) {
+						.isMultiSelectVariant(resultResultService.getTestType(result))) {
 					Dictionary dictionary = new Dictionary();
 					StringBuilder multiResult = new StringBuilder();
 
@@ -780,6 +776,7 @@ public abstract class PatientReport extends Report {
 		if (FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour)) {
 			receivedDate += " " + currentSampleService.getReceivedTimeForDisplay(currentSample);
 		}
+		ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
 		data.setContactInfo(currentContactInfo);
 		data.setSiteInfo(currentSiteInfo);
@@ -798,13 +795,14 @@ public abstract class PatientReport extends Report {
 				PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
 		data.setHealthDistrict(getLazyPatientIdentity(currentPatient, healthDistrict,
 				PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
-		data.setLabOrderType(ObservationHistoryServiceImpl.getInstance().getValueForSample(ObservationType.PROGRAM,
+
+		data.setLabOrderType(observationHistoryService.getValueForSample(ObservationType.PROGRAM,
 				currentSampleService.getId(currentSample)));
 		data.setTestName(testName);
-		data.setPatientSiteNumber(ObservationHistoryServiceImpl.getInstance()
-				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, currentSampleService.getId(currentSample)));
-		data.setBillingNumber(ObservationHistoryServiceImpl.getInstance().getValueForSample(
-				ObservationType.BILLING_REFERENCE_NUMBER, currentSampleService.getId(currentSample)));
+		data.setPatientSiteNumber(observationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
+				currentSampleService.getId(currentSample)));
+		data.setBillingNumber(observationHistoryService.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
+				currentSampleService.getId(currentSample)));
 
 		if (doAnalysis) {
 			data.setPanel(analysisService.getPanel(currentAnalysis));

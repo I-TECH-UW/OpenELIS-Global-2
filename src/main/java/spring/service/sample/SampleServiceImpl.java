@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.analysis.AnalysisService;
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.organization.OrganizationService;
 import spring.service.person.PersonService;
@@ -23,6 +24,7 @@ import spring.service.requester.SampleRequesterService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -42,6 +44,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> implements SampleService {
 
 	public static String TABLE_REFERENCE_ID;
+
 	private static Long PERSON_REQUESTER_TYPE_ID;
 	private static Long ORGANIZATION_REQUESTER_TYPE_ID;
 
@@ -58,7 +61,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	@Autowired
 	private PersonService personService;
 	@Autowired
-	private ReferenceTablesService refTableService;
+	private ReferenceTablesService referenceTableService;
 	@Autowired
 	private RequesterTypeService requesterTypeService;
 	@Autowired
@@ -68,7 +71,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
 	@PostConstruct
 	private void initializeGlobalVariables() {
-		TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE").getId();
+		TABLE_REFERENCE_ID = referenceTableService.getReferenceTableByName("SAMPLE").getId();
 		RequesterType type = requesterTypeService.getRequesterTypeByName("provider");
 		PERSON_REQUESTER_TYPE_ID = type != null ? Long.parseLong(type.getId()) : Long.MIN_VALUE;
 		type = requesterTypeService.getRequesterTypeByName("organization");
@@ -145,7 +148,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		if (sample == null) {
 			return null;
 		}
-		ObservationHistory observation = ObservationHistoryServiceImpl.getInstance()
+		ObservationHistory observation = SpringContext.getBean(ObservationHistoryService.class)
 				.getObservationForSample(ObservationHistoryServiceImpl.ObservationType.REQUEST_DATE, sample.getId());
 		if (observation != null && observation.getValue() != null) {
 			return DateUtil.convertStringDateToTruncatedTimestamp(observation.getValue());

@@ -58,12 +58,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<Entity, Map<String, String>> entityToMap;
 
-	protected static TestDAO baseObjectService = SpringContext.getBean(TestDAO.class);
+	protected static TestDAO baseObjectDAO = SpringContext.getBean(TestDAO.class);
 
-	private static TestResultService TEST_RESULT_Service = SpringContext.getBean(TestResultService.class);
-	private static TypeOfSampleTestService TYPE_OF_SAMPLE_testService = SpringContext
+	private static TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+	private static TypeOfSampleTestService typeOfSampleTestService = SpringContext
 			.getBean(TypeOfSampleTestService.class);
-	private static TypeOfSampleService TYPE_OF_SAMPLE_Service = SpringContext.getBean(TypeOfSampleService.class);
+	private static TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
 	private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
 	private PanelService panelService = SpringContext.getBean(PanelService.class);
 	private TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
@@ -75,7 +75,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	public synchronized void initializeGlobalVariables() {
-		TypeOfSample variableTypeOfSample = TYPE_OF_SAMPLE_Service.getTypeOfSampleByLocalAbbrevAndDomain("Variable",
+		TypeOfSample variableTypeOfSample = typeOfSampleService.getTypeOfSampleByLocalAbbrevAndDomain("Variable",
 				"H");
 		VARIABLE_TYPE_OF_SAMPLE_ID = variableTypeOfSample == null ? "-1" : variableTypeOfSample.getId();
 
@@ -99,12 +99,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	protected TestDAO getBaseObjectDAO() {
-		return baseObjectService;
+		return baseObjectDAO;
 	}
 
-	@Transactional
 	public static List<Test> getTestsInTestSectionById(String testSectionId) {
-		return baseObjectService.getTestsByTestSectionId(testSectionId);
+		return baseObjectDAO.getTestsByTestSectionId(testSectionId);
 	}
 
 	@Override
@@ -133,7 +132,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<TestResult> getPossibleTestResults(Test test) {
-		return TEST_RESULT_Service.getAllActiveTestResultsPerTest(test);
+		return testResultService.getAllActiveTestResultsPerTest(test);
 	}
 
 	@Override
@@ -190,7 +189,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 			return null;
 		}
 
-		TypeOfSampleTest typeOfSampleTest = TYPE_OF_SAMPLE_testService.getTypeOfSampleTestForTest(test.getId());
+		TypeOfSampleTest typeOfSampleTest = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
 
 		if (typeOfSampleTest == null) {
 			return null;
@@ -198,7 +197,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 		String typeOfSampleId = typeOfSampleTest.getTypeOfSampleId();
 
-		return TYPE_OF_SAMPLE_Service.getTypeOfSampleById(typeOfSampleId);
+		return typeOfSampleService.getTypeOfSampleById(typeOfSampleId);
 	}
 
 	@Override
@@ -292,11 +291,10 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return description == null ? "" : description;
 	}
 
-	@Transactional
 	private static Map<String, String> createTestIdToNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = baseObjectService.getAllTests(false);
+		List<Test> tests = baseObjectDAO.getAllTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildTestName(test).replace("\n", " "));
@@ -324,7 +322,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	private Map<String, String> createTestIdToAugmentedNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = baseObjectService.getAllTests(false);
+		List<Test> tests = baseObjectDAO.getAllTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildAugmentedTestName(test).replace("\n", " "));
@@ -337,7 +335,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	private static Map<String, String> createTestIdToReportingNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = baseObjectService.getAllActiveTests(false);
+		List<Test> tests = baseObjectDAO.getAllActiveTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildReportingTestName(test));

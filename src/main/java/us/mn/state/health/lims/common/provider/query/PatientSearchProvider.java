@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
 import spring.service.person.PersonService;
@@ -106,7 +106,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
 				patientPatientService.getNationalId(patient), patient.getExternalId(),
 				patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
 				patientPatientService.getGUID(patient),
-				ObservationHistoryServiceImpl.getInstance().getMostRecentValueForPatient(
+				SpringContext.getBean(ObservationHistoryService.class).getMostRecentValueForPatient(
 						ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId(patient)));
 	}
 

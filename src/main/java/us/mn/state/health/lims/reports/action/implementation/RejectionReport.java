@@ -127,8 +127,7 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 		List<Result> results = analysisService.getResults(analysis);
 		for (Result result : results) {
 			ResultService resultResultService = SpringContext.getBean(ResultService.class);
-			resultResultService.setResult(result);
-			String signature = resultResultService.getSignature();
+			String signature = resultResultService.getSignature(result);
 			if (!GenericValidator.isBlankOrNull(signature)) {
 				item.setTechnician(signature);
 				break;

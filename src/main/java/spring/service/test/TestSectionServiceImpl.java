@@ -28,11 +28,12 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String>
 		implements TestSectionService, LocaleChangeListener {
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+	private String languageLocale = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private Map<String, String> testUnitIdToNameMap;
 
 	protected TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
+
 	private SystemUserSectionService systemUserSectionService = SpringContext.getBean(SystemUserSectionService.class);
 
 	@PostConstruct
@@ -62,10 +63,11 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public void localeChanged(String locale) {
-		LANGUAGE_LOCALE = locale;
+		languageLocale = locale;
 		testNamesChanged();
 	}
 
+	@Override
 	public void refreshNames() {
 		testNamesChanged();
 	}
@@ -79,6 +81,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 		return testSection == null ? "0" : testSection.getSortOrder();
 	}
 
+	@Override
 	public String getUserLocalizedTesSectionName(TestSection testSection) {
 		if (testSection == null) {
 			return "";
@@ -105,7 +108,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	private String buildTestSectionName(TestSection testSection) {
 		Localization localization = testSection.getLocalization();
 
-		if (LANGUAGE_LOCALE.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
+		if (languageLocale.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
 			return localization.getFrench();
 		} else {
 			return localization.getEnglish();

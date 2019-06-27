@@ -2,7 +2,6 @@ package spring.service.patient;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +20,6 @@ import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.patienttype.PatientPatientTypeService;
 import spring.service.person.PersonService;
-import spring.service.samplehuman.SampleHumanService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,17 +38,16 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 @Service
-@DependsOn({ "springContext" })
 public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService {
 
-	public static final String ADDRESS_STREET = "Street";
-	public static final String ADDRESS_STATE = "State";
-	public static final String ADDRESS_VILLAGE = "village";
-	public static final String ADDRESS_DEPT = "department";
-	public static final String ADDRESS_COMMUNE = "commune";
-	public static final String ADDRESS_ZIP = "zip";
-	public static final String ADDRESS_COUNTRY = "Country";
-	public static final String ADDRESS_CITY = "City";
+	public final String ADDRESS_STREET = "Street";
+	public final String ADDRESS_STATE = "State";
+	public final String ADDRESS_VILLAGE = "village";
+	public final String ADDRESS_DEPT = "department";
+	public final String ADDRESS_COMMUNE = "commune";
+	public final String ADDRESS_ZIP = "zip";
+	public final String ADDRESS_COUNTRY = "Country";
+	public final String ADDRESS_CITY = "City";
 
 	public static String PATIENT_GUID_IDENTITY;
 	public static String PATIENT_NATIONAL_IDENTITY;
@@ -71,29 +66,23 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	public static String PATIENT_OB_NUMBER_IDENTITY;
 	public static String PATIENT_PC_NUMBER_IDENTITY;
 
-	private static Map<String, String> addressPartIdToNameMap = new HashMap<>();
+	@Autowired
+	private PatientDAO baseObjectDAO;
 
 	@Autowired
-	private static final PatientDAO baseObjectDAO = SpringContext.getBean(PatientDAO.class);
-
+	private PatientIdentityService patientIdentityService;
 	@Autowired
-	private static final PatientIdentityService patientIdentityService = SpringContext
-			.getBean(PatientIdentityService.class);
+	private GenderService genderService;
 	@Autowired
-	private static final SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	private PatientIdentityTypeService identityTypeService;
 	@Autowired
-	private static final GenderService genderService = SpringContext.getBean(GenderService.class);
+	private AddressPartService addressPartService;
 	@Autowired
-	private static PatientIdentityTypeService identityTypeService = SpringContext
-			.getBean(PatientIdentityTypeService.class);
+	private PersonAddressService personAddressService;
 	@Autowired
-	private static AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	private PatientPatientTypeService patientPatientTypeService;
 	@Autowired
-	private static PersonAddressService personAddressService = SpringContext.getBean(PersonAddressService.class);
-	@Autowired
-	private static PatientPatientTypeService patientPatientTypeService = SpringContext
-			.getBean(PatientPatientTypeService.class);
-	private PersonService personPersonService = SpringContext.getBean(PersonService.class);
+	private PersonService personService;
 
 	@PostConstruct
 	public void initializeGlobalVariables() {
@@ -178,11 +167,6 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 			PATIENT_PC_NUMBER_IDENTITY = patientType.getId();
 		}
 
-		List<AddressPart> parts = addressPartService.getAll();
-
-		for (AddressPart part : parts) {
-			addressPartIdToNameMap.put(part.getId(), part.getPartName());
-		}
 	}
 
 	PatientServiceImpl() {
@@ -194,7 +178,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 		return baseObjectDAO;
 	}
 
-	public static Patient getPatientForGuid(String guid) {
+	@Override
+	public Patient getPatientForGuid(String guid) {
 		List<PatientIdentity> identites = patientIdentityService.getPatientIdentitiesByValueAndType(guid,
 				PATIENT_GUID_IDENTITY);
 		if (identites.isEmpty()) {
@@ -280,7 +265,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getFirstName(Patient patient) {
-		return personPersonService.getFirstName(patient.getPerson());
+		return personService.getFirstName(patient.getPerson());
 	}
 
 	/*
@@ -291,7 +276,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastName(Patient patient) {
-		return personPersonService.getLastName(patient.getPerson());
+		return personService.getLastName(patient.getPerson());
 	}
 
 	/*
@@ -303,7 +288,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastFirstName(Patient patient) {
-		return personPersonService.getLastFirstName(patient.getPerson());
+		return personService.getLastFirstName(patient.getPerson());
 	}
 
 	/*
@@ -340,7 +325,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	 */
 	@Override
 	public Map<String, String> getAddressComponents(Patient patient) {
-		return personPersonService.getAddressComponents(patient.getPerson());
+		return personService.getAddressComponents(patient.getPerson());
 	}
 
 	/*
@@ -368,7 +353,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getPhone(Patient patient) {
-		return personPersonService.getPhone(patient.getPerson());
+		return personService.getPhone(patient.getPerson());
 	}
 
 	/*
@@ -579,9 +564,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId)
 			throws LIMSRuntimeException {
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			personPersonService.insert(patient.getPerson());
+			personService.insert(patient.getPerson());
 		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			personPersonService.update(patient.getPerson());
+			personService.update(patient.getPerson());
 		}
 		patient.setPerson(patient.getPerson());
 

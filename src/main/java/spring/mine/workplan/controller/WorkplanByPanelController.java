@@ -19,12 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import spring.service.analysis.AnalysisService;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -105,7 +106,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 					Sample sample = analysis.getSampleItem().getSample();
 					testResultItem.setAccessionNumber(sample.getAccessionNumber());
 					testResultItem.setPatientInfo(getSubjectNumber(analysis));
-					testResultItem.setNextVisitDate(ObservationHistoryServiceImpl.getInstance()
+					testResultItem.setNextVisitDate(SpringContext.getBean(ObservationHistoryService.class)
 							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
 					testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
 					testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));

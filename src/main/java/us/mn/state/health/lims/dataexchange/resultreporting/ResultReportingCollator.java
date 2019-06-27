@@ -136,8 +136,7 @@ public class ResultReportingCollator {
 		resultBean.setTypeResult(hl7type);
 		resultBean.setUpdateStatus(isUpdate ? "update" : "new");
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
-		resultBean.setLoinc(resultResultService.getLOINCCode());
+		resultBean.setLoinc(resultResultService.getLOINCCode(result));
 		results.add(resultBean);
 
 		SampleItem sampleItemForResult = result.getAnalysis().getSampleItem();
@@ -157,9 +156,8 @@ public class ResultReportingCollator {
 
 		CodedValueXmit codedTest = new CodedValueXmit();
 		/* if (forMalaria) { */
-		resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
-		codedTest.setCode(resultResultService.getLOINCCode() == null ? "34" : resultResultService.getLOINCCode());
+		codedTest.setCode(
+				resultResultService.getLOINCCode(result) == null ? "34" : resultResultService.getLOINCCode(result));
 		/*
 		 * } else { codedTest.setCode("34"); }
 		 */

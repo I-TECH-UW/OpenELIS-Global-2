@@ -1,10 +1,8 @@
 package spring.service.observationhistory;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +37,13 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 			this.dbName = dbName;
 		}
 
-		@Transactional(readOnly = true)
-	public String getDatabaseName() {
+		public String getDatabaseName() {
 			return dbName;
 		}
 
 	}
 
-	private static ObservationHistoryService INSTANCE;
-
-	private final Map<ObservationType, String> observationTypeToIdMap = new HashMap<>();
+	private final Map<ObservationType, String> observationTypeToIdMap = new EnumMap<>(ObservationType.class);
 
 	@Autowired
 	private ObservationHistoryDAO baseObjectDAO;
@@ -56,19 +51,10 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 	@Autowired
 	private DictionaryService dictionaryService;
 	@Autowired
-	private ObservationHistoryTypeService ohtService;
+	private ObservationHistoryTypeService observationHistoryTypeService;
 
 	ObservationHistoryServiceImpl() {
 		super(ObservationHistory.class);
-	}
-
-	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	public static ObservationHistoryService getInstance() {
-		return INSTANCE;
 	}
 
 	@Override
@@ -181,7 +167,7 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 		ObservationHistoryType oht;
 
 		for (ObservationType type : ObservationType.values()) {
-			oht = ohtService.getByName(type.getDatabaseName());
+			oht = observationHistoryTypeService.getByName(type.getDatabaseName());
 			if (oht != null) {
 				observationTypeToIdMap.put(type, oht.getId());
 			}

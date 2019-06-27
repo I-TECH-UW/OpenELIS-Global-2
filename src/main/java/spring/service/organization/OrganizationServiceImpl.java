@@ -19,7 +19,7 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 	@Autowired
 	protected OrganizationDAO baseObjectDAO;
 	@Autowired
-	OrganizationOrganizationTypeDAO organizationOrganizationTypeDAO;
+	private OrganizationOrganizationTypeDAO organizationOrganizationTypeDAO;
 
 	OrganizationServiceImpl() {
 		super(Organization.class);

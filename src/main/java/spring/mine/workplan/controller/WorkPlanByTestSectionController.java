@@ -16,10 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestSectionService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -142,7 +143,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
 					subjectNumber = getSubjectNumber(analysis);
 					patientName = getPatientName(analysis);
-					nextVisit = ObservationHistoryServiceImpl.getInstance()
+					nextVisit = SpringContext.getBean(ObservationHistoryService.class)
 							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
 				}
 

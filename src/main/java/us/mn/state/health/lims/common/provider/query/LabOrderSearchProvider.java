@@ -42,7 +42,6 @@ import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
 import spring.service.patient.PatientService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.person.PersonService;
 import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -432,7 +431,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
 	private void addAlerts(StringBuilder xml, String patientGuid) {
 		PatientService patientService = SpringContext.getBean(PatientService.class);
-		Patient patient = PatientServiceImpl.getPatientForGuid(patientGuid);
+		Patient patient = patientService.getPatientForGuid(patientGuid);
 		if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB(patient))
 				|| GenericValidator.isBlankOrNull(patientService.getGender(patient))) {
 			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),

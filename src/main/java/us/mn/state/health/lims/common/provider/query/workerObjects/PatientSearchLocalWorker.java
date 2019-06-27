@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
 import spring.service.person.PersonService;
@@ -81,7 +81,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
 	private List<PatientSearchResults> getObservationsByReferringPatientId(String referringId) {
 		List<PatientSearchResults> resultList = new ArrayList<>();
-		List<ObservationHistory> observationList = ObservationHistoryServiceImpl.getInstance()
+		List<ObservationHistory> observationList = SpringContext.getBean(ObservationHistoryService.class)
 				.getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
 
 		if (observationList != null) {

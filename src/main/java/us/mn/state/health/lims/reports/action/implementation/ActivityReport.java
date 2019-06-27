@@ -25,7 +25,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
 import spring.service.result.ResultService;
@@ -114,15 +114,14 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 	protected ActivityReportBean createActivityReportBean(Result result, boolean useTestName) {
 		ActivityReportBean item = new ActivityReportBean();
 
-		ResultService resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
+		ResultService resultService = SpringContext.getBean(ResultService.class);
 		SampleService sampleService = SpringContext.getBean(SampleService.class);
 		Sample sample = result.getAnalysis().getSampleItem().getSample();
 		PatientService patientService = SpringContext.getBean(PatientService.class);
 		SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		item.setResultValue(resultResultService.getResultValue("\n", true, true));
-		item.setTechnician(resultResultService.getSignature());
+		item.setResultValue(resultService.getResultValue(result, "\n", true, true));
+		item.setTechnician(resultService.getSignature(result));
 		item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
 		item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
 		item.setResultDate(DateUtil.convertTimestampToTwoYearStringDate(result.getLastupdated()));
@@ -134,14 +133,14 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 				patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());
 		values.add(patientService.getNationalId(patient));
 
-		String referringPatientId = ObservationHistoryServiceImpl.getInstance()
+		String referringPatientId = SpringContext.getBean(ObservationHistoryService.class)
 				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());
 		values.add(referringPatientId == null ? "" : referringPatientId);
 
 		String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
 
 		if (useTestName) {
-			item.setPatientOrTestName(resultResultService.getReportingTestName());
+			item.setPatientOrTestName(resultService.getReportingTestName(result));
 			item.setNonPrintingPatient(name);
 		} else {
 			item.setPatientOrTestName(name);

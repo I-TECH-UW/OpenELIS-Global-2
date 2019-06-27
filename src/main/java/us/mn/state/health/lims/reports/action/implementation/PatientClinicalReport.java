@@ -268,8 +268,8 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 				parentResults.add(data.getParentResult().getId());
 				ClinicalPatientData marker = new ClinicalPatientData(data);
 				ResultService resultResultService = SpringContext.getBean(ResultService.class);
-				resultResultService.setResult(data.getParentResult());
-				marker.setTestName(resultResultService.getSimpleResultValue());
+				Result result = data.getParentResult();
+				marker.setTestName(resultResultService.getSimpleResultValue(result));
 				marker.setResult(null);
 				marker.setTestRefRange(null);
 				marker.setParentMarker(true);

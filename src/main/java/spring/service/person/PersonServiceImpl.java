@@ -25,7 +25,7 @@ import us.mn.state.health.lims.person.valueholder.Person;
 @DependsOn({ "springContext" })
 public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> implements PersonService {
 
-	private static Map<String, String> addressPartIdToNameMap;
+	private Map<String, String> addressPartIdToNameMap;
 
 	@Autowired
 	protected PersonDAO baseObjectDAO;
@@ -39,13 +39,11 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	@PostConstruct
 	private void initializeGlobalVariables() {
-		if (addressPartIdToNameMap == null) {
-			addressPartIdToNameMap = new HashMap<>();
-			List<AddressPart> parts = addressPartService.getAll();
+		addressPartIdToNameMap = new HashMap<>();
+		List<AddressPart> parts = addressPartService.getAll();
 
-			for (AddressPart part : parts) {
-				addressPartIdToNameMap.put(part.getId(), part.getPartName());
-			}
+		for (AddressPart part : parts) {
+			addressPartIdToNameMap.put(part.getId(), part.getPartName());
 		}
 	}
 

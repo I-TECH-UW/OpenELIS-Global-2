@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
 import spring.service.samplehuman.SampleHumanService;
@@ -110,7 +110,7 @@ public abstract class BaseWorkplanController extends BaseController {
 					: patientService.getLastName(patient).toUpperCase());
 			values.add(patientService.getNationalId(patient));
 
-			String referringPatientId = ObservationHistoryServiceImpl.getInstance()
+			String referringPatientId = SpringContext.getBean(ObservationHistoryService.class)
 					.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());
 			values.add(referringPatientId == null ? "" : referringPatientId);
 			return StringUtil.buildDelimitedStringFromList(values, " / ", true);

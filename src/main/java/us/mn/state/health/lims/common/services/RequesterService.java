@@ -53,7 +53,6 @@ public class RequesterService {
 	private String sampleId;
 	private Person person;
 	private List<SampleRequester> requesters;
-	private PersonService personPersonService;
 	private Organization organization;
 
 	public static enum Requester {
@@ -176,8 +175,7 @@ public class RequesterService {
 		requesters = sampleRequesterService.getRequestersForSampleId(sampleId);
 		for (SampleRequester requester : requesters) {
 			if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
-				Person person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-				this.person = person;
+				person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
 			} else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
 				organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
 			}

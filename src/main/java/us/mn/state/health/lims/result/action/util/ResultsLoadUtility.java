@@ -844,8 +844,7 @@ public class ResultsLoadUtility {
 
 	private String getFormattedResultValue(Result result) {
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
-		return result != null ? resultResultService.getResultValue(false) : "";
+		return result != null ? resultResultService.getResultValue(result, false) : "";
 	}
 
 	private boolean hasLogValue(Test test) {// Analysis analysis, String resultValue) {

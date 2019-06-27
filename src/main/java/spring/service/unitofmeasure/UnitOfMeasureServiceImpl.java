@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
@@ -24,8 +23,6 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String>
 		implements UnitOfMeasureService, LocaleChangeListener {
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private Map<String, String> unitOfMeasureIdToNameMap = null;
 
 	@Autowired
@@ -37,10 +34,8 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	}
 
 	@PostConstruct
-	public void initializeGlobalVariables() {
-		if (unitOfMeasureIdToNameMap == null) {
-			createTestIdToNameMap();
-		}
+	private void initializeGlobalVariables() {
+		createTestIdToNameMap();
 	}
 
 	UnitOfMeasureServiceImpl() {
@@ -54,10 +49,10 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 
 	@Override
 	public void localeChanged(String locale) {
-		LANGUAGE_LOCALE = locale;
 		testNamesChanged();
 	}
 
+	@Override
 	public void refreshNames() {
 		testNamesChanged();
 	}
@@ -74,9 +69,9 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	private void createTestIdToNameMap() {
 		unitOfMeasureIdToNameMap = new HashMap<>();
 
-		List<UnitOfMeasure> UnitOfMeasures = unitOfMeasureDAO.getAll();
+		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureDAO.getAll();
 
-		for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
+		for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
 			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(),
 					buildUnitOfMeasureName(unitOfMeasure).replace("\n", " "));
 		}

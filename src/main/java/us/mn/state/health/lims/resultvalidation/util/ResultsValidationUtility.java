@@ -334,8 +334,7 @@ public class ResultsValidationUtility {
 			return uom;
 		}
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
-		resultResultService.setResult(result);
-		String range = resultResultService.getDisplayReferenceRange(true);
+		String range = resultResultService.getDisplayReferenceRange(result, true);
 		uom = StringUtil.blankIfNull(uom);
 		return GenericValidator.isBlankOrNull(range) ? uom : (uom + " ( " + range + " )");
 	}
@@ -520,8 +519,7 @@ public class ResultsValidationUtility {
 			return result.split("\\(")[0].trim();
 		} else {
 			ResultService resultResultService = SpringContext.getBean(ResultService.class);
-			resultResultService.setResult(testResultItem.getResult());
-			return resultResultService.getResultValue(false);
+			return resultResultService.getResultValue(testResultItem.getResult(), false);
 		}
 	}
 

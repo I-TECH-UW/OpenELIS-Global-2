@@ -100,4 +100,6 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
 	String getPCNumber(Patient patient);
 
+	Patient getPatientForGuid(String patientGuid);
+
 }

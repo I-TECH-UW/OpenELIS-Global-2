@@ -34,7 +34,8 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @DependsOn({ "springContext" })
 public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, String> implements ResultLimitService {
 
-	private final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
+	private static final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
+
 	private String NUMERIC_RESULT_TYPE_ID;
 	private String SELECT_LIST_RESULT_TYPE_IDS;
 
@@ -47,8 +48,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	private SiteInformationService siteInformationService;
 	@Autowired
 	private TypeOfTestResultService typeOfTestResultService;
-
-	private double currPatientAge;
 
 	@PostConstruct
 	public void initializeGlobalVariables() {
@@ -75,8 +74,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	@Override
 	@Transactional(readOnly = true)
 	public ResultLimit getResultLimitForTestAndPatient(String testId, Patient patient) {
-		currPatientAge = INVALID_PATIENT_AGE;
-
 		List<ResultLimit> resultLimits = getResultLimits(testId);
 
 		if (resultLimits.isEmpty()) {
@@ -204,15 +201,15 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 	}
 
 	private double getCurrPatientAge(Patient patient) {
-		if (currPatientAge == INVALID_PATIENT_AGE && patient.getBirthDate() != null) {
+		if (patient.getBirthDate() != null) {
 
 			Calendar dob = Calendar.getInstance();
 			dob.setTime(patient.getBirthDate());
 
-			currPatientAge = DateUtil.getAgeInMonths(patient.getBirthDate(), new Date());
+			return DateUtil.getAgeInMonths(patient.getBirthDate(), new Date());
 		}
 
-		return currPatientAge;
+		return INVALID_PATIENT_AGE;
 	}
 
 	@Override
