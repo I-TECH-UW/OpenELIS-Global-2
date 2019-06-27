@@ -45,6 +45,7 @@ import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.referral.ReferralService;
 import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultService;
@@ -122,6 +123,7 @@ public class ResultsLoadUtility {
 	private List<InventoryKitItem> activeKits;
 
 	private PatientService patientService;
+	private Patient currentPatient;
 
 	@Autowired
 	private ResultService resultService;
@@ -206,8 +208,9 @@ public class ResultsLoadUtility {
 			samples.add(sample);
 		}
 
-		patientService = SpringContext.getBean(PatientService.class);
-		patientService.setPatient(patient);
+		currentPatient = patient;
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
 		return getGroupedTestsForSamples();
 	}
@@ -217,8 +220,9 @@ public class ResultsLoadUtility {
 		activeKits = null;
 		inventoryNeeded = false;
 
-		patientService = SpringContext.getBean(PatientService.class);
-		patientService.setPatient(patient);
+		currentPatient = patient;
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
 		samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
@@ -274,17 +278,18 @@ public class ResultsLoadUtility {
 			patientService = SpringContext.getBean(PatientService.class);
 			SampleService sampleService = SpringContext.getBean(SampleService.class);
 			Sample sample = analysis.getSampleItem().getSample();
-			patientService.setPatient(sampleService.getPatient(sample));
+			currentPatient = sampleService.getPatient(sample);
 
 			String patientName = "";
 			String patientInfo;
-			String nationalId = patientService.getNationalId();
+			String nationalId = patientService.getNationalId(currentPatient);
 			if (depersonalize) {
-				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId() : nationalId;
+				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId(currentPatient)
+						: nationalId;
 			} else {
-				patientName = patientService.getLastFirstName();
-				patientInfo = nationalId + ", " + patientService.getGender() + ", "
-						+ patientService.getBirthdayForDisplay();
+				patientName = patientService.getLastFirstName(currentPatient);
+				patientInfo = nationalId + ", " + patientService.getGender(currentPatient) + ", "
+						+ patientService.getBirthdayForDisplay(currentPatient);
 			}
 
 			currSample = analysis.getSampleItem().getSample();
@@ -611,7 +616,7 @@ public class ResultsLoadUtility {
 		TestService testService = SpringContext.getBean(TestService.class);
 		Test test = analysisService.getTest(analysis);
 		ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
-				patientService.getPatient());
+				currentPatient);
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
 		String testMethodName = testService.getTestMethodName(test);

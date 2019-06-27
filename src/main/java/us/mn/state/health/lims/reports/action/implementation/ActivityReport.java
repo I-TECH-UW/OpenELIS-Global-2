@@ -30,11 +30,13 @@ import spring.service.observationhistory.ObservationHistoryServiceImpl.Observati
 import spring.service.patient.PatientService;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
+import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
@@ -116,8 +118,9 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 		resultResultService.setResult(result);
 		SampleService sampleService = SpringContext.getBean(SampleService.class);
 		Sample sample = result.getAnalysis().getSampleItem().getSample();
-		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-		patientSampleService.setPatientBySample(sample);
+		PatientService patientService = SpringContext.getBean(PatientService.class);
+		SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		item.setResultValue(resultResultService.getResultValue("\n", true, true));
 		item.setTechnician(resultResultService.getSignature());
 		item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
@@ -127,8 +130,9 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 				DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
 
 		List<String> values = new ArrayList<>();
-		values.add(patientSampleService.getLastName() == null ? "" : patientSampleService.getLastName().toUpperCase());
-		values.add(patientSampleService.getNationalId());
+		values.add(
+				patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());
+		values.add(patientService.getNationalId(patient));
 
 		String referringPatientId = ObservationHistoryServiceImpl.getInstance()
 				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());

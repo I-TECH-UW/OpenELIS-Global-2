@@ -29,6 +29,7 @@ import org.apache.commons.validator.GenericValidator;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
@@ -97,14 +98,16 @@ public class PatientSearchProvider extends BaseQueryProvider {
 
 	private PatientSearchResults getSearchResultsForPatient(Patient patient) {
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-				patientPatientService.getFirstName(), patientPatientService.getLastName(),
-				patientPatientService.getGender(), patientPatientService.getEnteredDOB(),
-				patientPatientService.getNationalId(), patient.getExternalId(), patientPatientService.getSTNumber(),
-				patientPatientService.getSubjectNumber(), patientPatientService.getGUID(),
+				patientPatientService.getFirstName(patient), patientPatientService.getLastName(patient),
+				patientPatientService.getGender(patient), patientPatientService.getEnteredDOB(patient),
+				patientPatientService.getNationalId(patient), patient.getExternalId(),
+				patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
+				patientPatientService.getGUID(patient),
 				ObservationHistoryServiceImpl.getInstance().getMostRecentValueForPatient(
-						ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId()));
+						ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId(patient)));
 	}
 
 	private Patient getPatientForLabNumber(String labNumber) {

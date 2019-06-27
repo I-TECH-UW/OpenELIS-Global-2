@@ -135,6 +135,7 @@ public abstract class PatientReport extends Report {
 	protected String completionDate;
 	protected SampleService currentSampleService;
 	protected Sample currentSample;
+	protected Patient currentPatient;
 
 	protected static final NoteType[] FILTER = { NoteType.EXTERNAL, NoteType.REJECTION_REASON,
 			NoteType.NON_CONFORMITY };
@@ -260,15 +261,15 @@ public abstract class PatientReport extends Report {
 	}
 
 	private void findPatientInfo() {
-		if (patientService.getPerson() == null) {
+		if (patientService.getPerson(currentPatient) == null) {
 			return;
 		}
 
 		patientDept = "";
 		patientCommune = "";
 		if (ADDRESS_DEPT_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
-					ADDRESS_DEPT_ID);
+			PersonAddress deptAddress = addressService
+					.getByPersonIdAndPartId(patientService.getPerson(currentPatient).getId(), ADDRESS_DEPT_ID);
 
 			if (deptAddress != null && !GenericValidator.isBlankOrNull(deptAddress.getValue())) {
 				patientDept = dictionaryService.getDictionaryById(deptAddress.getValue()).getDictEntry();
@@ -276,8 +277,8 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (ADDRESS_COMMUNE_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
-					ADDRESS_COMMUNE_ID);
+			PersonAddress deptAddress = addressService
+					.getByPersonIdAndPartId(patientService.getPerson(currentPatient).getId(), ADDRESS_COMMUNE_ID);
 
 			if (deptAddress != null) {
 				patientCommune = deptAddress.getValue();
@@ -381,11 +382,12 @@ public abstract class PatientReport extends Report {
 	protected void findPatientFromSample() {
 		Patient patient = sampleHumanService.getPatientForSample(currentSample);
 
-		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
+		if (patientService == null || !patient.getId().equals(patientService.getPatientId(patient))) {
 			STNumber = null;
 			patientDOB = null;
 			patientService = SpringContext.getBean(PatientService.class);
-			patientService.setPatient(patient);
+			personService.getData(patient.getPerson());
+			currentPatient = patient;
 		}
 	}
 
@@ -403,18 +405,18 @@ public abstract class PatientReport extends Report {
 
 	protected abstract String getHeaderName();
 
-	protected String getPatientDOB() {
+	protected String getPatientDOB(Patient patient) {
 		if (patientDOB == null) {
-			patientDOB = patientService.getBirthdayForDisplay();
+			patientDOB = patientService.getBirthdayForDisplay(patient);
 		}
 
 		return patientDOB;
 	}
 
-	protected String getLazyPatientIdentity(String identity, String id) {
+	protected String getLazyPatientIdentity(Patient patient, String identity, String id) {
 		if (identity == null) {
 			identity = " ";
-			List<PatientIdentity> identities = patientService.getIdentityList();
+			List<PatientIdentity> identities = patientService.getIdentityList(patient);
 			for (PatientIdentity patientIdentity : identities) {
 				if (patientIdentity.getIdentityTypeId().equals(id)) {
 					identity = patientIdentity.getIdentityData();
@@ -427,9 +429,9 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected void setPatientName(ClinicalPatientData data) {
-		data.setPatientName(patientService.getLastFirstName());
-		data.setFirstName(patientService.getFirstName());
-		data.setLastName(patientService.getLastName());
+		data.setPatientName(patientService.getLastFirstName(currentPatient));
+		data.setFirstName(patientService.getFirstName(currentPatient));
+		data.setLastName(patientService.getLastName(currentPatient));
 	}
 
 	protected void reportResultAndConclusion(ClinicalPatientData data) {
@@ -782,18 +784,20 @@ public abstract class PatientReport extends Report {
 		data.setContactInfo(currentContactInfo);
 		data.setSiteInfo(currentSiteInfo);
 		data.setReceivedDate(receivedDate);
-		data.setDob(getPatientDOB());
+		data.setDob(getPatientDOB(currentPatient));
 		data.setAge(createReadableAge(data.getDob()));
-		data.setGender(patientService.getGender());
-		data.setNationalId(patientService.getNationalId());
+		data.setGender(patientService.getGender(currentPatient));
+		data.setNationalId(patientService.getNationalId(currentPatient));
 		setPatientName(data);
 		data.setDept(patientDept);
 		data.setCommune(patientCommune);
-		data.setStNumber(getLazyPatientIdentity(STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
-		data.setSubjectNumber(getLazyPatientIdentity(subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
-		data.setHealthRegion(getLazyPatientIdentity(healthRegion, PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
-		data.setHealthDistrict(
-				getLazyPatientIdentity(healthDistrict, PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
+		data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
+		data.setSubjectNumber(
+				getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
+		data.setHealthRegion(getLazyPatientIdentity(currentPatient, healthRegion,
+				PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
+		data.setHealthDistrict(getLazyPatientIdentity(currentPatient, healthDistrict,
+				PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
 		data.setLabOrderType(ObservationHistoryServiceImpl.getInstance().getValueForSample(ObservationType.PROGRAM,
 				currentSampleService.getId(currentSample)));
 		data.setTestName(testName);

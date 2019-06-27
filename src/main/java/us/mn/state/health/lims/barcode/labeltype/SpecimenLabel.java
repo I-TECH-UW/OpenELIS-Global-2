@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -132,13 +133,14 @@ public class SpecimenLabel extends Label {
 	 */
 	private LabelField getAvailableIdField(Patient patient) {
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
-		String patientId = patientPatientService.getSubjectNumber();
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
+		String patientId = patientPatientService.getSubjectNumber(patient);
 		if (!StringUtil.isNullorNill(patientId)) {
 			return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
 					StringUtils.substring(patientId, 0, 25), 6);
 		}
-		patientId = patientPatientService.getNationalId();
+		patientId = patientPatientService.getNationalId(patient);
 		if (!StringUtil.isNullorNill(patientId)) {
 			return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
 					StringUtils.substring(patientId, 0, 25), 6);

@@ -32,6 +32,7 @@ import spring.mine.qaevent.validator.NonConformityFormValidator;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.project.ProjectService;
 import spring.service.provider.ProviderService;
 import spring.service.requester.SampleRequesterService;
@@ -182,10 +183,13 @@ public class NonConformityController extends BaseController {
 
 	private void createForExistingSample(NonConformityForm form, Sample sample)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PatientService patientService = getPatientService(sample);
-		List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patientService);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
+		PatientService patientService = SpringContext.getBean(PatientService.class);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
+		List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patient);
 		PropertyUtils.setProperty(form, "sampleId", sample.getId());
-		PropertyUtils.setProperty(form, "patientId", patientService.getPatientId());
+		PropertyUtils.setProperty(form, "patientId", patientService.getPatientId(patient));
 
 		Project project = getProjectForSample(sample);
 		if (project != null) {
@@ -193,19 +197,19 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "project", project.getLocalizedName());
 		}
 
-		String subjectNo = patientService.getSubjectNumber();
+		String subjectNo = patientService.getSubjectNumber(patient);
 		if (!GenericValidator.isBlankOrNull(subjectNo)) {
 			PropertyUtils.setProperty(form, "subjectNew", Boolean.FALSE);
 			PropertyUtils.setProperty(form, "subjectNo", subjectNo);
 		}
 
-		String STNo = patientService.getSTNumber();
+		String STNo = patientService.getSTNumber(patient);
 		if (!GenericValidator.isBlankOrNull(STNo)) {
 			PropertyUtils.setProperty(form, "newSTNumber", Boolean.FALSE);
 			PropertyUtils.setProperty(form, "STNumber", STNo);
 		}
 
-		String nationalId = patientService.getNationalId();
+		String nationalId = patientService.getNationalId(patient);
 		if (!GenericValidator.isBlankOrNull(nationalId)) {
 			PropertyUtils.setProperty(form, "nationalIdNew", Boolean.FALSE);
 			PropertyUtils.setProperty(form, "nationalId", nationalId);
@@ -360,15 +364,8 @@ public class NonConformityController extends BaseController {
 		return sampleService.getSampleByAccessionNumber(labNumber);
 	}
 
-	private PatientService getPatientService(Sample sample) {
-		Patient patient = sampleHumanService.getPatientForSample(sample);
-		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
-		return patientPatientService;
-	}
-
-	private List<ObservationHistory> getObservationHistory(Sample sample, PatientService patientService) {
-		return observationHistoryService.getAll(patientService.getPatient(), sample);
+	private List<ObservationHistory> getObservationHistory(Sample sample, Patient patient) {
+		return observationHistoryService.getAll(patient, sample);
 	}
 
 	private Project getProjectForSample(Sample sample) {

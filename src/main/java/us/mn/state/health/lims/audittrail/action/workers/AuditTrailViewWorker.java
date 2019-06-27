@@ -26,9 +26,9 @@ import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.patient.PatientService;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.SampleOrderService;
@@ -104,9 +104,9 @@ public class AuditTrailViewWorker {
 		getSample();
 
 		if (sample != null) {
-			PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-			patientSampleService.setPatientBySample(sample);
-			return new PatientManagementBridge().getPatientManagementInfoFor(patientSampleService.getPatient(), true);
+			SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+			Patient patient = sampleHumanService.getPatientForSample(sample);
+			return new PatientManagementBridge().getPatientManagementInfoFor(patient, true);
 		} else {
 			return new PatientManagementInfo();
 		}

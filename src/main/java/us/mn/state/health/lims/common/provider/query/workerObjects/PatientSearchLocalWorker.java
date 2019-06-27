@@ -27,6 +27,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.search.SearchResultsService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -98,12 +99,14 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
 	private PatientSearchResults getSearchResultsForPatient(Patient patient, String referringId) {
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientService.setPatient(patient);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-				patientPatientService.getFirstName(), patientPatientService.getLastName(),
-				patientPatientService.getGender(), patientPatientService.getEnteredDOB(),
-				patientPatientService.getNationalId(), patient.getExternalId(), patientPatientService.getSTNumber(),
-				patientPatientService.getSubjectNumber(), patientPatientService.getGUID(), referringId);
+				patientPatientService.getFirstName(patient), patientPatientService.getLastName(patient),
+				patientPatientService.getGender(patient), patientPatientService.getEnteredDOB(patient),
+				patientPatientService.getNationalId(patient), patient.getExternalId(),
+				patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
+				patientPatientService.getGUID(patient), referringId);
 	}
 
 }

@@ -5,54 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import spring.service.common.BaseObjectService;
-import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public interface PatientService extends BaseObjectService<Patient, String> {
-
-	String getGUID();
-
-	String getSTNumber();
-
-	String getSubjectNumber();
-
-	String getLocalizedGender();
-
-	Map<String, String> getAddressComponents();
-
-	String getEnteredDOB();
-
-	Timestamp getDOB();
-
-	String getPhone();
-
-	String getAKA();
-
-	String getMother();
-
-	String getInsurance();
-
-	String getOccupation();
-
-	String getOrgSite();
-
-	String getMothersInitial();
-
-	String getEducation();
-
-	String getMaritalStatus();
-
-	String getHealthDistrict();
-
-	String getHealthRegion();
-
-	String getObNumber();
-
-	String getPCNumber();
 
 	void getData(Patient patient);
 
@@ -82,34 +40,64 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
 	void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId);
 
-	Person getPerson();
+	String getGUID(Patient patient);
 
-	String getBirthdayForDisplay();
+	String getNationalId(Patient patient);
 
-	List<PatientIdentity> getIdentityList();
+	String getSTNumber(Patient patient);
 
-	String getLastFirstName();
+	String getSubjectNumber(Patient patient);
 
-	String getFirstName();
+	String getFirstName(Patient patient);
 
-	String getLastName();
+	String getLastName(Patient patient);
 
-	String getPatientId();
+	String getLastFirstName(Patient patient);
 
-	String getGender();
+	String getGender(Patient patient);
 
-	String getNationalId();
+	String getLocalizedGender(Patient patient);
 
-	Patient getPatient();
+	Map<String, String> getAddressComponents(Patient patient);
 
-	void setPatient(Patient patient);
+	String getEnteredDOB(Patient patient);
 
-	String getExternalId();
+	Timestamp getDOB(Patient patient);
 
-	void setPatient(MessagePatient orderPatient);
+	String getPhone(Patient patient);
 
-	void setPatientBySample(Sample sample);
+	Person getPerson(Patient patient);
 
-	void setPatient(String guid);
+	String getPatientId(Patient patient);
+
+	String getBirthdayForDisplay(Patient patient);
+
+	List<PatientIdentity> getIdentityList(Patient patient);
+
+	String getExternalId(Patient patient);
+
+	String getAKA(Patient patient);
+
+	String getMother(Patient patient);
+
+	String getInsurance(Patient patient);
+
+	String getOccupation(Patient patient);
+
+	String getOrgSite(Patient patient);
+
+	String getMothersInitial(Patient patient);
+
+	String getEducation(Patient patient);
+
+	String getMaritalStatus(Patient patient);
+
+	String getHealthDistrict(Patient patient);
+
+	String getHealthRegion(Patient patient);
+
+	String getObNumber(Patient patient);
+
+	String getPCNumber(Patient patient);
 
 }

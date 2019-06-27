@@ -33,6 +33,7 @@ import spring.mine.sample.form.SampleEditForm;
 import spring.mine.sample.validator.SampleEditFormValidator;
 import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleEditService;
 import spring.service.sample.SampleService;
@@ -226,12 +227,13 @@ public class SampleEditController extends BaseController {
 
 		Patient patient = sampleHumanService.getPatientForSample(sample);
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
-		PropertyUtils.setProperty(form, "patientName", patientPatientService.getLastFirstName());
-		PropertyUtils.setProperty(form, "dob", patientPatientService.getEnteredDOB());
-		PropertyUtils.setProperty(form, "gender", patientPatientService.getGender());
-		PropertyUtils.setProperty(form, "nationalId", patientPatientService.getNationalId());
+		PropertyUtils.setProperty(form, "patientName", patientPatientService.getLastFirstName(patient));
+		PropertyUtils.setProperty(form, "dob", patientPatientService.getEnteredDOB(patient));
+		PropertyUtils.setProperty(form, "gender", patientPatientService.getGender(patient));
+		PropertyUtils.setProperty(form, "nationalId", patientPatientService.getNationalId(patient));
 	}
 
 	private List<SampleEditItem> getCurrentTestInfo(List<SampleItem> sampleItemList, String accessionNumber,

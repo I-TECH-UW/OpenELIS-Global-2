@@ -30,6 +30,7 @@ import spring.service.note.NoteService;
 import spring.service.patient.PatientService;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
+import spring.service.person.PersonService;
 import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.samplehuman.SampleHumanService;
@@ -230,14 +231,15 @@ public class ResultReportingCollator {
 		if (forMalaria) {
 			// Patient demographic data
 			PatientService patientService = SpringContext.getBean(PatientService.class);
-			patientService.setPatient(patient);
-			testResult.setPatientFirstName(patientService.getFirstName());
-			testResult.setPatientLastName(patientService.getLastName());
-			testResult.setPatientGender(patientService.getGender());
-			testResult.setPatientBirthdate(patientService.getEnteredDOB());
-			testResult.setPatientTelephone(patientService.getPhone());
+			PersonService personService = SpringContext.getBean(PersonService.class);
+			personService.getData(patient.getPerson());
+			testResult.setPatientFirstName(patientService.getFirstName(patient));
+			testResult.setPatientLastName(patientService.getLastName(patient));
+			testResult.setPatientGender(patientService.getGender(patient));
+			testResult.setPatientBirthdate(patientService.getEnteredDOB(patient));
+			testResult.setPatientTelephone(patientService.getPhone(patient));
 
-			Map<String, String> addressParts = patientService.getAddressComponents();
+			Map<String, String> addressParts = patientService.getAddressComponents(patient);
 			testResult.setPatientStreetAddress(addressParts.get("Street"));
 			testResult.setPatientCity(addressParts.get("City"));
 			testResult.setPatientState(addressParts.get("State"));

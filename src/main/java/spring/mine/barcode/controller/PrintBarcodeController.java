@@ -28,6 +28,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
@@ -230,12 +231,13 @@ public class PrintBarcodeController extends BaseController {
 
 		Patient patient = sampleHumanService.getPatientForSample(sample);
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
-		displayObjects.put("patientName", patientPatientService.getLastFirstName());
-		displayObjects.put("dob", patientPatientService.getEnteredDOB());
-		displayObjects.put("gender", patientPatientService.getGender());
-		displayObjects.put("nationalId", patientPatientService.getNationalId());
+		displayObjects.put("patientName", patientPatientService.getLastFirstName(patient));
+		displayObjects.put("dob", patientPatientService.getEnteredDOB(patient));
+		displayObjects.put("gender", patientPatientService.getGender(patient));
+		displayObjects.put("nationalId", patientPatientService.getNationalId(patient));
 	}
 
 	private static class SampleEditItemComparator implements Comparator<SampleEditItem> {

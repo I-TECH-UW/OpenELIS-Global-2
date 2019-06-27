@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.organization.OrganizationService;
-import spring.service.patient.PatientService;
 import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -37,6 +37,7 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
 import us.mn.state.health.lims.organization.valueholder.Organization;
+import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
@@ -247,9 +248,9 @@ public class SampleOrderService {
 	private void createObservationHistoryArtifacts(SampleOrderItem sampleOrder, String currentUserId,
 			SampleOrderPersistenceArtifacts artifacts) {
 		List<ObservationHistory> observations = new ArrayList<>();
-		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-		patientSampleService.setPatientBySample(artifacts.getSample());
-		String patientId = patientSampleService.getPatient().getId();
+		SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+		Patient patient = sampleHumanService.getPatientForSample(artifacts.getSample());
+		String patientId = patient.getId();
 
 		createOrUpdateObservation(currentUserId, observations, patientId, ObservationType.REFERRERS_PATIENT_ID,
 				sampleOrder.getReferringPatientNumber(), ValueType.LITERAL);

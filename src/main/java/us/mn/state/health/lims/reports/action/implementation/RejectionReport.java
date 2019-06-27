@@ -31,6 +31,7 @@ import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientService;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -38,6 +39,7 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.RejectionReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
@@ -118,8 +120,9 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 
 		SampleService sampleService = SpringContext.getBean(SampleService.class);
 		Sample sample = analysis.getSampleItem().getSample();
-		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-		patientSampleService.setPatientBySample(sample);
+		PatientService patientService = SpringContext.getBean(PatientService.class);
+		SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 
 		List<Result> results = analysisService.getResults(analysis);
 		for (Result result : results) {
@@ -138,12 +141,12 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 				DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));
 		item.setRejectionReason(noteText);
 
-		StringBuilder nameBuilder = new StringBuilder(patientSampleService.getLastName().toUpperCase());
-		if (!GenericValidator.isBlankOrNull(patientSampleService.getNationalId())) {
+		StringBuilder nameBuilder = new StringBuilder(patientService.getLastName(patient).toUpperCase());
+		if (!GenericValidator.isBlankOrNull(patientService.getNationalId(patient))) {
 			if (nameBuilder.length() > 0) {
 				nameBuilder.append(" / ");
 			}
-			nameBuilder.append(patientSampleService.getNationalId());
+			nameBuilder.append(patientService.getNationalId(patient));
 		}
 
 		if (useTestName) {

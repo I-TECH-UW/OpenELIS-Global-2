@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.barcode.LabelField;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -69,19 +70,20 @@ public class OrderLabel extends Label {
 
 	/**
 	 * Get first available id to identify a patient (Subject Number > National Id)
-	 * 
+	 *
 	 * @param patient Who to find identification for
 	 * @return label field containing patient id
 	 */
 	private LabelField getAvailableIdField(Patient patient) {
 		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
-		String patientId = patientPatientService.getSubjectNumber();
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
+		String patientId = patientPatientService.getSubjectNumber(patient);
 		if (!StringUtil.isNullorNill(patientId)) {
 			return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
 					StringUtils.substring(patientId, 0, 25), 6);
 		}
-		patientId = patientPatientService.getNationalId();
+		patientId = patientPatientService.getNationalId(patient);
 		if (!StringUtil.isNullorNill(patientId)) {
 			return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
 					StringUtils.substring(patientId, 0, 25), 6);
@@ -91,7 +93,7 @@ public class OrderLabel extends Label {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see us.mn.state.health.lims.barcode.labeltype.Label#getNumTextRowsBefore()
 	 */
 	@Override
@@ -128,7 +130,7 @@ public class OrderLabel extends Label {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see us.mn.state.health.lims.barcode.labeltype.Label#getNumTextRowsAfter()
 	 */
 	@Override
@@ -138,7 +140,7 @@ public class OrderLabel extends Label {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see us.mn.state.health.lims.barcode.labeltype.Label#getMaxNumLabels()
 	 */
 	@Override
