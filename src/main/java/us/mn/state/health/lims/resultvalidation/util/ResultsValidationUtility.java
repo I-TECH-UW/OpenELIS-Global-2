@@ -246,9 +246,8 @@ public class ResultsValidationUtility {
 		List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 		NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
 				NoteType.NON_CONFORMITY };
-		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(analysis);
-		String notes = noteAnalysisService.getNotesAsString(true, true, "<br/>", noteTypes, false);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String notes = noteService.getNotesAsString(analysis, true, true, "<br/>", noteTypes, false);
 
 		if (resultList == null) {
 			return testResultList;

@@ -66,6 +66,7 @@ public class ResultReportingCollator {
 			.getBean(PatientIdentityTypeService.class);
 	private TypeOfTestResultService typeOfTestResultService = SpringContext.getBean(TypeOfTestResultService.class);
 	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	private NoteService noteService = SpringContext.getBean(NoteService.class);
 
 	private String VALIDATED_RESULT_STATUS_ID;
 
@@ -228,15 +229,15 @@ public class ResultReportingCollator {
 		// Malaria case report needs the following extra data elements
 		if (forMalaria) {
 			// Patient demographic data
-			PatientService patientPatientService = SpringContext.getBean(PatientService.class);
-			patientPatientService.setPatient(patient);
-			testResult.setPatientFirstName(patientPatientService.getFirstName());
-			testResult.setPatientLastName(patientPatientService.getLastName());
-			testResult.setPatientGender(patientPatientService.getGender());
-			testResult.setPatientBirthdate(patientPatientService.getEnteredDOB());
-			testResult.setPatientTelephone(patientPatientService.getPhone());
+			PatientService patientService = SpringContext.getBean(PatientService.class);
+			patientService.setPatient(patient);
+			testResult.setPatientFirstName(patientService.getFirstName());
+			testResult.setPatientLastName(patientService.getLastName());
+			testResult.setPatientGender(patientService.getGender());
+			testResult.setPatientBirthdate(patientService.getEnteredDOB());
+			testResult.setPatientTelephone(patientService.getPhone());
 
-			Map<String, String> addressParts = patientPatientService.getAddressComponents();
+			Map<String, String> addressParts = patientService.getAddressComponents();
 			testResult.setPatientStreetAddress(addressParts.get("Street"));
 			testResult.setPatientCity(addressParts.get("City"));
 			testResult.setPatientState(addressParts.get("State"));
@@ -269,9 +270,7 @@ public class ResultReportingCollator {
 		if (result != null) {
 			Analysis analysis = new Analysis();
 			analysis.setId(result.getAnalysis().getId());
-			NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-			noteAnalysisService.setAnalysis(analysis);
-			return noteAnalysisService.getNotesAsString(false, false, "<br/>", false);
+			return noteService.getNotesAsString(analysis, false, false, "<br/>", false);
 		}
 		return null;
 	}

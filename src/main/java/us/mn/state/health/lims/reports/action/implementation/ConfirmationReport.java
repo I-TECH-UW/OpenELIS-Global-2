@@ -194,9 +194,8 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getNoteForSampleItem(SampleItem sampleItem) {
-		NoteService noteSampleItemService = SpringContext.getBean(NoteService.class);
-		noteSampleItemService.setSampleItem(sampleItem);
-		String notes = noteSampleItemService.getNotesAsString(null, null);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String notes = noteService.getNotesAsString(sampleItem, null, null);
 		return notes == null ? "" : notes;
 	}
 

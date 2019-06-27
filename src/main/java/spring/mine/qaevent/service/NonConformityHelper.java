@@ -13,9 +13,8 @@ public class NonConformityHelper {
 	private static final String QA_NOTE_SUBJECT = "QaEvent Note";
 
 	public static String getNoteForSample(Sample sample) {
-		NoteService noteSampleService = SpringContext.getBean(NoteService.class);
-		noteSampleService.setSample(sample);
-		Note note = noteSampleService.getMostRecentNoteFilteredBySubject(QA_NOTE_SUBJECT);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		Note note = noteService.getMostRecentNoteFilteredBySubject(sample, QA_NOTE_SUBJECT);
 		return note != null ? note.getText() : null;
 	}
 
@@ -23,9 +22,8 @@ public class NonConformityHelper {
 		if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
 			return null;
 		} else {
-			NoteService noteSampleQaEventService = SpringContext.getBean(NoteService.class);
-			noteSampleQaEventService.setSampleQaEvent(sampleQaEvent);
-			Note note = noteSampleQaEventService.getMostRecentNoteFilteredBySubject(null);
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
 			return note != null ? note.getText() : null;
 		}
 	}

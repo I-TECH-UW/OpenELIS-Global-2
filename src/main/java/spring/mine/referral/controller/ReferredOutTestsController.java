@@ -577,9 +577,8 @@ public class ReferredOutTestsController extends BaseController {
 		referral.setReferralReasonId(referralItem.getReferralReasonId());
 		referralSet.setReferral(referral);
 
-		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(referral.getAnalysis());
-		referralSet.setNote(noteAnalysisService.createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		referralSet.setNote(noteService.createSavableNote(referral.getAnalysis(), NoteServiceImpl.NoteType.INTERNAL,
 				referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
 		createReferralResults(referralItem, referralSet);

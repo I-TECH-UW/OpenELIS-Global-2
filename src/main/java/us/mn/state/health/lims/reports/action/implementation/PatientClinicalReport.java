@@ -115,9 +115,8 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>();
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
-		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(currentAnalysis);
-		String note = noteAnalysisService.getNotesAsString(false, true, "<br/>", FILTER, true);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String note = noteService.getNotesAsString(currentAnalysis, false, true, "<br/>", FILTER, true);
 
 		if (!referralResults.isEmpty()) {
 

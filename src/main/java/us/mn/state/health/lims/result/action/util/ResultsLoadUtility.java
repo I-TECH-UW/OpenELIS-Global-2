@@ -121,7 +121,7 @@ public class ResultsLoadUtility {
 
 	private List<InventoryKitItem> activeKits;
 
-	private PatientService patientPatientService;
+	private PatientService patientService;
 
 	@Autowired
 	private ResultService resultService;
@@ -206,8 +206,8 @@ public class ResultsLoadUtility {
 			samples.add(sample);
 		}
 
-		patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
+		patientService = SpringContext.getBean(PatientService.class);
+		patientService.setPatient(patient);
 
 		return getGroupedTestsForSamples();
 	}
@@ -217,8 +217,8 @@ public class ResultsLoadUtility {
 		activeKits = null;
 		inventoryNeeded = false;
 
-		patientPatientService = SpringContext.getBean(PatientService.class);
-		patientPatientService.setPatient(patient);
+		patientService = SpringContext.getBean(PatientService.class);
+		patientService.setPatient(patient);
 
 		samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
@@ -271,21 +271,20 @@ public class ResultsLoadUtility {
 		List<TestResultItem> selectedTestList = new ArrayList<>();
 
 		for (Analysis analysis : filteredAnalysisList) {
-			patientPatientService = SpringContext.getBean(PatientService.class);
+			patientService = SpringContext.getBean(PatientService.class);
 			SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
 			sampleSampleService.setSample(analysis.getSampleItem().getSample());
-			patientPatientService.setPatient(sampleSampleService.getPatient());
+			patientService.setPatient(sampleSampleService.getPatient());
 
 			String patientName = "";
 			String patientInfo;
-			String nationalId = patientPatientService.getNationalId();
+			String nationalId = patientService.getNationalId();
 			if (depersonalize) {
-				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientPatientService.getExternalId()
-						: nationalId;
+				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId() : nationalId;
 			} else {
-				patientName = patientPatientService.getLastFirstName();
-				patientInfo = nationalId + ", " + patientPatientService.getGender() + ", "
-						+ patientPatientService.getBirthdayForDisplay();
+				patientName = patientService.getLastFirstName();
+				patientInfo = nationalId + ", " + patientService.getGender() + ", "
+						+ patientService.getBirthdayForDisplay();
 			}
 
 			currSample = analysis.getSampleItem().getSample();
@@ -441,9 +440,8 @@ public class ResultsLoadUtility {
 			String initialConditions = getInitialSampleConditionString(sampleItem);
 			NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
 					NoteType.NON_CONFORMITY };
-			NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-			noteAnalysisService.setAnalysis(analysis);
-			String notes = noteAnalysisService.getNotesAsString(true, true, "<br/>", noteTypes, false);
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			String notes = noteService.getNotesAsString(analysis, true, true, "<br/>", noteTypes, false);
 
 			TestResultItem resultItem = createTestResultItem(analysis, testKit, notes, sampleItem.getSortOrder(),
 					result, sampleItem.getSample().getAccessionNumber(), patientName, patientInfo, techSignature,
@@ -613,7 +611,7 @@ public class ResultsLoadUtility {
 		TestService testService = SpringContext.getBean(TestService.class);
 		Test test = analysisService.getTest(analysis);
 		ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
-				patientPatientService.getPatient());
+				patientService.getPatient());
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
 		String testMethodName = testService.getTestMethodName(test);

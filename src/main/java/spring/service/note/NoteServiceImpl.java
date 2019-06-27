@@ -8,10 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,6 @@ import spring.service.referencetables.ReferenceTablesService;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.systemuser.SystemUserService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.services.QAService;
@@ -40,7 +40,6 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> implements NoteService {
 
 	public enum NoteType {
@@ -65,84 +64,26 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
-	private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
+	public static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
 	public static String TABLE_REFERENCE_ID;
 
 	@Autowired
-	private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
+	private static NoteDAO baseObjectDAO;
 
 	@Autowired
-	private static SampleQaEventService sampleQAService = SpringContext.getBean(SampleQaEventService.class);
+	private static SampleQaEventService sampleQAService;
 	@Autowired
-	private ReferenceTablesService refTableService = SpringContext.getBean(ReferenceTablesService.class);
+	private ReferenceTablesService refTableService;
 	@Autowired
-	static SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
+	static SystemUserService systemUserService;
 
-	private BoundTo binding;
-	private String tableId;
-	private String objectId;
-	private Object object;
-
-	public synchronized void initializeGlobalVariables() {
+	@PostConstruct
+	public void initializeGlobalVariables() {
 		TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("NOTE").getId();
-		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
 	}
 
 	NoteServiceImpl() {
 		super(Note.class);
-		initializeGlobalVariables();
-	}
-
-	public NoteServiceImpl(Analysis analysis) {
-		this();
-		setAnalysis(analysis);
-	}
-
-	@Override
-	public void setAnalysis(Analysis analysis) {
-		tableId = AnalysisServiceImpl.TABLE_REFERENCE_ID;
-		objectId = analysis.getId();
-		binding = BoundTo.ANALYSIS;
-		object = analysis;
-	}
-
-	public NoteServiceImpl(Sample sample) {
-		this();
-		setSample(sample);
-	}
-
-	@Override
-	public void setSample(Sample sample) {
-		tableId = SampleServiceImpl.TABLE_REFERENCE_ID;
-		objectId = sample.getId();
-		binding = BoundTo.SAMPLE;
-		object = sample;
-	}
-
-	public NoteServiceImpl(SampleQaEvent sampleQaEvent) {
-		this();
-		setSampleQaEvent(sampleQaEvent);
-	}
-
-	@Override
-	public void setSampleQaEvent(SampleQaEvent sampleQaEvent) {
-		tableId = QAService.TABLE_REFERENCE_ID;
-		objectId = sampleQaEvent.getId();
-		binding = BoundTo.QA_EVENT;
-		object = sampleQaEvent;
-	}
-
-	public NoteServiceImpl(SampleItem sampleItem) {
-		this();
-		setSampleItem(sampleItem);
-	}
-
-	@Override
-	public void setSampleItem(SampleItem sampleItem) {
-		tableId = SAMPLE_ITEM_TABLE_REFERENCE_ID;
-		objectId = sampleItem.getId();
-		binding = BoundTo.SAMPLE_ITEM;
-		object = sampleItem;
 	}
 
 	@Override
@@ -152,16 +93,16 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	@Transactional(readOnly = true)
 	@Override
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
-			boolean excludeExternPrefix) {
-		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
+	public String getNotesAsString(NoteObject noteObject, boolean prefixType, boolean prefixTimestamp,
+			String noteSeparator, NoteType[] filter, boolean excludeExternPrefix) {
+		return getNotesAsString(noteObject, prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
 				EncodeContext.HTML);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
-			boolean excludeExternPrefix, EncodeContext context) {
+	public String getNotesAsString(NoteObject noteObject, boolean prefixType, boolean prefixTimestamp,
+			String noteSeparator, NoteType[] filter, boolean excludeExternPrefix, EncodeContext context) {
 		boolean includeNoneConformity = false;
 		List<String> dbFilter = new ArrayList<>(filter.length);
 		for (NoteType type : filter) {
@@ -173,10 +114,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 		}
 
-		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId, dbFilter);
+		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTableAndType(noteObject.getObjectId(),
+				noteObject.getTableId(), dbFilter);
 
 		if (includeNoneConformity) {
-			List<Note> nonConformityNoteList = getNonConformityReasons();
+			List<Note> nonConformityNoteList = getNonConformityReasons(noteObject);
 			if (!nonConformityNoteList.isEmpty()) {
 				noteList.addAll(nonConformityNoteList);
 				Collections.sort(noteList, new Comparator<Note>() {
@@ -188,13 +130,14 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 			}
 		}
 
-		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
+		return notesToString(noteObject, prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix,
+				context);
 	}
 
-	private List<Note> getNonConformityReasons() {
+	private List<Note> getNonConformityReasons(NoteObject noteObject) {
 		ArrayList<Note> notes = new ArrayList<>();
 
-		if (binding == BoundTo.QA_EVENT) {
+		if (noteObject.getBoundTo() == BoundTo.QA_EVENT) {
 			return notes;
 		}
 
@@ -204,16 +147,16 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		SampleItem sampleItem = null;
 
 		// get parent objects and the qa notes
-		if (binding == BoundTo.ANALYSIS) {
-			sampleItem = ((Analysis) object).getSampleItem();
+		if (noteObject.getBoundTo() == BoundTo.ANALYSIS) {
+			sampleItem = ((Analysis) noteObject).getSampleItem();
 			notes.addAll(getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(),
 					SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
 
 			sample = sampleItem.getSample();
 			notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
 					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
-		} else if (binding == BoundTo.SAMPLE_ITEM) {
-			sampleItem = (SampleItem) object;
+		} else if (noteObject.getBoundTo() == BoundTo.SAMPLE_ITEM) {
+			sampleItem = (SampleItem) noteObject;
 			sample = sampleItem.getSample();
 			notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
 					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
@@ -240,22 +183,25 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	@Transactional(readOnly = true)
 	@Override
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix) {
-		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
+	public String getNotesAsString(NoteObject noteObject, boolean prefixType, boolean prefixTimestamp,
+			String noteSeparator, boolean excludeExternPrefix) {
+		return getNotesAsString(noteObject, prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix,
+				EncodeContext.HTML);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix, EncodeContext context) {
-		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+	public String getNotesAsString(NoteObject noteObject, boolean prefixType, boolean prefixTimestamp,
+			String noteSeparator, boolean excludeExternPrefix, EncodeContext context) {
+		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(noteObject.getObjectId(),
+				noteObject.getTableId());
 
-		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
+		return notesToString(noteObject, prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix,
+				context);
 	}
 
-	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList,
-			boolean excludeExternPrefix, EncodeContext context) {
+	private String notesToString(NoteObject noteObject, boolean prefixType, boolean prefixTimestamp,
+			String noteSeparator, List<Note> noteList, boolean excludeExternPrefix, EncodeContext context) {
 		if (noteList.isEmpty()) {
 			return null;
 		}
@@ -290,8 +236,9 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	@Transactional(readOnly = true)
 	@Override
-	public String getNotesAsString(String prefix, String noteSeparator) {
-		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+	public String getNotesAsString(NoteObject noteObject, String prefix, String noteSeparator) {
+		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(noteObject.getObjectId(),
+				noteObject.getTableId());
 
 		if (noteList.isEmpty()) {
 			return null;
@@ -314,15 +261,15 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	@Transactional(readOnly = true)
 	@Override
-	public Note getMostRecentNoteFilteredBySubject(String filter) {
+	public Note getMostRecentNoteFilteredBySubject(NoteObject noteObject, String filter) {
 		List<Note> noteList;
 		if (GenericValidator.isBlankOrNull(filter)) {
-			noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+			noteList = getNotesChronologicallyByRefIdAndRefTable(noteObject.getObjectId(), noteObject.getTableId());
 			if (!noteList.isEmpty()) {
 				return noteList.get(noteList.size() - 1);
 			}
 		} else {
-			noteList = getNoteByRefIAndRefTableAndSubject(objectId, tableId, filter);
+			noteList = getNoteByRefIAndRefTableAndSubject(noteObject.getObjectId(), noteObject.getTableId(), filter);
 			if (!noteList.isEmpty()) {
 				return noteList.get(0);
 			}
@@ -336,14 +283,15 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Override
-	public Note createSavableNote(NoteType type, String text, String subject, String currentUserId) {
+	public Note createSavableNote(NoteObject noteObject, NoteType type, String text, String subject,
+			String currentUserId) {
 		if (GenericValidator.isBlankOrNull(text)) {
 			return null;
 		}
 
 		Note note = new Note();
-		note.setReferenceId(objectId);
-		note.setReferenceTableId(tableId);
+		note.setReferenceId(noteObject.getObjectId());
+		note.setReferenceTableId(noteObject.getTableId());
 		note.setNoteType(type.getDBCode());
 		note.setSubject(subject);
 		note.setText(text);

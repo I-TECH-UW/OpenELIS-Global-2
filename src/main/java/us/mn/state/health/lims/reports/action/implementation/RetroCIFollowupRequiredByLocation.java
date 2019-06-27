@@ -181,10 +181,9 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	private String getNonConformingNotes(Sample sample) {
 		StringBuilder allNotes = new StringBuilder();
 
-		NoteService noteSampleService = SpringContext.getBean(NoteService.class);
-		noteSampleService.setSample(sample);
-		String notes = noteSampleService
-				.getNotesAsString(MessageUtil.getMessage("report.followup.general.comment") + ": ", "<br/>");
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String notes = noteService.getNotesAsString(sample,
+				MessageUtil.getMessage("report.followup.general.comment") + ": ", "<br/>");
 		if (notes != null) {
 			allNotes.append(notes);
 			allNotes.append("<br/>");

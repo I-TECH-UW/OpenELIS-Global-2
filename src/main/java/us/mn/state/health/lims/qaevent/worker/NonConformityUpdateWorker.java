@@ -709,9 +709,8 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 			} else {
 				NoteSet noteSet = new NoteSet();
 				noteSet.referencedSample = sample;
-				NoteService noteSampleService = SpringContext.getBean(NoteService.class);
-				noteSampleService.setSample(sample);
-				noteSet.note = noteSampleService.createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
+				NoteService noteService = SpringContext.getBean(NoteService.class);
+				noteSet.note = noteService.createSavableNote(sample, NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
 						NOTE_SUBJECT, webData.getCurrentSysUserId());
 				insertableNotes.add(noteSet);
 			}
@@ -803,9 +802,8 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			NoteSet noteSet = new NoteSet();
 			noteSet.referencedEvent = event;
-			NoteService noteSampleQaEventService = SpringContext.getBean(NoteService.class);
-			noteSampleQaEventService.setSampleQaEvent(event);
-			noteSet.note = noteSampleQaEventService.createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			noteSet.note = noteService.createSavableNote(event, NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
 					NOTE_SUBJECT, webData.getCurrentSysUserId());
 			insertableNotes.add(noteSet);
 		}

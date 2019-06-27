@@ -539,9 +539,8 @@ public class ARVReportData {
 		if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
 			return null;
 		} else {
-			NoteService noteSampleQaEventService = SpringContext.getBean(NoteService.class);
-			noteSampleQaEventService.setSampleQaEvent(sampleQaEvent);
-			Note note = noteSampleQaEventService.getMostRecentNoteFilteredBySubject(null);
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
 			return note != null ? note.getText() : null;
 		}
 	}

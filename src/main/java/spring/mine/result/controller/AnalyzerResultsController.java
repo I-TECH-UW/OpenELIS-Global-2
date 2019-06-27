@@ -139,6 +139,8 @@ public class AnalyzerResultsController extends BaseController {
 	private SampleQaEventService sampleQaEventService;
 	@Autowired
 	private LocalizationService localizationService;
+	@Autowired
+	private NoteService noteService;
 
 	private TestReflexUtil reflexUtil = new TestReflexUtil();
 
@@ -1013,9 +1015,7 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-				noteAnalysisService.setAnalysis(analysis);
-				Note note = noteAnalysisService.createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
+				Note note = noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
@@ -1136,9 +1136,7 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-				noteAnalysisService.setAnalysis(analysis);
-				Note note = noteAnalysisService.createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
+				Note note = noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}

@@ -74,6 +74,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
 
+	// autowiring not needed, using constructor injection
 	private AnalysisService analysisService;
 	private TestResultService testResultService;
 	private SampleHumanService sampleHumanService;
@@ -81,6 +82,7 @@ public class ResultValidationController extends BaseResultValidationController {
 	private TestSectionService testSectionService;
 	private SystemUserService systemUserService;
 	private ResultValidationService resultValidationService;
+	private NoteService noteService;
 
 	private final String RESULT_SUBJECT = "Result Note";
 	private final String RESULT_TABLE_ID;
@@ -90,7 +92,7 @@ public class ResultValidationController extends BaseResultValidationController {
 			SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
 			TestSectionService testSectionService, SystemUserService systemUserService,
 			ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
-			ResultValidationService resultValidationService) {
+			ResultValidationService resultValidationService, NoteService noteService) {
 
 		this.analysisService = analysisService;
 		this.testResultService = testResultService;
@@ -99,6 +101,7 @@ public class ResultValidationController extends BaseResultValidationController {
 		this.testSectionService = testSectionService;
 		this.systemUserService = systemUserService;
 		this.resultValidationService = resultValidationService;
+		this.noteService = noteService;
 
 		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
 		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
@@ -298,11 +301,7 @@ public class ResultValidationController extends BaseResultValidationController {
 		for (AnalysisItem analysisItem : analysisItems) {
 			if (!analysisItem.isReadOnly() && analysisItemWillBeUpdated(analysisItem)) {
 
-				AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
 				Analysis analysis = analysisService.get(analysisItem.getAnalysisId());
-				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-				noteAnalysisService.setAnalysis(analysis);
-
 				analysis.setSysUserId(getSysUserId(request));
 
 				if (!analysisIdList.contains(analysis.getId())) {
@@ -321,10 +320,10 @@ public class ResultValidationController extends BaseResultValidationController {
 					}
 				}
 
-				createNeededNotes(analysisItem, noteAnalysisService, noteUpdateList);
+				createNeededNotes(analysisItem, analysis, noteUpdateList);
 
 				if (areResults(analysisItem)) {
-					List<Result> results = createResultFromAnalysisItem(analysisItem, analysis, noteAnalysisService,
+					List<Result> results = createResultFromAnalysisItem(analysisItem, analysis, analysis,
 							noteUpdateList, deletableList);
 					for (Result result : results) {
 						resultUpdateList.add(result);
@@ -338,17 +337,16 @@ public class ResultValidationController extends BaseResultValidationController {
 		}
 	}
 
-	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteAnalysisService,
-			List<Note> noteUpdateList) {
+	private void createNeededNotes(AnalysisItem analysisItem, Analysis analysis, List<Note> noteUpdateList) {
 		if (analysisItem.getIsRejected()) {
-			Note note = noteAnalysisService.createSavableNote(NoteType.INTERNAL,
+			Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
 					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
 			noteUpdateList.add(note);
 		}
 
 		if (!GenericValidator.isBlankOrNull(analysisItem.getNote())) {
 			NoteType noteType = analysisItem.getIsAccepted() ? NoteType.EXTERNAL : NoteType.INTERNAL;
-			Note note = noteAnalysisService.createSavableNote(noteType, analysisItem.getNote(), RESULT_SUBJECT,
+			Note note = noteService.createSavableNote(analysis, noteType, analysisItem.getNote(), RESULT_SUBJECT,
 					getSysUserId(request));
 			noteUpdateList.add(note);
 		}
@@ -468,15 +466,15 @@ public class ResultValidationController extends BaseResultValidationController {
 		return analysis;
 	}
 
-	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, Analysis analysis,
-			NoteService noteAnalysisService, List<Note> noteUpdateList, List<Result> deletableList) {
+	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, Analysis analysis, Analysis analysis2,
+			List<Note> noteUpdateList, List<Result> deletableList) {
 
 		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
 		ResultSaveService resultSaveService = new ResultSaveService(analysis, getSysUserId(request));
 		List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
 		if (analysisService.patientReportHasBeenDone(analysis) && resultSaveService.isUpdatedResult()) {
 			analysis.setCorrectedSincePatientReport(true);
-			noteUpdateList.add(noteAnalysisService.createSavableNote(NoteType.EXTERNAL,
+			noteUpdateList.add(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
 					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 		}
 		return results;

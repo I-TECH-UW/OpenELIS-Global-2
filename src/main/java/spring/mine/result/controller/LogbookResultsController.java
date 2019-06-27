@@ -99,6 +99,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	private LogbookResultsPersistService logbookPersistService;
 	@Autowired
 	private AnalysisService analysisService;
+	@Autowired
+	private NoteService noteService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static String REFERRAL_CONFORMATION_ID;
@@ -301,16 +303,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			handleReferrals(testResultItem, analysis, actionDataSet);
 			actionDataSet.getModifiedAnalysis().add(analysis);
 
-			NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-			noteAnalysisService.setAnalysis(analysis);
-			actionDataSet.addToNoteList(noteAnalysisService.createSavableNote(NoteType.INTERNAL,
+			actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
 					testResultItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
 			if (testResultItem.isShadowRejected()) {
 				String rejectedReasonId = testResultItem.getRejectReasonId();
 				for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
 					if (rejectedReasonId.equals(rejectReason.getId())) {
-						actionDataSet.addToNoteList(noteAnalysisService.createSavableNote(NoteType.REJECTION_REASON,
+						actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.REJECTION_REASON,
 								rejectReason.getValue(), RESULT_SUBJECT, getSysUserId(request)));
 						break;
 					}
@@ -327,7 +327,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 					resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
 
 			if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
-				actionDataSet.addToNoteList(noteAnalysisService.createSavableNote(NoteType.EXTERNAL,
+				actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
 						MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 			}
 

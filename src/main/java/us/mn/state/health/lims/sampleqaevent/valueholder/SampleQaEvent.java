@@ -18,6 +18,9 @@ package us.mn.state.health.lims.sampleqaevent.valueholder;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import spring.service.note.NoteObject;
+import spring.service.note.NoteServiceImpl.BoundTo;
+import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
@@ -28,17 +31,16 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 
 /**
- * @author benzd1
- * bugzilla 2510
+ * @author benzd1 bugzilla 2510
  */
-public class SampleQaEvent extends BaseObject<String> {
+public class SampleQaEvent extends BaseObject<String> implements NoteObject {
 
 	/**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
-    private String id;
+	private String id;
 
 	private String qaEventId;
 
@@ -53,29 +55,29 @@ public class SampleQaEvent extends BaseObject<String> {
 	private ValueHolderInterface sampleItem;
 
 	private Date completedDate;
-	
+
 	private Timestamp enteredDate;
 
 	private String completedDateForDisplay;
-	
 
 	public SampleQaEvent() {
 		sample = new ValueHolder();
 		sampleItem = new ValueHolder();
-	    qaEvent = new ValueHolder();
+		qaEvent = new ValueHolder();
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	
 	public Sample getSample() {
-		return (Sample) this.sample.getValue();
+		return (Sample) sample.getValue();
 	}
 
 	public void setSample(Sample sample) {
@@ -83,7 +85,7 @@ public class SampleQaEvent extends BaseObject<String> {
 	}
 
 	public SampleItem getSampleItem() {
-	    return (SampleItem)this.sampleItem.getValue();
+		return (SampleItem) sampleItem.getValue();
 	}
 
 	public void setSampleItem(SampleItem sampleItem) {
@@ -91,7 +93,7 @@ public class SampleQaEvent extends BaseObject<String> {
 	}
 
 	public QaEvent getQaEvent() {
-		return (QaEvent) this.qaEvent.getValue();
+		return (QaEvent) qaEvent.getValue();
 	}
 
 	public void setQaEvent(QaEvent qaEvent) {
@@ -115,19 +117,20 @@ public class SampleQaEvent extends BaseObject<String> {
 	}
 
 	public String getQaEventId() {
-	    return qaEventId;
+		return qaEventId;
 	}
+
 	public void setQaEventId(String qaEventId) {
-	    this.qaEventId = qaEventId;
+		this.qaEventId = qaEventId;
 	}
-		
+
 	public Date getCompletedDate() {
 		return completedDate;
 	}
 
 	public void setCompletedDate(Date completedDate) {
 		this.completedDate = completedDate;
-		this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(completedDate);
+		completedDateForDisplay = DateUtil.convertSqlDateToStringDate(completedDate);
 	}
 
 	public String getCompletedDateForDisplay() {
@@ -137,10 +140,8 @@ public class SampleQaEvent extends BaseObject<String> {
 	public void setCompletedDateForDisplay(String completedDateForDisplay) {
 		this.completedDateForDisplay = completedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.completedDate = DateUtil.convertStringDateToSqlDate(
-				completedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		completedDate = DateUtil.convertStringDateToSqlDate(completedDateForDisplay, locale);
 	}
 
 	public Timestamp getEnteredDate() {
@@ -149,5 +150,20 @@ public class SampleQaEvent extends BaseObject<String> {
 
 	public void setEnteredDate(Timestamp enteredDate) {
 		this.enteredDate = enteredDate;
+	}
+
+	@Override
+	public String getTableId() {
+		return QAService.TABLE_REFERENCE_ID;
+	}
+
+	@Override
+	public String getObjectId() {
+		return getId();
+	}
+
+	@Override
+	public BoundTo getBoundTo() {
+		return BoundTo.QA_EVENT;
 	}
 }

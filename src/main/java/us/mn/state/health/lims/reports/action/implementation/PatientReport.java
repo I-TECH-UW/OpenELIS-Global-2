@@ -99,7 +99,7 @@ public abstract class PatientReport extends Report {
 	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-	protected PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
 	protected PersonService personService = SpringContext.getBean(PersonService.class);
 	protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
 	protected TestService testService = SpringContext.getBean(TestService.class);
@@ -260,14 +260,14 @@ public abstract class PatientReport extends Report {
 	}
 
 	private void findPatientInfo() {
-		if (patientPatientService.getPerson() == null) {
+		if (patientService.getPerson() == null) {
 			return;
 		}
 
 		patientDept = "";
 		patientCommune = "";
 		if (ADDRESS_DEPT_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientPatientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
 					ADDRESS_DEPT_ID);
 
 			if (deptAddress != null && !GenericValidator.isBlankOrNull(deptAddress.getValue())) {
@@ -276,7 +276,7 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (ADDRESS_COMMUNE_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientPatientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
 					ADDRESS_COMMUNE_ID);
 
 			if (deptAddress != null) {
@@ -306,9 +306,9 @@ public abstract class PatientReport extends Report {
 	}
 
 	private boolean findPatientByPatientNumber(String patientNumber, List<Patient> patientList) {
-		patientPatientService = null;
+		patientService = null;
 		PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
-		patientList.addAll(patientPatientService.getPatientsByNationalId(patientNumber));
+		patientList.addAll(patientService.getPatientsByNationalId(patientNumber));
 
 		if (patientList.isEmpty()) {
 			List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
@@ -325,7 +325,7 @@ public abstract class PatientReport extends Report {
 					String reportPatientId = patientIdentity.getPatientId();
 					Patient patient = new Patient();
 					patient.setId(reportPatientId);
-					patientPatientService.getData(patient);
+					patientService.getData(patient);
 					patientList.add(patient);
 				}
 			}
@@ -382,11 +382,11 @@ public abstract class PatientReport extends Report {
 	protected void findPatientFromSample() {
 		Patient patient = sampleHumanService.getPatientForSample(currentSampleService.getSample());
 
-		if (patientPatientService == null || !patient.getId().equals(patientPatientService.getPatientId())) {
+		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
 			STNumber = null;
 			patientDOB = null;
-			patientPatientService = SpringContext.getBean(PatientService.class);
-			patientPatientService.setPatient(patient);
+			patientService = SpringContext.getBean(PatientService.class);
+			patientService.setPatient(patient);
 		}
 	}
 
@@ -406,7 +406,7 @@ public abstract class PatientReport extends Report {
 
 	protected String getPatientDOB() {
 		if (patientDOB == null) {
-			patientDOB = patientPatientService.getBirthdayForDisplay();
+			patientDOB = patientService.getBirthdayForDisplay();
 		}
 
 		return patientDOB;
@@ -415,7 +415,7 @@ public abstract class PatientReport extends Report {
 	protected String getLazyPatientIdentity(String identity, String id) {
 		if (identity == null) {
 			identity = " ";
-			List<PatientIdentity> identities = patientPatientService.getIdentityList();
+			List<PatientIdentity> identities = patientService.getIdentityList();
 			for (PatientIdentity patientIdentity : identities) {
 				if (patientIdentity.getIdentityTypeId().equals(id)) {
 					identity = patientIdentity.getIdentityData();
@@ -428,18 +428,17 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected void setPatientName(ClinicalPatientData data) {
-		data.setPatientName(patientPatientService.getLastFirstName());
-		data.setFirstName(patientPatientService.getFirstName());
-		data.setLastName(patientPatientService.getLastName());
+		data.setPatientName(patientService.getLastFirstName());
+		data.setFirstName(patientService.getFirstName());
+		data.setLastName(patientService.getLastName());
 	}
 
 	protected void reportResultAndConclusion(ClinicalPatientData data) {
 		List<Result> resultList = analysisService.getResults(currentAnalysis);
 
 		Test test = analysisService.getTest(currentAnalysis);
-		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(currentAnalysis);
-		String note = noteAnalysisService.getNotesAsString(true, true, "<br/>", FILTER, true);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String note = noteService.getNotesAsString(currentAnalysis, true, true, "<br/>", FILTER, true);
 		if (note != null) {
 			data.setNote(note);
 		}
@@ -786,8 +785,8 @@ public abstract class PatientReport extends Report {
 		data.setReceivedDate(receivedDate);
 		data.setDob(getPatientDOB());
 		data.setAge(createReadableAge(data.getDob()));
-		data.setGender(patientPatientService.getGender());
-		data.setNationalId(patientPatientService.getNationalId());
+		data.setGender(patientService.getGender());
+		data.setNationalId(patientService.getNationalId());
 		setPatientName(data);
 		data.setDept(patientDept);
 		data.setCommune(patientCommune);

@@ -56,6 +56,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	private TypeOfSampleService typeOfSampleService;
 	@Autowired
 	private ReferenceTablesService referenceTablesService;
+	@Autowired
+	private NoteService noteService;
 
 	public static String TABLE_REFERENCE_ID;
 	private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
@@ -246,9 +248,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 		if (analysis == null) {
 			return "";
 		} else {
-			NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-			noteAnalysisService.setAnalysis(analysis);
-			return noteAnalysisService.getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
+			return noteService.getNotesAsString(analysis, prefixType, prefixTimestamp, noteSeparator,
 					excludeExternPrefix);
 		}
 	}
