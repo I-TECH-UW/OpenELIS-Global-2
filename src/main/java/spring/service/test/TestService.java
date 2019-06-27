@@ -85,30 +85,26 @@ public interface TestService extends BaseObjectService<Test, String> {
 
 	void localeChanged(String locale);
 
-	void setTest(String testId);
+	void refreshTestNames();
 
-	void setTest(Test test);
+	String getTestMethodName(Test test);
 
-	String getResultType();
+	List<TestResult> getPossibleTestResults(Test test);
 
-	TypeOfSample getTypeOfSample();
+	String getUOM(Test test, boolean isCD4Conclusion);
 
-	String getTestSectionName();
+	boolean isReportable(Test test);
 
-	List<Panel> getPanels();
+	String getSortOrder(Test test);
 
-	String getUOM(boolean b);
+	TypeOfSample getTypeOfSample(Test test);
 
-	List<TestResult> getPossibleTestResults();
+	List<Panel> getPanels(Test test);
 
-	Test getTest();
+	String getTestSectionName(Test test);
 
-	String getTestMethodName();
+	ResultDisplayType getDisplayTypeForTestMethod(Test test);
 
-	ResultDisplayType getDisplayTypeForTestMethod();
-
-	boolean isReportable();
-
-	String getSortOrder();
+	String getResultType(Test test);
 
 }

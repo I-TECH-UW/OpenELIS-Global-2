@@ -760,9 +760,8 @@ public class ReferredOutTestsController extends BaseController {
 				Element testItem = i.next();
 
 				String testId = testItem.attribute("testId").getValue();
-				TestService testTestService = SpringContext.getBean(TestService.class);
-				testTestService.setTest(testId);
-				String resultType = testTestService.getResultType();
+				Test test = testService.get(testId);
+				String resultType = testService.getResultType(test);
 
 				ReferredTest referralTest = new ReferredTest();
 				referralTest.setReferredTestId(testId);

@@ -43,7 +43,6 @@ import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultService;
 import spring.service.unitofmeasure.UnitOfMeasureService;
-import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -334,12 +333,12 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case ALL_TESTS: {
-			TestServiceImpl.refreshTestNames();
+			testService.refreshTestNames();
 			typeToListMap.put(ListType.ALL_TESTS, createTestList());
 			break;
 		}
 		case ORDERABLE_TESTS: {
-			TestServiceImpl.refreshTestNames();
+			testService.refreshTestNames();
 			typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
 			break;
 		}
@@ -382,7 +381,7 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case UNIT_OF_MEASURE: {
-			UnitOfMeasureServiceImpl.getInstance().refreshNames();
+			unitOfMeasureService.refreshNames();
 			typeToListMap.put(ListType.UNIT_OF_MEASURE, createUnitOfMeasureList());
 			break;
 		}

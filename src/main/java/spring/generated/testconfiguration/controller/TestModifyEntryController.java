@@ -36,7 +36,6 @@ import spring.service.panel.PanelService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestSectionService;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestModifyService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -146,35 +145,34 @@ public class TestModifyEntryController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalogBean bean = new TestCatalogBean();
-			TestService testTestService = SpringContext.getBean(TestService.class);
-			testTestService.setTest(test);
-			String resultType = testTestService.getResultType();
+			TestService testService = SpringContext.getBean(TestService.class);
+			String resultType = testService.getResultType(test);
 			bean.setId(test.getId());
 			bean.setEnglishName(test.getLocalizedTestName().getEnglish());
 			bean.setFrenchName(test.getLocalizedTestName().getFrench());
 			bean.setEnglishReportName(test.getLocalizedReportingName().getEnglish());
 			bean.setFrenchReportName(test.getLocalizedReportingName().getFrench());
 			bean.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
-			bean.setTestUnit(testTestService.getTestSectionName());
-			bean.setPanel(createPanelList(testTestService));
+			bean.setTestUnit(testService.getTestSectionName(test));
+			bean.setPanel(createPanelList(testService, test));
 			bean.setResultType(resultType);
-			TypeOfSample typeOfSample = testTestService.getTypeOfSample();
+			TypeOfSample typeOfSample = testService.getTypeOfSample(test);
 			bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
 			bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
 			bean.setLoinc(test.getLoinc());
 			bean.setActive(test.isActive() ? "Active" : "Not active");
-			bean.setUom(testTestService.getUOM(false));
+			bean.setUom(testService.getUOM(test, false));
 			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-				bean.setSignificantDigits(testTestService.getPossibleTestResults().get(0).getSignificantDigits());
+				bean.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
 				bean.setHasLimitValues(true);
 				bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
 			}
 			bean.setHasDictionaryValues(
 					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
 			if (bean.isHasDictionaryValues()) {
-				bean.setDictionaryValues(createDictionaryValues(testTestService));
+				bean.setDictionaryValues(createDictionaryValues(testService, test));
 				bean.setReferenceValue(createReferenceValueForDictionaryType(test));
-				bean.setDictionaryIds(createDictionaryIds(testTestService));
+				bean.setDictionaryIds(createDictionaryIds(testService, test));
 				bean.setReferenceId(createReferenceIdForDictionaryType(test));
 				bean.setReferenceId(getDictionaryIdByDictEntry(bean.getReferenceValue(), bean.getDictionaryIds(),
 						bean.getDictionaryValues()));
@@ -245,9 +243,9 @@ public class TestModifyEntryController extends BaseController {
 
 	}
 
-	private List<String> createDictionaryValues(TestService testTestService) {
+	private List<String> createDictionaryValues(TestService testService, Test test) {
 		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testTestService.getPossibleTestResults();
+		List<TestResult> testResultList = testService.getPossibleTestResults(test);
 		for (TestResult testResult : testResultList) {
 			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryValue(testResult));
 		}
@@ -286,9 +284,9 @@ public class TestModifyEntryController extends BaseController {
 				null);
 	}
 
-	private List<String> createDictionaryIds(TestService testTestService) {
+	private List<String> createDictionaryIds(TestService testService, Test test) {
 		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testTestService.getPossibleTestResults();
+		List<TestResult> testResultList = testService.getPossibleTestResults(test);
 		for (TestResult testResult : testResultList) {
 			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryId(testResult));
 		}
@@ -331,10 +329,10 @@ public class TestModifyEntryController extends BaseController {
 		return null;
 	}
 
-	private String createPanelList(TestService testTestService) {
+	private String createPanelList(TestService testService, Test test) {
 		StringBuilder builder = new StringBuilder();
 
-		List<Panel> panelList = testTestService.getPanels();
+		List<Panel> panelList = testService.getPanels(test);
 		for (Panel panel : panelList) {
 			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
@@ -465,7 +463,7 @@ public class TestModifyEntryController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		TestServiceImpl.refreshTestNames();
+		testService.refreshTestNames();
 		SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);

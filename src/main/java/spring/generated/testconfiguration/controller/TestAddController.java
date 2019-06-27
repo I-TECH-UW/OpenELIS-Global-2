@@ -34,7 +34,6 @@ import spring.service.panel.PanelService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestSectionService;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestAddService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -76,6 +75,8 @@ public class TestAddController extends BaseController {
 	private TestAddService testAddService;
 	@Autowired
 	private TestSectionService testSectionService;
+	@Autowired
+	private TestService testService;
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
 	public ModelAndView showTestAdd(HttpServletRequest request) {
@@ -141,7 +142,7 @@ public class TestAddController extends BaseController {
 			lre.printStackTrace();
 		}
 
-		TestServiceImpl.refreshTestNames();
+		testService.refreshTestNames();
 		SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);

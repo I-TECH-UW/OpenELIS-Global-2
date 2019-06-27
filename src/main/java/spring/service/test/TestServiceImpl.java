@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +45,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> implements TestService, LocaleChangeListener {
 
 	public enum Entity {
@@ -69,8 +67,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
 	private PanelService panelService = SpringContext.getBean(PanelService.class);
 	private TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
-
-	private Test test;
 
 	@PostConstruct
 	private void initialize() {
@@ -100,26 +96,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		initializeGlobalVariables();
 	}
 
-	public TestServiceImpl(Test test) {
-		this();
-		setTest(test);
-	}
-
-	@Override
-	public void setTest(Test test) {
-		this.test = test;
-	}
-
-	public TestServiceImpl(String testId) {
-		this();
-		setTest(testId);
-	}
-
-	@Override
-	public void setTest(String testId) {
-		test = get(testId);
-	}
-
 	@Override
 	protected TestDAO getBaseObjectDAO() {
 		return baseObjectService;
@@ -136,35 +112,31 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		refreshTestNames();
 	}
 
-	public static void refreshTestNames() {
+	@Override
+	public void refreshTestNames() {
 		entityToMap.put(Entity.TEST_NAME, createTestIdToNameMap());
 		entityToMap.put(Entity.TEST_AUGMENTED_NAME, createTestIdToAugmentedNameMap());
 		entityToMap.put(Entity.TEST_REPORTING_NAME, createTestIdToReportingNameMap());
 	}
 
 	@Override
-	public Test getTest() {
-		return test;
-	}
-
-	@Override
-	public String getTestMethodName() {
+	public String getTestMethodName(Test test) {
 		return (test != null && test.getMethod() != null) ? test.getMethod().getMethodName() : null;
 	}
 
-	public boolean isActive() {
+	public boolean isActive(Test test) {
 		return test == null ? false : test.isActive();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<TestResult> getPossibleTestResults() {
+	public List<TestResult> getPossibleTestResults(Test test) {
 		return TEST_RESULT_Service.getAllActiveTestResultsPerTest(test);
 	}
 
 	@Override
-	public String getUOM(boolean isCD4Conclusion) {
+	public String getUOM(Test test, boolean isCD4Conclusion) {
 		if (!isCD4Conclusion) {
 			if (test != null && test.getUnitOfMeasure() != null) {
 				return test.getUnitOfMeasure().getName();
@@ -175,18 +147,18 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Override
-	public boolean isReportable() {
+	public boolean isReportable(Test test) {
 		return test != null && "Y".equals(test.getIsReportable());
 	}
 
 	@Override
-	public String getSortOrder() {
+	public String getSortOrder(Test test) {
 		return test == null ? "0" : test.getSortOrder();
 	}
 
 	@Override
-	public ResultDisplayType getDisplayTypeForTestMethod() {
-		String methodName = getTestMethodName();
+	public ResultDisplayType getDisplayTypeForTestMethod(Test test) {
+		String methodName = getTestMethodName(test);
 
 		if (HIV_TYPE.equals(methodName)) {
 			return ResultDisplayType.HIV;
@@ -199,9 +171,9 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getResultType() {
+	public String getResultType(Test test) {
 		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
-		List<TestResult> testResults = getPossibleTestResults();
+		List<TestResult> testResults = getPossibleTestResults(test);
 
 		if (testResults != null && !testResults.isEmpty()) {
 			testResultType = testResults.get(0).getTestResultType();
@@ -212,24 +184,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	@Transactional(readOnly = true)
-	public TypeOfSample getTypeOfSample() {
-		if (test == null) {
-			return null;
-		}
-
-		TypeOfSampleTest typeOfSampleTest = TYPE_OF_SAMPLE_testService.getTypeOfSampleTestForTest(test.getId());
-
-		if (typeOfSampleTest == null) {
-			return null;
-		}
-
-		String typeOfSampleId = typeOfSampleTest.getTypeOfSampleId();
-
-		return TYPE_OF_SAMPLE_Service.getTypeOfSampleById(typeOfSampleId);
-	}
-
-	@Transactional(readOnly = true)
-	public static TypeOfSample getTypeOfSample(Test test) {
+	public TypeOfSample getTypeOfSample(Test test) {
 		if (test == null) {
 			return null;
 		}
@@ -247,7 +202,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Panel> getPanels() {
+	public List<Panel> getPanels(Test test) {
 		List<Panel> panelList = new ArrayList<>();
 		if (test != null) {
 			List<PanelItem> panelItemList = panelItemService.getPanelItemByTestId(test.getId());
@@ -265,14 +220,14 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Transactional(readOnly = true)
-	public TestSection getTestSection() {
+	public TestSection getTestSection(Test test) {
 		return test == null ? null : test.getTestSection();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getTestSectionName() {
-		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection());
+	public String getTestSectionName(Test test) {
+		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection(test));
 	}
 
 	public static Map<String, String> getMap(Entity entiy) {
@@ -365,7 +320,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 
 	@Transactional
-	private static Map<String, String> createTestIdToAugmentedNameMap() {
+	private Map<String, String> createTestIdToAugmentedNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
 		List<Test> tests = baseObjectService.getAllTests(false);
@@ -405,7 +360,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		}
 	}
 
-	private static String buildAugmentedTestName(Test test) {
+	private String buildAugmentedTestName(Test test) {
 		Localization localization = test.getLocalizedTestName();
 
 		String sampleName = "";
@@ -703,4 +658,5 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

@@ -9,4 +9,6 @@ public interface UnitOfMeasureService extends BaseObjectService<UnitOfMeasure, S
 
 	UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure);
 
+	void refreshNames();
+
 }
