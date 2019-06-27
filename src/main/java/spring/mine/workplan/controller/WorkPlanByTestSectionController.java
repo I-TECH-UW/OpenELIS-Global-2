@@ -16,12 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
-import spring.service.analysis.AnalysisService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestSectionService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -148,10 +146,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
 				}
 
-				AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-				analysisAnalysisService.setAnalysis(analysis);
 				testResultItem = new TestResultItem();
-				testResultItem.setTestName(analysisAnalysisService.getTestDisplayName());
+				testResultItem.setTestName(analysisService.getTestDisplayName(analysis));
 				testResultItem.setAccessionNumber(currentAccessionNumber);
 				testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
 				testResultItem.setSampleGroupingNumber(sampleGroupingNumber);

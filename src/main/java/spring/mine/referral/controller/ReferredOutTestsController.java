@@ -92,6 +92,8 @@ public class ReferredOutTestsController extends BaseController {
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ReferralSetService referralSetService;
+	@Autowired
+	private AnalysisService analysisService;
 
 	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
 	public ModelAndView showReferredOutTests(HttpServletRequest request)
@@ -183,18 +185,16 @@ public class ReferredOutTestsController extends BaseController {
 
 		ReferralItem referralItem = new ReferralItem();
 
-		AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-		analysisAnalysisService.setAnalysis(referral.getAnalysis());
+		Analysis analysis = referral.getAnalysis();
 		referralItem.setCanceled(false);
 		referralItem.setReferredResultType("N");
-		referralItem.setAccessionNumber(analysisAnalysisService.getOrderAccessionNumber());
+		referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 
-		TypeOfSample typeOfSample = analysisAnalysisService.getTypeOfSample();
+		TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
-		referralItem.setReferringTestName(
-				TestServiceImpl.getUserLocalizedTestName(analysisAnalysisService.getAnalysis().getTest()));
-		List<Result> resultList = analysisAnalysisService.getResults();
+		referralItem.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+		List<Result> resultList = analysisService.getResults(analysis);
 		String resultString = "";
 
 		if (!resultList.isEmpty()) {
@@ -220,7 +220,7 @@ public class ReferredOutTestsController extends BaseController {
 		if (referral.getOrganization() != null) {
 			referralItem.setReferredInstituteId(referral.getOrganization().getId());
 		}
-		String notes = analysisAnalysisService.getNotesAsString(true, true, "<br/>", false);
+		String notes = analysisService.getNotesAsString(analysis, true, true, "<br/>", false);
 		if (notes != null) {
 			referralItem.setPastNotes(notes);
 		}

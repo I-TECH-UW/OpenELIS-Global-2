@@ -80,18 +80,16 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		ReferralItem referralItem = new ReferralItem();
 
 		Analysis analysis = referral.getAnalysis();
-		AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-		analysisAnalysisService.setAnalysis(analysis);
 
 		referralItem.setCanceled(false);
 		referralItem.setReferredResultType("N");
-		referralItem.setAccessionNumber(analysisAnalysisService.getOrderAccessionNumber());
+		referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 
-		TypeOfSample typeOfSample = analysisAnalysisService.getTypeOfSample();
+		TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
 		referralItem.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-		List<Result> resultList = analysisAnalysisService.getResults();
+		List<Result> resultList = analysisService.getResults(analysis);
 		String resultString = "";
 
 		if (!resultList.isEmpty()) {
@@ -117,7 +115,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		if (referral.getOrganization() != null) {
 			referralItem.setReferredInstituteId(referral.getOrganization().getId());
 		}
-		String notes = analysisAnalysisService.getNotesAsString(true, true, "<br/>", false);
+		String notes = analysisService.getNotesAsString(analysis, true, true, "<br/>", false);
 		if (notes != null) {
 			referralItem.setPastNotes(notes);
 		}

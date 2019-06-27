@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,20 +44,24 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String> implements AnalysisService {
 
-	protected AnalysisDAO baseObjectDAO = SpringContext.getBean(AnalysisDAO.class);
-	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	private ResultService resultService = SpringContext.getBean(ResultService.class);
-	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
-	private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+	@Autowired
+	protected AnalysisDAO baseObjectDAO;
+	@Autowired
+	private DictionaryService dictionaryService;
+	@Autowired
+	private ResultService resultService;
+	@Autowired
+	private TypeOfSampleService typeOfSampleService;
+	@Autowired
+	private ReferenceTablesService referenceTablesService;
 
-	private Analysis analysis;
 	public static String TABLE_REFERENCE_ID;
 	private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 
-	public synchronized void initializeGlobalVariables() {
+	@PostConstruct
+	public void initializeGlobalVariables() {
 		if (TABLE_REFERENCE_ID == null) {
 			TABLE_REFERENCE_ID = referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
 		}
@@ -63,45 +69,15 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	public AnalysisServiceImpl() {
 		super(Analysis.class);
-		initializeGlobalVariables();
-
-	}
-
-	public AnalysisServiceImpl(Analysis analysis) {
-		this();
-		setAnalysis(analysis);
-	}
-
-	@Override
-	public void setAnalysis(Analysis analysis) {
-		this.analysis = analysis;
-	}
-
-	public AnalysisServiceImpl(String analysisId) {
-		this();
-		setAnalysis(analysisId);
-	}
-
-	@Override
-	public void setAnalysis(String analysisId) {
-		if (!GenericValidator.isBlankOrNull(analysisId)) {
-			analysis = baseObjectDAO.getAnalysisById(analysisId);
-		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Analysis getAnalysis() {
-		return analysis;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public String getTestDisplayName() {
+	public String getTestDisplayName(Analysis analysis) {
 		if (analysis == null) {
 			return "";
 		}
-		Test test = getTest();
+		Test test = getTest(analysis);
 		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
 		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
@@ -129,7 +105,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getCSVMultiselectResults() {
+	public String getCSVMultiselectResults(Analysis analysis) {
 		if (analysis == null) {
 			return "";
 		}
@@ -150,14 +126,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getJSONMultiSelectResults() {
+	public String getJSONMultiSelectResults(Analysis analysis) {
 		return analysis == null ? ""
 				: ResultServiceImpl.getJSONStringForMultiSelect(resultService.getResultsByAnalysis(analysis));
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Result getQuantifiedResult() {
+	public Result getQuantifiedResult(Analysis analysis) {
 		if (analysis == null) {
 			return null;
 		}
@@ -183,30 +159,30 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getCompletedDateForDisplay() {
+	public String getCompletedDateForDisplay(Analysis analysis) {
 		return analysis == null ? "" : analysis.getCompletedDateForDisplay();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getAnalysisType() {
+	public String getAnalysisType(Analysis analysis) {
 		return analysis == null ? "" : analysis.getAnalysisType();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getStatusId() {
+	public String getStatusId(Analysis analysis) {
 		return analysis == null ? "" : analysis.getStatusId();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Boolean getTriggeredReflex() {
+	public Boolean getTriggeredReflex(Analysis analysis) {
 		return analysis == null ? false : analysis.getTriggeredReflex();
 	}
 
 	@Override
-	public boolean resultIsConclusion(Result currentResult) {
+	public boolean resultIsConclusion(Result currentResult, Analysis analysis) {
 		if (analysis == null || currentResult == null) {
 			return false;
 		}
@@ -229,13 +205,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	}
 
 	@Override
-	public boolean isParentNonConforming() {
+	public boolean isParentNonConforming(Analysis analysis) {
 		return analysis == null ? false : QAService.isAnalysisParentNonConforming(analysis);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Test getTest() {
+	public Test getTest(Analysis analysis) {
 		return analysis == null ? null : analysis.getTest();
 	}
 
@@ -247,17 +223,17 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Result> getResults() {
+	public List<Result> getResults(Analysis analysis) {
 		return analysis == null ? new ArrayList<>() : resultService.getResultsByAnalysis(analysis);
 	}
 
 	@Override
-	public boolean hasBeenCorrectedSinceLastPatientReport() {
+	public boolean hasBeenCorrectedSinceLastPatientReport(Analysis analysis) {
 		return analysis == null ? false : analysis.isCorrectedSincePatientReport();
 	}
 
 	@Override
-	public boolean patientReportHasBeenDone() {
+	public boolean patientReportHasBeenDone(Analysis analysis) {
 		return analysis == null ? false
 				: SpringContext.getBean(IReportTrackingService.class).getLastReportForSample(
 						analysis.getSampleItem().getSample(), ReportTrackingService.ReportType.PATIENT) != null;
@@ -265,7 +241,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+	public String getNotesAsString(Analysis analysis, boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
 		if (analysis == null) {
 			return "";
@@ -279,26 +255,26 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getOrderAccessionNumber() {
+	public String getOrderAccessionNumber(Analysis analysis) {
 		return analysis == null ? "" : analysis.getSampleItem().getSample().getAccessionNumber();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public TypeOfSample getTypeOfSample() {
+	public TypeOfSample getTypeOfSample(Analysis analysis) {
 		return analysis == null ? null
 				: typeOfSampleService.getTypeOfSampleById(analysis.getSampleItem().getTypeOfSampleId());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Panel getPanel() {
+	public Panel getPanel(Analysis analysis) {
 		return analysis == null ? null : analysis.getPanel();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public TestSection getTestSection() {
+	public TestSection getTestSection(Analysis analysis) {
 		return analysis == null ? null : analysis.getTestSection();
 	}
 

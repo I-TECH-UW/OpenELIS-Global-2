@@ -248,9 +248,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
 		resultResultService.setResult(result);
 		String reportResult = resultResultService.getResultValue(true);
-		AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-		analysisAnalysisService.setAnalysis(analysis);
-		Result quantifiableResult = analysisAnalysisService.getQuantifiedResult();
+		Result quantifiableResult = analysisService.getQuantifiedResult(analysis);
 		if (quantifiableResult != null) {
 			reportResult += ":" + quantifiableResult.getValue();
 		}

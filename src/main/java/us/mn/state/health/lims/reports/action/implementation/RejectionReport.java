@@ -48,6 +48,8 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 	protected String reportPath = "";
 	protected DateRange dateRange;
 
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+
 	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(rejections);
@@ -113,14 +115,12 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 	protected RejectionReportBean createRejectionReportBean(String noteText, Analysis analysis, boolean useTestName) {
 		RejectionReportBean item = new RejectionReportBean();
 
-		AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-		analysisAnalysisService.setAnalysis(analysis);
 		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(analysisAnalysisService.getAnalysis().getSampleItem().getSample());
+		sampleSampleService.setSample(analysis.getSampleItem().getSample());
 		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
 		patientSampleService.setPatientBySample(sampleSampleService.getSample());
 
-		List<Result> results = analysisAnalysisService.getResults();
+		List<Result> results = analysisService.getResults(analysis);
 		for (Result result : results) {
 			ResultService resultResultService = SpringContext.getBean(ResultService.class);
 			resultResultService.setResult(result);
@@ -133,8 +133,8 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 
 		item.setAccessionNumber(sampleSampleService.getAccessionNumber().substring(PREFIX_LENGTH));
 		item.setReceivedDate(sampleSampleService.getTwoYearReceivedDateForDisplay());
-		item.setCollectionDate(DateUtil.convertTimestampToTwoYearStringDate(
-				analysisAnalysisService.getAnalysis().getSampleItem().getCollectionDate()));
+		item.setCollectionDate(
+				DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));
 		item.setRejectionReason(noteText);
 
 		StringBuilder nameBuilder = new StringBuilder(patientSampleService.getLastName().toUpperCase());
@@ -146,7 +146,7 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 		}
 
 		if (useTestName) {
-			item.setPatientOrTestName(TestServiceImpl.getUserLocalizedTestName(analysisAnalysisService.getTest()));
+			item.setPatientOrTestName(TestServiceImpl.getUserLocalizedTestName(analysisService.getTest(analysis)));
 			item.setNonPrintingPatient(nameBuilder.toString());
 		} else {
 			item.setPatientOrTestName(nameBuilder.toString());

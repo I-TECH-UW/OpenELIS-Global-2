@@ -28,7 +28,6 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisService;
 import spring.service.localization.LocalizationService;
 import spring.service.note.NoteService;
 import spring.service.result.ResultService;
@@ -115,8 +114,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 			boolean hasParentResult = analysis.getParentResult() != null;
 			sampleSet.add(analysis.getSampleItem());
 			if (analysis.getTest() != null) {
-				currentAnalysisService = SpringContext.getBean(AnalysisService.class);
-				currentAnalysisService.setAnalysis(analysis);
+				currentAnalysis = analysis;
 				ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
 				if (isConfirmationSample) {
 					String alerts = resultsData.getAlerts();
@@ -129,9 +127,8 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 					resultsData.setAlerts(alerts);
 				}
 
-				if (currentAnalysisService.getAnalysis().isReferredOut()) {
-					Referral referral = referralService
-							.getReferralByAnalysisId(currentAnalysisService.getAnalysis().getId());
+				if (currentAnalysis.isReferredOut()) {
+					Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
 					if (referral != null) {
 						// addReferredTests method in both PatientClinical and PatientCILNSPClinical are
 						// nearly identical and
@@ -165,7 +162,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 	private List<ClinicalPatientData> addReferredTests(Referral referral, ClinicalPatientData parentData) {
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(currentAnalysisService.getAnalysis());
+		noteAnalysisService.setAnalysis(currentAnalysis);
 		String note = noteAnalysisService.getNotesAsString(false, true, "<br/>", FILTER, true);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>();
 
@@ -213,8 +210,8 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 					data.setTestRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
 					data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
 							: Integer.parseInt(test.getSortOrder()));
-					data.setSectionSortOrder(currentAnalysisService.getAnalysis().getTestSection().getSortOrderInt());
-					data.setTestSection(currentAnalysisService.getAnalysis().getTestSection().getLocalizedName());
+					data.setSectionSortOrder(currentAnalysis.getTestSection().getSortOrderInt());
+					data.setTestSection(currentAnalysis.getTestSection().getLocalizedName());
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {

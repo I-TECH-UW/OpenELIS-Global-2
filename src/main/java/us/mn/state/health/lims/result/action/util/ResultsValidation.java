@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 import spring.service.analysis.AnalysisService;
 import spring.service.result.ResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import spring.util.SpringContext;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -40,6 +40,8 @@ public class ResultsValidation {
 
 	@Autowired
 	private ResultService resultService;
+	@Autowired
+	private AnalysisService analysisService;
 
 	public Errors validateItem(TestResultItem item) {
 		Errors errors = new BaseErrors();
@@ -159,9 +161,8 @@ public class ResultsValidation {
 
 		if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())) {
 
-			AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-			analysisAnalysisService.setAnalysis(item.getAnalysisId());
-			List<Result> resultList = analysisAnalysisService.getResults();
+			Analysis analysis = analysisService.get(item.getAnalysisId());
+			List<Result> resultList = analysisService.getResults(analysis);
 			ArrayList<String> dictionaryIds = new ArrayList<>(resultList.size());
 			for (Result result : resultList) {
 				dictionaryIds.add(result.getValue());

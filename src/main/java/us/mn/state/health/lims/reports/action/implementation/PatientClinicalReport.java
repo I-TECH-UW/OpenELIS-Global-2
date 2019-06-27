@@ -28,7 +28,6 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisService;
 import spring.service.note.NoteService;
 import spring.service.result.ResultService;
 import spring.service.test.TestServiceImpl;
@@ -93,13 +92,11 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 			boolean hasParentResult = analysis.getParentResult() != null;
 
 			if (analysis.getTest() != null) {
-				currentAnalysisService = SpringContext.getBean(AnalysisService.class);
-				currentAnalysisService.setAnalysis(analysis);
+				currentAnalysis = analysis;
 				ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
 
-				if (currentAnalysisService.getAnalysis().isReferredOut()) {
-					Referral referral = referralService
-							.getReferralByAnalysisId(currentAnalysisService.getAnalysis().getId());
+				if (currentAnalysis.isReferredOut()) {
+					Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
 					if (referral != null) {
 						List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
 						currentSampleReportItems.addAll(referredData);
@@ -119,7 +116,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>();
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
-		noteAnalysisService.setAnalysis(currentAnalysisService.getAnalysis());
+		noteAnalysisService.setAnalysis(currentAnalysis);
 		String note = noteAnalysisService.getNotesAsString(false, true, "<br/>", FILTER, true);
 
 		if (!referralResults.isEmpty()) {
@@ -165,8 +162,8 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 					data.setTestRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
 					data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
 							: Integer.parseInt(test.getSortOrder()));
-					data.setSectionSortOrder(currentAnalysisService.getTestSection().getSortOrderInt());
-					data.setTestSection(currentAnalysisService.getTestSection().getLocalizedName());
+					data.setSectionSortOrder(analysisService.getTestSection(currentAnalysis).getSortOrderInt());
+					data.setTestSection(analysisService.getTestSection(currentAnalysis).getLocalizedName());
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {

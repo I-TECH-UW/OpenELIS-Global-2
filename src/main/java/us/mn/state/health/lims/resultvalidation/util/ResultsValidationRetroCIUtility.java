@@ -845,9 +845,8 @@ public class ResultsValidationRetroCIUtility {
 		if (result != null) {
 			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())
 					&& !(testResultItem.getAnalysis() == null)) {
-				AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
-				analysisAnalysisService.setAnalysis(testResultItem.getAnalysis());
-				analysisResultItem.setMultiSelectResultValues(analysisAnalysisService.getJSONMultiSelectResults());
+				Analysis analysis = testResultItem.getAnalysis();
+				analysisResultItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
 			} else {
 				analysisResultItem.setResult(getFormattedResult(testResultItem));
 			}
