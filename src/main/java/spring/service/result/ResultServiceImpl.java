@@ -106,11 +106,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return TestServiceImpl.getUserLocalizedTestName(test);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getReportingTestName() {
 		return TestServiceImpl.getUserLocalizedReportingTestName(test);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getTestDescription() {
 		return TestServiceImpl.getLocalizedTestNameWithType(test);
@@ -131,16 +133,19 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return "";
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getLOINCCode() {
 		return test != null ? test.getLoinc() : "";
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getTestTime() {
 		return result.getAnalysis().getCompletedDateForDisplay();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getTestType() {
 		return result.getResultType();
@@ -152,6 +157,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *
 	 * @return The String value
 	 */
+	@Override
 	@Transactional(readOnly = true)
 	public String getSimpleResultValue() {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
@@ -197,11 +203,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *                  they will be suitable for a web form
 	 * @return A textual representation of the value
 	 */
+	@Override
 	@Transactional(readOnly = true)
 	public String getResultValue(boolean printable) {
 		return getResultValue(",", printable, false);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getResultValue(String separator, boolean printable, boolean includeUOM) {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
@@ -387,6 +395,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getDisplayReferenceRange(boolean includeSelectList) {
 		String range = "";
@@ -414,6 +423,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return resultLimit;
 	}
 
+	@Override
 	public boolean isAbnormalDictionaryResult() {
 		if (result.getValue() != null
 				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
@@ -426,11 +436,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getLastUpdatedTime() {
 		return DateUtil.convertTimestampToStringDate(result.getLastupdated());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getSignature() {
 		List<ResultSignature> signatures = signatureService.getResultSignaturesByResult(result);

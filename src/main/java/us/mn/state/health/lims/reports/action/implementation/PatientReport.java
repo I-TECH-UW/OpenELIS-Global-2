@@ -298,9 +298,8 @@ public abstract class PatientReport extends Report {
 
 		Person person = currentSampleService.getPersonRequester(currentSample);
 		if (person != null) {
-			PersonService personPersonService = SpringContext.getBean(PersonService.class);
-			personPersonService.setPerson(person);
-			currentContactInfo = personPersonService.getLastFirstName();
+			PersonService personService = SpringContext.getBean(PersonService.class);
+			currentContactInfo = personService.getLastFirstName(person);
 			currentProvider = providerService.getProviderByPerson(person);
 		}
 	}

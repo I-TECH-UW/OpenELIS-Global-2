@@ -32,7 +32,6 @@ import spring.mine.qaevent.validator.NonConformityFormValidator;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
-import spring.service.person.PersonService;
 import spring.service.project.ProjectService;
 import spring.service.provider.ProviderService;
 import spring.service.requester.SampleRequesterService;
@@ -158,12 +157,10 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
 			Person providerPerson = getProviderPerson(provider);
 			if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
-				PersonService personPersonService = SpringContext.getBean(PersonService.class);
-				personPersonService.setPerson(providerPerson);
-				PropertyUtils.setProperty(form, "providerFirstName", personPersonService.getFirstName());
-				PropertyUtils.setProperty(form, "providerLastName", personPersonService.getLastName());
-				PropertyUtils.setProperty(form, "providerWorkPhone", personPersonService.getPhone());
-				Map<String, String> addressComponents = personPersonService.getAddressComponents();
+				PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName(providerPerson));
+				PropertyUtils.setProperty(form, "providerLastName", personService.getLastName(providerPerson));
+				PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone(providerPerson));
+				Map<String, String> addressComponents = personService.getAddressComponents(providerPerson);
 
 				PropertyUtils.setProperty(form, "providerStreetAddress", addressComponents.get("Street"));
 				PropertyUtils.setProperty(form, "providerCity", addressComponents.get("village"));

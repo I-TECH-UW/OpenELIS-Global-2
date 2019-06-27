@@ -51,6 +51,7 @@ public class RequesterService {
 	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
 
 	private String sampleId;
+	private Person person;
 	private List<SampleRequester> requesters;
 	private PersonService personPersonService;
 	private Organization organization;
@@ -93,31 +94,31 @@ public class RequesterService {
 	}
 
 	public String getRequesterFirstName() {
-		return getPersonService() == null ? null : getPersonService().getFirstName();
+		return personService == null ? null : personService.getFirstName(person);
 	}
 
 	public String getRequesterLastName() {
-		return getPersonService() == null ? null : getPersonService().getLastName();
+		return personService == null ? null : personService.getLastName(person);
 	}
 
 	public String getRequesterLastFirstName() {
-		return getPersonService() == null ? null : getPersonService().getLastFirstName();
+		return personService == null ? null : personService.getLastFirstName(person);
 	}
 
 	public String getWorkPhone() {
-		return getPersonService() == null ? null : getPersonService().getWorkPhone();
+		return personService == null ? null : personService.getWorkPhone(person);
 	}
 
 	public String getCellPhone() {
-		return getPersonService() == null ? null : getPersonService().getCellPhone();
+		return personService == null ? null : personService.getCellPhone(person);
 	}
 
 	public String getFax() {
-		return getPersonService() == null ? null : getPersonService().getFax();
+		return personService == null ? null : personService.getFax(person);
 	}
 
 	public String getEmail() {
-		return getPersonService() == null ? null : getPersonService().getEmail();
+		return personService == null ? null : personService.getEmail(person);
 	}
 
 	public String getReferringSiteId() {
@@ -133,15 +134,11 @@ public class RequesterService {
 	}
 
 	public Person getPerson() {
-		return getPersonService() == null ? null : getPersonService().getPerson();
-	}
-
-	private PersonService getPersonService() {
-		if (personPersonService == null) {
+		if (person == null) {
 			buildRequesters();
 		}
 
-		return personPersonService;
+		return person;
 	}
 
 	public Organization getOrganization() {
@@ -180,8 +177,7 @@ public class RequesterService {
 		for (SampleRequester requester : requesters) {
 			if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
 				Person person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-				personPersonService = SpringContext.getBean(PersonService.class);
-				personPersonService.setPerson(person);
+				this.person = person;
 			} else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
 				organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
 			}

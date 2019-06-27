@@ -21,25 +21,22 @@ public interface PersonService extends BaseObjectService<Person, String> {
 
 	Person getPersonById(String personId);
 
-	Map<String, String> getAddressComponents();
+	String getFirstName(Person person);
 
-	Person getPerson();
+	String getLastName(Person person);
 
-	String getPhone();
+	String getLastFirstName(Person person);
 
-	String getLastFirstName();
+	Map<String, String> getAddressComponents(Person person);
 
-	String getLastName();
+	String getPhone(Person person);
 
-	String getFirstName();
+	String getWorkPhone(Person person);
 
-	void setPerson(Person person);
+	String getCellPhone(Person person);
 
-	String getWorkPhone();
+	String getFax(Person person);
 
-	String getCellPhone();
+	String getEmail(Person person);
 
-	String getFax();
-
-	String getEmail();
 }

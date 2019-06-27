@@ -98,6 +98,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	private PersonService personPersonService = SpringContext.getBean(PersonService.class);
 
 	private Patient patient;
+	private Person person;
 
 	public synchronized void initializeGlobalVariables() {
 
@@ -210,8 +211,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 		if (patient.getPerson() == null) {
 			baseObjectDAO.getData(this.patient);
 		}
-		personPersonService = SpringContext.getBean(PersonService.class);
-		personPersonService.setPerson(patient.getPerson());
+		person = patient.getPerson();
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getFirstName() {
-		return personPersonService.getFirstName();
+		return personPersonService.getFirstName(person);
 	}
 
 	/*
@@ -357,7 +357,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastName() {
-		return personPersonService.getLastName();
+		return personPersonService.getLastName(person);
 	}
 
 	/*
@@ -369,7 +369,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastFirstName() {
-		return personPersonService.getLastFirstName();
+		return personPersonService.getLastFirstName(person);
 	}
 
 	/*
@@ -406,7 +406,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	 */
 	@Override
 	public Map<String, String> getAddressComponents() {
-		return personPersonService.getAddressComponents();
+		return personPersonService.getAddressComponents(person);
 	}
 
 	/*
@@ -434,7 +434,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public String getPhone() {
-		return personPersonService.getPhone();
+		return personPersonService.getPhone(person);
 	}
 
 	/*
@@ -445,7 +445,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	@Override
 	@Transactional(readOnly = true)
 	public Person getPerson() {
-		return personPersonService.getPerson();
+		return person;
 	}
 
 	/*

@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,6 @@ import spring.service.address.AddressPartService;
 import spring.service.address.PersonAddressService;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.dictionary.DictionaryService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.person.dao.PersonDAO;
@@ -23,7 +23,6 @@ import us.mn.state.health.lims.person.valueholder.Person;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> implements PersonService {
 
 	private static Map<String, String> addressPartIdToNameMap;
@@ -32,15 +31,14 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	protected PersonDAO baseObjectDAO;
 
 	@Autowired
-	private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	private DictionaryService dictionaryService;
 	@Autowired
-	private AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+	private AddressPartService addressPartService;
 	@Autowired
-	private PersonAddressService personAddressService = SpringContext.getBean(PersonAddressService.class);
+	private PersonAddressService personAddressService;
 
-	private Person person;
-
-	public synchronized void initializeGlobalVariables() {
+	@PostConstruct
+	private void initializeGlobalVariables() {
 		if (addressPartIdToNameMap == null) {
 			addressPartIdToNameMap = new HashMap<>();
 			List<AddressPart> parts = addressPartService.getAll();
@@ -53,17 +51,6 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	public PersonServiceImpl() {
 		super(Person.class);
-		initializeGlobalVariables();
-	}
-
-	public PersonServiceImpl(Person person) {
-		this();
-		setPerson(person);
-	}
-
-	@Override
-	public void setPerson(Person person) {
-		this.person = person;
 	}
 
 	@Override
@@ -73,21 +60,21 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getFirstName() {
+	public String getFirstName(Person person) {
 		return person != null ? person.getFirstName() : "";
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getLastName() {
+	public String getLastName(Person person) {
 		return person != null ? person.getLastName() : "";
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getLastFirstName() {
-		String lastName = getLastName();
-		String firstName = getFirstName();
+	public String getLastFirstName(Person person) {
+		String lastName = getLastName(person);
+		String firstName = getFirstName(person);
 		if (!GenericValidator.isBlankOrNull(lastName) && !GenericValidator.isBlankOrNull(firstName)) {
 			lastName += ", ";
 		}
@@ -99,7 +86,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	}
 
 	@Override
-	public Map<String, String> getAddressComponents() {
+	public Map<String, String> getAddressComponents(Person person) {
 		String value;
 		Map<String, String> addressMap = new HashMap<>();
 
@@ -135,7 +122,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getPhone() {
+	public String getPhone(Person person) {
 		if (person == null) {
 			return "";
 		}
@@ -153,42 +140,39 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 		return phone;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getWorkPhone() {
+	public String getWorkPhone(Person person) {
 		return person.getWorkPhone();
-	}
-
-	@Transactional(readOnly = true)
-	public String getCellPhone() {
-		return person.getCellPhone();
-	}
-
-	@Transactional(readOnly = true)
-	public String getHomePhone() {
-		return person.getHomePhone();
-	}
-
-	@Transactional(readOnly = true)
-	public String getFax() {
-		return person.getFax();
-	}
-
-	@Transactional(readOnly = true)
-	public String getEmail() {
-		return person.getEmail();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Person getPerson() {
-		return person;
+	public String getCellPhone(Person person) {
+		return person.getCellPhone();
+	}
+
+	@Transactional(readOnly = true)
+	public String getHomePhone(Person person) {
+		return person.getHomePhone();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getFax(Person person) {
+		return person.getFax();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getEmail(Person person) {
+		return person.getEmail();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public void getData(Person person) {
 		getBaseObjectDAO().getData(person);
-
 	}
 
 	@Override
@@ -226,4 +210,5 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 	public Person getPersonById(String personId) {
 		return getBaseObjectDAO().getPersonById(personId);
 	}
+
 }
