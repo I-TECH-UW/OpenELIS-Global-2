@@ -1,14 +1,59 @@
 package spring.service.patient;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.person.valueholder.Person;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public interface PatientService extends BaseObjectService<Patient, String> {
+
+	String getGUID();
+
+	String getSTNumber();
+
+	String getSubjectNumber();
+
+	String getLocalizedGender();
+
+	Map<String, String> getAddressComponents();
+
+	String getEnteredDOB();
+
+	Timestamp getDOB();
+
+	String getPhone();
+
+	String getAKA();
+
+	String getMother();
+
+	String getInsurance();
+
+	String getOccupation();
+
+	String getOrgSite();
+
+	String getMothersInitial();
+
+	String getEducation();
+
+	String getMaritalStatus();
+
+	String getHealthDistrict();
+
+	String getHealthRegion();
+
+	String getObNumber();
+
+	String getPCNumber();
+
 	void getData(Patient patient);
 
 	Patient getData(String patientId);
@@ -56,5 +101,15 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 	String getNationalId();
 
 	Patient getPatient();
+
+	void setPatient(Patient patient);
+
+	String getExternalId();
+
+	void setPatient(MessagePatient orderPatient);
+
+	void setPatientBySample(Sample sample);
+
+	void setPatient(String guid);
 
 }

@@ -39,10 +39,8 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.address.AddressPartService;
 import spring.service.address.PersonAddressService;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.dictionary.DictionaryService;
 import spring.service.note.NoteService;
-import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
@@ -51,14 +49,12 @@ import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.person.PersonService;
-import spring.service.person.PersonServiceImpl;
 import spring.service.provider.ProviderService;
 import spring.service.referral.ReferralReasonService;
 import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
-import spring.service.result.ResultServiceImpl;
+import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
-import spring.service.sample.SampleServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
@@ -103,7 +99,7 @@ public abstract class PatientReport extends Report {
 	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PatientService patientPatientService = SpringContext.getBean(PatientService.class);
 	protected PersonService personService = SpringContext.getBean(PersonService.class);
 	protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
 	protected TestService testService = SpringContext.getBean(TestService.class);
@@ -133,11 +129,11 @@ public abstract class PatientReport extends Report {
 	protected String patientCommune = null;
 
 	protected Provider currentProvider;
-	protected AnalysisServiceImpl currentAnalysisService;
+	protected AnalysisService currentAnalysisService;
 	protected String reportReferralResultValue;
 	protected List<ClinicalPatientData> reportItems;
 	protected String completionDate;
-	protected SampleServiceImpl currentSampleService;
+	protected SampleService currentSampleService;
 
 	protected static final NoteType[] FILTER = { NoteType.EXTERNAL, NoteType.REJECTION_REASON,
 			NoteType.NON_CONFORMITY };
@@ -231,7 +227,8 @@ public abstract class PatientReport extends Report {
 		} else {
 
 			for (Sample sample : reportSampleList) {
-				currentSampleService = new SampleServiceImpl(sample);
+				currentSampleService = SpringContext.getBean(SampleService.class);
+				currentSampleService.setSample(sample);
 				handledOrders.add(sample.getId());
 				sampleCompleteMap.put(sample.getAccessionNumber(), Boolean.TRUE);
 				findCompletionDate();
@@ -263,14 +260,14 @@ public abstract class PatientReport extends Report {
 	}
 
 	private void findPatientInfo() {
-		if (patientService.getPerson() == null) {
+		if (patientPatientService.getPerson() == null) {
 			return;
 		}
 
 		patientDept = "";
 		patientCommune = "";
 		if (ADDRESS_DEPT_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientPatientService.getPerson().getId(),
 					ADDRESS_DEPT_ID);
 
 			if (deptAddress != null && !GenericValidator.isBlankOrNull(deptAddress.getValue())) {
@@ -279,7 +276,7 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (ADDRESS_COMMUNE_ID != null) {
-			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientPatientService.getPerson().getId(),
 					ADDRESS_COMMUNE_ID);
 
 			if (deptAddress != null) {
@@ -301,15 +298,17 @@ public abstract class PatientReport extends Report {
 
 		Person person = currentSampleService.getPersonRequester();
 		if (person != null) {
-			currentContactInfo = new PersonServiceImpl(person).getLastFirstName();
+			PersonService personPersonService = SpringContext.getBean(PersonService.class);
+			personPersonService.setPerson(person);
+			currentContactInfo = personPersonService.getLastFirstName();
 			currentProvider = providerService.getProviderByPerson(person);
 		}
 	}
 
 	private boolean findPatientByPatientNumber(String patientNumber, List<Patient> patientList) {
-		patientService = null;
+		patientPatientService = null;
 		PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
-		patientList.addAll(patientService.getPatientsByNationalId(patientNumber));
+		patientList.addAll(patientPatientService.getPatientsByNationalId(patientNumber));
 
 		if (patientList.isEmpty()) {
 			List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
@@ -326,7 +325,7 @@ public abstract class PatientReport extends Report {
 					String reportPatientId = patientIdentity.getPatientId();
 					Patient patient = new Patient();
 					patient.setId(reportPatientId);
-					patientService.getData(patient);
+					patientPatientService.getData(patient);
 					patientList.add(patient);
 				}
 			}
@@ -383,10 +382,11 @@ public abstract class PatientReport extends Report {
 	protected void findPatientFromSample() {
 		Patient patient = sampleHumanService.getPatientForSample(currentSampleService.getSample());
 
-		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
+		if (patientPatientService == null || !patient.getId().equals(patientPatientService.getPatientId())) {
 			STNumber = null;
 			patientDOB = null;
-			patientService = new PatientServiceImpl(patient);
+			patientPatientService = SpringContext.getBean(PatientService.class);
+			patientPatientService.setPatient(patient);
 		}
 	}
 
@@ -406,7 +406,7 @@ public abstract class PatientReport extends Report {
 
 	protected String getPatientDOB() {
 		if (patientDOB == null) {
-			patientDOB = patientService.getBirthdayForDisplay();
+			patientDOB = patientPatientService.getBirthdayForDisplay();
 		}
 
 		return patientDOB;
@@ -415,7 +415,7 @@ public abstract class PatientReport extends Report {
 	protected String getLazyPatientIdentity(String identity, String id) {
 		if (identity == null) {
 			identity = " ";
-			List<PatientIdentity> identities = patientService.getIdentityList();
+			List<PatientIdentity> identities = patientPatientService.getIdentityList();
 			for (PatientIdentity patientIdentity : identities) {
 				if (patientIdentity.getIdentityTypeId().equals(id)) {
 					identity = patientIdentity.getIdentityData();
@@ -428,17 +428,18 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected void setPatientName(ClinicalPatientData data) {
-		data.setPatientName(patientService.getLastFirstName());
-		data.setFirstName(patientService.getFirstName());
-		data.setLastName(patientService.getLastName());
+		data.setPatientName(patientPatientService.getLastFirstName());
+		data.setFirstName(patientPatientService.getFirstName());
+		data.setLastName(patientPatientService.getLastName());
 	}
 
 	protected void reportResultAndConclusion(ClinicalPatientData data) {
 		List<Result> resultList = currentAnalysisService.getResults();
 
 		Test test = currentAnalysisService.getTest();
-		String note = new NoteServiceImpl(currentAnalysisService.getAnalysis()).getNotesAsString(true, true, "<br/>",
-				FILTER, true);
+		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+		noteAnalysisService.setAnalysis(currentAnalysisService.getAnalysis());
+		String note = noteAnalysisService.getNotesAsString(true, true, "<br/>", FILTER, true);
 		if (note != null) {
 			data.setNote(note);
 		}
@@ -539,7 +540,9 @@ public abstract class PatientReport extends Report {
 				boolean isAbnormal;
 
 				if (data == null) {
-					isAbnormal = new ResultServiceImpl(result).isAbnormalDictionaryResult();
+					ResultService resultResultService = SpringContext.getBean(ResultService.class);
+					resultResultService.setResult(result);
+					isAbnormal = resultResultService.isAbnormalDictionaryResult();
 				} else {
 					isAbnormal = data.getAbnormalResult();
 				}
@@ -570,7 +573,9 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected String getRange(Result result) {
-		return new ResultServiceImpl(result).getDisplayReferenceRange(true);
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		resultResultService.setResult(result);
+		return resultResultService.getDisplayReferenceRange(true);
 	}
 
 	protected String getUnitOfMeasure(Test test) {
@@ -588,7 +593,9 @@ public abstract class PatientReport extends Report {
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(result.getValue());
 					dictionaryService.getData(dictionary);
-					data.setAbnormalResult(new ResultServiceImpl(result).isAbnormalDictionaryResult());
+					ResultService resultResultService = SpringContext.getBean(ResultService.class);
+					resultResultService.setResult(result);
+					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult());
 
 					if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
 						currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
@@ -596,7 +603,9 @@ public abstract class PatientReport extends Report {
 						reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
 					}
 				} else {
-					reportResult = new ResultServiceImpl(result).getResultValue(true);
+					ResultService resultResultService = SpringContext.getBean(ResultService.class);
+					resultResultService.setResult(result);
+					reportResult = resultResultService.getResultValue(true);
 					// TODO - how is this used. Selection types can also have
 					// UOM and reference ranges
 					data.setHasRangeAndUOM(
@@ -606,10 +615,11 @@ public abstract class PatientReport extends Report {
 				// If multiple results it can be a quantified result, multiple
 				// results with quantified other results or it can be a
 				// conclusion
-				ResultServiceImpl resultService = new ResultServiceImpl(resultList.get(0));
+				ResultService resultResultService = SpringContext.getBean(ResultService.class);
+				resultResultService.setResult(resultList.get(0));
 
-				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultService.getTestType())) {
-					data.setAbnormalResult(resultService.isAbnormalDictionaryResult());
+				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultResultService.getTestType())) {
+					data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult());
 					List<Result> dictionaryResults = new ArrayList<>();
 					Result quantification = null;
 					for (Result sibResult : resultList) {
@@ -636,7 +646,8 @@ public abstract class PatientReport extends Report {
 							}
 						}
 					}
-				} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultService.getTestType())) {
+				} else if (TypeOfTestResultServiceImpl.ResultType
+						.isMultiSelectVariant(resultResultService.getTestType())) {
 					Dictionary dictionary = new Dictionary();
 					StringBuilder multiResult = new StringBuilder();
 
@@ -775,8 +786,8 @@ public abstract class PatientReport extends Report {
 		data.setReceivedDate(receivedDate);
 		data.setDob(getPatientDOB());
 		data.setAge(createReadableAge(data.getDob()));
-		data.setGender(patientService.getGender());
-		data.setNationalId(patientService.getNationalId());
+		data.setGender(patientPatientService.getGender());
+		data.setNationalId(patientPatientService.getNationalId());
 		setPatientName(data);
 		data.setDept(patientDept);
 		data.setCommune(patientCommune);

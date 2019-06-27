@@ -28,9 +28,9 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.analysis.AnalysisService;
 import spring.service.organization.OrganizationService;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -186,9 +186,11 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 	 * @param referral
 	 */
 	private void reportReferral(Referral referral) {
-		currentAnalysisService = new AnalysisServiceImpl(referral.getAnalysis());
+		currentAnalysisService = SpringContext.getBean(AnalysisService.class);
+		currentAnalysisService.setAnalysis(referral.getAnalysis());
 		Sample sample = referralService.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
-		currentSampleService = new SampleServiceImpl(sample);
+		currentSampleService = SpringContext.getBean(SampleService.class);
+		currentSampleService.setSample(sample);
 		findPatientFromSample();
 
 		String note = currentAnalysisService.getNotesAsString(false, true, "<br/>", false);

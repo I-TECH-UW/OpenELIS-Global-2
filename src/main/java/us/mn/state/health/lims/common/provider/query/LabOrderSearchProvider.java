@@ -41,7 +41,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
 import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -132,8 +132,9 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	}
 
 	private String getPatientGuid(ElectronicOrder eOrder) {
-		PatientServiceImpl patientService = new PatientServiceImpl(eOrder.getPatient());
-		return patientService.getGUID();
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientPatientService.setPatient(eOrder.getPatient());
+		return patientPatientService.getGUID();
 	}
 
 	private void createOrderXML(String orderMessage, String patientGuid, StringBuilder xml) {
@@ -426,9 +427,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	}
 
 	private void addAlerts(StringBuilder xml, String patientGuid) {
-		PatientServiceImpl patientService = new PatientServiceImpl(patientGuid);
-		if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB())
-				|| GenericValidator.isBlankOrNull(patientService.getGender())) {
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientPatientService.setPatient(patientGuid);
+		if (GenericValidator.isBlankOrNull(patientPatientService.getEnteredDOB())
+				|| GenericValidator.isBlankOrNull(patientPatientService.getGender())) {
 			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),
 					xml);
 		}

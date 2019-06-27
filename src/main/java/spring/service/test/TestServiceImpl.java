@@ -102,11 +102,21 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 	public TestServiceImpl(Test test) {
 		this();
+		setTest(test);
+	}
+
+	@Override
+	public void setTest(Test test) {
 		this.test = test;
 	}
 
 	public TestServiceImpl(String testId) {
 		this();
+		setTest(testId);
+	}
+
+	@Override
+	public void setTest(String testId) {
 		test = get(testId);
 	}
 
@@ -132,12 +142,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		entityToMap.put(Entity.TEST_REPORTING_NAME, createTestIdToReportingNameMap());
 	}
 
-	@Transactional(readOnly = true)
+	@Override
 	public Test getTest() {
 		return test;
 	}
 
-	@Transactional(readOnly = true)
+	@Override
 	public String getTestMethodName() {
 		return (test != null && test.getMethod() != null) ? test.getMethod().getMethodName() : null;
 	}
@@ -146,13 +156,14 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return test == null ? false : test.isActive();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<TestResult> getPossibleTestResults() {
 		return TEST_RESULT_Service.getAllActiveTestResultsPerTest(test);
 	}
 
-	@Transactional(readOnly = true)
+	@Override
 	public String getUOM(boolean isCD4Conclusion) {
 		if (!isCD4Conclusion) {
 			if (test != null && test.getUnitOfMeasure() != null) {
@@ -163,16 +174,17 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return "";
 	}
 
+	@Override
 	public boolean isReportable() {
 		return test != null && "Y".equals(test.getIsReportable());
 	}
 
-	@Transactional(readOnly = true)
+	@Override
 	public String getSortOrder() {
 		return test == null ? "0" : test.getSortOrder();
 	}
 
-	@Transactional(readOnly = true)
+	@Override
 	public ResultDisplayType getDisplayTypeForTestMethod() {
 		String methodName = getTestMethodName();
 
@@ -185,6 +197,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return TestResultItem.ResultDisplayType.TEXT;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getResultType() {
 		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
@@ -197,6 +210,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return testResultType;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public TypeOfSample getTypeOfSample() {
 		if (test == null) {
@@ -214,6 +228,24 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return TYPE_OF_SAMPLE_Service.getTypeOfSampleById(typeOfSampleId);
 	}
 
+	@Transactional(readOnly = true)
+	public static TypeOfSample getTypeOfSample(Test test) {
+		if (test == null) {
+			return null;
+		}
+
+		TypeOfSampleTest typeOfSampleTest = TYPE_OF_SAMPLE_testService.getTypeOfSampleTestForTest(test.getId());
+
+		if (typeOfSampleTest == null) {
+			return null;
+		}
+
+		String typeOfSampleId = typeOfSampleTest.getTypeOfSampleId();
+
+		return TYPE_OF_SAMPLE_Service.getTypeOfSampleById(typeOfSampleId);
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public List<Panel> getPanels() {
 		List<Panel> panelList = new ArrayList<>();
@@ -237,6 +269,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 		return test == null ? null : test.getTestSection();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getTestSectionName() {
 		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection());
@@ -379,7 +412,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
 		if (ConfigurationProperties.getInstance()
 				.isPropertyValueEqual(ConfigurationProperties.Property.TEST_NAME_AUGMENTED, "true")) {
-			TypeOfSample typeOfSample = new TestServiceImpl(test).getTypeOfSample();
+			TypeOfSample typeOfSample = getTypeOfSample(test);
 			if (typeOfSample != null && !typeOfSample.getId().equals(VARIABLE_TYPE_OF_SAMPLE_ID)) {
 				sampleName = "(" + typeOfSample.getLocalizedName() + ")";
 			}

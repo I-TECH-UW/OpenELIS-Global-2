@@ -28,11 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.patient.PatientService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.person.PersonService;
 import spring.service.systemuser.SystemUserService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
@@ -85,12 +85,13 @@ public class DBOrderPersister implements IOrderPersister {
 	}
 
 	private void persist(MessagePatient orderPatient) {
-		PatientServiceImpl patientService = new PatientServiceImpl(orderPatient);
-		patient = patientService.getPatient();
+		PatientService patientMessagePatientService = SpringContext.getBean(PatientService.class);
+		patientMessagePatientService.setPatient(orderPatient);
+		patient = patientMessagePatientService.getPatient();
 		if (patient == null) {
 			createNewPatient(orderPatient);
 		} else {
-			updatePatient(orderPatient, patientService);
+			updatePatient(orderPatient, patientMessagePatientService);
 		}
 	}
 
@@ -138,14 +139,14 @@ public class DBOrderPersister implements IOrderPersister {
 		}
 	}
 
-	private void updatePatient(MessagePatient orderPatient, PatientServiceImpl patientService) {
-		Patient patient = patientService.getPatient();
-		Person person = patientService.getPerson();
+	private void updatePatient(MessagePatient orderPatient, PatientService patientMessagePatientService) {
+		Patient patient = patientMessagePatientService.getPatient();
+		Person person = patientMessagePatientService.getPerson();
 
-		updatePersonIfNeeded(orderPatient, patientService, person);
-		updatePatientIfNeeded(orderPatient, patientService, patient);
+		updatePersonIfNeeded(orderPatient, patientMessagePatientService, person);
+		updatePatientIfNeeded(orderPatient, patientMessagePatientService, patient);
 
-		List<PatientIdentity> identityList = patientService.getIdentityList();
+		List<PatientIdentity> identityList = patientMessagePatientService.getIdentityList();
 		updateIdentityIfNeeded(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), patient.getId(), identityList,
 				identityService);
 		updateIdentityIfNeeded(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), patient.getId(), identityList,
@@ -182,48 +183,50 @@ public class DBOrderPersister implements IOrderPersister {
 		}
 	}
 
-	private void updatePatientIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService,
+	private void updatePatientIfNeeded(MessagePatient orderPatient, PatientService patientMessagePatientService,
 			Patient patient) {
 		boolean updatePatient = false;
 
-		if (needsUpdating(orderPatient.getDisplayDOB(), patientService.getBirthdayForDisplay())) {
+		if (needsUpdating(orderPatient.getDisplayDOB(), patientMessagePatientService.getBirthdayForDisplay())) {
 			patient.setBirthDateForDisplay(orderPatient.getDisplayDOB());
 			updatePatient = true;
 		}
 
-		if (needsUpdating(orderPatient.getGender(), patientService.getGender())) {
+		if (needsUpdating(orderPatient.getGender(), patientMessagePatientService.getGender())) {
 			patient.setGender(orderPatient.getGender());
 			updatePatient = true;
 		}
 
-		if (needsUpdating(orderPatient.getNationalId(), patientService.getNationalId())) {
+		if (needsUpdating(orderPatient.getNationalId(), patientMessagePatientService.getNationalId())) {
 			patient.setNationalId(orderPatient.getNationalId());
 			updatePatient = true;
 		}
 
 		if (updatePatient) {
 			patient.setSysUserId(SERVICE_USER_ID);
-			patientService.update(patient);
+			patientMessagePatientService.update(patient);
 		}
 	}
 
-	private void updatePersonIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService, Person person) {
+	private void updatePersonIfNeeded(MessagePatient orderPatient, PatientService patientMessagePatientService,
+			Person person) {
 		boolean updatePerson = false;
 
-		if (needsUpdating(orderPatient.getFirstName(), patientService.getFirstName())) {
+		if (needsUpdating(orderPatient.getFirstName(), patientMessagePatientService.getFirstName())) {
 			person.setFirstName(orderPatient.getFirstName());
 			updatePerson = true;
 		}
 
-		if (needsUpdating(orderPatient.getLastName(), patientService.getLastName())) {
+		if (needsUpdating(orderPatient.getLastName(), patientMessagePatientService.getLastName())) {
 			person.setLastName(orderPatient.getLastName());
 			updatePerson = true;
 		}
-		if (needsUpdating(orderPatient.getAddressStreet(), patientService.getPerson().getStreetAddress())) {
+		if (needsUpdating(orderPatient.getAddressStreet(),
+				patientMessagePatientService.getPerson().getStreetAddress())) {
 			person.setStreetAddress(orderPatient.getAddressStreet());
 			updatePerson = true;
 		}
-		if (needsUpdating(orderPatient.getAddressVillage(), patientService.getPerson().getCity())) {
+		if (needsUpdating(orderPatient.getAddressVillage(), patientMessagePatientService.getPerson().getCity())) {
 			person.setCity(orderPatient.getAddressVillage());
 			updatePerson = true;
 		}

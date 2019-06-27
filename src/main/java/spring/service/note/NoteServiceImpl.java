@@ -54,7 +54,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		}
 
 		@Transactional(readOnly = true)
-	public String getDBCode() {
+		public String getDBCode() {
 			return DBCode;
 		}
 	}
@@ -95,6 +95,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	public NoteServiceImpl(Analysis analysis) {
 		this();
+		setAnalysis(analysis);
+	}
+
+	@Override
+	public void setAnalysis(Analysis analysis) {
 		tableId = AnalysisServiceImpl.TABLE_REFERENCE_ID;
 		objectId = analysis.getId();
 		binding = BoundTo.ANALYSIS;
@@ -103,6 +108,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	public NoteServiceImpl(Sample sample) {
 		this();
+		setSample(sample);
+	}
+
+	@Override
+	public void setSample(Sample sample) {
 		tableId = SampleServiceImpl.TABLE_REFERENCE_ID;
 		objectId = sample.getId();
 		binding = BoundTo.SAMPLE;
@@ -111,6 +121,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	public NoteServiceImpl(SampleQaEvent sampleQaEvent) {
 		this();
+		setSampleQaEvent(sampleQaEvent);
+	}
+
+	@Override
+	public void setSampleQaEvent(SampleQaEvent sampleQaEvent) {
 		tableId = QAService.TABLE_REFERENCE_ID;
 		objectId = sampleQaEvent.getId();
 		binding = BoundTo.QA_EVENT;
@@ -119,6 +134,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
 	public NoteServiceImpl(SampleItem sampleItem) {
 		this();
+		setSampleItem(sampleItem);
+	}
+
+	@Override
+	public void setSampleItem(SampleItem sampleItem) {
 		tableId = SAMPLE_ITEM_TABLE_REFERENCE_ID;
 		objectId = sampleItem.getId();
 		binding = BoundTo.SAMPLE_ITEM;
@@ -131,6 +151,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
 			boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
@@ -138,6 +159,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
 			boolean excludeExternPrefix, EncodeContext context) {
 		boolean includeNoneConformity = false;
@@ -217,12 +239,14 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix, EncodeContext context) {
 		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
@@ -265,6 +289,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public String getNotesAsString(String prefix, String noteSeparator) {
 		List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
@@ -288,6 +313,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public Note getMostRecentNoteFilteredBySubject(String filter) {
 		List<Note> noteList;
 		if (GenericValidator.isBlankOrNull(filter)) {
@@ -309,6 +335,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 		return DateUtil.convertTimestampToStringDateAndTime(note.getLastupdated());
 	}
 
+	@Override
 	public Note createSavableNote(NoteType type, String text, String subject, String currentUserId) {
 		if (GenericValidator.isBlankOrNull(text)) {
 			return null;

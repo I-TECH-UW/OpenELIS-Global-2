@@ -1,10 +1,16 @@
 package spring.service.sample;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.organization.valueholder.Organization;
+import us.mn.state.health.lims.patient.valueholder.Patient;
+import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.sample.valueholder.Sample;
+import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleService extends BaseObjectService<Sample, String> {
 	void getData(Sample sample);
@@ -55,4 +61,40 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 	List<Sample> getSamplesForPatient(String patientID);
 
 	String generateAccessionNumberAndInsert(Sample sample);
+
+	void setSample(Sample sample);
+
+	void setSample(String accessionNumber);
+
+	List<Analysis> getAnalysis();
+
+	List<SampleQaEvent> getSampleQAEventList();
+
+	Sample getSample();
+
+	String getAccessionNumber();
+
+	String getReceivedDateWithTwoYearDisplay();
+
+	String getTwoYearReceivedDateForDisplay();
+
+	Patient getPatient();
+
+	String getReceivedDateForDisplay();
+
+	String getReceived24HourTimeForDisplay();
+
+	Date getCompletedDate();
+
+	Organization getOrganizationRequester();
+
+	Person getPersonRequester();
+
+	String getReceivedTimeForDisplay();
+
+	String getId();
+
+	Timestamp getOrderedDate();
+
+	boolean isConfirmationSample();
 }

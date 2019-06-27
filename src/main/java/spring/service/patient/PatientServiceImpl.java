@@ -21,13 +21,11 @@ import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.patienttype.PatientPatientTypeService;
 import spring.service.person.PersonService;
-import spring.service.person.PersonServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
 import us.mn.state.health.lims.gender.valueholder.Gender;
@@ -47,8 +45,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
-		implements PatientService, IPatientService {
+public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService {
 
 	public static final String ADDRESS_STREET = "Street";
 	public static final String ADDRESS_STATE = "State";
@@ -98,7 +95,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Autowired
 	private static PatientPatientTypeService patientPatientTypeService = SpringContext
 			.getBean(PatientPatientTypeService.class);
-	private PersonService personService = SpringContext.getBean(PersonService.class);
+	private PersonService personPersonService = SpringContext.getBean(PersonService.class);
 
 	private Patient patient;
 
@@ -198,18 +195,23 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 
 	public PatientServiceImpl(Patient patient) {
 		this();
+		setPatient(patient);
+	}
+
+	@Override
+	public void setPatient(Patient patient) {
 		this.patient = patient;
 
 		if (patient == null) {
-			personService = new PersonServiceImpl(null);
+			personPersonService = SpringContext.getBean(PersonService.class);
 			return;
 		}
 
 		if (patient.getPerson() == null) {
 			baseObjectDAO.getData(this.patient);
 		}
-		personService = new PersonServiceImpl(patient.getPerson());
-
+		personPersonService = SpringContext.getBean(PersonService.class);
+		personPersonService.setPerson(patient.getPerson());
 	}
 
 	/**
@@ -219,7 +221,13 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @param sample
 	 */
 	public PatientServiceImpl(Sample sample) {
-		this(sampleHumanService.getPatientForSample(sample));
+		this();
+		setPatientBySample(sample);
+	}
+
+	@Override
+	public void setPatientBySample(Sample sample) {
+		setPatient(sampleHumanService.getPatientForSample(sample));
 	}
 
 	/**
@@ -228,11 +236,23 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 * @param guid
 	 */
 	public PatientServiceImpl(String guid) {
-		this(getPatientForGuid(guid));
+		this();
+		setPatient(guid);
+	}
+
+	@Override
+	public void setPatient(String guid) {
+		setPatient(getPatientForGuid(guid));
 	}
 
 	public PatientServiceImpl(MessagePatient mPatient) {
-		this(baseObjectDAO.getPatientByExternalId(mPatient.getExternalId()));
+		this();
+		setPatient(mPatient);
+	}
+
+	@Override
+	public void setPatient(MessagePatient mPatient) {
+		setPatient(baseObjectDAO.getPatientByExternalId(mPatient.getExternalId()));
 	}
 
 	@Override
@@ -326,7 +346,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Override
 	@Transactional(readOnly = true)
 	public String getFirstName() {
-		return personService.getFirstName();
+		return personPersonService.getFirstName();
 	}
 
 	/*
@@ -337,7 +357,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastName() {
-		return personService.getLastName();
+		return personPersonService.getLastName();
 	}
 
 	/*
@@ -349,7 +369,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Override
 	@Transactional(readOnly = true)
 	public String getLastFirstName() {
-		return personService.getLastFirstName();
+		return personPersonService.getLastFirstName();
 	}
 
 	/*
@@ -386,7 +406,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	 */
 	@Override
 	public Map<String, String> getAddressComponents() {
-		return personService.getAddressComponents();
+		return personPersonService.getAddressComponents();
 	}
 
 	/*
@@ -414,7 +434,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Override
 	@Transactional(readOnly = true)
 	public String getPhone() {
-		return personService.getPhone();
+		return personPersonService.getPhone();
 	}
 
 	/*
@@ -425,7 +445,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	@Override
 	@Transactional(readOnly = true)
 	public Person getPerson() {
-		return personService.getPerson();
+		return personPersonService.getPerson();
 	}
 
 	/*
@@ -464,6 +484,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 		return patient != null ? PatientUtil.getIdentityListForPatient(patient) : new ArrayList<>();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public String getExternalId() {
 		return patient == null ? "" : patient.getExternalId();
@@ -635,9 +656,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String>
 	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId)
 			throws LIMSRuntimeException {
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			personService.insert(patient.getPerson());
+			personPersonService.insert(patient.getPerson());
 		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			personService.update(patient.getPerson());
+			personPersonService.update(patient.getPerson());
 		}
 		patient.setPerson(patient.getPerson());
 

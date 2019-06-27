@@ -56,12 +56,20 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	public TestSectionServiceImpl(TestSection testSection) {
 		this();
+		setTestSection(testSection);
+	}
+
+	public void setTestSection(TestSection testSection) {
 		this.testSection = testSection;
 	}
 
 	public TestSectionServiceImpl(String testSectionId) {
 		this();
-		testSection = baseObjectDAO.getTestSectionById(testSectionId);
+		setTestSection(testSectionId);
+	}
+
+	public void setTestSection(String testSectionId) {
+		testSection = get(testSectionId);
 	}
 
 	@Override

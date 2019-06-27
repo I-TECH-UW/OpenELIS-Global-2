@@ -58,6 +58,11 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
 	public PersonServiceImpl(Person person) {
 		this();
+		setPerson(person);
+	}
+
+	@Override
+	public void setPerson(Person person) {
 		this.person = person;
 	}
 

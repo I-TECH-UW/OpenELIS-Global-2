@@ -31,8 +31,8 @@ import spring.mine.qaevent.service.NonConformityHelper;
 import spring.mine.qaevent.validator.NonConformityFormValidator;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.organization.OrganizationService;
-import spring.service.patient.PatientServiceImpl;
-import spring.service.person.PersonServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.project.ProjectService;
 import spring.service.provider.ProviderService;
 import spring.service.requester.SampleRequesterService;
@@ -158,11 +158,12 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
 			Person providerPerson = getProviderPerson(provider);
 			if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
-				PersonServiceImpl personService = new PersonServiceImpl(providerPerson);
-				PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName());
-				PropertyUtils.setProperty(form, "providerLastName", personService.getLastName());
-				PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone());
-				Map<String, String> addressComponents = personService.getAddressComponents();
+				PersonService personPersonService = SpringContext.getBean(PersonService.class);
+				personPersonService.setPerson(providerPerson);
+				PropertyUtils.setProperty(form, "providerFirstName", personPersonService.getFirstName());
+				PropertyUtils.setProperty(form, "providerLastName", personPersonService.getLastName());
+				PropertyUtils.setProperty(form, "providerWorkPhone", personPersonService.getPhone());
+				Map<String, String> addressComponents = personPersonService.getAddressComponents();
 
 				PropertyUtils.setProperty(form, "providerStreetAddress", addressComponents.get("Street"));
 				PropertyUtils.setProperty(form, "providerCity", addressComponents.get("village"));
@@ -184,7 +185,7 @@ public class NonConformityController extends BaseController {
 
 	private void createForExistingSample(NonConformityForm form, Sample sample)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PatientServiceImpl patientService = getPatientService(sample);
+		PatientService patientService = getPatientService(sample);
 		List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patientService);
 		PropertyUtils.setProperty(form, "sampleId", sample.getId());
 		PropertyUtils.setProperty(form, "patientId", patientService.getPatientId());
@@ -362,12 +363,14 @@ public class NonConformityController extends BaseController {
 		return sampleService.getSampleByAccessionNumber(labNumber);
 	}
 
-	private PatientServiceImpl getPatientService(Sample sample) {
+	private PatientService getPatientService(Sample sample) {
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		return new PatientServiceImpl(patient);
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientPatientService.setPatient(patient);
+		return patientPatientService;
 	}
 
-	private List<ObservationHistory> getObservationHistory(Sample sample, PatientServiceImpl patientService) {
+	private List<ObservationHistory> getObservationHistory(Sample sample, PatientService patientService) {
 		return observationHistoryService.getAll(patientService.getPatient(), sample);
 	}
 

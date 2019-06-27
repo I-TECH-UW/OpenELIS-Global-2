@@ -27,14 +27,14 @@ import spring.mine.barcode.form.PrintBarcodeForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.IStatusService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -229,12 +229,13 @@ public class PrintBarcodeController extends BaseController {
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		IPatientService patientService = new PatientServiceImpl(patient);
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientPatientService.setPatient(patient);
 
-		displayObjects.put("patientName", patientService.getLastFirstName());
-		displayObjects.put("dob", patientService.getEnteredDOB());
-		displayObjects.put("gender", patientService.getGender());
-		displayObjects.put("nationalId", patientService.getNationalId());
+		displayObjects.put("patientName", patientPatientService.getLastFirstName());
+		displayObjects.put("dob", patientPatientService.getEnteredDOB());
+		displayObjects.put("gender", patientPatientService.getGender());
+		displayObjects.put("nationalId", patientPatientService.getNationalId());
 	}
 
 	private static class SampleEditItemComparator implements Comparator<SampleEditItem> {

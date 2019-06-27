@@ -75,6 +75,11 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
 	public ResultServiceImpl(Result result) {
 		this();
+		setResult(result);
+	}
+
+	@Override
+	public void setResult(Result result) {
 		this.result = result;
 
 		test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;

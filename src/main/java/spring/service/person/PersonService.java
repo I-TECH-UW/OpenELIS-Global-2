@@ -32,4 +32,14 @@ public interface PersonService extends BaseObjectService<Person, String> {
 	String getLastName();
 
 	String getFirstName();
+
+	void setPerson(Person person);
+
+	String getWorkPhone();
+
+	String getCellPhone();
+
+	String getFax();
+
+	String getEmail();
 }

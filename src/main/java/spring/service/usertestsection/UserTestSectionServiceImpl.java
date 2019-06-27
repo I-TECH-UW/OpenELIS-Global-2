@@ -12,11 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.sample.SampleService;
-import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestSectionService;
-import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -38,6 +35,8 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	private TestSectionService testSectionService;
 	@Autowired
 	private UserModuleService userModuleService;
+	@Autowired
+	private SampleService sampleService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -73,7 +72,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 			String searchStr) throws LIMSRuntimeException {
 
 		List list = new ArrayList();
-		TestService testService = new TestServiceImpl();
+		TestService testService = SpringContext.getBean(TestService.class);
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
@@ -120,20 +119,17 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	public List getAllUserTestSections(HttpServletRequest request) throws LIMSRuntimeException {
 
 		List list = new ArrayList();
-		TestSectionService testSectService = new TestSectionServiceImpl();
-
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
-				list = testSectService.getAllTestSections();
+				list = testSectionService.getAllTestSections();
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession()
 						.getAttribute(IActionConstants.USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 				if (!userModuleService.isUserAdmin(request)) {
-					list = testSectService.getAllTestSectionsBySysUserId(usd.getSystemUserId());
+					list = testSectionService.getAllTestSectionsBySysUserId(usd.getSystemUserId());
 				} else {
-					list = testSectService.getAllTestSections();
+					list = testSectionService.getAllTestSections();
 				}
 			}
 		} catch (Exception e) {
@@ -148,7 +144,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 	@Transactional(readOnly = true)
 	public List getAllUserTests(HttpServletRequest request, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List list = new ArrayList();
-		TestService testService = new TestServiceImpl();
+		TestService testService = SpringContext.getBean(TestService.class);
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
@@ -212,7 +208,6 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 			throws LIMSRuntimeException {
 
 		List samplePdfList = new java.util.ArrayList();
-		SampleService sampleService = new SampleServiceImpl();
 
 		try {
 			List statuses = new ArrayList();

@@ -28,10 +28,10 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.analysis.AnalysisService;
 import spring.service.localization.LocalizationService;
-import spring.service.note.NoteServiceImpl;
-import spring.service.result.ResultServiceImpl;
+import spring.service.note.NoteService;
+import spring.service.result.ResultService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -115,7 +115,8 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 			boolean hasParentResult = analysis.getParentResult() != null;
 			sampleSet.add(analysis.getSampleItem());
 			if (analysis.getTest() != null) {
-				currentAnalysisService = new AnalysisServiceImpl(analysis);
+				currentAnalysisService = SpringContext.getBean(AnalysisService.class);
+				currentAnalysisService.setAnalysis(analysis);
 				ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
 				if (isConfirmationSample) {
 					String alerts = resultsData.getAlerts();
@@ -163,8 +164,9 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	// should be refactored to use the same code.
 	private List<ClinicalPatientData> addReferredTests(Referral referral, ClinicalPatientData parentData) {
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
-		String note = new NoteServiceImpl(currentAnalysisService.getAnalysis()).getNotesAsString(false, true, "<br/>",
-				FILTER, true);
+		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+		noteAnalysisService.setAnalysis(currentAnalysisService.getAnalysis());
+		String note = noteAnalysisService.getNotesAsString(false, true, "<br/>", FILTER, true);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>();
 
 		if (!referralResults.isEmpty()) {
@@ -312,7 +314,9 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 			if (data.getParentResult() != null && !parentResults.contains(data.getParentResult().getId())) {
 				parentResults.add(data.getParentResult().getId());
 				ClinicalPatientData marker = new ClinicalPatientData(data);
-				marker.setTestName(new ResultServiceImpl(data.getParentResult()).getSimpleResultValue());
+				ResultService resultResultService = SpringContext.getBean(ResultService.class);
+				resultResultService.setResult(data.getParentResult());
+				marker.setTestName(resultResultService.getSimpleResultValue());
 				marker.setResult(null);
 				marker.setTestRefRange(null);
 				marker.setParentMarker(true);

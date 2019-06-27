@@ -23,14 +23,13 @@ import java.util.List;
 
 import spring.mine.common.form.BaseForm;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.organization.OrganizationService;
+import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
 import spring.service.requester.RequesterTypeService;
 import spring.service.requester.SampleRequesterService;
 import spring.service.result.ResultService;
-import spring.service.result.ResultServiceImpl;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
@@ -113,26 +112,27 @@ public class HaitiLNSPExportReport extends CSVExportReport {
 			}
 		}
 
-		PatientServiceImpl patientService = new PatientServiceImpl(patient);
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientPatientService.setPatient(patient);
 
 		List<SampleItem> sampleItemList = sampleItemService.getSampleItemsBySampleId(order.getId());
 
 		for (SampleItem sampleItem : sampleItemList) {
-			getResultsForSampleItem(requesterOrganization, patientService, sampleItem, order);
+			getResultsForSampleItem(requesterOrganization, patientPatientService, sampleItem, order);
 		}
 	}
 
-	private void getResultsForSampleItem(Organization requesterOrganization, PatientServiceImpl patientService,
+	private void getResultsForSampleItem(Organization requesterOrganization, PatientService patientPatientService,
 			SampleItem sampleItem, Sample order) {
 		List<Analysis> analysisList = analysisService.getAnalysesBySampleItem(sampleItem);
 
 		for (Analysis analysis : analysisList) {
-			getResultForAnalysis(requesterOrganization, patientService, order, sampleItem, analysis);
+			getResultForAnalysis(requesterOrganization, patientPatientService, order, sampleItem, analysis);
 		}
 
 	}
 
-	private void getResultForAnalysis(Organization requesterOrganization, PatientServiceImpl patientService,
+	private void getResultForAnalysis(Organization requesterOrganization, PatientService patientPatientService,
 			Sample order, SampleItem sampleItem, Analysis analysis) {
 		TestSegmentedExportBean ts = new TestSegmentedExportBean();
 
@@ -141,20 +141,22 @@ public class HaitiLNSPExportReport extends CSVExportReport {
 		ts.setReceptionTime(DateUtil.convertTimestampToStringConfiguredHourTime(order.getReceivedTimestamp()));
 		ts.setCollectionDate(DateUtil.convertTimestampToStringDate(sampleItem.getCollectionDate()));
 		ts.setCollectionTime(DateUtil.convertTimestampToStringConfiguredHourTime(sampleItem.getCollectionDate()));
-		ts.setAge(createReadableAge(patientService.getDOB()));
-		ts.setDOB(patientService.getEnteredDOB());
-		ts.setFirstName(patientService.getFirstName());
-		ts.setLastName(patientService.getLastName());
-		ts.setGender(patientService.getGender());
-		ts.setNationalId(patientService.getNationalId());
+		ts.setAge(createReadableAge(patientPatientService.getDOB()));
+		ts.setDOB(patientPatientService.getEnteredDOB());
+		ts.setFirstName(patientPatientService.getFirstName());
+		ts.setLastName(patientPatientService.getLastName());
+		ts.setGender(patientPatientService.getGender());
+		ts.setNationalId(patientPatientService.getNationalId());
 		ts.setStatus(StatusService.getInstance()
 				.getStatusName(StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId())));
 		ts.setSampleType(sampleItem.getTypeOfSample().getLocalizedName());
 		ts.setTestBench(analysis.getTestSection() == null ? "" : analysis.getTestSection().getTestSectionName());
 		ts.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-		ts.setDepartment(
-				StringUtil.blankIfNull(patientService.getAddressComponents().get(PatientServiceImpl.ADDRESS_DEPT)));
-		String notes = new NoteServiceImpl(analysis).getNotesAsString(false, false, "|", false);
+		ts.setDepartment(StringUtil
+				.blankIfNull(patientPatientService.getAddressComponents().get(PatientServiceImpl.ADDRESS_DEPT)));
+		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+		noteAnalysisService.setAnalysis(analysis);
+		String notes = noteAnalysisService.getNotesAsString(false, false, "|", false);
 		if (notes != null) {
 			ts.setNotes(notes);
 		}
@@ -243,9 +245,12 @@ public class HaitiLNSPExportReport extends CSVExportReport {
 
 	private void setAppropriateResults(List<Result> resultList, Analysis analysis, TestSegmentedExportBean data) {
 		Result result = resultList.get(0);
-		ResultServiceImpl resultService = new ResultServiceImpl(result);
-		String reportResult = resultService.getResultValue(true);
-		Result quantifiableResult = new AnalysisServiceImpl(analysis).getQuantifiedResult();
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		resultResultService.setResult(result);
+		String reportResult = resultResultService.getResultValue(true);
+		AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
+		analysisAnalysisService.setAnalysis(analysis);
+		Result quantifiableResult = analysisAnalysisService.getQuantifiedResult();
 		if (quantifiableResult != null) {
 			reportResult += ":" + quantifiableResult.getValue();
 		}

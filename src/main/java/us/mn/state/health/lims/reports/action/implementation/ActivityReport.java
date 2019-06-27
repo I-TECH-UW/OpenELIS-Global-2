@@ -27,9 +27,10 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
-import spring.service.patient.PatientServiceImpl;
-import spring.service.result.ResultServiceImpl;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -110,29 +111,32 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 	protected ActivityReportBean createActivityReportBean(Result result, boolean useTestName) {
 		ActivityReportBean item = new ActivityReportBean();
 
-		ResultServiceImpl resultService = new ResultServiceImpl(result);
-		SampleServiceImpl sampleService = new SampleServiceImpl(result.getAnalysis().getSampleItem().getSample());
-		PatientServiceImpl patientService = new PatientServiceImpl(sampleService.getSample());
-		item.setResultValue(resultService.getResultValue("\n", true, true));
-		item.setTechnician(resultService.getSignature());
-		item.setAccessionNumber(sampleService.getAccessionNumber().substring(PREFIX_LENGTH));
-		item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay());
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		resultResultService.setResult(result);
+		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+		sampleSampleService.setSample(result.getAnalysis().getSampleItem().getSample());
+		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
+		patientSampleService.setPatientBySample(sampleSampleService.getSample());
+		item.setResultValue(resultResultService.getResultValue("\n", true, true));
+		item.setTechnician(resultResultService.getSignature());
+		item.setAccessionNumber(sampleSampleService.getAccessionNumber().substring(PREFIX_LENGTH));
+		item.setReceivedDate(sampleSampleService.getReceivedDateWithTwoYearDisplay());
 		item.setResultDate(DateUtil.convertTimestampToTwoYearStringDate(result.getLastupdated()));
 		item.setCollectionDate(
 				DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
 
 		List<String> values = new ArrayList<>();
-		values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
-		values.add(patientService.getNationalId());
+		values.add(patientSampleService.getLastName() == null ? "" : patientSampleService.getLastName().toUpperCase());
+		values.add(patientSampleService.getNationalId());
 
 		String referringPatientId = ObservationHistoryServiceImpl.getInstance()
-				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sampleService.getSample().getId());
+				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sampleSampleService.getSample().getId());
 		values.add(referringPatientId == null ? "" : referringPatientId);
 
 		String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
 
 		if (useTestName) {
-			item.setPatientOrTestName(resultService.getReportingTestName());
+			item.setPatientOrTestName(resultResultService.getReportingTestName());
 			item.setNonPrintingPatient(name);
 		} else {
 			item.setPatientOrTestName(name);

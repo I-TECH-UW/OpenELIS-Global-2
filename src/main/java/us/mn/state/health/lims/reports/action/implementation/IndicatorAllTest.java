@@ -28,7 +28,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.test.TestSectionService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
@@ -121,7 +120,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
 	private void setAnalysisForDateRange() {
 		HashMap<String, ArrayList<Analysis>> sampleToPanelAnalysisMap = new HashMap<>();
-		AnalysisService analysisService = new AnalysisServiceImpl("");
+		AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 		List<Analysis> rawAnalysisList = analysisService.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
 		ArrayList<Analysis> analysisList = new ArrayList<>();
 

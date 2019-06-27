@@ -35,15 +35,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.analyte.AnalyteService;
 import spring.service.dictionary.DictionaryService;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistorytype.ObservationHistoryTypeService;
 import spring.service.result.ResultService;
-import spring.service.result.ResultServiceImpl;
 import spring.service.sample.SampleService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestSectionService;
@@ -51,6 +49,7 @@ import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -433,7 +432,9 @@ public class ResultsValidationRetroCIUtility {
 		List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 		NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
 				NoteType.NON_CONFORMITY };
-		String notes = new NoteServiceImpl(analysis).getNotesAsString(true, true, "<br/>", noteTypes, false);
+		NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+		noteAnalysisService.setAnalysis(analysis);
+		String notes = noteAnalysisService.getNotesAsString(true, true, "<br/>", noteTypes, false);
 
 		if (resultList == null) {
 			return testResultList;
@@ -519,7 +520,9 @@ public class ResultsValidationRetroCIUtility {
 		if (result == null) {
 			return uom;
 		}
-		String range = new ResultServiceImpl(result).getDisplayReferenceRange(true);
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		resultResultService.setResult(result);
+		String range = resultResultService.getDisplayReferenceRange(true);
 		uom = StringUtil.blankIfNull(uom);
 		return GenericValidator.isBlankOrNull(range) ? uom : (uom + " ( " + range + " )");
 	}
@@ -842,8 +845,9 @@ public class ResultsValidationRetroCIUtility {
 		if (result != null) {
 			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())
 					&& !(testResultItem.getAnalysis() == null)) {
-				analysisResultItem.setMultiSelectResultValues(
-						new AnalysisServiceImpl(testResultItem.getAnalysis()).getJSONMultiSelectResults());
+				AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
+				analysisAnalysisService.setAnalysis(testResultItem.getAnalysis());
+				analysisResultItem.setMultiSelectResultValues(analysisAnalysisService.getJSONMultiSelectResults());
 			} else {
 				analysisResultItem.setResult(getFormattedResult(testResultItem));
 			}
@@ -878,7 +882,9 @@ public class ResultsValidationRetroCIUtility {
 				&& !GenericValidator.isBlankOrNull(result)) {
 			return result.split("\\(")[0].trim();
 		} else {
-			return new ResultServiceImpl(testResultItem.getResult()).getResultValue(false);
+			ResultService resultResultService = SpringContext.getBean(ResultService.class);
+			resultResultService.setResult(testResultItem.getResult());
+			return resultResultService.getResultValue(false);
 		}
 	}
 

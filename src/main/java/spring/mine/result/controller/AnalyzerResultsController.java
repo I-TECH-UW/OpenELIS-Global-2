@@ -32,6 +32,7 @@ import spring.service.analysis.AnalysisService;
 import spring.service.analyzerresults.AnalyzerResultsService;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitService;
@@ -1012,7 +1013,9 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				Note note = new NoteServiceImpl(analysis).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
+				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+				noteAnalysisService.setAnalysis(analysis);
+				Note note = noteAnalysisService.createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
@@ -1133,7 +1136,9 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				Note note = new NoteServiceImpl(analysis).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
+				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+				noteAnalysisService.setAnalysis(analysis);
+				Note note = noteAnalysisService.createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}

@@ -3,7 +3,8 @@ package us.mn.state.health.lims.referral.valueholder;
 import java.util.ArrayList;
 import java.util.List;
 
-import spring.service.test.TestServiceImpl;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -36,9 +37,13 @@ public class ReferralSet {
 				Result result = referralResult.getResult();
 				result.setSysUserId(currentUserId);
 				if (updatedReferralResult == null) {
+					TestService testTestService = SpringContext.getBean(TestService.class);
+					testTestService.setTest(newTestId);
+
 					referralResult.setTestId(newTestId);
 					referralResult.setSysUserId(currentUserId);
-					result.setResultType(new TestServiceImpl(newTestId).getResultType());
+
+					result.setResultType(testTestService.getResultType());
 					result.setValue("");
 					updatedReferralResult = referralResult;
 					updatableReferralResults.add(referralResult);

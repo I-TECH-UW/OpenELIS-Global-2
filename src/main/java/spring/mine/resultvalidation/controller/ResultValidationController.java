@@ -31,8 +31,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.reports.DocumentTrackService;
@@ -299,9 +298,11 @@ public class ResultValidationController extends BaseResultValidationController {
 		for (AnalysisItem analysisItem : analysisItems) {
 			if (!analysisItem.isReadOnly() && analysisItemWillBeUpdated(analysisItem)) {
 
-				AnalysisServiceImpl analysisService = new AnalysisServiceImpl(analysisItem.getAnalysisId());
-				Analysis analysis = analysisService.getAnalysis();
-				NoteServiceImpl noteService = new NoteServiceImpl(analysis);
+				AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
+				analysisAnalysisService.setAnalysis(analysisItem.getAnalysisId());
+				Analysis analysis = analysisAnalysisService.getAnalysis();
+				NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+				noteAnalysisService.setAnalysis(analysis);
 
 				analysis.setSysUserId(getSysUserId(request));
 
@@ -321,11 +322,11 @@ public class ResultValidationController extends BaseResultValidationController {
 					}
 				}
 
-				createNeededNotes(analysisItem, noteService, noteUpdateList);
+				createNeededNotes(analysisItem, noteAnalysisService, noteUpdateList);
 
 				if (areResults(analysisItem)) {
-					List<Result> results = createResultFromAnalysisItem(analysisItem, analysisService, noteService,
-							noteUpdateList, deletableList);
+					List<Result> results = createResultFromAnalysisItem(analysisItem, analysisAnalysisService,
+							noteAnalysisService, noteUpdateList, deletableList);
 					for (Result result : results) {
 						resultUpdateList.add(result);
 
@@ -338,16 +339,17 @@ public class ResultValidationController extends BaseResultValidationController {
 		}
 	}
 
-	private void createNeededNotes(AnalysisItem analysisItem, NoteServiceImpl noteService, List<Note> noteUpdateList) {
+	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteAnalysisService,
+			List<Note> noteUpdateList) {
 		if (analysisItem.getIsRejected()) {
-			Note note = noteService.createSavableNote(NoteType.INTERNAL,
+			Note note = noteAnalysisService.createSavableNote(NoteType.INTERNAL,
 					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
 			noteUpdateList.add(note);
 		}
 
 		if (!GenericValidator.isBlankOrNull(analysisItem.getNote())) {
 			NoteType noteType = analysisItem.getIsAccepted() ? NoteType.EXTERNAL : NoteType.INTERNAL;
-			Note note = noteService.createSavableNote(noteType, analysisItem.getNote(), RESULT_SUBJECT,
+			Note note = noteAnalysisService.createSavableNote(noteType, analysisItem.getNote(), RESULT_SUBJECT,
 					getSysUserId(request));
 			noteUpdateList.add(note);
 		}
@@ -467,16 +469,17 @@ public class ResultValidationController extends BaseResultValidationController {
 		return analysis;
 	}
 
-	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, AnalysisServiceImpl analysisService,
-			NoteServiceImpl noteService, List<Note> noteUpdateList, List<Result> deletableList) {
+	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem,
+			AnalysisService analysisAnalysisService, NoteService noteAnalysisService, List<Note> noteUpdateList,
+			List<Result> deletableList) {
 
 		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
-		ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(),
+		ResultSaveService resultSaveService = new ResultSaveService(analysisAnalysisService.getAnalysis(),
 				getSysUserId(request));
 		List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
-		if (analysisService.patientReportHasBeenDone() && resultSaveService.isUpdatedResult()) {
-			analysisService.getAnalysis().setCorrectedSincePatientReport(true);
-			noteUpdateList.add(noteService.createSavableNote(NoteType.EXTERNAL,
+		if (analysisAnalysisService.patientReportHasBeenDone() && resultSaveService.isUpdatedResult()) {
+			analysisAnalysisService.getAnalysis().setCorrectedSincePatientReport(true);
+			noteUpdateList.add(noteAnalysisService.createSavableNote(NoteType.EXTERNAL,
 					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 		}
 		return results;

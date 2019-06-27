@@ -11,7 +11,6 @@ import spring.service.localization.LocalizationService;
 import spring.service.panelitem.PanelItemService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -108,7 +107,7 @@ public class TestModifyServiceImpl implements TestModifyService {
 	}
 
 	private void updateTestEntities(String testId, String loinc, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = testService.get(testId);
 
 		if (test != null) {
 			test.setSysUserId(userId);
@@ -119,7 +118,7 @@ public class TestModifyServiceImpl implements TestModifyService {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = testService.get(testId);
 
 		if (test != null) {
 			Localization name = test.getLocalizedTestName();

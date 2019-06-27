@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.validator.BaseErrors;
-import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.analysis.AnalysisService;
 import spring.service.result.ResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -157,7 +158,10 @@ public class ResultsValidation {
 	private boolean resultHasChanged(TestResultItem item) {
 
 		if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())) {
-			List<Result> resultList = new AnalysisServiceImpl(item.getAnalysisId()).getResults();
+
+			AnalysisService analysisAnalysisService = SpringContext.getBean(AnalysisService.class);
+			analysisAnalysisService.setAnalysis(item.getAnalysisId());
+			List<Result> resultList = analysisAnalysisService.getResults();
 			ArrayList<String> dictionaryIds = new ArrayList<>(resultList.size());
 			for (Result result : resultList) {
 				dictionaryIds.add(result.getValue());

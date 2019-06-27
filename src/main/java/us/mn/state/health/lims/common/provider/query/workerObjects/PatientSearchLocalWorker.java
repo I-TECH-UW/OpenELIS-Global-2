@@ -27,7 +27,6 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.search.SearchResultsService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -36,10 +35,10 @@ import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory
 import us.mn.state.health.lims.patient.valueholder.Patient;
 
 public class PatientSearchLocalWorker extends PatientSearchWorker {
-	
+
 	protected PatientService patientService = SpringContext.getBean(PatientService.class);
 	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
-	
+
 	@Override
 	public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
 			String nationalID, String patientID, String guid, StringBuilder xml) {
@@ -57,8 +56,8 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
 		// N.B. results do not have the referrinngPatientId information but it is not
 		// displayed so for now it will be left as null
-		List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber,
-				nationalID, nationalID, patientID, guid);
+		List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
+				subjectNumber, nationalID, nationalID, patientID, guid);
 		if (!GenericValidator.isBlankOrNull(nationalID)) {
 			List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
 			results.addAll(observationResults);
@@ -98,12 +97,13 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 	}
 
 	private PatientSearchResults getSearchResultsForPatient(Patient patient, String referringId) {
-		PatientServiceImpl service = new PatientServiceImpl(patient);
-
-		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())), service.getFirstName(),
-				service.getLastName(), service.getGender(), service.getEnteredDOB(), service.getNationalId(),
-				patient.getExternalId(), service.getSTNumber(), service.getSubjectNumber(), service.getGUID(),
-				referringId);
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		patientService.setPatient(patient);
+		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
+				patientPatientService.getFirstName(), patientPatientService.getLastName(),
+				patientPatientService.getGender(), patientPatientService.getEnteredDOB(),
+				patientPatientService.getNationalId(), patient.getExternalId(), patientPatientService.getSTNumber(),
+				patientPatientService.getSubjectNumber(), patientPatientService.getGUID(), referringId);
 	}
 
 }

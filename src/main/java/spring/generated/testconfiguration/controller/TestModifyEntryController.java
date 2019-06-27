@@ -34,7 +34,7 @@ import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestSectionService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestModifyService;
@@ -83,6 +83,8 @@ public class TestModifyEntryController extends BaseController {
 	private TestModifyService testModifyService;
 	@Autowired
 	private LocalizationService localizationService;
+	@Autowired
+	private TestSectionService testSectionService;
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
 	public ModelAndView showTestModifyEntry(HttpServletRequest request) {
@@ -144,34 +146,35 @@ public class TestModifyEntryController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalogBean bean = new TestCatalogBean();
-			TestServiceImpl testService = new TestServiceImpl(test);
-			String resultType = testService.getResultType();
+			TestService testTestService = SpringContext.getBean(TestService.class);
+			testTestService.setTest(test);
+			String resultType = testTestService.getResultType();
 			bean.setId(test.getId());
 			bean.setEnglishName(test.getLocalizedTestName().getEnglish());
 			bean.setFrenchName(test.getLocalizedTestName().getFrench());
 			bean.setEnglishReportName(test.getLocalizedReportingName().getEnglish());
 			bean.setFrenchReportName(test.getLocalizedReportingName().getFrench());
 			bean.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
-			bean.setTestUnit(testService.getTestSectionName());
-			bean.setPanel(createPanelList(testService));
+			bean.setTestUnit(testTestService.getTestSectionName());
+			bean.setPanel(createPanelList(testTestService));
 			bean.setResultType(resultType);
-			TypeOfSample typeOfSample = testService.getTypeOfSample();
+			TypeOfSample typeOfSample = testTestService.getTypeOfSample();
 			bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
 			bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
 			bean.setLoinc(test.getLoinc());
 			bean.setActive(test.isActive() ? "Active" : "Not active");
-			bean.setUom(testService.getUOM(false));
+			bean.setUom(testTestService.getUOM(false));
 			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-				bean.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
+				bean.setSignificantDigits(testTestService.getPossibleTestResults().get(0).getSignificantDigits());
 				bean.setHasLimitValues(true);
 				bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
 			}
 			bean.setHasDictionaryValues(
 					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
 			if (bean.isHasDictionaryValues()) {
-				bean.setDictionaryValues(createDictionaryValues(testService));
+				bean.setDictionaryValues(createDictionaryValues(testTestService));
 				bean.setReferenceValue(createReferenceValueForDictionaryType(test));
-				bean.setDictionaryIds(createDictionaryIds(testService));
+				bean.setDictionaryIds(createDictionaryIds(testTestService));
 				bean.setReferenceId(createReferenceIdForDictionaryType(test));
 				bean.setReferenceId(getDictionaryIdByDictEntry(bean.getReferenceValue(), bean.getDictionaryIds(),
 						bean.getDictionaryValues()));
@@ -242,9 +245,9 @@ public class TestModifyEntryController extends BaseController {
 
 	}
 
-	private List<String> createDictionaryValues(TestServiceImpl testService) {
+	private List<String> createDictionaryValues(TestService testTestService) {
 		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testService.getPossibleTestResults();
+		List<TestResult> testResultList = testTestService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
 			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryValue(testResult));
 		}
@@ -283,9 +286,9 @@ public class TestModifyEntryController extends BaseController {
 				null);
 	}
 
-	private List<String> createDictionaryIds(TestServiceImpl testService) {
+	private List<String> createDictionaryIds(TestService testTestService) {
 		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testService.getPossibleTestResults();
+		List<TestResult> testResultList = testTestService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
 			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryId(testResult));
 		}
@@ -328,10 +331,10 @@ public class TestModifyEntryController extends BaseController {
 		return null;
 	}
 
-	private String createPanelList(TestServiceImpl testService) {
+	private String createPanelList(TestService testTestService) {
 		StringBuilder builder = new StringBuilder();
 
-		List<Panel> panelList = testService.getPanels();
+		List<Panel> panelList = testTestService.getPanels();
 		for (Panel panel : panelList) {
 			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
@@ -526,7 +529,7 @@ public class TestModifyEntryController extends BaseController {
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
 			uom = unitOfMeasureService.getUnitOfMeasureById(testAddParams.uomId);
 		}
-		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
+		TestSection testSection = testSectionService.get(testAddParams.testSectionId);
 
 		if (numericResults) {
 			lowValid = StringUtil.doubleWithInfinity(testAddParams.lowValid);
@@ -558,7 +561,7 @@ public class TestModifyEntryController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
+					Test orderedTest = SpringContext.getBean(TestService.class).get(orderedTests.get(j));
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}

@@ -49,7 +49,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	private static final AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	private static final SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	private static final SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
-	private static final SampleRequesterService sampleRequesterService = SpringContext.getBean(SampleRequesterService.class);
+	private static final SampleRequesterService sampleRequesterService = SpringContext
+			.getBean(SampleRequesterService.class);
 	private static final PersonService personService = SpringContext.getBean(PersonService.class);
 	private static ReferenceTablesService refTableService = SpringContext.getBean(ReferenceTablesService.class);
 	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
@@ -73,11 +74,21 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
 	public SampleServiceImpl(Sample sample) {
 		this();
+		this.setSample(sample);
+	}
+
+	@Override
+	public void setSample(Sample sample) {
 		this.sample = sample;
 	}
 
 	public SampleServiceImpl(String accessionNumber) {
 		this();
+		this.setSample(accessionNumber);
+	}
+
+	@Override
+	public void setSample(String accessionNumber) {
 		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
 	}
 

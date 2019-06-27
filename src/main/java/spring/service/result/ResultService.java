@@ -50,4 +50,30 @@ public interface ResultService extends BaseObjectService<Result, String> {
 	Result getResultById(String resultId);
 
 	List getPageOfResults(int startingRecNo);
+
+	void setResult(Result result);
+
+	String getTestTime();
+
+	String getLastUpdatedTime();
+
+	String getTestDescription();
+
+	String getLOINCCode();
+
+	String getDisplayReferenceRange(boolean b);
+
+	String getSimpleResultValue();
+
+	String getResultValue(String string, boolean b, boolean c);
+
+	String getSignature();
+
+	String getReportingTestName();
+
+	String getResultValue(boolean b);
+
+	boolean isAbnormalDictionaryResult();
+
+	String getTestType();
 }

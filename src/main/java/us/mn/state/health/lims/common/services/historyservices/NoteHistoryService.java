@@ -26,6 +26,7 @@ import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.history.HistoryService;
 import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.sample.SampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -62,7 +63,9 @@ public class NoteHistoryService extends AbstractHistoryService {
 	private void addAnalysisNotes(Sample sample) {
 		History searchHistory = new History();
 		searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
-		List<Analysis> analysisList = new SampleServiceImpl(sample).getAnalysis();
+		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+		sampleSampleService.setSample(sample);
+		List<Analysis> analysisList = sampleSampleService.getAnalysis();
 		Note searchNote = new Note();
 		searchNote.setReferenceTableId(AnalysisServiceImpl.TABLE_REFERENCE_ID);
 		for (Analysis analysis : analysisList) {
@@ -102,7 +105,9 @@ public class NoteHistoryService extends AbstractHistoryService {
 		Note searchNote = new Note();
 		searchNote.setReferenceTableId(QAService.TABLE_REFERENCE_ID);
 
-		List<SampleQaEvent> qaEventList = new SampleServiceImpl(sample).getSampleQAEventList();
+		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+		sampleSampleService.setSample(sample);
+		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList();
 
 		for (SampleQaEvent qaEvent : qaEventList) {
 			searchNote.setReferenceId(qaEvent.getId());

@@ -55,7 +55,6 @@ import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistorytype.ObservationHistoryTypeService;
-import spring.service.observationhistorytype.ObservationHistoryTypeServiceImpl;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
 import spring.service.patientidentity.PatientIdentityService;
@@ -63,7 +62,6 @@ import spring.service.person.PersonService;
 import spring.service.project.ProjectService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.sample.SampleService;
-import spring.service.sample.SampleServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.sampleorganization.SampleOrganizationService;
@@ -1271,7 +1269,7 @@ public abstract class Accessioner implements IAccessioner {
 	}
 
 	protected SampleService getSimpleSampleService() {
-		return new SampleServiceImpl();
+		return SpringContext.getBean(SampleService.class);
 	}
 
 	@Override
@@ -1324,7 +1322,7 @@ public abstract class Accessioner implements IAccessioner {
 						observation.setValue(initialSampleConditionIds[j]);
 						observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
 						observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
-								new ObservationHistoryTypeServiceImpl(), "initialSampleCondition"));
+								SpringContext.getBean(ObservationHistoryTypeService.class), "initialSampleCondition"));
 						observation.setSampleId(sample.getId());
 						observation.setSampleItemId(sampleItemId);
 						observation.setPatientId(patientInDB.getId());

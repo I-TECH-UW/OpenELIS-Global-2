@@ -161,4 +161,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	void update(Analysis analysis, boolean skipAuditTrail);
 
+	void setAnalysis(Analysis analysis);
+
+	void setAnalysis(String analysisId);
+
 }

@@ -28,9 +28,7 @@ import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.sample.SampleService;
-import spring.service.sample.SampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -53,8 +51,9 @@ public class SampleOrderService {
 
 	private static SampleService sampleService = SpringContext.getBean(SampleService.class);
 	private static OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
-	private ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
-	
+	private ObservationHistoryService observationHistoryService = SpringContext
+			.getBean(ObservationHistoryService.class);
+
 	boolean needRequesterList = FormFields.getInstance().useField(FormFields.Field.RequesterSiteList);
 	private boolean needPaymentOptions = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.TRACK_PATIENT_PAYMENT, "true");
@@ -123,11 +122,12 @@ public class SampleOrderService {
 		sampleOrder = getBaseSampleOrderItem();
 
 		if (sample != null) {
-			SampleServiceImpl sampleServiceImpl = new SampleServiceImpl(sample);
+			SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+			sampleSampleService.setSample(sample);
 			sampleOrder.setSampleId(sample.getId());
-			sampleOrder.setLabNo(sampleServiceImpl.getAccessionNumber());
-			sampleOrder.setReceivedDateForDisplay(sampleServiceImpl.getReceivedDateForDisplay());
-			sampleOrder.setReceivedTime(sampleServiceImpl.getReceived24HourTimeForDisplay());
+			sampleOrder.setLabNo(sampleSampleService.getAccessionNumber());
+			sampleOrder.setReceivedDateForDisplay(sampleSampleService.getReceivedDateForDisplay());
+			sampleOrder.setReceivedTime(sampleSampleService.getReceived24HourTimeForDisplay());
 
 			sampleOrder.setRequestDate(
 					observationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));
@@ -248,8 +248,9 @@ public class SampleOrderService {
 	private void createObservationHistoryArtifacts(SampleOrderItem sampleOrder, String currentUserId,
 			SampleOrderPersistenceArtifacts artifacts) {
 		List<ObservationHistory> observations = new ArrayList<>();
-		PatientService patientService = new PatientServiceImpl(artifacts.getSample());
-		String patientId = patientService.getPatient().getId();
+		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
+		patientSampleService.setPatientBySample(artifacts.getSample());
+		String patientId = patientSampleService.getPatient().getId();
 
 		createOrUpdateObservation(currentUserId, observations, patientId, ObservationType.REFERRERS_PATIENT_ID,
 				sampleOrder.getReferringPatientNumber(), ValueType.LITERAL);

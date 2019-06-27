@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import spring.service.organization.OrganizationService;
 import spring.service.organization.OrganizationTypeService;
 import spring.service.person.PersonService;
-import spring.service.person.PersonServiceImpl;
 import spring.service.requester.RequesterTypeService;
 import spring.service.requester.SampleRequesterService;
 import spring.util.SpringContext;
@@ -53,7 +52,7 @@ public class RequesterService {
 
 	private String sampleId;
 	private List<SampleRequester> requesters;
-	private PersonServiceImpl personServiceImpl;
+	private PersonService personPersonService;
 	private Organization organization;
 
 	public static enum Requester {
@@ -137,12 +136,12 @@ public class RequesterService {
 		return getPersonService() == null ? null : getPersonService().getPerson();
 	}
 
-	private PersonServiceImpl getPersonService() {
-		if (personServiceImpl == null) {
+	private PersonService getPersonService() {
+		if (personPersonService == null) {
 			buildRequesters();
 		}
 
-		return personServiceImpl;
+		return personPersonService;
 	}
 
 	public Organization getOrganization() {
@@ -181,7 +180,8 @@ public class RequesterService {
 		for (SampleRequester requester : requesters) {
 			if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
 				Person person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-				personServiceImpl = new PersonServiceImpl(person);
+				personPersonService = SpringContext.getBean(PersonService.class);
+				personPersonService.setPerson(person);
 			} else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
 				organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
 			}

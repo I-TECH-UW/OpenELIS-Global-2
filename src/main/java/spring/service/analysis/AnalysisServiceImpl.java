@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.dictionary.DictionaryService;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.result.ResultService;
 import spring.service.result.ResultServiceImpl;
@@ -69,11 +69,21 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
 	public AnalysisServiceImpl(Analysis analysis) {
 		this();
+		setAnalysis(analysis);
+	}
+
+	@Override
+	public void setAnalysis(Analysis analysis) {
 		this.analysis = analysis;
 	}
 
 	public AnalysisServiceImpl(String analysisId) {
 		this();
+		setAnalysis(analysisId);
+	}
+
+	@Override
+	public void setAnalysis(String analysisId) {
 		if (!GenericValidator.isBlankOrNull(analysisId)) {
 			analysis = baseObjectDAO.getAnalysisById(analysisId);
 		}
@@ -97,8 +107,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 		TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
 				.getTypeOfSampleForTest(test.getId());
 
-		if (typeOfSample != null && typeOfSample.getId().equals(SpringContext.getBean(TypeOfSampleService.class)
-				.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+		if (typeOfSample != null && typeOfSample.getId().equals(
+				SpringContext.getBean(TypeOfSampleService.class).getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}
 
@@ -257,9 +267,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	@Transactional(readOnly = true)
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
-		return analysis == null ? ""
-				: new NoteServiceImpl(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
-						excludeExternPrefix);
+		if (analysis == null) {
+			return "";
+		} else {
+			NoteService noteAnalysisService = SpringContext.getBean(NoteService.class);
+			noteAnalysisService.setAnalysis(analysis);
+			return noteAnalysisService.getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
+					excludeExternPrefix);
+		}
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestActivationService;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -171,7 +172,8 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (String testId : testIds) {
-			Test test = new TestServiceImpl(testId).getTest();
+			Test test = SpringContext.getBean(TestService.class).get(testId);
+
 			test.setIsActive("N");
 			test.setSysUserId(getSysUserId(request));
 			tests.add(test);
@@ -184,7 +186,7 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (ActivateSet set : testIds) {
-			Test test = new TestServiceImpl(set.id).getTest();
+			Test test = SpringContext.getBean(TestService.class).get(set.id);
 			test.setIsActive("Y");
 			test.setSortOrder(String.valueOf(set.sortOrder * 10));
 			test.setSysUserId(getSysUserId(request));
@@ -198,7 +200,8 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (String id : sampleTypeIds) {
-			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTransientTypeOfSampleById(id);
+			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
+					.getTransientTypeOfSampleById(id);
 			typeOfSample.setActive(false);
 			typeOfSample.setSysUserId(getSysUserId(request));
 			sampleTypes.add(typeOfSample);
@@ -211,7 +214,8 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (ActivateSet set : sampleTypeSets) {
-			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class).getTransientTypeOfSampleById(set.id);
+			TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
+					.getTransientTypeOfSampleById(set.id);
 			typeOfSample.setActive(true);
 			typeOfSample.setSortOrder(set.sortOrder * 10);
 			typeOfSample.setSysUserId(getSysUserId(request));

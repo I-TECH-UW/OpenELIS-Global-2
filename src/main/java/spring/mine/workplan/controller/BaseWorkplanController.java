@@ -11,12 +11,12 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
 import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -88,8 +88,9 @@ public abstract class BaseWorkplanController extends BaseController {
 
 	protected String getSubjectNumber(Analysis analysis) {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")) {
-			IPatientService patientService = new PatientServiceImpl(analysis.getSampleItem().getSample());
-			return patientService.getSubjectNumber();
+			PatientService patientSampleService = SpringContext.getBean(PatientService.class);
+			patientSampleService.setPatientBySample(analysis.getSampleItem().getSample());
+			return patientSampleService.getSubjectNumber();
 		} else {
 			return "";
 		}
@@ -98,10 +99,12 @@ public abstract class BaseWorkplanController extends BaseController {
 	protected String getPatientName(Analysis analysis) {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
 			Sample sample = analysis.getSampleItem().getSample();
-			IPatientService patientService = new PatientServiceImpl(sample);
+			PatientService patientSampleService = SpringContext.getBean(PatientService.class);
+			patientSampleService.setPatientBySample(sample);
 			List<String> values = new ArrayList<>();
-			values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
-			values.add(patientService.getNationalId());
+			values.add(
+					patientSampleService.getLastName() == null ? "" : patientSampleService.getLastName().toUpperCase());
+			values.add(patientSampleService.getNationalId());
 
 			String referringPatientId = ObservationHistoryServiceImpl.getInstance()
 					.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import spring.service.address.AddressPartService;
+import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
@@ -55,22 +56,23 @@ public class PatientManagementBridge {
 		info.setReadOnly(readOnly);
 
 		if (patient != null) {
-			PatientServiceImpl patientService = new PatientServiceImpl(patient);
-			Map<String, String> addressComponents = patientService.getAddressComponents();
-			info.setFirstName(patientService.getFirstName());
-			info.setLastName(patientService.getLastName());
+			PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+			patientPatientService.setPatient(patient);
+			Map<String, String> addressComponents = patientPatientService.getAddressComponents();
+			info.setFirstName(patientPatientService.getFirstName());
+			info.setLastName(patientPatientService.getLastName());
 			info.setAddressDepartment(addressComponents.get(PatientServiceImpl.ADDRESS_DEPT));
 			info.setCommune(addressComponents.get(PatientServiceImpl.ADDRESS_COMMUNE));
 			info.setCity(addressComponents.get(PatientServiceImpl.ADDRESS_CITY));
 			info.setStreetAddress(addressComponents.get(PatientServiceImpl.ADDRESS_STREET));
-			info.setGender(readOnly ? patientService.getLocalizedGender() : patientService.getGender());
-			info.setBirthDateForDisplay(patientService.getBirthdayForDisplay());
-			info.setNationalId(patientService.getNationalId());
-			info.setSTnumber(patientService.getSTNumber());
-			info.setMothersInitial(patientService.getMothersInitial());
+			info.setGender(readOnly ? patientPatientService.getLocalizedGender() : patientPatientService.getGender());
+			info.setBirthDateForDisplay(patientPatientService.getBirthdayForDisplay());
+			info.setNationalId(patientPatientService.getNationalId());
+			info.setSTnumber(patientPatientService.getSTNumber());
+			info.setMothersInitial(patientPatientService.getMothersInitial());
 			if (readOnly) {
 				info.setAge(DateUtil.getCurrentAgeForDate(
-						DateUtil.convertStringDateStringTimeToTimestamp(patientService.getBirthdayForDisplay(), null),
+						DateUtil.convertStringDateStringTimeToTimestamp(patientPatientService.getBirthdayForDisplay(), null),
 						DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null)));
 			}
 		}
