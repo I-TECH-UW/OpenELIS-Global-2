@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestSectionTestAssignForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.test.TestSectionService;
-import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestSectionTestAssignService;
@@ -57,7 +56,7 @@ public class TestSectionTestAssignController extends BaseController {
 		for (IdValuePair sectionPair : testSections) {
 			List<IdValuePair> tests = new ArrayList<>();
 			testSectionTestsMap.put(sectionPair, tests);
-			List<Test> testList = TestSectionServiceImpl.getTestsInSection(sectionPair.getId());
+			List<Test> testList = testSectionService.getTestsInSection(sectionPair.getId());
 
 			for (Test test : testList) {
 				if (test.isActive()) {

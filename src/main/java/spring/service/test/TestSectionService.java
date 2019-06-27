@@ -3,6 +3,7 @@ package spring.service.test;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 public interface TestSectionService extends BaseObjectService<TestSection, String> {
@@ -33,4 +34,10 @@ public interface TestSectionService extends BaseObjectService<TestSection, Strin
 	List<TestSection> getAllInActiveTestSections();
 
 	List<TestSection> getAllActiveTestSections();
+
+	List<Test> getTestsInSection(String id);
+
+	String getUserLocalizedTesSectionName(TestSection testSection);
+
+	void refreshNames();
 }

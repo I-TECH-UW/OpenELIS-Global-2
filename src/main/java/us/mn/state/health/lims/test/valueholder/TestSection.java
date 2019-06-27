@@ -2,22 +2,23 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.test.valueholder;
 
 import java.sql.Timestamp;
 
-import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestSectionService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
@@ -39,45 +40,44 @@ public class TestSection extends EnumValueItemImpl {
 	private String description;
 
 	private ValueHolderInterface organization;
-	
+
 	private String selectedOrganizationId;
-	
+
 	private int sortOrderInt;
 
 	private String selectedParentTestSectionId;
-	
+
 	private ValueHolderInterface parentTestSection;
 
-    private ValueHolderInterface localization;
-	
+	private ValueHolderInterface localization;
+
 	private String isActive;
-	
-	
+
 	public TestSection() {
 		super();
-		this.organization = new ValueHolder();
-		this.parentTestSection = new ValueHolder();
-        this.localization = new ValueHolder();
+		organization = new ValueHolder();
+		parentTestSection = new ValueHolder();
+		localization = new ValueHolder();
 	}
 
+	@Override
 	public String getId() {
-		return this.id;
+		return id;
 	}
 
 	public String getIsExternal() {
-		return this.isExternal;
+		return isExternal;
 	}
 
-
-
 	public String getTestSectionName() {
-		return this.testSectionName;
+		return testSectionName;
 	}
 
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -85,7 +85,6 @@ public class TestSection extends EnumValueItemImpl {
 	public void setIsExternal(String isExternal) {
 		this.isExternal = isExternal;
 	}
-
 
 	public void setTestSectionName(String testSectionName) {
 		this.testSectionName = testSectionName;
@@ -96,9 +95,8 @@ public class TestSection extends EnumValueItemImpl {
 	}
 
 	public Organization getOrganization() {
-		return (Organization) this.organization.getValue();
+		return (Organization) organization.getValue();
 	}
-
 
 	public void setOrganization(Organization organization) {
 		this.organization.setValue(organization);
@@ -109,38 +107,39 @@ public class TestSection extends EnumValueItemImpl {
 	}
 
 	public String getSelectedOrganizationId() {
-		return this.selectedOrganizationId;
+		return selectedOrganizationId;
 	}
-	
+
+	@Override
 	public void setLastupdated(Timestamp lastupdated) {
 		this.lastupdated = lastupdated;
 	}
-	
+
+	@Override
 	public Timestamp getLastupdated() {
-		return this.lastupdated;
+		return lastupdated;
 	}
-	
+
 	public TestSection getParentTestSection() {
-	    return (TestSection) this.parentTestSection.getValue();
+		return (TestSection) parentTestSection.getValue();
 	}
-    
+
 	public void setParentTestSection(TestSection parentTestSection) {
 		this.parentTestSection.setValue(parentTestSection);
 	}
-	
-	public void setSelectedParentTestSectionId (String selectedParentTestSectionId) {
+
+	public void setSelectedParentTestSectionId(String selectedParentTestSectionId) {
 		this.selectedParentTestSectionId = selectedParentTestSectionId;
 	}
 
-	public String getSelectedParentTestSectionId () {
-		return this.selectedParentTestSectionId;
+	public String getSelectedParentTestSectionId() {
+		return selectedParentTestSectionId;
 	}
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return TestSectionServiceImpl.getUserLocalizedTesSectionName(this);
+		return SpringContext.getBean(TestSectionService.class).getUserLocalizedTesSectionName(this);
 	}
-
 
 	public int getSortOrderInt() {
 		return sortOrderInt;
@@ -150,22 +149,22 @@ public class TestSection extends EnumValueItemImpl {
 		this.sortOrderInt = sortOrderInt;
 	}
 
+	@Override
 	public String getIsActive() {
 		return isActive;
 	}
 
+	@Override
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
 
-    public Localization getLocalization() {
-        return (Localization)localization.getValue();
-    }
+	public Localization getLocalization() {
+		return (Localization) localization.getValue();
+	}
 
-    public void setLocalization(Localization localization) {
-        this.localization.setValue( localization );
-    }
-
-
+	public void setLocalization(Localization localization) {
+		this.localization.setValue(localization);
+	}
 
 }

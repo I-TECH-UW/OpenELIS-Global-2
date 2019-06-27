@@ -37,7 +37,6 @@ import spring.service.panel.PanelService;
 import spring.service.qaevent.QaEventService;
 import spring.service.referral.ReferralReasonService;
 import spring.service.test.TestSectionService;
-import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
@@ -355,12 +354,12 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case TEST_SECTION: {
-			TestSectionServiceImpl.refreshNames();
+			testSectionService.refreshNames();
 			typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
 			break;
 		}
 		case TEST_SECTION_INACTIVE: {
-			TestSectionServiceImpl.refreshNames();
+			testSectionService.refreshNames();
 			typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
 			break;
 		}

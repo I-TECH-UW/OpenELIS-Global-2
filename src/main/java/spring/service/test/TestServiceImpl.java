@@ -67,6 +67,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
 	private PanelService panelService = SpringContext.getBean(PanelService.class);
 	private TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
+	private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
 	@PostConstruct
 	private void initialize() {
@@ -227,7 +228,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	@Override
 	@Transactional(readOnly = true)
 	public String getTestSectionName(Test test) {
-		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection(test));
+		return testSectionService.getUserLocalizedTesSectionName(getTestSection(test));
 	}
 
 	public static Map<String, String> getMap(Entity entiy) {
