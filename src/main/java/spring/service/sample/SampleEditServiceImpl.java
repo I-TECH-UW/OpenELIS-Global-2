@@ -23,7 +23,6 @@ import spring.service.test.TestSectionService;
 import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.userrole.UserRoleService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -133,9 +132,7 @@ public class SampleEditServiceImpl implements SampleEditService {
 		}
 
 		Person referringPerson = orderArtifacts.getProviderPerson();
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(updatedSample);
-		Patient patient = sampleSampleService.getPatient();
+		Patient patient = sampleService.getPatient(updatedSample);
 
 		for (SampleItem sampleItem : updateSampleItemList) {
 			sampleItemService.update(sampleItem);

@@ -76,6 +76,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.statusofsample.util.StatusRules;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -408,20 +409,20 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
 		}
 
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(testResultItem.getAccessionNumber());
-		Patient patient = sampleSampleService.getPatient();
+		SampleService sampleService = SpringContext.getBean(SampleService.class);
+		Sample sample = sampleService.getSampleByAccessionNumber(testResultItem.getAccessionNumber());
+		Patient patient = sampleService.getPatient(sample);
 
 		Map<String, List<String>> triggersToReflexesMap = new HashMap<>();
 
 		getSelectedReflexes(testResultItem.getReflexJSONResult(), triggersToReflexesMap);
 
 		if (newResult) {
-			actionDataSet.getNewResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleSampleService.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+			actionDataSet.getNewResults().add(new ResultSet(result, technicianResultSignature, testKit, patient, sample,
+					triggersToReflexesMap, multipleResultsForAnalysis));
 		} else {
 			actionDataSet.getModifiedResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleSampleService.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+					sample, triggersToReflexesMap, multipleResultsForAnalysis));
 		}
 
 		actionDataSet.setPreviousAnalysis(analysis);

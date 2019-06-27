@@ -105,9 +105,9 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	protected void createReportItems() {
 		Set<SampleItem> sampleSet = new HashSet<>();
 
-		boolean isConfirmationSample = currentSampleService.isConfirmationSample();
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(),
-				analysisStatusIds);
+		boolean isConfirmationSample = currentSampleService.isConfirmationSample(currentSample);
+		List<Analysis> analysisList = analysisService
+				.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(currentSample), analysisStatusIds);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
 		currentConclusion = null;
 		for (Analysis analysis : analysisList) {
@@ -182,7 +182,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 		}
 		for (int i = 0; i < referralResults.size(); i++) {
 			if (referralResults.get(i).getResult() == null) {
-				sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+				sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			} else {
 
 				i = reportReferralResultValue(referralResults, i);
@@ -214,7 +214,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {
-					sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+					sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 					data.setAnalysisStatus(MessageUtil.getMessage("report.test.status.inProgress"));
 				} else {
 					data.setResult(reportReferralResultValue);

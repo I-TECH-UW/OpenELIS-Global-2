@@ -81,8 +81,8 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
 	@Override
 	protected void createReportItems() {
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(),
-				analysisStatusIds);
+		List<Analysis> analysisList = analysisService
+				.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(currentSample), analysisStatusIds);
 
 		currentConclusion = null;
 		Set<SampleItem> sampleSet = new HashSet<>();
@@ -136,7 +136,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
 		for (int i = 0; i < referralResults.size(); i++) {
 			if (referralResults.get(i).getResult() == null) {
-				sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+				sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			} else {
 
 				i = reportReferralResultValue(referralResults, i);
@@ -166,7 +166,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {
-					sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+					sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 					data.setResult(MessageUtil.getMessage("report.test.status.inProgress"));
 				} else {
 					data.setResult(reportReferralResultValue);

@@ -272,9 +272,9 @@ public class ResultsLoadUtility {
 
 		for (Analysis analysis : filteredAnalysisList) {
 			patientService = SpringContext.getBean(PatientService.class);
-			SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-			sampleSampleService.setSample(analysis.getSampleItem().getSample());
-			patientService.setPatient(sampleSampleService.getPatient());
+			SampleService sampleService = SpringContext.getBean(SampleService.class);
+			Sample sample = analysis.getSampleItem().getSample();
+			patientService.setPatient(sampleService.getPatient(sample));
 
 			String patientName = "";
 			String patientInfo;

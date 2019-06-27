@@ -28,8 +28,7 @@ public class QaHistoryService extends AbstractHistoryService {
 	@SuppressWarnings("unchecked")
 	private void setUpForSample(Sample sample) {
 		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(sample);
-		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList();
+		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
 
 		History searchHistory = new History();
 		searchHistory.setReferenceTable(QAService.TABLE_REFERENCE_ID);

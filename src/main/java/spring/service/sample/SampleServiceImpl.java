@@ -5,8 +5,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,6 @@ import spring.service.requester.SampleRequesterService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestService;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -38,28 +39,35 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> implements SampleService {
 
 	public static String TABLE_REFERENCE_ID;
 	private static Long PERSON_REQUESTER_TYPE_ID;
 	private static Long ORGANIZATION_REQUESTER_TYPE_ID;
 
-	protected SampleDAO sampleDAO = SpringContext.getBean(SampleDAO.class);
-	private static final AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-	private static final SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	private static final SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
-	private static final SampleRequesterService sampleRequesterService = SpringContext
-			.getBean(SampleRequesterService.class);
-	private static final PersonService personService = SpringContext.getBean(PersonService.class);
-	private static ReferenceTablesService refTableService = SpringContext.getBean(ReferenceTablesService.class);
-	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
-	private static OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-	private static TestService testService = SpringContext.getBean(TestService.class);
+	@Autowired
+	protected SampleDAO sampleDAO;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
+	@Autowired
+	private SampleRequesterService sampleRequesterService;
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private ReferenceTablesService refTableService;
+	@Autowired
+	private RequesterTypeService requesterTypeService;
+	@Autowired
+	private OrganizationService organizationService;
+	@Autowired
+	private TestService testService;
 
-	private Sample sample;
-
-	public synchronized void initializeGlobalVariables() {
+	@PostConstruct
+	private void initializeGlobalVariables() {
 		TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE").getId();
 		RequesterType type = requesterTypeService.getRequesterTypeByName("provider");
 		PERSON_REQUESTER_TYPE_ID = type != null ? Long.parseLong(type.getId()) : Long.MIN_VALUE;
@@ -69,27 +77,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
 	public SampleServiceImpl() {
 		super(Sample.class);
-		initializeGlobalVariables();
-	}
-
-	public SampleServiceImpl(Sample sample) {
-		this();
-		this.setSample(sample);
-	}
-
-	@Override
-	public void setSample(Sample sample) {
-		this.sample = sample;
-	}
-
-	public SampleServiceImpl(String accessionNumber) {
-		this();
-		this.setSample(accessionNumber);
-	}
-
-	@Override
-	public void setSample(String accessionNumber) {
-		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
 	}
 
 	@Override
@@ -127,8 +114,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	 *
 	 * @return The date of when it was completed, null if it was not yet completed
 	 */
+	@Override
 	@Transactional(readOnly = true)
-	public Date getCompletedDate() {
+	public Date getCompletedDate(Sample sample) {
 		Date date = null;
 		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
@@ -151,8 +139,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 				.equals(analysis.getStatusId());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Timestamp getOrderedDate() {
+	public Timestamp getOrderedDate(Sample sample) {
 		if (sample == null) {
 			return null;
 		}
@@ -165,69 +154,76 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		}
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getAccessionNumber() {
+	public String getAccessionNumber(Sample sample) {
 		return sample.getAccessionNumber();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getReceivedDateForDisplay() {
+	public String getReceivedDateForDisplay(Sample sample) {
 		return sample.getReceivedDateForDisplay();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getTwoYearReceivedDateForDisplay() {
-		String fourYearDate = getReceivedDateForDisplay();
+	public String getTwoYearReceivedDateForDisplay(Sample sample) {
+		String fourYearDate = getReceivedDateForDisplay(sample);
 		int lastSlash = fourYearDate.lastIndexOf("/");
 		return fourYearDate.substring(0, lastSlash + 1) + fourYearDate.substring(lastSlash + 3);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getReceivedDateWithTwoYearDisplay() {
+	public String getReceivedDateWithTwoYearDisplay(Sample sample) {
 		return DateUtil.convertTimestampToTwoYearStringDate(sample.getReceivedTimestamp());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getReceivedTimeForDisplay() {
+	public String getReceivedTimeForDisplay(Sample sample) {
 		return sample.getReceivedTimeForDisplay();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getReceived24HourTimeForDisplay() {
+	public String getReceived24HourTimeForDisplay(Sample sample) {
 		return sample.getReceived24HourTimeForDisplay();
 	}
 
-	public boolean isConfirmationSample() {
+	@Override
+	public boolean isConfirmationSample(Sample sample) {
 		return sample != null && sample.getIsConfirmation();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Sample getSample() {
-		return sample;
-	}
-
-	@Transactional(readOnly = true)
-	public String getId() {
+	public String getId(Sample sample) {
 		return sample.getId();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Patient getPatient() {
+	public Patient getPatient(Sample sample) {
 		return sampleHumanService.getPatientForSample(sample);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public List<Analysis> getAnalysis() {
+	public List<Analysis> getAnalysis(Sample sample) {
 		return sample == null ? new ArrayList<>() : analysisService.getAnalysesBySampleId(sample.getId());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public List<SampleQaEvent> getSampleQAEventList() {
+	public List<SampleQaEvent> getSampleQAEventList(Sample sample) {
 		return sample == null ? new ArrayList<>() : sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Person getPersonRequester() {
+	public Person getPersonRequester(Sample sample) {
 		if (sample == null) {
 			return null;
 		}
@@ -246,8 +242,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		return null;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Organization getOrganizationRequester() {
+	public Organization getOrganizationRequester(Sample sample) {
 		if (sample == null) {
 			return null;
 		}
@@ -265,20 +262,20 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 	}
 
 	@Transactional(readOnly = true)
-	public Sample getPatientPreviousSampleForTestName(Patient patient, String testName) {
-		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
+	public Sample getPatientPreviousSampleForTestName(Sample sample, Patient patient, String testName) {
+		List<Sample> patientSampleList = sampleHumanService.getSamplesForPatient(patient.getId());
 		Sample previousSample = null;
 		List<Integer> sampIDList = new ArrayList<>();
 		List<Integer> testIDList = new ArrayList<>();
 
 		testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
 
-		if (sampList.isEmpty()) {
+		if (patientSampleList.isEmpty()) {
 			return previousSample;
 		}
 
-		for (Sample sample : sampList) {
-			sampIDList.add(Integer.parseInt(sample.getId()));
+		for (Sample patientSample : patientSampleList) {
+			sampIDList.add(Integer.parseInt(patientSample.getId()));
 		}
 
 		List<Integer> statusList = new ArrayList<>();
@@ -434,4 +431,5 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 		sample.setAccessionNumber(getBaseObjectDAO().getNextAccessionNumber());
 		return insert(sample);
 	}
+
 }

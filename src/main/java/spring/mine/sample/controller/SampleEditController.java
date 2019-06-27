@@ -150,9 +150,7 @@ public class SampleEditController extends BaseController {
 				String maxAccessionNumber = accessionNumber + "-"
 						+ sampleItemList.get(sampleItemList.size() - 1).getSortOrder();
 				PropertyUtils.setProperty(form, "maxAccessionNumber", maxAccessionNumber);
-				SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-				sampleSampleService.setSample(sample);
-				PropertyUtils.setProperty(form, "isConfirmationSample", sampleSampleService.isConfirmationSample());
+				PropertyUtils.setProperty(form, "isConfirmationSample", sampleService.isConfirmationSample(sample));
 			} else {
 				PropertyUtils.setProperty(form, "noSampleFound", Boolean.TRUE);
 			}

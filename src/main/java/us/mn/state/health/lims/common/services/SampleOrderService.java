@@ -123,11 +123,10 @@ public class SampleOrderService {
 
 		if (sample != null) {
 			SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-			sampleSampleService.setSample(sample);
 			sampleOrder.setSampleId(sample.getId());
-			sampleOrder.setLabNo(sampleSampleService.getAccessionNumber());
-			sampleOrder.setReceivedDateForDisplay(sampleSampleService.getReceivedDateForDisplay());
-			sampleOrder.setReceivedTime(sampleSampleService.getReceived24HourTimeForDisplay());
+			sampleOrder.setLabNo(sampleSampleService.getAccessionNumber(sample));
+			sampleOrder.setReceivedDateForDisplay(sampleSampleService.getReceivedDateForDisplay(sample));
+			sampleOrder.setReceivedTime(sampleSampleService.getReceived24HourTimeForDisplay(sample));
 
 			sampleOrder.setRequestDate(
 					observationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));

@@ -62,39 +62,33 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
 	String generateAccessionNumberAndInsert(Sample sample);
 
-	void setSample(Sample sample);
+	Organization getOrganizationRequester(Sample sample);
 
-	void setSample(String accessionNumber);
+	Person getPersonRequester(Sample sample);
 
-	List<Analysis> getAnalysis();
+	List<SampleQaEvent> getSampleQAEventList(Sample sample);
 
-	List<SampleQaEvent> getSampleQAEventList();
+	List<Analysis> getAnalysis(Sample sample);
 
-	Sample getSample();
+	Patient getPatient(Sample sample);
 
-	String getAccessionNumber();
+	String getId(Sample sample);
 
-	String getReceivedDateWithTwoYearDisplay();
+	boolean isConfirmationSample(Sample sample);
 
-	String getTwoYearReceivedDateForDisplay();
+	String getReceived24HourTimeForDisplay(Sample sample);
 
-	Patient getPatient();
+	String getReceivedTimeForDisplay(Sample sample);
 
-	String getReceivedDateForDisplay();
+	String getReceivedDateWithTwoYearDisplay(Sample sample);
 
-	String getReceived24HourTimeForDisplay();
+	String getReceivedDateForDisplay(Sample sample);
 
-	Date getCompletedDate();
+	String getAccessionNumber(Sample sample);
 
-	Organization getOrganizationRequester();
+	Timestamp getOrderedDate(Sample sample);
 
-	Person getPersonRequester();
+	Date getCompletedDate(Sample sample);
 
-	String getReceivedTimeForDisplay();
-
-	String getId();
-
-	Timestamp getOrderedDate();
-
-	boolean isConfirmationSample();
+	String getTwoYearReceivedDateForDisplay(Sample sample);
 }

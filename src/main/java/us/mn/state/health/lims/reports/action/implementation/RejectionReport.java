@@ -41,6 +41,7 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.RejectionReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public abstract class RejectionReport extends Report implements IReportCreator {
 	private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
@@ -115,10 +116,10 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 	protected RejectionReportBean createRejectionReportBean(String noteText, Analysis analysis, boolean useTestName) {
 		RejectionReportBean item = new RejectionReportBean();
 
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(analysis.getSampleItem().getSample());
+		SampleService sampleService = SpringContext.getBean(SampleService.class);
+		Sample sample = analysis.getSampleItem().getSample();
 		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-		patientSampleService.setPatientBySample(sampleSampleService.getSample());
+		patientSampleService.setPatientBySample(sample);
 
 		List<Result> results = analysisService.getResults(analysis);
 		for (Result result : results) {
@@ -131,8 +132,8 @@ public abstract class RejectionReport extends Report implements IReportCreator {
 			}
 		}
 
-		item.setAccessionNumber(sampleSampleService.getAccessionNumber().substring(PREFIX_LENGTH));
-		item.setReceivedDate(sampleSampleService.getTwoYearReceivedDateForDisplay());
+		item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+		item.setReceivedDate(sampleService.getTwoYearReceivedDateForDisplay(sample));
 		item.setCollectionDate(
 				DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));
 		item.setRejectionReason(noteText);

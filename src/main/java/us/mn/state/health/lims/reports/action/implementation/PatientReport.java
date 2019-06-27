@@ -134,6 +134,7 @@ public abstract class PatientReport extends Report {
 	protected List<ClinicalPatientData> reportItems;
 	protected String completionDate;
 	protected SampleService currentSampleService;
+	protected Sample currentSample;
 
 	protected static final NoteType[] FILTER = { NoteType.EXTERNAL, NoteType.REJECTION_REASON,
 			NoteType.NON_CONFORMITY };
@@ -227,8 +228,7 @@ public abstract class PatientReport extends Report {
 		} else {
 
 			for (Sample sample : reportSampleList) {
-				currentSampleService = SpringContext.getBean(SampleService.class);
-				currentSampleService.setSample(sample);
+				currentSample = sample;
 				handledOrders.add(sample.getId());
 				sampleCompleteMap.put(sample.getAccessionNumber(), Boolean.TRUE);
 				findCompletionDate();
@@ -255,7 +255,7 @@ public abstract class PatientReport extends Report {
 	}
 
 	private void findCompletionDate() {
-		Date date = currentSampleService.getCompletedDate();
+		Date date = currentSampleService.getCompletedDate(currentSample);
 		completionDate = date == null ? null : DateUtil.convertSqlDateToStringDate(date);
 	}
 
@@ -291,12 +291,12 @@ public abstract class PatientReport extends Report {
 		currentSiteInfo = "";
 		currentProvider = null;
 
-		Organization org = currentSampleService.getOrganizationRequester();
+		Organization org = currentSampleService.getOrganizationRequester(currentSample);
 		if (org != null) {
 			currentSiteInfo = org.getOrganizationName();
 		}
 
-		Person person = currentSampleService.getPersonRequester();
+		Person person = currentSampleService.getPersonRequester(currentSample);
 		if (person != null) {
 			PersonService personPersonService = SpringContext.getBean(PersonService.class);
 			personPersonService.setPerson(person);
@@ -380,7 +380,7 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected void findPatientFromSample() {
-		Patient patient = sampleHumanService.getPatientForSample(currentSampleService.getSample());
+		Patient patient = sampleHumanService.getPatientForSample(currentSample);
 
 		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
 			STNumber = null;
@@ -462,7 +462,7 @@ public abstract class PatientReport extends Report {
 			 */
 		} else if (!StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
 				AnalysisStatus.Finalized)) {
-			sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+			sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			setEmptyResult(data);
 		} else {
 			if (resultList.isEmpty()) {
@@ -493,7 +493,7 @@ public abstract class PatientReport extends Report {
 	private void setCorrectedStatus(Result result, ClinicalPatientData data) {
 		if (currentAnalysis.isCorrectedSincePatientReport() && !GenericValidator.isBlankOrNull(result.getValue())) {
 			data.setCorrectedResult(true);
-			sampleCorrectedMap.put(currentSampleService.getAccessionNumber(), true);
+			sampleCorrectedMap.put(currentSampleService.getAccessionNumber(currentSample), true);
 			currentAnalysis.setCorrectedSincePatientReport(false);
 			updatedAnalysis.add(currentAnalysis);
 		}
@@ -765,7 +765,7 @@ public abstract class PatientReport extends Report {
 		ClinicalPatientData data = new ClinicalPatientData();
 		String testName = null;
 		String sortOrder = "";
-		String receivedDate = currentSampleService.getReceivedDateForDisplay();
+		String receivedDate = currentSampleService.getReceivedDateForDisplay(currentSample);
 
 		boolean doAnalysis = analysisService != null;
 
@@ -777,7 +777,7 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour)) {
-			receivedDate += " " + currentSampleService.getReceivedTimeForDisplay();
+			receivedDate += " " + currentSampleService.getReceivedTimeForDisplay(currentSample);
 		}
 
 		data.setContactInfo(currentContactInfo);
@@ -796,12 +796,12 @@ public abstract class PatientReport extends Report {
 		data.setHealthDistrict(
 				getLazyPatientIdentity(healthDistrict, PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
 		data.setLabOrderType(ObservationHistoryServiceImpl.getInstance().getValueForSample(ObservationType.PROGRAM,
-				currentSampleService.getId()));
+				currentSampleService.getId(currentSample)));
 		data.setTestName(testName);
 		data.setPatientSiteNumber(ObservationHistoryServiceImpl.getInstance()
-				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, currentSampleService.getId()));
-		data.setBillingNumber(ObservationHistoryServiceImpl.getInstance()
-				.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER, currentSampleService.getId()));
+				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, currentSampleService.getId(currentSample)));
+		data.setBillingNumber(ObservationHistoryServiceImpl.getInstance().getValueForSample(
+				ObservationType.BILLING_REFERENCE_NUMBER, currentSampleService.getId(currentSample)));
 
 		if (doAnalysis) {
 			data.setPanel(analysisService.getPanel(currentAnalysis));
@@ -811,15 +811,15 @@ public abstract class PatientReport extends Report {
 			data.setTestDate(analysisService.getCompletedDateForDisplay(currentAnalysis));
 			data.setSampleSortOrder(currentAnalysis.getSampleItem().getSortOrder());
 			data.setOrderFinishDate(completionDate);
-			data.setOrderDate(
-					DateUtil.convertTimestampToStringDateAndConfiguredHourTime(currentSampleService.getOrderedDate()));
-			data.setSampleId(currentSampleService.getAccessionNumber() + "-" + data.getSampleSortOrder());
+			data.setOrderDate(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
+					currentSampleService.getOrderedDate(currentSample)));
+			data.setSampleId(currentSampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
 			data.setSampleType(analysisService.getTypeOfSample(currentAnalysis).getLocalizedName());
 			data.setCollectionDateTime(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
 					currentAnalysis.getSampleItem().getCollectionDate()));
 		}
 
-		data.setAccessionNumber(currentSampleService.getAccessionNumber() + "-" + sortOrder);
+		data.setAccessionNumber(currentSampleService.getAccessionNumber(currentSample) + "-" + sortOrder);
 
 		if (doAnalysis) {
 			reportResultAndConclusion(data);

@@ -38,6 +38,7 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public abstract class ActivityReport extends Report implements IReportCreator {
 	private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
@@ -113,14 +114,14 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 
 		ResultService resultResultService = SpringContext.getBean(ResultService.class);
 		resultResultService.setResult(result);
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		sampleSampleService.setSample(result.getAnalysis().getSampleItem().getSample());
+		SampleService sampleService = SpringContext.getBean(SampleService.class);
+		Sample sample = result.getAnalysis().getSampleItem().getSample();
 		PatientService patientSampleService = SpringContext.getBean(PatientService.class);
-		patientSampleService.setPatientBySample(sampleSampleService.getSample());
+		patientSampleService.setPatientBySample(sample);
 		item.setResultValue(resultResultService.getResultValue("\n", true, true));
 		item.setTechnician(resultResultService.getSignature());
-		item.setAccessionNumber(sampleSampleService.getAccessionNumber().substring(PREFIX_LENGTH));
-		item.setReceivedDate(sampleSampleService.getReceivedDateWithTwoYearDisplay());
+		item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+		item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
 		item.setResultDate(DateUtil.convertTimestampToTwoYearStringDate(result.getLastupdated()));
 		item.setCollectionDate(
 				DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
@@ -130,7 +131,7 @@ public abstract class ActivityReport extends Report implements IReportCreator {
 		values.add(patientSampleService.getNationalId());
 
 		String referringPatientId = ObservationHistoryServiceImpl.getInstance()
-				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sampleSampleService.getSample().getId());
+				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());
 		values.add(referringPatientId == null ? "" : referringPatientId);
 
 		String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
