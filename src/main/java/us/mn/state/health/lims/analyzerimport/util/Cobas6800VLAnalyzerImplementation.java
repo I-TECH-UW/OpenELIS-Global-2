@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.analyzer.AnalyzerService;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.test.TestService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -41,6 +41,7 @@ import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerReaderUtil
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {
@@ -92,8 +93,9 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {
 			resultList.add(result);
 			return;
 		}
-		SampleServiceImpl sampleServ = new SampleServiceImpl(result.getAccessionNumber());
-		if (!result.getAccessionNumber().startsWith(projectCode) || sampleServ.getSample() == null) {
+		SampleService sampleService = SpringContext.getBean(SampleService.class);
+		Sample sample = sampleService.getSampleByAccessionNumber(result.getAccessionNumber());
+		if (!result.getAccessionNumber().startsWith(projectCode) || sample == null) {
 			return;
 		}
 
@@ -175,12 +177,12 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {
 
 			/*
 			 * String home = System.getProperty("user.home");
-			 * 
+			 *
 			 * File data_directory = new File(home, ".my_app_data"); data_directory.mkdir();
-			 * 
+			 *
 			 * File log_file = new File(data_directory, "ARVPRESC.AST"); try {
 			 * log_file.createNewFile(); } catch (IOException e) { // handle error }
-			 * 
+			 *
 			 * BufferedWriter writer = new BufferedWriter(new FileWriter(log_file));
 			 */
 
@@ -359,12 +361,12 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {
 
 			/*
 			 * String home = System.getProperty("user.home");
-			 * 
+			 *
 			 * File data_directory = new File(home, ".my_app_data"); data_directory.mkdir();
-			 * 
+			 *
 			 * File log_file = new File(data_directory, "ARVPRESC.AST"); try {
 			 * log_file.createNewFile(); } catch (IOException e) { // handle error }
-			 * 
+			 *
 			 * BufferedWriter writer = new BufferedWriter(new FileWriter(log_file));
 			 */
 

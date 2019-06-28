@@ -31,7 +31,6 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.dictionary.DictionaryService;
 import spring.service.note.NoteService;
-import spring.service.note.NoteServiceImpl;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.sample.SampleService;
@@ -182,8 +181,9 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	private String getNonConformingNotes(Sample sample) {
 		StringBuilder allNotes = new StringBuilder();
 
-		String notes = new NoteServiceImpl(sample)
-				.getNotesAsString(MessageUtil.getMessage("report.followup.general.comment") + ": ", "<br/>");
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String notes = noteService.getNotesAsString(sample,
+				MessageUtil.getMessage("report.followup.general.comment") + ": ", "<br/>");
 		if (notes != null) {
 			allNotes.append(notes);
 			allNotes.append("<br/>");

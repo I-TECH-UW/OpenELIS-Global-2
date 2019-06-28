@@ -169,7 +169,7 @@ public class TestOrderabilityController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (String testId : testIds) {
-			Test test = new TestServiceImpl(testId).getTest();
+			Test test = SpringContext.getBean(TestService.class).get(testId);
 			test.setOrderable(orderable);
 			test.setSysUserId(getSysUserId(request));
 			tests.add(test);

@@ -30,7 +30,7 @@ import org.json.simple.parser.ParseException;
 
 import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
 import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
-import spring.service.result.ResultServiceImpl;
+import spring.service.result.ResultService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -105,10 +105,10 @@ public class TestUsageUpdate implements IResultUpdate {
 
 	private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
 		for (Result result : results) {
-			ResultServiceImpl resultService = new ResultServiceImpl(result);
-			String testDate = resultService.getTestTime();
+			ResultService resultResultService = SpringContext.getBean(ResultService.class);
+			String testDate = resultResultService.getTestTime(result);
 			if (testDate == null) {
-				testDate = resultService.getLastUpdatedTime();
+				testDate = resultResultService.getLastUpdatedTime(result);
 			}
 			Map<String, Integer> testCountMap = dateTestMap.get(testDate);
 
@@ -117,7 +117,7 @@ public class TestUsageUpdate implements IResultUpdate {
 				dateTestMap.put(testDate, testCountMap);
 			}
 
-			String testDescription = resultService.getTestDescription();
+			String testDescription = resultResultService.getTestDescription(result);
 
 			Integer count = testCountMap.get(testDescription);
 			testCountMap.put(testDescription, count == null ? 1 : count + 1);

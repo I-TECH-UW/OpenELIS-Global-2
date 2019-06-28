@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 
-import spring.service.test.TestServiceImpl;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -35,80 +36,85 @@ public class TestEntitiesProvider extends BaseQueryProvider {
 
 	protected AjaxServlet ajaxServlet = null;
 
-    @Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		String testId = request.getParameter("testId");
 
-        String jResult;
-        JSONObject jsonResult = new JSONObject();
-        String jString;
+		String jResult;
+		JSONObject jsonResult = new JSONObject();
+		String jString;
 
-		if (GenericValidator.isBlankOrNull(testId) ){
+		if (GenericValidator.isBlankOrNull(testId)) {
 			jResult = INVALID;
 			jString = "Internal error, please contact Admin and file bug report";
 		} else {
-            jResult = createJsonTestEntities( testId, jsonResult );
-            StringWriter out = new StringWriter();
-            try{
-                jsonResult.writeJSONString( out );
-                jString = out.toString();
-            }catch( IOException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }catch( IllegalStateException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }
-        }
+			jResult = createJsonTestEntities(testId, jsonResult);
+			StringWriter out = new StringWriter();
+			try {
+				jsonResult.writeJSONString(out);
+				jString = out.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			}
+		}
 		ajaxServlet.sendData(jString, jResult, request, response);
 
 	}
 
-    @SuppressWarnings("unchecked")
-    private String createJsonTestEntities( String testId, JSONObject jsonResult )throws IllegalStateException{
+	@SuppressWarnings("unchecked")
+	private String createJsonTestEntities(String testId, JSONObject jsonResult) throws IllegalStateException {
 
-        if( GenericValidator.isBlankOrNull( testId ) ){
-            throw new IllegalStateException( "TestEntitiesProvider testId was blank.  It must have a value" );
-        }
+		if (GenericValidator.isBlankOrNull(testId)) {
+			throw new IllegalStateException("TestEntitiesProvider testId was blank.  It must have a value");
+		}
 
-        Test test = new TestServiceImpl( testId ).getTest();
-        if( test != null){
-            TestSection testSection = test.getTestSection();
-            String testSectionId = "";
-            UnitOfMeasure uom = test.getUnitOfMeasure();
-            String uomId = "";
+		Test test = SpringContext.getBean(TestService.class).get(testId);
+		if (test != null) {
+			TestSection testSection = test.getTestSection();
+			String testSectionId = "";
+			UnitOfMeasure uom = test.getUnitOfMeasure();
+			String uomId = "";
 
-            if(testSection != null) { testSectionId = testSection.getId(); }
-            if(uom != null) { uomId = uom.getId(); }
-            String loinc = test.getLoinc();
-            String isActive = test.getIsActive();
-            Boolean orderable = test.getOrderable();
-            
-            JSONObject idObject = new JSONObject();
-            idObject.put("testSectionId", testSectionId);
-            idObject.put("uomId", uomId);
-            idObject.put("loinc", loinc);
-            idObject.put("isActive", isActive);
-            idObject.put("orderable", orderable);
-            jsonResult.put("entities", idObject);
-     
-            return VALID;
-        }
+			if (testSection != null) {
+				testSectionId = testSection.getId();
+			}
+			if (uom != null) {
+				uomId = uom.getId();
+			}
+			String loinc = test.getLoinc();
+			String isActive = test.getIsActive();
+			Boolean orderable = test.getOrderable();
 
-        return INVALID;
-    }
+			JSONObject idObject = new JSONObject();
+			idObject.put("testSectionId", testSectionId);
+			idObject.put("uomId", uomId);
+			idObject.put("loinc", loinc);
+			idObject.put("isActive", isActive);
+			idObject.put("orderable", orderable);
+			jsonResult.put("entities", idObject);
+
+			return VALID;
+		}
+
+		return INVALID;
+	}
 
 	@Override
 	public void setServlet(AjaxServlet as) {
-		this.ajaxServlet = as;
+		ajaxServlet = as;
 	}
 
 	@Override
 	public AjaxServlet getServlet() {
-		return this.ajaxServlet;
+		return ajaxServlet;
 	}
 
 }

@@ -34,8 +34,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.referral.form.ReferredOutTestsForm;
-import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.analysis.AnalysisService;
 import spring.service.dictionary.DictionaryService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.organization.OrganizationService;
 import spring.service.referral.ReferralResultService;
@@ -91,6 +92,8 @@ public class ReferredOutTestsController extends BaseController {
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ReferralSetService referralSetService;
+	@Autowired
+	private AnalysisService analysisService;
 
 	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
 	public ModelAndView showReferredOutTests(HttpServletRequest request)
@@ -182,18 +185,16 @@ public class ReferredOutTestsController extends BaseController {
 
 		ReferralItem referralItem = new ReferralItem();
 
-		AnalysisServiceImpl analysisService = new AnalysisServiceImpl(referral.getAnalysis());
-
+		Analysis analysis = referral.getAnalysis();
 		referralItem.setCanceled(false);
 		referralItem.setReferredResultType("N");
-		referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber());
+		referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 
-		TypeOfSample typeOfSample = analysisService.getTypeOfSample();
+		TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
-		referralItem.setReferringTestName(
-				TestServiceImpl.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
-		List<Result> resultList = analysisService.getResults();
+		referralItem.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+		List<Result> resultList = analysisService.getResults(analysis);
 		String resultString = "";
 
 		if (!resultList.isEmpty()) {
@@ -219,7 +220,7 @@ public class ReferredOutTestsController extends BaseController {
 		if (referral.getOrganization() != null) {
 			referralItem.setReferredInstituteId(referral.getOrganization().getId());
 		}
-		String notes = analysisService.getNotesAsString(true, true, "<br/>", false);
+		String notes = analysisService.getNotesAsString(analysis, true, true, "<br/>", false);
 		if (notes != null) {
 			referralItem.setPastNotes(notes);
 		}
@@ -353,8 +354,8 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(typeOfSample.getId(),
-				false);
+		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class)
+				.getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 
@@ -576,8 +577,9 @@ public class ReferredOutTestsController extends BaseController {
 		referral.setReferralReasonId(referralItem.getReferralReasonId());
 		referralSet.setReferral(referral);
 
-		referralSet.setNote(new NoteServiceImpl(referral.getAnalysis()).createSavableNote(
-				NoteServiceImpl.NoteType.INTERNAL, referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		referralSet.setNote(noteService.createSavableNote(referral.getAnalysis(), NoteServiceImpl.NoteType.INTERNAL,
+				referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
 		createReferralResults(referralItem, referralSet);
 
@@ -679,7 +681,8 @@ public class ReferredOutTestsController extends BaseController {
 		Test test = testService.get(referredTest.getReferredTestId());
 		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		ResultLimit limit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test, patient);
+		ResultLimit limit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
+				patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
 		result.setGrouping(grouping);
@@ -756,10 +759,12 @@ public class ReferredOutTestsController extends BaseController {
 				Element testItem = i.next();
 
 				String testId = testItem.attribute("testId").getValue();
+				Test test = testService.get(testId);
+				String resultType = testService.getResultType(test);
 
 				ReferredTest referralTest = new ReferredTest();
 				referralTest.setReferredTestId(testId);
-				referralTest.setReferredResultType(new TestServiceImpl(testId).getResultType());
+				referralTest.setReferredResultType(resultType);
 				referralTest.setReferredResult("");
 				referralTest.setReferredDictionaryResult("");
 				referralTest.setReferredMultiDictionaryResult("");

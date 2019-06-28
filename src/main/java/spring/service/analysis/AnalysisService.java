@@ -112,53 +112,51 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList);
 
-	String getCompletedDateForDisplay();
-
-	Result getQuantifiedResult();
-
-	String getJSONMultiSelectResults();
-
-	String getCSVMultiselectResults();
-
-	boolean isParentNonConforming();
-
-	String getTestDisplayName();
-
-	String getOrderAccessionNumber();
-
-	boolean patientReportHasBeenDone();
-
-	boolean resultIsConclusion(Result currentResult);
-
-	Boolean getTriggeredReflex();
-
-	boolean hasBeenCorrectedSinceLastPatientReport();
-
-	Test getTest();
-
 	Analysis buildAnalysis(Test test, SampleItem sampleItem);
 
 	void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId);
 
-	TestSection getTestSection();
-
-	Panel getPanel();
-
-	TypeOfSample getTypeOfSample();
-
-	String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix);
-
-	String getAnalysisType();
-
-	String getStatusId();
-
-	Analysis getAnalysis();
-
-	List<Result> getResults();
-
 	void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
 
 	void update(Analysis analysis, boolean skipAuditTrail);
+
+	String getTestDisplayName(Analysis analysis);
+
+	String getCompletedDateForDisplay(Analysis analysis);
+
+	String getAnalysisType(Analysis analysis);
+
+	String getJSONMultiSelectResults(Analysis analysis);
+
+	String getCSVMultiselectResults(Analysis analysis);
+
+	Result getQuantifiedResult(Analysis analysis);
+
+	String getStatusId(Analysis analysis);
+
+	Boolean getTriggeredReflex(Analysis analysis);
+
+	boolean resultIsConclusion(Result currentResult, Analysis analysis);
+
+	boolean isParentNonConforming(Analysis analysis);
+
+	Test getTest(Analysis analysis);
+
+	List<Result> getResults(Analysis analysis);
+
+	boolean hasBeenCorrectedSinceLastPatientReport(Analysis analysis);
+
+	boolean patientReportHasBeenDone(Analysis analysis);
+
+	String getNotesAsString(Analysis analysis, boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+			boolean excludeExternPrefix);
+
+	String getOrderAccessionNumber(Analysis analysis);
+
+	TypeOfSample getTypeOfSample(Analysis analysis);
+
+	Panel getPanel(Analysis analysis);
+
+	TestSection getTestSection(Analysis analysis);
 
 }

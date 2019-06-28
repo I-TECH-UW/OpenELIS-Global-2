@@ -43,27 +43,12 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 
 	}
 
-//	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-//			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-
 	@Autowired
 	private LocalizationDAO baseObjectDAO;
-
-//	@PostConstruct
-//	private void initialize() {
-//		SystemConfiguration.getInstance().addLocalChangeListener(this);
-//	}
 
 	LocalizationServiceImpl() {
 		super(Localization.class);
 	}
-
-//	public LocalizationServiceImpl(String id) {
-//		this();
-//		if (!GenericValidator.isBlankOrNull(id)) {
-//			localization = baseObjectDAO.get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization"));
-//		}
-//	}
 
 	@Override
 	protected LocalizationDAO getBaseObjectDAO() {
@@ -83,11 +68,6 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 	public String getCurrentLocale() {
 		return LocaleContextHolder.getLocale().getLanguage();
 	}
-
-//	@Override
-//	public void localeChanged(String locale) {
-//		LANGUAGE_LOCALE = locale;
-//	}
 
 	@Override
 	public boolean languageChanged(Localization localization, String english, String french) {

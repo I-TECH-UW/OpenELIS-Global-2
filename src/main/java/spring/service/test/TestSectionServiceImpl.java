@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,22 +25,20 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String>
 		implements TestSectionService, LocaleChangeListener {
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+	private String languageLocale = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-	private static Map<String, String> testUnitIdToNameMap;
+	private Map<String, String> testUnitIdToNameMap;
 
-	protected static TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
+	protected TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
+
 	private SystemUserSectionService systemUserSectionService = SpringContext.getBean(SystemUserSectionService.class);
-	private TestSection testSection;
 
-	public synchronized void initializeGlobalVariables() {
-		if (testUnitIdToNameMap == null) {
-			createTestIdToNameMap();
-		}
+	@PostConstruct
+	private void initializeGlobalVariables() {
+		createTestIdToNameMap();
 	}
 
 	@PostConstruct
@@ -51,17 +48,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	public TestSectionServiceImpl() {
 		super(TestSection.class);
-		initializeGlobalVariables();
-	}
-
-	public TestSectionServiceImpl(TestSection testSection) {
-		this();
-		this.testSection = testSection;
-	}
-
-	public TestSectionServiceImpl(String testSectionId) {
-		this();
-		testSection = baseObjectDAO.getTestSectionById(testSectionId);
 	}
 
 	@Override
@@ -75,31 +61,28 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 		return baseObjectDAO.getAllMatchingOrdered("isActive", "Y", "sortOrderInt", false);
 	}
 
-	@Transactional(readOnly = true)
-	public TestSection getTestSection() {
-		return testSection;
+	@Override
+	public void localeChanged(String locale) {
+		languageLocale = locale;
+		testNamesChanged();
 	}
 
 	@Override
-	public void localeChanged(String locale) {
-		LANGUAGE_LOCALE = locale;
+	public void refreshNames() {
 		testNamesChanged();
 	}
 
-	public static void refreshNames() {
-		testNamesChanged();
-	}
-
-	public static void testNamesChanged() {
+	public void testNamesChanged() {
 		createTestIdToNameMap();
 	}
 
 	@Transactional(readOnly = true)
-	public String getSortOrder() {
+	public String getSortOrder(TestSection testSection) {
 		return testSection == null ? "0" : testSection.getSortOrder();
 	}
 
-	public static String getUserLocalizedTesSectionName(TestSection testSection) {
+	@Override
+	public String getUserLocalizedTesSectionName(TestSection testSection) {
 		if (testSection == null) {
 			return "";
 		}
@@ -107,12 +90,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 		return getUserLocalizedTestSectionName(testSection.getId());
 	}
 
-	public static String getUserLocalizedTestSectionName(String testSectionId) {
+	public String getUserLocalizedTestSectionName(String testSectionId) {
 		String name = testUnitIdToNameMap.get(testSectionId);
 		return name == null ? "" : name;
 	}
 
-	private static void createTestIdToNameMap() {
+	private void createTestIdToNameMap() {
 		testUnitIdToNameMap = new HashMap<>();
 
 		List<TestSection> testSections = baseObjectDAO.getAllTestSections();
@@ -122,17 +105,18 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 		}
 	}
 
-	private static String buildTestSectionName(TestSection testSection) {
+	private String buildTestSectionName(TestSection testSection) {
 		Localization localization = testSection.getLocalization();
 
-		if (LANGUAGE_LOCALE.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
+		if (languageLocale.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
 			return localization.getFrench();
 		} else {
 			return localization.getEnglish();
 		}
 	}
 
-	public static List<Test> getTestsInSection(String id) {
+	@Override
+	public List<Test> getTestsInSection(String id) {
 		return TestServiceImpl.getTestsInTestSectionById(id);
 	}
 

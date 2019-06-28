@@ -32,11 +32,12 @@ import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.test.TestSectionServiceImpl;
-import spring.service.test.TestServiceImpl;
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import spring.service.testconfiguration.TestAddService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
+import spring.service.typeoftestresult.TypeOfTestResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import spring.util.SpringContext;
@@ -73,6 +74,10 @@ public class TestAddController extends BaseController {
 	private UnitOfMeasureService unitOfMeasureService;
 	@Autowired
 	private TestAddService testAddService;
+	@Autowired
+	private TestSectionService testSectionService;
+	@Autowired
+	private TestService testService;
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
 	public ModelAndView showTestAdd(HttpServletRequest request) {
@@ -138,7 +143,7 @@ public class TestAddController extends BaseController {
 			lre.printStackTrace();
 		}
 
-		TestServiceImpl.refreshTestNames();
+		testService.refreshTestNames();
 		SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
@@ -166,7 +171,7 @@ public class TestAddController extends BaseController {
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
 			uom = unitOfMeasureService.getUnitOfMeasureById(testAddParams.uomId);
 		}
-		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
+		TestSection testSection = testSectionService.get(testAddParams.testSectionId);
 
 		if (numericResults) {
 			lowValid = StringUtil.doubleWithInfinity(testAddParams.lowValid);
@@ -196,7 +201,7 @@ public class TestAddController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
+					Test orderedTest = SpringContext.getBean(TestService.class).get(orderedTests.get(j));
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}
@@ -262,7 +267,7 @@ public class TestAddController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getInstance()
+		TypeOfTestResultServiceImpl.ResultType type = SpringContext.getBean(TypeOfTestResultService.class)
 				.getResultTypeById(testAddParams.resultTypeId);
 
 		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)

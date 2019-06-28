@@ -132,7 +132,7 @@ public class SampleEditServiceImpl implements SampleEditService {
 		}
 
 		Person referringPerson = orderArtifacts.getProviderPerson();
-		Patient patient = new SampleServiceImpl(updatedSample).getPatient();
+		Patient patient = sampleService.getPatient(updatedSample);
 
 		for (SampleItem sampleItem : updateSampleItemList) {
 			sampleItemService.update(sampleItem);

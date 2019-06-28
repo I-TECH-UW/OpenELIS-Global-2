@@ -32,8 +32,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
-import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.note.NoteServiceImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referral.ReferralService;
 import spring.service.referral.ReferralTypeService;
@@ -41,7 +41,7 @@ import spring.service.result.LogbookResultsPersistService;
 import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.test.TestSectionService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
@@ -76,6 +76,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.statusofsample.util.StatusRules;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -97,6 +98,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	private ReferralTypeService referralTypeService;
 	@Autowired
 	private LogbookResultsPersistService logbookPersistService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private NoteService noteService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static String REFERRAL_CONFORMATION_ID;
@@ -278,35 +283,35 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 	private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
 		for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
-			AnalysisServiceImpl analysisServiceOld = new AnalysisServiceImpl(testResultItem.getAnalysisId());
-			analysisServiceOld.getAnalysis().setSysUserId(getSysUserId(request));
-			analysisServiceOld.getAnalysis()
-					.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
+
+			Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+			analysis.setSysUserId(getSysUserId(request));
+			analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
 			if (testResultItem.getAnalysisMethod() != null) {
-				analysisServiceOld.getAnalysis().setAnalysisType(testResultItem.getAnalysisMethod());
+				analysis.setAnalysisType(testResultItem.getAnalysisMethod());
 			}
-			actionDataSet.getModifiedAnalysis().add(analysisServiceOld.getAnalysis());
+			actionDataSet.getModifiedAnalysis().add(analysis);
 		}
 	}
 
 	private void createResultsFromItems(ResultsUpdateDataSet actionDataSet) {
 
 		for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
-			AnalysisServiceImpl analysisService = new AnalysisServiceImpl(testResultItem.getAnalysisId());
-			analysisService.getAnalysis().setStatusId(getStatusForTestResult(testResultItem));
-			analysisService.getAnalysis().setSysUserId(getSysUserId(request));
-			handleReferrals(testResultItem, analysisService.getAnalysis(), actionDataSet);
-			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
 
-			NoteServiceImpl noteServiceOld = new NoteServiceImpl(analysisService.getAnalysis());
-			actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.INTERNAL, testResultItem.getNote(),
-					RESULT_SUBJECT, getSysUserId(request)));
+			Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+			analysis.setStatusId(getStatusForTestResult(testResultItem));
+			analysis.setSysUserId(getSysUserId(request));
+			handleReferrals(testResultItem, analysis, actionDataSet);
+			actionDataSet.getModifiedAnalysis().add(analysis);
+
+			actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
+					testResultItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
 			if (testResultItem.isShadowRejected()) {
 				String rejectedReasonId = testResultItem.getRejectReasonId();
 				for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
 					if (rejectedReasonId.equals(rejectReason.getId())) {
-						actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.REJECTION_REASON,
+						actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.REJECTION_REASON,
 								rejectReason.getValue(), RESULT_SUBJECT, getSysUserId(request)));
 						break;
 					}
@@ -314,27 +319,26 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			}
 
 			ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
-			ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(),
-					getSysUserId(request));
+			ResultSaveService resultSaveService = new ResultSaveService(analysis, getSysUserId(request));
 			// deletable Results will be written to, not read
 			List<Result> results = resultSaveService.createResultsFromTestResultItem(bean,
 					actionDataSet.getDeletableResults());
 
-			analysisService.getAnalysis().setCorrectedSincePatientReport(
-					resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone());
+			analysis.setCorrectedSincePatientReport(
+					resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
 
-			if (analysisService.hasBeenCorrectedSinceLastPatientReport()) {
-				actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.EXTERNAL,
+			if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
+				actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
 						MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 			}
 
 			// If there is more than one result then each user selected reflex gets mapped
 			// to that result
 			for (Result result : results) {
-				addResult(result, testResultItem, analysisService.getAnalysis(), results.size() > 1, actionDataSet);
+				addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet);
 
 				if (analysisShouldBeUpdated(testResultItem, result)) {
-					updateAnalysis(testResultItem, testResultItem.getTestDate(), analysisService.getAnalysis());
+					updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis);
 				}
 			}
 		}
@@ -405,19 +409,20 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
 		}
 
-		SampleServiceImpl sampleServiceOld = new SampleServiceImpl(testResultItem.getAccessionNumber());
-		Patient patient = sampleServiceOld.getPatient();
+		SampleService sampleService = SpringContext.getBean(SampleService.class);
+		Sample sample = sampleService.getSampleByAccessionNumber(testResultItem.getAccessionNumber());
+		Patient patient = sampleService.getPatient(sample);
 
 		Map<String, List<String>> triggersToReflexesMap = new HashMap<>();
 
 		getSelectedReflexes(testResultItem.getReflexJSONResult(), triggersToReflexesMap);
 
 		if (newResult) {
-			actionDataSet.getNewResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleServiceOld.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+			actionDataSet.getNewResults().add(new ResultSet(result, technicianResultSignature, testKit, patient, sample,
+					triggersToReflexesMap, multipleResultsForAnalysis));
 		} else {
 			actionDataSet.getModifiedResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleServiceOld.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+					sample, triggersToReflexesMap, multipleResultsForAnalysis));
 		}
 
 		actionDataSet.setPreviousAnalysis(analysis);

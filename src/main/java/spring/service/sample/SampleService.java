@@ -1,10 +1,16 @@
 package spring.service.sample;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.organization.valueholder.Organization;
+import us.mn.state.health.lims.patient.valueholder.Patient;
+import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.sample.valueholder.Sample;
+import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleService extends BaseObjectService<Sample, String> {
 	void getData(Sample sample);
@@ -55,4 +61,34 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 	List<Sample> getSamplesForPatient(String patientID);
 
 	String generateAccessionNumberAndInsert(Sample sample);
+
+	Organization getOrganizationRequester(Sample sample);
+
+	Person getPersonRequester(Sample sample);
+
+	List<SampleQaEvent> getSampleQAEventList(Sample sample);
+
+	List<Analysis> getAnalysis(Sample sample);
+
+	Patient getPatient(Sample sample);
+
+	String getId(Sample sample);
+
+	boolean isConfirmationSample(Sample sample);
+
+	String getReceived24HourTimeForDisplay(Sample sample);
+
+	String getReceivedTimeForDisplay(Sample sample);
+
+	String getReceivedDateWithTwoYearDisplay(Sample sample);
+
+	String getReceivedDateForDisplay(Sample sample);
+
+	String getAccessionNumber(Sample sample);
+
+	Timestamp getOrderedDate(Sample sample);
+
+	Date getCompletedDate(Sample sample);
+
+	String getTwoYearReceivedDateForDisplay(Sample sample);
 }

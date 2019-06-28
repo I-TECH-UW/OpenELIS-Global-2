@@ -6,12 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
 
 	public static String TABLE_REFERENCE_ID;
@@ -60,24 +60,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	@Autowired
 	private ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
 
-	private Result result;
-	private Test test;
-	private List<ResultLimit> resultLimit;
-
-	public synchronized void initializeGlobalVariables() {
+	@PostConstruct
+	private void initializeGlobalVariables() {
 		TABLE_REFERENCE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
 	}
 
 	ResultServiceImpl() {
 		super(Result.class);
-		initializeGlobalVariables();
-	}
-
-	public ResultServiceImpl(Result result) {
-		this();
-		this.result = result;
-
-		test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 	}
 
 	@Override
@@ -92,27 +81,27 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Transactional(readOnly = true)
-	public String getLabSectionName() {
+	public String getLabSectionName(Result result) {
 		return result.getAnalysis().getTestSection().getName();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getTestName() {
-		return TestServiceImpl.getUserLocalizedTestName(test);
-	}
-
-	@Transactional(readOnly = true)
-	public String getReportingTestName() {
+	public String getReportingTestName(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 		return TestServiceImpl.getUserLocalizedReportingTestName(test);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getTestDescription() {
+	public String getTestDescription(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 		return TestServiceImpl.getLocalizedTestNameWithType(test);
 	}
 
 	@Transactional(readOnly = true)
-	public String getSampleType() {
+	public String getSampleType(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 		if (test == null) {
 			return "";
 		}
@@ -126,18 +115,22 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return "";
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getLOINCCode() {
+	public String getLOINCCode(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 		return test != null ? test.getLoinc() : "";
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getTestTime() {
+	public String getTestTime(Result result) {
 		return result.getAnalysis().getCompletedDateForDisplay();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getTestType() {
+	public String getTestType(Result result) {
 		return result.getResultType();
 	}
 
@@ -147,15 +140,16 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *
 	 * @return The String value
 	 */
+	@Override
 	@Transactional(readOnly = true)
-	public String getSimpleResultValue() {
+	public String getSimpleResultValue(Result result) {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
 		}
 
-		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(getTestType())) {
-			return getDictEntry();
-		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(getTestType(result))) {
+			return getDictEntry(result);
+		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
 			int significantPlaces = result.getSignificantDigits();
 			if (significantPlaces == 0) {
 				return result.getValue().split("\\.")[0];
@@ -192,18 +186,20 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 *                  they will be suitable for a web form
 	 * @return A textual representation of the value
 	 */
+	@Override
 	@Transactional(readOnly = true)
-	public String getResultValue(boolean printable) {
-		return getResultValue(",", printable, false);
+	public String getResultValue(Result result, boolean printable) {
+		return getResultValue(result, ",", printable, false);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getResultValue(String separator, boolean printable, boolean includeUOM) {
+	public String getResultValue(Result result, String separator, boolean printable, boolean includeUOM) {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
 		}
 
-		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
 
 			if (!printable) {
 				return result.getValue();
@@ -212,7 +208,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 			List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
 			if (!resultList.isEmpty()) {
 				if (resultList.size() == 1) {
-					reportResult = getDictEntry();
+					reportResult = getDictEntry(result);
 				} else {
 					// If dictionary result it can also have a quantified result
 					List<Result> dictionaryResults = new ArrayList<>();
@@ -240,14 +236,14 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 			}
 
 			if (includeUOM && !GenericValidator.isBlankOrNull(reportResult)) {
-				String uom = getUOM();
+				String uom = getUOM(result);
 				if (!GenericValidator.isBlankOrNull(uom)) {
 					reportResult += " " + uom;
 				}
 			}
 
 			return StringEscapeUtils.escapeHtml(reportResult);
-		} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(getTestType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(getTestType(result))) {
 			StringBuilder buffer = new StringBuilder();
 			boolean firstPass = true;
 
@@ -265,13 +261,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 				}
 			}
 			return buffer.toString();
-		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
 			int significantPlaces = result.getSignificantDigits();
 			if (significantPlaces == -1) {
-				return result.getValue() + appendUOM(includeUOM);
+				return result.getValue() + appendUOM(result, includeUOM);
 			}
 			if (significantPlaces == 0) {
-				return result.getValue().split("\\.")[0] + appendUOM(includeUOM);
+				return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
 			}
 			StringBuilder value = new StringBuilder();
 			value.append(result.getValue());
@@ -287,7 +283,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 				value.append("0");
 			}
 
-			return value.toString() + appendUOM(includeUOM);
+			return value.toString() + appendUOM(result, includeUOM);
 		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(result.getValue())) {
 			return result.getValue().split("\\(")[0].trim();
@@ -296,12 +292,12 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		}
 	}
 
-	private String getDictEntry() {
+	private String getDictEntry(Result result) {
 		Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
 		return dictionary != null ? dictionary.getDictEntry() : "";
 	}
 
-	private String appendUOM(boolean includeUOM) {
+	private String appendUOM(Result result, boolean includeUOM) {
 		if (includeUOM && result.getAnalysis().getTest().getUnitOfMeasure() != null) {
 			return " " + result.getAnalysis().getTest().getUnitOfMeasure().getName();
 		} else {
@@ -310,12 +306,12 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Transactional(readOnly = true)
-	public String getMultiSelectSelectedIdValues() {
+	public String getMultiSelectSelectedIdValues(Result result) {
 		if (GenericValidator.isBlankOrNull(result.getValue())) {
 			return "";
 		}
 
-		if (TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getCharacterValue().equals(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getCharacterValue().equals(getTestType(result))) {
 			StringBuilder buffer = new StringBuilder();
 			boolean firstPass = true;
 
@@ -339,17 +335,18 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	}
 
 	@Transactional(readOnly = true)
-	public String getUOM() {
+	public String getUOM(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
 		return test != null && test.getUnitOfMeasure() != null ? test.getUnitOfMeasure().getUnitOfMeasureName() : "";
 	}
 
 	@Transactional(readOnly = true)
-	public double getlowNormalRange() {
+	public double getlowNormalRange(Result result) {
 		return result.getMinNormal();
 	}
 
 	@Transactional(readOnly = true)
-	public double getHighNormalRange() {
+	public double getHighNormalRange(Result result) {
 		return result.getMaxNormal();
 	}
 
@@ -358,8 +355,8 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	 * @return true if any of the result limits for this test have a gender
 	 *         specification
 	 */
-	public boolean ageInRangeCriteria() {
-		List<ResultLimit> resultLimits = getResultLimits();
+	public boolean ageInRangeCriteria(Result result) {
+		List<ResultLimit> resultLimits = getResultLimits(result);
 
 		for (ResultLimit limit : resultLimits) {
 			if (limit.getMaxAge() != limit.getMinAge()) {
@@ -370,8 +367,8 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
-	public boolean genderInRangeCritera() {
-		List<ResultLimit> resultLimits = getResultLimits();
+	public boolean genderInRangeCritera(Result result) {
+		List<ResultLimit> resultLimits = getResultLimits(result);
 
 		for (ResultLimit limit : resultLimits) {
 			if (!GenericValidator.isBlankOrNull(limit.getGender())) {
@@ -382,8 +379,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getDisplayReferenceRange(boolean includeSelectList) {
+	public String getDisplayReferenceRange(Result result, boolean includeSelectList) {
 		String range = "";
 		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			if (result.getMinNormal() != null && result.getMaxNormal() != null
@@ -393,7 +391,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 			}
 		} else if (includeSelectList
 				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
-			List<ResultLimit> limits = getResultLimits();
+			List<ResultLimit> limits = getResultLimits(result);
 			if (!limits.isEmpty() && !GenericValidator.isBlankOrNull(limits.get(0).getDictionaryNormalId())) {
 				range = dictionaryService.getDataForId(limits.get(0).getDictionaryNormalId()).getLocalizedName();
 			}
@@ -401,18 +399,19 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return range;
 	}
 
-	private List<ResultLimit> getResultLimits() {
-		if (resultLimit == null) {
-			resultLimit = test != null ? resultLimitService.getAllResultLimitsForTest(test.getId()) : new ArrayList<>();
-		}
+	private List<ResultLimit> getResultLimits(Result result) {
+		Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
+		List<ResultLimit> resultLimit = test != null ? resultLimitService.getAllResultLimitsForTest(test.getId())
+				: new ArrayList<>();
 
 		return resultLimit;
 	}
 
-	public boolean isAbnormalDictionaryResult() {
+	@Override
+	public boolean isAbnormalDictionaryResult(Result result) {
 		if (result.getValue() != null
 				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
-			List<ResultLimit> limits = getResultLimits();
+			List<ResultLimit> limits = getResultLimits(result);
 			if (!limits.isEmpty()) {
 				return !result.getValue().equals(limits.get(0).getDictionaryNormalId());
 			}
@@ -421,13 +420,15 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 		return false;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getLastUpdatedTime() {
+	public String getLastUpdatedTime(Result result) {
 		return DateUtil.convertTimestampToStringDate(result.getLastupdated());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public String getSignature() {
+	public String getSignature(Result result) {
 		List<ResultSignature> signatures = signatureService.getResultSignaturesByResult(result);
 		return signatures.isEmpty() ? "" : signatures.get(0).getNonUserName();
 	}
@@ -600,4 +601,5 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 	public List getPageOfResults(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfResults(startingRecNo);
 	}
+
 }

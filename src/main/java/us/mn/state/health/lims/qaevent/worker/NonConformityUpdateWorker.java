@@ -49,6 +49,7 @@ import spring.service.sampleproject.SampleProjectService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.systemuser.SystemUserService;
 import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -708,8 +709,9 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 			} else {
 				NoteSet noteSet = new NoteSet();
 				noteSet.referencedSample = sample;
-				noteSet.note = new NoteServiceImpl(sample).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY,
-						noteText, NOTE_SUBJECT, webData.getCurrentSysUserId());
+				NoteService noteService = SpringContext.getBean(NoteService.class);
+				noteSet.note = noteService.createSavableNote(sample, NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
+						NOTE_SUBJECT, webData.getCurrentSysUserId());
 				insertableNotes.add(noteSet);
 			}
 		}
@@ -800,8 +802,9 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			NoteSet noteSet = new NoteSet();
 			noteSet.referencedEvent = event;
-			noteSet.note = new NoteServiceImpl(event).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY,
-					noteText, NOTE_SUBJECT, webData.getCurrentSysUserId());
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			noteSet.note = noteService.createSavableNote(event, NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
+					NOTE_SUBJECT, webData.getCurrentSysUserId());
 			insertableNotes.add(noteSet);
 		}
 	}

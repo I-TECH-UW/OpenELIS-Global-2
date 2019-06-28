@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.patient.PatientService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.person.PersonService;
@@ -85,12 +84,11 @@ public class DBOrderPersister implements IOrderPersister {
 	}
 
 	private void persist(MessagePatient orderPatient) {
-		PatientServiceImpl patientService = new PatientServiceImpl(orderPatient);
-		patient = patientService.getPatient();
+		patient = patientService.getPatientByExternalId(orderPatient.getExternalId());
 		if (patient == null) {
 			createNewPatient(orderPatient);
 		} else {
-			updatePatient(orderPatient, patientService);
+			updatePatient(orderPatient, patient);
 		}
 	}
 
@@ -138,14 +136,13 @@ public class DBOrderPersister implements IOrderPersister {
 		}
 	}
 
-	private void updatePatient(MessagePatient orderPatient, PatientServiceImpl patientService) {
-		Patient patient = patientService.getPatient();
-		Person person = patientService.getPerson();
+	private void updatePatient(MessagePatient orderPatient, Patient patient) {
+		Person person = patientService.getPerson(patient);
 
-		updatePersonIfNeeded(orderPatient, patientService, person);
-		updatePatientIfNeeded(orderPatient, patientService, patient);
+		updatePersonIfNeeded(orderPatient, patient, person);
+		updatePatientIfNeeded(orderPatient, patient);
 
-		List<PatientIdentity> identityList = patientService.getIdentityList();
+		List<PatientIdentity> identityList = patientService.getIdentityList(patient);
 		updateIdentityIfNeeded(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), patient.getId(), identityList,
 				identityService);
 		updateIdentityIfNeeded(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), patient.getId(), identityList,
@@ -182,21 +179,20 @@ public class DBOrderPersister implements IOrderPersister {
 		}
 	}
 
-	private void updatePatientIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService,
-			Patient patient) {
+	private void updatePatientIfNeeded(MessagePatient orderPatient, Patient patient) {
 		boolean updatePatient = false;
 
-		if (needsUpdating(orderPatient.getDisplayDOB(), patientService.getBirthdayForDisplay())) {
+		if (needsUpdating(orderPatient.getDisplayDOB(), patientService.getBirthdayForDisplay(patient))) {
 			patient.setBirthDateForDisplay(orderPatient.getDisplayDOB());
 			updatePatient = true;
 		}
 
-		if (needsUpdating(orderPatient.getGender(), patientService.getGender())) {
+		if (needsUpdating(orderPatient.getGender(), patientService.getGender(patient))) {
 			patient.setGender(orderPatient.getGender());
 			updatePatient = true;
 		}
 
-		if (needsUpdating(orderPatient.getNationalId(), patientService.getNationalId())) {
+		if (needsUpdating(orderPatient.getNationalId(), patientService.getNationalId(patient))) {
 			patient.setNationalId(orderPatient.getNationalId());
 			updatePatient = true;
 		}
@@ -207,23 +203,23 @@ public class DBOrderPersister implements IOrderPersister {
 		}
 	}
 
-	private void updatePersonIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService, Person person) {
+	private void updatePersonIfNeeded(MessagePatient orderPatient, Patient patient, Person person) {
 		boolean updatePerson = false;
 
-		if (needsUpdating(orderPatient.getFirstName(), patientService.getFirstName())) {
+		if (needsUpdating(orderPatient.getFirstName(), patientService.getFirstName(patient))) {
 			person.setFirstName(orderPatient.getFirstName());
 			updatePerson = true;
 		}
 
-		if (needsUpdating(orderPatient.getLastName(), patientService.getLastName())) {
+		if (needsUpdating(orderPatient.getLastName(), patientService.getLastName(patient))) {
 			person.setLastName(orderPatient.getLastName());
 			updatePerson = true;
 		}
-		if (needsUpdating(orderPatient.getAddressStreet(), patientService.getPerson().getStreetAddress())) {
+		if (needsUpdating(orderPatient.getAddressStreet(), patientService.getPerson(patient).getStreetAddress())) {
 			person.setStreetAddress(orderPatient.getAddressStreet());
 			updatePerson = true;
 		}
-		if (needsUpdating(orderPatient.getAddressVillage(), patientService.getPerson().getCity())) {
+		if (needsUpdating(orderPatient.getAddressVillage(), patientService.getPerson(patient).getCity())) {
 			person.setCity(orderPatient.getAddressVillage());
 			updatePerson = true;
 		}

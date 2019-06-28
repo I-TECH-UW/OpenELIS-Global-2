@@ -20,9 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testconfiguration.TestSectionTestAssignService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
@@ -34,6 +36,8 @@ public class TestSectionTestAssignController extends BaseController {
 
 	@Autowired
 	private TestSectionTestAssignService testSectionTestAssignService;
+	@Autowired
+	private TestSectionService testSectionService;
 
 	@RequestMapping(value = "/TestSectionTestAssign", method = RequestMethod.GET)
 	public ModelAndView showTestSectionTestAssign(HttpServletRequest request) {
@@ -52,7 +56,7 @@ public class TestSectionTestAssignController extends BaseController {
 		for (IdValuePair sectionPair : testSections) {
 			List<IdValuePair> tests = new ArrayList<>();
 			testSectionTestsMap.put(sectionPair, tests);
-			List<Test> testList = TestSectionServiceImpl.getTestsInSection(sectionPair.getId());
+			List<Test> testList = testSectionService.getTestsInSection(sectionPair.getId());
 
 			for (Test test : testList) {
 				if (test.isActive()) {
@@ -111,8 +115,8 @@ public class TestSectionTestAssignController extends BaseController {
 		String deactivateTestSectionId = form.getString("deactivateTestSectionId");
 		boolean updateTestSection = false;
 		String currentUser = getSysUserId(request);
-		Test test = new TestServiceImpl(testId).getTest();
-		TestSection testSection = new TestSectionServiceImpl(testSectionId).getTestSection();
+		Test test = SpringContext.getBean(TestService.class).get(testId);
+		TestSection testSection = testSectionService.get(testSectionId);
 		TestSection deActivateTestSection = null;
 		test.setTestSection(testSection);
 		test.setSysUserId(currentUser);
@@ -130,7 +134,7 @@ public class TestSectionTestAssignController extends BaseController {
 		}
 
 		if (!GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
-			deActivateTestSection = new TestSectionServiceImpl(deactivateTestSectionId).getTestSection();
+			deActivateTestSection = testSectionService.get(deactivateTestSectionId);
 			deActivateTestSection.setIsActive("N");
 			deActivateTestSection.setSysUserId(currentUser);
 		}

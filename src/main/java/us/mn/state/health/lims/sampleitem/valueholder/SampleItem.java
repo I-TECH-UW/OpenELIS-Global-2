@@ -17,6 +17,9 @@ package us.mn.state.health.lims.sampleitem.valueholder;
 
 import java.sql.Timestamp;
 
+import spring.service.note.NoteObject;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.BoundTo;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
@@ -25,7 +28,7 @@ import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
-public class SampleItem extends BaseObject<String> {
+public class SampleItem extends BaseObject<String> implements NoteObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,13 +50,13 @@ public class SampleItem extends BaseObject<String> {
 	private Timestamp collectionDate;
 	private String statusId;
 	private String collector;
-	
+
 	public SampleItem() {
 		super();
-		this.typeOfSample = new ValueHolder();
-		this.sourceOfSample = new ValueHolder();
-		this.unitOfMeasure = new ValueHolder();
-		this.sample = new ValueHolder();
+		typeOfSample = new ValueHolder();
+		sourceOfSample = new ValueHolder();
+		unitOfMeasure = new ValueHolder();
+		sample = new ValueHolder();
 	}
 
 	public String getExternalId() {
@@ -72,10 +75,12 @@ public class SampleItem extends BaseObject<String> {
 		this.collectionDate = collectionDate;
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -89,8 +94,8 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public String getTypeOfSampleId() {
-		if( typeOfSampleId == null){
-			if( getTypeOfSample() != null){
+		if (typeOfSampleId == null) {
+			if (getTypeOfSample() != null) {
 				typeOfSampleId = getTypeOfSample().getId();
 			}
 		}
@@ -107,8 +112,8 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public String getSourceOfSampleId() {
-		if( sourceOfSampleId == null){
-			if(getSourceOfSample() != null){
+		if (sourceOfSampleId == null) {
+			if (getSourceOfSample() != null) {
 				sourceOfSampleId = getSourceOfSample().getId();
 			}
 		}
@@ -128,7 +133,7 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public Sample getSample() {
-		return (Sample) this.sample.getValue();
+		return (Sample) sample.getValue();
 	}
 
 	public void setSample(Sample sample) {
@@ -144,7 +149,7 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public TypeOfSample getTypeOfSample() {
-		return (TypeOfSample) this.typeOfSample.getValue();
+		return (TypeOfSample) typeOfSample.getValue();
 	}
 
 	public void setTypeOfSample(TypeOfSample typeOfSample) {
@@ -152,7 +157,7 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public SourceOfSample getSourceOfSample() {
-		return (SourceOfSample) this.sourceOfSample.getValue();
+		return (SourceOfSample) sourceOfSample.getValue();
 	}
 
 	public void setSourceOfSample(SourceOfSample sourceOfSample) {
@@ -160,7 +165,7 @@ public class SampleItem extends BaseObject<String> {
 	}
 
 	public UnitOfMeasure getUnitOfMeasure() {
-		return (UnitOfMeasure) this.unitOfMeasure.getValue();
+		return (UnitOfMeasure) unitOfMeasure.getValue();
 	}
 
 	public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
@@ -189,6 +194,21 @@ public class SampleItem extends BaseObject<String> {
 
 	public void setCollector(String collector) {
 		this.collector = collector;
+	}
+
+	@Override
+	public String getTableId() {
+		return NoteServiceImpl.SAMPLE_ITEM_TABLE_REFERENCE_ID;
+	}
+
+	@Override
+	public String getObjectId() {
+		return getId();
+	}
+
+	@Override
+	public BoundTo getBoundTo() {
+		return BoundTo.SAMPLE_ITEM;
 	}
 
 }

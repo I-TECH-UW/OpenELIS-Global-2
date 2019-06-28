@@ -24,6 +24,9 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteObject;
+import spring.service.note.NoteServiceImpl.BoundTo;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
@@ -35,7 +38,7 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
-public class Analysis extends BaseObject<String> {
+public class Analysis extends BaseObject<String> implements NoteObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -77,9 +80,9 @@ public class Analysis extends BaseObject<String> {
 	private String statusId;
 	private String assignedSortedTestTreeDisplayValue;
 	private boolean referredOut = false;
-    private String sampleTypeName;
+	private String sampleTypeName;
 	private List<Analysis> children;
-    private boolean correctedSincePatientReport;
+	private boolean correctedSincePatientReport;
 
 	public Analysis() {
 		super();
@@ -91,40 +94,41 @@ public class Analysis extends BaseObject<String> {
 		panel = new ValueHolder();
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-    public String getSampleTypeName(){
-        return sampleTypeName;
-    }
+	public String getSampleTypeName() {
+		return sampleTypeName;
+	}
 
-    public void setSampleTypeName( String sampleTypeName ){
-        this.sampleTypeName = sampleTypeName;
-    }
+	public void setSampleTypeName(String sampleTypeName) {
+		this.sampleTypeName = sampleTypeName;
+	}
 
-    public String getAssignedSortedTestTreeDisplayValue() {
-        return assignedSortedTestTreeDisplayValue;
-    }
+	public String getAssignedSortedTestTreeDisplayValue() {
+		return assignedSortedTestTreeDisplayValue;
+	}
 
-    public List<Analysis> getChildren() {
-        return children;
-    }
+	public List<Analysis> getChildren() {
+		return children;
+	}
 
-    public void setChildren(List<Analysis> children) {
-        this.children = children;
-    }
+	public void setChildren(List<Analysis> children) {
+		this.children = children;
+	}
 
-    public void setAssignedSortedTestTreeDisplayValue(
-            String assignedSortedTestTreeDisplayValue) {
-        this.assignedSortedTestTreeDisplayValue = assignedSortedTestTreeDisplayValue;
-    }
+	public void setAssignedSortedTestTreeDisplayValue(String assignedSortedTestTreeDisplayValue) {
+		this.assignedSortedTestTreeDisplayValue = assignedSortedTestTreeDisplayValue;
+	}
 
-    public String getAnalysisType() {
+	public String getAnalysisType() {
 		return analysisType;
 	}
 
@@ -133,15 +137,16 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public SampleItem getSampleItem() {
-		return (SampleItem) this.sampleItem.getValue();
+		return (SampleItem) sampleItem.getValue();
 	}
 
 	public void setSampleItem(SampleItem sampleItem) {
 		this.sampleItem.setValue(sampleItem);
 
-        if( GenericValidator.isBlankOrNull( sampleTypeName ) && sampleItem != null && sampleItem.getTypeOfSample() != null ){
-            setSampleTypeName( sampleItem.getTypeOfSample().getLocalizedName() );
-        }
+		if (GenericValidator.isBlankOrNull(sampleTypeName) && sampleItem != null
+				&& sampleItem.getTypeOfSample() != null) {
+			setSampleTypeName(sampleItem.getTypeOfSample().getLocalizedName());
+		}
 	}
 
 	public Date getCompletedDate() {
@@ -150,7 +155,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setCompletedDate(Date completedDate) {
 		this.completedDate = completedDate;
-		this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(	completedDate);
+		completedDateForDisplay = DateUtil.convertSqlDateToStringDate(completedDate);
 	}
 
 	public String getCompletedDateForDisplay() {
@@ -160,12 +165,9 @@ public class Analysis extends BaseObject<String> {
 	public void setCompletedDateForDisplay(String completedDateForDisplay) {
 		this.completedDateForDisplay = completedDateForDisplay;
 
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.completedDate = DateUtil.convertStringDateToSqlDate(
-				this.completedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		completedDate = DateUtil.convertStringDateToSqlDate(this.completedDateForDisplay, locale);
 	}
-
 
 	public String getRevision() {
 		return revision;
@@ -181,7 +183,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setStartedDate(Date startedDate) {
 		this.startedDate = startedDate;
-		this.startedDateForDisplay = DateUtil.convertSqlDateToStringDate(startedDate);
+		startedDateForDisplay = DateUtil.convertSqlDateToStringDate(startedDate);
 	}
 
 	public String getStartedDateForDisplay() {
@@ -191,10 +193,8 @@ public class Analysis extends BaseObject<String> {
 	public void setStartedDateForDisplay(String startedDateForDisplay) {
 		this.startedDateForDisplay = startedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.startedDate = DateUtil.convertStringDateToSqlDate(
-				this.startedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		startedDate = DateUtil.convertStringDateToSqlDate(this.startedDateForDisplay, locale);
 	}
 
 	public String getStatus() {
@@ -219,7 +219,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setPrintedDate(Date printedDate) {
 		this.printedDate = printedDate;
-		this.printedDateForDisplay = DateUtil.convertSqlDateToStringDate(printedDate);
+		printedDateForDisplay = DateUtil.convertSqlDateToStringDate(printedDate);
 	}
 
 	public String getPrintedDateForDisplay() {
@@ -229,10 +229,8 @@ public class Analysis extends BaseObject<String> {
 	public void setPrintedDateForDisplay(String printedDateForDisplay) {
 		this.printedDateForDisplay = printedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.printedDate = DateUtil.convertStringDateToSqlDate(
-				this.printedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		printedDate = DateUtil.convertStringDateToSqlDate(this.printedDateForDisplay, locale);
 	}
 
 	public Date getReleasedDate() {
@@ -241,7 +239,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setReleasedDate(Date releasedDate) {
 		this.releasedDate = releasedDate;
-		this.releasedDateForDisplay = DateUtil.convertSqlDateToStringDate(releasedDate);
+		releasedDateForDisplay = DateUtil.convertSqlDateToStringDate(releasedDate);
 	}
 
 	public String getReleasedDateForDisplay() {
@@ -251,10 +249,8 @@ public class Analysis extends BaseObject<String> {
 	public void setReleasedDateForDisplay(String releasedDateForDisplay) {
 		this.releasedDateForDisplay = releasedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.releasedDate = DateUtil.convertStringDateToSqlDate(
-				this.releasedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		releasedDate = DateUtil.convertStringDateToSqlDate(this.releasedDateForDisplay, locale);
 	}
 
 	public String getSoClientReference() {
@@ -271,22 +267,18 @@ public class Analysis extends BaseObject<String> {
 
 	public void setSoNotifyReceivedDate(Date soNotifyReceivedDate) {
 		this.soNotifyReceivedDate = soNotifyReceivedDate;
-		this.soNotifyReceivedDateForDisplay = DateUtil
-				.convertSqlDateToStringDate(soNotifyReceivedDate);
+		soNotifyReceivedDateForDisplay = DateUtil.convertSqlDateToStringDate(soNotifyReceivedDate);
 	}
 
 	public String getSoNotifyReceivedDateForDisplay() {
 		return soNotifyReceivedDateForDisplay;
 	}
 
-	public void setSoNotifyReceivedDateForDisplay(
-			String soNotifyReceivedDateForDisplay) {
+	public void setSoNotifyReceivedDateForDisplay(String soNotifyReceivedDateForDisplay) {
 		this.soNotifyReceivedDateForDisplay = soNotifyReceivedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.soNotifyReceivedDate = DateUtil.convertStringDateToSqlDate(
-				this.soNotifyReceivedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		soNotifyReceivedDate = DateUtil.convertStringDateToSqlDate(this.soNotifyReceivedDateForDisplay, locale);
 	}
 
 	public Date getSoNotifySendDate() {
@@ -295,7 +287,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setSoNotifySendDate(Date soNotifySendDate) {
 		this.soNotifySendDate = soNotifySendDate;
-		this.soNotifySendDateForDisplay = DateUtil.convertSqlDateToStringDate(soNotifySendDate);
+		soNotifySendDateForDisplay = DateUtil.convertSqlDateToStringDate(soNotifySendDate);
 	}
 
 	public String getSoNotifySendDateForDisplay() {
@@ -305,10 +297,8 @@ public class Analysis extends BaseObject<String> {
 	public void setSoNotifySendDateForDisplay(String soNotifySendDateForDisplay) {
 		this.soNotifySendDateForDisplay = soNotifySendDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.soNotifySendDate = DateUtil.convertStringDateToSqlDate(
-				this.soNotifySendDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		soNotifySendDate = DateUtil.convertStringDateToSqlDate(this.soNotifySendDateForDisplay, locale);
 	}
 
 	public Date getSoSendDate() {
@@ -317,7 +307,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setSoSendDate(Date soSendDate) {
 		this.soSendDate = soSendDate;
-		this.soSendDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendDate);
+		soSendDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendDate);
 	}
 
 	public String getSoSendDateForDisplay() {
@@ -327,10 +317,8 @@ public class Analysis extends BaseObject<String> {
 	public void setSoSendDateForDisplay(String soSendDateForDisplay) {
 		this.soSendDateForDisplay = soSendDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.soSendDate = DateUtil.convertStringDateToSqlDate(
-				this.soSendDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		soSendDate = DateUtil.convertStringDateToSqlDate(this.soSendDateForDisplay, locale);
 	}
 
 	public String getSoSendEntryBy() {
@@ -347,7 +335,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setSoSendEntryDate(Date soSendEntryDate) {
 		this.soSendEntryDate = soSendEntryDate;
-		this.soSendEntryDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendEntryDate);
+		soSendEntryDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendEntryDate);
 	}
 
 	public String getSoSendEntryDateForDisplay() {
@@ -357,10 +345,8 @@ public class Analysis extends BaseObject<String> {
 	public void setSoSendEntryDateForDisplay(String soSendEntryDateForDisplay) {
 		this.soSendEntryDateForDisplay = soSendEntryDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.soSendEntryDate = DateUtil.convertStringDateToSqlDate(
-				this.soSendEntryDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		soSendEntryDate = DateUtil.convertStringDateToSqlDate(this.soSendEntryDateForDisplay, locale);
 	}
 
 	public Date getSoSendReadyDate() {
@@ -369,7 +355,7 @@ public class Analysis extends BaseObject<String> {
 
 	public void setSoSendReadyDate(Date soSendReadyDate) {
 		this.soSendReadyDate = soSendReadyDate;
-		this.soSendReadyDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendReadyDate);
+		soSendReadyDateForDisplay = DateUtil.convertSqlDateToStringDate(soSendReadyDate);
 	}
 
 	public String getSoSendReadyDateForDisplay() {
@@ -379,14 +365,12 @@ public class Analysis extends BaseObject<String> {
 	public void setSoSendReadyDateForDisplay(String soSendReadyDateForDisplay) {
 		this.soSendReadyDateForDisplay = soSendReadyDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.soSendReadyDate = DateUtil.convertStringDateToSqlDate(
-				this.soSendReadyDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		soSendReadyDate = DateUtil.convertStringDateToSqlDate(this.soSendReadyDateForDisplay, locale);
 	}
 
 	public TestSection getTestSection() {
-		return (TestSection) this.testSection.getValue();
+		return (TestSection) testSection.getValue();
 	}
 
 	public void setTestSection(TestSection testSection) {
@@ -394,7 +378,7 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public Test getTest() {
-		return (Test) this.test.getValue();
+		return (Test) test.getValue();
 	}
 
 	public void setTest(Test test) {
@@ -402,7 +386,7 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public String getTestSectionName() {
-		return this.testSectionName;
+		return testSectionName;
 	}
 
 	public void setTestSectionName(String testSectionName) {
@@ -410,7 +394,7 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public String getTestName() {
-		return this.testName;
+		return testName;
 	}
 
 	public void setTestName(String testName) {
@@ -418,7 +402,7 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public Analysis getParentAnalysis() {
-		return (Analysis) this.parentAnalysis.getValue();
+		return (Analysis) parentAnalysis.getValue();
 	}
 
 	public void setParentAnalysis(Analysis parentAnalysis) {
@@ -426,7 +410,7 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public Result getParentResult() {
-		return (Result) this.parentResult.getValue();
+		return (Result) parentResult.getValue();
 	}
 
 	public void setParentResult(Result parentResult) {
@@ -458,26 +442,41 @@ public class Analysis extends BaseObject<String> {
 	}
 
 	public Panel getPanel() {
-		return (Panel)panel.getValue();
+		return (Panel) panel.getValue();
 	}
 
 	public void setPanel(Panel panel) {
 		this.panel.setValue(panel);
 	}
 
-	public boolean isReferredOut(){
+	public boolean isReferredOut() {
 		return referredOut;
 	}
 
-	public void setReferredOut(boolean referredOut){
+	public void setReferredOut(boolean referredOut) {
 		this.referredOut = referredOut;
 	}
 
-    public boolean isCorrectedSincePatientReport(){
-        return correctedSincePatientReport;
-    }
+	public boolean isCorrectedSincePatientReport() {
+		return correctedSincePatientReport;
+	}
 
-    public void setCorrectedSincePatientReport( boolean correctedSincePatientReport ){
-        this.correctedSincePatientReport = correctedSincePatientReport;
-    }
+	public void setCorrectedSincePatientReport(boolean correctedSincePatientReport) {
+		this.correctedSincePatientReport = correctedSincePatientReport;
+	}
+
+	@Override
+	public String getTableId() {
+		return AnalysisServiceImpl.TABLE_REFERENCE_ID;
+	}
+
+	@Override
+	public String getObjectId() {
+		return getId();
+	}
+
+	@Override
+	public BoundTo getBoundTo() {
+		return BoundTo.ANALYSIS;
+	}
 }

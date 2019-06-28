@@ -134,7 +134,8 @@ public class OrderHistoryService extends AbstractHistoryService {
 			if (history.getReferenceId().equals(currentProviderRequestLinkId)) {
 				String value = extractSimple(changes, "requesterId");
 				if (value != null) {
-					changeMap.put(PROVIDER_ATTRIBUTE, personService.getLastFirstName());
+					changeMap.put(PROVIDER_ATTRIBUTE,
+							personService.getLastFirstName(personService.getPersonById(value)));
 				}
 			} else if (history.getReferenceId().equals(currentOrganizationRequesterLinkId)) {
 				String value = extractSimple(changes, "requesterId");

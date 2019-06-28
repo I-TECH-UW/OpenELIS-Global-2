@@ -23,7 +23,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.springframework.validation.Errors;
 
 import spring.service.dataexchange.order.ElectronicOrderService;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
@@ -460,29 +460,35 @@ public class SamplePatientUpdateData {
 	}
 
 	private void addObservations(SampleOrderItem sampleOrder, boolean trackPayments) {
+		ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 		if (trackPayments) {
-			createObservation(sampleOrder.getPaymentOptionSelection(), ObservationHistoryServiceImpl.getInstance()
-					.getObservationTypeIdForType(ObservationType.PAYMENT_STATUS), ValueType.DICTIONARY);
+			createObservation(sampleOrder.getPaymentOptionSelection(),
+					observationHistoryService.getObservationTypeIdForType(ObservationType.PAYMENT_STATUS),
+					ValueType.DICTIONARY);
 		}
 
 		createObservation(sampleOrder.getRequestDate(),
-				ObservationHistoryServiceImpl.getInstance().getObservationTypeIdForType(ObservationType.REQUEST_DATE),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.REQUEST_DATE), ValueType.LITERAL);
+		createObservation(sampleOrder.getNextVisitDate(),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.NEXT_VISIT_DATE),
 				ValueType.LITERAL);
-		createObservation(sampleOrder.getNextVisitDate(), ObservationHistoryServiceImpl.getInstance()
-				.getObservationTypeIdForType(ObservationType.NEXT_VISIT_DATE), ValueType.LITERAL);
-		createObservation(sampleOrder.getTestLocationCode(), ObservationHistoryServiceImpl.getInstance()
-				.getObservationTypeIdForType(ObservationType.TEST_LOCATION_CODE), ValueType.DICTIONARY);
-		createObservation(sampleOrder.getOtherLocationCode(), ObservationHistoryServiceImpl.getInstance()
-				.getObservationTypeIdForType(ObservationType.TEST_LOCATION_CODE_OTHER), ValueType.LITERAL);
-		createObservation(sampleOrder.getReferringPatientNumber(), ObservationHistoryServiceImpl.getInstance()
-				.getObservationTypeIdForType(ObservationType.REFERRERS_PATIENT_ID), ValueType.LITERAL);
+		createObservation(sampleOrder.getTestLocationCode(),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.TEST_LOCATION_CODE),
+				ValueType.DICTIONARY);
+		createObservation(sampleOrder.getOtherLocationCode(),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.TEST_LOCATION_CODE_OTHER),
+				ValueType.LITERAL);
+		createObservation(sampleOrder.getReferringPatientNumber(),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.REFERRERS_PATIENT_ID),
+				ValueType.LITERAL);
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.USE_BILLING_REFERENCE_NUMBER, "true")) {
-			createObservation(sampleOrder.getBillingReferenceNumber(), ObservationHistoryServiceImpl.getInstance()
-					.getObservationTypeIdForType(ObservationType.BILLING_REFERENCE_NUMBER), ValueType.LITERAL);
+			createObservation(sampleOrder.getBillingReferenceNumber(),
+					observationHistoryService.getObservationTypeIdForType(ObservationType.BILLING_REFERENCE_NUMBER),
+					ValueType.LITERAL);
 		}
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ORDER_PROGRAM, "true")) {
 			createObservation(sampleOrder.getProgram(),
-					ObservationHistoryServiceImpl.getInstance().getObservationTypeIdForType(ObservationType.PROGRAM),
+					observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM),
 					ValueType.DICTIONARY);
 		}
 	}

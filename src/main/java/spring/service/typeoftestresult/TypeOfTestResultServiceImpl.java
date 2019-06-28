@@ -35,6 +35,7 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 			private TypeOfTestResultService typeOfTestResultService;
 
 			@PostConstruct
+			@Transactional(readOnly = true)
 			private void construct() {
 				for (ResultType resultType : EnumSet.allOf(ResultType.class)) {
 					resultType.id = typeOfTestResultService.getTypeOfTestResultByType(resultType.DBValue).getId();
@@ -47,13 +48,11 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 			DBValue = dbValue;
 		}
 
-		@Transactional(readOnly = true)
-	public String getCharacterValue() {
+		public String getCharacterValue() {
 			return DBValue;
 		}
 
-		@Transactional(readOnly = true)
-	public String getId() {
+		public String getId() {
 			return id;
 		}
 
@@ -91,22 +90,11 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 		}
 	}
 
-	public static TypeOfTestResultServiceImpl INSTANCE;
-
 	@Autowired
 	protected TypeOfTestResultDAO baseObjectDAO;
 
 	TypeOfTestResultServiceImpl() {
 		super(TypeOfTestResult.class);
-	}
-
-	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	public static TypeOfTestResultService getInstance() {
-		return INSTANCE;
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package spring.service.patient;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
@@ -9,6 +11,7 @@ import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 public interface PatientService extends BaseObjectService<Patient, String> {
+
 	void getData(Patient patient);
 
 	Patient getData(String patientId);
@@ -37,24 +40,66 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
 	void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId);
 
-	Person getPerson();
+	String getGUID(Patient patient);
 
-	String getBirthdayForDisplay();
+	String getNationalId(Patient patient);
 
-	List<PatientIdentity> getIdentityList();
+	String getSTNumber(Patient patient);
 
-	String getLastFirstName();
+	String getSubjectNumber(Patient patient);
 
-	String getFirstName();
+	String getFirstName(Patient patient);
 
-	String getLastName();
+	String getLastName(Patient patient);
 
-	String getPatientId();
+	String getLastFirstName(Patient patient);
 
-	String getGender();
+	String getGender(Patient patient);
 
-	String getNationalId();
+	String getLocalizedGender(Patient patient);
 
-	Patient getPatient();
+	Map<String, String> getAddressComponents(Patient patient);
+
+	String getEnteredDOB(Patient patient);
+
+	Timestamp getDOB(Patient patient);
+
+	String getPhone(Patient patient);
+
+	Person getPerson(Patient patient);
+
+	String getPatientId(Patient patient);
+
+	String getBirthdayForDisplay(Patient patient);
+
+	List<PatientIdentity> getIdentityList(Patient patient);
+
+	String getExternalId(Patient patient);
+
+	String getAKA(Patient patient);
+
+	String getMother(Patient patient);
+
+	String getInsurance(Patient patient);
+
+	String getOccupation(Patient patient);
+
+	String getOrgSite(Patient patient);
+
+	String getMothersInitial(Patient patient);
+
+	String getEducation(Patient patient);
+
+	String getMaritalStatus(Patient patient);
+
+	String getHealthDistrict(Patient patient);
+
+	String getHealthRegion(Patient patient);
+
+	String getObNumber(Patient patient);
+
+	String getPCNumber(Patient patient);
+
+	Patient getPatientForGuid(String patientGuid);
 
 }

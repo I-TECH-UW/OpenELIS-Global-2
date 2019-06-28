@@ -37,13 +37,11 @@ import spring.service.panel.PanelService;
 import spring.service.qaevent.QaEventService;
 import spring.service.referral.ReferralReasonService;
 import spring.service.test.TestSectionService;
-import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultService;
 import spring.service.unitofmeasure.UnitOfMeasureService;
-import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -334,12 +332,12 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case ALL_TESTS: {
-			TestServiceImpl.refreshTestNames();
+			testService.refreshTestNames();
 			typeToListMap.put(ListType.ALL_TESTS, createTestList());
 			break;
 		}
 		case ORDERABLE_TESTS: {
-			TestServiceImpl.refreshTestNames();
+			testService.refreshTestNames();
 			typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
 			break;
 		}
@@ -356,12 +354,12 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case TEST_SECTION: {
-			TestSectionServiceImpl.refreshNames();
+			testSectionService.refreshNames();
 			typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
 			break;
 		}
 		case TEST_SECTION_INACTIVE: {
-			TestSectionServiceImpl.refreshNames();
+			testSectionService.refreshNames();
 			typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
 			break;
 		}
@@ -382,7 +380,7 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case UNIT_OF_MEASURE: {
-			UnitOfMeasureServiceImpl.getInstance().refreshNames();
+			unitOfMeasureService.refreshNames();
 			typeToListMap.put(ListType.UNIT_OF_MEASURE, createUnitOfMeasureList());
 			break;
 		}

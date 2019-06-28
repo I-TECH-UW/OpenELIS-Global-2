@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.note.NoteObject;
+import spring.service.note.NoteServiceImpl.BoundTo;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
@@ -29,7 +32,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public class Sample extends EnumValueItemImpl {
+public class Sample extends EnumValueItemImpl implements NoteObject {
 
 	private static final long serialVersionUID = 1407388492068629053L;
 
@@ -60,24 +63,26 @@ public class Sample extends EnumValueItemImpl {
 	private ValueHolderInterface systemUser;
 	private String referringId;
 	private String clinicalOrderId;
-    private Boolean isConfirmation = false;
+	private Boolean isConfirmation = false;
 
 	// testing one-to-many
-	//this is for HSE I  and II - ability to enter up to two projects
+	// this is for HSE I and II - ability to enter up to two projects
 	private List sampleProjects;
 
 	private String statusId;
 
 	public Sample() {
 		super();
-		this.systemUser = new ValueHolder();
-		this.sampleProjects = new ArrayList();
+		systemUser = new ValueHolder();
+		sampleProjects = new ArrayList();
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -112,8 +117,8 @@ public class Sample extends EnumValueItemImpl {
 
 	public void setCollectionDate(Timestamp collectionDate) {
 		this.collectionDate = collectionDate;
-		this.collectionDateForDisplay = DateUtil.convertTimestampToStringDate(collectionDate);
-		this.collectionTimeForDisplay = DateUtil.convertTimestampToStringTime(collectionDate );
+		collectionDateForDisplay = DateUtil.convertTimestampToStringDate(collectionDate);
+		collectionTimeForDisplay = DateUtil.convertTimestampToStringTime(collectionDate);
 	}
 
 	public String getDomain() {
@@ -124,14 +129,13 @@ public class Sample extends EnumValueItemImpl {
 		this.domain = domain;
 	}
 
-
 	public Date getEnteredDate() {
 		return enteredDate;
 	}
 
 	public void setEnteredDate(Date enteredDate) {
 		this.enteredDate = enteredDate;
-		this.enteredDateForDisplay = DateUtil.convertSqlDateToStringDate(enteredDate);
+		enteredDateForDisplay = DateUtil.convertSqlDateToStringDate(enteredDate);
 	}
 
 	public String getNextItemSequence() {
@@ -155,22 +159,24 @@ public class Sample extends EnumValueItemImpl {
 	}
 
 	public void setReceivedDate(Date receivedDate) {
-		this.receivedDateForDisplay = DateUtil.convertSqlDateToStringDate(receivedDate);
-		this.receivedTimestamp = DateUtil.convertSqlDateToTimestamp(receivedDate);
+		receivedDateForDisplay = DateUtil.convertSqlDateToStringDate(receivedDate);
+		receivedTimestamp = DateUtil.convertSqlDateToTimestamp(receivedDate);
 	}
 
-    /**
-     * @deprecated Use DateUtil methods
-     * @return The received time in either 12 hour or 24 hour notation depending on configuration
-     */
-    @Deprecated
-	public String getReceivedTimeForDisplay( ) {
-        return receivedTimestamp != null ? DateUtil.convertTimestampToStringConfiguredHourTime( receivedTimestamp) : null;
+	/**
+	 * @deprecated Use DateUtil methods
+	 * @return The received time in either 12 hour or 24 hour notation depending on
+	 *         configuration
+	 */
+	@Deprecated
+	public String getReceivedTimeForDisplay() {
+		return receivedTimestamp != null ? DateUtil.convertTimestampToStringConfiguredHourTime(receivedTimestamp)
+				: null;
 	}
 
-    public String getReceived24HourTimeForDisplay( ) {
-        return receivedTimestamp != null ? DateUtil.convertTimestampToStringHourTime( receivedTimestamp) : null;
-    }
+	public String getReceived24HourTimeForDisplay() {
+		return receivedTimestamp != null ? DateUtil.convertTimestampToStringHourTime(receivedTimestamp) : null;
+	}
 
 	public String getReferredCultureFlag() {
 		return referredCultureFlag;
@@ -186,7 +192,7 @@ public class Sample extends EnumValueItemImpl {
 
 	public void setReleasedDate(Date releasedDate) {
 		this.releasedDate = releasedDate;
-		this.releasedDateForDisplay = DateUtil.convertSqlDateToStringDate(releasedDate);
+		releasedDateForDisplay = DateUtil.convertSqlDateToStringDate(releasedDate);
 	}
 
 	public String getRevision() {
@@ -213,20 +219,22 @@ public class Sample extends EnumValueItemImpl {
 		this.stickerReceivedFlag = stickerReceivedFlag;
 	}
 
+	@Override
 	public String getSysUserId() {
 		return sysUserId;
 	}
 
+	@Override
 	public void setSysUserId(String sysUserId) {
 		this.sysUserId = sysUserId;
 	}
 
 	public SystemUser getSystemUser() {
-		return (SystemUser) this.systemUser.getValue();
+		return (SystemUser) systemUser.getValue();
 	}
 
 	protected ValueHolderInterface getSystemUserHolder() {
-		return this.systemUser;
+		return systemUser;
 	}
 
 	public void setSystemUser(SystemUser systemUser) {
@@ -243,36 +251,36 @@ public class Sample extends EnumValueItemImpl {
 
 	public void setTransmissionDate(Date transmissionDate) {
 		this.transmissionDate = transmissionDate;
-		this.transmissionDateForDisplay = DateUtil.convertSqlDateToStringDate(transmissionDate);
+		transmissionDateForDisplay = DateUtil.convertSqlDateToStringDate(transmissionDate);
 	}
 
 	public String getCollectionDateForDisplay() {
-	    if( GenericValidator.isBlankOrNull(collectionDateForDisplay)){
-            return collectionDate != null ? DateUtil.convertTimestampToStringDate(collectionDate) : null;
-        }		
-	    return collectionDateForDisplay;
+		if (GenericValidator.isBlankOrNull(collectionDateForDisplay)) {
+			return collectionDate != null ? DateUtil.convertTimestampToStringDate(collectionDate) : null;
+		}
+		return collectionDateForDisplay;
 	}
 
 	public void setCollectionDateForDisplay(String collectionDateForDisplay) {
 		this.collectionDateForDisplay = collectionDateForDisplay;
-	    this.collectionDate = DateUtil.convertStringDateToTruncatedTimestamp(collectionDateForDisplay);
+		collectionDate = DateUtil.convertStringDateToTruncatedTimestamp(collectionDateForDisplay);
 	}
 
 	public String getEnteredDateForDisplay() {
-        if ( GenericValidator.isBlankOrNull(enteredDateForDisplay)) {	    
-            return enteredDate != null ? DateUtil.convertSqlDateToStringDate(enteredDate) : null;
-        }
-	    return enteredDateForDisplay;
+		if (GenericValidator.isBlankOrNull(enteredDateForDisplay)) {
+			return enteredDate != null ? DateUtil.convertSqlDateToStringDate(enteredDate) : null;
+		}
+		return enteredDateForDisplay;
 	}
 
 	public void setEnteredDateForDisplay(String enteredDateForDisplay) {
 		this.enteredDateForDisplay = enteredDateForDisplay;
-		this.enteredDate = DateUtil.convertStringDateToSqlDate(	enteredDateForDisplay);
+		enteredDate = DateUtil.convertStringDateToSqlDate(enteredDateForDisplay);
 
 	}
 
 	public String getReceivedDateForDisplay() {
-		if( GenericValidator.isBlankOrNull(receivedDateForDisplay)){
+		if (GenericValidator.isBlankOrNull(receivedDateForDisplay)) {
 			return receivedTimestamp != null ? DateUtil.convertTimestampToStringDate(receivedTimestamp) : null;
 		}
 		return receivedDateForDisplay;
@@ -283,48 +291,44 @@ public class Sample extends EnumValueItemImpl {
 	}
 
 	public String getReleasedDateForDisplay() {
-        if ( GenericValidator.isBlankOrNull(releasedDateForDisplay)) {       
-            return releasedDate != null ? DateUtil.convertSqlDateToStringDate(releasedDate) : null;
-        }		
-	    return releasedDateForDisplay;
+		if (GenericValidator.isBlankOrNull(releasedDateForDisplay)) {
+			return releasedDate != null ? DateUtil.convertSqlDateToStringDate(releasedDate) : null;
+		}
+		return releasedDateForDisplay;
 	}
 
 	public void setReleasedDateForDisplay(String releasedDateForDisplay) {
 		this.releasedDateForDisplay = releasedDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.releasedDate = DateUtil.convertStringDateToSqlDate(
-				releasedDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		releasedDate = DateUtil.convertStringDateToSqlDate(releasedDateForDisplay, locale);
 
 	}
 
 	public String getTransmissionDateForDisplay() {
-        if ( GenericValidator.isBlankOrNull(transmissionDateForDisplay)) {       
-            return transmissionDate != null ? DateUtil.convertSqlDateToStringDate(transmissionDate) : null;
-        }	    
+		if (GenericValidator.isBlankOrNull(transmissionDateForDisplay)) {
+			return transmissionDate != null ? DateUtil.convertSqlDateToStringDate(transmissionDate) : null;
+		}
 		return transmissionDateForDisplay;
 	}
 
 	public void setTransmissionDateForDisplay(String transmissionDateForDisplay) {
 		this.transmissionDateForDisplay = transmissionDateForDisplay;
 		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.transmissionDate = DateUtil.convertStringDateToSqlDate(
-				transmissionDateForDisplay, locale);
+		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+		transmissionDate = DateUtil.convertStringDateToSqlDate(transmissionDateForDisplay, locale);
 
 	}
 
 	public void setCollectionTimeForDisplay(String collectionTimeForDisplay) {
 		this.collectionTimeForDisplay = collectionTimeForDisplay;
-		this.collectionDate = DateUtil.convertStringTimeToTimestamp(this.collectionDate, collectionTimeForDisplay);
+		collectionDate = DateUtil.convertStringTimeToTimestamp(collectionDate, collectionTimeForDisplay);
 	}
 
 	public String getCollectionTimeForDisplay() {
-       if( GenericValidator.isBlankOrNull(collectionTimeForDisplay)){
-            return collectionDate != null ? DateUtil.convertTimestampToStringTime(collectionDate) : null;
-        }       
+		if (GenericValidator.isBlankOrNull(collectionTimeForDisplay)) {
+			return collectionDate != null ? DateUtil.convertTimestampToStringTime(collectionDate) : null;
+		}
 		return collectionTimeForDisplay;
 	}
 
@@ -350,46 +354,59 @@ public class Sample extends EnumValueItemImpl {
 
 	public void setReceivedTimestamp(Timestamp receivedTimestamp) {
 		this.receivedTimestamp = receivedTimestamp;
-        // also update String date
-       
-        this.receivedDateForDisplay = DateUtil
-                .convertTimestampToStringDate(receivedTimestamp);
+		// also update String date
 
-        // also update String time
-        this.receivedTimeForDisplay = DateUtil
-                .convertTimestampToStringTime(receivedTimestamp);
+		receivedDateForDisplay = DateUtil.convertTimestampToStringDate(receivedTimestamp);
+
+		// also update String time
+		receivedTimeForDisplay = DateUtil.convertTimestampToStringTime(receivedTimestamp);
 	}
 
-    /**
-     * @deprecated use DateUtil methods instead
-     * @param receivedTimeForDisplay -- the time for display
-     */
-    @Deprecated
-    public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
-        this.receivedTimeForDisplay = receivedTimeForDisplay;
-    }
+	/**
+	 * @deprecated use DateUtil methods instead
+	 * @param receivedTimeForDisplay -- the time for display
+	 */
+	@Deprecated
+	public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
+		this.receivedTimeForDisplay = receivedTimeForDisplay;
+	}
 
-	public String getReferringId(){
+	public String getReferringId() {
 		return referringId;
 	}
 
-	public void setReferringId(String referringId){
+	public void setReferringId(String referringId) {
 		this.referringId = referringId;
 	}
 
-	public String getClinicalOrderId(){
+	public String getClinicalOrderId() {
 		return clinicalOrderId;
 	}
 
-	public void setClinicalOrderId(String clinicalOrderId){
+	public void setClinicalOrderId(String clinicalOrderId) {
 		this.clinicalOrderId = clinicalOrderId;
 	}
 
-    public Boolean getIsConfirmation() {
-        return isConfirmation;
-    }
+	public Boolean getIsConfirmation() {
+		return isConfirmation;
+	}
 
-    public void setIsConfirmation(Boolean isConfirmation) {
-        this.isConfirmation = isConfirmation;
-    }
+	public void setIsConfirmation(Boolean isConfirmation) {
+		this.isConfirmation = isConfirmation;
+	}
+
+	@Override
+	public String getTableId() {
+		return SampleServiceImpl.TABLE_REFERENCE_ID;
+	}
+
+	@Override
+	public String getObjectId() {
+		return getId();
+	}
+
+	@Override
+	public BoundTo getBoundTo() {
+		return BoundTo.SAMPLE;
+	}
 }

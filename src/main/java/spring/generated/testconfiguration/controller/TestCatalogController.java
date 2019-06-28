@@ -21,7 +21,6 @@ import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
@@ -89,8 +88,7 @@ public class TestCatalogController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalog catalog = new TestCatalog();
-			TestServiceImpl testService = new TestServiceImpl(test);
-			String resultType = testService.getResultType();
+			String resultType = testService.getResultType(test);
 			catalog.setId(test.getId());
 			catalog.setEnglishName(test.getLocalizedTestName().getEnglish());
 			catalog.setFrenchName(test.getLocalizedTestName().getFrench());
@@ -99,24 +97,24 @@ public class TestCatalogController extends BaseController {
 			if (NumberUtils.isNumber(test.getSortOrder())) {
 				catalog.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
 			}
-			catalog.setTestUnit(testService.getTestSectionName());
-			catalog.setPanel(createPanelList(testService));
+			catalog.setTestUnit(testService.getTestSectionName(test));
+			catalog.setPanel(createPanelList(testService, test));
 			catalog.setResultType(resultType);
-			TypeOfSample typeOfSample = testService.getTypeOfSample();
+			TypeOfSample typeOfSample = testService.getTypeOfSample(test);
 			catalog.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
 			catalog.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
 			catalog.setLoinc(test.getLoinc());
 			catalog.setActive(test.isActive() ? "Active" : "Not active");
-			catalog.setUom(testService.getUOM(false));
+			catalog.setUom(testService.getUOM(test, false));
 			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-				catalog.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
+				catalog.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
 				catalog.setHasLimitValues(true);
 				catalog.setResultLimits(getResultLimits(test, catalog.getSignificantDigits()));
 			}
 			catalog.setHasDictionaryValues(
 					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(catalog.getResultType()));
 			if (catalog.isHasDictionaryValues()) {
-				catalog.setDictionaryValues(createDictionaryValues(testService));
+				catalog.setDictionaryValues(createDictionaryValues(testService, test));
 				catalog.setReferenceValue(createReferenceValueForDictionaryType(test));
 			}
 			catalogList.add(catalog);
@@ -160,9 +158,9 @@ public class TestCatalogController extends BaseController {
 
 	}
 
-	private List<String> createDictionaryValues(TestServiceImpl testService) {
+	private List<String> createDictionaryValues(TestService testService, Test test) {
 		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testService.getPossibleTestResults();
+		List<TestResult> testResultList = testService.getPossibleTestResults(test);
 		for (TestResult testResult : testResultList) {
 			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryValue(testResult));
 		}
@@ -215,10 +213,10 @@ public class TestCatalogController extends BaseController {
 		return limitBeans;
 	}
 
-	private String createPanelList(TestServiceImpl testService) {
+	private String createPanelList(TestService testService, Test test) {
 		StringBuilder builder = new StringBuilder();
 
-		List<Panel> panelList = testService.getPanels();
+		List<Panel> panelList = testService.getPanels(test);
 		for (Panel panel : panelList) {
 			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");

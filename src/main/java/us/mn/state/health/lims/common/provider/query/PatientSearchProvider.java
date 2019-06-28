@@ -26,9 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
@@ -96,13 +97,17 @@ public class PatientSearchProvider extends BaseQueryProvider {
 	}
 
 	private PatientSearchResults getSearchResultsForPatient(Patient patient) {
-		PatientServiceImpl service = new PatientServiceImpl(patient);
-
-		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())), service.getFirstName(),
-				service.getLastName(), service.getGender(), service.getEnteredDOB(), service.getNationalId(),
-				patient.getExternalId(), service.getSTNumber(), service.getSubjectNumber(), service.getGUID(),
-				ObservationHistoryServiceImpl.getInstance()
-						.getMostRecentValueForPatient(ObservationType.REFERRERS_PATIENT_ID, service.getPatientId()));
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
+		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
+				patientPatientService.getFirstName(patient), patientPatientService.getLastName(patient),
+				patientPatientService.getGender(patient), patientPatientService.getEnteredDOB(patient),
+				patientPatientService.getNationalId(patient), patient.getExternalId(),
+				patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
+				patientPatientService.getGUID(patient),
+				SpringContext.getBean(ObservationHistoryService.class).getMostRecentValueForPatient(
+						ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId(patient)));
 	}
 
 	private Patient getPatientForLabNumber(String labNumber) {

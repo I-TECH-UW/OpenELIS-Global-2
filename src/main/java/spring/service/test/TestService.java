@@ -5,7 +5,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.panel.valueholder.Panel;
+import us.mn.state.health.lims.test.beanItems.TestResultItem.ResultDisplayType;
 import us.mn.state.health.lims.test.valueholder.Test;
+import us.mn.state.health.lims.testresult.valueholder.TestResult;
+import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 public interface TestService extends BaseObjectService<Test, String> {
 
@@ -80,4 +84,27 @@ public interface TestService extends BaseObjectService<Test, String> {
 	List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString);
 
 	void localeChanged(String locale);
+
+	void refreshTestNames();
+
+	String getTestMethodName(Test test);
+
+	List<TestResult> getPossibleTestResults(Test test);
+
+	String getUOM(Test test, boolean isCD4Conclusion);
+
+	boolean isReportable(Test test);
+
+	String getSortOrder(Test test);
+
+	TypeOfSample getTypeOfSample(Test test);
+
+	List<Panel> getPanels(Test test);
+
+	String getTestSectionName(Test test);
+
+	ResultDisplayType getDisplayTypeForTestMethod(Test test);
+
+	String getResultType(Test test);
+
 }

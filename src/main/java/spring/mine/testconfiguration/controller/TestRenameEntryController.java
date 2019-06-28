@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.common.controller.BaseController;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import spring.service.localization.LocalizationService;
-import spring.service.test.TestServiceImpl;
+import spring.service.test.TestService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -26,7 +26,9 @@ import us.mn.state.health.lims.test.valueholder.Test;
 public class TestRenameEntryController extends BaseController {
 
 	@Autowired
-	LocalizationService localizationService;
+	private LocalizationService localizationService;
+	@Autowired
+	private TestService testService;
 
 	@RequestMapping(value = "/TestRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showTestRenameEntry(HttpServletRequest request) {
@@ -77,7 +79,7 @@ public class TestRenameEntryController extends BaseController {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = testService.get(testId);
 
 		if (test != null) {
 

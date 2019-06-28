@@ -39,26 +39,24 @@ import org.springframework.stereotype.Service;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.analyte.AnalyteService;
 import spring.service.dictionary.DictionaryService;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.observationhistory.ObservationHistoryService;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.referral.ReferralService;
 import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultService;
-import spring.service.result.ResultServiceImpl;
 import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.systemuser.SystemUserService;
 import spring.service.test.TestService;
-import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
@@ -124,7 +122,8 @@ public class ResultsLoadUtility {
 
 	private List<InventoryKitItem> activeKits;
 
-	private PatientServiceImpl patientServiceImpl;
+	private PatientService patientService;
+	private Patient currentPatient;
 
 	@Autowired
 	private ResultService resultService;
@@ -209,7 +208,9 @@ public class ResultsLoadUtility {
 			samples.add(sample);
 		}
 
-		patientServiceImpl = new PatientServiceImpl(patient);
+		currentPatient = patient;
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
 		return getGroupedTestsForSamples();
 	}
@@ -219,7 +220,9 @@ public class ResultsLoadUtility {
 		activeKits = null;
 		inventoryNeeded = false;
 
-		patientServiceImpl = new PatientServiceImpl(patient);
+		currentPatient = patient;
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
 		samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
@@ -272,19 +275,21 @@ public class ResultsLoadUtility {
 		List<TestResultItem> selectedTestList = new ArrayList<>();
 
 		for (Analysis analysis : filteredAnalysisList) {
-			patientServiceImpl = new PatientServiceImpl(
-					new SampleServiceImpl(analysis.getSampleItem().getSample()).getPatient());
+			patientService = SpringContext.getBean(PatientService.class);
+			SampleService sampleService = SpringContext.getBean(SampleService.class);
+			Sample sample = analysis.getSampleItem().getSample();
+			currentPatient = sampleService.getPatient(sample);
 
 			String patientName = "";
 			String patientInfo;
-			String nationalId = patientServiceImpl.getNationalId();
+			String nationalId = patientService.getNationalId(currentPatient);
 			if (depersonalize) {
-				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientServiceImpl.getExternalId()
+				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId(currentPatient)
 						: nationalId;
 			} else {
-				patientName = patientServiceImpl.getLastFirstName();
-				patientInfo = nationalId + ", " + patientServiceImpl.getGender() + ", "
-						+ patientServiceImpl.getBirthdayForDisplay();
+				patientName = patientService.getLastFirstName(currentPatient);
+				patientInfo = nationalId + ", " + patientService.getGender(currentPatient) + ", "
+						+ patientService.getBirthdayForDisplay(currentPatient);
 			}
 
 			currSample = analysis.getSampleItem().getSample();
@@ -440,12 +445,12 @@ public class ResultsLoadUtility {
 			String initialConditions = getInitialSampleConditionString(sampleItem);
 			NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
 					NoteType.NON_CONFORMITY };
-			String notes = new NoteServiceImpl(analysis).getNotesAsString(true, true, "<br/>", noteTypes, false);
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			String notes = noteService.getNotesAsString(analysis, true, true, "<br/>", noteTypes, false);
 
-			TestResultItem resultItem = createTestResultItem(new AnalysisServiceImpl(analysis), testKit, notes,
-					sampleItem.getSortOrder(), result, sampleItem.getSample().getAccessionNumber(), patientName,
-					patientInfo, techSignature, techSignatureId, initialConditions,
-					SpringContext.getBean(TypeOfSampleService.class)
+			TestResultItem resultItem = createTestResultItem(analysis, testKit, notes, sampleItem.getSortOrder(),
+					result, sampleItem.getSample().getAccessionNumber(), patientName, patientInfo, techSignature,
+					techSignatureId, initialConditions, SpringContext.getBean(TypeOfSampleService.class)
 							.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			resultItem.setNationalId(nationalId);
 			testResultList.add(resultItem);
@@ -604,18 +609,18 @@ public class ResultsLoadUtility {
 		return analysisService.getAnalysesBySampleItemsExcludingByStatusIds(item, excludedAnalysisStatus);
 	}
 
-	private TestResultItem createTestResultItem(AnalysisServiceImpl analysisService, ResultInventory testKit,
-			String notes, String sequenceNumber, Result result, String accessionNumber, String patientName,
-			String patientInfo, String techSignature, String techSignatureId, String initialSampleConditions,
-			String sampleType) {
+	private TestResultItem createTestResultItem(Analysis analysis, ResultInventory testKit, String notes,
+			String sequenceNumber, Result result, String accessionNumber, String patientName, String patientInfo,
+			String techSignature, String techSignatureId, String initialSampleConditions, String sampleType) {
 
-		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
-		ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class)
-				.getResultLimitForTestAndPatient(testService.getTest(), patientServiceImpl.getPatient());
+		TestService testService = SpringContext.getBean(TestService.class);
+		Test test = analysisService.getTest(analysis);
+		ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
+				currentPatient);
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
-		String testMethodName = testService.getTestMethodName();
-		List<TestResult> testResults = testService.getPossibleTestResults();
+		String testMethodName = testService.getTestMethodName(test);
+		List<TestResult> testResults = testService.getPossibleTestResults(test);
 
 		String testKitId = null;
 		String testKitInventoryId = null;
@@ -630,7 +635,7 @@ public class ResultsLoadUtility {
 			testKitInactive = kitNotInActiveKitList(testKitInventoryId);
 		}
 
-		String displayTestName = analysisService.getTestDisplayName();
+		String displayTestName = analysisService.getTestDisplayName(analysis);
 
 		boolean isConclusion = false;
 		boolean isCD4Conclusion = false;
@@ -650,8 +655,8 @@ public class ResultsLoadUtility {
 		String referralReasonId = null;
 		boolean referralCanceled = false;
 		if (supportReferrals) {
-			if (analysisService.getAnalysis() != null) {
-				Referral referral = referralService.getReferralByAnalysisId(analysisService.getAnalysis().getId());
+			if (analysis != null) {
+				Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
 				if (referral != null) {
 					referralCanceled = referral.isCanceled();
 					referralId = referral.getId();
@@ -662,38 +667,38 @@ public class ResultsLoadUtility {
 			}
 		}
 
-		String uom = testService.getUOM(isCD4Conclusion);
+		String uom = testService.getUOM(test, isCD4Conclusion);
 
-		String testDate = GenericValidator.isBlankOrNull(analysisService.getCompletedDateForDisplay())
+		String testDate = GenericValidator.isBlankOrNull(analysisService.getCompletedDateForDisplay(analysis))
 				? getCurrentDate()
-				: analysisService.getCompletedDateForDisplay();
-		ResultDisplayType resultDisplayType = testService.getDisplayTypeForTestMethod();
+				: analysisService.getCompletedDateForDisplay(analysis);
+		ResultDisplayType resultDisplayType = testService.getDisplayTypeForTestMethod(test);
 		if (resultDisplayType != ResultDisplayType.TEXT) {
 			inventoryNeeded = true;
 		}
 		TestResultItem testItem = new TestResultItem();
 
 		testItem.setAccessionNumber(accessionNumber);
-		testItem.setAnalysisId(analysisService.getAnalysis().getId());
+		testItem.setAnalysisId(analysis.getId());
 		testItem.setSequenceNumber(sequenceNumber);
 		testItem.setReceivedDate(receivedDate);
 		testItem.setTestName(displayTestName);
-		testItem.setTestId(testService.getTest().getId());
+		testItem.setTestId(test.getId());
 		setResultLimitDependencies(resultLimit, testItem, testResults);
 		testItem.setPatientName(patientName);
 		testItem.setPatientInfo(patientInfo);
-		testItem.setReportable(testService.isReportable());
+		testItem.setReportable(testService.isReportable(test));
 		testItem.setUnitsOfMeasure(uom);
 		testItem.setTestDate(testDate);
 		testItem.setResultDisplayType(resultDisplayType);
 		testItem.setTestMethod(testMethodName);
-		testItem.setAnalysisMethod(analysisService.getAnalysisType());
+		testItem.setAnalysisMethod(analysisService.getAnalysisType(analysis));
 		testItem.setResult(result);
 		testItem.setResultValue(getFormattedResultValue(result));
-		testItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults());
-		testItem.setAnalysisStatusId(analysisService.getStatusId());
+		testItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
+		testItem.setAnalysisStatusId(analysisService.getStatusId(analysis));
 		// setDictionaryResults must come after setResultType, it may override it
-		testItem.setResultType(testService.getResultType());
+		testItem.setResultType(testService.getResultType(test));
 		setDictionaryResults(testItem, isConclusion, result, testResults);
 
 		testItem.setTechnician(techSignature);
@@ -709,22 +714,23 @@ public class ResultsLoadUtility {
 		testItem.setReferralCanceled(referralCanceled);
 		testItem.setInitialSampleCondition(initialSampleConditions);
 		testItem.setSampleType(sampleType);
-		testItem.setTestSortOrder(testService.getSortOrder());
-		testItem.setFailedValidation(statusRules.hasFailedValidation(analysisService.getStatusId()));
+		testItem.setTestSortOrder(testService.getSortOrder(test));
+		testItem.setFailedValidation(statusRules.hasFailedValidation(analysisService.getStatusId(analysis)));
 		if (useCurrentUserAsTechDefault && GenericValidator.isBlankOrNull(testItem.getTechnician())) {
 			testItem.setTechnician(currentUserName);
 		}
-		testItem.setReflexGroup(analysisService.getTriggeredReflex());
-		testItem.setChildReflex(analysisService.getTriggeredReflex() && analysisService.resultIsConclusion(result));
+		testItem.setReflexGroup(analysisService.getTriggeredReflex(analysis));
+		testItem.setChildReflex(
+				analysisService.getTriggeredReflex(analysis) && analysisService.resultIsConclusion(result, analysis));
 		testItem.setPastNotes(notes);
-		testItem.setDisplayResultAsLog(hasLogValue(testService));
-		testItem.setNonconforming(analysisService.isParentNonConforming() || StatusService.getInstance()
-				.matches(analysisService.getStatusId(), AnalysisStatus.TechnicalRejected));
+		testItem.setDisplayResultAsLog(hasLogValue(test));
+		testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || StatusService.getInstance()
+				.matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
 		if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-			testItem.setNonconforming(getQaEventByTestSection(analysisService.getAnalysis()));
+			testItem.setNonconforming(getQaEventByTestSection(analysis));
 		}
 
-		Result quantifiedResult = analysisService.getQuantifiedResult();
+		Result quantifiedResult = analysisService.getQuantifiedResult(analysis);
 		if (quantifiedResult != null) {
 			testItem.setQualifiedResultId(quantifiedResult.getId());
 			testItem.setQualifiedResultValue(quantifiedResult.getValue());
@@ -837,10 +843,11 @@ public class ResultsLoadUtility {
 	}
 
 	private String getFormattedResultValue(Result result) {
-		return result != null ? new ResultServiceImpl(result).getResultValue(false) : "";
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		return result != null ? resultResultService.getResultValue(result, false) : "";
 	}
 
-	private boolean hasLogValue(TestServiceImpl testService) {// Analysis analysis, String resultValue) {
+	private boolean hasLogValue(Test test) {// Analysis analysis, String resultValue) {
 		// TO-DO refactor
 		// if ( ){
 //			if (GenericValidator.isBlankOrNull(resultValue)) {
@@ -857,7 +864,7 @@ public class ResultsLoadUtility {
 		// }
 
 		// return false;
-		return TestIdentityService.getInstance().isTestNumericViralLoad(testService.getTest());
+		return TestIdentityService.getInstance().isTestNumericViralLoad(test);
 	}
 
 	private List<IdValuePair> getAnyDictionaryValues(Result result) {

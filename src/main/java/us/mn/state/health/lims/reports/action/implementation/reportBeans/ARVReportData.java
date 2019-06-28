@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.QAService;
@@ -539,7 +539,8 @@ public class ARVReportData {
 		if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
 			return null;
 		} else {
-			Note note = new NoteServiceImpl(sampleQaEvent).getMostRecentNoteFilteredBySubject(null);
+			NoteService noteService = SpringContext.getBean(NoteService.class);
+			Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
 			return note != null ? note.getText() : null;
 		}
 	}

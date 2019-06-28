@@ -41,7 +41,8 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.test.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
@@ -52,6 +53,7 @@ import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
+import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
@@ -132,8 +134,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	}
 
 	private String getPatientGuid(ElectronicOrder eOrder) {
-		PatientServiceImpl patientService = new PatientServiceImpl(eOrder.getPatient());
-		return patientService.getGUID();
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(eOrder.getPatient().getPerson());
+		return patientPatientService.getGUID(eOrder.getPatient());
 	}
 
 	private void createOrderXML(String orderMessage, String patientGuid, StringBuilder xml) {
@@ -426,9 +430,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 	}
 
 	private void addAlerts(StringBuilder xml, String patientGuid) {
-		PatientServiceImpl patientService = new PatientServiceImpl(patientGuid);
-		if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB())
-				|| GenericValidator.isBlankOrNull(patientService.getGender())) {
+		PatientService patientService = SpringContext.getBean(PatientService.class);
+		Patient patient = patientService.getPatientForGuid(patientGuid);
+		if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB(patient))
+				|| GenericValidator.isBlankOrNull(patientService.getGender(patient))) {
 			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),
 					xml);
 		}

@@ -244,7 +244,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 		List<Sample> samples;
 
 		try {
-			String sql = "select sample from Sample as sample, SampleHuman as sampleHuman where sampleHuman.sampleId = sample.id and sampleHuman.patientId = :patientId order by sample.id";
+			String sql = "select sample from Sample as sample, SampleHuman as sampleHuman where sampleHuman.sampleId = sample.id and sampleHuman.patient.id = :patientId order by sample.id";
 			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientID));
 			samples = query.list();

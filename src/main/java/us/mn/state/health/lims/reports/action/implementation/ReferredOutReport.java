@@ -28,11 +28,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.organization.OrganizationService;
-import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -186,12 +185,12 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 	 * @param referral
 	 */
 	private void reportReferral(Referral referral) {
-		currentAnalysisService = new AnalysisServiceImpl(referral.getAnalysis());
+		Analysis analysis = referral.getAnalysis();
 		Sample sample = referralService.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
-		currentSampleService = new SampleServiceImpl(sample);
+		currentSample = sample;
 		findPatientFromSample();
 
-		String note = currentAnalysisService.getNotesAsString(false, true, "<br/>", false);
+		String note = analysisService.getNotesAsString(analysis, false, true, "<br/>", false);
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		for (int i = 0; i < referralResults.size(); i++) {
 			i = reportReferralResultValue(referralResults, i);
@@ -216,8 +215,8 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 				data.setReferralRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
 				data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
 						: Integer.parseInt(test.getSortOrder()));
-				data.setSectionSortOrder(currentAnalysisService.getTestSection().getSortOrderInt());
-				data.setTestSection(currentAnalysisService.getTestSection().getLocalizedName());
+				data.setSectionSortOrder(analysisService.getTestSection(analysis).getSortOrderInt());
+				data.setTestSection(analysisService.getTestSection(analysis).getLocalizedName());
 			}
 			Timestamp referralReportDate = referralResult.getReferralReportDate();
 			data.setReferralResultReportDate(

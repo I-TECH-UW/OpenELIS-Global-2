@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.analysis.AnalysisService;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.dictionary.DictionaryService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.test.TestServiceImpl;
@@ -67,7 +66,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		boolean allReferralResultsHaveResults = true;
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		for (ReferralResult referralResult : referralResults) {
-			if (referralResult.getResult() == null || GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
+			if (referralResult.getResult() == null
+					|| GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
 				allReferralResultsHaveResults = false;
 				break;
 			}
@@ -80,17 +80,16 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		ReferralItem referralItem = new ReferralItem();
 
 		Analysis analysis = referral.getAnalysis();
-		AnalysisServiceImpl analysisServiceImpl = new AnalysisServiceImpl(analysis);
 
 		referralItem.setCanceled(false);
 		referralItem.setReferredResultType("N");
-		referralItem.setAccessionNumber(analysisServiceImpl.getOrderAccessionNumber());
+		referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 
-		TypeOfSample typeOfSample = analysisServiceImpl.getTypeOfSample();
+		TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
 		referralItem.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-		List<Result> resultList = analysisServiceImpl.getResults();
+		List<Result> resultList = analysisService.getResults(analysis);
 		String resultString = "";
 
 		if (!resultList.isEmpty()) {
@@ -116,7 +115,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		if (referral.getOrganization() != null) {
 			referralItem.setReferredInstituteId(referral.getOrganization().getId());
 		}
-		String notes = analysisServiceImpl.getNotesAsString(true, true, "<br/>", false);
+		String notes = analysisService.getNotesAsString(analysis, true, true, "<br/>", false);
 		if (notes != null) {
 			referralItem.setPastNotes(notes);
 		}
@@ -144,7 +143,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 																							// referralResults from the
 																							// list as needed (for
 																							// multiResults).
-			referralTest.setReferredReportDate(DateUtil.convertTimestampToStringDate(referralResult.getReferralReportDate()));
+			referralTest.setReferredReportDate(
+					DateUtil.convertTimestampToStringDate(referralResult.getReferralReportDate()));
 			referralTest.setReferralResultId(referralResult.getId());
 			additionalTestList.add(referralTest);
 		}
@@ -159,14 +159,16 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	 * @param referralItem    The source item
 	 * @param referralResults The created list
 	 */
-	private List<ReferralResult> setReferralItemForNextTest(IReferralResultTest referralItem, List<ReferralResult> referralResults) {
+	private List<ReferralResult> setReferralItemForNextTest(IReferralResultTest referralItem,
+			List<ReferralResult> referralResults) {
 
 		ReferralResult nextTestFirstResult = referralResults.remove(0);
 		List<ReferralResult> resultsForOtherTests = new ArrayList<>(referralResults);
 
 		referralItem.setReferredTestId(nextTestFirstResult.getTestId());
 		referralItem.setReferredTestIdShadow(referralItem.getReferredTestId());
-		referralItem.setReferredReportDate(DateUtil.convertTimestampToStringDate(nextTestFirstResult.getReferralReportDate()));
+		referralItem.setReferredReportDate(
+				DateUtil.convertTimestampToStringDate(nextTestFirstResult.getReferralReportDate()));
 		// We can not use ResultService because that assumes the result is for an
 		// analysis, not a referral
 		Result result = nextTestFirstResult.getResult();
@@ -184,7 +186,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 			resultList.add(nextTestFirstResult.getResult());
 
 			for (ReferralResult referralResult : referralResults) {
-				if (nextTestFirstResult.getTestId().equals(referralResult.getTestId()) && !GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
+				if (nextTestFirstResult.getTestId().equals(referralResult.getTestId())
+						&& !GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
 					resultList.add(referralResult.getResult());
 					resultsForOtherTests.remove(referralResult);
 				}
@@ -223,7 +226,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 		} else {
 			String resultValue = GenericValidator.isBlankOrNull(result.getValue()) ? "" : result.getValue();
 
-			if (!GenericValidator.isBlankOrNull(resultValue) && result.getAnalysis().getTest().getUnitOfMeasure() != null) {
+			if (!GenericValidator.isBlankOrNull(resultValue)
+					&& result.getAnalysis().getTest().getUnitOfMeasure() != null) {
 				resultValue += " " + result.getAnalysis().getTest().getUnitOfMeasure().getName();
 			}
 
@@ -234,7 +238,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class).getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = SpringContext.getBean(TypeOfSampleService.class)
+				.getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 

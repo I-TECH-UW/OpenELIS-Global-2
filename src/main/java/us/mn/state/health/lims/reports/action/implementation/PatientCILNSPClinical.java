@@ -28,10 +28,9 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.localization.LocalizationService;
-import spring.service.note.NoteServiceImpl;
-import spring.service.result.ResultServiceImpl;
+import spring.service.note.NoteService;
+import spring.service.result.ResultService;
 import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -106,16 +105,16 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	protected void createReportItems() {
 		Set<SampleItem> sampleSet = new HashSet<>();
 
-		boolean isConfirmationSample = currentSampleService.isConfirmationSample();
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(),
-				analysisStatusIds);
+		boolean isConfirmationSample = currentSampleService.isConfirmationSample(currentSample);
+		List<Analysis> analysisList = analysisService
+				.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(currentSample), analysisStatusIds);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
 		currentConclusion = null;
 		for (Analysis analysis : analysisList) {
 			boolean hasParentResult = analysis.getParentResult() != null;
 			sampleSet.add(analysis.getSampleItem());
 			if (analysis.getTest() != null) {
-				currentAnalysisService = new AnalysisServiceImpl(analysis);
+				currentAnalysis = analysis;
 				ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
 				if (isConfirmationSample) {
 					String alerts = resultsData.getAlerts();
@@ -128,9 +127,8 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 					resultsData.setAlerts(alerts);
 				}
 
-				if (currentAnalysisService.getAnalysis().isReferredOut()) {
-					Referral referral = referralService
-							.getReferralByAnalysisId(currentAnalysisService.getAnalysis().getId());
+				if (currentAnalysis.isReferredOut()) {
+					Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
 					if (referral != null) {
 						// addReferredTests method in both PatientClinical and PatientCILNSPClinical are
 						// nearly identical and
@@ -163,8 +161,8 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	// should be refactored to use the same code.
 	private List<ClinicalPatientData> addReferredTests(Referral referral, ClinicalPatientData parentData) {
 		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
-		String note = new NoteServiceImpl(currentAnalysisService.getAnalysis()).getNotesAsString(false, true, "<br/>",
-				FILTER, true);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String note = noteService.getNotesAsString(currentAnalysis, false, true, "<br/>", FILTER, true);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>();
 
 		if (!referralResults.isEmpty()) {
@@ -184,7 +182,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 		}
 		for (int i = 0; i < referralResults.size(); i++) {
 			if (referralResults.get(i).getResult() == null) {
-				sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+				sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			} else {
 
 				i = reportReferralResultValue(referralResults, i);
@@ -211,12 +209,12 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 					data.setTestRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
 					data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
 							: Integer.parseInt(test.getSortOrder()));
-					data.setSectionSortOrder(currentAnalysisService.getAnalysis().getTestSection().getSortOrderInt());
-					data.setTestSection(currentAnalysisService.getAnalysis().getTestSection().getLocalizedName());
+					data.setSectionSortOrder(currentAnalysis.getTestSection().getSortOrderInt());
+					data.setTestSection(currentAnalysis.getTestSection().getLocalizedName());
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {
-					sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
+					sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 					data.setAnalysisStatus(MessageUtil.getMessage("report.test.status.inProgress"));
 				} else {
 					data.setResult(reportReferralResultValue);
@@ -312,7 +310,9 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 			if (data.getParentResult() != null && !parentResults.contains(data.getParentResult().getId())) {
 				parentResults.add(data.getParentResult().getId());
 				ClinicalPatientData marker = new ClinicalPatientData(data);
-				marker.setTestName(new ResultServiceImpl(data.getParentResult()).getSimpleResultValue());
+				ResultService resultResultService = SpringContext.getBean(ResultService.class);
+				Result result = data.getParentResult();
+				marker.setTestName(resultResultService.getSimpleResultValue(result));
 				marker.setResult(null);
 				marker.setTestRefRange(null);
 				marker.setParentMarker(true);

@@ -26,11 +26,12 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
-import spring.service.note.NoteServiceImpl;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.note.NoteService;
+import spring.service.patient.PatientService;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
-import spring.service.result.ResultServiceImpl;
+import spring.service.person.PersonService;
+import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.test.TestServiceImpl;
@@ -38,7 +39,6 @@ import spring.service.typeoftestresult.TypeOfTestResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.LabIdentificationService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -67,6 +67,7 @@ public class ResultReportingCollator {
 			.getBean(PatientIdentityTypeService.class);
 	private TypeOfTestResultService typeOfTestResultService = SpringContext.getBean(TypeOfTestResultService.class);
 	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	private NoteService noteService = SpringContext.getBean(NoteService.class);
 
 	private String VALIDATED_RESULT_STATUS_ID;
 
@@ -134,7 +135,8 @@ public class ResultReportingCollator {
 		}
 		resultBean.setTypeResult(hl7type);
 		resultBean.setUpdateStatus(isUpdate ? "update" : "new");
-		resultBean.setLoinc(new ResultServiceImpl(result).getLOINCCode());
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		resultBean.setLoinc(resultResultService.getLOINCCode(result));
 		results.add(resultBean);
 
 		SampleItem sampleItemForResult = result.getAnalysis().getSampleItem();
@@ -154,8 +156,8 @@ public class ResultReportingCollator {
 
 		CodedValueXmit codedTest = new CodedValueXmit();
 		/* if (forMalaria) { */
-		ResultServiceImpl resultService = new ResultServiceImpl(result);
-		codedTest.setCode(resultService.getLOINCCode() == null ? "34" : resultService.getLOINCCode());
+		codedTest.setCode(
+				resultResultService.getLOINCCode(result) == null ? "34" : resultResultService.getLOINCCode(result));
 		/*
 		 * } else { codedTest.setCode("34"); }
 		 */
@@ -226,14 +228,16 @@ public class ResultReportingCollator {
 		// Malaria case report needs the following extra data elements
 		if (forMalaria) {
 			// Patient demographic data
-			IPatientService patientService = new PatientServiceImpl(patient);
-			testResult.setPatientFirstName(patientService.getFirstName());
-			testResult.setPatientLastName(patientService.getLastName());
-			testResult.setPatientGender(patientService.getGender());
-			testResult.setPatientBirthdate(patientService.getEnteredDOB());
-			testResult.setPatientTelephone(patientService.getPhone());
+			PatientService patientService = SpringContext.getBean(PatientService.class);
+			PersonService personService = SpringContext.getBean(PersonService.class);
+			personService.getData(patient.getPerson());
+			testResult.setPatientFirstName(patientService.getFirstName(patient));
+			testResult.setPatientLastName(patientService.getLastName(patient));
+			testResult.setPatientGender(patientService.getGender(patient));
+			testResult.setPatientBirthdate(patientService.getEnteredDOB(patient));
+			testResult.setPatientTelephone(patientService.getPhone(patient));
 
-			Map<String, String> addressParts = patientService.getAddressComponents();
+			Map<String, String> addressParts = patientService.getAddressComponents(patient);
 			testResult.setPatientStreetAddress(addressParts.get("Street"));
 			testResult.setPatientCity(addressParts.get("City"));
 			testResult.setPatientState(addressParts.get("State"));
@@ -266,7 +270,7 @@ public class ResultReportingCollator {
 		if (result != null) {
 			Analysis analysis = new Analysis();
 			analysis.setId(result.getAnalysis().getId());
-			return new NoteServiceImpl(analysis).getNotesAsString(false, false, "<br/>", false);
+			return noteService.getNotesAsString(analysis, false, false, "<br/>", false);
 		}
 		return null;
 	}

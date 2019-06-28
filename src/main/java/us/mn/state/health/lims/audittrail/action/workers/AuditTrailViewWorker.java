@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -26,9 +26,9 @@ import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
-import spring.service.patient.PatientServiceImpl;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.SampleOrderService;
@@ -51,14 +51,13 @@ import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 public class AuditTrailViewWorker {
-	
+
 	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	protected ResultService resultService = SpringContext.getBean(ResultService.class);
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	private String accessionNumber = null;
 	private Sample sample;
-
 
 	public AuditTrailViewWorker(String accessionNumber) {
 		this.accessionNumber = accessionNumber;
@@ -70,57 +69,57 @@ public class AuditTrailViewWorker {
 			throw new IllegalStateException("AuditTrialViewWorker is not initialized");
 		}
 
-        getSample();
+		getSample();
 
-        List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> items = new ArrayList<>();
 
 		if (sample != null) {
-			items.addAll(addOrders());	
-			items.addAll(addSamples());	
+			items.addAll(addOrders());
+			items.addAll(addSamples());
 			items.addAll(addTestsAndResults());
 			items.addAll(addReports());
 			items.addAll(addPatientHistory());
 			items.addAll(addNotes());
 			items.addAll(addQAEvents());
 		}
-		
+
 		sortItemsByTime(items);
 		return items;
 	}
 
-    public SampleOrderItem getSampleOrderSnapshot(){
-        if (GenericValidator.isBlankOrNull(accessionNumber)) {
-            throw new IllegalStateException("AuditTrialViewWorker is not initialized");
-        }
-
-        SampleOrderService orderService = new SampleOrderService( accessionNumber, true );
-        return orderService.getSampleOrderItem();
-    }
-
-    public PatientManagementInfo getPatientSnapshot(){
-        if (GenericValidator.isBlankOrNull(accessionNumber)) {
-            throw new IllegalStateException("AuditTrialViewWorker is not initialized");
-        }
-
-        getSample();
-
-
-
-        if( sample != null){
-            PatientServiceImpl patientService = new PatientServiceImpl( sample );
-            return new PatientManagementBridge().getPatientManagementInfoFor( patientService.getPatient(), true );
-        }else{
-            return new PatientManagementInfo();
-        }
-    }
-	public List<AuditTrailItem> getPatientHistoryAuditTrail() throws IllegalStateException{
+	public SampleOrderItem getSampleOrderSnapshot() {
 		if (GenericValidator.isBlankOrNull(accessionNumber)) {
 			throw new IllegalStateException("AuditTrialViewWorker is not initialized");
 		}
 
-        getSample();
+		SampleOrderService orderService = new SampleOrderService(accessionNumber, true);
+		return orderService.getSampleOrderItem();
+	}
 
-        List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
+	public PatientManagementInfo getPatientSnapshot() {
+		if (GenericValidator.isBlankOrNull(accessionNumber)) {
+			throw new IllegalStateException("AuditTrialViewWorker is not initialized");
+		}
+
+		getSample();
+
+		if (sample != null) {
+			SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+			Patient patient = sampleHumanService.getPatientForSample(sample);
+			return new PatientManagementBridge().getPatientManagementInfoFor(patient, true);
+		} else {
+			return new PatientManagementInfo();
+		}
+	}
+
+	public List<AuditTrailItem> getPatientHistoryAuditTrail() throws IllegalStateException {
+		if (GenericValidator.isBlankOrNull(accessionNumber)) {
+			throw new IllegalStateException("AuditTrialViewWorker is not initialized");
+		}
+
+		getSample();
+
+		List<AuditTrailItem> items = new ArrayList<>();
 
 		if (sample != null) {
 			items.addAll(addPatientHistory());
@@ -129,24 +128,23 @@ public class AuditTrailViewWorker {
 
 	}
 
-    private void getSample(){
-        if( sample == null ){
-            sample = sampleService.getSampleByAccessionNumber(accessionNumber);
-        }
-    }
+	private void getSample() {
+		if (sample == null) {
+			sample = sampleService.getSampleByAccessionNumber(accessionNumber);
+		}
+	}
 
+	private Collection<AuditTrailItem> addReports() {
+		List<AuditTrailItem> items = new ArrayList<>();
 
-    private Collection<AuditTrailItem> addReports() {
-		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
-		
 		if (sample != null) {
 			AbstractHistoryService historyService = new ReportHistoryService(sample);
 			items.addAll(historyService.getAuditTrailItems());
 
-			//sortItemsByTime(items);
+			// sortItemsByTime(items);
 		}
-		
-		for( AuditTrailItem auditTrailItem : items){
+
+		for (AuditTrailItem auditTrailItem : items) {
 			auditTrailItem.setClassName("reportAudit");
 			setAttributeNewIfInsert(auditTrailItem);
 		}
@@ -154,47 +152,47 @@ public class AuditTrailViewWorker {
 	}
 
 	private Collection<AuditTrailItem> addSamples() {
-		List<AuditTrailItem> sampleItems = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> sampleItems = new ArrayList<>();
 		if (sample != null) {
 			AbstractHistoryService historyService = new SampleHistoryService(sample);
 			sampleItems.addAll(historyService.getAuditTrailItems());
 
-			//sortItems(sampleItems);
-			
-			for( AuditTrailItem auditTrailItem : sampleItems){
+			// sortItems(sampleItems);
+
+			for (AuditTrailItem auditTrailItem : sampleItems) {
 				auditTrailItem.setClassName("sampleAudit");
 				setAttributeNewIfInsert(auditTrailItem);
 			}
 		}
-		
+
 		return sampleItems;
 	}
 
 	private Collection<AuditTrailItem> addOrders() {
-		List<AuditTrailItem> orderItems = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> orderItems = new ArrayList<>();
 		if (sample != null) {
 			AbstractHistoryService historyService = new OrderHistoryService(sample);
 			orderItems.addAll(historyService.getAuditTrailItems());
 
-			//sortItems(orderItems);
-			
-			for( AuditTrailItem auditTrailItem : orderItems){
+			// sortItems(orderItems);
+
+			for (AuditTrailItem auditTrailItem : orderItems) {
 				auditTrailItem.setClassName("orderAudit");
 				setAttributeNewIfInsert(auditTrailItem);
 			}
 		}
-		
+
 		return orderItems;
 	}
 
 	private void setAttributeNewIfInsert(AuditTrailItem auditTrailItem) {
-		if( auditTrailItem.getAction().equals("I")){
+		if (auditTrailItem.getAction().equals("I")) {
 			auditTrailItem.setAttribute(MessageUtil.getMessage("auditTrail.action.new"));
 		}
 	}
 
 	private List<AuditTrailItem> addTestsAndResults() {
-		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> items = new ArrayList<>();
 
 		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
@@ -203,77 +201,77 @@ public class AuditTrailViewWorker {
 			AbstractHistoryService historyService = new AnalysisHistoryService(analysis);
 			List<AuditTrailItem> resultItems = historyService.getAuditTrailItems();
 			items.addAll(resultItems);
-			
+
 			for (Result result : resultList) {
 				historyService = new ResultHistoryService(result, analysis);
 				resultItems = historyService.getAuditTrailItems();
-				
+
 				items.addAll(resultItems);
 			}
 		}
 
-		//sortItems(items);
-		for( AuditTrailItem auditTrailItem : items){
+		// sortItems(items);
+		for (AuditTrailItem auditTrailItem : items) {
 			auditTrailItem.setClassName("testResultAudit");
 			setAttributeNewIfInsert(auditTrailItem);
 		}
 		return items;
 	}
 
-	private Collection<AuditTrailItem> addPatientHistory() {	
-		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
+	private Collection<AuditTrailItem> addPatientHistory() {
+		List<AuditTrailItem> items = new ArrayList<>();
 		AbstractHistoryService historyService;
 		Patient patient = PatientUtil.getPatientForSample(sample);
-		if( patient != null) {
+		if (patient != null) {
 			historyService = new PatientHistoryService(patient);
 			items.addAll(historyService.getAuditTrailItems());
 		}
-		
+
 //		historyService = new HistoryService(sample, HistoryType.PERSON);
 //		items.addAll(historyService.getAuditTrailItems());
-		
+
 		historyService = new PatientHistoryHistoryService(sample);
 		items.addAll(historyService.getAuditTrailItems());
-		
-		//sortItems(items);
-		
-		for( AuditTrailItem auditTrailItem : items){
+
+		// sortItems(items);
+
+		for (AuditTrailItem auditTrailItem : items) {
 			auditTrailItem.setClassName("patientHistoryAudit");
 			setAttributeNewIfInsert(auditTrailItem);
 		}
 
 		return items;
 	}
-	
+
 	private Collection<AuditTrailItem> addNotes() {
-		List<AuditTrailItem> notes = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> notes = new ArrayList<>();
 		if (sample != null) {
 			AbstractHistoryService historyService = new NoteHistoryService(sample);
 			notes.addAll(historyService.getAuditTrailItems());
 
-			//sortItems(notes);
-			
-			for( AuditTrailItem auditTrailItem : notes){
+			// sortItems(notes);
+
+			for (AuditTrailItem auditTrailItem : notes) {
 				auditTrailItem.setClassName("noteAudit");
 				setAttributeNewIfInsert(auditTrailItem);
 			}
 		}
-		
+
 		return notes;
 	}
-	
+
 	private Collection<AuditTrailItem> addQAEvents() {
-		List<AuditTrailItem> qaEvents = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> qaEvents = new ArrayList<>();
 		if (sample != null) {
 			QaHistoryService qaService = new QaHistoryService(sample);
 			qaEvents = qaService.getAuditTrailItems();
-			
-			for( AuditTrailItem auditTrailItem : qaEvents){
+
+			for (AuditTrailItem auditTrailItem : qaEvents) {
 				auditTrailItem.setClassName("qaEvent");
 				setAttributeNewIfInsert(auditTrailItem);
 			}
 		}
-		
+
 		return qaEvents;
 	}
 
@@ -290,12 +288,12 @@ public class AuditTrailViewWorker {
 				if (sort != 0) {
 					return sort;
 				}
-				
+
 				return o1.getAction().compareTo(o2.getAction());
 			}
 		});
 	}
-	
+
 	private void sortItemsByTime(List<AuditTrailItem> items) {
 		Collections.sort(items, new Comparator<AuditTrailItem>() {
 			@Override

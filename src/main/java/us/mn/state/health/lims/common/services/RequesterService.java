@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import spring.service.organization.OrganizationService;
 import spring.service.organization.OrganizationTypeService;
 import spring.service.person.PersonService;
-import spring.service.person.PersonServiceImpl;
 import spring.service.requester.RequesterTypeService;
 import spring.service.requester.SampleRequesterService;
 import spring.util.SpringContext;
@@ -52,8 +51,8 @@ public class RequesterService {
 	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
 
 	private String sampleId;
+	private Person person;
 	private List<SampleRequester> requesters;
-	private PersonServiceImpl personServiceImpl;
 	private Organization organization;
 
 	public static enum Requester {
@@ -94,31 +93,31 @@ public class RequesterService {
 	}
 
 	public String getRequesterFirstName() {
-		return getPersonService() == null ? null : getPersonService().getFirstName();
+		return personService == null ? null : personService.getFirstName(person);
 	}
 
 	public String getRequesterLastName() {
-		return getPersonService() == null ? null : getPersonService().getLastName();
+		return personService == null ? null : personService.getLastName(person);
 	}
 
 	public String getRequesterLastFirstName() {
-		return getPersonService() == null ? null : getPersonService().getLastFirstName();
+		return personService == null ? null : personService.getLastFirstName(person);
 	}
 
 	public String getWorkPhone() {
-		return getPersonService() == null ? null : getPersonService().getWorkPhone();
+		return personService == null ? null : personService.getWorkPhone(person);
 	}
 
 	public String getCellPhone() {
-		return getPersonService() == null ? null : getPersonService().getCellPhone();
+		return personService == null ? null : personService.getCellPhone(person);
 	}
 
 	public String getFax() {
-		return getPersonService() == null ? null : getPersonService().getFax();
+		return personService == null ? null : personService.getFax(person);
 	}
 
 	public String getEmail() {
-		return getPersonService() == null ? null : getPersonService().getEmail();
+		return personService == null ? null : personService.getEmail(person);
 	}
 
 	public String getReferringSiteId() {
@@ -134,15 +133,11 @@ public class RequesterService {
 	}
 
 	public Person getPerson() {
-		return getPersonService() == null ? null : getPersonService().getPerson();
-	}
-
-	private PersonServiceImpl getPersonService() {
-		if (personServiceImpl == null) {
+		if (person == null) {
 			buildRequesters();
 		}
 
-		return personServiceImpl;
+		return person;
 	}
 
 	public Organization getOrganization() {
@@ -180,8 +175,7 @@ public class RequesterService {
 		requesters = sampleRequesterService.getRequestersForSampleId(sampleId);
 		for (SampleRequester requester : requesters) {
 			if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
-				Person person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-				personServiceImpl = new PersonServiceImpl(person);
+				person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
 			} else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
 				organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
 			}

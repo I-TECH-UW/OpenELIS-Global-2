@@ -8,14 +8,11 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
@@ -23,20 +20,13 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Service
 @DependsOn({ "springContext" })
-@Scope("prototype")
 public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String>
 		implements UnitOfMeasureService, LocaleChangeListener {
 
-	private static UnitOfMeasureServiceImpl INSTANCE;
-
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-	private static Map<String, String> unitOfMeasureIdToNameMap = null;
+	private Map<String, String> unitOfMeasureIdToNameMap = null;
 
 	@Autowired
-	protected static UnitOfMeasureDAO unitOfMeasureDAO = SpringContext.getBean(UnitOfMeasureDAO.class);
-
-	private UnitOfMeasure unitOfMeasure;
+	protected UnitOfMeasureDAO unitOfMeasureDAO;
 
 	@PostConstruct
 	private void initilaize() {
@@ -44,35 +34,12 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	}
 
 	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
-
-	public static UnitOfMeasureServiceImpl getInstance() {
-		return INSTANCE;
-	}
-
-	public synchronized void initializeGlobalVariables() {
-		if (unitOfMeasureIdToNameMap == null) {
-			createTestIdToNameMap();
-		}
+	private void initializeGlobalVariables() {
+		createTestIdToNameMap();
 	}
 
 	UnitOfMeasureServiceImpl() {
 		super(UnitOfMeasure.class);
-		initializeGlobalVariables();
-	}
-
-	public UnitOfMeasureServiceImpl(UnitOfMeasure unitOfMeasure) {
-		this();
-		this.unitOfMeasure = unitOfMeasure;
-		initializeGlobalVariables();
-	}
-
-	public UnitOfMeasureServiceImpl(String unitOfMeasureId) {
-		this();
-		unitOfMeasure = unitOfMeasureDAO.getUnitOfMeasureById(unitOfMeasureId);
-		initializeGlobalVariables();
 	}
 
 	@Override
@@ -80,55 +47,37 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 		return unitOfMeasureDAO;
 	}
 
-	@Transactional(readOnly = true)
-	public UnitOfMeasure getUnitOfMeasure() {
-		return unitOfMeasure;
+	@Override
+	public void localeChanged(String locale) {
+		testNamesChanged();
 	}
 
 	@Override
-	public void localeChanged(String locale) {
-		LANGUAGE_LOCALE = locale;
+	public void refreshNames() {
 		testNamesChanged();
 	}
 
-	public static void refreshNames() {
-		testNamesChanged();
-	}
-
-	public static void testNamesChanged() {
+	public void testNamesChanged() {
 		createTestIdToNameMap();
 	}
 
-	@Transactional(readOnly = true)
-	public String getSortOrder() {
-		return unitOfMeasure == null ? "0" : unitOfMeasure.getSortOrder();
-	}
-
-	public static String getUserLocalizedUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
-		if (unitOfMeasure == null) {
-			return "";
-		}
-
-		return getUserLocalizedUnitOfMeasureName(unitOfMeasure.getId());
-	}
-
-	public static String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
+	public String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
 		String name = unitOfMeasureIdToNameMap.get(unitOfMeasureId);
 		return name == null ? "" : name;
 	}
 
-	private static void createTestIdToNameMap() {
+	private void createTestIdToNameMap() {
 		unitOfMeasureIdToNameMap = new HashMap<>();
 
-		List<UnitOfMeasure> UnitOfMeasures = unitOfMeasureDAO.getAll();
+		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureDAO.getAll();
 
-		for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
+		for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
 			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(),
 					buildUnitOfMeasureName(unitOfMeasure).replace("\n", " "));
 		}
 	}
 
-	private static String buildUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
+	private String buildUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
 //       Localization localization = unitOfMeasure.getLocalization();
 //
 //        if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){

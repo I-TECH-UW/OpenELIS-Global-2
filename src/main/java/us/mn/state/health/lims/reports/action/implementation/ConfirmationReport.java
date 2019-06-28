@@ -29,7 +29,7 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.dictionary.DictionaryService;
-import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.organization.OrganizationService;
 import spring.service.person.PersonService;
 import spring.service.referral.ReferringTestResultService;
@@ -194,7 +194,8 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getNoteForSampleItem(SampleItem sampleItem) {
-		String notes = new NoteServiceImpl(sampleItem).getNotesAsString(null, null);
+		NoteService noteService = SpringContext.getBean(NoteService.class);
+		String notes = noteService.getNotesAsString(sampleItem, null, null);
 		return notes == null ? "" : notes;
 	}
 

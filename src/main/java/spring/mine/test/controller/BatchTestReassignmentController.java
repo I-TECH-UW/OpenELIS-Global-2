@@ -26,7 +26,9 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.test.form.BatchTestReassignmentForm;
 import spring.mine.test.validator.BatchTestReassignmentFormValidator;
 import spring.service.analysis.AnalysisService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -240,7 +242,7 @@ public class BatchTestReassignmentController extends BaseController {
 		}
 
 		for (Object testIdObject : replacementTestArray) {
-			replacementTestList.add(new TestServiceImpl((String) testIdObject).getTest());
+			replacementTestList.add(SpringContext.getBean(TestService.class).get((String) testIdObject));
 		}
 
 		return replacementTestList;

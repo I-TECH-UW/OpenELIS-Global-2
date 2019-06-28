@@ -32,11 +32,11 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.form.SampleEditForm;
 import spring.mine.sample.validator.SampleEditFormValidator;
 import spring.service.analysis.AnalysisService;
-import spring.service.patient.PatientServiceImpl;
+import spring.service.patient.PatientService;
+import spring.service.person.PersonService;
 import spring.service.result.ResultService;
 import spring.service.sample.SampleEditService;
 import spring.service.sample.SampleService;
-import spring.service.sample.SampleServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestService;
@@ -44,13 +44,13 @@ import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.userrole.UserRoleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -151,8 +151,7 @@ public class SampleEditController extends BaseController {
 				String maxAccessionNumber = accessionNumber + "-"
 						+ sampleItemList.get(sampleItemList.size() - 1).getSortOrder();
 				PropertyUtils.setProperty(form, "maxAccessionNumber", maxAccessionNumber);
-				PropertyUtils.setProperty(form, "isConfirmationSample",
-						new SampleServiceImpl(sample).isConfirmationSample());
+				PropertyUtils.setProperty(form, "isConfirmationSample", sampleService.isConfirmationSample(sample));
 			} else {
 				PropertyUtils.setProperty(form, "noSampleFound", Boolean.TRUE);
 			}
@@ -227,12 +226,14 @@ public class SampleEditController extends BaseController {
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		IPatientService patientService = new PatientServiceImpl(patient);
+		PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		personService.getData(patient.getPerson());
 
-		PropertyUtils.setProperty(form, "patientName", patientService.getLastFirstName());
-		PropertyUtils.setProperty(form, "dob", patientService.getEnteredDOB());
-		PropertyUtils.setProperty(form, "gender", patientService.getGender());
-		PropertyUtils.setProperty(form, "nationalId", patientService.getNationalId());
+		PropertyUtils.setProperty(form, "patientName", patientPatientService.getLastFirstName(patient));
+		PropertyUtils.setProperty(form, "dob", patientPatientService.getEnteredDOB(patient));
+		PropertyUtils.setProperty(form, "gender", patientPatientService.getGender(patient));
+		PropertyUtils.setProperty(form, "nationalId", patientPatientService.getNationalId(patient));
 	}
 
 	private List<SampleEditItem> getCurrentTestInfo(List<SampleItem> sampleItemList, String accessionNumber,

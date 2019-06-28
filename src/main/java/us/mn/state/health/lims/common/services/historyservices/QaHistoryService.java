@@ -7,7 +7,7 @@ import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.history.HistoryService;
-import spring.service.sample.SampleServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
@@ -17,33 +17,34 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public class QaHistoryService extends AbstractHistoryService {
-	
+
 	protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
 	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
 	public QaHistoryService(Sample sample) {
-		setUpForSample( sample );
+		setUpForSample(sample);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void setUpForSample(Sample sample) {
-		List<SampleQaEvent> qaEventList =  new SampleServiceImpl( sample ).getSampleQAEventList();
-		
+		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
+
 		History searchHistory = new History();
-		searchHistory.setReferenceTable( QAService.TABLE_REFERENCE_ID);
-		historyList = new ArrayList<History>();
-		
-		for( SampleQaEvent event : qaEventList){
+		searchHistory.setReferenceTable(QAService.TABLE_REFERENCE_ID);
+		historyList = new ArrayList<>();
+
+		for (SampleQaEvent event : qaEventList) {
 			searchHistory.setReferenceId(event.getId());
 			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
 		}
-		
-		newValueMap = new HashMap<String, String>();
+
+		newValueMap = new HashMap<>();
 	}
 
 	@Override
 	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		identifier =  sampleQaEventService.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
+		identifier = sampleQaEventService.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
 		items.add(getCoreTrail(history));
 	}
 
@@ -53,8 +54,8 @@ public class QaHistoryService extends AbstractHistoryService {
 	}
 
 	@Override
-	protected void getObservableChanges(History history,	Map<String, String> changeMap, String changes) {
-			changeMap.put(STATUS_ATTRIBUTE, "Gail");
+	protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
+		changeMap.put(STATUS_ATTRIBUTE, "Gail");
 
 	}
 
