@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+//TODO csl - unused
 public class UTF8Filter implements Filter {
 	public void destroy() {
 	}

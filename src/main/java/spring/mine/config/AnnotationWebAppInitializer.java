@@ -8,6 +8,7 @@ import javax.servlet.ServletRegistration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import us.mn.state.health.lims.analyzerimport.action.AnalyzerImportServlet;
@@ -35,8 +36,8 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 		servletContext.addListener(new ContextLoaderListener(context));
 		servletContext.addListener(new StartStopListener());
 
-		setupServlets(servletContext);
 		setupFilters(servletContext);
+		setupServlets(servletContext);
 	}
 
 	private void setupServlets(ServletContext servletContext) {
@@ -116,11 +117,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 	}
 
 	private void setupFilters(ServletContext servletContext) {
-		FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("UTF8Filter", UTF8Filter.class);
-		encodingFilter.addMappingForUrlPatterns(null, true, "/*");
-
-		FilterRegistration.Dynamic securityFilter = servletContext.addFilter("SecurityFilter", SecurityFilter.class);
-		securityFilter.addMappingForUrlPatterns(null, true, "/*");
 	}
 
 }
