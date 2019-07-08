@@ -255,7 +255,7 @@ public abstract class PatientReport extends Report {
 	}
 
 	private void findCompletionDate() {
-		Date date = currentSampleService.getCompletedDate(currentSample);
+		Date date = sampleService.getCompletedDate(currentSample);
 		completionDate = date == null ? null : DateUtil.convertSqlDateToStringDate(date);
 	}
 
@@ -291,12 +291,12 @@ public abstract class PatientReport extends Report {
 		currentSiteInfo = "";
 		currentProvider = null;
 
-		Organization org = currentSampleService.getOrganizationRequester(currentSample);
+		Organization org = sampleService.getOrganizationRequester(currentSample);
 		if (org != null) {
 			currentSiteInfo = org.getOrganizationName();
 		}
 
-		Person person = currentSampleService.getPersonRequester(currentSample);
+		Person person = sampleService.getPersonRequester(currentSample);
 		if (person != null) {
 			PersonService personService = SpringContext.getBean(PersonService.class);
 			currentContactInfo = personService.getLastFirstName(person);
@@ -305,7 +305,6 @@ public abstract class PatientReport extends Report {
 	}
 
 	private boolean findPatientByPatientNumber(String patientNumber, List<Patient> patientList) {
-		patientService = null;
 		PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
 		patientList.addAll(patientService.getPatientsByNationalId(patientNumber));
 
@@ -381,7 +380,7 @@ public abstract class PatientReport extends Report {
 	protected void findPatientFromSample() {
 		Patient patient = sampleHumanService.getPatientForSample(currentSample);
 
-		if (patientService == null || !patient.getId().equals(patientService.getPatientId(patient))) {
+		if (currentPatient == null || !patient.getId().equals(patientService.getPatientId(currentPatient))) {
 			STNumber = null;
 			patientDOB = null;
 			patientService = SpringContext.getBean(PatientService.class);
@@ -462,7 +461,7 @@ public abstract class PatientReport extends Report {
 			 */
 		} else if (!StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
 				AnalysisStatus.Finalized)) {
-			sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+			sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			setEmptyResult(data);
 		} else {
 			if (resultList.isEmpty()) {
@@ -493,7 +492,7 @@ public abstract class PatientReport extends Report {
 	private void setCorrectedStatus(Result result, ClinicalPatientData data) {
 		if (currentAnalysis.isCorrectedSincePatientReport() && !GenericValidator.isBlankOrNull(result.getValue())) {
 			data.setCorrectedResult(true);
-			sampleCorrectedMap.put(currentSampleService.getAccessionNumber(currentSample), true);
+			sampleCorrectedMap.put(sampleService.getAccessionNumber(currentSample), true);
 			currentAnalysis.setCorrectedSincePatientReport(false);
 			updatedAnalysis.add(currentAnalysis);
 		}
@@ -762,7 +761,7 @@ public abstract class PatientReport extends Report {
 		ClinicalPatientData data = new ClinicalPatientData();
 		String testName = null;
 		String sortOrder = "";
-		String receivedDate = currentSampleService.getReceivedDateForDisplay(currentSample);
+		String receivedDate = sampleService.getReceivedDateForDisplay(currentSample);
 
 		boolean doAnalysis = analysisService != null;
 
@@ -774,7 +773,7 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour)) {
-			receivedDate += " " + currentSampleService.getReceivedTimeForDisplay(currentSample);
+			receivedDate += " " + sampleService.getReceivedTimeForDisplay(currentSample);
 		}
 		ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
@@ -797,12 +796,12 @@ public abstract class PatientReport extends Report {
 				PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
 
 		data.setLabOrderType(observationHistoryService.getValueForSample(ObservationType.PROGRAM,
-				currentSampleService.getId(currentSample)));
+				sampleService.getId(currentSample)));
 		data.setTestName(testName);
 		data.setPatientSiteNumber(observationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
-				currentSampleService.getId(currentSample)));
+				sampleService.getId(currentSample)));
 		data.setBillingNumber(observationHistoryService.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
-				currentSampleService.getId(currentSample)));
+				sampleService.getId(currentSample)));
 
 		if (doAnalysis) {
 			data.setPanel(analysisService.getPanel(currentAnalysis));
@@ -813,14 +812,14 @@ public abstract class PatientReport extends Report {
 			data.setSampleSortOrder(currentAnalysis.getSampleItem().getSortOrder());
 			data.setOrderFinishDate(completionDate);
 			data.setOrderDate(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
-					currentSampleService.getOrderedDate(currentSample)));
-			data.setSampleId(currentSampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
+					sampleService.getOrderedDate(currentSample)));
+			data.setSampleId(sampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
 			data.setSampleType(analysisService.getTypeOfSample(currentAnalysis).getLocalizedName());
 			data.setCollectionDateTime(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
 					currentAnalysis.getSampleItem().getCollectionDate()));
 		}
 
-		data.setAccessionNumber(currentSampleService.getAccessionNumber(currentSample) + "-" + sortOrder);
+		data.setAccessionNumber(sampleService.getAccessionNumber(currentSample) + "-" + sortOrder);
 
 		if (doAnalysis) {
 			reportResultAndConclusion(data);
