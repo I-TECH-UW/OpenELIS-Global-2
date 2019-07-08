@@ -93,31 +93,31 @@ public class RequesterService {
 	}
 
 	public String getRequesterFirstName() {
-		return personService == null ? null : personService.getFirstName(person);
+		return personService == null ? null : personService.getFirstName(getPerson());
 	}
 
 	public String getRequesterLastName() {
-		return personService == null ? null : personService.getLastName(person);
+		return personService == null ? null : personService.getLastName(getPerson());
 	}
 
 	public String getRequesterLastFirstName() {
-		return personService == null ? null : personService.getLastFirstName(person);
+		return personService == null ? null : personService.getLastFirstName(getPerson());
 	}
 
 	public String getWorkPhone() {
-		return personService == null ? null : personService.getWorkPhone(person);
+		return personService == null ? null : personService.getWorkPhone(getPerson());
 	}
 
 	public String getCellPhone() {
-		return personService == null ? null : personService.getCellPhone(person);
+		return personService == null ? null : personService.getCellPhone(getPerson());
 	}
 
 	public String getFax() {
-		return personService == null ? null : personService.getFax(person);
+		return personService == null ? null : personService.getFax(getPerson());
 	}
 
 	public String getEmail() {
-		return personService == null ? null : personService.getEmail(person);
+		return personService == null ? null : personService.getEmail(getPerson());
 	}
 
 	public String getReferringSiteId() {

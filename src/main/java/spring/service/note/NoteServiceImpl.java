@@ -23,6 +23,7 @@ import spring.service.referencetables.ReferenceTablesService;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.systemuser.SystemUserService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.services.QAService;
@@ -68,18 +69,19 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 	public static String TABLE_REFERENCE_ID;
 
 	@Autowired
-	private static NoteDAO baseObjectDAO;
+	private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
 
 	@Autowired
-	private static SampleQaEventService sampleQAService;
+	private SampleQaEventService sampleQAService;
 	@Autowired
 	private ReferenceTablesService refTableService;
 	@Autowired
-	static SystemUserService systemUserService;
+	private static SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
 	@PostConstruct
 	public void initializeGlobalVariables() {
 		TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("NOTE").getId();
+		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
 	}
 
 	NoteServiceImpl() {

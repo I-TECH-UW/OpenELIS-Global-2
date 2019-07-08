@@ -40,14 +40,14 @@ import us.mn.state.health.lims.person.valueholder.Person;
 @Service
 public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService {
 
-	public final String ADDRESS_STREET = "Street";
-	public final String ADDRESS_STATE = "State";
-	public final String ADDRESS_VILLAGE = "village";
-	public final String ADDRESS_DEPT = "department";
-	public final String ADDRESS_COMMUNE = "commune";
-	public final String ADDRESS_ZIP = "zip";
-	public final String ADDRESS_COUNTRY = "Country";
-	public final String ADDRESS_CITY = "City";
+	public final static String ADDRESS_STREET = "Street";
+	public final static String ADDRESS_STATE = "State";
+	public final static String ADDRESS_VILLAGE = "village";
+	public final static String ADDRESS_DEPT = "department";
+	public final static String ADDRESS_COMMUNE = "commune";
+	public final static String ADDRESS_ZIP = "zip";
+	public final static String ADDRESS_COUNTRY = "Country";
+	public final static String ADDRESS_CITY = "City";
 
 	public static String PATIENT_GUID_IDENTITY;
 	public static String PATIENT_NATIONAL_IDENTITY;

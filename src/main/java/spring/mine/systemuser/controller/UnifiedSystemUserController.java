@@ -568,7 +568,6 @@ public class UnifiedSystemUserController extends BaseController {
 		String initial = systemUser.getFirstName().substring(0, 1) + systemUser.getLastName().substring(0, 1);
 		systemUser.setInitials(initial);
 		systemUser.setSysUserId(loggedOnUserId);
-		systemUser.setLastupdated(form.getSystemUserLastupdated());
 
 		return systemUser;
 	}
