@@ -105,9 +105,9 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	protected void createReportItems() {
 		Set<SampleItem> sampleSet = new HashSet<>();
 
-		boolean isConfirmationSample = currentSampleService.isConfirmationSample(currentSample);
+		boolean isConfirmationSample = sampleService.isConfirmationSample(currentSample);
 		List<Analysis> analysisList = analysisService
-				.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(currentSample), analysisStatusIds);
+				.getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
 		currentConclusion = null;
 		for (Analysis analysis : analysisList) {
