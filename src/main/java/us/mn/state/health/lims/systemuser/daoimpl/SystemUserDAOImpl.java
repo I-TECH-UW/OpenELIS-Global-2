@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -71,11 +72,11 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //
 //				// Make the change to the object.
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -93,7 +94,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + systemUser.getFirstName() + BLANK + systemUser.getFirstName());
 //			}
-//			String id = (String) sessionFactory.getCurrentSession().save(systemUser);
+//			String id = (String) entityManager.unwrap(Session.class).save(systemUser);
 //			systemUser.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -102,8 +103,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //			String tableName = "SYSTEM_USER";
 //			auditDAO.saveNewHistory(systemUser, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -149,11 +150,11 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(systemUser);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUser);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUser);
+//			entityManager.unwrap(Session.class).merge(systemUser);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(systemUser);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(systemUser);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
@@ -165,9 +166,9 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	@Transactional(readOnly = true)
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException {
 		try {
-			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, systemUser.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, systemUser.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (sysUser != null) {
 				// System.out.println("Just read sysUser " + sysUser.getId() + " " +
@@ -189,10 +190,10 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 		List list = new Vector();
 		try {
 			String sql = "from SystemUser";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "getAllSystemUsers()", e.toString());
@@ -212,13 +213,13 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
 			// bugzilla 1399
 			String sql = "from SystemUser s order by s.lastName, s.firstName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "getPageOfSystemUsers()", e.toString());
@@ -231,9 +232,9 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	public SystemUser readSystemUser(String idString) {
 		SystemUser su = null;
 		try {
-			su = sessionFactory.getCurrentSession().get(SystemUser.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "readSystemUser()", e.toString());
@@ -281,13 +282,13 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 			// id = currentId
 			String sql = "select su.id from SystemUser su " + " order by su.lastName, su.firstName";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -315,13 +316,13 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 			// id = currentId
 			String sql = "select su.id from SystemUser su " + " order by su.lastName desc, su.firstName desc";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -343,7 +344,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) = :param2 and t.id != :id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", systemUser.getLastName().toLowerCase().trim());
 			query.setParameter("param2", systemUser.getFirstName().toLowerCase().trim());
 
@@ -355,8 +356,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 			query.setInteger("id", Integer.parseInt(sysUserId));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -378,11 +379,11 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 		List<SystemUser> list;
 		try {
 			String sql = "from SystemUser where login_name = :name";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", userName);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SystemUserDAOImpl", "getDataForUser()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
@@ -395,7 +396,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	@Transactional(readOnly = true)
 	public SystemUser getUserById(String userId) throws LIMSRuntimeException {
 		try {
-			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, userId);
+			SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, userId);
 			// closeSession(); // CSL remove old
 			return sysUser;
 		} catch (Exception e) {

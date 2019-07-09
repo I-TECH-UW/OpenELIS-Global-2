@@ -18,10 +18,11 @@ package us.mn.state.health.lims.referral.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.dao.ReferralTypeDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralType;
@@ -42,7 +43,7 @@ public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> imple
 		String sql = "From ReferralType rt where rt.name = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("name", name);
 			ReferralType referralType = (ReferralType) query.uniqueResult();
 			// closeSession(); // CSL remove old

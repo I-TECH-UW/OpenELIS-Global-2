@@ -1,18 +1,18 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ */
 package us.mn.state.health.lims.common.provider.reports;
 
 import java.io.File;
@@ -206,17 +206,17 @@ public class ResultsReportProvider extends BaseReportsProvider {
 					// turn subreport jasper files into JasperReport objects to pass in as
 					// parameters
 					JasperReport providerDetailsReport = (JasperReport) JRLoader
-							.loadObject(providerDetailsReportFile.getPath());
+							.loadObjectFromFile(providerDetailsReportFile.getPath());
 					JasperReport projectDetailsReport = (JasperReport) JRLoader
-							.loadObject(projectDetailsReportFile.getPath());
+							.loadObjectFromFile(projectDetailsReportFile.getPath());
 					JasperReport sourceTypeDetailsReport = (JasperReport) JRLoader
-							.loadObject(sourceTypeDetailsReportFile.getPath());
+							.loadObjectFromFile(sourceTypeDetailsReportFile.getPath());
 					JasperReport patientDetailsReport = (JasperReport) JRLoader
-							.loadObject(patientDetailsReportFile.getPath());
+							.loadObjectFromFile(patientDetailsReportFile.getPath());
 					JasperReport testResultsReport = (JasperReport) JRLoader
-							.loadObject(testResultsReportFile.getPath());
+							.loadObjectFromFile(testResultsReportFile.getPath());
 					JasperReport resultValueReport = (JasperReport) JRLoader
-							.loadObject(resultValueReportFile.getPath());
+							.loadObjectFromFile(resultValueReportFile.getPath());
 
 					parameters.put("Provider_Details", providerDetailsReport);
 					parameters.put("Project_Details", projectDetailsReport);
@@ -365,9 +365,9 @@ public class ResultsReportProvider extends BaseReportsProvider {
 											" " + StringUtil.trim(organization.getStreetAddress()) + " "
 													+ StringUtil.trim(organization.getMultipleUnit()));
 									reportSample
-											.setOrganizationCityStateZip(" " + StringUtil.trim(organization.getCity())
-													+ " " + StringUtil.trim(organization.getState()) + " "
-													+ StringUtil.trim(organization.getZipCode()));
+									.setOrganizationCityStateZip(" " + StringUtil.trim(organization.getCity())
+									+ " " + StringUtil.trim(organization.getState()) + " "
+									+ StringUtil.trim(organization.getZipCode()));
 								}
 								reportSample.setSampleCollectionDate(sample.getCollectionDateForDisplay() + " "
 										+ sample.getCollectionTimeForDisplay());
@@ -411,11 +411,11 @@ public class ResultsReportProvider extends BaseReportsProvider {
 								if (sampleItem.getSourceOfSample() != null
 										&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
 									reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription()
-											+ "," + sourceOtherMessage + ":" + sourceOther);
+									+ "," + sourceOtherMessage + ":" + sourceOther);
 								} else if (sampleItem.getSourceOfSample() != null
 										&& StringUtil.isNullorNill(sampleItem.getSourceOther())) {
 									reportSample.setSourceOfSample(sourceMessage + ":" + sourceOfSample.getDescription()
-											+ "," + sourceOtherMessage + ":" + notApplicableMessage);
+									+ "," + sourceOtherMessage + ":" + notApplicableMessage);
 								} else if (sampleItem.getSourceOfSample() == null
 										&& !StringUtil.isNullorNill(sampleItem.getSourceOther())) {
 									reportSample.setSourceOfSample(sourceMessage + ":" + notApplicableMessage + ","
@@ -453,7 +453,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 								&& resultsReportType.equals(RESULTS_REPORT_TYPE_AMENDED))
 								|| (samp.getSampleHasTestRevisions().equals(FALSE)
 										&& resultsReportType.equals(RESULTS_REPORT_TYPE_ORIGINAL))
-						// bugzilla 1900
+								// bugzilla 1900
 								|| (resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW))) {
 							// then this sample will print
 						} else {

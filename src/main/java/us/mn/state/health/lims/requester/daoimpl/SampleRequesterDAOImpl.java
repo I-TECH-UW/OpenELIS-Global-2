@@ -20,10 +20,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
@@ -42,11 +43,11 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //	@Override
 //	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
 //		try {
-//			sessionFactory.getCurrentSession().save(sampleRequester);
+//			entityManager.unwrap(Session.class).save(sampleRequester);
 //
 //			auditDAO.saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
@@ -72,11 +73,11 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleRequester);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleRequester);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(sampleRequester);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleRequester);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(sampleRequester);
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
@@ -95,7 +96,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 
 	@Override
 	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
-		sessionFactory.getCurrentSession().delete(sampleRequester);
+		entityManager.unwrap(Session.class).delete(sampleRequester);
 		// closeSession(); // CSL remove old
 	}
 
@@ -106,7 +107,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setLong("sampleId", Long.parseLong(sampleId));
 			List<SampleRequester> requester = query.list();
 
@@ -123,7 +124,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 	public SampleRequester readOld(long sampleId, long requesterTypeId) {
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setLong("sampleId", sampleId);
 			query.setLong("requesterTypeId", requesterTypeId);
 			SampleRequester requester = (SampleRequester) query.uniqueResult();

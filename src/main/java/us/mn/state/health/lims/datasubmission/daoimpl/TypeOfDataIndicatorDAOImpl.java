@@ -3,10 +3,11 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
@@ -25,10 +26,10 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	@Transactional(readOnly = true)
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator typeOfIndicatorClone = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class,
+			TypeOfDataIndicator typeOfIndicatorClone = entityManager.unwrap(Session.class).get(TypeOfDataIndicator.class,
 					typeOfIndicator.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (typeOfIndicatorClone != null) {
 				PropertyUtils.copyProperties(typeOfIndicator, typeOfIndicatorClone);
 			} else {
@@ -47,10 +48,10 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 		List<TypeOfDataIndicator> list;
 		try {
 			String sql = "from TypeOfDataIndicator";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfDataIndicator", "getAllTypeOfDataIndicator()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfDataIndicator getAllTypeOfDataIndicator()", e);
@@ -63,9 +64,9 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	@Transactional(readOnly = true)
 	public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator dataValue = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class, id);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			TypeOfDataIndicator dataValue = entityManager.unwrap(Session.class).get(TypeOfDataIndicator.class, id);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			return dataValue;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -78,15 +79,15 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(typeOfIndicator);
+//			String id = (String) entityManager.unwrap(Session.class).save(typeOfIndicator);
 //			typeOfIndicator.setId(id);
 //
 //			String sysUserId = typeOfIndicator.getSysUserId();
 //			String tableName = "TYPE_OF_DATA_INDICATOR";
 //			auditDAO.saveNewHistory(typeOfIndicator, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -114,11 +115,11 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(typeOfIndicator);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfIndicator);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(typeOfIndicator);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(typeOfIndicator);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(typeOfIndicator);
 //		} catch (Exception e) {
 //			// bugzilla 2154

@@ -22,11 +22,12 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -74,9 +75,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //				TestReflex data = (TestReflex) testReflexs.get(i);
 //				// bugzilla 2206
 //				data = readTestReflex(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -97,7 +98,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(testReflex);
+//			String id = (String) entityManager.unwrap(Session.class).save(testReflex);
 //			testReflex.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -106,8 +107,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //			String tableName = "TEST_REFLEX";
 //			auditDAO.saveNewHistory(testReflex, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "insertData()", e.toString());
@@ -151,11 +152,11 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(testReflex);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(testReflex);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testReflex);
+//			entityManager.unwrap(Session.class).merge(testReflex);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(testReflex);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(testReflex);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
@@ -167,9 +168,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	@Transactional(readOnly = true)
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
-			TestReflex tr = sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			TestReflex tr = entityManager.unwrap(Session.class).get(TestReflex.class, testReflex.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tr != null) {
 				PropertyUtils.copyProperties(testReflex, tr);
 			} else {
@@ -188,12 +189,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 		List list = null;
 		try {
 			String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "getAllTestReflexs()", e.toString());
@@ -215,13 +216,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			// column) for dictionary values - requires further step of getting
 			// value from dictionary table before sorting
 			String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "getPageOfTestReflexs()", e.toString());
@@ -244,12 +245,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list;
 
@@ -275,13 +276,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 		try {
 			// bugzilla 1404 testResultId is mapped as testResult.id now
 			String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.id = :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", testResult.getId());
 			query.setParameter("param2", testAnalyte.getId());
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list;
 
@@ -308,15 +309,15 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 			if (analysis.getParentAnalysis() != null && analysis.getParentResult() != null) {
 				String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.analyte.id = :param2 and t.test.id = :param3 and t.addedTest.id = :param4";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", analysis.getParentResult().getTestResult().getId());
 				query.setParameter("param2", analysis.getParentResult().getAnalyte().getId());
 				query.setParameter("param3", analysis.getParentAnalysis().getTest().getId());
 				query.setParameter("param4", analysis.getTest().getId());
 
 				list = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			}
 
 			return list != null && list.size() > 0;
@@ -339,14 +340,14 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 				List<TestReflex> list = null;
 
 				String sql = "from TestReflex t where t.testResult.id = :testResultId and t.testAnalyte.analyte.id = :analyteId and t.test.id = :testId";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("testResultId", Integer.parseInt(testResultId));
 				query.setInteger("analyteId", Integer.parseInt(analyteId));
 				query.setInteger("testId", Integer.parseInt(testId));
 
 				list = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 				return list;
 			} catch (Exception e) {
@@ -362,9 +363,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	public TestReflex readTestReflex(String idString) {
 		TestReflex tr = null;
 		try {
-			tr = sessionFactory.getCurrentSession().get(TestReflex.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			tr = entityManager.unwrap(Session.class).get(TestReflex.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "readTestReflex()", e.toString());
@@ -412,13 +413,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			String sql = "select tr.id from TestReflex tr "
 					+ " order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -447,13 +448,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			String sql = "select tr.id from TestReflex tr "
 					+ " order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -478,7 +479,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 					+ "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
 					+ "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
 					+ "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("localizedTestName",
 					Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
 			query.setString("analyteName",
@@ -494,8 +495,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			query.setInteger("testId", Integer.parseInt(testReflexId));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -523,18 +524,18 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			Query query = null;
 			if (GenericValidator.isBlankOrNull(flag)) {
 				String sql = "from TestReflex tr where tr.testResult.test.id = :id";
-				query = sessionFactory.getCurrentSession().createQuery(sql);
+				query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("id", Integer.parseInt(testId));
 			} else {
 				String sql = "from TestReflex tr where tr.testResult.test.id = :id and tr.flags = :flag";
-				query = sessionFactory.getCurrentSession().createQuery(sql);
+				query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("id", Integer.parseInt(testId));
 				query.setString("flag", flag);
 			}
 			reflexList = query.list();
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			handleException(e, "getTestReflexsByTestAndFlag()");
@@ -554,7 +555,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId and t.flags = :flag";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 			query.setString("flag", flag);
 			List<TestReflex> list = query.list();

@@ -20,12 +20,13 @@ package us.mn.state.health.lims.analyzerresults.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 
@@ -45,13 +46,13 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //		try {
 //			String sql = "from AnalyzerResults ar where ar.analyzerId = :analyzerId order by ar.id";
 //
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("analyzerId", Integer.parseInt(analyzerId));
 //
 //			results = query.list();
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			return results;
 //
@@ -72,14 +73,14 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 
 			String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
 					+ "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("analyzerId", Integer.parseInt(result.getAnalyzerId()));
 			query.setString("assessionNumber", result.getAccessionNumber());
 			query.setString("testName", result.getTestName());
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0 ? list : null;
 
@@ -100,11 +101,11 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 //					"ANALYZER_RESULTS");
 //
-//			sessionFactory.getCurrentSession().merge(results);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(results);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(results);
+//			entityManager.unwrap(Session.class).merge(results);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(results);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(results);
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
@@ -115,9 +116,9 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
 		AnalyzerResults data = null;
 		try {
-			data = sessionFactory.getCurrentSession().get(AnalyzerResults.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
@@ -129,10 +130,10 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
 //
 //		try {
-//			AnalyzerResults analyzerResultsClone = sessionFactory.getCurrentSession().get(AnalyzerResults.class,
+//			AnalyzerResults analyzerResultsClone = entityManager.unwrap(Session.class).get(AnalyzerResults.class,
 //					analyzerResults.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (analyzerResultsClone != null) {
 //				PropertyUtils.copyProperties(analyzerResults, analyzerResultsClone);
 //			} else {
@@ -150,9 +151,9 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //			for (AnalyzerResults result : analyzerResults) {
 //				result = readAnalyzerResults(result.getId());
 //
-//				sessionFactory.getCurrentSession().delete(result);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(result);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			}
 //		} catch (HibernateException se) {

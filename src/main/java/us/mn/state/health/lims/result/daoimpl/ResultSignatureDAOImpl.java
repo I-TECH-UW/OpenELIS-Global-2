@@ -23,10 +23,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
@@ -65,9 +66,9 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //				ResultSignature data = resultSignatures.get(i);
 //
 //				data = readResultSignature(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "deleteData()", e.toString());
@@ -78,15 +79,15 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //	@Override
 //	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(resultSignature);
+//			String id = (String) entityManager.unwrap(Session.class).save(resultSignature);
 //			resultSignature.setId(id);
 //
 //			String sysUserId = resultSignature.getSysUserId();
 //			String tableName = "RESULT_SIGNATURE";
 //			auditDAO.saveNewHistory(resultSignature, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "insertData()", e.toString());
@@ -114,11 +115,11 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(resultSignature);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(resultSignature);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(resultSignature);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(resultSignature);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(resultSignature);
 //		} catch (Exception e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
@@ -130,10 +131,10 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	@Transactional(readOnly = true)
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature tmpResultSignature = sessionFactory.getCurrentSession().get(ResultSignature.class,
+			ResultSignature tmpResultSignature = entityManager.unwrap(Session.class).get(ResultSignature.class,
 					resultSignature.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tmpResultSignature != null) {
 				PropertyUtils.copyProperties(resultSignature, tmpResultSignature);
 			} else {
@@ -153,12 +154,12 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 		try {
 
 			String sql = "from ResultSignature r where r.resultId = :resultId";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("resultId", Integer.parseInt(result.getId()));
 
 			resultSignatures = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return resultSignatures;
 
@@ -171,9 +172,9 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	public ResultSignature readResultSignature(String idString) {
 		ResultSignature data = null;
 		try {
-			data = sessionFactory.getCurrentSession().get(ResultSignature.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
@@ -186,9 +187,9 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	@Transactional(readOnly = true)
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature re = sessionFactory.getCurrentSession().get(ResultSignature.class, resultSignature.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			ResultSignature re = entityManager.unwrap(Session.class).get(ResultSignature.class, resultSignature.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			return re;
 		} catch (Exception e) {
 			LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
@@ -212,7 +213,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 		String sql = "From ResultSignature rs where rs.resultId in (:resultIdList)";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameterList("resultIdList", resultIds);
 			List<ResultSignature> sigs = query.list();
 			// closeSession(); // CSL remove old

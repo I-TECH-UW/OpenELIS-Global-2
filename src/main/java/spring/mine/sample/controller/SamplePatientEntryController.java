@@ -22,6 +22,7 @@ import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.validator.SamplePatientEntryFormValidator;
 import spring.service.sample.PatientManagementUpdate;
 import spring.service.sample.SamplePatientEntryService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -30,7 +31,6 @@ import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.patient.action.IPatientUpdate;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
@@ -46,8 +46,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 	@Autowired
 	private SamplePatientEntryService samplePatientService;
-	@Autowired
-	PatientManagementUpdate patientUpdate;
 
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
 	public ModelAndView showSamplePatientEntry(HttpServletRequest request)
@@ -85,7 +83,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	public @ResponseBody ModelAndView showSamplePatientEntrySave(HttpServletRequest request,
 			@ModelAttribute("form") @Validated(SamplePatientEntryForm.SamplePatientEntry.class) SamplePatientEntryForm form,
 			BindingResult result, RedirectAttributes redirectAttributes)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+					throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
@@ -103,7 +101,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 		String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
 
-		if (!GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
 			receivedDateForDisplay += " " + sampleOrder.getReceivedTime();
 		} else {
 			receivedDateForDisplay += " 00:00";
@@ -112,6 +110,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);
 		updateData.initializeRequester(sampleOrder);
 
+		PatientManagementUpdate patientUpdate = SpringContext.getBean(PatientManagementUpdate.class);
 		patientUpdate.setSysUserIdFromRequest(request);
 		testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
@@ -153,7 +152,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 	private void testAndInitializePatientForSaving(HttpServletRequest request, PatientManagementInfo patientInfo,
 			IPatientUpdate patientUpdate, SamplePatientUpdateData updateData)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+					throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		patientUpdate.setPatientUpdateStatus(patientInfo);
 		updateData.setSavePatient(patientUpdate.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION);

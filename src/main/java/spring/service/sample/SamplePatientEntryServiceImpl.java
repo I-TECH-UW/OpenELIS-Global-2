@@ -12,11 +12,9 @@ import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.service.address.OrganizationAddressService;
 import spring.service.analysis.AnalysisService;
 import spring.service.dataexchange.order.ElectronicOrderService;
-import spring.service.gender.GenderService;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.organization.OrganizationService;
 import spring.service.person.PersonService;
-import spring.service.project.ProjectService;
 import spring.service.provider.ProviderService;
 import spring.service.requester.SampleRequesterService;
 import spring.service.samplehuman.SampleHumanService;
@@ -33,7 +31,6 @@ import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -73,11 +70,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 	@Autowired
 	private SampleRequesterService sampleRequesterService;
 	@Autowired
-	GenderService genderService;
-	@Autowired
-	ProjectService projectService;
-	@Autowired
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	@Transactional
 	@Override
@@ -194,7 +187,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
 	private void persistRequesterData(SamplePatientUpdateData updateData) {
 		if (updateData.getProviderPerson() != null
-				&& !GenericValidator.isBlankOrNull(updateData.getProviderPerson().getId())) {
+				&& !org.apache.commons.validator.GenericValidator.isBlankOrNull(updateData.getProviderPerson().getId())) {
 			SampleRequester sampleRequester = new SampleRequester();
 			sampleRequester.setRequesterId(updateData.getProviderPerson().getId());
 			sampleRequester.setRequesterTypeId(TableIdService.getInstance().PROVIDER_REQUESTER_TYPE_ID);
@@ -233,7 +226,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 			String userSelectedTestSection, String sampleTypeName, SamplePatientUpdateData updateData) {
 		java.sql.Date collectionDateTime = DateUtil.convertStringDateTimeToSqlDate(sampleTestCollection.collectionDate);
 		TestSection testSection = test.getTestSection();
-		if (!GenericValidator.isBlankOrNull(userSelectedTestSection)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(userSelectedTestSection)) {
 			testSection = testSectionService.get(userSelectedTestSection);
 		}
 
@@ -249,7 +242,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 		analysis.setRevision(analysisRevision);
 		analysis.setStartedDate(collectionDateTime == null ? DateUtil.getNowAsSqlDate() : collectionDateTime);
 		analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
-		if (!GenericValidator.isBlankOrNull(sampleTypeName)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleTypeName)) {
 			analysis.setSampleTypeName(sampleTypeName);
 		}
 		analysis.setTestSection(testSection);

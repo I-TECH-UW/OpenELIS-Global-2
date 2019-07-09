@@ -3,11 +3,12 @@ package us.mn.state.health.lims.audittrail.dao;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 
@@ -33,7 +34,7 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
 		
 		try {
 			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(refId));
 			query.setInteger("tableId", Integer.parseInt(tableId));
 			list = query.list();

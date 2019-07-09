@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -69,9 +70,9 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //				Scriptlet data = (Scriptlet) scriptlets.get(i);
 //				// bugzilla 2206
 //				data = readScriptlet(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -88,7 +89,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + scriptlet.getScriptletName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(scriptlet);
+//			String id = (String) entityManager.unwrap(Session.class).save(scriptlet);
 //			scriptlet.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -97,8 +98,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //			String tableName = "SCRIPTLET";
 //			auditDAO.saveNewHistory(scriptlet, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ScriptletDAOImpl", "insertData()", e.toString());
@@ -138,11 +139,11 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(scriptlet);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(scriptlet);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(scriptlet);
+//			entityManager.unwrap(Session.class).merge(scriptlet);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(scriptlet);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(scriptlet);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
@@ -154,9 +155,9 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	@Transactional(readOnly = true)
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
-			Scriptlet sc = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptlet.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Scriptlet sc = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptlet.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (sc != null) {
 				PropertyUtils.copyProperties(scriptlet, sc);
 			} else {
@@ -175,12 +176,12 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 		List list = new Vector();
 		try {
 			String sql = "from Scriptlet";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
@@ -200,13 +201,13 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
 			// bugzilla 1399
 			String sql = "from Scriptlet s order by s.scriptletName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
@@ -219,9 +220,9 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	public Scriptlet readScriptlet(String idString) {
 		Scriptlet scriptlet = null;
 		try {
-			scriptlet = sessionFactory.getCurrentSession().get(Scriptlet.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
@@ -253,12 +254,12 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 		List list = new Vector();
 		try {
 			String sql = "from Scriptlet s where upper(s.scriptletName) like upper(:param) order by upper(s.scriptletName)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
@@ -272,12 +273,12 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
 			String sql = "from Scriptlet s where s.scriptletName = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", scriptlet.getScriptletName());
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			Scriptlet s = null;
 			if (list.size() > 0) {
 				s = (Scriptlet) list.get(0);
@@ -307,7 +308,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.scriptletName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -330,7 +331,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.scriptletName desc where name <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -353,7 +354,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from Scriptlet t where trim(lower(t.scriptletName)) = :param and t.id != :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", scriptlet.getScriptletName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -365,8 +366,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 			query.setParameter("param2", scriptletId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -385,7 +386,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	@Transactional(readOnly = true)
 	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
 		try {
-			Scriptlet scriptlet = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptletId);
+			Scriptlet scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptletId);
 			// closeSession(); // CSL remove old
 			return scriptlet;
 		} catch (Exception e) {

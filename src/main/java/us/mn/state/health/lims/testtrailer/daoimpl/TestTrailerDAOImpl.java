@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -69,9 +70,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 //				TestTrailer data = (TestTrailer) testTrailers.get(i);
 //				// bugzilla 2206
 //				data = readTestTrailer(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -89,7 +90,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 //						"Duplicate record exists for " + testTrailer.getTestTrailerName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(testTrailer);
+//			String id = (String) entityManager.unwrap(Session.class).save(testTrailer);
 //			testTrailer.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -98,8 +99,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 //			String tableName = "TEST_TRAILER";
 //			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
@@ -140,11 +141,11 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(testTrailer);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(testTrailer);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testTrailer);
+//			entityManager.unwrap(Session.class).merge(testTrailer);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(testTrailer);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(testTrailer);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
@@ -156,9 +157,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	@Transactional(readOnly = true)
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
-			TestTrailer uom = sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			TestTrailer uom = entityManager.unwrap(Session.class).get(TestTrailer.class, testTrailer.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (uom != null) {
 				PropertyUtils.copyProperties(testTrailer, uom);
 			} else {
@@ -177,12 +178,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 		List list = new Vector();
 		try {
 			String sql = "from TestTrailer";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getAllTestTrailers()", e.toString());
@@ -202,13 +203,13 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
 			// bugzilla 1399
 			String sql = "from TestTrailer t order by t.testTrailerName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getPageOfTestTrailers()", e.toString());
@@ -221,9 +222,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	public TestTrailer readTestTrailer(String idString) {
 		TestTrailer tr = null;
 		try {
-			tr = sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			tr = entityManager.unwrap(Session.class).get(TestTrailer.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "readTestTrailer()", e.toString());
@@ -253,12 +254,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestTrailer t where t.testTrailerName = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", testTrailer.getTestTrailerName());
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			TestTrailer t = null;
 			if (list.size() > 0) {
 				t = (TestTrailer) list.get(0);
@@ -280,12 +281,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 		List list = new Vector();
 		try {
 			String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by upper(t.testTrailerName)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getTestTrailers()", e.toString());
@@ -309,7 +310,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.testTrailerName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -332,7 +333,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.testTrailerName desc where name <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -356,7 +357,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from TestTrailer t where trim(lower(t.testTrailerName)) = :param and t.id != :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", testTrailer.getTestTrailerName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -368,8 +369,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 			query.setParameter("param2", testTrailerId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

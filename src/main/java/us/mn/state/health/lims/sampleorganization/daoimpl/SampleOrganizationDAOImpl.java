@@ -20,10 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -73,9 +74,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
 //				// bugzilla 2206
 //				data = readSampleOrganization(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -88,7 +89,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(sampleOrg);
+//			String id = (String) entityManager.unwrap(Session.class).save(sampleOrg);
 //			sampleOrg.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -97,8 +98,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //			String tableName = "SAMPLE_ORGANIZATION";
 //			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -129,11 +130,11 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleOrg);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleOrg);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleOrg);
+//			entityManager.unwrap(Session.class).merge(sampleOrg);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleOrg);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleOrg);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
@@ -145,10 +146,10 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 	@Transactional(readOnly = true)
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 		try {
-			SampleOrganization data = sessionFactory.getCurrentSession().get(SampleOrganization.class,
+			SampleOrganization data = entityManager.unwrap(Session.class).get(SampleOrganization.class,
 					sampleOrg.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleOrg, data);
 			} else {
@@ -164,9 +165,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 	public SampleOrganization readSampleOrganization(String idString) {
 		SampleOrganization so = null;
 		try {
-			so = sessionFactory.getCurrentSession().get(SampleOrganization.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
@@ -182,11 +183,11 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 
 		try {
 			String sql = "from SampleOrganization so where samp_id = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			SampleOrganization so = null;
 			if (list.size() > 0) {
 				so = (SampleOrganization) list.get(0);
@@ -205,7 +206,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 	public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
 		String sql = "From SampleOrganization so where so.sample.id = :sampleId";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<SampleOrganization> sampleOrg = query.list();
 			// closeSession(); // CSL remove old

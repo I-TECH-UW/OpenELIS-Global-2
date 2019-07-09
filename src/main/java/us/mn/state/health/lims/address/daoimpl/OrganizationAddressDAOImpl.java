@@ -20,13 +20,14 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
@@ -45,7 +46,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("organizationId", Integer.parseInt(organizationId));
 			List<OrganizationAddress> addressPartList = query.list();
 			return addressPartList;
@@ -59,7 +60,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 //	@Override
 //	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(organizationAddress);
+//			String id = (String) entityManager.unwrap(Session.class).save(organizationAddress);
 //			auditDAO.saveNewHistory(organizationAddress, organizationAddress.getSysUserId(), "organization_address");
 //			return id;
 //		} catch (HibernateException e) {
@@ -77,11 +78,11 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 //			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
 //
-//			sessionFactory.getCurrentSession().merge(organizationAddress);
+//			entityManager.unwrap(Session.class).merge(organizationAddress);
 //			// closeSession(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove
+//			// entityManager.unwrap(Session.class).evict // CSL remove
 //			// old(organizationAddress);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(organizationAddress);
 //		} catch (HibernateException e) {
 //			handleException(e, "update");
@@ -91,7 +92,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 
 //	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
 //		try {
-//			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession()
+//			OrganizationAddress oldOrganizationAddress = entityManager.unwrap(Session.class)
 //					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
 //			// closeSession(); // CSL remove old
 //

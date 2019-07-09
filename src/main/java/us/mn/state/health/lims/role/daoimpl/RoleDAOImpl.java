@@ -24,10 +24,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -65,9 +66,9 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //		try {
 //			for (Role data : roles) {
 //				data = readRole(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
@@ -79,15 +80,15 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //	public boolean insertData(Role role) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(role);
+//			String id = (String) entityManager.unwrap(Session.class).save(role);
 //			role.setId(id);
 //
 //			String sysUserId = role.getSysUserId();
 //			String tableName = "SYSTEM_ROLE";
 //			auditDAO.saveNewHistory(role, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
@@ -115,11 +116,11 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(role);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(role);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(role);
+//			entityManager.unwrap(Session.class).merge(role);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(role);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(role);
 //		} catch (Exception e) {
 //			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role updateData()", e);
@@ -130,9 +131,9 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	@Transactional(readOnly = true)
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
-			Role tmpRole = sessionFactory.getCurrentSession().get(Role.class, role.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Role tmpRole = entityManager.unwrap(Session.class).get(Role.class, role.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tmpRole != null) {
 				PropertyUtils.copyProperties(role, tmpRole);
 			} else {
@@ -151,7 +152,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		List<Role> list = null;
 		try {
 			String sql = "from Role";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
 			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
@@ -168,7 +169,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		List<Role> list = null;
 		try {
 			String sql = "from Role r where r.active = true";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
 			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
@@ -188,13 +189,13 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Role r order by r.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
@@ -206,9 +207,9 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	public Role readRole(String idString) {
 		Role recoveredRole = null;
 		try {
-			recoveredRole = sessionFactory.getCurrentSession().get(Role.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			recoveredRole = entityManager.unwrap(Session.class).get(Role.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
 			throw new LIMSRuntimeException("Error in Role readRole()", e);
@@ -242,12 +243,12 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		List<Role> list = null;
 		try {
 			String sql = "from Role where grouping_parent = :parent";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("parent", Integer.parseInt(role.getId()));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
@@ -262,7 +263,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		String sql = "from Role r where trim(r.name) = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", name);
 			Role role = (Role) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old
@@ -279,7 +280,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		String sql = "from Role r where r.id = :id";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("id", Integer.parseInt(roleId));
 			Role role = (Role) query.uniqueResult();
 			// closeSession(); // CSL remove old

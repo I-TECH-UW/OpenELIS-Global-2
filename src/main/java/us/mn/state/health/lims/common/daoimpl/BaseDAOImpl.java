@@ -1,18 +1,18 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ */
 package us.mn.state.health.lims.common.daoimpl;
 
 import java.io.Serializable;
@@ -37,7 +37,6 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,6 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 /**
@@ -60,7 +58,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 @Component
 @Transactional
 public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializable>
-		implements BaseDAO<T, PK>, IActionConstants {
+implements BaseDAO<T, PK>, IActionConstants {
 
 	private enum DBComparison {
 		EQ, LIKE, IN
@@ -70,10 +68,8 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
 	private final Class<T> classType;
 
-	@Autowired
-	protected SessionFactory sessionFactory;
 	@PersistenceContext
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@Autowired
 	public BaseDAOImpl(Class<T> clazz) {
@@ -84,8 +80,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	@Transactional(readOnly = true)
 	public Optional<T> get(PK id) {
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			T object = session.get(classType, id);
+			T object = entityManager.find(classType, id);
 			return Optional.ofNullable(object);
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "get", e);
@@ -178,8 +173,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		try {
-			Session session = this.sessionFactory.getCurrentSession();
-			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 			CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
 			Root<T> root = criteriaQuery.from(this.classType);
 			criteriaQuery.select(root);
@@ -190,18 +184,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			for (String orderProperty : orderProperties) {
 				this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
 			}
-			return session.createQuery(criteriaQuery).list();
+			return entityManager.createQuery(criteriaQuery).getResultList();
 
-//			Map<String, String> aliases = new HashMap<>();
-//			Session session = sessionFactory.getCurrentSession();
-//			Criteria criteria = session.createCriteria(classType);
-//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
-//			}
-//			for (String orderProperty : orderProperties) {
-//				addOrder(criteria, orderProperty, descending, aliases);
-//			}
-//			return criteria.list();
+			//			Map<String, String> aliases = new HashMap<>();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			Criteria criteria = session.createCriteria(classType);
+			//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+			//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			//			}
+			//			for (String orderProperty : orderProperties) {
+			//				addOrder(criteria, orderProperty, descending, aliases);
+			//			}
+			//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException(
 					"Error in " + this.getClass().getSimpleName() + " " + "getAllMatchingOrdered", e);
@@ -256,16 +250,16 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			}
 			return entityManager.createQuery(criteriaQuery).getResultList();
 
-//			Map<String, String> aliases = new HashMap<>();
-//			Session session = sessionFactory.getCurrentSession();
-//			Criteria criteria = session.createCriteria(classType);
-//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
-//			}
-//			for (String orderProperty : orderProperties) {
-//				addOrder(criteria, orderProperty, descending, aliases);
-//			}
-//			return criteria.list();
+			//			Map<String, String> aliases = new HashMap<>();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			Criteria criteria = session.createCriteria(classType);
+			//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+			//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			//			}
+			//			for (String orderProperty : orderProperties) {
+			//				addOrder(criteria, orderProperty, descending, aliases);
+			//			}
+			//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getAllLikeOrdered",
 					e);
@@ -374,18 +368,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
 			return typedQuery.getResultList();
 
-//			Map<String, String> aliases = new HashMap<>();
-//			Session session = sessionFactory.getCurrentSession();
-//			Criteria criteria = session.createCriteria(classType);
-//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
-//			}
-//			for (String orderProperty : orderProperties) {
-//				addOrder(criteria, orderProperty, descending, aliases);
-//			}
-//			criteria.setFirstResult(startingRecNo - 1);
-//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-//			return criteria.list();
+			//			Map<String, String> aliases = new HashMap<>();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			Criteria criteria = session.createCriteria(classType);
+			//			for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+			//				addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			//			}
+			//			for (String orderProperty : orderProperties) {
+			//				addOrder(criteria, orderProperty, descending, aliases);
+			//			}
+			//			criteria.setFirstResult(startingRecNo - 1);
+			//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException(
 					"Error in " + this.getClass().getSimpleName() + " " + "getMatchingOrderedPage", e);
@@ -445,18 +439,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
 			return typedQuery.getResultList();
 
-//			Map<String, String> aliases = new HashMap<>();
-//			Session session = sessionFactory.getCurrentSession();
-//			Criteria criteria = session.createCriteria(classType);
-//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
-//			}
-//			for (String orderProperty : orderProperties) {
-//				addOrder(criteria, orderProperty, descending, aliases);
-//			}
-//			criteria.setFirstResult(startingRecNo - 1);
-//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
-//			return criteria.list();
+			//			Map<String, String> aliases = new HashMap<>();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			Criteria criteria = session.createCriteria(classType);
+			//			for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+			//				addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+			//			}
+			//			for (String orderProperty : orderProperties) {
+			//				addOrder(criteria, orderProperty, descending, aliases);
+			//			}
+			//			criteria.setFirstResult(startingRecNo - 1);
+			//			criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+			//			return criteria.list();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getLikeOrderedPage",
 					e);
@@ -469,9 +463,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			entityManager.persist(object);
 			entityManager.flush();
 			return object.getId();
-//			Session session = sessionFactory.getCurrentSession();
-//			PK id = (PK) session.save(object);
-//			session.flush();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			PK id = (PK) session.save(object);
+			//			session.flush();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "insert", e);
 		}
@@ -483,10 +477,10 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			T dbObject = entityManager.merge(object);
 			entityManager.flush();
 			return dbObject;
-//			Session session = sessionFactory.getCurrentSession();
-//			T dbObject = (T) session.merge(object);
-//			session.flush();
-//			return dbObject;
+			//			Session session = entityManager.unwrap(Session.class);
+			//			T dbObject = (T) session.merge(object);
+			//			session.flush();
+			//			return dbObject;
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "save", e);
 		}
@@ -497,9 +491,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		try {
 			entityManager.remove(object);
 			entityManager.flush();
-//			Session session = sessionFactory.getCurrentSession();
-//			session.delete(object);
-//			session.flush();
+			//			Session session = entityManager.unwrap(Session.class);
+			//			session.delete(object);
+			//			session.flush();
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "delete", e);
 		}
@@ -514,20 +508,20 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.classType)));
 			return entityManager.createQuery(criteriaQuery).getSingleResult().intValue();
 
-//			Integer rowCount = 0;
-//			Session session = sessionFactory.getCurrentSession();
-//			Criteria criteria = session.createCriteria(classType);
-//			criteria.setProjection(Projections.rowCount());
-//			List<Long> results = criteria.list();
-//
-//			if (results != null) {
-//				rowCount = results.get(0).intValue();
-//			} else {
-//				LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
-//						"could not count number of objects for class" + classType.getName());
-//				rowCount = -1;
-//			}
-//			return rowCount;
+			//			Integer rowCount = 0;
+			//			Session session = entityManager.unwrap(Session.class);
+			//			Criteria criteria = session.createCriteria(classType);
+			//			criteria.setProjection(Projections.rowCount());
+			//			List<Long> results = criteria.list();
+			//
+			//			if (results != null) {
+			//				rowCount = results.get(0).intValue();
+			//			} else {
+			//				LogEvent.logError(this.getClass().getSimpleName(), "getCount()",
+			//						"could not count number of objects for class" + classType.getName());
+			//				rowCount = -1;
+			//			}
+			//			return rowCount;
 		} catch (HibernateException e) {
 			throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getCount", e);
 		}
@@ -593,7 +587,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 	// the table name from the object instead of querying the metadata;
 	// ImplicitNamingStrategyJpaCompliantImpl
 	public String getTableName() {
-		AbstractEntityPersister persister = (AbstractEntityPersister) sessionFactory.getClassMetadata(classType);
+		AbstractEntityPersister persister = (AbstractEntityPersister) entityManager.unwrap(Session.class).getSessionFactory().getClassMetadata(classType);
 		String tableName = persister.getTableName();
 		return tableName.substring(tableName.indexOf('.') + 1);
 	}
@@ -612,7 +606,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 			path = root.get(propertyName);
 		}
 		if ((propertyName.endsWith("id") || propertyName.endsWith("Id")) && propertyValue instanceof String
-				&& GenericValidator.isInt((String) propertyValue)) {
+				&& org.apache.commons.validator.GenericValidator.isInt((String) propertyValue)) {
 			propertyValue = Integer.valueOf((String) propertyValue);
 
 		}
@@ -746,166 +740,166 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 		throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
 	}
 
-//	private static final int RANDOM_ALIAS_LENGTH = 5;
-//	private static final String MULTI_NESTED_MARKING = ",";
-//	private void addRestriction(Criteria criteria, String propertyName, Object propertyValue,
-//			Map<String, String> aliases) {
-//		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
-//		criteria.add(Restrictions.eq(aliasedProperty, propertyValue));
-//	}
-//
-//	private void addLikeRestriction(Criteria criteria, String propertyName, String propertyValue,
-//			Map<String, String> aliases) {
-//		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
-//		criteria.add(Restrictions.ilike(aliasedProperty, propertyValue, MatchMode.ANYWHERE));
-//	}
-//
-//	private void addOrder(Criteria criteria, String orderProperty, boolean descending, Map<String, String> aliases) {
-//		String aliasedProperty = createAliasIfNeeded(criteria, orderProperty, aliases);
-//		if (descending) {
-//			criteria.addOrder(Order.desc(aliasedProperty));
-//		} else {
-//			criteria.addOrder(Order.asc(aliasedProperty));
-//		}
-//
-//	}
-//
-//	private String createAliasIfNeeded(Criteria criteria, String propertyName, Map<String, String> aliases) {
-//		int dotCount = StringUtils.countMatches(propertyName, '.');
-//		if (dotCount > 2 || (dotCount == 2 && !propertyName.endsWith(".id"))) {
-//			// multi nesting detected, need special consideration to generate multiple
-//			// aliases unless there are only 2 levels and the third property is the id field
-//			return createMultiNestedAliases(criteria, propertyName, aliases);
-//		} else if (dotCount == 1 || (dotCount == 2 && propertyName.endsWith(".id"))) {
-//			// simple aliasing is required
-//			return createSingleNestedAlias(criteria, propertyName, aliases);
-//		} else {
-//			// no aliasing needed, use the property name as is
-//			return propertyName;
-//		}
-//	}
-//
-//	private Optional<String> createAlias(String nestedProperty, Map<String, String> aliases) {
-//		return createAlias(nestedProperty, 1, aliases);
-//	}
-//
-//	private Optional<String> createAlias(String nestedProperty, int i, Map<String, String> aliases) {
-//		String alias;
-//		if (aliases.containsKey(nestedProperty)) {
-//			// signal alias does not need to be created, it already exists
-//			return Optional.empty();
-//		} else {
-//			if (nestedProperty.length() > i) {
-//				// use substring of property as alias
-//				alias = nestedProperty.substring(0, i);
-//			} else {
-//				// reached max length for the property without finding a unique alias, using
-//				// random alias
-//				LogEvent.logWarn(this.getClass().getSimpleName(), "createAlias()",
-//						"this alias is going to be a poorly named alias as the string length has been reached.");
-//				alias = createRandomAlias();
-//			}
-//			if (aliases.containsValue(alias)) {
-//				// recurse to try and find an unused alias,
-//				return createAlias(nestedProperty, ++i, aliases);
-//			} else {
-//				// unique alias found, end recursion
-//				return Optional.of(alias);
-//			}
-//		}
-//
-//	}
-//
-//	private String createRandomAlias() {
-//		return RandomStringUtils.randomAlphabetic(RANDOM_ALIAS_LENGTH);
-//	}
-//
-//	private String createSingleNestedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
-//		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
-//		ClassMetadata metadata = sessionFactory.getClassMetadata(classType);
-//		// check if composite-id, which doesn't require aliasing
-//		if (nestedProperty.equals(metadata.getIdentifierPropertyName())) {
-//			return propertyName;
-//		}
-//		Optional<String> alias = createAlias(nestedProperty, aliases);
-//		// alias is new and needs to be added
-//		if (alias.isPresent()) {
-//			criteria.createAlias(nestedProperty, alias.get());
-//			aliases.put(nestedProperty, alias.get());
-//		}
-//		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
-//	}
-//
-//	private String createMultiNestedAliases(Criteria criteria, String propertyName, Map<String, String> aliases) {
-//		String alias;
-//		String newPropertyName = propertyName;
-//		while (true) {
-//			String[] properties = newPropertyName.split("\\.");
-//			// create alias for one level of nesting
-//			alias = createMarkedAlias(criteria, properties[0] + "." + properties[1], aliases);
-//			// mark nesting level that has just been completed
-//			newPropertyName = newPropertyName.replaceFirst("\\.", MULTI_NESTED_MARKING);
-//			// check if there is another level of nesting
-//			if (newPropertyName.contains(".")) {
-//				// replace the property name with it's alias
-//				newPropertyName = alias.replaceFirst("\\.", MULTI_NESTED_MARKING)
-//						+ newPropertyName.substring(newPropertyName.indexOf('.'));
-//			} else {
-//				break;
-//			}
-//		}
-//		return alias;
-//	}
-//
-//	private String createMarkedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
-//		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
-//		// replace properties that have been marked as done with "." for properly adding
-//		// the criteria
-//		nestedProperty = nestedProperty.replace(MULTI_NESTED_MARKING, ".");
-//		Optional<String> alias = createMarkedAlias(nestedProperty, aliases);
-//		// alias is new and needs to be added
-//		if (alias.isPresent()) {
-//			criteria.createAlias(nestedProperty, alias.get());
-//			aliases.put(nestedProperty, alias.get());
-//		}
-//		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
-//
-//	}
-//
-//	private Optional<String> createMarkedAlias(String nestedProperty, Map<String, String> aliases) {
-//		return createMarkedAlias(nestedProperty, 1, aliases);
-//	}
-//
-//	private Optional<String> createMarkedAlias(String nestedProperty, int i, Map<String, String> aliases) {
-//		String alias;
-//		if (aliases.containsKey(nestedProperty)) {
-//			// signal alias does not need to be created, it already exists
-//			return Optional.empty();
-//		} else {
-//			if (nestedProperty.length() > i) {
-//				if (nestedProperty.contains(".")) {
-//					// use substring of second property as alias (property after the first ".")
-//					alias = nestedProperty.substring(nestedProperty.indexOf('.') + 1,
-//							nestedProperty.indexOf('.') + 1 + i);
-//				} else {
-//					// use substring of property as alias
-//					alias = nestedProperty.substring(0, i);
-//				}
-//			} else {
-//				// reached max length for the property without finding a unique alias, using
-//				// random alias
-//				LogEvent.logWarn(this.getClass().getSimpleName(), "createMultiAlias()",
-//						"this alias is going to be a poor alias as the string length has been reached.");
-//				alias = createRandomAlias();
-//
-//			}
-//			if (aliases.containsValue(alias)) {
-//				// recurse to try and find an unused alias,
-//				return createAlias(nestedProperty, ++i, aliases);
-//			} else {
-//				// unique alias found, end recursion
-//				return Optional.of(alias);
-//			}
-//		}
-//	}
+	//	private static final int RANDOM_ALIAS_LENGTH = 5;
+	//	private static final String MULTI_NESTED_MARKING = ",";
+	//	private void addRestriction(Criteria criteria, String propertyName, Object propertyValue,
+	//			Map<String, String> aliases) {
+	//		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
+	//		criteria.add(Restrictions.eq(aliasedProperty, propertyValue));
+	//	}
+	//
+	//	private void addLikeRestriction(Criteria criteria, String propertyName, String propertyValue,
+	//			Map<String, String> aliases) {
+	//		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
+	//		criteria.add(Restrictions.ilike(aliasedProperty, propertyValue, MatchMode.ANYWHERE));
+	//	}
+	//
+	//	private void addOrder(Criteria criteria, String orderProperty, boolean descending, Map<String, String> aliases) {
+	//		String aliasedProperty = createAliasIfNeeded(criteria, orderProperty, aliases);
+	//		if (descending) {
+	//			criteria.addOrder(Order.desc(aliasedProperty));
+	//		} else {
+	//			criteria.addOrder(Order.asc(aliasedProperty));
+	//		}
+	//
+	//	}
+	//
+	//	private String createAliasIfNeeded(Criteria criteria, String propertyName, Map<String, String> aliases) {
+	//		int dotCount = StringUtils.countMatches(propertyName, '.');
+	//		if (dotCount > 2 || (dotCount == 2 && !propertyName.endsWith(".id"))) {
+	//			// multi nesting detected, need special consideration to generate multiple
+	//			// aliases unless there are only 2 levels and the third property is the id field
+	//			return createMultiNestedAliases(criteria, propertyName, aliases);
+	//		} else if (dotCount == 1 || (dotCount == 2 && propertyName.endsWith(".id"))) {
+	//			// simple aliasing is required
+	//			return createSingleNestedAlias(criteria, propertyName, aliases);
+	//		} else {
+	//			// no aliasing needed, use the property name as is
+	//			return propertyName;
+	//		}
+	//	}
+	//
+	//	private Optional<String> createAlias(String nestedProperty, Map<String, String> aliases) {
+	//		return createAlias(nestedProperty, 1, aliases);
+	//	}
+	//
+	//	private Optional<String> createAlias(String nestedProperty, int i, Map<String, String> aliases) {
+	//		String alias;
+	//		if (aliases.containsKey(nestedProperty)) {
+	//			// signal alias does not need to be created, it already exists
+	//			return Optional.empty();
+	//		} else {
+	//			if (nestedProperty.length() > i) {
+	//				// use substring of property as alias
+	//				alias = nestedProperty.substring(0, i);
+	//			} else {
+	//				// reached max length for the property without finding a unique alias, using
+	//				// random alias
+	//				LogEvent.logWarn(this.getClass().getSimpleName(), "createAlias()",
+	//						"this alias is going to be a poorly named alias as the string length has been reached.");
+	//				alias = createRandomAlias();
+	//			}
+	//			if (aliases.containsValue(alias)) {
+	//				// recurse to try and find an unused alias,
+	//				return createAlias(nestedProperty, ++i, aliases);
+	//			} else {
+	//				// unique alias found, end recursion
+	//				return Optional.of(alias);
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//	private String createRandomAlias() {
+	//		return RandomStringUtils.randomAlphabetic(RANDOM_ALIAS_LENGTH);
+	//	}
+	//
+	//	private String createSingleNestedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
+	//		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
+	//		ClassMetadata metadata = sessionFactory.getClassMetadata(classType);
+	//		// check if composite-id, which doesn't require aliasing
+	//		if (nestedProperty.equals(metadata.getIdentifierPropertyName())) {
+	//			return propertyName;
+	//		}
+	//		Optional<String> alias = createAlias(nestedProperty, aliases);
+	//		// alias is new and needs to be added
+	//		if (alias.isPresent()) {
+	//			criteria.createAlias(nestedProperty, alias.get());
+	//			aliases.put(nestedProperty, alias.get());
+	//		}
+	//		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
+	//	}
+	//
+	//	private String createMultiNestedAliases(Criteria criteria, String propertyName, Map<String, String> aliases) {
+	//		String alias;
+	//		String newPropertyName = propertyName;
+	//		while (true) {
+	//			String[] properties = newPropertyName.split("\\.");
+	//			// create alias for one level of nesting
+	//			alias = createMarkedAlias(criteria, properties[0] + "." + properties[1], aliases);
+	//			// mark nesting level that has just been completed
+	//			newPropertyName = newPropertyName.replaceFirst("\\.", MULTI_NESTED_MARKING);
+	//			// check if there is another level of nesting
+	//			if (newPropertyName.contains(".")) {
+	//				// replace the property name with it's alias
+	//				newPropertyName = alias.replaceFirst("\\.", MULTI_NESTED_MARKING)
+	//						+ newPropertyName.substring(newPropertyName.indexOf('.'));
+	//			} else {
+	//				break;
+	//			}
+	//		}
+	//		return alias;
+	//	}
+	//
+	//	private String createMarkedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
+	//		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
+	//		// replace properties that have been marked as done with "." for properly adding
+	//		// the criteria
+	//		nestedProperty = nestedProperty.replace(MULTI_NESTED_MARKING, ".");
+	//		Optional<String> alias = createMarkedAlias(nestedProperty, aliases);
+	//		// alias is new and needs to be added
+	//		if (alias.isPresent()) {
+	//			criteria.createAlias(nestedProperty, alias.get());
+	//			aliases.put(nestedProperty, alias.get());
+	//		}
+	//		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
+	//
+	//	}
+	//
+	//	private Optional<String> createMarkedAlias(String nestedProperty, Map<String, String> aliases) {
+	//		return createMarkedAlias(nestedProperty, 1, aliases);
+	//	}
+	//
+	//	private Optional<String> createMarkedAlias(String nestedProperty, int i, Map<String, String> aliases) {
+	//		String alias;
+	//		if (aliases.containsKey(nestedProperty)) {
+	//			// signal alias does not need to be created, it already exists
+	//			return Optional.empty();
+	//		} else {
+	//			if (nestedProperty.length() > i) {
+	//				if (nestedProperty.contains(".")) {
+	//					// use substring of second property as alias (property after the first ".")
+	//					alias = nestedProperty.substring(nestedProperty.indexOf('.') + 1,
+	//							nestedProperty.indexOf('.') + 1 + i);
+	//				} else {
+	//					// use substring of property as alias
+	//					alias = nestedProperty.substring(0, i);
+	//				}
+	//			} else {
+	//				// reached max length for the property without finding a unique alias, using
+	//				// random alias
+	//				LogEvent.logWarn(this.getClass().getSimpleName(), "createMultiAlias()",
+	//						"this alias is going to be a poor alias as the string length has been reached.");
+	//				alias = createRandomAlias();
+	//
+	//			}
+	//			if (aliases.containsValue(alias)) {
+	//				// recurse to try and find an unused alias,
+	//				return createAlias(nestedProperty, ++i, aliases);
+	//			} else {
+	//				// unique alias found, end recursion
+	//				return Optional.of(alias);
+	//			}
+	//		}
+	//	}
 }

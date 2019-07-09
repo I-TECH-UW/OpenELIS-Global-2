@@ -22,10 +22,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -73,9 +74,9 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
 //				// bugzilla 2206
 //				data = readReferenceTables(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -109,7 +110,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //
 //			// System.out.println("This is ID from insert referencetables " +
 //			// referencetables.getId());
-//			String id = (String) sessionFactory.getCurrentSession().save(referenceTables);
+//			String id = (String) entityManager.unwrap(Session.class).save(referenceTables);
 //			referenceTables.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -118,8 +119,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //			String tableName = "REFERENCE_TABLES";
 //			auditDAO.saveNewHistory(referenceTables, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "insertData()", e.toString());
@@ -180,11 +181,11 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(referenceTables);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(referenceTables);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(referenceTables);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(referenceTables);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(referenceTables);
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -197,10 +198,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	@Transactional(readOnly = true)
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
 		try {
-			ReferenceTables reftbl = sessionFactory.getCurrentSession().get(ReferenceTables.class,
+			ReferenceTables reftbl = entityManager.unwrap(Session.class).get(ReferenceTables.class,
 					referenceTables.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (reftbl != null) {
 				PropertyUtils.copyProperties(referenceTables, reftbl);
 			} else {
@@ -219,12 +220,12 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 		List list = new Vector();
 		try {
 			String sql = "from ReferenceTables";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "getAllReferenceTables()", e.toString());
@@ -243,14 +244,14 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 			// query.setCacheMode(org.hibernate.CacheMode.REFRESH);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "getPageOfReferenceTables()", e.toString());
@@ -263,9 +264,9 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	public ReferenceTables readReferenceTables(String idString) {
 		ReferenceTables referenceTables = null;
 		try {
-			referenceTables = sessionFactory.getCurrentSession().get(ReferenceTables.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			referenceTables = entityManager.unwrap(Session.class).get(ReferenceTables.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "readReferenceTables()", e.toString());
@@ -312,13 +313,13 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			// instead get the list in this sortorder and determine the index of record with
 			// id = currentId
 			String sql = "select r.id from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -345,13 +346,13 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			// instead get the list in this sortorder and determine the index of record with
 			// id = currentId
 			String sql = "select r.id from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn - 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn - 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -381,7 +382,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			}
 
 			// System.out.println("Yi in duplicateReferencetables sql is " + sql);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// System.out.println("duplicateReferencetables sql is " + sql);
 
 			query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
@@ -397,8 +398,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 				query.setParameter("param2", referenceTablesId);
 			}
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -420,12 +421,12 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 		List list = new Vector();
 		try {
 			String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("ReferenceTableDAOImpl", "getAllReferenceTablesForHl7Encoding()", e.toString());
@@ -452,7 +453,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	public ReferenceTables getReferenceTableByName(String tableName) {
 		try {
 			String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("tableName", tableName.toLowerCase().trim());
 
 			ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();

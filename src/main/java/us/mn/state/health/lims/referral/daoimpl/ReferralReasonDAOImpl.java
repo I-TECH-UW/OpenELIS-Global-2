@@ -20,10 +20,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.dao.ReferralReasonDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralReason;
@@ -44,7 +45,7 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> i
 		String sql = "from ReferralReason";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			List<ReferralReason> reasons = query.list();
 			// closeSession(); // CSL remove old
 			return reasons;

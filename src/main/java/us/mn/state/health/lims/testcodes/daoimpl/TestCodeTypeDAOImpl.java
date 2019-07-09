@@ -18,10 +18,11 @@ package us.mn.state.health.lims.testcodes.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testcodes.dao.TestCodeTypeDAO;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
@@ -40,7 +41,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
 		String sql = "from TestCodeType et where et.schemaName = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", name);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -57,7 +58,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
 		String sql = "from TestCodeType et where et.id = :id";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("id", id);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
 			// closeSession(); // CSL remove old
