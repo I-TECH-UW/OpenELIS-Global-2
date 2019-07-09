@@ -3,7 +3,7 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.datasubmission.dao.DataResourceDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataResource;
 
@@ -18,9 +18,9 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //	@Override
 //	public void getData(DataResource resource) throws LIMSRuntimeException {
 //		try {
-//			DataResource resourceClone = sessionFactory.getCurrentSession().get(DataResource.class, resource.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			DataResource resourceClone = entityManager.unwrap(Session.class).get(DataResource.class, resource.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (resourceClone != null) {
 //				PropertyUtils.copyProperties(resource, resourceClone);
 //			} else {
@@ -36,9 +36,9 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //	@Override
 //	public DataResource getDataResource(String id) throws LIMSRuntimeException {
 //		try {
-//			DataResource resource = sessionFactory.getCurrentSession().get(DataResource.class, id);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			DataResource resource = entityManager.unwrap(Session.class).get(DataResource.class, id);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return resource;
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -51,15 +51,15 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //	public boolean insertData(DataResource resource) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(resource);
+//			String id = (String) entityManager.unwrap(Session.class).save(resource);
 //			resource.setId(id);
 //
 //			String sysUserId = resource.getSysUserId();
 //			String tableName = "DATA_VALUE";
 //			auditDAO.saveNewHistory(resource, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -87,11 +87,11 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(resource);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(resource);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(resource);
+//			entityManager.unwrap(Session.class).merge(resource);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(resource);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(resource);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataResourceDAOImpl", "updateData()", e.toString());

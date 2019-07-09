@@ -3,7 +3,7 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.datasubmission.dao.DataIndicatorDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 
@@ -18,10 +18,10 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //	@Override
 //	public void getData(DataIndicator indicator) throws LIMSRuntimeException {
 //		try {
-//			DataIndicator indicatorClone = sessionFactory.getCurrentSession().get(DataIndicator.class,
+//			DataIndicator indicatorClone = entityManager.unwrap(Session.class).get(DataIndicator.class,
 //					indicator.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (indicatorClone != null) {
 //				PropertyUtils.copyProperties(indicator, indicatorClone);
 //			} else {
@@ -37,9 +37,9 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //	@Override
 //	public DataIndicator getIndicator(String id) throws LIMSRuntimeException {
 //		try {
-//			DataIndicator indicator = sessionFactory.getCurrentSession().get(DataIndicator.class, id);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			DataIndicator indicator = entityManager.unwrap(Session.class).get(DataIndicator.class, id);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return indicator;
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -53,13 +53,13 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			throws LIMSRuntimeException {
 //		String sql = "From DataIndicator di where di.typeOfIndicator.id = :todiid and di.year = :year and di.month = :month";
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("todiid", Integer.parseInt(type.getId()));
 //			query.setInteger("year", year);
 //			query.setInteger("month", month);
 //			DataIndicator indicator = (DataIndicator) query.uniqueResult();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (indicator == null) {
 //				return null;
 //			}
@@ -74,11 +74,11 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //	public List<DataIndicator> getIndicatorsByStatus(String status) throws LIMSRuntimeException {
 //		String sql = "From DataIndicator di where di.status = :status";
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("status", status);
 //			List<DataIndicator> indicators = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return indicators;
 //		} catch (HibernateException e) {
 //			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByStatus()", e.toString());
@@ -89,15 +89,15 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //	@Override
 //	public boolean insertData(DataIndicator dataIndicator) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(dataIndicator);
+//			String id = (String) entityManager.unwrap(Session.class).save(dataIndicator);
 //			dataIndicator.setId(id);
 //
 //			String sysUserId = dataIndicator.getSysUserId();
 //			String tableName = "DATA_INDICATOR";
 //			// auditDAO.saveNewHistory(dataIndicator, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -125,11 +125,11 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(dataIndicator);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(dataIndicator);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(dataIndicator);
+//			entityManager.unwrap(Session.class).merge(dataIndicator);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(dataIndicator);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(dataIndicator);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataIndicatorDAOImpl", "updateData()", e.toString());

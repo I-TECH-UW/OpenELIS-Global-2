@@ -23,10 +23,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -75,11 +76,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //
 //				// Make the change to the object.
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -97,7 +98,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(project);
+//			String id = (String) entityManager.unwrap(Session.class).save(project);
 //			project.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -106,8 +107,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			String tableName = "PROJECT";
 //			auditDAO.saveNewHistory(project, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -148,11 +149,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(project);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(project);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(project);
+//			entityManager.unwrap(Session.class).merge(project);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(project);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(project);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
@@ -164,9 +165,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	@Transactional(readOnly = true)
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
-			Project proj = sessionFactory.getCurrentSession().get(Project.class, project.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Project proj = entityManager.unwrap(Session.class).get(Project.class, project.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (proj != null) {
 				if (proj.getStartedDate() != null) {
@@ -192,10 +193,10 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 		List list = new Vector();
 		try {
 			String sql = "from Project";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getAllProjects()", e.toString());
@@ -216,13 +217,13 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			// bugzilla 1399
 			// bugzilla 2438 order by local abbreviation
 			String sql = "from Project p order by p.localAbbreviation desc";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getPageOfProjects()", e.toString());
@@ -235,9 +236,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	public Project readProject(String idString) {
 		Project pro = null;
 		try {
-			pro = sessionFactory.getCurrentSession().get(Project.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			pro = entityManager.unwrap(Session.class).get(Project.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "readProject()", e.toString());
@@ -283,7 +284,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 					sql = "from Project p where p.projectName = :param";
 				}
 			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			if (ignoreCase) {
 				query.setParameter("param", project.getProjectName().toLowerCase().trim());
 			} else {
@@ -291,8 +292,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			}
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -319,12 +320,12 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			} else {
 				sql = "from Project p where upper(p.projectName) like upper(:param) order by upper(p.projectName)";
 			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -349,7 +350,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.projectName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -372,7 +373,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.projectName desc where name <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -398,7 +399,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 			// bugzilla 2438 adding local abbreviation to duplicate check
 			String sql = "from Project t where ((trim(lower(t.projectName)) = :param and t.id != :param2) or (trim(lower(t.localAbbreviation)) = :param3 and t.id != :param2))";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", project.getProjectName().toLowerCase().trim());
 			query.setParameter("param3", project.getLocalAbbreviation().toLowerCase().trim());
 
@@ -410,8 +411,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			query.setParameter("param2", projId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -437,11 +438,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			} else {
 				sql = "from Project p where trim(lower(p.localAbbreviation)) = :param";
 			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", project.getLocalAbbreviation().toLowerCase().trim());
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -461,7 +462,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	public Project getProjectById(String id) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(id)) {
 			try {
-				Query query = sessionFactory.getCurrentSession().createQuery("from Project p where p.id = :id");
+				Query query = entityManager.unwrap(Session.class).createQuery("from Project p where p.id = :id");
 				query.setInteger("id", Integer.parseInt(id));
 				Project project = (Project) query.uniqueResult();
 

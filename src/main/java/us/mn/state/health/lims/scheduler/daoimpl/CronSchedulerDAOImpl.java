@@ -19,7 +19,7 @@ package us.mn.state.health.lims.scheduler.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
@@ -36,7 +36,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //		String sql = "from CronScheduler";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			@SuppressWarnings("unchecked")
 //			List<CronScheduler> schedulers = query.list();
 //			// closeSession(); // CSL remove old
@@ -53,7 +53,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //		String sql = "from CronScheduler cs where cs.jobName = :jobName";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("jobName", jobName);
 //			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
 //			// closeSession(); // CSL remove old
@@ -68,7 +68,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //	@Override
 //	public String insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(cronSchedule);
+//			String id = (String) entityManager.unwrap(Session.class).save(cronSchedule);
 //			cronSchedule.setId(id);
 //			auditDAO.saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
 //			// closeSession(); // CSL remove old
@@ -88,11 +88,11 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //			auditDAO.saveHistory(cronSchedule, oldData, cronSchedule.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
 //
-//			sessionFactory.getCurrentSession().merge(cronSchedule);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(cronSchedule);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(cronSchedule);
+//			entityManager.unwrap(Session.class).merge(cronSchedule);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(cronSchedule);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(cronSchedule);
 //		} catch (Exception e) {
 //			handleException(e, "update");
 //		}
@@ -102,7 +102,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //	public CronScheduler readCronScheduler(String idString) throws LIMSRuntimeException {
 //
 //		try {
-//			CronScheduler data = sessionFactory.getCurrentSession().get(CronScheduler.class, idString);
+//			CronScheduler data = entityManager.unwrap(Session.class).get(CronScheduler.class, idString);
 //			// closeSession(); // CSL remove old
 //			return data;
 //		} catch (HibernateException e) {
@@ -116,7 +116,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //		String sql = "from CronScheduler cs where cs.id = :id";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("id", Integer.parseInt(schedulerId));
 //			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
 //			// closeSession(); // CSL remove old

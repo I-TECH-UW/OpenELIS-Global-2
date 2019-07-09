@@ -18,10 +18,11 @@ package us.mn.state.health.lims.requester.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
@@ -42,7 +43,7 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> imp
 		String sql = "from RequesterType rt where rt.requesterType = :typeName";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("typeName", typeName);
 			RequesterType type = (RequesterType) query.uniqueResult();
 			return type;

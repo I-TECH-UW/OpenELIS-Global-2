@@ -18,10 +18,11 @@ package us.mn.state.health.lims.siteinformation.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
@@ -41,7 +42,7 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
 		String sql = "from SiteInformationDomain sid where sid.name = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", name);
 			SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
 			// closeSession(); // CSL remove old

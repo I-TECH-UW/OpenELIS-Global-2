@@ -17,10 +17,11 @@ package us.mn.state.health.lims.typeoftestresult.daoimpl;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -64,9 +65,9 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
 //
 //				data = readTypeOfTestResult(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("TypeOfTestResultDAOImpl", "deleteData()", e.toString());
@@ -83,7 +84,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //						"Duplicate record exists for " + typeOfTestResult.getDescription());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(typeOfTestResult);
+//			String id = (String) entityManager.unwrap(Session.class).save(typeOfTestResult);
 //			typeOfTestResult.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -92,8 +93,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //			String tableName = "TYPE_OF_TEST_RESULT";
 //			auditDAO.saveNewHistory(typeOfTestResult, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfTestResultDAOImpl", "insertData()", e.toString());
@@ -131,11 +132,11 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(typeOfTestResult);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfTestResult);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(typeOfTestResult);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(typeOfTestResult);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(typeOfTestResult);
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -147,10 +148,10 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //	@Override
 //	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
 //		try {
-//			TypeOfTestResult sc = sessionFactory.getCurrentSession().get(TypeOfTestResult.class,
+//			TypeOfTestResult sc = entityManager.unwrap(Session.class).get(TypeOfTestResult.class,
 //					typeOfTestResult.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (sc != null) {
 //				PropertyUtils.copyProperties(typeOfTestResult, sc);
 //			} else {
@@ -168,12 +169,12 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		List list;
 //		try {
 //			String sql = "from TypeOfTestResult";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			// query.setMaxResults(10);
 //			// query.setFirstResult(3);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfTestResultDAOImpl", "getAllTypeOfTestResults()", e.toString());
@@ -191,13 +192,13 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
 //			String sql = "from TypeOfTestResult t order by t.description";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfTestResultDAOImpl", "getPageOfTypeOfTestResults()", e.toString());
@@ -210,9 +211,9 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //	public TypeOfTestResult readTypeOfTestResult(String idString) {
 //		TypeOfTestResult data;
 //		try {
-//			data = sessionFactory.getCurrentSession().get(TypeOfTestResult.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			data = entityManager.unwrap(Session.class).get(TypeOfTestResult.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfTestResultDAOImpl", "readTypeOfTestResult()", e.toString());
@@ -248,7 +249,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		List list;
 //		try {
 //			String sql = "from " + table + " t where description >= " + enquote(id) + " order by t.description";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -270,7 +271,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		List list;
 //		try {
 //			String sql = "from " + table + " t order by t.description desc where description <= " + enquote(id);
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -294,7 +295,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from TypeOfTestResult t where (trim(lower(t.description)) = :param and t.id != :param2) or (trim(lower(t.testResultType)) = :param3 and t.id != :param2)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", typeOfTestResult.getDescription().toLowerCase().trim());
 			query.setParameter("param3", typeOfTestResult.getTestResultType().toLowerCase().trim());
 
@@ -307,8 +308,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 			query.setParameter("param2", typeOfTestResultId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -326,7 +327,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 		TypeOfTestResult totr = null;
 		try {
 			String sql = "from TypeOfTestResult totr where upper(totr.testResultType) = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", typeOfTestResult.getTestResultType().trim().toUpperCase());
 
 			List list = query.list();
@@ -335,8 +336,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 				totr = (TypeOfTestResult) list.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfTestResultDAOImpl", "getTypeOfTestResultByType()", e.toString());
@@ -350,7 +351,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException {
 //		String sql = "from TypeOfTestResult ttr where ttr.testResultType = :type";
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("type", type);
 //			TypeOfTestResult typeOfTestResult = (TypeOfTestResult) query.uniqueResult();
 //			// closeSession(); // CSL remove old

@@ -19,7 +19,7 @@ package us.mn.state.health.lims.reports.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
@@ -38,7 +38,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> imp
 //		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId order by dt.reportTime";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("typeId", Integer.parseInt(typeId));
 //			query.setInteger("tableId", Integer.parseInt(tableId));
 //			query.setInteger("recordId", Integer.parseInt(recordId));
@@ -59,7 +59,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> imp
 //		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId and dt.documentName = :name order by dt.reportTime";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("typeId", Integer.parseInt(reportTypeId));
 //			query.setInteger("tableId", Integer.parseInt(tableId));
 //			query.setInteger("recordId", Integer.parseInt(recordId));

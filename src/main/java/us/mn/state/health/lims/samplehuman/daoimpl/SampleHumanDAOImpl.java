@@ -22,10 +22,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.patient.valueholder.Patient;
@@ -76,9 +77,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 //				SampleHuman data = (SampleHuman) sampleHumans.get(i);
 //				// bugzilla 2206
 //				data = readSampleHuman(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -91,7 +92,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 //	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(sampleHuman);
+//			String id = (String) entityManager.unwrap(Session.class).save(sampleHuman);
 //			sampleHuman.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +101,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 //			String tableName = "SAMPLE_HUMAN";
 //			auditDAO.saveNewHistory(sampleHuman, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -132,11 +133,11 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleHuman);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleHuman);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleHuman);
+//			entityManager.unwrap(Session.class).merge(sampleHuman);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleHuman);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleHuman);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
@@ -148,9 +149,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	@Transactional(readOnly = true)
 	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 		try {
-			SampleHuman sampHuman = sessionFactory.getCurrentSession().get(SampleHuman.class, sampleHuman.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			SampleHuman sampHuman = entityManager.unwrap(Session.class).get(SampleHuman.class, sampleHuman.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (sampHuman != null) {
 				PropertyUtils.copyProperties(sampleHuman, sampHuman);
 			} else {
@@ -166,9 +167,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	public SampleHuman readSampleHuman(String idString) {
 		SampleHuman sh = null;
 		try {
-			sh = sessionFactory.getCurrentSession().get(SampleHuman.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			sh = entityManager.unwrap(Session.class).get(SampleHuman.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleHumanDAOImpl", "readSampleHuman()", e.toString());
@@ -184,11 +185,11 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 
 		try {
 			String sql = "from SampleHuman sh where samp_id = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("param", Integer.parseInt(sampleHuman.getSampleId()));
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			SampleHuman sh = null;
 			if (list.size() > 0) {
 				sh = (SampleHuman) list.get(0);
@@ -207,7 +208,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 		Patient patient = null;
 		try {
 			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patient.id = patient.id and sampleHuman.sampleId = :sId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			patient = (Patient) query.uniqueResult();
 		} catch (HibernateException he) {
@@ -223,7 +224,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "select provider from Provider as provider, SampleHuman as sampleHuman where sampleHuman.providerId = provider.id and sampleHuman.sampleId = :sId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			Provider provider = (Provider) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -245,7 +246,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 
 		try {
 			String sql = "select sample from Sample as sample, SampleHuman as sampleHuman where sampleHuman.sampleId = sample.id and sampleHuman.patient.id = :patientId order by sample.id";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientID));
 			samples = query.list();
 		} catch (HibernateException he) {

@@ -18,10 +18,11 @@ package us.mn.state.health.lims.testdictionary.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
@@ -39,7 +40,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary, String> i
 	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException {
 		String sql = "FROM TestDictionary td where td.testId = :testId";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old

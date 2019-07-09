@@ -22,11 +22,12 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -75,11 +76,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //				// Make the change to the object.
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -97,7 +98,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //						"Duplicate record or abrevation exists for " + dictionary.getDictEntry());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(dictionary);
+//			String id = (String) entityManager.unwrap(Session.class).save(dictionary);
 //			dictionary.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -106,8 +107,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			String tableName = "DICTIONARY";
 //			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
@@ -120,7 +121,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	// modified for bugzilla 2061-2063
 //	@Override
 //	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException {
-//		Session session = sessionFactory.getCurrentSession();
+//		Session session = entityManager.unwrap(Session.class);
 //
 //		// bugzilla 1386 throw Exception if record already exists
 //		try {
@@ -166,10 +167,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //		try {
 //			session.merge(dictionary);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(dictionary);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(dictionary);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(dictionary);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(dictionary);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
@@ -181,9 +182,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	@Transactional(readOnly = true)
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
-			Dictionary d = sessionFactory.getCurrentSession().get(Dictionary.class, dictionary.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Dictionary d = entityManager.unwrap(Session.class).get(Dictionary.class, dictionary.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (d != null) {
 				PropertyUtils.copyProperties(dictionary, d);
 			} else {
@@ -201,13 +202,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		List list = new Vector();
 //		try {
 //			String sql = "from Dictionary";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			// query.setMaxResults(10);
 //			// query.setFirstResult(3);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
@@ -226,13 +227,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //			// bugzilla 1399
 //			String sql = "from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
@@ -262,14 +263,14 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 //				sql = "from Dictionary d where trim(lower (d.dictEntry)) like :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
 //			}
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", newSearchStr);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
@@ -283,9 +284,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	public Dictionary readDictionary(String idString) {
 //		Dictionary dictionary = null;
 //		try {
-//			dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
@@ -347,7 +348,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 			}
 
 			sql += " order by d.dictEntry asc";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param1", filter + "%");
 			if (!StringUtil.isNullorNill(categoryFilter)) {
 				query.setParameter("param2", categoryFilter);
@@ -355,8 +356,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 			@SuppressWarnings("unchecked")
 			List<Dictionary> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list;
 
@@ -405,7 +406,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 			} else {
 				sql += " order by d.sortOrder asc";
 			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param1", fieldValue);
 
 			@SuppressWarnings("unchecked")
@@ -441,13 +442,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			// instead get the list in this sortorder and determine the index of
 //			// record with id = currentId
 //			String sql = "select d.id from Dictionary d" + " order by d.dictionaryCategory.categoryName, d.dictEntry";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -474,13 +475,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			// record with id = currentId
 //			String sql = "select d.id from Dictionary d"
 //					+ " order by d.dictionaryCategory.categoryName desc, d.dictEntry desc";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -517,7 +518,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 						+ "(trim(lower(t.localAbbreviation)) = :param4 and t.dictionaryCategory is null and t.id != :param3)) ";
 
 			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
 			query.setParameter("param4", dictionary.getLocalAbbreviation().toLowerCase().trim());
 			if (dictionary.getDictionaryCategory() != null) {
@@ -549,12 +550,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //			sql = "from Dictionary d where (d.localAbbreviation = :param) and d.isActive= " + enquote(YES);
 //
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", dictionary.getLocalAbbreviation());
 //
 //			List list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (list.size() > 0) {
 //				d = (Dictionary) list.get(0);
@@ -589,7 +590,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //						+ " || trim(d.dictEntry) = :param and d.localAbbreviation is not null))" + " and d.isActive= "
 //						+ enquote(YES);
 //			}
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //
 //			if (ignoreCase) {
 //				query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
@@ -598,8 +599,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			}
 //
 //			List list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (list.size() > 0) {
 //				d = (Dictionary) list.get(0);
@@ -633,7 +634,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 				sql = "from TestResult tr where tr.value = :param and tr.test.isActive = " + enquote(YES);
 			}
 
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", dictionary.getId());
 
 			return !query.list().isEmpty();
@@ -663,12 +664,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 //				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) like :param ";
 //			}
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", newSearchStr);
 //
 //			List results = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (results != null && results.get(0) != null) {
 //				if (results.get(0) != null) {
@@ -691,7 +692,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setInteger("categoryId", Integer.parseInt(categoryId));
 //			List<Dictionary> queryResults = query.list();
 //
@@ -709,7 +710,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	@Transactional(readOnly = true)
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
 		try {
-			Dictionary dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, dictionaryId);
+			Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
 			// closeSession(); // CSL remove old
 			return dictionary;
 		} catch (Exception e) {
@@ -725,7 +726,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		String sql = "From Dictionary d where d.dictEntry = :dictionaryEntry and d.dictionaryCategory.description = :description";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("dictionaryEntry", dictionaryName);
 //			query.setParameter("description", categoryDescription);
 //
@@ -745,7 +746,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		String sql = "from Dictionary d where d.dictEntry = :dictionaryEntry";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("dictionaryEntry", dictEntry);
 //			Dictionary dictionary = (Dictionary) query.uniqueResult();
 //			// closeSession(); // CSL remove old
@@ -762,7 +763,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
 		String sql = "from Dictionary d where d.id = :id";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("id", Integer.parseInt(dictionaryId));
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old

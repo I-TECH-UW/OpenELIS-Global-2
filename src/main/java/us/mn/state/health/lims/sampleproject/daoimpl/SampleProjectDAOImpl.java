@@ -23,10 +23,11 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
@@ -75,9 +76,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //				SampleProject data = (SampleProject) sampleProjs.get(i);
 //				// bugzilla 2206
 //				data = readSampleProject(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -90,7 +91,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(sampleProj);
+//			String id = (String) entityManager.unwrap(Session.class).save(sampleProj);
 //			sampleProj.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +101,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //			String tableName = "SAMPLE_PROJECTS";
 //			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -133,11 +134,11 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleProj);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleProj);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleProj);
+//			entityManager.unwrap(Session.class).merge(sampleProj);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleProj);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleProj);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
@@ -149,9 +150,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 	@Transactional(readOnly = true)
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
 		try {
-			SampleProject data = sessionFactory.getCurrentSession().get(SampleProject.class, sampleProj.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			SampleProject data = entityManager.unwrap(Session.class).get(SampleProject.class, sampleProj.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleProj, data);
 			} else {
@@ -167,9 +168,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 	public SampleProject readSampleProject(String idString) {
 		SampleProject sp = null;
 		try {
-			sp = sessionFactory.getCurrentSession().get(SampleProject.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
@@ -188,12 +189,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
 		try {
 			String sql = "from SampleProject sp where sp.project = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", projId);
 
 			sampleProjects = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return sampleProjects;
 
@@ -212,7 +213,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
 		try {
 			String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(id));
 
 			sampleProjects = query.list();
@@ -235,7 +236,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 			String sql = "FROM SampleProject as sp "
 					+ " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
 					+ " AND   so.organization.id = :organizationId ) ";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setString("projectName", projectName);
 			query.setDate("dateLow", lowReceivedDate);

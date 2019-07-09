@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
@@ -42,15 +43,15 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //	@Override
 //	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(patientType);
+//			String id = (String) entityManager.unwrap(Session.class).save(patientType);
 //			patientType.setId(id);
 //
 //			String sysUserId = patientType.getSysUserId();
 //			String tableName = "PATIENT_PATIENT_TYPE";
 //			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
@@ -77,11 +78,11 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(patientType);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(patientType);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientType);
+//			entityManager.unwrap(Session.class).merge(patientType);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(patientType);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(patientType);
 //		} catch (Exception e) {
 //			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
@@ -92,9 +93,9 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 	public PatientPatientType getCurrentPatientPatientType(String id) {
 		PatientPatientType current = null;
 		try {
-			current = sessionFactory.getCurrentSession().get(PatientPatientType.class, id);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
@@ -127,13 +128,13 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 
 		try {
 			String sql = "from PatientPatientType pi where pi.patientId = :patientId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("patientId", new Integer(patientId));
 
 			patientTypes = query.list();
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());

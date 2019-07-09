@@ -19,7 +19,7 @@ package us.mn.state.health.lims.localization.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.localization.dao.LocalizationDAO;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 
@@ -36,7 +36,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 //	@Override
 //	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 //		try {
-//			Localization localization = sessionFactory.getCurrentSession().get(Localization.class, id);
+//			Localization localization = entityManager.unwrap(Session.class).get(Localization.class, id);
 //			// closeSession(); // CSL remove old
 //			return localization;
 //		} catch (HibernateException e) {
@@ -58,11 +58,11 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(localization);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(localization);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(localization);
+//			entityManager.unwrap(Session.class).merge(localization);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(localization);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(localization);
 //		} catch (HibernateException e) {
 //			handleException(e, "updateData");
 //		}
@@ -70,9 +70,9 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 
 //	public Localization readLocalization(String idString) {
 //		try {
-//			Localization localization = sessionFactory.getCurrentSession().get(Localization.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Localization localization = entityManager.unwrap(Session.class).get(Localization.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return localization;
 //		} catch (Exception e) {
 //			handleException(e, "readLocalization");

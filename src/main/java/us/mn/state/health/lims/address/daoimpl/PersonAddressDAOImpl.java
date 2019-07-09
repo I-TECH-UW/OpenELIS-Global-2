@@ -20,13 +20,14 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Component
@@ -43,7 +44,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			List<PersonAddress> addressPartList = query.list();
 			return addressPartList;
@@ -57,7 +58,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 //	@Override
 //	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
 //		try {
-//			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
+//			AddressPK id = (AddressPK) entityManager.unwrap(Session.class).save(personAddress);
 //			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
 //			// closeSession(); // CSL remove old
 //			return id;
@@ -76,10 +77,10 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 //			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
 //
-//			sessionFactory.getCurrentSession().merge(personAddress);
+//			entityManager.unwrap(Session.class).merge(personAddress);
 //			// closeSession(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(personAddress);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(personAddress);
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(personAddress);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(personAddress);
 //		} catch (HibernateException e) {
 //			handleException(e, "update");
 //		}
@@ -88,7 +89,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 
 //	public PersonAddress readPersonAddress(PersonAddress personAddress) {
 //		try {
-//			PersonAddress oldPersonAddress = sessionFactory.getCurrentSession().get(PersonAddress.class,
+//			PersonAddress oldPersonAddress = entityManager.unwrap(Session.class).get(PersonAddress.class,
 //					personAddress.getCompoundId());
 //			// closeSession(); // CSL remove old
 //
@@ -105,7 +106,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			query.setInteger("partId", Integer.parseInt(addressPartId));
 			PersonAddress addressPart = (PersonAddress) query.uniqueResult();

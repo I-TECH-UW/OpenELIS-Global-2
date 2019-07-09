@@ -22,10 +22,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -58,9 +59,9 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //
 //		try {
 //			SiteInformation siteInformation = readSiteInformation(siteInformationId);
-//			sessionFactory.getCurrentSession().delete(siteInformation);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			entityManager.unwrap(Session.class).delete(siteInformation);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("SiteInformationsDAOImpl", "deleteData()", e.toString());
@@ -72,13 +73,13 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(siteInformation);
+//			String id = (String) entityManager.unwrap(Session.class).save(siteInformation);
 //			siteInformation.setId(id);
 //
 //			auditDAO.saveNewHistory(siteInformation, siteInformation.getSysUserId(), "SITE_INFORMATION");
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("SiteInformationDAOImpl", "insertData()", e.toString());
@@ -103,11 +104,11 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(siteInformation);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(siteInformation);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			entityManager.unwrap(Session.class).merge(siteInformation);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(siteInformation);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(siteInformation);
 //		} catch (Exception e) {
 //			LogEvent.logError("SiteInformationsDAOImpl", "updateData()", e.toString());
@@ -119,10 +120,10 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	@Transactional(readOnly = true)
 	public void getData(SiteInformation siteInformation) throws LIMSRuntimeException {
 		try {
-			SiteInformation tmpSiteInformation = sessionFactory.getCurrentSession().get(SiteInformation.class,
+			SiteInformation tmpSiteInformation = entityManager.unwrap(Session.class).get(SiteInformation.class,
 					siteInformation.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tmpSiteInformation != null) {
 				PropertyUtils.copyProperties(siteInformation, tmpSiteInformation);
 			} else {
@@ -141,10 +142,10 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 		List<SiteInformation> list;
 		try {
 			String sql = "from SiteInformation";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationsDAOImpl", "getAllSiteInformation()", e.toString());
 			throw new LIMSRuntimeException("Error in SiteInformation getAllSiteInformation()", e);
@@ -164,15 +165,15 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from SiteInformation si where si.domain.name = :domainName order by si.name";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("domainName", domainName);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getPageOfSiteInformationByDomainName");
 		}
@@ -183,9 +184,9 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	public SiteInformation readSiteInformation(String idString) {
 		SiteInformation recoveredSiteInformation;
 		try {
-			recoveredSiteInformation = sessionFactory.getCurrentSession().get(SiteInformation.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			recoveredSiteInformation = entityManager.unwrap(Session.class).get(SiteInformation.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationDAOImpl", "readSiteInformation()", e.toString());
 			throw new LIMSRuntimeException("Error in SiteInformation readSiteInformation()", e);
@@ -214,7 +215,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 		String sql = "From SiteInformation si where name = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", siteName);
 			SiteInformation information = (SiteInformation) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -232,7 +233,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 		String sql = "select count(*) from SiteInformation si where si.domain.name = :domainName";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("domainName", domainName);
 			Integer count = ((Long) query.uniqueResult()).intValue();
 			// closeSession(); // CSL remove old
@@ -248,7 +249,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	public SiteInformation getSiteInformationById(String id) throws LIMSRuntimeException {
 
 		try {
-			SiteInformation info = sessionFactory.getCurrentSession().get(SiteInformation.class, id);
+			SiteInformation info = entityManager.unwrap(Session.class).get(SiteInformation.class, id);
 			// closeSession(); // CSL remove old
 			return info;
 		} catch (HibernateException e) {
@@ -263,7 +264,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 	public List<SiteInformation> getSiteInformationByDomainName(String domainName) {
 		String sql = "From SiteInformation si where si.domain.name = :domainName";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("domainName", domainName);
 			List<SiteInformation> list = query.list();
 			// closeSession(); // CSL remove old

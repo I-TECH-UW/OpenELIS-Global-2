@@ -1,6 +1,5 @@
 package spring.mine.config;
 
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -8,7 +7,6 @@ import javax.servlet.ServletRegistration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import us.mn.state.health.lims.analyzerimport.action.AnalyzerImportServlet;
@@ -19,12 +17,10 @@ import us.mn.state.health.lims.common.servlet.reports.ReportsServlet;
 import us.mn.state.health.lims.common.servlet.startup.StartStopListener;
 import us.mn.state.health.lims.common.servlet.validation.AjaxTextServlet;
 import us.mn.state.health.lims.common.servlet.validation.AjaxXMLServlet;
-import us.mn.state.health.lims.common.util.UTF8Filter;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.IndicatorAggregationReportingServlet;
 import us.mn.state.health.lims.dataexchange.order.action.OrderRawServlet;
 import us.mn.state.health.lims.dataexchange.order.action.OrderServlet;
 import us.mn.state.health.lims.metricservice.action.MetricServicesServlet;
-import us.mn.state.health.lims.security.SecurityFilter;
 
 public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 

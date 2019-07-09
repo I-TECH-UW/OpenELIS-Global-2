@@ -18,7 +18,7 @@ package us.mn.state.health.lims.image.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
@@ -35,14 +35,14 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 //		String id = image.getId();
 //		try {
 //			if (id == null) {
-//				id = (String) sessionFactory.getCurrentSession().save(image);
+//				id = (String) entityManager.unwrap(Session.class).save(image);
 //				// closeSession(); // CSL remove old
 //			} else { // this part does not seem to work so we are deleting and then adding as a work
 //						// around
-//				sessionFactory.getCurrentSession().merge(image);
+//				entityManager.unwrap(Session.class).merge(image);
 //				// closeSession(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(image);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(image);
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(image);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(image);
 //			}
 //		} catch (HibernateException e) {
 //			handleException(e, "saveImage");
@@ -54,7 +54,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 //	@Override
 //	public void deleteImage(Image image) throws LIMSRuntimeException {
 //		try {
-//			sessionFactory.getCurrentSession().delete(image);
+//			entityManager.unwrap(Session.class).delete(image);
 //			// closeSession(); // CSL remove old
 //		} catch (Exception e) {
 //			handleException(e, "deleteImage");
@@ -63,9 +63,9 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 
 //	public Image readImage(String idString) {
 //		try {
-//			Image image = sessionFactory.getCurrentSession().get(Image.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Image image = entityManager.unwrap(Session.class).get(Image.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return image;
 //		} catch (Exception e) {
 //			handleException(e, "readImage");

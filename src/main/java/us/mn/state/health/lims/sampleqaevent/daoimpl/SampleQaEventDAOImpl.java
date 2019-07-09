@@ -24,10 +24,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -76,9 +77,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //				SampleQaEvent data = (SampleQaEvent) sampleQaEvents.get(i);
 //				// bugzilla 2206
 //				data = readSampleQaEvent(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// buzilla 2154
@@ -91,15 +92,15 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(sampleQaEvent);
+//			String id = (String) entityManager.unwrap(Session.class).save(sampleQaEvent);
 //			sampleQaEvent.setId(id);
 //
 //			String sysUserId = sampleQaEvent.getSysUserId();
 //			String tableName = "SAMPLE_QAEVENT";
 //			auditDAO.saveNewHistory(sampleQaEvent, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// buzilla 2154
@@ -130,11 +131,11 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleQaEvent);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleQaEvent);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleQaEvent);
+//			entityManager.unwrap(Session.class).merge(sampleQaEvent);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleQaEvent);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleQaEvent);
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "updateData()", e.toString());
@@ -146,7 +147,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	@Transactional(readOnly = true)
 	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
 		try {
-			SampleQaEvent data = sessionFactory.getCurrentSession().get(SampleQaEvent.class, sampleQaEventId);
+			SampleQaEvent data = entityManager.unwrap(Session.class).get(SampleQaEvent.class, sampleQaEventId);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (Exception e) {
@@ -159,9 +160,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	@Transactional(readOnly = true)
 	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		try {
-			SampleQaEvent data = sessionFactory.getCurrentSession().get(SampleQaEvent.class, sampleQaEvent.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			SampleQaEvent data = entityManager.unwrap(Session.class).get(SampleQaEvent.class, sampleQaEvent.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleQaEvent, data);
 			} else {
@@ -177,9 +178,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 	public SampleQaEvent readSampleQaEvent(String idString) {
 		SampleQaEvent sp = null;
 		try {
-			sp = sessionFactory.getCurrentSession().get(SampleQaEvent.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			sp = entityManager.unwrap(Session.class).get(SampleQaEvent.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("SampleQaEventDAOImpl", "readSampleQaEvent()", e.toString());
@@ -196,12 +197,12 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
 		try {
 			String sql = "from SampleQaEvent aqe where aqe.sample = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", sampleQaEvent.getSample().getId());
 
 			sampleQaEvents = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return sampleQaEvents;
 
@@ -220,7 +221,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
 		try {
 			String sql = "from SampleQaEvent aqe where aqe.sample = :sampleId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 
 			sampleQaEvents = query.list();
@@ -242,15 +243,15 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 			// Use an expression to read in the SampleQaEvent whose
 			// sample and qaevent is given
 			String sql = "from SampleQaEvent aqe where aqe.sample = :param and aqe.qaEvent = :param2";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", sampleQaEvent.getSample().getId());
 			query.setParameter("param2", sampleQaEvent.getQaEvent().getId());
 			List list = query.list();
 			if ((list != null) && !list.isEmpty()) {
 				analQaEvent = (SampleQaEvent) list.get(0);
 			}
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -273,7 +274,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
 		try {
 			String sql = "FROM SampleQaEvent sqe WHERE sqe.lastupdated >= :lowDate AND sqe.lastupdated <= :highDate";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
 
@@ -293,7 +294,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 		String sql = "From SampleQaEvent sqa where sqa.completedDate is null";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			List<SampleQaEvent> events = query.list();
 			// closeSession(); // CSL remove old
 			return events;

@@ -20,12 +20,13 @@ package us.mn.state.health.lims.analyte.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -74,11 +75,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				Analyte cloneData = readAnalyte(data.getId());
 //
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// buzilla 2154
@@ -96,7 +97,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			if (duplicateAnalyteExists(analyte)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 //			}
-//			String id = (String) sessionFactory.getCurrentSession().save(analyte);
+//			String id = (String) entityManager.unwrap(Session.class).save(analyte);
 //			analyte.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -105,8 +106,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			String tableName = "ANALYTE";
 //			auditDAO.saveNewHistory(analyte, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// buzilla 2154
@@ -151,11 +152,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(analyte);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(analyte);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyte);
+//			entityManager.unwrap(Session.class).merge(analyte);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(analyte);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(analyte);
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
@@ -166,9 +167,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //	@Override
 //	public void getData(Analyte analyte) throws LIMSRuntimeException {
 //		try {
-//			Analyte anal = sessionFactory.getCurrentSession().get(Analyte.class, analyte.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Analyte anal = entityManager.unwrap(Session.class).get(Analyte.class, analyte.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (anal != null) {
 //				PropertyUtils.copyProperties(analyte, anal);
 //			} else {
@@ -186,11 +187,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		List list = new Vector();
 //		try {
 //			String sql = "from Analyte";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getAllAnalytes()", e.toString());
@@ -209,13 +210,13 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //
 //			// bugzilla 1399
 //			String sql = "from Analyte a order by a.analyteName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getPageOfAnalytes()", e.toString());
@@ -245,14 +246,14 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 //				sql = "from Analyte a where trim(lower (a.analyteName)) like :param  order by a.analyteName";
 //			}
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", newSearchStr);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
@@ -265,9 +266,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //	public Analyte readAnalyte(String idString) {
 //		Analyte analyte = null;
 //		try {
-//			analyte = sessionFactory.getCurrentSession().get(Analyte.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			analyte = entityManager.unwrap(Session.class).get(Analyte.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "readAnalyte()", e.toString());
@@ -283,11 +284,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		List list = new Vector();
 //		try {
 //			String sql = "from Analyte a where upper(a.analyteName) like upper(:param) and a.isActive='Y' order by upper(a.analyteName)";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", filter + "%");
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getAnalytes()", e.toString());
@@ -323,7 +324,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 			} else {
 				sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
 			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			if (ignoreCase) {
 				query.setString("param", analyte.getAnalyteName().trim().toLowerCase());
@@ -332,8 +333,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 			}
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			Analyte ana = null;
 			if (list.size() > 0) {
@@ -362,7 +363,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		List list = new Vector();
 //		try {
 //			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.analyteName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -384,7 +385,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		List list = new Vector();
 //		try {
 //			String sql = "from " + table + " t order by t.analyteName desc where name <= " + enquote(id);
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -417,7 +418,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 				sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
 			}
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", analyte.getAnalyteName().toLowerCase().trim());
 			// bugzilla 2432
 			if (analyte.getLocalAbbreviation() != null) {
@@ -429,8 +430,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 			query.setInteger("id", Integer.parseInt(analyteId));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0;
 		} catch (Exception e) {
@@ -461,12 +462,12 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 //				sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) like :param ";
 //			}
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", newSearchStr);
 //
 //			List results = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (results != null && results.get(0) != null) {
 //				if (results.get(0) != null) {

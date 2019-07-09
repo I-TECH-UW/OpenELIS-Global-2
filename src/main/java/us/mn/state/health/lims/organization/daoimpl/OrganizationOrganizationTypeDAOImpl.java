@@ -19,9 +19,11 @@ package us.mn.state.health.lims.organization.daoimpl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +34,19 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 
 //TODO move to service layer, or other DAOs
 @Component
-@Transactional 
+@Transactional
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
-	@Autowired
-	SessionFactory sessionFactory;
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	@Override
 	public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
 		try {
 			String sql = "delete from organization_organization_type where org_id = :id";
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("id", Integer.parseInt(id));
 			query.executeUpdate();
 		} catch (Exception e) {
@@ -57,7 +60,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
 		try {
 			String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id, :type_id);";
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("org_id", Integer.parseInt(org.getId()));
 			query.setInteger("type_id", Integer.parseInt(typeId));
 			query.executeUpdate();
@@ -76,7 +79,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 		String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("orgTypeId", Integer.parseInt(typeId));
 			orgIdList = query.list();
 
@@ -95,7 +98,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 		String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(organizationId));
 			orgIdList = query.list();
 

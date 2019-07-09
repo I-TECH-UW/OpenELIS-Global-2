@@ -5,10 +5,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
@@ -40,7 +41,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 		List<SystemModuleUrl> list;
 		try {
 			String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("urlPath", urlPath);
 			list = query.list();
 		} catch (Exception e) {
@@ -58,11 +59,11 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 //
 //		try {
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(systemModuleUrl);
+//			String id = (String) entityManager.unwrap(Session.class).save(systemModuleUrl);
 //			systemModuleUrl.setId(id);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// closeSession(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154

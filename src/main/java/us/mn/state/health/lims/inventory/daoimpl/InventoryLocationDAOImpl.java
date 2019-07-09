@@ -15,10 +15,11 @@
 */
 package us.mn.state.health.lims.inventory.daoimpl;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
@@ -38,10 +39,10 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //		List<InventoryLocation> inventoryItems;
 //		try {
 //			String sql = "from InventoryLocation";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			inventoryItems = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "getAllInventoryLocations()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation getAllInventoryLocations()", e);
@@ -68,9 +69,9 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			for (InventoryLocation data : inventoryItems) {
 //
 //				data = readInventoryLocation(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "deleteData()", e.toString());
@@ -81,15 +82,15 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //	@Override
 //	public boolean insertData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
+//			String id = (String) entityManager.unwrap(Session.class).save(inventoryItem);
 //			inventoryItem.setId(id);
 //
 //			String sysUserId = inventoryItem.getSysUserId();
 //			String tableName = "INVENTORY_ITEM";
 //			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "insertData()", e.toString());
@@ -112,11 +113,11 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			String tableName = "INVENTORY_ITEM";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //
-//			sessionFactory.getCurrentSession().merge(inventoryItem);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryItem);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryItem);
+//			entityManager.unwrap(Session.class).merge(inventoryItem);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(inventoryItem);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(inventoryItem);
 //		} catch (Exception e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation updateData()", e);
@@ -126,10 +127,10 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //	@Override
 //	public void getData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
 //		try {
-//			InventoryLocation tmpInventoryLocation = sessionFactory.getCurrentSession().get(InventoryLocation.class,
+//			InventoryLocation tmpInventoryLocation = entityManager.unwrap(Session.class).get(InventoryLocation.class,
 //					inventoryItem.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (tmpInventoryLocation != null) {
 //				PropertyUtils.copyProperties(inventoryItem, tmpInventoryLocation);
 //			} else {
@@ -144,9 +145,9 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
 		InventoryLocation data = null;
 		try {
-			data = sessionFactory.getCurrentSession().get(InventoryLocation.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "readInventoryLocation()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
@@ -158,10 +159,10 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //	@Override
 //	public InventoryLocation getInventoryLocationById(InventoryLocation inventoryItem) throws LIMSRuntimeException {
 //		try {
-//			InventoryLocation re = sessionFactory.getCurrentSession().get(InventoryLocation.class,
+//			InventoryLocation re = entityManager.unwrap(Session.class).get(InventoryLocation.class,
 //					inventoryItem.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return re;
 //		} catch (Exception e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "getInventoryLocationById()", e.toString());

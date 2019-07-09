@@ -22,10 +22,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -72,9 +73,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //				Patient data = (Patient) patients.get(i);
 //				// bugzilla 2206
 //				data = readPatient(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
 //		} catch (Exception e) {
@@ -88,7 +89,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //	public boolean insertData(Patient patient) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(patient);
+//			String id = (String) entityManager.unwrap(Session.class).save(patient);
 //			patient.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -97,8 +98,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //			String tableName = "PATIENT";
 //			auditDAO.saveNewHistory(patient, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PatientDAOImpl", "insertData()", e.toString());
@@ -126,11 +127,11 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(patient);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(patient);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(patient);
+//			entityManager.unwrap(Session.class).merge(patient);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(patient);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(patient);
 //		} catch (Exception e) {
 //			LogEvent.logError("PatientDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Patient updateData()", e);
@@ -141,7 +142,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	@Transactional(readOnly = true)
 	public Patient getData(String patientId) throws LIMSRuntimeException {
 		try {
-			Patient pat = sessionFactory.getCurrentSession().get(Patient.class, patientId);
+			Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patientId);
 			// closeSession(); // CSL remove old
 			if (pat != null) {
 				updateDisplayValues(pat);
@@ -158,9 +159,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	@Transactional(readOnly = true)
 	public void getData(Patient patient) throws LIMSRuntimeException {
 		try {
-			Patient pat = sessionFactory.getCurrentSession().get(Patient.class, patient.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patient.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (pat != null) {
 				updateDisplayValues(pat);
 
@@ -193,10 +194,10 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 		List list = new Vector();
 		try {
 			String sql = "from Patient";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
@@ -215,13 +216,13 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Patient t order by t.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			patients = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -236,9 +237,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	public Patient readPatient(String idString) {
 		Patient pat = null;
 		try {
-			pat = sessionFactory.getCurrentSession().get(Patient.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			pat = entityManager.unwrap(Session.class).get(Patient.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
@@ -271,12 +272,12 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 		try {
 			String sql = "From Patient where external_id = :patientID";
 
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("patientID", patientExternalID);
 
 			results = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient readPatient()", e);
@@ -291,11 +292,11 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
 		try {
 			String sql = "From Patient p where p." + propertyName + " = :" + propertyName;
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString(propertyName, propertyValue);
 			patients = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
@@ -315,7 +316,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 	public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
 		try {
 			String sql = "From Patient p where p.nationalId = :nationalId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("nationalId", nationalId);
 			List<Patient> patients = query.list();
 			// closeSession(); // CSL remove old
@@ -342,12 +343,12 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 		try {
 			String sql = "From Patient p where p.person.id = :personID";
 
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("personID", Integer.parseInt(person.getId()));
 
 			patients = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
@@ -375,7 +376,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 		}
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sqlBuilder.toString());
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sqlBuilder.toString());
 			if (useIdList) {
 				query.setParameterList("statusIdList", inclusiveStatusIdList);
 			}

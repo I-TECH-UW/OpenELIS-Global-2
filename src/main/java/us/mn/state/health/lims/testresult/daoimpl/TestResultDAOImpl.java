@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -72,9 +73,9 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //				TestResult data = (TestResult) testResult;
 //				// bugzilla 2206
 //				data = readTestResult(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -87,7 +88,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //	public boolean insertData(TestResult testResult) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(testResult);
+//			String id = (String) entityManager.unwrap(Session.class).save(testResult);
 //			testResult.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -96,8 +97,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //			String tableName = "TEST_RESULT";
 //			auditDAO.saveNewHistory(testResult, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -126,11 +127,11 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(testResult);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(testResult);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(testResult);
+//			entityManager.unwrap(Session.class).merge(testResult);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(testResult);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(testResult);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "updateData()", e.toString());
@@ -142,9 +143,9 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	@Transactional(readOnly = true)
 	public void getData(TestResult testResult) throws LIMSRuntimeException {
 		try {
-			TestResult tr = sessionFactory.getCurrentSession().get(TestResult.class, testResult.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			TestResult tr = entityManager.unwrap(Session.class).get(TestResult.class, testResult.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tr != null) {
 				PropertyUtils.copyProperties(testResult, tr);
 			} else {
@@ -163,10 +164,10 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 		List list;
 		try {
 			String sql = "from TestResult";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getAllTestResults()", e.toString());
@@ -184,13 +185,13 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 			// calculate maxRow to be one more than the page size
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 			String sql = "from TestResult t order by t.test.description";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getPageOfTestResults()", e.toString());
@@ -203,9 +204,9 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	public TestResult readTestResult(String idString) {
 		TestResult tr;
 		try {
-			tr = sessionFactory.getCurrentSession().get(TestResult.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			tr = entityManager.unwrap(Session.class).get(TestResult.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "readTestResult()", e.toString());
@@ -236,9 +237,9 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 	public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException {
 		TestResult newTestResult;
 		try {
-			newTestResult = sessionFactory.getCurrentSession().get(TestResult.class, testResult.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			newTestResult = entityManager.unwrap(Session.class).get(TestResult.class, testResult.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getTestResultById()", e.toString());
@@ -256,14 +257,14 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 			if (testAnalyte.getId() != null && testAnalyte.getResultGroup() != null) {
 				// bugzilla 1845 added testResult sortOrder
 				String sql = "from TestResult t where t.test = :testId and t.resultGroup = :resultGroup order by t.sortOrder";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 				query.setInteger("testId", Integer.parseInt(testAnalyte.getTest().getId()));
 				query.setInteger("resultGroup", Integer.parseInt(testAnalyte.getResultGroup()));
 
 				list = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -286,12 +287,12 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 		List list;
 		try {
 			String sql = "from TestResult t where t.test = :testId and t.isActive = true order by t.resultGroup, t.id asc";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(test.getId()));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestResultDAOImpl", "getAllActiveTestResultsPerTest()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()", e);
@@ -308,7 +309,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 			List<TestResult> list;
 			try {
 				String sql = "from TestResult t where  t.testResultType in ('D','M','Q') and t.test = :testId and t.value = :testValue";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("testId", Integer.parseInt(testId));
 				query.setString("testValue", result);
 
@@ -335,7 +336,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 		List<TestResult> list;
 		try {
 			String sql = "from TestResult t where  t.test = :testId and t.isActive = true";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 
 			list = query.list();

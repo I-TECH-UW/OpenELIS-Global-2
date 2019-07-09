@@ -23,10 +23,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
@@ -64,9 +65,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		try {
 //			for (UserRole data : roles) {
 //				data = readUserRole(data.getCompoundId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("UserRolesDAOImpl", "deleteData()", e.toString());
@@ -78,15 +79,15 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //	public boolean insertData(UserRole role) throws LIMSRuntimeException {
 //
 //		try {
-//			UserRolePK id = (UserRolePK) sessionFactory.getCurrentSession().save(role);
+//			UserRolePK id = (UserRolePK) entityManager.unwrap(Session.class).save(role);
 //			role.setCompoundId(id);
 //
 //			String sysUserId = role.getSysUserId();
 //			String tableName = "SYSTEM_USER_ROLE";
 //			auditDAO.saveNewHistory(role, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (ConstraintViolationException cve) {
 //			LogEvent.logError("UserRolesDAOImpl", "insertData()-- duplicate record", cve.toString());
@@ -116,11 +117,11 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(role);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(role);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(role);
+//			entityManager.unwrap(Session.class).merge(role);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(role);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(role);
 //		} catch (Exception e) {
 //			LogEvent.logError("UserRolesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole updateData()", e);
@@ -130,9 +131,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //	@Override
 //	public void getData(UserRole role) throws LIMSRuntimeException {
 //		try {
-//			UserRole tmpUserRole = sessionFactory.getCurrentSession().get(UserRole.class, role.getCompoundId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			UserRole tmpUserRole = entityManager.unwrap(Session.class).get(UserRole.class, role.getCompoundId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (tmpUserRole != null) {
 //				PropertyUtils.copyProperties(role, tmpUserRole);
 //			} else {
@@ -149,10 +150,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		List list;
 //		try {
 //			String sql = "from UserRole";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("UserRolesDAOImpl", "getAllUserRoles()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole getAllUserRoles()", e);
@@ -169,13 +170,13 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
 //			String sql = "from UserRole r order by r.id.systemUserId";
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("UserRolesDAOImpl", "getPageOfUserRoles()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole getPageOfUserRoles()", e);
@@ -187,9 +188,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //	public UserRole readUserRole(UserRolePK userRolePK) {
 //		UserRole recoveredUserRole;
 //		try {
-//			recoveredUserRole = sessionFactory.getCurrentSession().get(UserRole.class, userRolePK);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			recoveredUserRole = entityManager.unwrap(Session.class).get(UserRole.class, userRolePK);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("UserRoleDAOImpl", "readUserRole()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole readUserRole()", e);
@@ -215,7 +216,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 
 		try {
 			String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			userRoles = query.list();
 		} catch (Exception e) {
@@ -231,7 +232,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 		try {
 			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
 					+ "where sur.system_user_id = :userId and sr.name = :roleName";
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			query.setString("roleName", roleName);
 			int result = ((BigInteger) query.uniqueResult()).intValue();
@@ -252,7 +253,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 		try {
 			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
 					+ "where sur.system_user_id = :userId and sr.name in (:roleNames)";
-			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			query.setParameterList("roleNames", roleNames);
 			int result = ((BigInteger) query.uniqueResult()).intValue();

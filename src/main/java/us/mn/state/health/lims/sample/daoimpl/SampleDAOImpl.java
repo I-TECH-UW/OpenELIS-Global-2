@@ -28,10 +28,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -79,9 +80,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //				Sample data = (Sample) samples.get(i);
 //				// bugzilla 2206
 //				data = readSample(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -96,15 +97,15 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //
 //		try {
 //			sample.setAccessionNumber(getNextAccessionNumber());
-//			String id = (String) sessionFactory.getCurrentSession().save(sample);
+//			String id = (String) entityManager.unwrap(Session.class).save(sample);
 //			sample.setId(id);
 //
 //			String sysUserId = sample.getSysUserId();
 //			String tableName = "SAMPLE";
 //			auditDAO.saveNewHistory(sample, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
@@ -126,13 +127,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException {
 //		try {
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(sample);
+//			String id = (String) entityManager.unwrap(Session.class).save(sample);
 //			sample.setId(id);
 //
 //			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -162,11 +163,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sample);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sample);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sample);
+//			entityManager.unwrap(Session.class).merge(sample);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sample);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sample);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
@@ -178,17 +179,17 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	@Transactional(readOnly = true)
 	public void getData(Sample sample) throws LIMSRuntimeException {
 		try {
-			Sample samp = sessionFactory.getCurrentSession().get(Sample.class, sample.getId());
+			Sample samp = entityManager.unwrap(Session.class).get(Sample.class, sample.getId());
 
 			if (samp != null) {
 
 				// set sample projects
 				String sql = "from SampleProject sp where samp_id = :sampleId";
-				Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("sampleId", Integer.parseInt(samp.getId()));
 				List list = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 				samp.setSampleProjects(list);
 
@@ -213,13 +214,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Sample s order by s.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			samples = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			Sample samp;
 
@@ -245,11 +246,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	public void getSampleByAccessionNumber(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "from Sample s where s.accessionNumber = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", sample.getAccessionNumber());
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			Sample samp = null;
 			if (list.size() > 0) {
@@ -259,11 +260,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 			if (samp != null) {
 				// set sample projects
 				sql = "from SampleProject sp where samp_id = :param";
-				query = sessionFactory.getCurrentSession().createQuery(sql);
+				query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("param", Integer.parseInt(samp.getId()));
 				List sp = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 				samp.setSampleProjects(sp);
 
 				PropertyUtils.copyProperties(sample, samp);
@@ -280,9 +281,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 	public Sample readSample(String idString) {
 		Sample samp = null;
 		try {
-			samp = sessionFactory.getCurrentSession().get(Sample.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			samp = entityManager.unwrap(Session.class).get(Sample.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleDAOImpl", "readSample()", e.toString());
@@ -303,11 +304,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			List reports = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (reports != null && reports.get(0) != null) {
 				if (reports.get(0) != null) {
@@ -399,7 +400,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 		Sample sample = null;
 		try {
 			String sql = "from Sample s where accession_number = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setParameter("param", accessionNumber);
 			List<Sample> list = query.list();
@@ -420,12 +421,12 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 		List list = new Vector();
 		try {
 			String sql = "from Sample s where status in (:param1) and domain = :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameterList("param1", statuses);
 			query.setParameter("param2", domain);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 
 			// bugzilla 2154
@@ -499,7 +500,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 				}
 			}
 
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			if (filterByDomain) {
 				query.setParameter("param", sample.getDomain());
 			}
@@ -511,8 +512,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param3", statusesToExclude);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesWithPendingQaEvents()", e.toString());
 			throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
@@ -552,7 +553,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 		end.set(Calendar.SECOND, 0);
 		try {
 			String sql = "from Sample as s where s.receivedTimestamp >= :start AND s.receivedTimestamp < :end";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setCalendarDate("start", start);
 			query.setCalendarDate("end", end);
 			list = query.list();
@@ -573,11 +574,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		try {
 			String sql = "from Sample as sample where sample.collectionDate = :date";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setCalendarDate("date", calendar);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesRecievedOn()", he.toString());
@@ -607,7 +608,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 				+ "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
 				+ "s.id in (select sp.sample.id from SampleProject sp where sp.project.id in (:projectId))";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameterList("statusList", inclusiveStatusIdList);
 			query.setParameterList("projectId", inclusiveProjectIdList);
 			query.setString("minAccess", minAccession);
@@ -635,7 +636,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 				+ "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
 				+ "s.id in (select sp.sample.id from SampleProject sp where sp.project.id = :projectId)";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameterList("statusList", inclusiveStatusIdList);
 			query.setInteger("projectId", Integer.parseInt(projectId));
 			query.setString("minAccess", minAccession);
@@ -661,7 +662,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		String sql = "from Sample s where s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("minAccess", minAccession);
 			query.setString("maxAccess", maxAccession);
 
@@ -684,7 +685,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			greatestAccessionNumber = (String) query.uniqueResult();
 
@@ -703,7 +704,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber like :prefix";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("prefix", prefix + "%");
 			greatestAccessionNumber = (String) query.uniqueResult();
 		} catch (Exception e) {
@@ -723,7 +724,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber LIKE :starts and length(s.accessionNumber) = :numberSize";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("starts", startingWith + "%");
 			query.setInteger("numberSize", accessionSize);
 			greatestAccessionNumber = (String) query.uniqueResult();
@@ -741,7 +742,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 		String sql = "Select sqa.sample From SampleQaEvent sqa where sqa.sample.id IN (select sa.sample.id from SampleOrganization sa where sa.organization.id = :serviceId) ";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("serviceId", Integer.parseInt(serviceId));
 			List<Sample> samples = query.list();
 			// closeSession(); // CSL remove old
@@ -759,7 +760,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 			throws LIMSRuntimeException {
 		String sql = "from Sample s where s.isConfirmation = true and s.receivedTimestamp BETWEEN :lowDate AND :highDate";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setDate("lowDate", receivedDateStart);
 			query.setDate("highDate", receivedDateEnd);
 
@@ -779,7 +780,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		String sql = "from Sample s where s.id in (select si.sample.id from SampleItem si where si.id = :sampleitemId)";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("sampleitemId", sampleitemId);
 			List<Sample> sampleList = query.list();
 
@@ -799,7 +800,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
 		String sql = "from Sample s where s.referringId = :referringId";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("referringId", referringId);
 			Sample sample = (Sample) query.uniqueResult();
 

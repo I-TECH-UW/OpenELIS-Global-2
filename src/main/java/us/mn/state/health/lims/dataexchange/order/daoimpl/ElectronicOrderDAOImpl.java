@@ -21,11 +21,12 @@ import java.util.Vector;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
@@ -44,7 +45,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("externalid", id);
 			@SuppressWarnings("unchecked")
 			List<ElectronicOrder> eOrders = query.list();
@@ -62,7 +63,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //
 //			query.setString("patientid", id);
 //			List<ElectronicOrder> eorders = query.list();
@@ -78,7 +79,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //	@Override
 //	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(eOrder);
+//			String id = (String) entityManager.unwrap(Session.class).save(eOrder);
 //			eOrder.setId(id);
 //
 //			auditDAO.saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
@@ -98,11 +99,11 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 //					"ELECTROINIC_ORDER");
 //
-//			sessionFactory.getCurrentSession().merge(eOrder);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(eOrder);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(eOrder);
+//			entityManager.unwrap(Session.class).merge(eOrder);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(eOrder);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(eOrder);
 //		} catch (HibernateException e) {
 //			handleException(e, "updateData");
 //		}
@@ -110,7 +111,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 
 //	public ElectronicOrder readOrder(String idString) {
 //		try {
-//			ElectronicOrder eOrder = sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
+//			ElectronicOrder eOrder = entityManager.unwrap(Session.class).get(ElectronicOrder.class, idString);
 //			// closeSession(); // CSL remove old
 //			return eOrder;
 //		} catch (HibernateException e) {
@@ -126,10 +127,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //		List<ElectronicOrder> list = new Vector<>();
 //		try {
 //			String sql = "from ElectronicOrder";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			handleException(e, "getAllElectronicOrders");
 //		}
@@ -145,15 +146,15 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 		List<ElectronicOrder> list = new Vector<>();
 		try {
 			if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
-				list = sessionFactory.getCurrentSession().createCriteria(ElectronicOrder.class)
+				list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
 						.addOrder(Order.desc("lastupdated")).list();
 			} else {
 
-				list = sessionFactory.getCurrentSession().createCriteria(ElectronicOrder.class)
+				list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
 						.addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
 			}
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllElectronicOrdersOrderedBy");
 		}

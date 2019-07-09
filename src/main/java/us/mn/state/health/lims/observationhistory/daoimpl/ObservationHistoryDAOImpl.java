@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
@@ -72,7 +73,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
 		try {
 
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("value", dictionaryValue);
 
 			observationList = query.list();
@@ -94,7 +95,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		String sql = "from ObservationHistory oh where oh.sampleItemId = :sampleItemId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 
 			List<ObservationHistory> observationList = query.list();
@@ -115,7 +116,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		String sql = "from ObservationHistory oh where oh.sampleId = :sampleId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 
 			List<ObservationHistory> observationList = query.list();
@@ -136,7 +137,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId = :ohTypeId order by oh.lastupdated desc";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientId));
 			query.setInteger("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
@@ -160,7 +161,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		String sql = "from ObservationHistory oh where oh.sampleId = :sampleId and oh.observationHistoryTypeId = :ohTypeId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 			query.setInteger("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
@@ -183,7 +184,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 		String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId = :typeId and oh.valueType = :valueType";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("typeId", Integer.parseInt(typeId));
 			query.setString("value", value);
 			query.setString("valueType", valueType);
@@ -208,7 +209,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 	public List<ObservationHistory> readByExample(ObservationHistory entity) throws LIMSRuntimeException {
 		List<ObservationHistory> results;
 		try {
-			results = sessionFactory.getCurrentSession().createCriteria(entity.getClass()).add(Example.create(entity))
+			results = entityManager.unwrap(Session.class).createCriteria(entity.getClass()).add(Example.create(entity))
 					.list();
 		} catch (Exception e) {
 			throw createAndLogException("readByExample()", e);
