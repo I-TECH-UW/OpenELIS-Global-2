@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
@@ -48,9 +49,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 //
 //				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 //						"SAMPLETYPE_TEST");
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
 //		} catch (Exception e) {
@@ -65,12 +66,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 //
 //		try {
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(typeOfSampleTest);
+//			String id = (String) entityManager.unwrap(Session.class).save(typeOfSampleTest);
 //			typeOfSampleTest.setId(id);
 //
 //			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
@@ -83,9 +84,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	@Transactional(readOnly = true)
 	public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
 		try {
-			TypeOfSampleTest tos = sessionFactory.getCurrentSession().get(TypeOfSampleTest.class, typeOfSample.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			TypeOfSampleTest tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, typeOfSample.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (tos != null) {
 				PropertyUtils.copyProperties(typeOfSample, tos);
 			} else {
@@ -107,12 +108,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 		try {
 			String sql = "from TypeOfSampleTest";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
@@ -131,12 +132,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 			int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
 			String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
@@ -148,9 +149,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 	public TypeOfSampleTest readTypeOfSample(String idString) {
 		TypeOfSampleTest tos;
 		try {
-			tos = sessionFactory.getCurrentSession().get(TypeOfSampleTest.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
@@ -197,13 +198,13 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 			// record with id = currentId
 			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain, tos.description";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -226,13 +227,13 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 		int rrn;
 		try {
 			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -255,7 +256,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 				// so parseInt doesn't throw
 				sampleTypeId = "0";
 			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old
@@ -275,7 +276,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old
@@ -295,7 +296,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old

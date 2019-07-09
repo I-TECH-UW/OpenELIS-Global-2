@@ -19,10 +19,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -65,9 +66,9 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			for (Object gender : genders) {
 //				Gender data = (Gender) gender;
 //				data = readGender(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
@@ -84,15 +85,15 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(gender);
+//			String id = (String) entityManager.unwrap(Session.class).save(gender);
 //			gender.setId(id);
 //
 //			String sysUserId = gender.getSysUserId();
 //			String tableName = "GENDER";
 //			auditDAO.saveNewHistory(gender, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "insertData()", e.toString());
@@ -129,11 +130,11 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(gender);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(gender);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(gender);
+//			entityManager.unwrap(Session.class).merge(gender);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(gender);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(gender);
 //		} catch (Exception e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
@@ -144,9 +145,9 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //	@Override
 //	public void getData(Gender gender) throws LIMSRuntimeException {
 //		try {
-//			Gender gen = sessionFactory.getCurrentSession().get(Gender.class, gender.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Gender gen = entityManager.unwrap(Session.class).get(Gender.class, gender.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (gen != null) {
 //				PropertyUtils.copyProperties(gender, gen);
 //			} else {
@@ -164,12 +165,12 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //		List list;
 //		try {
 //			String sql = "from Gender";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			// query.setMaxResults(10);
 //			// query.setFirstResult(3);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getAllGenders()", e.toString());
@@ -187,14 +188,14 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
 //			String sql = "from Gender g order by g.description, g.genderType";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //			// query.setCacheMode(org.hibernate.CacheMode.REFRESH);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getPageOfGenders()", e.toString());
@@ -207,9 +208,9 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //	public Gender readGender(String idString) {
 //		Gender gender;
 //		try {
-//			gender = sessionFactory.getCurrentSession().get(Gender.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			gender = entityManager.unwrap(Session.class).get(Gender.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "readGender()", e.toString());
@@ -230,7 +231,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 	public Gender getGenderByType(String type) throws LIMSRuntimeException {
 		String sql = "From Gender g where g.genderType = :type";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("type", type);
 			Gender gender = (Gender) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -261,13 +262,13 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //
 //		try {
 //			String sql = "select g.id from Gender g order by g.description, g.genderType";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			int rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -288,13 +289,13 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //
 //		try {
 //			String sql = "select g.id from Gender g order by g.description desc, g.genderType desc";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			int rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -316,7 +317,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -328,8 +329,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 			query.setInteger("genderId", Integer.parseInt(genderId));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0;
 

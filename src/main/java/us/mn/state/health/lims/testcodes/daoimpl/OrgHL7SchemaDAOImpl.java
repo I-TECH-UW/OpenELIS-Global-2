@@ -18,10 +18,11 @@ package us.mn.state.health.lims.testcodes.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testcodes.dao.OrgHL7SchemaDAO;
 import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
@@ -41,7 +42,7 @@ public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, Orga
 		String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("id", orgId);
 			OrganizationHL7Schema hs = (OrganizationHL7Schema) query.uniqueResult();
 			// closeSession(); // CSL remove old

@@ -20,10 +20,11 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -69,9 +70,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 //				Provider data = (Provider) providers.get(i);
 //				// bugzilla 2206
 //				data = readProvider(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -84,15 +85,15 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 //	public boolean insertData(Provider provider) throws LIMSRuntimeException {
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(provider);
+//			String id = (String) entityManager.unwrap(Session.class).save(provider);
 //			provider.setId(id);
 //
 //			String sysUserId = provider.getSysUserId();
 //			String tableName = "PROVIDER";
 //			auditDAO.saveNewHistory(provider, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("ProviderDAOImpl", "insertData()", e.toString());
@@ -122,11 +123,11 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(provider);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(provider);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(provider);
+//			entityManager.unwrap(Session.class).merge(provider);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(provider);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(provider);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProviderDAOImpl", "updateData()", e.toString());
@@ -138,9 +139,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	@Transactional(readOnly = true)
 	public void getData(Provider provider) throws LIMSRuntimeException {
 		try {
-			Provider prov = sessionFactory.getCurrentSession().get(Provider.class, provider.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Provider prov = entityManager.unwrap(Session.class).get(Provider.class, provider.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (prov != null) {
 				PropertyUtils.copyProperties(provider, prov);
 			} else {
@@ -159,10 +160,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 		List list = new Vector();
 		try {
 			String sql = "from Provider";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "getAllProviders()", e.toString());
@@ -181,13 +182,13 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Provider p order by p.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "getPageOfProviders()", e.toString());
@@ -200,9 +201,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 	public Provider readProvider(String idString) {
 		Provider provider = null;
 		try {
-			provider = sessionFactory.getCurrentSession().get(Provider.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "readProvider()", e.toString());
@@ -235,12 +236,12 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 		List<Provider> list = null;
 		try {
 			String sql = "from Provider p where p.person.id = :personId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(person.getId()));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ProviderDAOImpl", "getProviderByPerson()", e.toString());
 			throw new LIMSRuntimeException("Error in Provider getProviderByPerson()", e);

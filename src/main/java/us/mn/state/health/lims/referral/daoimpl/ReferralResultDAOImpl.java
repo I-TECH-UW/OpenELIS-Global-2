@@ -22,10 +22,11 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
@@ -43,7 +44,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 //	@Override
 //	public boolean insertData(ReferralResult referralResult) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(referralResult);
+//			String id = (String) entityManager.unwrap(Session.class).save(referralResult);
 //			referralResult.setId(id);
 //
 //			auditDAO.saveNewHistory(referralResult, referralResult.getSysUserId(), "referral_result");
@@ -60,7 +61,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 	public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = sessionFactory.getCurrentSession().get(ReferralResult.class,
+				ReferralResult referralResult = entityManager.unwrap(Session.class).get(ReferralResult.class,
 						referralResultId);
 				// closeSession(); // CSL remove old
 				return referralResult;
@@ -79,7 +80,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 			String sql = "from ReferralResult rr where rr.referralId = :referralId order by rr.id";
 
 			try {
-				Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("referralId", Integer.parseInt(referralId));
 				List<ReferralResult> resultList = query.list();
 
@@ -98,7 +99,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 	private ReferralResult readReferralResult(String referralResultId) {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = sessionFactory.getCurrentSession().get(ReferralResult.class,
+				ReferralResult referralResult = entityManager.unwrap(Session.class).get(ReferralResult.class,
 						referralResultId);
 				// closeSession(); // CSL remove old
 				return referralResult;
@@ -122,11 +123,11 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(referralResult);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(referralResult);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(referralResult);
+//			entityManager.unwrap(Session.class).merge(referralResult);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(referralResult);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(referralResult);
 //		} catch (HibernateException e) {
 //			handleException(e, "updateData");
 //		}
@@ -146,7 +147,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().delete(oldData);
+//			entityManager.unwrap(Session.class).delete(oldData);
 //			// closeSession(); // CSL remove old
 //		} catch (HibernateException e) {
 //			handleException(e, "deleteData");
@@ -160,7 +161,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 		String sql = "From ReferralResult rr where rr.result.id= :resultId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("resultId", Integer.parseInt(resultId));
 			List<ReferralResult> referralResults = query.list();
 

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
@@ -40,6 +41,7 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 @Service
+@Scope("prototype")
 public class PatientManagementUpdate implements IPatientUpdate {
 
 	private String currentUserId;
@@ -288,7 +290,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
 					if ((listIdentity.getIdentityData() == null && !GenericValidator.isBlankOrNull(paramValue))
 							|| (listIdentity.getIdentityData() != null
-									&& !listIdentity.getIdentityData().equals(paramValue))) {
+							&& !listIdentity.getIdentityData().equals(paramValue))) {
 						listIdentity.setIdentityData(paramValue);
 						identityService.update(listIdentity);
 					}

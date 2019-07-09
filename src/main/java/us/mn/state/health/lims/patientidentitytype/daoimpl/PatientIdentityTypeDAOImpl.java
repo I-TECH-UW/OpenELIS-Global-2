@@ -22,10 +22,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
@@ -49,11 +50,11 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 		List<PatientIdentityType> list = null;
 		try {
 			String sql = "from PatientIdentityType";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllPatientIdenityTypes");
 		}
@@ -70,13 +71,13 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 //						"Duplicate record exists for " + patientIdentityType.getIdentityType());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(patientIdentityType);
+//			String id = (String) entityManager.unwrap(Session.class).save(patientIdentityType);
 //			patientIdentityType.setId(id);
 //
 //			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (HibernateException e) {
 //			handleException(e, "insertData");
 //		} catch (LIMSDuplicateRecordException e) {
@@ -90,7 +91,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 			throws LIMSRuntimeException {
 		try {
 			String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
@@ -112,7 +113,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 		String sql = "from PatientIdentityType t where t.identityType = :identityType";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("identityType", name);
 			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
 			// closeSession(); // CSL remove old

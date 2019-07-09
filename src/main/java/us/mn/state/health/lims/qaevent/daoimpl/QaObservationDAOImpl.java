@@ -18,10 +18,11 @@ package us.mn.state.health.lims.qaevent.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
@@ -38,7 +39,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 //	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException {
 //		try {
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(qaObservation);
+//			String id = (String) entityManager.unwrap(Session.class).save(qaObservation);
 //			qaObservation.setId(id);
 //
 //			auditDAO.saveNewHistory(qaObservation, qaObservation.getSysUserId(), "QA_OBSERVATION");
@@ -63,11 +64,11 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(qaObservation);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(qaObservation);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaObservation);
+//			entityManager.unwrap(Session.class).merge(qaObservation);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(qaObservation);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(qaObservation);
 //		} catch (Exception e) {
 //			handleException(e, "updateData");
 //		}
@@ -80,7 +81,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 		String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("observationName", typeName);
 			query.setString("observedType", observedType);
 			query.setInteger("observedId", Integer.parseInt(observedId));
@@ -96,7 +97,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 	public QaObservation readQaObservation(String idString) {
 		QaObservation qaObservation = null;
 		try {
-			qaObservation = sessionFactory.getCurrentSession().get(QaObservation.class, idString);
+			qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
 			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "readQaObservation");

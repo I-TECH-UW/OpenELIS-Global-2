@@ -17,10 +17,11 @@ package us.mn.state.health.lims.samplepdf.daoimpl;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.samplepdf.dao.SamplePdfDAO;
@@ -42,14 +43,14 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
 		Boolean isFound = false;
 		try {
 			String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", accessionNumber);
 			List list = query.list();
 			if ((list != null) && !list.isEmpty()) {
 				isFound = true;
 			}
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
@@ -65,7 +66,7 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
 	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
 		try {
 			String sql = "from SamplePdf s where s.accessionNumber = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", samplePdf.getAccessionNumber());
 
 			List list = query.list();
@@ -73,8 +74,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
 				samplePdf = (SamplePdf) list.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());

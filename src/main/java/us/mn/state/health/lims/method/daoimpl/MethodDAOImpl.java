@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -69,11 +70,11 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //
 //				// Make the change to the object.
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -91,7 +92,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(method);
+//			String id = (String) entityManager.unwrap(Session.class).save(method);
 //			method.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +101,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			String tableName = "METHOD";
 //			auditDAO.saveNewHistory(method, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -142,11 +143,11 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(method);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(method);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(method);
+//			entityManager.unwrap(Session.class).merge(method);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(method);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(method);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "updateData()", e.toString());
@@ -157,9 +158,9 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	@Override
 //	public void getData(Method method) throws LIMSRuntimeException {
 //		try {
-//			Method meth = sessionFactory.getCurrentSession().get(Method.class, method.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Method meth = entityManager.unwrap(Session.class).get(Method.class, method.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (meth != null) {
 //
 //				if (meth.getActiveBeginDate() != null) {
@@ -185,10 +186,10 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		List list = new Vector();
 //		try {
 //			String sql = "from Method";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -208,13 +209,13 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //
 //			// bugzilla 1399
 //			String sql = "from Method m order by m.methodName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -228,9 +229,9 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	public Method readMethod(String idString) {
 //		Method method = null;
 //		try {
-//			method = sessionFactory.getCurrentSession().get(Method.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			method = entityManager.unwrap(Session.class).get(Method.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "readMethod()", e.toString());
@@ -260,12 +261,12 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 		List list = new Vector();
 		try {
 			String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
@@ -279,12 +280,12 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	public Method getMethodByName(Method method) throws LIMSRuntimeException {
 //		try {
 //			String sql = "from Method m where m.methodName = :param and m.isActive='Y'";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", method.getMethodName());
 //
 //			List list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			Method m = null;
 //			if (list.size() > 0) {
 //				m = (Method) list.get(0);
@@ -312,7 +313,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		List list = new Vector();
 //		try {
 //			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.methodName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -334,7 +335,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		List list = new Vector();
 //		try {
 //			String sql = "from " + table + " t order by t.methodName desc where name <= " + enquote(id);
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(1);
 //			query.setMaxResults(2);
 //
@@ -358,7 +359,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", method.getMethodName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated yet
@@ -369,8 +370,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 			query.setParameter("param2", methodId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

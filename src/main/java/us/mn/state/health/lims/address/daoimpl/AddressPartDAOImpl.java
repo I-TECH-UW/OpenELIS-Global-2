@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional

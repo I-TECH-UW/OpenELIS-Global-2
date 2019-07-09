@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional
@@ -48,9 +48,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			for (Analyzer data : analyzers) {
 //
 //				data = readAnalyzer(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
@@ -64,10 +64,10 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //		List<Analyzer> analyzer;
 //		try {
 //			String sql = "from Analyzer";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			analyzer = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
@@ -79,9 +79,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	@Override
 //	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
 //		try {
-//			Analyzer re = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Analyzer re = entityManager.unwrap(Session.class).get(Analyzer.class, analyzer.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return re;
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
@@ -93,7 +93,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException {
 //		String sql = "From Analyzer a where a.name = :name";
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("name", name);
 //			Analyzer analyzer = (Analyzer) query.uniqueResult();
 //			// closeSession(); // CSL remove old
@@ -107,9 +107,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	@Override
 //	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
 //		try {
-//			Analyzer tmpAnalyzer = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Analyzer tmpAnalyzer = entityManager.unwrap(Session.class).get(Analyzer.class, analyzer.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (tmpAnalyzer != null) {
 //				PropertyUtils.copyProperties(analyzer, tmpAnalyzer);
 //			} else {
@@ -124,15 +124,15 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	@Override
 //	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(analyzer);
+//			String id = (String) entityManager.unwrap(Session.class).save(analyzer);
 //			analyzer.setId(id);
 //
 //			String sysUserId = analyzer.getSysUserId();
 //			String tableName = "ANALYZER";
 //			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
@@ -155,11 +155,11 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			String tableName = "ANALYZER";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //
-//			sessionFactory.getCurrentSession().merge(analyzer);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(analyzer);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyzer);
+//			entityManager.unwrap(Session.class).merge(analyzer);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(analyzer);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(analyzer);
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
@@ -170,9 +170,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException {
 //		Analyzer data = null;
 //		try {
-//			data = sessionFactory.getCurrentSession().get(Analyzer.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			data = entityManager.unwrap(Session.class).get(Analyzer.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);

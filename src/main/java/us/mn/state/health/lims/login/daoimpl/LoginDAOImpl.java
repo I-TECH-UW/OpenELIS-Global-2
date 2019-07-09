@@ -20,10 +20,11 @@ package us.mn.state.health.lims.login.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -68,9 +69,9 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //				Login data = (Login) logins.get(i);
 //				// bugzilla 2206
 //				data = readLoginUser(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -89,7 +90,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //
 //			// Crypto crypto = new Crypto();
 //			PasswordUtil passUtil = new PasswordUtil();
-//			String id = (String) sessionFactory.getCurrentSession().save(login);
+//			String id = (String) entityManager.unwrap(Session.class).save(login);
 //			login.setId(id);
 //			// login.setPassword(crypto.getEncrypt(login.getPassword()));
 //			login.setPassword(passUtil.hashPassword(login.getPassword()));
@@ -100,8 +101,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			String tableName = "LOGIN_USER";
 //			auditDAO.saveNewHistory(login, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "insertData()", e.toString());
@@ -148,11 +149,11 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(login);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			entityManager.unwrap(Session.class).merge(login);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
@@ -163,9 +164,9 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	@Override
 //	public void getData(Login login) throws LIMSRuntimeException {
 //		try {
-//			Login l = sessionFactory.getCurrentSession().get(Login.class, login.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			Login l = entityManager.unwrap(Session.class).get(Login.class, login.getId());
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (l != null) {
 //				// Crypto crypto = new Crypto();
 //				// l.setPassword(crypto.getDecrypt(l.getPassword()));
@@ -185,10 +186,10 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		List list = new Vector();
 //		try {
 //			String sql = "from Login";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getAllLogins()", e.toString());
@@ -206,13 +207,13 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
 //			String sql = "from Login l order by l.loginName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getPageOfLogins()", e.toString());
@@ -225,11 +226,11 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	public Login readLoginUser(String idString) {
 //		Login l = null;
 //		try {
-//			l = sessionFactory.getCurrentSession().get(Login.class, idString);
+//			l = entityManager.unwrap(Session.class).get(Login.class, idString);
 //			// Crypto crypto = new Crypto();
 //			// l.setPassword(crypto.getDecrypt(l.getPassword()));
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "readLoginUser()", e.toString());
@@ -265,13 +266,13 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		int rrn = 0;
 //		try {
 //			String sql = "select l.id from Login l order by l.loginName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -292,13 +293,13 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		int rrn = 0;
 //		try {
 //			String sql = "select l.id from Login l order by l.loginName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -317,7 +318,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 			List list = new ArrayList();
 
 			String sql = "from Login l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
 
 			String loginId = "0";
@@ -328,8 +329,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 			query.setInteger("loginId", Integer.parseInt(loginId));
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -356,13 +357,13 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		try {
 //			List list = new ArrayList();
 //			String sql = "from Login l where l.loginName = :param1";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param1", login.getLoginName());
 //			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (list.size() > 0) {
 //				loginData = (Login) list.get(0);
@@ -411,12 +412,12 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		try {
 //			List list = new ArrayList();
 //			String sql = "from Login l where l.loginName = :param";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", loginName);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			if (list.size() > 0) {
 //				login = (Login) list.get(0);
@@ -445,7 +446,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
-			Object obj = sessionFactory.getCurrentSession().getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
+			Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
 					.setString("loginName", login.getLoginName()).uniqueResult();
 			if (obj != null) {
 				retVal = Integer.parseInt(obj.toString());
@@ -471,7 +472,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	public int getSystemUserId(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
-			Object obj = sessionFactory.getCurrentSession().getNamedQuery("login.getSystemUserId")
+			Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getSystemUserId")
 					.setString("loginName", login.getLoginName()).uniqueResult();
 
 			if (obj != null) {
@@ -483,8 +484,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 			LogEvent.logError("LoginDAOImpl", "getSystemUserId()", e.toString());
 			throw new LIMSRuntimeException("Error in getSystemUserId()", e);
 		} finally {
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		}
 
 		return retVal;
@@ -510,11 +511,11 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
 //
-//			sessionFactory.getCurrentSession().merge(login);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			entityManager.unwrap(Session.class).merge(login);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -533,11 +534,11 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	public boolean lockAccount(Login login) throws LIMSRuntimeException {
 //		boolean isSuccess = false;
 //		try {
-//			sessionFactory.getCurrentSession().merge(login);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			entityManager.unwrap(Session.class).merge(login);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //			isSuccess = true;
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -557,11 +558,11 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	public boolean unlockAccount(Login login) throws LIMSRuntimeException {
 //		boolean isSuccess = false;
 //		try {
-//			sessionFactory.getCurrentSession().merge(login);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			entityManager.unwrap(Session.class).merge(login);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //			isSuccess = true;
 //		} catch (Exception e) {
 //			// bugzilla 2154

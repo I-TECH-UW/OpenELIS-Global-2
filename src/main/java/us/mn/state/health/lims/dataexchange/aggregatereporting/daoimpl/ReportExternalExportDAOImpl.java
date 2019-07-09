@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
@@ -84,7 +85,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setTimestamp("lower", lower);
 			query.setTimestamp("upper", upper);
 			List<ReportExternalExport> reports = query.list();
@@ -102,7 +103,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 //	@Override
 //	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(report);
+//			String id = (String) entityManager.unwrap(Session.class).save(report);
 //			report.setId(id);
 //			// closeSession(); // CSL remove old
 //		} catch (HibernateException e) {
@@ -114,11 +115,11 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 //	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(report);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
+//			entityManager.unwrap(Session.class).merge(report);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(report);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(report);
 //		} catch (Exception e) {
 //			handleException(e, "updateReportExternalExport");
 //		}
@@ -128,7 +129,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalExport data = sessionFactory.getCurrentSession().get(ReportExternalExport.class, idString);
+			ReportExternalExport data = entityManager.unwrap(Session.class).get(ReportExternalExport.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
@@ -140,7 +141,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	@SuppressWarnings("unchecked")
 	private List<ReportExternalExport> handleListResultWithTypeId(String sql, String typeId) {
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			List<ReportExternalExport> reports = query.list();
 
@@ -156,7 +157,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
 	private ReportExternalExport handleMaxResultWithTypeId(String typeId, String sql) {
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 
@@ -176,7 +177,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old
 			if (report != null) {
@@ -194,7 +195,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old
 			if (report != null) {
@@ -212,7 +213,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate < :nextDay and ree.typeId = :typeId";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setDate("eventDate", report.getEventDate());
 			query.setDate("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
 			query.setInteger("typeId", Integer.parseInt(report.getTypeId()));
@@ -234,7 +235,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 //	@Override
 //	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
 //		try {
-//			sessionFactory.getCurrentSession().delete(readReportExternalExport(report.getId()));
+//			entityManager.unwrap(Session.class).delete(readReportExternalExport(report.getId()));
 //			// closeSession(); // CSL remove old
 //		} catch (Exception e) {
 //			handleException(e, "delete");

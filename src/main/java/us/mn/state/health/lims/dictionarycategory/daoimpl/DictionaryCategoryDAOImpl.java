@@ -21,10 +21,11 @@ package us.mn.state.health.lims.dictionarycategory.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -70,9 +71,9 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //				DictionaryCategory data = (DictionaryCategory) dictionaryCategorys.get(i);
 //				// bugzilla 2206
 //				data = readDictionaryCategory(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -91,7 +92,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //						"Duplicate record exists for " + dictionaryCategory.getCategoryName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(dictionaryCategory);
+//			String id = (String) entityManager.unwrap(Session.class).save(dictionaryCategory);
 //			dictionaryCategory.setId(id);
 //
 //			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +101,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			String tableName = "DICTIONARY_CATEGORY";
 //			auditDAO.saveNewHistory(dictionaryCategory, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "insertData()", e.toString());
@@ -143,12 +144,12 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(dictionaryCategory);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove
+//			entityManager.unwrap(Session.class).merge(dictionaryCategory);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove
 //			// old(dictionaryCategory);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(dictionaryCategory);
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -160,10 +161,10 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //	@Override
 //	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException {
 //		try {
-//			DictionaryCategory cc = sessionFactory.getCurrentSession().get(DictionaryCategory.class,
+//			DictionaryCategory cc = entityManager.unwrap(Session.class).get(DictionaryCategory.class,
 //					dictionaryCategory.getId());
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			if (cc != null) {
 //				PropertyUtils.copyProperties(dictionaryCategory, cc);
 //			} else {
@@ -182,13 +183,13 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //
 //		try {
 //			String sql = "from DictionaryCategory";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			// query.setMaxResults(10);
 //			// query.setFirstResult(3);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getAllDictionaryCategorys()", e.toString());
@@ -206,13 +207,13 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //
 //			// bugzilla 1399
 //			String sql = "from DictionaryCategory cc order by cc.description, cc.categoryName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getPageOfDictionaryCategorys()", e.toString());
@@ -225,9 +226,9 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //	public DictionaryCategory readDictionaryCategory(String idString) {
 //		DictionaryCategory dc = null;
 //		try {
-//			dc = sessionFactory.getCurrentSession().get(DictionaryCategory.class, idString);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			dc = entityManager.unwrap(Session.class).get(DictionaryCategory.class, idString);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "readDictionaryCategory()", e.toString());
@@ -270,13 +271,13 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			// instead get the list in this sortorder and determine the index of record with
 //			// id = currentId
 //			String sql = "select dc.id from DictionaryCategory dc " + " order by dc.description, dc.categoryName";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -303,13 +304,13 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			// id = currentId
 //			String sql = "select dc.id from DictionaryCategory dc "
 //					+ " order by dc.description desc, dc.categoryName desc";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			rrn = list.indexOf(String.valueOf(currentId));
 //
-//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
 //		} catch (Exception e) {
@@ -336,7 +337,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 					+ "((trim(lower(t.categoryName)) = :param and t.id != :param3) " + "or "
 					+ "(trim(lower(t.description)) = :param2 and t.id != :param3) " + "or "
 					+ "(trim(lower(t.localAbbreviation)) = :param4 and t.id != :param3)) ";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", dictionaryCategory.getCategoryName().toLowerCase().trim());
 			query.setParameter("param2", dictionaryCategory.getDescription().toLowerCase().trim());
 			query.setParameter("param4", dictionaryCategory.getLocalAbbreviation().toLowerCase().trim());
@@ -350,8 +351,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 			query.setParameter("param3", dictId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -374,7 +375,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //	public List<DictionaryCategory> readByExample(DictionaryCategory entity) throws LIMSRuntimeException {
 //		List<DictionaryCategory> results;
 //		try {
-//			results = sessionFactory.getCurrentSession().createCriteria(DictionaryCategory.class)
+//			results = entityManager.unwrap(Session.class).createCriteria(DictionaryCategory.class)
 //					.add(Example.create(entity)).list();
 //		} catch (Exception e) {
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "readByExample()", e.toString());
@@ -389,7 +390,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //
 //		String sql = "from DictionaryCategory dc where dc.categoryName = :name";
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("name", name);
 //
 //			List<DictionaryCategory> categoryList = query.list();

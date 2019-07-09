@@ -18,10 +18,11 @@ package us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
@@ -40,7 +41,7 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String>
 		String sql = "from ReportQueueType rqt where rqt.name = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", name);
 			ReportQueueType type = (ReportQueueType) query.uniqueResult();
 			// closeSession(); // CSL remove old

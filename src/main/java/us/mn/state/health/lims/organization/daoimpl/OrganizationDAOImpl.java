@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -76,11 +76,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //
 //				// Make the change to the object.
 //				cloneData.setIsActive(IActionConstants.NO);
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -98,13 +98,13 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //						"Duplicate record exists for " + organization.getOrganizationName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(organization);
+//			String id = (String) entityManager.unwrap(Session.class).save(organization);
 //			organization.setId(id);
 //
 //			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
@@ -145,11 +145,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(organization);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(organization);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(organization);
+//			entityManager.unwrap(Session.class).merge(organization);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(organization);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(organization);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
@@ -161,9 +161,9 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	@Transactional(readOnly = true)
 	public void getData(Organization organization) throws LIMSRuntimeException {
 		try {
-			Organization org = sessionFactory.getCurrentSession().get(Organization.class, organization.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			Organization org = entityManager.unwrap(Session.class).get(Organization.class, organization.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (org != null) {
 				PropertyUtils.copyProperties(organization, org);
 			} else {
@@ -183,10 +183,10 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		List list = new Vector();
 		try {
 			String sql = "from Organization";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getAllOrganizations()", e.toString());
@@ -206,13 +206,13 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 			// bugzilla 1399
 			String sql = "from Organization o order by o.organizationName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getPageOfOrganizations()", e.toString());
@@ -243,14 +243,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "from Organization o where trim(lower (o.organizationName)) like :param  order by o.organizationName";
 			}
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", newSearchStr);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
@@ -263,9 +263,9 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	public Organization readOrganization(String idString) {
 		Organization org = null;
 		try {
-			org = sessionFactory.getCurrentSession().get(Organization.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			org = entityManager.unwrap(Session.class).get(Organization.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "readOrganization()", e.toString());
@@ -282,12 +282,12 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		List list = new Vector();
 		try {
 			String sql = "from Organization o where upper(o.organizationName) like upper(:param) and o.isActive='Y' order by upper(o.organizationName)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getOrganizations()", e.toString());
@@ -325,7 +325,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				sql = "from Organization o where o.organizationName = :param and o.isActive='Y'";
 			}
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			if (ignoreCase) {
 				query.setString("param", organization.getOrganizationName().trim().toLowerCase());
 			} else {
@@ -333,8 +333,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			}
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -362,7 +362,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				sql = "from Organization o where o.organizationLocalAbbreviation = :param and o.isActive='Y'";
 			}
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			if (ignoreCase) {
 				query.setParameter("param", organization.getOrganizationLocalAbbreviation().trim().toLowerCase());
 			} else {
@@ -370,8 +370,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			}
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -401,7 +401,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.organizationName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -424,7 +424,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.organizationName desc where name <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -451,7 +451,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				String sql = "from Organization o where ((trim(lower(o.organizationName))) = :orgName and o.isActive='Y' and o.id != :orgId)"
 						+ " or "
 						+ "((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("orgName", organization.getOrganizationName().toLowerCase().trim());
 
 				// initialize with 0 (for new records where no id has been generated yet
@@ -468,8 +468,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				query.setParameter("orgAbrv", organizationLocalAbbrev);
 
 				list = query.list();
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			}
 
@@ -508,12 +508,12 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "select count (*) from Organization o where trim(lower (o.organizationName)) like :param ";
 			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -554,7 +554,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			if (null != orderByProperty) {
 				sql += " ORDER BY o." + orderByProperty;
 			}
-			Session session = sessionFactory.getCurrentSession();
+			Session session = entityManager.unwrap(Session.class);
 			Query query = session.createQuery(sql).setParameterList("names", typeNames);
 			@SuppressWarnings("unchecked")
 			List<Organization> orgs = query.list();
@@ -576,7 +576,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		try {
 			String sql = "SELECT o FROM Organization AS o INNER JOIN o.organizationTypes AS ot WHERE ot.name = :typeName "
 					+ " AND o.isActive = 'Y' AND upper(o.organizationName) like upper(:partialName) order by upper(o.organizationName)";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("typeName", typeName);
 			query.setParameter("partialName", partialName + "%");
 			@SuppressWarnings("unchecked")
@@ -598,7 +598,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			String sql = "from Organization o where o.id = :organizationId";
 
 			try {
-				Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setInteger("organizationId", Integer.parseInt(organizationId));
 				Organization organization = (Organization) query.uniqueResult();
 
@@ -635,7 +635,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		String sql = "from Organization o where o.organization.id = :parentId order by o.id";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("parentId", Integer.parseInt(parentId));
 			List<Organization> orgs = query.list();
 

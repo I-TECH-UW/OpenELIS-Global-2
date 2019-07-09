@@ -20,10 +20,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
@@ -42,7 +43,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 //	@Override
 //	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(referringTestResult);
+//			String id = (String) entityManager.unwrap(Session.class).save(referringTestResult);
 //			referringTestResult.setId(id);
 //
 //			auditDAO.saveNewHistory(referringTestResult, referringTestResult.getSysUserId(), "REFERRING_TEST_RESULT");
@@ -61,7 +62,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 			throws LIMSRuntimeException {
 		String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 			List<ReferringTestResult> list = query.list();
 			// closeSession(); // CSL remove old
@@ -77,7 +78,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 	public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
 		String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
 

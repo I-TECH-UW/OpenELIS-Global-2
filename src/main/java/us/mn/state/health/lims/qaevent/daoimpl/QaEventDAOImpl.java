@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -69,11 +70,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 //				QaEvent data = (QaEvent) qaEvents.get(i);
 //				QaEvent cloneData = readQaEvent(data.getId());
 //
-//				sessionFactory.getCurrentSession().merge(cloneData);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//				entityManager.unwrap(Session.class).merge(cloneData);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
+//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -90,15 +91,15 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(qaEvent);
+//			String id = (String) entityManager.unwrap(Session.class).save(qaEvent);
 //			qaEvent.setId(id);
 //
 //			String sysUserId = qaEvent.getSysUserId();
 //			String tableName = "QA_EVENT";
 //			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -138,11 +139,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(qaEvent);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(qaEvent);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaEvent);
+//			entityManager.unwrap(Session.class).merge(qaEvent);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(qaEvent);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(qaEvent);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
@@ -154,9 +155,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	@Transactional(readOnly = true)
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
-			QaEvent qaEv = sessionFactory.getCurrentSession().get(QaEvent.class, qaEvent.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			QaEvent qaEv = entityManager.unwrap(Session.class).get(QaEvent.class, qaEvent.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (qaEv != null) {
 				PropertyUtils.copyProperties(qaEvent, qaEv);
 
@@ -176,10 +177,10 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		List list;
 		try {
 			String sql = "from QaEvent qe order by qe.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("QaEventDAOImpl", "getAllQaEvents()", e.toString());
@@ -198,13 +199,13 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from QaEvent qe order by qe.qaEventName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -218,9 +219,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	public QaEvent readQaEvent(String idString) {
 		QaEvent qaEvent = null;
 		try {
-			qaEvent = sessionFactory.getCurrentSession().get(QaEvent.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			qaEvent = entityManager.unwrap(Session.class).get(QaEvent.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("QaEventDAOImpl", "readQaEvent()", e.toString());
@@ -252,12 +253,12 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		List list = new Vector();
 		try {
 			String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by upper(qe.qaEventName)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("QaEventDAOImpl", "getQaEvents()", e.toString());
@@ -272,12 +273,12 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
 			String sql = "from QaEvent qe where qe.qaEventName = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", qaEvent.getQaEventName());
 
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			QaEvent qe = null;
 			if (list.size() > 0) {
 				qe = (QaEvent) list.get(0);
@@ -305,7 +306,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.qaEventName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -327,7 +328,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.qaEventName desc where name <= " + enquote(id);
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -354,7 +355,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 					+ "or "
 					+ "(trim(lower(t.description)) = :param4 and trim(lower(t.type)) = :param3 and t.id != :param2)) ";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
 			query.setParameter("param3", qaEvent.getType());
 			query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());
@@ -367,8 +368,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 			query.setParameter("param2", qaEventId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

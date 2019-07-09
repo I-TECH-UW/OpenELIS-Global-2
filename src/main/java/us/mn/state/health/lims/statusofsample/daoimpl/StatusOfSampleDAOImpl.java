@@ -20,10 +20,11 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -50,12 +51,12 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 		try {
 			// AIS - bugzilla 1546 - Used Upper
 			String sql = "from StatusOfSample ss where UPPER(ss.statusType) = UPPER(:param) and ss.code = :param2";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", statusofsample.getStatusType());
 			query.setParameter("param2", statusofsample.getCode());
 			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			StatusOfSample statusOfSamp = null;
 
@@ -95,7 +96,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 //				throw new LIMSDuplicateRecordException(sb.toString());
 //			}
 //
-//			String id = (String) sessionFactory.getCurrentSession().save(statusOfSample);
+//			String id = (String) entityManager.unwrap(Session.class).save(statusOfSample);
 //
 //			statusOfSample.setId(id);
 //
@@ -105,8 +106,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 //			String tableName = "STATUS_OF_SAMPLE";
 //			auditDAO.saveNewHistory(statusOfSample, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			// bugzilla 2154
@@ -160,11 +161,11 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(statusOfSample);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(statusOfSample);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(statusOfSample);
+//			entityManager.unwrap(Session.class).merge(statusOfSample);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(statusOfSample);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(statusOfSample);
 //		} catch (Exception e) {
 //			// bugzilla 2154
 //			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
@@ -183,9 +184,9 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	public void getData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
 
 		try {
-			StatusOfSample sos = sessionFactory.getCurrentSession().get(StatusOfSample.class, statusOfSample.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			StatusOfSample sos = entityManager.unwrap(Session.class).get(StatusOfSample.class, statusOfSample.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (sos != null) {
 				PropertyUtils.copyProperties(statusOfSample, sos);
 			} else {
@@ -211,10 +212,10 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 		List list = new Vector();
 		try {
 			String sql = "from StatusOfSample sos order by sos.statusOfSampleName ";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("StatusOfSampleDAOImpl", "getAllStatusOfSamples()", e.toString());
@@ -243,13 +244,13 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
 			// bugzilla 1399
 			String sql = "from StatusOfSample s order by s.statusType, s.code";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -270,9 +271,9 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
 		StatusOfSample sos = null;
 		try {
-			sos = sessionFactory.getCurrentSession().get(StatusOfSample.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			sos = entityManager.unwrap(Session.class).get(StatusOfSample.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("StatusOfSampleDAOImpl", "readStatusOfSample()", e.toString());
@@ -351,13 +352,13 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 			// id = currentId
 			String sql = "select sos.id from StatusOfSample sos " + " order by sos.statusType, sos.code";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -394,13 +395,13 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 			// id = currentId
 			String sql = "select sos.id from StatusOfSample sos " + " order by sos.statusType desc, sos.code desc";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -430,7 +431,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from StatusOfSample t where trim(lower(t.code)) = :param and trim(lower(t.statusType)) = :param2 and t.id != :param3";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", statusOfSample.getCode().toLowerCase().trim());
 			query.setParameter("param2", statusOfSample.getStatusType().toLowerCase().trim());
 
@@ -443,8 +444,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 			query.setParameter("param3", statusOfSampleId);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

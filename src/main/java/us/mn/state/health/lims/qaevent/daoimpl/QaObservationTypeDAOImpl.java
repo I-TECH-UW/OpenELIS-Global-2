@@ -18,10 +18,11 @@ package us.mn.state.health.lims.qaevent.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.qaevent.dao.QaObservationTypeDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
@@ -40,7 +41,7 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, Str
 		String sql = "FROM QaObservationType where name = :name";
 
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setString("name", typeName);
 			QaObservationType type = (QaObservationType) query.uniqueResult();
 			// closeSession(); // CSL remove old

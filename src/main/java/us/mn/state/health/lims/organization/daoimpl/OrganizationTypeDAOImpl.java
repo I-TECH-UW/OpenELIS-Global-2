@@ -23,7 +23,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.organization.dao.OrganizationTypeDAO;
@@ -45,10 +45,10 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 		List<OrganizationType> list = null;
 		try {
 			String sql = "from OrganizationType";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
 			throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
@@ -63,14 +63,14 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 		String sql = null;
 		try {
 			sql = "from OrganizationType o where o.name = :name";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setString("name", name);
 
 			@SuppressWarnings("unchecked")
 			List<OrganizationType> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list.size() > 0 ? list.get(0) : null;
 
@@ -87,7 +87,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 		String sql = null;
 		try {
 			sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
-			Session session = sessionFactory.getCurrentSession();
+			Session session = entityManager.unwrap(Session.class);
 			org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
 			@SuppressWarnings("unchecked")
 			OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);

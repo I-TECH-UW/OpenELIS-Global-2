@@ -24,10 +24,11 @@ import java.util.Set;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -74,9 +75,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 //				SampleItem data = sampleItems.get(i);
 //
 //				data = readSampleItem(data.getId());
-//				sessionFactory.getCurrentSession().delete(data);
-//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				entityManager.unwrap(Session.class).delete(data);
+//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleItemDAOImpl", "deleteData()", e.toString());
@@ -91,15 +92,15 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 //		}
 //
 //		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(sampleItem);
+//			String id = (String) entityManager.unwrap(Session.class).save(sampleItem);
 //			sampleItem.setId(id);
 //
 //			String sysUserId = sampleItem.getSysUserId();
 //			String tableName = "SAMPLE_ITEM";
 //			auditDAO.saveNewHistory(sampleItem, sysUserId, tableName);
 //
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleItemDAOImpl", "insertData()", e.toString());
@@ -127,11 +128,11 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 //		}
 //
 //		try {
-//			sessionFactory.getCurrentSession().merge(sampleItem);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleItem);
-//			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleItem);
+//			entityManager.unwrap(Session.class).merge(sampleItem);
+//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleItem);
+//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleItem);
 //		} catch (Exception e) {
 //			LogEvent.logError("SampleItemDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleItem updateData()", e);
@@ -142,9 +143,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	@Transactional(readOnly = true)
 	public void getData(SampleItem sampleItem) throws LIMSRuntimeException {
 		try {
-			SampleItem sampleIt = sessionFactory.getCurrentSession().get(SampleItem.class, sampleItem.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			SampleItem sampleIt = entityManager.unwrap(Session.class).get(SampleItem.class, sampleItem.getId());
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			if (sampleIt != null) {
 				PropertyUtils.copyProperties(sampleItem, sampleIt);
 			} else {
@@ -160,7 +161,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	@Transactional(readOnly = true)
 	public SampleItem getData(String sampleItemId) throws LIMSRuntimeException {
 		try {
-			SampleItem sampleItem = sessionFactory.getCurrentSession().get(SampleItem.class, sampleItemId);
+			SampleItem sampleItem = entityManager.unwrap(Session.class).get(SampleItem.class, sampleItemId);
 			// closeSession(); // CSL remove old
 			return sampleItem;
 		} catch (Exception e) {
@@ -177,10 +178,10 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 		List<SampleItem> list;
 		try {
 			String sql = "from SampleItem";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SampleItemDAOImpl", "getAllSampleItems()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleItem getAllSampleItems()", e);
@@ -199,13 +200,13 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from SampleItem s order by s.id";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("SampleItemDAOImpl", "getPageOfSampleItems()", e.toString());
@@ -218,9 +219,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	public SampleItem readSampleItem(String idString) {
 		SampleItem samp = null;
 		try {
-			samp = sessionFactory.getCurrentSession().get(SampleItem.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			samp = entityManager.unwrap(Session.class).get(SampleItem.class, idString);
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("SampleItemDAOImpl", "readSampleItem()", e.toString());
@@ -254,30 +255,30 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 		// Use an expression to read in the Sample_Item by SAMP_ID
 		try {
 			String sql = "from SampleItem si where samp_id = :param";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setInteger("param", Integer.parseInt(sampleItem.getSample().getId()));
 			@SuppressWarnings("unchecked")
 			List<SampleItem> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 			SampleItem si = null;
 			if (!list.isEmpty()) {
 				si = list.get(0);
 
 				TypeOfSample tos = null;
 				if (si.getTypeOfSampleId() != null) {
-					tos = sessionFactory.getCurrentSession().get(TypeOfSample.class, si.getTypeOfSampleId());
-					// sessionFactory.getCurrentSession().flush(); // CSL remove old
-					// sessionFactory.getCurrentSession().clear(); // CSL remove old
+					tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, si.getTypeOfSampleId());
+					// entityManager.unwrap(Session.class).flush(); // CSL remove old
+					// entityManager.unwrap(Session.class).clear(); // CSL remove old
 					si.setTypeOfSample(tos);
 				}
 				SourceOfSample sos = null;
 				if (si.getSourceOfSampleId() != null) {
-					sos = sessionFactory.getCurrentSession().get(SourceOfSample.class, si.getSourceOfSampleId());
+					sos = entityManager.unwrap(Session.class).get(SourceOfSample.class, si.getSourceOfSampleId());
 					si.setSourceOfSample(sos);
-					// sessionFactory.getCurrentSession().flush(); // CSL remove old
-					// sessionFactory.getCurrentSession().clear(); // CSL remove old
+					// entityManager.unwrap(Session.class).flush(); // CSL remove old
+					// entityManager.unwrap(Session.class).clear(); // CSL remove old
 				}
 				PropertyUtils.copyProperties(sampleItem, si);
 			}
@@ -295,11 +296,11 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 		try {
 			String sql = "from SampleItem sampleItem where sampleItem.sample.id = :sampleId order by sampleItem.sortOrder";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(id));
 			List<SampleItem> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list;
 
@@ -320,12 +321,12 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 	public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
 		try {
 			String sql = "from SampleItem si where si.sample.id = :sampleId and si.typeOfSample.id = :typeOfSampleId";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 			query.setInteger("typeOfSampleId", Integer.parseInt(typeOfSample.getId()));
 			List<SampleItem> list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return list;
 
@@ -345,7 +346,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
 		try {
 			String sql = "from SampleItem sampleItem where sampleItem.sample.id = :sampleId and sampleItem.statusId in ( :statusIds ) order by sampleItem.sortOrder";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(id));
 			query.setParameterList("statusIds", includedStatusList);
 			@SuppressWarnings("unchecked")

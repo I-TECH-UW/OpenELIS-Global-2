@@ -18,13 +18,14 @@ package us.mn.state.health.lims.citystatezip.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
 import us.mn.state.health.lims.citystatezip.valueholder.CityView;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -53,7 +54,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		try {
 			String sql = "from CityView csz where upper(csz.city) like upper(:param) order by upper(csz.city)";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", filter + "%");
 			// for performance
 			query.setMaxResults(100);
@@ -68,8 +69,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				cityStateZips.add(csz);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getCities()", e.toString());
@@ -87,7 +88,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
 			String sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param";
 
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 
 			List list = query.list();
@@ -108,8 +109,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				cityStateZips.add(csz);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return cityStateZips;
 
@@ -126,7 +127,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		List<CityStateZip> cityStateZips = new ArrayList<>();
 		try {
 			String sql = "select distinct csz.city, csz.zipCode from CityStateZip csz where csz.zipCode = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", cityStateZip.getZipCode().trim());
 
 			List list = query.list();
@@ -161,7 +162,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		try {
 			// bugzilla 1908 postgres error on order by
 			String sql = "select distinct upper(csz.state) from CityStateZip csz order by upper(csz.state)";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			List list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
@@ -189,7 +190,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		CityStateZip csz = null;
 		try {
 			String sql = "from CityStateZip csz where upper(csz.city)) = :param and csz.zipCode = :param2";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 			query.setParameter("param2", cityStateZip.getZipCode());
 
@@ -199,8 +200,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				csz = list.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -218,7 +219,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.state from CityStateZip csz where upper(csz.state) = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getState().trim().toUpperCase());
 			List list = query.list();
@@ -237,8 +238,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				csz = cityStateZips.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "CityStateZip()", e.toString());
@@ -256,7 +257,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.city from CityStateZip csz where upper(csz.city) = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 			List list = query.list();
@@ -275,8 +276,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				csz = cityStateZips.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getCity()", e.toString());
@@ -294,7 +295,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		CityStateZip csz = null;
 		try {
 			String sql = "select distinct csz.zipCode from CityStateZip csz where upper(csz.zipCode) = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
 			query.setParameter("param", cityStateZip.getZipCode().trim().toUpperCase());
 			List list = query.list();
@@ -313,8 +314,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				csz = cityStateZips.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getZip()", e.toString());
@@ -338,7 +339,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2 and upper(csz.state) = :param3";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
 				query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
@@ -346,40 +347,40 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			} else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
 				list = query.list();
 			} else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
 				list = query.list();
 			} else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.zipCode, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
 				query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
 				list = query.list();
 			} else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(zipCode)
 					&& !StringUtil.isNullorNill(city)) {
 				sql = "select distinct csz.city from CityStateZip csz where upper(csz.city) = :param";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				list = query.list();
 			} else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.zipCode from CityStateZip csz where csz.zipCode = :param2";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
 				list = query.list();
 			} else if (StringUtil.isNullorNill(city) && StringUtil.isNullorNill(zipCode)
 					&& !StringUtil.isNullorNill(state)) {
 				sql = "select distinct csz.state from CityStateZip csz where upper(csz.state) = :param3";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
 				list = query.list();
 			} else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
@@ -391,8 +392,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				isValid = true;
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return isValid;
 
@@ -424,7 +425,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 					&& !StringUtil.isNullorNill(zipCode)) {
 				// first get all where city matches (and state)
 				sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3 order by csz.zipCode";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
 				listByCity = query.list();
@@ -443,7 +444,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				}
 				// now get all where zip matches (and state)
 				sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3 order by csz.city";
-				org.hibernate.Query query2 = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query2 = entityManager.unwrap(Session.class).createQuery(sql);
 				query2.setParameter("param2", cityStateZip.getZipCode().trim());
 				query2.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
 				listByZip = query2.list();
@@ -466,7 +467,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				// all matches for city and zip regardless of state
 				if (cityStateZips.size() == 0) {
 					sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
-					org.hibernate.Query query3 = sessionFactory.getCurrentSession().createQuery(sql);
+					org.hibernate.Query query3 = entityManager.unwrap(Session.class).createQuery(sql);
 					query3.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 					listByCity = query3.list();
 					for (int i = 0; i < listByCity.size(); i++) {
@@ -484,7 +485,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 					}
 					// now get all where zip matches
 					sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
-					org.hibernate.Query query4 = sessionFactory.getCurrentSession().createQuery(sql);
+					org.hibernate.Query query4 = entityManager.unwrap(Session.class).createQuery(sql);
 					query4.setParameter("param2", cityStateZip.getZipCode().trim());
 					listByZip = query4.list();
 					int k = cityStateZips.size();
@@ -505,7 +506,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			} else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.state";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				list = query.list();
 				for (int i = 0; i < list.size(); i++) {
@@ -524,7 +525,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			} else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 				listByCity = query.list();
 				for (int i = 0; i < listByCity.size(); i++) {
@@ -542,7 +543,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				}
 				// now get all where zip matches
 				sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
-				org.hibernate.Query query2 = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query2 = entityManager.unwrap(Session.class).createQuery(sql);
 				query2.setParameter("param2", cityStateZip.getZipCode().trim());
 				listByZip = query2.list();
 				int k = cityStateZips.size();
@@ -562,7 +563,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 			} else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
 					&& !StringUtil.isNullorNill(zipCode)) {
 				sql = "select distinct csz.state, csz.zipCode from CityStateZip csz where csz.zipCode = :param2 order by csz.state";
-				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+				org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 				query.setParameter("param2", cityStateZip.getZipCode().trim());
 				list = query.list();
 				for (int i = 0; i < list.size(); i++) {
@@ -580,8 +581,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				}
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 			return cityStateZips;
 
@@ -617,7 +618,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 		String countyCode = null;
 		try {
 
-			List list = sessionFactory.getCurrentSession().getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
+			List list = entityManager.unwrap(Session.class).getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
 					.setParameter("param", cityStateZip.getState().trim().toUpperCase())
 					.setParameter("param2", cityStateZip.getZipCode().trim()).list();
 
@@ -625,8 +626,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 				countyCode = (String) list.get(0);
 			}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("CityStateZipDAOImpl", "getCountyCodeByStateAndZipCode()", e.toString());

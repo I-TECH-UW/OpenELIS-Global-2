@@ -19,7 +19,7 @@ package us.mn.state.health.lims.reports.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import  us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.reports.dao.DocumentTypeDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
@@ -36,7 +36,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> imple
 //		String sql = "Select from DocumentType dt where name = :name";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("name", name);
 //			DocumentType docType = (DocumentType) query.uniqueResult();
 //			// closeSession(); // CSL remove old
@@ -51,7 +51,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> imple
 //		String sql = "From DocumentType dt where dt.name = :name";
 //
 //		try {
-//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setString("name", name);
 //			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
 //			// closeSession(); // CSL remove old
