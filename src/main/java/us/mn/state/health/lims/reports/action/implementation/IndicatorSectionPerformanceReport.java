@@ -92,8 +92,8 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
 	}
 
 	@Override
-	public HashMap<String, ?> getReportParameters() throws IllegalStateException {
-		return new HashMap<String, String>();
+	public HashMap<String, Object> getReportParameters() throws IllegalStateException {
+		return new HashMap<>();
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
 	private void addValidationItems() {
 		List<Integer> includedStatusList = new ArrayList<>();
 		includedStatusList
-				.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+		.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
 
 		List<Analysis> bioAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(BIOCHEMISTRY_SECTION_ID,
 				includedStatusList, true);
