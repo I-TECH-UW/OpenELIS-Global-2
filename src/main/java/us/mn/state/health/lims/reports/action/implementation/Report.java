@@ -104,12 +104,12 @@ public abstract class Report implements IReportCreator {
 		reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance().getDefaultLocale());
 	}
 
-//	@Deprecated
-//	private Object getImage(String siteName) {
-//		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(siteName);
-//		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-//				: imageService.retrieveImageInputStream(siteInformation.getValue());
-//	}
+	//	@Deprecated
+	//	private Object getImage(String siteName) {
+	//		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(siteName);
+	//		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
+	//				: imageService.retrieveImageInputStream(siteInformation.getValue());
+	//	}
 
 	/**
 	 *
@@ -226,7 +226,7 @@ public abstract class Report implements IReportCreator {
 	public abstract JRDataSource getReportDataSource() throws IllegalStateException;
 
 	@Override
-	public HashMap<String, ?> getReportParameters() throws IllegalStateException {
+	public HashMap<String, Object> getReportParameters() throws IllegalStateException {
 		if (!initialized) {
 			throw new IllegalStateException("initializeReport not called first");
 		}

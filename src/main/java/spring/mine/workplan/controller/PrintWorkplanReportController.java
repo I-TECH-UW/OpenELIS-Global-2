@@ -62,7 +62,7 @@ public class PrintWorkplanReportController extends BaseController {
 		workplanReport.setReportPath(getReportPath());
 
 		// set jasper report parameters
-		HashMap<String, ?> parameterMap = workplanReport.getParameters();
+		HashMap<String, Object> parameterMap = workplanReport.getParameters();
 
 		// prepare report
 		List<?> workplanRows = workplanReport.prepareRows(form);
