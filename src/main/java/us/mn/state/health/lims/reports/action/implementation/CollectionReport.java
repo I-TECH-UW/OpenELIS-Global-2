@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.lowagie.text.DocumentException;
@@ -68,7 +69,7 @@ public abstract class CollectionReport implements IReportCreator {
 
 	@Override
 	public void initializeReport(BaseForm form) {
-		handledOrders = new HashSet<String>();
+		handledOrders = new HashSet<>();
 		this.form = form;
 	}
 
@@ -81,10 +82,10 @@ public abstract class CollectionReport implements IReportCreator {
 	public byte[] runReport() throws Exception {
 		List<byte[]> byteList = generateReports();
 		if (byteList.isEmpty()) {
-			HashMap<String, String> parameterMap = new HashMap<String, String>();
+			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("SUBREPORT_DIR", reportPath);
 			parameterMap.put("directorName", ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
-			List<ErrorMessages> errorMsgs = new ArrayList<ErrorMessages>();
+			List<ErrorMessages> errorMsgs = new ArrayList<>();
 			ErrorMessages msgs = new ErrorMessages();
 			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
 			errorMsgs.add(msgs);
@@ -138,8 +139,9 @@ public abstract class CollectionReport implements IReportCreator {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (outputStream != null)
+				if (outputStream != null) {
 					outputStream.close();
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
@@ -174,8 +176,9 @@ public abstract class CollectionReport implements IReportCreator {
 		return PatientUtil.getPatientByIdentificationNumber(patientId);
 	}
 
+	@Override
 	public List<String> getReportedOrders() {
-		List<String> orderList = new ArrayList<String>();
+		List<String> orderList = new ArrayList<>();
 		orderList.addAll(handledOrders);
 		return orderList;
 	}

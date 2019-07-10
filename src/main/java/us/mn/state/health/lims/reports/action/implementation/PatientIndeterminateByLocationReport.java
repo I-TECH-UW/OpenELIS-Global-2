@@ -32,7 +32,7 @@ import us.mn.state.health.lims.reports.action.implementation.reportBeans.Indeter
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 
 public class PatientIndeterminateByLocationReport extends PatientIndeterminateReport
-		implements IReportParameterSetter, IReportCreator {
+implements IReportParameterSetter, IReportCreator {
 
 	private String lowDateStr;
 	private String highDateStr;
@@ -121,7 +121,7 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
 	}
 
 	@Override
-	public HashMap<String, ?> getReportParameters() throws IllegalStateException {
+	public HashMap<String, Object> getReportParameters() throws IllegalStateException {
 		return super.getReportParameters();
 	}
 
