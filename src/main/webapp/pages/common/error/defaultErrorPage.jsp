@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*">
+<%@ page language="java" import="java.util.*"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
