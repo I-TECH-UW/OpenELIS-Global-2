@@ -144,12 +144,7 @@ public class PatientManagementInfo implements Serializable {
 	private String otherNationality;
 
 	// for display
-	private static List<IdValuePair> genders;
 	private static List<Dictionary> addressDepartments;
-	private static List<IdValuePair> healthRegions;
-	private static List<IdValuePair> educationList;
-	private static List<IdValuePair> maritialList;
-	private static List<IdValuePair> nationalityList;
 
 	private boolean readOnly = false;
 
@@ -315,14 +310,8 @@ public class PatientManagementInfo implements Serializable {
 		this.occupation = occupation;
 	}
 
-	public void setGenders(List<IdValuePair> genderList) {
-		genders = genderList;
-	}
-
 	public List<IdValuePair> getGenders() {
-			genders = DisplayListService.getInstance().getList(ListType.GENDERS);
-
-		return genders;
+		return DisplayListService.getInstance().getList(ListType.GENDERS);
 	}
 
 	public void setPatientTypes(List<PatientType> patientTypes) {
@@ -363,14 +352,7 @@ public class PatientManagementInfo implements Serializable {
 	}
 
 	public List<IdValuePair> getHealthRegions() {
-		if (healthRegions == null) {
-			healthRegions = DisplayListService.getInstance().getList(ListType.PATIENT_HEALTH_REGIONS);
-		}
-		return healthRegions;
-	}
-
-	public void setHealthRegions(List<IdValuePair> healthRegions) {
-		PatientManagementInfo.healthRegions = healthRegions;
+		return DisplayListService.getInstance().getList(ListType.PATIENT_HEALTH_REGIONS);
 	}
 
 	public String getHealthRegion() {
@@ -390,36 +372,15 @@ public class PatientManagementInfo implements Serializable {
 	}
 
 	public List<IdValuePair> getEducationList() {
-		if (educationList == null) {
-			educationList = DisplayListService.getInstance().getList(ListType.PATIENT_EDUCATION);
-		}
-		return educationList;
-	}
-
-	public void setEducationList(List<IdValuePair> educationList) {
-		PatientManagementInfo.educationList = educationList;
+		return DisplayListService.getInstance().getList(ListType.PATIENT_EDUCATION);
 	}
 
 	public List<IdValuePair> getMaritialList() {
-		if (maritialList == null) {
-			maritialList = DisplayListService.getInstance().getList(ListType.PATIENT_MARITAL_STATUS);
-		}
-		return maritialList;
-	}
-
-	public void setMaritialList(List<IdValuePair> maritialList) {
-		PatientManagementInfo.maritialList = maritialList;
+		return DisplayListService.getInstance().getList(ListType.PATIENT_MARITAL_STATUS);
 	}
 
 	public List<IdValuePair> getNationalityList() {
-		if (nationalityList == null) {
-			nationalityList = DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);
-		}
-		return nationalityList;
-	}
-
-	public void setNationalityList(List<IdValuePair> nationalityList) {
-		PatientManagementInfo.nationalityList = nationalityList;
+		return DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);
 	}
 
 	public String getOtherNationality() {
