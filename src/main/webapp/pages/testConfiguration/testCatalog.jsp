@@ -43,16 +43,16 @@
 %>
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
     function sectionSelection(checkbox) {
-        var element = $jq(checkbox).val();
+        var element = jQuery(checkbox).val();
         if (checkbox.checked) {
-            $jq("#" + element).show();
+            jQuery("#" + element).show();
         } else {
-            $jq("#" + element).hide();
+            jQuery("#" + element).hide();
         }
     }
 
@@ -60,22 +60,22 @@
         var checked = checkbox.checked;
         var element;
 
-        $jq(".testSection").each(function () {
-            element = $jq(this);
+        jQuery(".testSection").each(function () {
+            element = jQuery(this);
             element.prop('checked', checked);
             if (checked) {
-                $jq("#" + element.val()).show();
+                jQuery("#" + element.val()).show();
             } else {
-                $jq("#" + element.val()).hide();
+                jQuery("#" + element.val()).hide();
             }
         })
     }
 
     function guideSelection(checkbox) {
         if (checkbox.checked) {
-            $jq("#guide").show();
+            jQuery("#guide").show();
         } else {
-            $jq("#guide").hide();
+            jQuery("#guide").hide();
         }
     }
 

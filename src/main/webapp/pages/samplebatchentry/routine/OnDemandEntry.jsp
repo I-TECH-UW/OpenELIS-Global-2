@@ -24,30 +24,30 @@ function formWarning(){
 function printLabel() {
 	inPrintState = false;
 	setSave();
-	$jq("#nextButtonId").prop('disabled', false);
-	var labNo = $jq("#labNo").val();
-	var patientId = $jq("#lastPatientId").val();
-	$jq("#barcodeArea").show();
+	jQuery("#nextButtonId").prop('disabled', false);
+	var labNo = jQuery("#labNo").val();
+	var patientId = jQuery("#lastPatientId").val();
+	jQuery("#barcodeArea").show();
 	//make request to LabelMakerServlet
 	var src = "LabelMakerServlet?labNo=" + labNo + "&patientId=" + patientId;
-	$jq("#ifbarcode").attr('src', src);
+	jQuery("#ifbarcode").attr('src', src);
 }
 
 function nextLabel() {
 	inPrintState = true;
 	setSave();
-	$jq("#nextButtonId").prop('disabled', true);
+	jQuery("#nextButtonId").prop('disabled', true);
 	moveAccessionToRecentArea();
-	$jq("#labNo").val("");
+	jQuery("#labNo").val("");
 }
 
 //Add accession number to recent area
 function moveAccessionToRecentArea() {
-	var $recentTextArea = $jq("#recentSummary");
+	var $recentTextArea = jQuery("#recentSummary");
 	if ($recentTextArea.val()) {
 		lineSeparator = "\n";
 	}
-	var newRecent = $jq("#labNo").val() + lineSeparator + $recentTextArea.val();
+	var newRecent = jQuery("#labNo").val() + lineSeparator + $recentTextArea.val();
 	if ((newRecent.match(/\n/g)||[]).length >= 3) {
 		newRecent = newRecent.slice(0,newRecent.lastIndexOf("\n"));
 	}
@@ -76,14 +76,14 @@ function processScanSuccess(xhr) {
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     var success = message.firstChild.nodeValue == "valid";
     if (success) {
-        $jq("#labNo").val(returnedData);
+        jQuery("#labNo").val(returnedData);
     } else {
         alert("<%= MessageUtil.getMessage("error.accession.no.next") %>");
-        $jq("#labNo").val("");
+        jQuery("#labNo").val("");
     }
     selectFieldErrorDisplay(success, document.getElementById("labNo"));
     setValidIndicaterOnField(success, "labNo");
-    $jq("#labNo").trigger('change');
+    jQuery("#labNo").trigger('change');
 }
 
 //called once accession number is validated on server
@@ -111,8 +111,8 @@ function setPatientThenPrintLabel() {
     var subjectNumber = "";
     var nationalID = "";
     var labNumber = "";
-	labNumber = $jq("#labNo").val();
-    $jq("#searchLabNumber").val(labNumber);
+	labNumber = jQuery("#labNo").val();
+    jQuery("#searchLabNumber").val(labNumber);
     patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccessPrint);
 }
 
@@ -124,11 +124,11 @@ function processSearchSuccessPrint(xhr) {
 	if( message.firstChild.nodeValue == "valid" ) {
 		var resultNode = formField.getElementsByTagName("result").item(0);
 		var id = resultNode.getElementsByTagName("id").item(0);
-		$jq("#lastPatientId").val(id.firstChild.nodeValue);
+		jQuery("#lastPatientId").val(id.firstChild.nodeValue);
 	}
 	if (window.hasIdentifyingInfo) {
 		//fill out patient management form if any "identifying info" was provided
-		if (hasIdentifyingInfo() && !$jq("#patientPK_ID").val()) {
+		if (hasIdentifyingInfo() && !jQuery("#patientPK_ID").val()) {
 			processSearchSuccess(xhr);
 			searchDone = true;
 		} 

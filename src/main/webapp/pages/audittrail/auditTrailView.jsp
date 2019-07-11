@@ -93,7 +93,7 @@ function submit(){
         </div>
 		<div class="row-fluid">
 			<div class="span12">		
-				<div id="loading" class="loading-note"><img src="<%=basePath%>/images/indicator.gif" /><spring:message code="loading" /></div>
+				<div id="loading" class="loading-note"><img src="<%=basePath%>images/indicator.gif" /><spring:message code="loading" /></div>
 				<table class="table table-small table-hover table-bordered table-striped" id="advancedTable">
 					<thead>
 				    	<tr id="rowHeader">

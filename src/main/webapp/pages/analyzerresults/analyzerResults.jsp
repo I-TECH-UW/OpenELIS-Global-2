@@ -54,7 +54,7 @@ pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 
 
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
 
 			pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );

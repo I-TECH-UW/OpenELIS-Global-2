@@ -76,7 +76,7 @@ var currentRequestSampleIndex;
 
 function handleMultiSelectChange( e, data ){
 	var id = "#multi" + e.target.id;
-	var selection = $jq(id)[0];
+	var selection = jQuery(id)[0];
 
 	if( data.type == "add"){
 		appendValueToElementValue( selection, data.value );
@@ -126,7 +126,7 @@ function processGetTestSuccess(xhr){
    	var test;
    	var length = tests.length;
 
-   	var requestingTests = $jq(".requestingTests_" + currentRequestSampleIndex );
+   	var requestingTests = jQuery(".requestingTests_" + currentRequestSampleIndex );
    	var requestedTestTable = $("requestedTests_" + currentRequestSampleIndex  );
 
 	enableDisableAndClearRequestedTests(requestedTestTable, currentRequestSampleIndex );
@@ -208,7 +208,7 @@ function addNewRequesterTestResult(addButtonElement, sampleIndex){  //request fo
 
 	newRow.className = "extraTest_" + sampleIndex;
         // Jquery fix for IE bug where value of cloned text input remains
-        $jq("." + newRow.className).find("#textResult_" + compoundIndex).val('');
+        jQuery("." + newRow.className).find("#textResult_" + compoundIndex).val('');
 	maxReferralElement.value = newTestIndex;
 }
 
@@ -220,7 +220,7 @@ function addNewRequesterSample( ){ // a new sample which came in with the reques
 	var protoIDPattern = /[0-9]_[0-9]/g; //this has to do with the order of replacements
 	var selectPrototype;
 
- 	var clone = $jq("#div_0" ).clone(true, true);
+ 	var clone = jQuery("#div_0" ).clone(true, true);
 	clone.attr("id", "div_" + sampleIndex);
 	clone.find(".sampleIndex").val( sampleIndex );
 	clone.find("#requesterSampleId_0").val("");
@@ -235,7 +235,7 @@ function addNewRequesterSample( ){ // a new sample which came in with the reques
 	                              "\" class=\"textButton\"  onclick=\"removeRequesterTest( this, \'" + sampleIndex +  "\' );\" ></td>");
 	
 	if( clone.find("div")){
-		selectPrototype = $jq("#prototypeID").clone(true, true);
+		selectPrototype = jQuery("#prototypeID").clone(true, true);
 		selectPrototype.attr("id", "initialCondition_" + sampleIndex);
 		selectPrototype.attr("multiple", "multiple");
 		clone.find("div").replaceWith( selectPrototype );
@@ -256,10 +256,10 @@ function addNewRequesterSample( ){ // a new sample which came in with the reques
 	clone.find(".extraTest_" + sampleIndex).remove();
 	
 
-	$jq("#div_" + (sampleIndex - 1) ).after(clone);
+	jQuery("#div_" + (sampleIndex - 1) ).after(clone);
 	
 	if(selectPrototype){
-		$jq("#initialCondition_" + sampleIndex).asmSelect({removeLabel: "X"});
+		jQuery("#initialCondition_" + sampleIndex).asmSelect({removeLabel: "X"});
 		selectPrototype.attr("selectedIndex", -1);
 	}	
 	
@@ -400,12 +400,12 @@ function /*string*/ getTests( sampleIndex ){
 
 function getTest( sampleIndex, testIndex ){
 	var compoundIndex = sampleIndex + "_" + testIndex;
-	var requesterTestPreformed = $jq("#requestedTests_" + compoundIndex);
+	var requesterTestPreformed = jQuery("#requestedTests_" + compoundIndex);
 
 	if( jQuery.trim(requesterTestPreformed.val()).length > 0 ){
 		var name = requesterTestPreformed.val();
 		var resultType;
-		var value = $jq("#textResult_" + compoundIndex).val();
+		var value = jQuery("#textResult_" + compoundIndex).val();
 
 		return "<test name='" + name + "' resultType='A' value='" + value +  "' />";
 	}
@@ -647,17 +647,17 @@ function savePage(){
 }
 
 // Moving autocomplete to end - needs to be at bottom for IE to trigger properly
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
         //fieldValidator declared in utilities.js
         fieldValidator.addRequiredField( "labNo" );
         fieldValidator.addRequiredField( "receivedDate" );
         fieldValidator.setFieldValidity(false, "requestedTests_0");
 
-        $jq("select[multiple]").asmSelect({
+        jQuery("select[multiple]").asmSelect({
                         removeLabel: "X"
                 });
 
-        $jq("select[multiple]").change(function(e, data) {
+        jQuery("select[multiple]").change(function(e, data) {
                 // handleMultiSelectChange( e, data );
                 });
 

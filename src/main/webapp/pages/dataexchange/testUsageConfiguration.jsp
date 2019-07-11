@@ -20,7 +20,7 @@
 
 <script>
 
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
 	if( !sendingEnabled() ){
 			disableSendingState();
 	}

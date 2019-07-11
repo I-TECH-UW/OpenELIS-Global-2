@@ -21,9 +21,9 @@
 %>
 
 <script type="text/javascript">
-    $jq(document).ready(function () {
+    jQuery(document).ready(function () {
     	<c:if test='${not form.editable}'>
-            $jq(".inputWidget").prop('disabled', true);
+            jQuery(".inputWidget").prop('disabled', true);
        </c:if>
     });
 
@@ -37,9 +37,9 @@
                 uploader.value.search("\.png") == -1 &&
                 uploader.value.search("\.gif") == -1) {
             alert("<%= MessageUtil.getMessage("siteInformation.logo.warning") %>");
-            $jq('input[name="save"]').attr('disabled', '');
+            jQuery('input[name="save"]').attr('disabled', '');
         } else {
-            $jq('input[name="save"]').removeAttr('disabled');
+            jQuery('input[name="save"]').removeAttr('disabled');
         }
     }
 </script>
@@ -84,11 +84,11 @@
     <input type="file" name="aFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
     <spring:message code="label.remove.image" /><input type="checkbox" id="removeImage" />
     <script type="text/javascript">
-        $jq("form").attr("enctype", "multipart/form-data");
-        $jq(":file").css("width", "600px");
+        jQuery("form").attr("enctype", "multipart/form-data");
+        jQuery(":file").css("width", "600px");
         function setAction(form, action, validate, parameters) {
-        	var siteInfoName = $jq("#siteInfoName").val()
-            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + $jq("#removeImage").is(":checked");
+        	var siteInfoName = jQuery("#siteInfoName").val()
+            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + jQuery("#removeImage").is(":checked");
             form.validateDocument = new Object();
             form.validateDocument.value = validate;
 

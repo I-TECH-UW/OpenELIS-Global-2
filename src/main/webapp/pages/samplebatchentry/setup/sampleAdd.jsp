@@ -107,7 +107,7 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			var initialConditionCell = newRow.insertCell(++cellCount);
 			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
-			$jq("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "X"});
+			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "X"});
 		}
 
 		if( useCollectionDate ){
@@ -243,14 +243,14 @@ function convertSamplesToXml(){
 
 function convertSampleToXml( id ){
 
-	var xml = "<sample sampleID='" + $jq("#typeId" + id).val() +
-			  "' date='" + (useCollectionDate ? $jq("#collectionDate" + id).val() : '') +
-			  "' time='" + (useCollectionDate ? $jq("#collectionTime" + id).val() : '') +
-			  "' collector='" + (useCollector ? $jq("#collector" + id).val() : '') +
-			  "' tests='" + $jq("#testIds" + id).val() +
-              "' testSectionMap='" + $jq("#testSectionMap" + id).val() +
-              "' testSampleTypeMap=\"" + $jq("#testTypeMap" + id).val() +
-			  "\" panels='" + $jq("#panelIds" + id).val() + "'";
+	var xml = "<sample sampleID='" + jQuery("#typeId" + id).val() +
+			  "' date='" + (useCollectionDate ? jQuery("#collectionDate" + id).val() : '') +
+			  "' time='" + (useCollectionDate ? jQuery("#collectionTime" + id).val() : '') +
+			  "' collector='" + (useCollector ? jQuery("#collector" + id).val() : '') +
+			  "' tests='" + jQuery("#testIds" + id).val() +
+              "' testSectionMap='" + jQuery("#testSectionMap" + id).val() +
+              "' testSampleTypeMap=\"" + jQuery("#testTypeMap" + id).val() +
+			  "\" panels='" + jQuery("#panelIds" + id).val() + "'";
 
 	if( useInitialSampleCondition ){
 		var initialConditions = $("initialCondition" + id);
@@ -305,9 +305,9 @@ function processGetTestSuccess(xhr){
 		removeRow( selectedTypeRowId );
     }else{
        if( isVariableSampleType){
-           $jq("#userSampleTypeHead").show();
+           jQuery("#userSampleTypeHead").show();
        }else{
-           $jq("#userSampleTypeHead").hide();
+           jQuery("#userSampleTypeHead").hide();
        }
 	   for( i = 0; i < tests.length; i++ ){
 	   		insertTestIntoTestTable( tests[i], testTable, isVariableSampleType );
@@ -344,7 +344,7 @@ function insertTestIntoTestTable( test, testTable, userSampleTypes ){
 		$("sectionHead").show();
 		selectionCell = newRow.insertCell(2);
 		selectionCell.id = "testSection_" + nominalRow;
-		selectionClone = $jq("#sectionPrototype").clone().show();
+		selectionClone = jQuery("#sectionPrototype").clone().show();
 		selectionClone.children("#testSectionPrototypeID").attr("id", "sectionSelect_" + nominalRow);
 		selectionCell.innerHTML = selectionClone.html();
 	}
@@ -358,9 +358,9 @@ function insertTestIntoTestTable( test, testTable, userSampleTypes ){
         $("userSampleTypeHead").show();
         selectionCell = newRow.insertCell(2);
         selectionCell.id = "userSampleType_" + nominalRow;
-        selectionClone = $jq("#userSampleTypePrototype").clone().show();
-        $jq.each(userSampleTypesList, function (index, value) {
-            selectionClone.children("#userSampleTypePrototypeID").append($jq('<option>', {
+        selectionClone = jQuery("#userSampleTypePrototype").clone().show();
+        jQuery.each(userSampleTypesList, function (index, value) {
+            selectionClone.children("#userSampleTypePrototypeID").append(jQuery('<option>', {
                 value: value.attributes.getNamedItem("id").nodeValue,
                 text : value.attributes.getNamedItem("name").nodeValue
             }));
@@ -368,13 +368,13 @@ function insertTestIntoTestTable( test, testTable, userSampleTypes ){
 
         selectionClone.children("#userSampleTypePrototypeID").attr("id", "userSampleTypeSelect_" + nominalRow);
         selectionCell.innerHTML = selectionClone.html();
-        $jq("#userSampleTypeSelect_" + nominalRow).change(function(){
+        jQuery("#userSampleTypeSelect_" + nominalRow).change(function(){
             userSampleTypeSelectionChanged( "userSampleTypeSelect_" + nominalRow, nominalRow, qualifiableId  );
         });
 
         selectionCell = newRow.insertCell(3);
         selectionCell.id = "userSampleTypeQualifier_" + nominalRow;
-        selectionClone = $jq("#userSampleTypeQualifierPrototype").clone();
+        selectionClone = jQuery("#userSampleTypeQualifierPrototype").clone();
         selectionClone.children("#userSampleTypeQualifierPrototypeID").removeAttr("disabled");
         selectionClone.children("#userSampleTypeQualifierPrototypeID").attr("id", "userSampleTypeQualifierID_" + nominalRow);
         selectionClone.children("#userSampleTypeQualifierPrototypeValueID").val(qualifiableId);
@@ -454,29 +454,29 @@ function deselecAllTestsForList( table ){
 
 function setUserSectionSelection(testCheckbox, row){
 	if( testCheckbox.checked){
-		$jq("#testSection_" + row + " select").removeAttr("disabled");
-		$jq("#testSection_" + row + " span").css("visibility", "visible");
+		jQuery("#testSection_" + row + " select").removeAttr("disabled");
+		jQuery("#testSection_" + row + " span").css("visibility", "visible");
 	}else{
-		$jq("#testSection_" + row + " select").attr("disabled", "disabled");
-		$jq("#testSection_" + row + " span").css("visibility", "hidden");
+		jQuery("#testSection_" + row + " select").attr("disabled", "disabled");
+		jQuery("#testSection_" + row + " span").css("visibility", "hidden");
 	}	
 }
 
 function setUserSampleTypeSelection(testCheckbox, row){
-    var sampleTypeSelection = $jq("#userSampleType_" + row + " select");
+    var sampleTypeSelection = jQuery("#userSampleType_" + row + " select");
 
     if( testCheckbox.checked){
         sampleTypeSelection.removeAttr("disabled");
         sampleTypeSelection.addClass('required');
-        $jq("#userSampleType_" + row + " span").css("visibility", "visible");
+        jQuery("#userSampleType_" + row + " span").css("visibility", "visible");
     }else{
         sampleTypeSelection.val(0);
         sampleTypeSelection.attr("disabled", "disabled");
         sampleTypeSelection.removeClass('required');
-        $jq("#userSampleType_" + row + " span").css("visibility", "hidden");
-        $jq("#userSampleTypeQualifierID_" + row).val('');
-        $jq("#userSampleTypeQualifierID_" + row).removeClass('required');
-        $jq("#userSampleTypeQualifier_" + row).hide();
+        jQuery("#userSampleType_" + row + " span").css("visibility", "hidden");
+        jQuery("#userSampleTypeQualifierID_" + row).val('');
+        jQuery("#userSampleTypeQualifierID_" + row).removeClass('required');
+        jQuery("#userSampleTypeQualifier_" + row).hide();
 
     }
 }
@@ -549,10 +549,10 @@ function addIdToUniqueIdList(id, list) {
 }
 
 function sectionSelectionChanged( selectionElement ){
-	var selection = $jq( selectionElement);
+	var selection = jQuery( selectionElement);
 	var testIdNumber = selection.attr("id").split("_")[1];
-	var sectionMap = $jq("#testSectionMap_" + selectedTypeRowId );
-	sectionMap.val( sectionMap.val() + $jq("#testName_" + testIdNumber).val() + ":" + selection.val() + "," );
+	var sectionMap = jQuery("#testSectionMap_" + selectedTypeRowId );
+	sectionMap.val( sectionMap.val() + jQuery("#testName_" + testIdNumber).val() + ":" + selection.val() + "," );
 	
 	checkValidSubPages();
 }
@@ -603,26 +603,26 @@ function checkTests(tests, isVariableSampleType) {
 }
 
 function populateUserSelectedType( testRow ){
-    var selectedTypes = $jq("#testTypeMap_" + selectedTypeRowId).val();
-    var testId = $jq("#testName_" + testRow).val();
+    var selectedTypes = jQuery("#testTypeMap_" + selectedTypeRowId).val();
+    var testId = jQuery("#testName_" + testRow).val();
     var selectedTypeList, selectedTypeListLength, typeSelection, selectedTypeName, selectionFound, i;
 
     if(selectedTypes){
         selectedTypeList = selectedTypes.split(",");
         selectedTypeListLength = selectedTypeList.length;
-        typeSelection = $jq("#userSampleTypeSelect_" + testRow);
+        typeSelection = jQuery("#userSampleTypeSelect_" + testRow);
         for( i = 0; i < selectedTypeListLength; i++ ){
             selectionFound = true;
             if( selectedTypeList[i].indexOf(testId) == 0){
                 selectionFound = false;
                 selectedTypeName = selectedTypeList[i].split(":")[1];
                 typeSelection.children("option").each(function(j){
-                    if( selectedTypeName == $jq(this).text() ){
-                        typeSelection.val($jq(this).val());
-                        if( $jq(this).val() == $jq("#userSampleTypeQualifierValueID_" + testRow).val() ){
-                            $jq("#userSampleTypeQualifier_" + testRow).show();
+                    if( selectedTypeName == jQuery(this).text() ){
+                        typeSelection.val(jQuery(this).val());
+                        if( jQuery(this).val() == jQuery("#userSampleTypeQualifierValueID_" + testRow).val() ){
+                            jQuery("#userSampleTypeQualifier_" + testRow).show();
                         }else{
-                            $jq("#userSampleTypeQualifier_" + testRow).hide();
+                            jQuery("#userSampleTypeQualifier_" + testRow).hide();
                         }
                         selectionFound = true;
                         return;
@@ -632,7 +632,7 @@ function populateUserSelectedType( testRow ){
             }
             //if the selection is not found then it is "other"
             if( !selectionFound){
-                $jq("#userSampleTypeQualifierID_" + testRow).val( selectedTypeList[i].split(":")[1]);
+                jQuery("#userSampleTypeQualifierID_" + testRow).val( selectedTypeList[i].split(":")[1]);
             }
         }
     }
@@ -666,19 +666,19 @@ function checkPanels(panels) {
 
 function panelSelected(checkBox, tests ){
 	for( var i = 0; i < tests.length; i++ ){
-		$jq("#test_" + tests[i]).attr("checked", checkBox.checked );
-        $jq("#test_" + tests[i]).trigger("onclick");
+		jQuery("#test_" + tests[i]).attr("checked", checkBox.checked );
+        jQuery("#test_" + tests[i]).trigger("onclick");
 
 	}
 }
 
 //validation logic for this 'page'
 function /*boolean*/ sampleAddValid( sampleRequired ) {
-	if ($jq("#study").val() == "routine") {
+	if (jQuery("#study").val() == "routine") {
 		return routineSampleValid(sampleRequired);
-	} else if ($jq("#study").val() == "viralLoad") {
+	} else if (jQuery("#study").val() == "viralLoad") {
 		return viralSampleValid(sampleRequired);
-	} else if ($jq("#study").val() == "EID") {
+	} else if (jQuery("#study").val() == "EID") {
 		return eidSampleValid(sampleRequired);
 	}
 	return true;
@@ -687,20 +687,20 @@ function /*boolean*/ sampleAddValid( sampleRequired ) {
 
 //TO DO place logic for validating whether next page should be allowed
 function viralSampleValid(sampleRequired) {
-	var valid = $jq("#vl_dryTubeTaken").is(':checked');
-	valid = valid || $jq("#vl_edtaTubeTaken").is(':checked');
-	valid = valid || $jq("#vl_dbsTaken").is(':checked');
-	valid = valid || $jq("#vl_dryTubeTaken").is(':checked');
-	valid = valid && $jq("#vl_viralLoadTest").is(':checked');
+	var valid = jQuery("#vl_dryTubeTaken").is(':checked');
+	valid = valid || jQuery("#vl_edtaTubeTaken").is(':checked');
+	valid = valid || jQuery("#vl_dbsTaken").is(':checked');
+	valid = valid || jQuery("#vl_dryTubeTaken").is(':checked');
+	valid = valid && jQuery("#vl_viralLoadTest").is(':checked');
 	return valid;
 }
 
 //TO DO place logic for validating whether next page should be allowed
 function eidSampleValid(sampleRequired) {
-	var valid = $jq("#vl.dryTubeTaken").is(':checked');
-	valid = valid || $jq("#eid_dbsTaken").is(':checked');
-	valid = valid || $jq("#eid_dryTubeTaken").is(':checked');
-	valid = valid && $jq("#eid_dnaPCR").is(':checked');
+	var valid = jQuery("#vl.dryTubeTaken").is(':checked');
+	valid = valid || jQuery("#eid_dbsTaken").is(':checked');
+	valid = valid || jQuery("#eid_dryTubeTaken").is(':checked');
+	valid = valid && jQuery("#eid_dnaPCR").is(':checked');
 	return valid;
 }
 
@@ -726,7 +726,7 @@ function routineSampleValid(sampleRequired) {
 	}
 
 	//ensure that all enabled testSectionSelectors have values
-	$jq(".testSectionSelector:enabled").each( function(i, val){
+	jQuery(".testSectionSelector:enabled").each( function(i, val){
 		if( val.selectedIndex == 0){
 			enable = false;
 			return;
@@ -734,8 +734,8 @@ function routineSampleValid(sampleRequired) {
 	});
 
     //we should move everything to this model
-    $jq(".required").each( function(i, val){
-        var elValue = $jq(val).val();
+    jQuery(".required").each( function(i, val){
+        var elValue = jQuery(val).val();
          if( !elValue.trim().length || elValue == 0){
             enable = false;
             return;
@@ -750,27 +750,27 @@ function samplesHaveBeenAdded(){
 
 function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableId ){
 
-    var sampleType =  $jq("#" + userTypeSelectionId);
-    var typeMap = $jq("#testTypeMap_" + selectedTypeRowId );
-    typeMap.val( typeMap.val() + $jq("#testName_" + row).val() + ":" + $jq("#" + userTypeSelectionId + " :selected").text() + "," );
+    var sampleType =  jQuery("#" + userTypeSelectionId);
+    var typeMap = jQuery("#testTypeMap_" + selectedTypeRowId );
+    typeMap.val( typeMap.val() + jQuery("#testName_" + row).val() + ":" + jQuery("#" + userTypeSelectionId + " :selected").text() + "," );
 
     //checkValidSubPages();
 
     if(sampleType.val() == qualifiableId){
-        $jq("#userSampleTypeQualifier_" + row).show();
-        $jq("#userSampleTypeQualifierID_" + row).addClass('required');
+        jQuery("#userSampleTypeQualifier_" + row).show();
+        jQuery("#userSampleTypeQualifierID_" + row).addClass('required');
     }else{
-        $jq("#userSampleTypeQualifier_" + row).hide();
-        $jq("#userSampleTypeQualifierID_" + row).val('');
-        $jq("#userSampleTypeQualifierID_" + row).removeClass('required');
+        jQuery("#userSampleTypeQualifier_" + row).hide();
+        jQuery("#userSampleTypeQualifierID_" + row).val('');
+        jQuery("#userSampleTypeQualifierID_" + row).removeClass('required');
     }
 
     checkValidSubPages();
 }
 
 function sampleTypeQualifierChanged(element){
-    var typeMap = $jq("#testTypeMap_" + selectedTypeRowId );
-    typeMap.val( typeMap.val() +  $jq("#testName_" + element.id.split("_")[1]).val() + ":" + element.value + "," );
+    var typeMap = jQuery("#testTypeMap_" + selectedTypeRowId );
+    typeMap.val( typeMap.val() +  jQuery("#testName_" + element.id.split("_")[1]).val() + ":" + element.value + "," );
 
     checkValidSubPages();
 }

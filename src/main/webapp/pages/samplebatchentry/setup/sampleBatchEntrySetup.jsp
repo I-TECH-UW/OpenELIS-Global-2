@@ -142,7 +142,7 @@ function /*void*/ nextPage() {
 //check all subpages to see if 'next' should active
 function checkValidSubPages() {
 	var valid = configBarcodeValid() && sampleAddValid(true) && sampleOrderValid()
-		&& invalidSampleElements.length == 0 && $jq(".error").length == 0;
+		&& invalidSampleElements.length == 0 && jQuery(".error").length == 0;
 	setNext(valid)
 }
 

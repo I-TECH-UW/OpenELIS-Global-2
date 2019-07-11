@@ -78,14 +78,14 @@ var pagingSearch = {};
 	pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
             loadMultiSelects();
-            $jq("select[multiple]").asmSelect({
+            jQuery("select[multiple]").asmSelect({
                 removeLabel: "X"
             });
 
-            $jq("select[multiple]").change(function(e, data) {
+            jQuery("select[multiple]").change(function(e, data) {
                 handleMultiSelectChange( e, data );
             });
 
@@ -94,7 +94,7 @@ $jq(document).ready( function() {
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
 			}
-            $jq(".asmContainer").css("display","inline-block");
+            jQuery(".asmContainer").css("display","inline-block");
 			});
 
 

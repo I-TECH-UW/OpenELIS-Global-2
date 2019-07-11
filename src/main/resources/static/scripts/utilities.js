@@ -583,7 +583,7 @@ function FieldValidator() {
      */
     this.isAllValid = function /*boolean*/
     () {
-        return this.invalidFields.length == 0 && this.isEachRequiredFieldEntered() && $jq(".error").length == 0;
+        return this.invalidFields.length == 0 && this.isEachRequiredFieldEntered() && jQuery(".error").length == 0;
     }
 
     this.isAnyConflicted = function /*boolean*/
@@ -810,7 +810,7 @@ function /*void*/ showHideNotes( index) {
 }
 
 function showNewNote( index){
-    if( !$jq("#note_" + index).val()){
+    if( !jQuery("#note_" + index).val()){
         showNote( index );
     }
 }
@@ -828,37 +828,37 @@ function /*void*/ hideNote(index) {
 }
 
 function showCachedRejectionReasonRows() {
-	var rows = $jq('tr[id^="row_"]');
+	var rows = jQuery('tr[id^="row_"]');
 	for (var i=0; i<rows.length; i++) {
 	    var split = rows[i].id.split("_");
 	    var index = split[1];	    
-		if ($jq('#rejectionConsidered_' + index).val() == 'true' ) {
-			$jq('#rejectReasonRow_' + index).show();
+		if (jQuery('#rejectionConsidered_' + index).val() == 'true' ) {
+			jQuery('#rejectReasonRow_' + index).show();
 		}
 	}
 }
 
 function disableRejectedResults() {
-	var rows = $jq('tr[id^="row_"]');
+	var rows = jQuery('tr[id^="row_"]');
 	for (var i=0; i<rows.length; i++) {
 	    var split = rows[i].id.split("_");
 	    var index = split[1];
-	    if ($jq('#considerRejectReason_' + index).val() == 'true' &&
-	    		$jq('#isRejected_' + index).val() == 'false') {
+	    if (jQuery('#considerRejectReason_' + index).val() == 'true' &&
+	    		jQuery('#isRejected_' + index).val() == 'false') {
 	    	disableResultInputs(index);
-	    } else if ($jq('#considerRejectReason_' + index).val() == 'true' &&
-	    		$jq('#isRejected_' + index).val() == 'true') {
-	    	$jq('#rejected_' + index).prop('checked', true);
+	    } else if (jQuery('#considerRejectReason_' + index).val() == 'true' &&
+	    		jQuery('#isRejected_' + index).val() == 'true') {
+	    	jQuery('#rejected_' + index).prop('checked', true);
 	    	disableResultInputs(index);
 	    } else {
-	    	$jq('#rejected_' + index).prop('checked', false);
+	    	jQuery('#rejected_' + index).prop('checked', false);
 	    }
 	}
 }
 
 function disableResultInputs(index) {
-	var resultType = $jq('#resultType_' + index).val();
-    var qualifiedResult = $jq("#qualifiedDict_" + index);
+	var resultType = jQuery('#resultType_' + index).val();
+    var qualifiedResult = jQuery("#qualifiedDict_" + index);
     if( qualifiedResult){
         qualifiedResult.val('');
         qualifiedResult.hide();
@@ -871,49 +871,49 @@ function disableResultInputs(index) {
 		resetMultiSelect(index);
 		disableMultiSelect(index);
 	} else if (resultType == 'D') {
-		$jq('#resultId_' + index).val(0);
-        $jq('#shadowResult_' + index).val(0);
-		$jq('#resultId_' + index).css("background-color", "#ffffff");
-		$jq('#resultId_' + index).attr('disabled', 'disabled');
+		jQuery('#resultId_' + index).val(0);
+        jQuery('#shadowResult_' + index).val(0);
+		jQuery('#resultId_' + index).css("background-color", "#ffffff");
+		jQuery('#resultId_' + index).attr('disabled', 'disabled');
 	}  else if (resultType == 'R') {
-        $jq('#results_' + index).val('');
-        $jq('#shadowResult_' + index).val('');
-		$jq('#results_' + index).css("background-color", "#ffffff");
-		$jq('#results_' + index).attr('disabled', 'disabled');
+        jQuery('#results_' + index).val('');
+        jQuery('#shadowResult_' + index).val('');
+		jQuery('#results_' + index).css("background-color", "#ffffff");
+		jQuery('#results_' + index).attr('disabled', 'disabled');
 	} else {
-		$jq('#results_' + index).val('');
-        $jq('#shadowResult_' + index).val('');
-		$jq('#results_' + index).css("background-color", "#ffffff");
-        $jq('#results_' + index).attr('disabled', 'disabled');
+		jQuery('#results_' + index).val('');
+        jQuery('#shadowResult_' + index).val('');
+		jQuery('#results_' + index).css("background-color", "#ffffff");
+        jQuery('#results_' + index).attr('disabled', 'disabled');
 	}
 }
  
 function showHideRejectionReasons(index, confirmRejection) {
-	if ($jq('#rejected_' + index).prop('checked')) {
+	if (jQuery('#rejected_' + index).prop('checked')) {
 		if(confirm( confirmRejection )) {
-			$jq("#considerRejectReason_" + index).val("true");
-			$jq("#shadowRejected_" + index).val("true");
-			$jq("#rejectReasonRow_" + index).show();
+			jQuery("#considerRejectReason_" + index).val("true");
+			jQuery("#shadowRejected_" + index).val("true");
+			jQuery("#rejectReasonRow_" + index).show();
 			
 			disableResultInputs(index);
 		} else {
-			$jq('#rejected_' + index).prop('checked', false);
+			jQuery('#rejected_' + index).prop('checked', false);
 		}
 	} else { 
-		$jq("#considerRejectReason_" + index).val("");
-		$jq("#shadowRejected_" + index).val("");
-		$jq("#rejectReasonRow_" + index).hide();
-			var resultType = $jq('#resultType_' + index).val();
+		jQuery("#considerRejectReason_" + index).val("");
+		jQuery("#shadowRejected_" + index).val("");
+		jQuery("#rejectReasonRow_" + index).hide();
+			var resultType = jQuery('#resultType_' + index).val();
 			if (resultType == 'C') {			
 				 enableCascadingMultiSelect(index);
 			} else if (resultType == 'M') {
 				enableMultiSelect(index);
 			} else if (resultType == 'D') {
-				$jq('#resultId_' + index).removeAttr('disabled');
+				jQuery('#resultId_' + index).removeAttr('disabled');
 			} else if (resultType == 'R') {
-				$jq('#results_' + index).removeAttr('disabled');
+				jQuery('#results_' + index).removeAttr('disabled');
 			} else {
-				$jq('#results_' + index).removeAttr('disabled');
+				jQuery('#results_' + index).removeAttr('disabled');
 			}
 	}
 }
@@ -922,7 +922,7 @@ function showQuanitiy(selector, index, dictionaryIds, context) {
     var quantifiableFound = false;
 
     if( context == 'M'){
-        multipleResults = $jq("#multiresultId_" + index).val();
+        multipleResults = jQuery("#multiresultId_" + index).val();
         if( multipleResults.length > 0){
             resultList = multipleResults.split(',');
             for( i = 0; i < resultList.size(); i++){
@@ -933,16 +933,16 @@ function showQuanitiy(selector, index, dictionaryIds, context) {
             }
         }
     }else{
-        quantifiableFound = (dictionaryIds.indexOf($jq("#resultId_" + index + " option:selected").val()) != -1);
+        quantifiableFound = (dictionaryIds.indexOf(jQuery("#resultId_" + index + " option:selected").val()) != -1);
     }
 
     if( quantifiableFound) {
-        $jq("#qualifiedDict_" + index).show();
-        $jq("#hasQualifiedResult_" + index).val("true");
+        jQuery("#qualifiedDict_" + index).show();
+        jQuery("#hasQualifiedResult_" + index).val("true");
     } else {
-        $jq("#qualifiedDict_" + index).hide();
-        $jq("#qualifiedDict_" + index).val("");
-        $jq("#hasQualifiedResult_" + index).val("false");
+        jQuery("#qualifiedDict_" + index).hide();
+        jQuery("#qualifiedDict_" + index).val("");
+        jQuery("#hasQualifiedResult_" + index).val("false");
     }
 }
 

@@ -132,7 +132,6 @@ public abstract class PatientReport extends Report {
 	protected String reportReferralResultValue;
 	protected List<ClinicalPatientData> reportItems;
 	protected String completionDate;
-	protected SampleService currentSampleService;
 	protected Sample currentSample;
 	protected Patient currentPatient;
 

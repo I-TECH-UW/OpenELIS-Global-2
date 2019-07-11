@@ -56,8 +56,8 @@ var newSearchInfo = false;
 
 function searchPatients()
 {
-    var criteria = $jq("#searchCriteria").val();
-    var value = $jq("#searchValue").val();
+    var criteria = jQuery("#searchCriteria").val();
+    var value = jQuery("#searchValue").val();
     var splitName;
     var lastName = "";
     var firstName = "";
@@ -68,8 +68,8 @@ function searchPatients()
 
 
 	newSearchInfo = false;
-    $jq("#resultsDiv").hide();
-    $jq("#searchLabNumber").val('');
+    jQuery("#resultsDiv").hide();
+    jQuery("#searchLabNumber").val('');
     if( criteria == 1){
         firstName =  value.trim();
     }else if(criteria == 2){
@@ -84,7 +84,7 @@ function searchPatients()
         nationalID = value.trim();
     }else if(criteria == 5){
         labNumber = value;
-        $jq("#searchLabNumber").val(value);
+        jQuery("#searchLabNumber").val(value);
     }
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
@@ -276,20 +276,20 @@ function /*void*/ doNothing(){
 
 function checkIndex(select) {
 	var indexVal = select.options[select.selectedIndex].value;
-    var valueElem = $jq("#searchValue");
+    var valueElem = jQuery("#searchValue");
 	if (indexVal == "5") {
-		$jq("#scanInstruction").show();
+		jQuery("#scanInstruction").show();
         valueElem.attr("maxlength","<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>");
 	} else {
-		$jq("#scanInstruction").hide();
+		jQuery("#scanInstruction").hide();
         valueElem.attr("maxlength","120");
 	}
 }
 
 function enableSearchButton(eventCode){
-    var valueElem = $jq("#searchValue");
-    var criteriaElem  = $jq('#searchCriteria');
-    var searchButton = $jq("#searchButton");
+    var valueElem = jQuery("#searchValue");
+    var criteriaElem  = jQuery('#searchCriteria');
+    var searchButton = jQuery("#searchButton");
     if( valueElem.val() && criteriaElem.val() != "0"){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
@@ -302,8 +302,8 @@ function enableSearchButton(eventCode){
 
 function handleSelectedPatient(){
     var accessionNumber = "";
-    if($jq("#searchCriteria").val() == 5){//lab number
-        accessionNumber = $jq("#searchValue").val();
+    if(jQuery("#searchCriteria").val() == 5){//lab number
+        accessionNumber = jQuery("#searchValue").val();
     }
 
     $("searchResultsDiv").style.display = "none";

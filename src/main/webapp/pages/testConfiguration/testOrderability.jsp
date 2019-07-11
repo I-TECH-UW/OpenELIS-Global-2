@@ -41,11 +41,11 @@
 <script type="text/javascript">
     var backFunction = selectBack;
 
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready( function() {
+    jQuery(document).ready( function() {
         configureForSelect();
     });
 
@@ -67,7 +67,7 @@
         form.submit();
     }
     function checkedChanged(isActive, element) {
-        var jqueriedElement = $jq(element);
+        var jqueriedElement = jQuery(element);
         var activate, deactivate;
 
         if ((element.checked == isActive)) {
@@ -78,10 +78,10 @@
             jqueriedElement.addClass("activationChanged");
         }
 
-        deactivate = $jq(".active.activationChanged").length;
-        activate = $jq(".inactive.activationChanged").length;
+        deactivate = jQuery(".active.activationChanged").length;
+        activate = jQuery(".inactive.activationChanged").length;
 
-        $jq("#nextButtonSelect").attr('disabled', ( deactivate == 0 && activate == 0));
+        jQuery("#nextButtonSelect").attr('disabled', ( deactivate == 0 && activate == 0));
 
         if(  deactivate == 0 && activate == 0){
             makeClean();
@@ -92,11 +92,11 @@
 
 
     function nextStepToConfirmation(){
-        var deactivate = $jq(".active.activationChanged").length;
-        var activate = $jq(".inactive.activationChanged").length;
+        var deactivate = jQuery(".active.activationChanged").length;
+        var activate = jQuery(".inactive.activationChanged").length;
         configureForConfirmation();
         confirmationStep(activate, deactivate);
-        $jq("#activateSection input").prop("disabled", true);
+        jQuery("#activateSection input").prop("disabled", true);
 
         window.scrollTo(0,0);
     }
@@ -115,17 +115,17 @@
             listDeactivatedItems(jsonObj);
         }
 
-        $jq("#jsonChangeList").val(JSON.stringify(jsonObj));
+        jQuery("#jsonChangeList").val(JSON.stringify(jsonObj));
     }
 
     function listActivatedItems( jsonObj){
 
-        var activateTestList = $jq("#testActivateList");
+        var activateTestList = jQuery("#testActivateList");
         var jsonBlob, sampleType, activatedTests;
 
-        $jq("#testActivate").show();
-        $jq(".activeSampleType").each(function(){
-            sampleType=$jq(this);
+        jQuery("#testActivate").show();
+        jQuery(".activeSampleType").each(function(){
+            sampleType=jQuery(this);
             activatedTests= sampleType.parent().find(".inactive.activationChanged");
             if(activatedTests.length > 0) {
                 activateTestList.append("<br />");
@@ -133,9 +133,9 @@
                 activateTestList.append("<br />");
                 activatedTests.each(function () {
                     jsonBlob = {};
-                    jsonBlob.id = $jq(this).val();
+                    jsonBlob.id = jQuery(this).val();
                     jsonObj.activateTest[jsonObj.activateTest.length] = jsonBlob;
-                    activateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + $jq(this).siblings("span").text());
+                    activateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + jQuery(this).siblings("span").text());
                     activateTestList.append("<br />");
 
                 });
@@ -146,12 +146,12 @@
 
     function listDeactivatedItems(jsonObj) {
         var sampleType, deactivatedTests, jsonBlob;
-        var deactivateTestList = $jq("#testDeactivateList");
+        var deactivateTestList = jQuery("#testDeactivateList");
 
 
-        $jq("#testDeactivate").show();
-        $jq(".activeSampleType").each(function () {
-            sampleType = $jq(this);
+        jQuery("#testDeactivate").show();
+        jQuery(".activeSampleType").each(function () {
+            sampleType = jQuery(this);
             deactivatedTests = sampleType.parent().find(".active.activationChanged");
 
             if (deactivatedTests.length > 0) {
@@ -161,9 +161,9 @@
                 deactivateTestList.append("<br />");
                 deactivatedTests.each(function () {
                     jsonBlob = {};
-                    jsonBlob.id = $jq(this).val();
+                    jsonBlob.id = jQuery(this).val();
                     jsonObj.deactivateTest[jsonObj.deactivateTest.length] = jsonBlob;
-                    deactivateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + $jq(this).siblings("span").text());
+                    deactivateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + jQuery(this).siblings("span").text());
                     deactivateTestList.append("<br />");
                 });
             }
@@ -185,21 +185,21 @@
            configureForSelect();
     }
     function configureForSelect() {
-        $jq("#step").text("<%=MessageUtil.getContextualMessage("configuration.test.orderable")%>");
-        $jq("#instructions").text("<spring:message code="instructions.test.order"/>");
-        $jq("#activateSection input").prop("disabled", false);
-        $jq(".selectHide").hide();
-        $jq(".selectShow").show();
-        $jq(".selectClear").empty();
+        jQuery("#step").text("<%=MessageUtil.getContextualMessage("configuration.test.orderable")%>");
+        jQuery("#instructions").text("<spring:message code="instructions.test.order"/>");
+        jQuery("#activateSection input").prop("disabled", false);
+        jQuery(".selectHide").hide();
+        jQuery(".selectShow").show();
+        jQuery(".selectClear").empty();
         backFunction = selectBack;
     }
 
 
     function configureForConfirmation() {
-        $jq("#step").text("<%=MessageUtil.getContextualMessage("label.test.order.confirm")%>");
-        $jq("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.confirm")%>");
-        $jq(".confirmHide").hide();
-        $jq(".confirmShow").show();
+        jQuery("#step").text("<%=MessageUtil.getContextualMessage("label.test.order.confirm")%>");
+        jQuery("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.confirm")%>");
+        jQuery(".confirmHide").hide();
+        jQuery(".confirmShow").show();
 
         backFunction = confirmBack;
     }

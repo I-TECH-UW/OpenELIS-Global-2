@@ -28,11 +28,11 @@
 
 <script>
 
-	$jq(document).ready( function() {
-		$jq("#analyzerIdHidden").val($jq("#analyzerId").val());
-		if($jq("#analyzerId").val() != 0 ){
-			$jq("#analyzerId").attr('disabled', 'disabled');
-			$jq("#analyzerTestNameId").attr('disabled','disabled');
+	jQuery(document).ready( function() {
+		jQuery("#analyzerIdHidden").val(jQuery("#analyzerId").val());
+		if(jQuery("#analyzerId").val() != 0 ){
+			jQuery("#analyzerId").attr('disabled', 'disabled');
+			jQuery("#analyzerTestNameId").attr('disabled','disabled');
 		}
 	});
 function validateForm(form) {
@@ -48,7 +48,7 @@ function validateForm(form) {
 }
 
 	function copyToHiddenAnalyzer( element ){
-		$jq("#analyzerIdHidden").val(element.value);
+		jQuery("#analyzerIdHidden").val(element.value);
 	}
 
 </script>

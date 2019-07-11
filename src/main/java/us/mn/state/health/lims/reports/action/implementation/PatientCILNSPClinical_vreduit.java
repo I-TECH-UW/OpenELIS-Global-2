@@ -105,9 +105,9 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 	protected void createReportItems() {
 		Set<SampleItem> sampleSet = new HashSet<>();
 
-		boolean isConfirmationSample = currentSampleService.isConfirmationSample(currentSample);
+		boolean isConfirmationSample = sampleService.isConfirmationSample(currentSample);
 		List<Analysis> analysisList = analysisService
-				.getAnalysesBySampleIdAndStatusId(currentSampleService.getId(currentSample), analysisStatusIds);
+				.getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
 		List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
 		currentConclusion = null;
 		for (Analysis analysis : analysisList) {
@@ -182,7 +182,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 		}
 		for (int i = 0; i < referralResults.size(); i++) {
 			if (referralResults.get(i).getResult() == null) {
-				sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+				sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 			} else {
 
 				i = reportReferralResultValue(referralResults, i);
@@ -214,7 +214,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 				}
 
 				if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {
-					sampleCompleteMap.put(currentSampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+					sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
 					data.setAnalysisStatus(MessageUtil.getMessage("report.test.status.inProgress"));
 				} else {
 					data.setResult(reportReferralResultValue);

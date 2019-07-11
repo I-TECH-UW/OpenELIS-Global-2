@@ -45,7 +45,7 @@ function finish() {
 //check fields, entryMethod printState, and then call patientManagement setSave
 function setSave() {
 	var saveAllowed = checkOptionalFields() && inPrintState;
-	$jq("#saveButtonId").prop('disabled', !saveAllowed);
+	jQuery("#saveButtonId").prop('disabled', !saveAllowed);
 }
 
 //if optional fields are being used, check them for validity
@@ -57,7 +57,7 @@ function checkOptionalFields() {
 		}
 	</c:if>
 	<c:if test="${facilityIDCheck}">
-		if (!$jq("#requesterId").val() && !$jq("#newRequesterName").val()) {
+		if (!jQuery("#requesterId").val() && !jQuery("#newRequesterName").val()) {
 			return false;
 		}
 	</c:if>
@@ -74,10 +74,10 @@ function setPatient() {
   var subjectNumber = "";
   var nationalID = "";
   var labNumber = "";
-	labNumber = $jq("#labNo").val();
-  $jq("#searchLabNumber").val(labNumber);
+	labNumber = jQuery("#labNo").val();
+  jQuery("#searchLabNumber").val(labNumber);
 	if (window.hasIdentifyingInfo) {
-		if (hasIdentifyingInfo() && !$jq("#patientPK_ID").val()) {
+		if (hasIdentifyingInfo() && !jQuery("#patientPK_ID").val()) {
 		    patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
 		}
 	}
@@ -92,12 +92,12 @@ function siteListChanged(textValue) {
     }
 }
 
-$jq(document).ready(function() {
+jQuery(document).ready(function() {
 	setSave();
 });
 
-$jq(document).ready(function () {
-    var dropdown = $jq("select#requesterId");
+jQuery(document).ready(function () {
+    var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
     <% if(restrictNewReferringSiteEntries) { %>
    			clearNonMatching = true;

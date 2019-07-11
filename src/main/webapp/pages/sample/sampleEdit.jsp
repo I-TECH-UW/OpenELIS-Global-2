@@ -50,14 +50,14 @@ var orderChanged = false;
 //This handles the case where sampleAdd.jsp tile is not used.  Will be overridden in sampleAdd.jsp
 function samplesHaveBeenAdded(){ return false;}
 
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
     if( !${form.isEditable}) {
-        $jq(":input").prop("readOnly", true);
-        $jq(".patientSearch").prop("readOnly", false);
+        jQuery(":input").prop("readOnly", true);
+        jQuery(".patientSearch").prop("readOnly", false);
     }
 });
 
-$jq(function() {
+jQuery(function() {
    	var maxAccessionNumber = $("maxAccessionNumber").value;
 	var lastDash = maxAccessionNumber.lastIndexOf('-');
    	sampleIdStart = maxAccessionNumber.substring(lastDash + 1);
@@ -99,7 +99,7 @@ function /*void*/ savePage(){
 	}
 
 
-    if( $jq(".testWithResult:checked").size() > 0 &&
+    if( jQuery(".testWithResult:checked").size() > 0 &&
         !confirm("<%= MessageUtil.getMessage("test.modify.save.warning")%>") ) {
             return;
     }
@@ -183,7 +183,7 @@ function updateSampleItemNumbers(newAccessionNumber){
 
 function checkValidEntryDate(date, dateRange, blankAllowed)
 {
-    $jq("#sampleItemChanged_" + date.id.split("_")[1]).val(true);
+    jQuery("#sampleItemChanged_" + date.id.split("_")[1]).val(true);
     if((!date.value || date.value == "") && !blankAllowed){
         setSaveButton();
         return;
@@ -228,7 +228,7 @@ function checkValidTime(time, blankAllowed)
     var lowRangeRegEx = new RegExp("^[0-1]{0,1}\\d:[0-5]\\d$");
     var highRangeRegEx = new RegExp("^2[0-3]:[0-5]\\d$");
 
-    $jq("#sampleItemChanged_" + time.id.split("_")[1]).val(true);
+    jQuery("#sampleItemChanged_" + time.id.split("_")[1]).val(true);
     if (time.value.blank() && blankAllowed == true) {
         clearFieldErrorDisplay(time);
         setSaveButton();
@@ -267,7 +267,7 @@ function makeDirty(){
     window.onbeforeunload = formWarning;
 }
 
-$jq('body').on('change', 'input', function() {
+jQuery('body').on('change', 'input', function() {
 	makeDirty();
 });
 
@@ -481,7 +481,7 @@ $jq('body').on('change', 'input', function() {
     function setSaveButton(){
         var newAccession = $("newAccessionNumber").value;
         var accessionChanged = newAccession.length > 1 && newAccession != "${form.accessionNumber}";
-        var sampleItemChanged = $jq(".sampleItemChanged[value='true']").length > 0;
+        var sampleItemChanged = jQuery(".sampleItemChanged[value='true']").length > 0;
         var sampleAddIsValid = typeof(sampleAddValid) != 'undefined' ?  sampleAddValid(false) : true;
         var sampleConfirmationIsValid = typeof(sampleConfirmationValid) != 'undefined' ?  sampleConfirmationValid() : true;
 

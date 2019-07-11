@@ -83,29 +83,29 @@ function checkValidTime(time, blankAllowed)
 function studyChanged(studyElement) {
 	var study = studyElement.value;
 	if (study == "routine") {
-		$jq("#psuedoPatientInfo").removeAttr("disabled");
-		$jq("#facility-combobox").show();
-		$jq("#routineSampleAdd").show();
-		$jq("#viralLoadSampleAdd").hide();
-		$jq("#EIDSampleAdd").hide();
+		jQuery("#psuedoPatientInfo").removeAttr("disabled");
+		jQuery("#facility-combobox").show();
+		jQuery("#routineSampleAdd").show();
+		jQuery("#viralLoadSampleAdd").hide();
+		jQuery("#EIDSampleAdd").hide();
 	} else if (study == "viralLoad"){
-		$jq("#psuedoPatientInfo").attr('checked', false);
-		$jq("#psuedoPatientInfo").attr('disabled', 'disabled');
+		jQuery("#psuedoPatientInfo").attr('checked', false);
+		jQuery("#psuedoPatientInfo").attr('disabled', 'disabled');
 		document.getElementsByName('patientInfoCheck')[0].disabled = true;
-		$jq("select#requesterId").prop("selectedIndex", 0);
-		$jq("#facility-combobox").hide();
-		$jq("#routineSampleAdd").hide();
-		$jq("#viralLoadSampleAdd").show();
-		$jq("#EIDSampleAdd").hide();
+		jQuery("select#requesterId").prop("selectedIndex", 0);
+		jQuery("#facility-combobox").hide();
+		jQuery("#routineSampleAdd").hide();
+		jQuery("#viralLoadSampleAdd").show();
+		jQuery("#EIDSampleAdd").hide();
 	} else if (study == "EID"){
-		$jq("#psuedoPatientInfo").attr('checked', false);
-		$jq("#psuedoPatientInfo").attr('disabled', 'disabled');
+		jQuery("#psuedoPatientInfo").attr('checked', false);
+		jQuery("#psuedoPatientInfo").attr('disabled', 'disabled');
 		document.getElementsByName('patientInfoCheck')[0].disabled = true;
-		$jq("select#requesterId").prop("selectedIndex", 0);
-		$jq("#facility-combobox").hide();
-		$jq("#routineSampleAdd").hide();
-		$jq("#viralLoadSampleAdd").hide();
-		$jq("#EIDSampleAdd").show();
+		jQuery("select#requesterId").prop("selectedIndex", 0);
+		jQuery("#facility-combobox").hide();
+		jQuery("#routineSampleAdd").hide();
+		jQuery("#viralLoadSampleAdd").hide();
+		jQuery("#EIDSampleAdd").show();
 	}
 }
 </script>
