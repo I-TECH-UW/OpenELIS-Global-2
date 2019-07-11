@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends Serializable>
-		implements BaseObjectService<T, PK> {
+implements BaseObjectService<T, PK> {
 
 	@Autowired
 	protected AuditTrailService auditTrailDAO;
@@ -259,10 +259,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public void delete(T baseObject) {
-		T oldObject = getBaseObjectDAO().get(baseObject.getId())
-				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(null, oldObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
+			auditTrailDAO.saveHistory(null, baseObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
 					getBaseObjectDAO().getTableName());
 		}
 		getBaseObjectDAO().delete(baseObject);
@@ -273,10 +271,6 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	public void delete(PK id, String sysUserId) {
 		T oldObject = getBaseObjectDAO().get(id)
 				.orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
-		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-					getBaseObjectDAO().getTableName());
-		}
 		delete(oldObject);
 	}
 
