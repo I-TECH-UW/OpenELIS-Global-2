@@ -51,7 +51,7 @@ function finish() {
 //check fields, entryMethod printState, and then call patientManagement setSave
 function setSave() {
 	var saveAllowed = inPrintState;
-	$jq("#saveButtonId").prop('disabled', !saveAllowed);
+	jQuery("#saveButtonId").prop('disabled', !saveAllowed);
 }
 
 function siteListChanged(textValue) {
@@ -75,12 +75,12 @@ function syncCenterInfo(centerInfo) {
 	}
 }
 
-$jq(document).ready(function() {
+jQuery(document).ready(function() {
 	setSave();
 });
 
-$jq(document).ready(function () {
-    var dropdown = $jq("select#requesterId");
+jQuery(document).ready(function () {
+    var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
     <% if(restrictNewReferringSiteEntries) { %>
    			clearNonMatching = true;

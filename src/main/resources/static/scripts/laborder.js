@@ -241,7 +241,7 @@ function populateCrossPanelsAndTests(panels, tests, entryDate) {
     populateCrossTests(tests, buffer, entryDate);
     
     buffer.push("<tr><td colspan='4'><br></td></tr></table></td></tr></table>");
-    $jq('#crossPanels').html(buffer.join(""));
+    jQuery('#crossPanels').html(buffer.join(""));
     
 }
 

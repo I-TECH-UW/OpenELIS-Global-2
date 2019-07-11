@@ -75,8 +75,8 @@ function siteListChanged(textValue) {
     }
 }
 
-$jq(document).ready(function () {
-    var dropdown = $jq("select#requesterId");
+jQuery(document).ready(function () {
+    var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
     <% if(restrictNewReferringSiteEntries) { %>
    			clearNonMatching = true;

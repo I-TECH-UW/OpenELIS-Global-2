@@ -56,8 +56,8 @@
 %>
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
     function makeDirty(){
@@ -75,8 +75,8 @@
 
     function confirmValues() {
         var hasError = false;
-        $jq(".required").each(function () {
-            var input = $jq(this);
+        jQuery(".required").each(function () {
+            var input = jQuery(this);
             if (!input.val() || input.val().strip().length == 0) {
                 input.addClass("error");
                 hasError = true;
@@ -86,35 +86,35 @@
         if (hasError) {
             alert("<%=MessageUtil.getContextualMessage("error.all.required")%>");
         } else {
-            $jq(".required").each(function () {
-                var element = $jq(this);
+            jQuery(".required").each(function () {
+                var element = jQuery(this);
                 element.prop("readonly", true);
                 element.addClass("confirmation");
             });
-            $jq(".requiredlabel").each(function () {
-                $jq(this).hide();
+            jQuery(".requiredlabel").each(function () {
+                jQuery(this).hide();
             });
-            $jq("#editButtons").hide();
-            $jq("#confirmationButtons").show();
-            $jq("#confirmationMessage").show();
-            $jq("#action").text("<%=MessageUtil.getContextualMessage("label.confirmation")%>");
+            jQuery("#editButtons").hide();
+            jQuery("#confirmationButtons").show();
+            jQuery("#confirmationMessage").show();
+            jQuery("#action").text("<%=MessageUtil.getContextualMessage("label.confirmation")%>");
         }
     }
 
     function rejectConfirmation() {
-        $jq(".required").each(function () {
-            var element = $jq(this);
+        jQuery(".required").each(function () {
+            var element = jQuery(this);
             element.removeProp("readonly");
             element.removeClass("confirmation");
         });
-        $jq(".requiredlabel").each(function () {
-            $jq(this).show();
+        jQuery(".requiredlabel").each(function () {
+            jQuery(this).show();
         });
 
-        $jq("#editButtons").show();
-        $jq("#confirmationButtons").hide();
-        $jq("#confirmationMessage").hide();
-        $jq("#action").text("<%=MessageUtil.getContextualMessage("label.button.edit")%>");
+        jQuery("#editButtons").show();
+        jQuery("#confirmationButtons").hide();
+        jQuery("#confirmationMessage").hide();
+        jQuery("#action").text("<%=MessageUtil.getContextualMessage("label.button.edit")%>");
     }
 
     function handleInput(element, locale) {
@@ -128,10 +128,10 @@
         }
 
         if(duplicate){
-            $jq(element).addClass("error");
+            jQuery(element).addClass("error");
             alert("<spring:message code="configuration.testUnit.create.duplicate" />" );
         }else{
-            $jq(element).removeClass("error");
+            jQuery(element).removeClass("error");
         }
 
         makeDirty();

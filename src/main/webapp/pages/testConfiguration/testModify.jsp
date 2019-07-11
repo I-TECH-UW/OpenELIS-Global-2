@@ -113,8 +113,8 @@
 %>
 
 	<script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
     
     function makeDirty(){
@@ -131,67 +131,67 @@
     }
 
     function setForEditing(testId, name) {
-        $jq("#catDiv").show();
-        $jq("#testName").text(name);
-        $jq(".error").each(function (index, value) {
+        jQuery("#catDiv").show();
+        jQuery("#testName").text(name);
+        jQuery(".error").each(function (index, value) {
             value.value = "";
-            $jq(value).removeClass("error");
-            $jq(value).removeClass("confirmation");
+            jQuery(value).removeClass("error");
+            jQuery(value).removeClass("confirmation");
         });
         
-        $jq(".test").each(function () {
-            var element = $jq(this);
+        jQuery(".test").each(function () {
+            var element = jQuery(this);
             element.prop("disabled", "disabled");
             element.addClass("disabled-text-button");
         });
         
         var resultType = "";
-        $jq(".resultClass").each(function (i,elem) {
-        	if(testId !== $jq(elem).attr("fTestId")){    		
-        		$jq(elem).remove();
+        jQuery(".resultClass").each(function (i,elem) {
+        	if(testId !== jQuery(elem).attr("fTestId")){    		
+        		jQuery(elem).remove();
         	} else {
 				// from type_of_test_result table, translate to DisplayListService
-        		switch($jq(elem).attr('fresulttype')) {
+        		switch(jQuery(elem).attr('fresulttype')) {
         	    case "R": 
-        	    	$jq("#resultTypeSelection").val(1) 
+        	    	jQuery("#resultTypeSelection").val(1) 
         	    	break;
         	    case "D": 
-        	    	$jq("#resultTypeSelection").val(2) 
+        	    	jQuery("#resultTypeSelection").val(2) 
         	    	break;
         	    case "T": 
-        	    	$jq("#resultTypeSelection").val(3) 
+        	    	jQuery("#resultTypeSelection").val(3) 
         	    	break;
         	    case "N": 
-        	    	$jq("#resultTypeSelection").val(4) 
+        	    	jQuery("#resultTypeSelection").val(4) 
         	    	break;
         	    case "A": 
-        	    	$jq("#resultTypeSelection").val(5) 
+        	    	jQuery("#resultTypeSelection").val(5) 
         	    	break;
         	    case "M": 
-        	    	$jq("#resultTypeSelection").val(6) 
+        	    	jQuery("#resultTypeSelection").val(6) 
         	    	break;
         	    case "C": 
-        	    	$jq("#resultTypeSelection").val(7) 
+        	    	jQuery("#resultTypeSelection").val(7) 
         	    	break;
         	    default:
         		}
 				
-				var panel = $jq(elem).attr('fPanel');
-				var optionsArray = Array.from($jq("#panelSelection")[0]);
+				var panel = jQuery(elem).attr('fPanel');
+				var optionsArray = Array.from(jQuery("#panelSelection")[0]);
 				var panelOption = optionsArray.filter(function(elem) { return elem.label === panel });
 				panelOption.forEach(function(elem) {
-					$jq(elem).attr("selected", true)
+					jQuery(elem).attr("selected", true)
 				});
 				
-				$jq("#panelSelection").change();
+				jQuery("#panelSelection").change();
 							
         	}
         });
         
         getTestNames(testId, testNameSuccess);
 		getTestEntities(testId, testEntitiesSuccess);
-		$jq("#nextButton").prop("disabled", false);	
-		$jq("#step1Div").show();
+		jQuery("#nextButton").prop("disabled", false);	
+		jQuery("#step1Div").show();
     }
    
     function testEntitiesSuccess(xhr) {
@@ -210,13 +210,13 @@
          	//getEntityNames(testSectionId, "<%=EntityNamesProvider.TEST_SECTION%>", testSectionNameSuccess );
          	//getEntityNames(uomId, "<%=EntityNamesProvider.UNIT_OF_MEASURE%>", uomNameSuccess );
             
-            $jq("#loinc").val(response["entities"]["loinc"]);
-            $jq("#testUnitSelection").val(response["entities"]["testSectionId"]);
-            $jq("#uomSelection").val(response["entities"]["uomId"]);
+            jQuery("#loinc").val(response["entities"]["loinc"]);
+            jQuery("#testUnitSelection").val(response["entities"]["testSectionId"]);
+            jQuery("#uomSelection").val(response["entities"]["uomId"]);
         }
         
         window.onbeforeunload = null;
-        $jq("#step1Div").show();
+        jQuery("#step1Div").show();
     }
     
     function uomNameSuccess(xhr) {
@@ -227,9 +227,9 @@
 
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
-            $jq("#uomEnglish").text(response["name"]["english"]);
-            $jq(".required").each(function () {
-                $jq(this).val("");
+            jQuery("#uomEnglish").text(response["name"]["english"]);
+            jQuery(".required").each(function () {
+                jQuery(this).val("");
             });
         }
 
@@ -244,10 +244,10 @@
 
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
-            $jq("#testSectionEnglish").text(response["name"]["english"]);
-            $jq("#testSectionFrench").text(response["name"]["french"]);
-            $jq(".required").each(function () {
-                $jq(this).val("");
+            jQuery("#testSectionEnglish").text(response["name"]["english"]);
+            jQuery("#testSectionFrench").text(response["name"]["french"]);
+            jQuery(".required").each(function () {
+                jQuery(this).val("");
             });
         }
 
@@ -263,17 +263,17 @@
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
             
-            $jq("#testNameEnglish").val(response["name"]["english"]);
+            jQuery("#testNameEnglish").val(response["name"]["english"]);
             
-            $jq("#testNameFrench").val(response["name"]["french"]);
+            jQuery("#testNameFrench").val(response["name"]["french"]);
             
-            $jq("#testReportNameEnglish").val(response["reportingName"]["english"]);
+            jQuery("#testReportNameEnglish").val(response["reportingName"]["english"]);
             
-            $jq("#testReportNameFrench").val(response["reportingName"]["french"]);
+            jQuery("#testReportNameFrench").val(response["reportingName"]["french"]);
             
             //alert(response["reportingName"]["french"]);
-            //$jq(".required").each(function () {
-              //  $jq(this).val("");
+            //jQuery(".required").each(function () {
+              //  jQuery(this).val("");
             //});
         }
 
@@ -282,8 +282,8 @@
 
     function confirmValues() {
         var hasError = false;
-        $jq(".required").each(function () {
-            var input = $jq(this);
+        jQuery(".required").each(function () {
+            var input = jQuery(this);
             if (!input.val() || input.val().strip().length == 0) {
                 input.addClass("error");
                 hasError = true;
@@ -293,40 +293,40 @@
         if (hasError) {
             alert('<%=MessageUtil.getContextualMessage("error.all.required")%>');
         } else {
-            $jq(".required").each(function () {
-                var element = $jq(this);
+            jQuery(".required").each(function () {
+                var element = jQuery(this);
                 element.prop("readonly", true);
                 element.addClass("confirmation");
             });
-            $jq(".requiredlabel").each(function () {
-                $jq(this).hide();
+            jQuery(".requiredlabel").each(function () {
+                jQuery(this).hide();
             });
-            $jq("#editButtons").hide();
-            $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
+            jQuery("#editButtons").hide();
+            jQuery("#confirmationButtons").show();
+            jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
         }
     }
 
     function rejectConfirmation() {
-        $jq(".required").each(function () {
-            var element = $jq(this);
+        jQuery(".required").each(function () {
+            var element = jQuery(this);
             element.removeProp("readonly");
             element.removeClass("confirmation");
         });
-        $jq(".requiredlabel").each(function () {
-            $jq(this).show();
+        jQuery(".requiredlabel").each(function () {
+            jQuery(this).show();
         });
 
-        $jq("#editButtons").show();
-        $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
+        jQuery("#editButtons").show();
+        jQuery("#confirmationButtons").hide();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
     }
 
     function cancel() {
-        $jq("#editDiv").hide();
-        $jq("#testId").val("");
-        $jq(".test").each(function () {
-            var element = $jq(this);
+        jQuery("#editDiv").hide();
+        jQuery("#testId").val("");
+        jQuery(".test").each(function () {
+            var element = jQuery(this);
             element.removeProp("disabled");
             element.removeClass("disabled-text-button");
         });
@@ -334,7 +334,7 @@
     }
 
     function handleInput(element) {
-        $jq(element).removeClass("error");
+        jQuery(element).removeClass("error");
         makeDirty();
     }
 
@@ -347,13 +347,13 @@
     
     function genderMatersForRange(checked, index) {
         if (checked) {
-            $jq(".sexRange_" + index).show();
+            jQuery(".sexRange_" + index).show();
         } else {
-            $jq(".sexRange_" + index).hide();
-            $jq("#lowNormal_G_" + index).val("-Infinity");
-            $jq("#highNormal_G_" + index).val("Infinity");
-            $jq("#lowNormal_G_" + index).removeClass("error");
-            $jq("#highNormal_G_" + index).removeClass("error");
+            jQuery(".sexRange_" + index).hide();
+            jQuery("#lowNormal_G_" + index).val("-Infinity");
+            jQuery("#highNormal_G_" + index).val("Infinity");
+            jQuery("#lowNormal_G_" + index).removeClass("error");
+            jQuery("#highNormal_G_" + index).removeClass("error");
         }
     }
     
@@ -363,29 +363,29 @@
     var useResultLimitDefault = true;
     var defaultResultLimits = null;
 
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready(function () {
-        $jq("select[multiple]").asmSelect({
+    jQuery(document).ready(function () {
+        jQuery("select[multiple]").asmSelect({
             removeLabel: "X"
         });
 
-        $jq("select[multiple]").change(function (e, data) {
+        jQuery("select[multiple]").change(function (e, data) {
             handleMultiSelectChange(e, data);
         });
 
-        $jq("#dictionarySelectId .asmSelect").css("max-width", "275px");
+        jQuery("#dictionarySelectId .asmSelect").css("max-width", "275px");
     });
 
 
     function augmentMultiselects(parent) {
-        $jq(parent + " select[multiple]").asmSelect({
+        jQuery(parent + " select[multiple]").asmSelect({
             removeLabel: "X"
         });
 
-        $jq(parent + " select[multiple]").change(function (e, data) {
+        jQuery(parent + " select[multiple]").change(function (e, data) {
             handleMultiSelectChange(e, data);
         });
     }
@@ -405,20 +405,20 @@
 
     function createOrderBoxForSampleType(data) {
     	if(typeof data === 'undefined') return;
-        var sampleTypeName = $jq("#sampleTypeSelection option[value=" + data.value + "]").text();
+        var sampleTypeName = jQuery("#sampleTypeSelection option[value=" + data.value + "]").text();
         var divId = data.value;
         if (data.type == 'add') {
             createNewSortingDiv(sampleTypeName, divId);
             getTestsForSampleType(data.value, testForSampleTypeSuccess);
         } else {
-            $jq("#" + divId).remove();
+            jQuery("#" + divId).remove();
         }
     }
 
     function appendOrderBoxForDictionary(e, data) {
-        var dictionaryName = $jq(e.currentTarget).find("option[value=" + data.value + "]").text();
-        var qualifiyList = $jq("#qualifierSelection");
-        var ul = $jq("#dictionaryNameSortUI");
+        var dictionaryName = jQuery(e.currentTarget).find("option[value=" + data.value + "]").text();
+        var qualifiyList = jQuery("#qualifierSelection");
+        var ul = jQuery("#dictionaryNameSortUI");
         var li, option;
         ul.addClass("sortable");
         if (e.currentTarget.id == "dictionarySelection") {
@@ -426,25 +426,25 @@
                 li = createLI(data.value, dictionaryName, false);
                 li.addClass("ui-sortable-handle");
                 ul.append(li);
-                $jq("#dictionaryNameSortUI").sortable();
-                $jq("#dictionaryNameSortUI").disableSelection();
-                $jq("#dictionaryQualify .asmContainer").remove();
-                $jq("#dictionaryQualify").append(qualifiyList);
+                jQuery("#dictionaryNameSortUI").sortable();
+                jQuery("#dictionaryNameSortUI").disableSelection();
+                jQuery("#dictionaryQualify .asmContainer").remove();
+                jQuery("#dictionaryQualify").append(qualifiyList);
 
                 option = createOption(data.value, dictionaryName, false);
                 qualifiyList.append(option);
                 augmentMultiselects("#dictionaryQualify");
 
                 option = createOption(data.value, dictionaryName, false);
-                $jq("#referenceSelection").append(option);
+                jQuery("#referenceSelection").append(option);
             } else {
-                $jq("#dictionaryNameSortUI li[value=" + data.value + "]").remove();
+                jQuery("#dictionaryNameSortUI li[value=" + data.value + "]").remove();
 
-                $jq("#dictionaryQualify .asmContainer").remove();
+                jQuery("#dictionaryQualify .asmContainer").remove();
                 qualifiyList.find("option[value=" + data.value + "]").remove();
-                $jq("#dictionaryQualify").append(qualifiyList);
+                jQuery("#dictionaryQualify").append(qualifiyList);
                 augmentMultiselects("#dictionaryQualify");
-                $jq("#referenceSelection option[value=" + data.value + "]").remove();
+                jQuery("#referenceSelection option[value=" + data.value + "]").remove();
             }
         }
     }
@@ -453,7 +453,7 @@
     function dictionarySetDefault(valuesArray) {
         var dictionaryOption;
         clearDictionaryLists();
-        var optionArray = Array.from($jq("#dictionarySelection")[0]);
+        var optionArray = Array.from(jQuery("#dictionarySelection")[0]);
         
         for(var i = 0; i < valuesArray.length; i++) {
         	dictionaryOption = optionArray.filter(function(elem) { return elem.label === valuesArray[i] });
@@ -463,10 +463,10 @@
         	}
         	
         	dictionaryOption.forEach(function(inner) {
-            	$jq(inner).attr("selected", "selected")
+            	jQuery(inner).attr("selected", "selected")
         	});
         }
-        $jq("#dictionarySelection").change();
+        jQuery("#dictionarySelection").change();
     }
   	*/
   	
@@ -476,22 +476,22 @@
         //clear existing selections
         clearDictionaryLists();
         //add new selections
-        $jq("#dictionaryGroup_" + index + " li").each(function () {
-            dictionarySelect = $jq("#dictionarySelectId .asmSelect option[value=" + $jq(this).val() + "]");
+        jQuery("#dictionaryGroup_" + index + " li").each(function () {
+            dictionarySelect = jQuery("#dictionarySelectId .asmSelect option[value=" + jQuery(this).val() + "]");
             dictionarySelect.attr("selected", "selected");
             dictionarySelect.trigger('change');
         });
     }
 
     function clearDictionaryLists(){
-        $jq("#qualifierSelection option").remove();
-        clearMultiSelectContainer($jq(".dictionaryMultiSelect"));
-        $jq("#dictionaryNameSortUI li").remove();
-        $jq("#referenceSelection option").remove();
-        $jq("#referenceSelection").append(createOption("0", "", false));
+        jQuery("#qualifierSelection option").remove();
+        clearMultiSelectContainer(jQuery(".dictionaryMultiSelect"));
+        jQuery("#dictionaryNameSortUI li").remove();
+        jQuery("#referenceSelection option").remove();
+        jQuery("#referenceSelection").append(createOption("0", "", false));
     }
     function createOption(id, name, isActive) {
-        var option = $jq('<option/>');
+        var option = jQuery('<option/>');
         option.attr({'value': id}).text(name);
         if (isActive == 'N') {
             option.addClass("inactiveTest");
@@ -500,15 +500,15 @@
     }
     function guideSelection(checkbox) {
         if (checkbox.checked) {
-            $jq("#guide").show();
+            jQuery("#guide").show();
         } else {
-            $jq("#guide").hide();
+            jQuery("#guide").hide();
         }
     }
 
     function copyFromTestName() {
-        $jq("#testReportNameEnglish").val($jq("#testNameEnglish").val());
-        $jq("#testReportNameFrench").val($jq("#testNameFrench").val());
+        jQuery("#testReportNameEnglish").val(jQuery("#testNameEnglish").val());
+        jQuery("#testReportNameFrench").val(jQuery("#testNameFrench").val());
     }
 
     function testForSampleTypeSuccess(xhr) {
@@ -517,7 +517,7 @@
         var tests = response.getElementsByTagName("test");
         var sampleTypeId = getValueFromXmlElement(response, "sampleTypeId");
         var test, name, modName, id, modId;
-        var ul = $jq(document.createElement("ul"));
+        var ul = jQuery(document.createElement("ul"));
         var length = tests.length;
         ul.addClass("sortable sortable-tag");
 
@@ -526,9 +526,9 @@
             name = getValueFromXmlElement(test, "name");
             
             <%if (locale.equals("en_US")) {%>
-            modName = $jq("#testNameEnglish").val();
+            modName = jQuery("#testNameEnglish").val();
             <%} else {%>
-            modName = $jq("#testNameFrench").val();
+            modName = jQuery("#testNameFrench").val();
             <%}%>
             
             id = getValueFromXmlElement(test, "id");
@@ -540,20 +540,20 @@
         }
 
         <%if (locale.equals("en_US")) {%>
-        //ul.append( createLI(modId, $jq("#testNameEnglish").val(), true) );
+        //ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
         <%} else {%>
-        //ul.append( createLI(modId, $jq("#testNameFrench").val(), true) );
+        //ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
         <%}%>
 
-        $jq("#sort" + sampleTypeId).append(ul);
+        jQuery("#sort" + sampleTypeId).append(ul);
 
-        $jq(".sortable").sortable();
-        $jq(".sortable").disableSelection();
+        jQuery(".sortable").sortable();
+        jQuery(".sortable").disableSelection();
     }
 
     function createLI(id, name, highlight) {
-        var li = $jq(document.createElement("li"));
-        var span = $jq(document.createElement("span"));
+        var li = jQuery(document.createElement("li"));
+        var span = jQuery(document.createElement("span"));
 
         li.val(id);
         li.addClass("ui-state-default_oe ui-state-default_oe-tag");
@@ -570,7 +570,7 @@
         return element ? element[0].childNodes[0].nodeValue : "";
     }
     function createNewSortingDiv(sampleTypeName, divId) {
-        var mainDiv = $jq(document.createElement("div"));
+        var mainDiv = jQuery(document.createElement("div"));
         var nameSpan = createNameSpan(sampleTypeName);
         var sortSpan = createSortSpan(divId);
 
@@ -579,41 +579,41 @@
         mainDiv.css("padding", "20px");
         mainDiv.append(nameSpan);
         mainDiv.append(sortSpan);
-        $jq("#endOrderMarker").before(mainDiv);
+        jQuery("#endOrderMarker").before(mainDiv);
 
     }
 
     function createNameSpan(sampleTypeName) {
-        var nameSpan = $jq(document.createElement("span"));
+        var nameSpan = jQuery(document.createElement("span"));
         nameSpan.addClass("half-tab");
         nameSpan.append(sampleTypeName);
         return nameSpan;
     }
 
     function createSortSpan(divId) {
-        var sortSpan = $jq(document.createElement("span"));
+        var sortSpan = jQuery(document.createElement("span"));
         sortSpan.attr("id", "sort" + divId);
 
         return sortSpan;
     }
 
     function makeSortListsReadOnly() {
-        if ($jq(".sortable li").length > 0) {
-            $jq(".sortable").removeClass("sortable");
-            $jq(".ui-state-default_oe").removeClass("ui-state-default_oe");
+        if (jQuery(".sortable li").length > 0) {
+            jQuery(".sortable").removeClass("sortable");
+            jQuery(".ui-state-default_oe").removeClass("ui-state-default_oe");
         }
     }
 
     function upperAgeRangeChanged(index) {
         var copy, htmlCopy, monthYear, lowAge, lowAgeValue, highAgeValue, lowAgeModifier, newMonthValue;
-        var element = $jq("#upperAgeSetter_" + index);
+        var element = jQuery("#upperAgeSetter_" + index);
 
         element.removeClass("error");
         if (element.val() != "Infinity") {
-            monthYear = $jq(".yearMonthSelect_" + index + ":checked").val();
+            monthYear = jQuery(".yearMonthSelect_" + index + ":checked").val();
 
             if (index != 0) {
-                lowAge = $jq("#lowerAge_" + index).text();
+                lowAge = jQuery("#lowerAge_" + index).text();
                 lowAgeModifier = lowAge.charAt(lowAge.length - 1);
                 lowAgeValue = lowAge.substring(0, lowAge.length - 1);
                 lowAgeValue = lowAgeModifier == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue;
@@ -634,17 +634,17 @@
             }
 
 
-            $jq(element).hide();
-            $jq("#upperAge_" + index).text(element.val() + monthYear);
-            $jq(".yearMonthSelect_" + index).attr("disabled", "disabled");
-            $jq("#ageRangeSelect_" + index).attr("disabled", "disabled");
-            copy = $jq("#normalRangeTemplate table tbody").clone();
+            jQuery(element).hide();
+            jQuery("#upperAge_" + index).text(element.val() + monthYear);
+            jQuery(".yearMonthSelect_" + index).attr("disabled", "disabled");
+            jQuery("#ageRangeSelect_" + index).attr("disabled", "disabled");
+            copy = jQuery("#normalRangeTemplate table tbody").clone();
             htmlCopy = copy.html().replace(/index/g, currentNormalRangeIndex);
-            $jq("#endRow").before(htmlCopy);
-            $jq(".sexRange_" + currentNormalRangeIndex).hide();
-            $jq("#lowerAge_" + currentNormalRangeIndex).text(element.val() + monthYear);
+            jQuery("#endRow").before(htmlCopy);
+            jQuery(".sexRange_" + currentNormalRangeIndex).hide();
+            jQuery("#lowerAge_" + currentNormalRangeIndex).text(element.val() + monthYear);
             if (index != 0) {
-                $jq("#removeButton_" + index).hide();
+                jQuery("#removeButton_" + index).hide();
             }
             currentNormalRangeIndex++;
         }
@@ -652,17 +652,17 @@
     }
 
     function removeLimitRow(index) {
-        $jq(".row_" + index).remove();
+        jQuery(".row_" + index).remove();
 
         for (var i = index - 1; index >= 0; i--) {
-            if ($jq(".row_" + i)) {
-                $jq(".yearMonthSelect_" + i).removeAttr("disabled");
-                $jq("#ageRangeSelect_" + i).removeAttr("disabled");
-                $jq("#ageRangeSelect_" + i).val(0);
-                $jq("#upperAge_" + i).text("");
-                $jq("#upperAgeSetter_" + i).show();
+            if (jQuery(".row_" + i)) {
+                jQuery(".yearMonthSelect_" + i).removeAttr("disabled");
+                jQuery("#ageRangeSelect_" + i).removeAttr("disabled");
+                jQuery("#ageRangeSelect_" + i).val(0);
+                jQuery("#upperAge_" + i).text("");
+                jQuery("#upperAgeSetter_" + i).show();
                 if (i != 0) {
-                    $jq("#removeButton_" + i).show();
+                    jQuery("#removeButton_" + i).show();
                 }
                 break;
             }
@@ -670,30 +670,30 @@
     }
 
     function ageRangeSelected(element, index) {
-        var ageInMonths = $jq(element).find("option:selected").val();
+        var ageInMonths = jQuery(element).find("option:selected").val();
         var selectFound = false;
         var optionValue;
 
         if (ageInMonths != 0) {
             if (ageInMonths == "Infinity") {
-                $jq("#upperAgeSetter_" + index).val(ageInMonths);
+                jQuery("#upperAgeSetter_" + index).val(ageInMonths);
             } else if (ageInMonths % 12 == 0) {
-                $jq("input:radio[name=time_" + index + "]").val(["<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"]);
-                $jq("#upperAgeSetter_" + index).val(ageInMonths / 12);
+                jQuery("input:radio[name=time_" + index + "]").val(["<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"]);
+                jQuery("#upperAgeSetter_" + index).val(ageInMonths / 12);
             } else {
-                $jq("input:radio[name=time_" + index + "]").val(["<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"]);
-                $jq("#upperAgeSetter_" + index).val(ageInMonths);
+                jQuery("input:radio[name=time_" + index + "]").val(["<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"]);
+                jQuery("#upperAgeSetter_" + index).val(ageInMonths);
             }
             upperAgeRangeChanged(index);
 
-            $jq("#ageRangeSelect_" + (currentNormalRangeIndex - 1) + " option").each(function () {
-                optionValue = $jq(this).val();
+            jQuery("#ageRangeSelect_" + (currentNormalRangeIndex - 1) + " option").each(function () {
+                optionValue = jQuery(this).val();
                 if (!selectFound) {
                     if (optionValue == ageInMonths) {
                         selectFound = true;
                     }
                     if (optionValue != 0) {
-                        $jq(this).hide();
+                        jQuery(this).hide();
                     }
                 }
             });
@@ -704,11 +704,11 @@
         var lowNormalValue, highNormalValue, lowValidValue, highValidValue;
         var lowGenderNormalValue, highGenderNormalValue;
         var lowGenderNormal, highGenderNormal;
-        var lowNormal = $jq("#lowNormal_" + index);
-        var highNormal = $jq("#highNormal_" + index);
-        var lowValid = $jq("#lowValid");
-        var highValid = $jq("#highValid");
-        var checkGenderValues = $jq("#genderCheck_" + index).is(':checked');
+        var lowNormal = jQuery("#lowNormal_" + index);
+        var highNormal = jQuery("#highNormal_" + index);
+        var lowValid = jQuery("#lowValid");
+        var highValid = jQuery("#highValid");
+        var checkGenderValues = jQuery("#genderCheck_" + index).is(':checked');
 
         //check to see if the normal ranges are numeric (Except for infinity) and then compare them to make sure they
         //are ordered correctly.
@@ -740,8 +740,8 @@
         }
 
         if (checkGenderValues) {
-            lowGenderNormal = $jq("#lowNormal_G_" + index);
-            highGenderNormal = $jq("#highNormal_G_" + index);
+            lowGenderNormal = jQuery("#lowNormal_G_" + index);
+            highGenderNormal = jQuery("#highNormal_G_" + index);
             lowGenderNormal.removeClass("error");
             lowGenderNormalValue = +lowGenderNormal.val();
             if (lowGenderNormalValue != "-Infinity" &&
@@ -816,8 +816,8 @@
 
     function validRangeCheck() {
         var highValidValue, lowValidValue;
-        var lowValid = $jq("#lowValid");
-        var highValid = $jq("#highValid");
+        var lowValid = jQuery("#lowValid");
+        var highValid = jQuery("#highValid");
 
         lowValid.removeClass("error");
         lowValidValue = +lowValid.val();
@@ -845,36 +845,36 @@
             return;
         }
 
-        $jq(".rowKey").each(function () {
+        jQuery(".rowKey").each(function () {
             //index is in the template
-            if ($jq(this).val() != "index") {
-                normalRangeCheck($jq(this).val());
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
             }
         });
     }
     function checkReadyForNextStep() {
         var ready = true;
         if (step == "step1") {
-            $jq("#step1Div .required").each(function () {
-                if (!$jq(this).val() || $jq(this).val() == 0 || $jq(this).val().length == 0) {
+            jQuery("#step1Div .required").each(function () {
+                if (!jQuery(this).val() || jQuery(this).val() == 0 || jQuery(this).val().length == 0) {
                     ready = false;
                 }
             });
         } else if (step == "step2") {
-            $jq("#sampleTypeSelectionDiv .required").each(function () {
-                if (!$jq(this).val() || $jq(this).val() == 0 || $jq(this).val().length == 0) {
+            jQuery("#sampleTypeSelectionDiv .required").each(function () {
+                if (!jQuery(this).val() || jQuery(this).val() == 0 || jQuery(this).val().length == 0) {
                     ready = false;
                 }
             });
         } else if (step == "step3Dictionary") {
-            $jq("#testDisplayOrderDiv .required").each(function () {
-                if (!$jq(this).val() || $jq(this).val() == 0 || $jq(this).val().length == 0) {
+            jQuery("#testDisplayOrderDiv .required").each(function () {
+                if (!jQuery(this).val() || jQuery(this).val() == 0 || jQuery(this).val().length == 0) {
                     ready = false;
                 }
             });
         }
 
-        $jq("#nextButton").prop("disabled", !ready);
+        jQuery("#nextButton").prop("disabled", !ready);
     }
     
     function editRangeAsk(){
@@ -896,23 +896,23 @@
         if (step == 'step1') {
             step = 'step2';
             setStep1ReadOnlyFields();
-            $jq(".step1").hide();
-            $jq(".step2").show();
-            $jq("#nextButton").attr("disabled", "disabled");
-            $jq("#sampleTypeContainer").show();
+            jQuery(".step1").hide();
+            jQuery(".step2").show();
+            jQuery("#nextButton").attr("disabled", "disabled");
+            jQuery("#sampleTypeContainer").show();
             
             var sampleType = null;
             var sampleTypeId = null;
             
-            $jq(".resultClass").each(function (i,elem) {
-            	sampleType = $jq(elem).attr("fSampleType")
+            jQuery(".resultClass").each(function (i,elem) {
+            	sampleType = jQuery(elem).attr("fSampleType")
             });
             
-			var optionsArray = Array.from($jq("#sampleTypeSelection")[0]);
+			var optionsArray = Array.from(jQuery("#sampleTypeSelection")[0]);
 			var sampleTypeOption = optionsArray.filter(function(elem) { return elem.label === sampleType });
 			sampleTypeOption.forEach(function(elem) {
-				$jq(elem).attr("selected", true)
-				sampleTypeId = $jq(elem).attr("value");
+				jQuery(elem).attr("selected", true)
+				sampleTypeId = jQuery(elem).attr("value");
 			});
 			
 			var sampleTypeData = {value:sampleTypeId, type:"add"};
@@ -920,9 +920,9 @@
 			//because "change" triggers extra call
 			if (sampleTypeId != null) {
 	            createOrderBoxForSampleType(sampleTypeData);
-				$jq("#sampleTypeSelection").change();
+				jQuery("#sampleTypeSelection").change();
 			}
-			$jq("#nextButton").prop("disabled", false);	
+			jQuery("#nextButton").prop("disabled", false);	
 
         } else if (step == 'step2') {
         	var significantDigits = null;
@@ -931,12 +931,12 @@
 			var referenceValue = null;
 			var referenceId = null;
 
-            $jq(".resultClass").each(function (i,elem) {
-            	significantDigits = $jq(elem).attr("fSignificantDigits")
-            	dictionaryValues = $jq(elem).attr("fDictionaryIds")
-            	dictionaryIds = $jq(elem).attr("fDictionaryValues")
-            	referenceValue = $jq(elem).attr("fReferenceValue")
-            	referenceId = $jq(elem).attr("fReferenceId")
+            jQuery(".resultClass").each(function (i,elem) {
+            	significantDigits = jQuery(elem).attr("fSignificantDigits")
+            	dictionaryValues = jQuery(elem).attr("fDictionaryIds")
+            	dictionaryIds = jQuery(elem).attr("fDictionaryValues")
+            	referenceValue = jQuery(elem).attr("fReferenceValue")
+            	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
             // format dictionary values
@@ -946,110 +946,110 @@
             	var tmpArray = tmpArray[0].split(", ");
             	var valuesArray = jQuery.makeArray(tmpArray);
             }
-            resultTypeId = $jq("#resultTypeSelection").val();
-            $jq("#sortTitleDiv").attr("align", "left");
-            $jq("#step2BreadCrumb").hide();
-            $jq("#step2Guide").hide();
+            resultTypeId = jQuery("#resultTypeSelection").val();
+            jQuery("#sortTitleDiv").attr("align", "left");
+            jQuery("#step2BreadCrumb").hide();
+            jQuery("#step2Guide").hide();
             makeSortListsReadOnly();
             if (resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.ALPHA.getId()%>' ||
                     resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.REMARK.getId()%>') {
-                $jq("#sampleTypeSelectionDiv").hide();
-                $jq("#sortTitleDiv").text("Sample type and test sort order");
-                $jq(".confirmShow").show();
-                $jq(".selectShow").hide();
-                $jq("#step2Confirm").show();
+                jQuery("#sampleTypeSelectionDiv").hide();
+                jQuery("#sortTitleDiv").text("Sample type and test sort order");
+                jQuery(".confirmShow").show();
+                jQuery(".selectShow").hide();
+                jQuery("#step2Confirm").show();
                 createJSON(); 
             } else if (resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.NUMERIC.getId()%>') {
             		step = "step3Numeric";
-            		$jq("#significantDigits").val(significantDigits);
-                    $jq("#normalRangeAskDiv").show();
-                    $jq("#editResultLimitsButton").show();
-                    $jq("#sampleTypeSelectionDiv").hide();
+            		jQuery("#significantDigits").val(significantDigits);
+                    jQuery("#normalRangeAskDiv").show();
+                    jQuery("#editResultLimitsButton").show();
+                    jQuery("#sampleTypeSelectionDiv").hide();
             } else if (resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.DICTIONARY.getId()%>' ||
                     resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getId()%>' ||
                     resultTypeId == '<%=TypeOfTestResultServiceImpl.ResultType.CASCADING_MULTISELECT.getId()%>') {
                 step = 'step3Dictionary';
-                $jq("#sampleTypeSelectionDiv").hide();
-                $jq("#dictionaryAskDiv").show();
+                jQuery("#sampleTypeSelectionDiv").hide();
+                jQuery("#dictionaryAskDiv").show();
             }
         } else if (step == "step3NumericAsk") {
         	step = "step3Numeric";
-        	$jq("#normalRangeDiv").show();
-            $jq("#sampleTypeSelectionDiv").hide();
-            $jq(".resultLimits").show();
+        	jQuery("#normalRangeDiv").show();
+            jQuery("#sampleTypeSelectionDiv").hide();
+            jQuery(".resultLimits").show();
             resetResultLimits();
         } else if (step == "step3Numeric") {
         	
         	var defaultLimitsString = null;
-        	defaultLimitsString = $jq("#fLimit").val();
+        	defaultLimitsString = jQuery("#fLimit").val();
         	//console.log("defaultLimitsString:" + defaultLimitsString);
         	defaultResultLimits = buildResultLimitesFromDefault(defaultLimitsString);
         	
-            $jq("#normalRangeDiv input,select").attr("disabled", "disabled");
-            $jq(".confirmShow").show();
-            $jq(".selectShow").hide();
-            $jq(".resultLimits").hide();
-            $jq(".resultLimitsConfirm").show();
+            jQuery("#normalRangeDiv input,select").attr("disabled", "disabled");
+            jQuery(".confirmShow").show();
+            jQuery(".selectShow").hide();
+            jQuery(".resultLimits").hide();
+            jQuery(".resultLimitsConfirm").show();
             
             createJSON();
             
         } else if (step == "step3DictionaryAsk") {
         	step = 'step3Dictionary';
-        	$jq("#dictionaryAskDiv").hide();
-        	$jq("#dictionaryVerifyId").hide();
-        	$jq(".dictionarySelect").show();
+        	jQuery("#dictionaryAskDiv").hide();
+        	jQuery("#dictionaryVerifyId").hide();
+        	jQuery(".dictionarySelect").show();
         	
         	var dictionaryValues = null;
         	var dictionaryIds = null;
         	var referenceValue = null;
         	var referenceId = null;
-            $jq(".resultClass").each(function (i,elem) {
-            	dictionaryValues = $jq(elem).attr("fDictionaryValues")
-            	dictionaryValues = $jq(elem).attr("fDictionaryIds")
-            	referenceValue = $jq(elem).attr("fReferenceValue")
-            	referenceId = $jq(elem).attr("fReferenceId")
+            jQuery(".resultClass").each(function (i,elem) {
+            	dictionaryValues = jQuery(elem).attr("fDictionaryValues")
+            	dictionaryValues = jQuery(elem).attr("fDictionaryIds")
+            	referenceValue = jQuery(elem).attr("fReferenceValue")
+            	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
-            $jq("#referenceValue").text($jq(referenceValue).text());
-            $jq("#referenceId").text($jq(referenceId).text());
+            jQuery("#referenceValue").text(jQuery(referenceValue).text());
+            jQuery("#referenceId").text(jQuery(referenceId).text());
             
         } else if (step == "step3Dictionary") {
-        	$jq("#dictionaryAskDiv").hide();
-            $jq(".dictionarySelect").hide();
-            $jq("#sortDictionaryDiv").hide();
+        	jQuery("#dictionaryAskDiv").hide();
+            jQuery(".dictionarySelect").hide();
+            jQuery("#sortDictionaryDiv").hide();
            
             
             var dictionaryValues = null;
         	var dictionaryIds = null;
         	var referenceValue = null;
         	var referenceId = null;
-            $jq(".resultClass").each(function (i,elem) {
-            	dictionaryValues = $jq(elem).attr("fDictionaryValues")
-            	dictionaryIds = $jq(elem).attr("fDictionaryIds")
-            	referenceValue = $jq(elem).attr("fReferenceValue")
-            	referenceId = $jq(elem).attr("fReferenceId")
+            jQuery(".resultClass").each(function (i,elem) {
+            	dictionaryValues = jQuery(elem).attr("fDictionaryValues")
+            	dictionaryIds = jQuery(elem).attr("fDictionaryIds")
+            	referenceValue = jQuery(elem).attr("fReferenceValue")
+            	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
-            if($jq("#referenceSelection option").length == 1) {
+            if(jQuery("#referenceSelection option").length == 1) {
             	//console.log("dict default:" + dictionaryValues);
-            	$jq("#referenceValue").text(referenceValue);
+            	jQuery("#referenceValue").text(referenceValue);
             	buildVerifyDictionaryListFromDefault(dictionaryValues);
             } else {
             	console.log("dict group:");
-            	$jq("#referenceValue").text($jq("#referenceSelection option:selected").text());
+            	jQuery("#referenceValue").text(jQuery("#referenceSelection option:selected").text());
             	buildVerifyDictionaryList();
             }
 
-            $jq("#dictionaryVerifyId").show();
-            $jq(".selectListConfirm").show();
-            $jq(".confirmShow").show();
-            $jq(".selectShow").hide();
+            jQuery("#dictionaryVerifyId").show();
+            jQuery(".selectListConfirm").show();
+            jQuery(".confirmShow").show();
+            jQuery(".selectShow").hide();
             createJSON();
         }
     }
     
-    $jq(".dictionarySelect").hide();
-    $jq("#sortDictionaryDiv").hide();
+    jQuery(".dictionarySelect").hide();
+    jQuery("#sortDictionaryDiv").hide();
     
     function buildResultLimitesFromDefault(defaultLimitsString) {
     	var resultLimits = [];
@@ -1088,8 +1088,8 @@
     }
     
     function buildVerifyDictionaryListFromDefault(dictionaryValues) {
-        var verifyList = $jq("#dictionaryVerifyListId");
-        var qualifyList = $jq("#dictionaryQualify");
+        var verifyList = jQuery("#dictionaryVerifyListId");
+        var qualifyList = jQuery("#dictionaryQualify");
         var li, qualified;
         var tmpArray = dictionaryValues.split("[");
     	var tmpArray = tmpArray[1].split("]");
@@ -1097,31 +1097,31 @@
     	dictionaryValues = jQuery.makeArray(tmpArray);
         verifyList.empty();
         for(var i=0; i < dictionaryValues.length; i++ ) {
-            li = $jq(document.createElement("li"));
+            li = jQuery(document.createElement("li"));
             li.val(dictionaryValues[i]);
             //qualified = qualifyList.find("option[value=" + this.value + "]:selected").length == 1;
-            //li.append($jq(this).text() + (qualified ? "-- qualified" : ""));
+            //li.append(jQuery(this).text() + (qualified ? "-- qualified" : ""));
             li.append(dictionaryValues[i]);
             verifyList.append(li);
         };
     }
     
     function buildVerifyDictionaryList() {
-        var verifyList = $jq("#dictionaryVerifyListId");
-        var qualifyList = $jq("#dictionaryQualify");
+        var verifyList = jQuery("#dictionaryVerifyListId");
+        var qualifyList = jQuery("#dictionaryQualify");
         var li, qualified;
         verifyList.empty();
-        $jq("#dictionaryNameSortUI li").each(function () {
-            li = $jq(document.createElement("li"));
+        jQuery("#dictionaryNameSortUI li").each(function () {
+            li = jQuery(document.createElement("li"));
             li.val(this.value);
             qualified = qualifyList.find("option[value=" + this.value + "]:selected").length == 1;
-            li.append($jq(this).text() + (qualified ? "-- qualified" : ""));
+            li.append(jQuery(this).text() + (qualified ? "-- qualified" : ""));
             verifyList.append(li);
         });
     }
     function navigateBack() {
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
         if (step == 'step1') {
         	window.location.href = "TestManagementConfigMenu.do";
         } else if (step == 'step2') {
@@ -1132,9 +1132,9 @@
     }
 
     function navigateBackFromConfirm() {
-        $jq(".confirmationBreadCrumb").hide();
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
+        jQuery(".confirmationBreadCrumb").hide();
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
         if (step == 'step2') {
             goBackToStep2();
         } else if (step == "step3Numeric") {
@@ -1146,79 +1146,79 @@
 
     function goBackToStep1() {
         step = 'step1';
-        $jq('.step2').hide();
-        $jq(".step1").show();
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
-        $jq(".dictionarySelect").hide();
-        $jq(".confirmationBreadCrumb").hide();
-        $jq("#nextButton").removeAttr("disabled");
-        $jq(".sortingMainDiv").remove();
-        $jq("#normalRangeDiv").hide();
-        $jq("#normalRangeDiv input,select").removeAttr("disabled");
-        $jq(".resultLimits").hide();
-        $jq("#sortTitleDiv").attr("align", "center");
+        jQuery('.step2').hide();
+        jQuery(".step1").show();
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
+        jQuery(".dictionarySelect").hide();
+        jQuery(".confirmationBreadCrumb").hide();
+        jQuery("#nextButton").removeAttr("disabled");
+        jQuery(".sortingMainDiv").remove();
+        jQuery("#normalRangeDiv").hide();
+        jQuery("#normalRangeDiv input,select").removeAttr("disabled");
+        jQuery(".resultLimits").hide();
+        jQuery("#sortTitleDiv").attr("align", "center");
         //The reason for the li is that the sample sortable UL is hardcoded as sortable, even if it has no contents
-        if ($jq(".sortable-tag li").length > 0) {
-            $jq(".sortable-tag").addClass("sortable");
-            $jq(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
-            $jq(".sortable").sortable("enable");
+        if (jQuery(".sortable-tag li").length > 0) {
+            jQuery(".sortable-tag").addClass("sortable");
+            jQuery(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
+            jQuery(".sortable").sortable("enable");
         }
-        $jq("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
-        $jq("#dictionaryVerifyId").hide();
-        $jq(".notStep1BreadCrumb").hide();
+        jQuery("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
+        jQuery("#dictionaryVerifyId").hide();
+        jQuery(".notStep1BreadCrumb").hide();
 
-        clearMultiSelectContainer($jq("#sampleTypeSelectionDiv"));
+        clearMultiSelectContainer(jQuery("#sampleTypeSelectionDiv"));
         clearDictionaryLists();
     }
 
     function goBackToStep2() {
         step = "step2";
-        $jq(".step2").show();
-        $jq(".resultLimits").hide();
-        $jq("#editResultLimitsButton").hide();
-        $jq("#sortTitleDiv").attr("align", "center");
+        jQuery(".step2").show();
+        jQuery(".resultLimits").hide();
+        jQuery("#editResultLimitsButton").hide();
+        jQuery("#sortTitleDiv").attr("align", "center");
         //The reason for the li is that the sample sortable UL is hardcoded as sortable, even if it has no contents
-        if ($jq(".sortable-tag li").length > 0) {
-            $jq(".sortable-tag").addClass("sortable");
-            $jq(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
-            $jq(".sortable").sortable("enable");
+        if (jQuery(".sortable-tag li").length > 0) {
+            jQuery(".sortable-tag").addClass("sortable");
+            jQuery(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
+            jQuery(".sortable").sortable("enable");
         }
-        $jq("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
+        jQuery("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
         clearDictionaryLists();
 
-        $jq("#sampleTypeSelectionDiv").show();
-        $jq(".dictionarySelect").hide();
-        $jq("#dictioanryVerifyListId").hide();
-        $jq(".confirmationBreadCrumb").hide();
-        $jq("#nextButton").removeAttr("disabled");
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
-        $jq("#normalRangeDiv").hide();
-        $jq("#normalRangeDiv input,select").removeAttr("disabled");
-        $jq("#dictionaryVerifyId").hide();
-        $jq("#dictionaryAskDiv").hide();
-        $jq("#dictionaryVerifyId").hide();
+        jQuery("#sampleTypeSelectionDiv").show();
+        jQuery(".dictionarySelect").hide();
+        jQuery("#dictioanryVerifyListId").hide();
+        jQuery(".confirmationBreadCrumb").hide();
+        jQuery("#nextButton").removeAttr("disabled");
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
+        jQuery("#normalRangeDiv").hide();
+        jQuery("#normalRangeDiv input,select").removeAttr("disabled");
+        jQuery("#dictionaryVerifyId").hide();
+        jQuery("#dictionaryAskDiv").hide();
+        jQuery("#dictionaryVerifyId").hide();
     }
 
     function goBackToStep3Dictionary(){
-        $jq(".dictionarySelect").show();
-        $jq("#sortDictionaryDiv").show();
-        $jq("#dictionaryVerifyId").hide();
-        $jq(".confirmationBreadCrumb").hide();
-        $jq(".selectListConfirm").hide();
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
+        jQuery(".dictionarySelect").show();
+        jQuery("#sortDictionaryDiv").show();
+        jQuery("#dictionaryVerifyId").hide();
+        jQuery(".confirmationBreadCrumb").hide();
+        jQuery(".selectListConfirm").hide();
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
     }
 
     function goBackToResultLimits(){
-        $jq(".confirmShow").hide();
-        $jq(".selectShow").show();
-        $jq(".confirmationBreadCrumb").hide();
-        $jq("#dictionaryVerifyId").hide();
-        $jq("#normalRangeDiv").show();
-        $jq(".resultLimits").show();
-        $jq("#normalRangeDiv input,select").removeAttr("disabled");
+        jQuery(".confirmShow").hide();
+        jQuery(".selectShow").show();
+        jQuery(".confirmationBreadCrumb").hide();
+        jQuery("#dictionaryVerifyId").hide();
+        jQuery("#normalRangeDiv").show();
+        jQuery(".resultLimits").show();
+        jQuery("#normalRangeDiv input,select").removeAttr("disabled");
         resetResultLimits();
     }
 
@@ -1249,22 +1249,22 @@
     
     function resetResultLimits(){
         genderMatersForRange(false,'0');
-        $jq("#normalRangeDiv .createdFromTemplate").remove();
+        jQuery("#normalRangeDiv .createdFromTemplate").remove();
 
-        $jq("#lowNormal_0").val("-Infinity");
-        $jq("#highNormal_0").val("Infinity");
-        $jq("#lowValid").val("-Infinity");
-        $jq("#highValid").val("Infinity");
-        $jq("#lowNormal_0").removeClass("error");
-        $jq("#highNormal_0").removeClass("error");
-        $jq("#reportingRange_0").val('');
-        //$jq("#significantDigits").val('');
-        $jq("#lowerAge_0").val('0');
-        $jq("#upperAge_0").text('');
-        $jq("#upperAgeSetter_0").val('Infinity');
-        $jq("#upperAgeSetter_0").show();
-        $jq("#ageRangeSelect_0").val(0);
-        $jq("#genderCheck_0").prop('checked', false);
+        jQuery("#lowNormal_0").val("-Infinity");
+        jQuery("#highNormal_0").val("Infinity");
+        jQuery("#lowValid").val("-Infinity");
+        jQuery("#highValid").val("Infinity");
+        jQuery("#lowNormal_0").removeClass("error");
+        jQuery("#highNormal_0").removeClass("error");
+        jQuery("#reportingRange_0").val('');
+        //jQuery("#significantDigits").val('');
+        jQuery("#lowerAge_0").val('0');
+        jQuery("#upperAge_0").text('');
+        jQuery("#upperAgeSetter_0").val('Infinity');
+        jQuery("#upperAgeSetter_0").show();
+        jQuery("#ageRangeSelect_0").val(0);
+        jQuery("#genderCheck_0").prop('checked', false);
         
     }
     function clearMultiSelectContainer(root) {
@@ -1276,44 +1276,44 @@
     function setStep1ReadOnlyFields() {
         var panelNames = "";
 
-        $jq("#testNameEnglishRO").text($jq("#testNameEnglish").val());
-        $jq("#testNameFrenchRO").text($jq("#testNameFrench").val());
-        $jq("#testReportNameEnglishRO").text($jq("#testReportNameEnglish").val());
-        $jq("#testReportNameFrenchRO").text($jq("#testReportNameFrench").val());
-        $jq("#testSectionRO").text($jq("#testUnitSelection  option:selected").text());
-        $jq("#panelSelection option:selected").each(function () {
-            panelNames += ($jq(this).text()) + "\<br\>";
+        jQuery("#testNameEnglishRO").text(jQuery("#testNameEnglish").val());
+        jQuery("#testNameFrenchRO").text(jQuery("#testNameFrench").val());
+        jQuery("#testReportNameEnglishRO").text(jQuery("#testReportNameEnglish").val());
+        jQuery("#testReportNameFrenchRO").text(jQuery("#testReportNameFrench").val());
+        jQuery("#testSectionRO").text(jQuery("#testUnitSelection  option:selected").text());
+        jQuery("#panelSelection option:selected").each(function () {
+            panelNames += (jQuery(this).text()) + "\<br\>";
         });
         //we use append for optional
-        $jq("#panelRO").empty();
-        $jq("#panelRO").append(panelNames);
-        $jq("#uomRO").empty();
-        $jq("#uomRO").append($jq("#uomSelection  option:selected").text());
-        $jq("#loincRO").text($jq("#loinc").val());
-        $jq("#resultTypeRO").text($jq("#resultTypeSelection  option:selected").text());
-        $jq("#activeRO").text($jq("#active").attr("checked") ? "Y" : "N");
-        $jq("#orderableRO").text($jq("#orderable").attr("checked") ? "Y" : "N");
+        jQuery("#panelRO").empty();
+        jQuery("#panelRO").append(panelNames);
+        jQuery("#uomRO").empty();
+        jQuery("#uomRO").append(jQuery("#uomSelection  option:selected").text());
+        jQuery("#loincRO").text(jQuery("#loinc").val());
+        jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
+        jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
+        jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
         var jsonObj = {};
-        jsonObj.testNameEnglish = $jq("#testNameEnglish").val();
-        jsonObj.testNameFrench = $jq("#testNameFrench").val();
-        jsonObj.testReportNameEnglish = $jq("#testReportNameEnglish").val();
-        jsonObj.testReportNameFrench = $jq("#testReportNameFrench").val();
-        jsonObj.testSection = $jq("#testUnitSelection").val();
+        jsonObj.testNameEnglish = jQuery("#testNameEnglish").val();
+        jsonObj.testNameFrench = jQuery("#testNameFrench").val();
+        jsonObj.testReportNameEnglish = jQuery("#testReportNameEnglish").val();
+        jsonObj.testReportNameFrench = jQuery("#testReportNameFrench").val();
+        jsonObj.testSection = jQuery("#testUnitSelection").val();
         jsonObj.panels = [];
         addJsonPanels(jsonObj);
-        $jq("#panelSelection").val();
-        jsonObj.uom = $jq("#uomSelection").val();
-        jsonObj.loinc = $jq("#loinc").val();
-        jsonObj.resultType = $jq("#resultTypeSelection").val();
-        jsonObj.orderable = $jq("#orderable").attr("checked") ? 'Y' : 'N';
-        jsonObj.active = $jq("#active").attr("checked") ? 'Y' : 'N';
+        jQuery("#panelSelection").val();
+        jsonObj.uom = jQuery("#uomSelection").val();
+        jsonObj.loinc = jQuery("#loinc").val();
+        jsonObj.resultType = jQuery("#resultTypeSelection").val();
+        jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
+        jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         
-        $jq(".resultClass").each(function (i,elem) {
-        	jsonObj.testId = $jq(elem).attr('fTestId');
-            console.log("createJSON: " + $jq(elem).attr('fTestId') + ":" + $jq(elem).attr('fResultType'));
+        jQuery(".resultClass").each(function (i,elem) {
+        	jsonObj.testId = jQuery(elem).attr('fTestId');
+            console.log("createJSON: " + jQuery(elem).attr('fTestId') + ":" + jQuery(elem).attr('fResultType'));
         });
         
         jsonObj.sampleTypes = [];
@@ -1340,12 +1340,12 @@
 				var dictionaryIds = null;
 				var referenceId = null;
 
-           	 	$jq(".resultClass").each(function (i,elem) {
-            		significantDigits = $jq(elem).attr("fSignificantDigits")
-            		dictionaryValues = $jq(elem).attr("fDictionaryValues")
-            		referenceValue = $jq(elem).attr("fReferenceValue")
-            		dictionaryIds = $jq(elem).attr("fDictionaryIds")
-            		referenceId = $jq(elem).attr("fReferenceId")
+           	 	jQuery(".resultClass").each(function (i,elem) {
+            		significantDigits = jQuery(elem).attr("fSignificantDigits")
+            		dictionaryValues = jQuery(elem).attr("fDictionaryValues")
+            		referenceValue = jQuery(elem).attr("fReferenceValue")
+            		dictionaryIds = jQuery(elem).attr("fDictionaryIds")
+            		referenceId = jQuery(elem).attr("fReferenceId")
             	});
             	//console.log("Values:" + dictionaryValues + "::::" + referenceValue);
             	//console.log("Ids:" + dictionaryIds + "::::" + referenceId);
@@ -1372,11 +1372,11 @@
         }
         console.log(JSON.stringify(jsonObj));
         
-		$jq("#jsonWad").val(JSON.stringify(jsonObj));
+		jQuery("#jsonWad").val(JSON.stringify(jsonObj));
     }
     
     function addJsonPanels(jsonObj) {
-        var panelSelections = $jq("#panelSelection").val();
+        var panelSelections = jQuery("#panelSelection").val();
         var jsonPanel;
         jsonObj.panels = [];
         if (panelSelections) {
@@ -1389,7 +1389,7 @@
     }
 
     function addJsonSortingOrder(jsonObj) {
-        var sampleTypes = $jq("#sampleTypeSelection").val();
+        var sampleTypes = jQuery("#sampleTypeSelection").val();
         var i, jsonSampleType, index, test;
 
 
@@ -1398,12 +1398,12 @@
             jsonSampleType.typeId = sampleTypes[i];
             jsonSampleType.tests = [];
             index = 0;
-            $jq("#" + sampleTypes[i] + " li").each(function () {
-            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + $jq(this).val());
-            	//if (jsonObj.testId != $jq(this).val()){
+            jQuery("#" + sampleTypes[i] + " li").each(function () {
+            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + jQuery(this).val());
+            	//if (jsonObj.testId != jQuery(this).val()){
             	if (true){
                 	test = {};
-                	test.id = $jq(this).val();
+                	test.id = jQuery(this).val();
                 	jsonSampleType.tests[index++] = test;
             	}
             });
@@ -1426,7 +1426,7 @@
 
         for (var rowIndex = 0; rowIndex < defaultResultLimits.length; rowIndex++) {
             
-            //yearMonth = monthYear = $jq(".yearMonthSelect_" + rowIndex + ":checked").val();
+            //yearMonth = monthYear = jQuery(".yearMonthSelect_" + rowIndex + ":checked").val();
             yearMonth = 'M'; // always month regardless
             limit = {};
 
@@ -1464,18 +1464,18 @@
         var rowIndex, limit, gender, yearMonth, upperAge;
         var countIndex = 0;
 
-        jsonObj.lowValid = $jq("#lowValid").val();
-        jsonObj.highValid = $jq("#highValid").val();
-        jsonObj.significantDigits = $jq("#significantDigits").val();
+        jsonObj.lowValid = jQuery("#lowValid").val();
+        jsonObj.highValid = jQuery("#highValid").val();
+        jsonObj.significantDigits = jQuery("#significantDigits").val();
         jsonObj.resultLimits = [];
 
-        $jq("#normalRangeDiv .rowKey").each(function () {
-            rowIndex = $jq(this).val();
-            gender = $jq("#genderCheck_" + rowIndex).is(":checked");
-            yearMonth = monthYear = $jq(".yearMonthSelect_" + rowIndex + ":checked").val();
+        jQuery("#normalRangeDiv .rowKey").each(function () {
+            rowIndex = jQuery(this).val();
+            gender = jQuery("#genderCheck_" + rowIndex).is(":checked");
+            yearMonth = monthYear = jQuery(".yearMonthSelect_" + rowIndex + ":checked").val();
             limit = {};
 
-            upperAge = $jq("#upperAgeSetter_" + rowIndex).val();
+            upperAge = jQuery("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
                 limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
             } else {
@@ -1483,14 +1483,14 @@
             }
 
             limit.gender = gender;
-            limit.lowNormal = $jq("#lowNormal_" + rowIndex).val();
-            limit.highNormal = $jq("#highNormal_" + rowIndex).val();
-            limit.reportingRange = $jq("#reportingRange_" + rowIndex).val();
+            limit.lowNormal = jQuery("#lowNormal_" + rowIndex).val();
+            limit.highNormal = jQuery("#highNormal_" + rowIndex).val();
+            limit.reportingRange = jQuery("#reportingRange_" + rowIndex).val();
 
             if (gender) {
-                limit.lowNormalFemale = $jq("#lowNormal_G_" + rowIndex).val();
-                limit.highNormalFemale = $jq("#highNormal_G_" + rowIndex).val();
-                limit.reportingRangeFemale = $jq("#reportingRange_G_" + rowIndex).val();
+                limit.lowNormalFemale = jQuery("#lowNormal_G_" + rowIndex).val();
+                limit.highNormalFemale = jQuery("#highNormal_G_" + rowIndex).val();
+                limit.reportingRangeFemale = jQuery("#reportingRange_G_" + rowIndex).val();
             }
 
             jsonObj.resultLimits[countIndex++] = limit;
@@ -1502,13 +1502,13 @@
         var dictionary;
         jsonObj.dictionary = [];
 
-        $jq("#dictionarySelection option:selected").each(function (index, value) {
-            if ($jq("#referenceSelection option:selected[value=" + value.value + "]").length == 1) {
+        jQuery("#dictionarySelection option:selected").each(function (index, value) {
+            if (jQuery("#referenceSelection option:selected[value=" + value.value + "]").length == 1) {
                 jsonObj.dictionaryReference = value.value;
             }
             dictionary = {};
             dictionary.value = value.value;
-            dictionary.qualified = $jq("#qualifierSelection option:selected[value=" + value.value + "]").length == 1 ? "Y" : "N";
+            dictionary.qualified = jQuery("#qualifierSelection option:selected[value=" + value.value + "]").length == 1 ? "Y" : "N";
             jsonObj.dictionary[index] = dictionary;
         });
     }

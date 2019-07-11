@@ -130,14 +130,14 @@ var pagingSearch = {};
 pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 
-$jq(document).ready( function() {
+jQuery(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
             loadMultiSelects();
-			$jq("select[multiple]").asmSelect({
+			jQuery("select[multiple]").asmSelect({
 					removeLabel: "X"
 				});
 
-			$jq("select[multiple]").change(function(e, data) {
+			jQuery("select[multiple]").change(function(e, data) {
 				handleMultiSelectChange( e, data );
 				});
 
@@ -147,14 +147,14 @@ $jq(document).ready( function() {
 				 pageSearch.highlightSearch( searchTerm, false );
 			}
 			
-            $jq('#modal_ok').on('click',function(e){
+            jQuery('#modal_ok').on('click',function(e){
                 addReflexToTests( '<%= MessageUtil.getMessage("button.label.edit")%>' );
                 e.preventDefault();
-                $jq('#reflexSelect').modal('hide');
+                jQuery('#reflexSelect').modal('hide');
 			});
 
             loadPagedReflexSelections('<%= MessageUtil.getMessage("button.label.edit")%>');
-            $jq(".asmContainer").css("display","inline-block");
+            jQuery(".asmContainer").css("display","inline-block");
             disableRejectedResults();
             showCachedRejectionReasonRows();
 			});
@@ -193,7 +193,7 @@ function markUpdated( index, userChoiceReflex, siblingReflexKey ){
 
 	makeDirty();
 
-    $jq("#saveButtonId").removeAttr("disabled");
+    jQuery("#saveButtonId").removeAttr("disabled");
 }
 
 function updateLogValue(element, index ){
@@ -253,7 +253,7 @@ function /*void*/ handleReferralReasonChange(select,  index ){
 function  /*void*/ savePage()
 {
 	
-	$jq( "#saveButtonId" ).prop("disabled",true);
+	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
 	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<c:out value="logbookType"/>';
@@ -323,7 +323,7 @@ function submitTestSectionSelect( element ) {
 
 var showForceWarning = true;
 function forceTechApproval(checkbox, index ){
-	if( $jq(checkbox).attr('checked')){
+	if( jQuery(checkbox).attr('checked')){
 		if( showForceWarning){
 			alert( "<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>" );
 			showForceWarning = false;
@@ -339,7 +339,7 @@ function processDateCallbackEvaluation(xhr) {
     //alert(xhr.responseText);
     var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
     var formFieldId = xhr.responseXML.getElementsByTagName("formfield").item(0).firstChild.nodeValue;
-    var givenDate = $jq("#" + formFieldId).val();
+    var givenDate = jQuery("#" + formFieldId).val();
     var isValid = message == "valid";
 
     if( !isValid ){
@@ -356,11 +356,11 @@ function processDateCallbackEvaluation(xhr) {
 }
 
 function updateShadowResult(source, index){
-  $jq("#shadowResult_" + index).val(source.value);
+  jQuery("#shadowResult_" + index).val(source.value);
 }
 
 function setField(id, value) {
-	$jq("#" + id).val(value);
+	jQuery("#" + id).val(value);
 }
 
 </script>

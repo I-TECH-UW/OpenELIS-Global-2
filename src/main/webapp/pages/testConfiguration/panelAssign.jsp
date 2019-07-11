@@ -61,12 +61,12 @@
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready( function(){
-        $jq(".sortable").sortable({
+    jQuery(document).ready( function(){
+        jQuery(".sortable").sortable({
             stop: function( ) {makeDirty();}
         });
     });
@@ -86,20 +86,20 @@
 
     function testSelected(input, id, currentPanel, onlyOneTestInPanel, panelId) {
         makeDirty();
-        $jq(".test").each(function () {
-            $jq(this).attr("disabled", "disabled");
-            $jq(this).addClass("disabled-text-button");
+        jQuery(".test").each(function () {
+            jQuery(this).attr("disabled", "disabled");
+            jQuery(this).addClass("disabled-text-button");
         });
 
-        $jq(".selectedTestName").text(input.value);
-        $jq("#action").text('<spring:message code="label.button.edit"/>');
-        $jq("#fromPanel").text(currentPanel);
-        $jq("#testId").val(id);
-        $jq("#deactivatePanelId").val(onlyOneTestInPanel ? panelId : "");
-        $jq("#warnDeactivtePanel").text(currentPanel);
-        $jq(".edit-step").show();
-        $jq(".select-step").hide();
-        $jq(window).scrollTop(0);
+        jQuery(".selectedTestName").text(input.value);
+        jQuery("#action").text('<spring:message code="label.button.edit"/>');
+        jQuery("#fromPanel").text(currentPanel);
+        jQuery("#testId").val(id);
+        jQuery("#deactivatePanelId").val(onlyOneTestInPanel ? panelId : "");
+        jQuery("#warnDeactivtePanel").text(currentPanel);
+        jQuery(".edit-step").show();
+        jQuery(".select-step").hide();
+        jQuery(window).scrollTop(0);
 
     }
 
@@ -108,48 +108,48 @@
     }
 
     function confirmValues() {
-        $jq("#editButtons").hide();
-        $jq(".confirmation-step").show();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
-        if( $jq("#deactivatePanelId").val().length > 0){
-            $jq("#deatcitvateWarning").show();
+        jQuery("#editButtons").hide();
+        jQuery(".confirmation-step").show();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
+        if( jQuery("#deactivatePanelId").val().length > 0){
+            jQuery("#deatcitvateWarning").show();
         }else{
-            $jq("#deatcitvateWarning").hide();
+            jQuery("#deatcitvateWarning").hide();
         }
 
-        $jq("#panelSelection").attr("disabled", true);
+        jQuery("#panelSelection").attr("disabled", true);
 
     }
 
     function rejectConfirmation() {
-        $jq("#editButtons").show();
-        $jq(".confirmation-step").hide();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
+        jQuery("#editButtons").show();
+        jQuery(".confirmation-step").hide();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
 
-        $jq("#panelSelection").attr("disabled", false);
+        jQuery("#panelSelection").attr("disabled", false);
     }
 
 
     function savePage() {
         //window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        $jq('#list1 option').prop('selected', true);
+        jQuery('#list1 option').prop('selected', true);
         var form = document.getElementById("mainForm");
         form.action = "PanelTestAssign.do";
         form.submit();
     }
     
-    $jq(function(){
-        $jq("#button1").click(function(){
-            $jq("#list1 > option:selected").each(function(){
-                $jq(this).remove().appendTo("#list2");
-                $jq('#list2 option').prop('selected', false);
+    jQuery(function(){
+        jQuery("#button1").click(function(){
+            jQuery("#list1 > option:selected").each(function(){
+                jQuery(this).remove().appendTo("#list2");
+                jQuery('#list2 option').prop('selected', false);
             });
         });
         
-        $jq("#button2").click(function(){
-            $jq("#list2 > option:selected").each(function(){
-                $jq(this).remove().appendTo("#list1");
-                $jq('#list1 option').prop('selected', false);
+        jQuery("#button2").click(function(){
+            jQuery("#list2 > option:selected").each(function(){
+                jQuery(this).remove().appendTo("#list1");
+                jQuery('#list1 option').prop('selected', false);
             });
         });
     });

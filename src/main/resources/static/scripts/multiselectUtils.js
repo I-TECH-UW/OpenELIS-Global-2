@@ -18,11 +18,11 @@ function handleMultiSelectChange(e, data) {
     var splitSource = e.target.id.split("_");
     var major = splitSource[0] + "_" + splitSource[1];
     var minorKey = splitSource[2];
-    var accumulator = $jq("#multi" + major);
+    var accumulator = jQuery("#multi" + major);
 
     if (data.type == "add") {
         appendValueForMultiSelect(accumulator, minorKey, data.value);
-        if ($jq("#" + e.target.id).hasClass("userSelection")) {
+        if (jQuery("#" + e.target.id).hasClass("userSelection")) {
             showUserReflexChoices(splitSource[1], data.value);
         }
     } else { //drop
@@ -31,11 +31,11 @@ function handleMultiSelectChange(e, data) {
     }
 
     //The extra split is to handle the additional tests on referral page
-    $jq("#modified_" + splitSource[1].split("-")[0]).val("true");
+    jQuery("#modified_" + splitSource[1].split("-")[0]).val("true");
 
     makeDirty();
 
-    $jq("#saveButtonId").removeAttr("disabled");
+    jQuery("#saveButtonId").removeAttr("disabled");
 }
 
 function appendValueForMultiSelect( element, key, addString ){
@@ -94,7 +94,7 @@ function removeFromCSV( oldString, removeString){
 
 function  removeAllMultiSelectionsFor( majorMinorTarget ){
     var splitSource = majorMinorTarget.split("_");
-    var accumulator = $jq("#multiresultId_" + splitSource[0]);
+    var accumulator = jQuery("#multiresultId_" + splitSource[0]);
     var currentValue = accumulator.val();
     var currentHash = {};
 
@@ -108,7 +108,7 @@ function  removeAllMultiSelectionsFor( majorMinorTarget ){
 }
 
 function loadMultiSelects(){
-    $jq(".multiSelectValues").each(function(i,element){loadMultSelect(element);});
+    jQuery(".multiSelectValues").each(function(i,element){loadMultSelect(element);});
 }
 
 function loadMultSelect( element ){
@@ -130,7 +130,7 @@ function loadMultSelect( element ){
             createNewMultiSelect( index, keys[i] );
         }
 
-        $jq("#resultId_" + index + "_" + keys[i] + " option").each(function (i, element) {
+        jQuery("#resultId_" + index + "_" + keys[i] + " option").each(function (i, element) {
             if (options.indexOf(element.value) != -1) {
                 element.selected = "selected";
             }
@@ -144,19 +144,19 @@ function setSelected( i, element, options){
     }
 }
 function createNewMultiSelect( index, minorIndex){
-    var divCount = $jq("#divCount_" + index);
+    var divCount = jQuery("#divCount_" + index);
     var nextDivCount = minorIndex;
-    $jq('<div></div>',{id: 'cascadingMulti_' + index + "_" + nextDivCount, class: 'cascadingMulti_' + index}).insertAfter(".cascadingMulti_" + index + ":last");
+    jQuery('<div></div>',{id: 'cascadingMulti_' + index + "_" + nextDivCount, class: 'cascadingMulti_' + index}).insertAfter(".cascadingMulti_" + index + ":last");
 
-    var select = $jq("#resultId_" + index + "_0").clone();
+    var select = jQuery("#resultId_" + index + "_0").clone();
     select.find("option:selected").prop("selected", false);
     select.find("option").attr("id", "");
     select.attr("id", "resultId_" + index + "_" + nextDivCount);
-    var add = $jq(".addMultiSelect" + index).last().clone();
-    var remove = $jq(".removeMultiSelect" + index).first().clone();
+    var add = jQuery(".addMultiSelect" + index).last().clone();
+    var remove = jQuery(".removeMultiSelect" + index).first().clone();
        remove.attr("onclick", remove.attr("onclick").replace("target", index + "_" + nextDivCount));
-    var newDiv = $jq('#cascadingMulti_' + index + "_" + nextDivCount);
-    $jq(".addMultiSelect" + index).hide();
+    var newDiv = jQuery('#cascadingMulti_' + index + "_" + nextDivCount);
+    jQuery(".addMultiSelect" + index).hide();
 
     select.appendTo(newDiv);
     add.appendTo(newDiv);
@@ -171,7 +171,7 @@ function createNewMultiSelect( index, minorIndex){
 }
 
 function addNewMultiSelect( index ){
-    var nextDivCount = parseInt($jq("#divCount_" + index).val()) + 1;
+    var nextDivCount = parseInt(jQuery("#divCount_" + index).val()) + 1;
     var newSelect = createNewMultiSelect(index, nextDivCount);
 
     newSelect.asmSelect({
@@ -181,55 +181,55 @@ function addNewMultiSelect( index ){
         handleMultiSelectChange( e, data );
     });
 
-    $jq(".asmContainer").css("display","inline-block");
+    jQuery(".asmContainer").css("display","inline-block");
 }
 
 function removeMultiSelect(target){
     //ie chokes if we just remove the div so we need to empty it first
-    $jq("#cascadingMulti_" + target).empty();
-    $jq("#cascadingMulti_" + target).remove();
-    $jq(".addMultiSelect" + target.split("_")[0]).last().show();
+    jQuery("#cascadingMulti_" + target).empty();
+    jQuery("#cascadingMulti_" + target).remove();
+    jQuery(".addMultiSelect" + target.split("_")[0]).last().show();
     removeAllMultiSelectionsFor( target );
 }
 function resetCascadingMultiSelect(index) {
 	// remove all divs except for the first multiselect block				
-	$jq('#cell_' + index).find('.removeMultiSelect' + index).each(function(i) { 
-		$jq(this).click();
+	jQuery('#cell_' + index).find('.removeMultiSelect' + index).each(function(i) { 
+		jQuery(this).click();
 	});					
 	// remove list items 
-	$jq('#cascadingMulti_' + index + '_0').find('.asmListItemRemove').each(function(i) { 
-		$jq(this).click();
+	jQuery('#cascadingMulti_' + index + '_0').find('.asmListItemRemove').each(function(i) { 
+		jQuery(this).click();
 	});		
 }
 function disableCascadingMultiSelect(index){
-	$jq('#cascadingMulti_' + index + '_0').find('.asmSelect').each(function(i) { 
-		$jq(this).attr('disabled', 'true');
+	jQuery('#cascadingMulti_' + index + '_0').find('.asmSelect').each(function(i) { 
+		jQuery(this).attr('disabled', 'true');
 	});		        
-	$jq('#cascadingMulti_' + index + '_0').find('.addMultiSelect' + index).each(function(i) { 
-		$jq(this).attr('disabled', 'true');
+	jQuery('#cascadingMulti_' + index + '_0').find('.addMultiSelect' + index).each(function(i) { 
+		jQuery(this).attr('disabled', 'true');
 	});		        
 }
 function enableCascadingMultiSelect(index) {
-	$jq('#cascadingMulti_' + index + '_0').find('.asmSelect').each(function(i) { 
-		$jq(this).removeAttr('disabled');
+	jQuery('#cascadingMulti_' + index + '_0').find('.asmSelect').each(function(i) { 
+		jQuery(this).removeAttr('disabled');
 	});		        
-	$jq('#cascadingMulti_' + index + '_0').find('.addMultiSelect' + index).each(function(i) { 
-		$jq(this).removeAttr('disabled');
+	jQuery('#cascadingMulti_' + index + '_0').find('.addMultiSelect' + index).each(function(i) { 
+		jQuery(this).removeAttr('disabled');
 	});	
 }
 function resetMultiSelect(index) {
 	// remove list items 
-	$jq('#cell_' + index).find('.asmListItemRemove').each(function(i) { 
-		$jq(this).click();
+	jQuery('#cell_' + index).find('.asmListItemRemove').each(function(i) { 
+		jQuery(this).click();
 	});		
 }
 function disableMultiSelect(index){
-	$jq('#cell_' + index).find('.asmSelect').each(function(i) { 
-		$jq(this).attr('disabled', 'true');
+	jQuery('#cell_' + index).find('.asmSelect').each(function(i) { 
+		jQuery(this).attr('disabled', 'true');
 	});	
 }
 function enableMultiSelect(index) {
-	$jq('#cell_' + index).find('.asmSelect').each(function(i) { 
-		$jq(this).removeAttr('disabled');
+	jQuery('#cell_' + index).find('.asmSelect').each(function(i) { 
+		jQuery(this).removeAttr('disabled');
 	});		        
 }

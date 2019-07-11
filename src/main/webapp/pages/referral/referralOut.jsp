@@ -39,18 +39,18 @@
       href="<%=basePath%>css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
 <script type="text/javascript">
 
-$jq(document).ready(function () {
+jQuery(document).ready(function () {
     loadMultiSelects();
-    $jq("select[multiple]:visible").asmSelect({
+    jQuery("select[multiple]:visible").asmSelect({
         removeLabel: "X"
         // , debugMode: true
     });
 
-    $jq("select[multiple]").change(function (e, data) {
+    jQuery("select[multiple]").change(function (e, data) {
         handleMultiSelectChange(e, data);
     });
 
-    $jq(".asmContainer").css("display", "inline-block");
+    jQuery(".asmContainer").css("display", "inline-block");
 });
 
 
@@ -63,8 +63,8 @@ function /*void*/ markModified(index) {
 function missingRequiredValues() {
     var missing = false;
 
-    $jq(".requiredRow").each(function (index, element) {
-        var children = $jq(element).find(".required");
+    jQuery(".requiredRow").each(function (index, element) {
+        var children = jQuery(element).find(".required");
         if (!((children[1].value == 0 && children[0].value == 0) ||
                 (children[1].value != 0 && children[0].value != 0))) {
             missing = true;
@@ -81,9 +81,9 @@ function missingRequiredValues() {
 function /*void*/ updateResultField(index) {
     //This function will now just enable/disable the existing results widgits
     if ($("testSelection_" + index).value == $("shadowReferredTest_" + index).value) {
-        $jq(".resultCell_" + index).show();
+        jQuery(".resultCell_" + index).show();
     } else {
-        $jq(".resultCell_" + index).hide();
+        jQuery(".resultCell_" + index).hide();
     }
 }
 

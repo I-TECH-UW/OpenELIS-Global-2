@@ -345,12 +345,12 @@ function showHideSection(button, targetId){
 }
 
 function showSection( button, targetId){
-    $jq("#" + targetId ).show();
+    jQuery("#" + targetId ).show();
     button.value = "-";
 }
 
 function hideSection( button, targetId){
-    $jq("#" + targetId ).hide();
+    jQuery("#" + targetId ).hide();
     button.value = "+";
 }
 
@@ -376,7 +376,7 @@ function /*bool*/ requiredSampleEntryFieldsValid(){
 }
 
 function /*bool*/ sampleEntryTopValid(){
-    return invalidSampleElements.length == 0 && requiredSampleEntryFieldsValid() && $jq(".error").length == 0;
+    return invalidSampleElements.length == 0 && requiredSampleEntryFieldsValid() && jQuery(".error").length == 0;
 }
 
 function /*void*/ loadSamples(){

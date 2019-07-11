@@ -38,18 +38,18 @@ function buildPopUp(rawResponse, showPopup){
     var selections = response["selections"];
     var i, selected;
 
-    $jq(".modal-body #testRow").val(rowIndex);
-    $jq(".modal-body #targetIds").val(response["triggerIds"]);
-    $jq(".modal-body #serverResponse").val( encodeJSONStringToHTML( rawResponse) );
-    $jq(".selection_element").remove();
-    $jq("#modal_ok").attr('disabled','disabled');
+    jQuery(".modal-body #testRow").val(rowIndex);
+    jQuery(".modal-body #targetIds").val(response["triggerIds"]);
+    jQuery(".modal-body #serverResponse").val( encodeJSONStringToHTML( rawResponse) );
+    jQuery(".selection_element").remove();
+    jQuery("#modal_ok").attr('disabled','disabled');
     for( i = 0; i < selections.length; i++){
         selected = jQuery.inArray(selections[i]["value"], response["selected"]) != -1;
-        $jq(".modal-body").append(getSelectionRow(selections[i]["name"], selections[i]["value"], i, selected));
+        jQuery(".modal-body").append(getSelectionRow(selections[i]["name"], selections[i]["value"], i, selected));
     }
-    $jq(".modal-body #selectAll").prop('checked', false);
-    $jq(".selection_element").change( function(){ checkForCheckedReflexes(); });
-    $jq("#headerLabel").text(response["triggers"]);
+    jQuery(".modal-body #selectAll").prop('checked', false);
+    jQuery(".selection_element").change( function(){ checkForCheckedReflexes(); });
+    jQuery("#headerLabel").text(response["triggers"]);
 
     if( showPopup){
         showReflexSelection();
@@ -65,44 +65,44 @@ function getSelectionRow(name, value, index, selected ){
 }
 
 function modalSelectAll(selectBox){
-    if( $jq(selectBox).prop('checked')){
-        $jq('.selectionCheckbox').prop('checked', true);
-        $jq("#modal_ok").removeAttr('disabled');
+    if( jQuery(selectBox).prop('checked')){
+        jQuery('.selectionCheckbox').prop('checked', true);
+        jQuery("#modal_ok").removeAttr('disabled');
     } else{
-        $jq('.selectionCheckbox').prop('checked', false);
-        $jq("#modal_ok").attr('disabled','disabled');
+        jQuery('.selectionCheckbox').prop('checked', false);
+        jQuery("#modal_ok").attr('disabled','disabled');
     }
 }
 
 function checkForCheckedReflexes(){
-    if( $jq(".selectionCheckbox:checked").length == 0 ){
-        $jq("#modal_ok").attr('disabled','disabled');
+    if( jQuery(".selectionCheckbox:checked").length == 0 ){
+        jQuery("#modal_ok").attr('disabled','disabled');
     }else{
-        $jq("#modal_ok").removeAttr('disabled');
+        jQuery("#modal_ok").removeAttr('disabled');
     }
 }
 
 function addReflexToTests( editLabel ){
-    var index = $jq(".modal-body #testRow").val();
+    var index = jQuery(".modal-body #testRow").val();
     var tests = '';
-    var parentRow = $jq('#noteRow_' + index);
-    var targetIds = $jq(".modal-body #targetIds" ).val();
-    var popupJSONString = encodeHTMLToJSONString($jq(".modal-body #serverResponse").val());
+    var parentRow = jQuery('#noteRow_' + index);
+    var targetIds = jQuery(".modal-body #targetIds" ).val();
+    var popupJSONString = encodeHTMLToJSONString(jQuery(".modal-body #serverResponse").val());
     var popupJSONResponse = JSON.parse(popupJSONString);
-    var testJSONString = encodeHTMLToJSONString( $jq("#reflexServerResultId_" + index ).val());
+    var testJSONString = encodeHTMLToJSONString( jQuery("#reflexServerResultId_" + index ).val());
     var testJSONResponse = JSON.parse( testJSONString );
-    var existingDisplay = $jq("#reflexSelection_" + index + "_" + targetIds );
+    var existingDisplay = jQuery("#reflexSelection_" + index + "_" + targetIds );
     var selectedReflexes = [];
 
-    $jq(".selectionCheckbox:checked").each(function(index, value){
-            tests += $jq.trim($jq(value).parent().text()) + ", ";
+    jQuery(".selectionCheckbox:checked").each(function(index, value){
+            tests += jQuery.trim(jQuery(value).parent().text()) + ", ";
             selectedReflexes.push(value.value);
     });
 
     tests = tests.substr(0, tests.length - 2 );
 
     if( existingDisplay.length == 0 ){
-        parentRow.after(getSelectedTestDisplay(parentRow.attr("class"), index, targetIds, $jq("#headerLabel").text().split(":")[1], tests, editLabel ));
+        parentRow.after(getSelectedTestDisplay(parentRow.attr("class"), index, targetIds, jQuery("#headerLabel").text().split(":")[1], tests, editLabel ));
     }else{
         existingDisplay.children().children("#reflexedTests").text(tests);
     }
@@ -110,7 +110,7 @@ function addReflexToTests( editLabel ){
     popupJSONResponse["selected"] = selectedReflexes;
 
     testJSONResponse[index + "_" + targetIds ] = popupJSONResponse;
-    $jq("#reflexServerResultId_" + index ).val(encodeJSONStringToHTML(JSON.stringify(testJSONResponse)));
+    jQuery("#reflexServerResultId_" + index ).val(encodeJSONStringToHTML(JSON.stringify(testJSONResponse)));
 
 }
 
@@ -124,24 +124,24 @@ function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, ed
 }
 
 function removeReflexesFor( triggers, row){
-    var JSONResponses = JSON.parse(encodeHTMLToJSONString( $jq("#reflexServerResultId_" + row ).val()));
+    var JSONResponses = JSON.parse(encodeHTMLToJSONString( jQuery("#reflexServerResultId_" + row ).val()));
     JSONResponses[row + "_" + triggers] = null;
-    $jq("#reflexServerResultId_" + row ).val(encodeJSONStringToHTML(JSON.stringify(JSONResponses)));
+    jQuery("#reflexServerResultId_" + row ).val(encodeJSONStringToHTML(JSON.stringify(JSONResponses)));
 
-    $jq("#reflexSelection_" + row + "_" + triggers).remove();
+    jQuery("#reflexSelection_" + row + "_" + triggers).remove();
 }
 
 function editReflexes(index, targetIds){
-    var JSONResponses = JSON.parse(encodeHTMLToJSONString( $jq("#reflexServerResultId_" + index ).val()));
+    var JSONResponses = JSON.parse(encodeHTMLToJSONString( jQuery("#reflexServerResultId_" + index ).val()));
     buildPopUp( JSON.stringify(JSONResponses[index + "_" + targetIds] ), true);
 }
 
 function loadPagedReflexSelections( editLabel){
     var JSONResponse;
     //get collection of fields and send to buildpopup with new flag to stop actual popup
-    $jq(".reflexJSONResult").each( function(){
-        if($jq(this).val() ){
-            JSONResponse = JSON.parse(encodeHTMLToJSONString( $jq(this ).val()));
+    jQuery(".reflexJSONResult").each( function(){
+        if(jQuery(this).val() ){
+            JSONResponse = JSON.parse(encodeHTMLToJSONString( jQuery(this ).val()));
             for (var member in JSONResponse) {
                 if (!JSONResponse.hasOwnProperty(member) || typeof(JSONResponse[member]) === "function"){
                     continue;
@@ -153,7 +153,7 @@ function loadPagedReflexSelections( editLabel){
     });
 }
 function showReflexSelection( element ){
-    $jq('#reflexSelect').modal('show');
+    jQuery('#reflexSelect').modal('show');
 }
 
 function encodeJSONStringToHTML( json){

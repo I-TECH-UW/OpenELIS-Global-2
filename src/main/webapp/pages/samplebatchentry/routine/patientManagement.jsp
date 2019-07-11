@@ -49,7 +49,7 @@
 
 <script type="text/javascript" >
 
-var $jq = jQuery.noConflict();
+var jQuery = jQuery.noConflict();
 
 /*the prefix pt_ is being used for scoping.  Since this is being used as a tile there may be collisions with other
   tiles with simular names.  Only those elements that may cause confusion are being tagged, and we know which ones will collide
@@ -515,7 +515,7 @@ function /*void*/ clearErrors() {
 }
 
 function clearSelection() {
-	$jq("#searchResultsDiv").hide();
+	jQuery("#searchResultsDiv").hide();
 }
 
 function /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
@@ -659,23 +659,23 @@ function processSubjectNumberSuccess(xhr) {
 //ie. STnumber, SubjectNumber, National ID, or name
 function hasIdentifyingInfo() {
 	<% if (supportSTNumber) { %>
-	    if ($jq("#ST_ID").val()) {
+	    if (jQuery("#ST_ID").val()) {
 	    	return true
 	    }            
     <%} %>
     <% if (supportSubjectNumber) { %>
-    	if ($jq("#subjectNumberID").val()) {
+    	if (jQuery("#subjectNumberID").val()) {
     		return true;
     	}
     <% } %>
     <% if (supportNationalID) { %>
-    	if ($jq("#nationalID").val()) {
+    	if (jQuery("#nationalID").val()) {
     		return true;
     	}
 	<%} %>
-	if ($jq("#lastNameID").val()) {
+	if (jQuery("#lastNameID").val()) {
 		return true;
-	} else if ($jq("#firstNameID").val()) {
+	} else if (jQuery("#firstNameID").val()) {
 		return true;
 	} else {
 		return false;

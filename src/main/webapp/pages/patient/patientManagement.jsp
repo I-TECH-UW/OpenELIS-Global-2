@@ -86,7 +86,7 @@ String formName;
 
 <script type="text/javascript" >
 
-var $jq = jQuery.noConflict();
+var jQuery = jQuery.noConflict();
 
 /*the prefix pt_ is being used for scoping.  Since this is being used as a tile there may be collisions with other
   tiles with simular names.  Only those elements that may cause confusion are being tagged, and we know which ones will collide

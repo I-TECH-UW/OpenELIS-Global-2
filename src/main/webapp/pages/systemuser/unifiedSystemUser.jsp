@@ -39,8 +39,8 @@ basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 <script>
 
-$jq(document).ready( function() {
-	var input = $jq( ":input" );
+jQuery(document).ready( function() {
+	var input = jQuery( ":input" );
 	document.getElementsByName("save")[0].disabled = true;
 	input.change( function( objEvent ){
 		document.getElementsByName("save")[0].disabled = false;

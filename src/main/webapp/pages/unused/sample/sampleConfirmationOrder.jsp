@@ -137,7 +137,7 @@
         }
 
         if (orgKey == 0) { //if no match with site list
-            $jq("#newRequesterName").val(textValue);
+            jQuery("#newRequesterName").val(textValue);
             requesterList = $("personRequesterId");
             requesterList.options.length = 0;
             addOptionToSelect(requesterList, '<%=MessageUtil.getMessage("sample.entry.requester.new")%>', "0");
@@ -246,7 +246,7 @@
     }
 
     function setOrderModified(){
-        $jq("#orderModified").val("true");
+        jQuery("#orderModified").val("true");
         orderChanged = true;
         if( window.makeDirty ){ makeDirty(); }
         if( window.setSave){
@@ -259,8 +259,8 @@
     function sampleConfirmationValid(){
         var enable = true;
 
-        $jq(".required").each( function(i, val){
-            var elValue = $jq(val).val();
+        jQuery(".required").each( function(i, val){
+            var elValue = jQuery(val).val();
             if( !elValue.trim().length || elValue == 0){
                 enable = false;
                 return;
@@ -415,10 +415,10 @@
 </table>
 
 <script type="text/javascript">
-   $jq(document).ready( function() {
+   jQuery(document).ready( function() {
         //dropdown defined in customAutocomplete.js
         autoCompId = 'siteId'; //needs to be set before the dropdown is created N.B. shouuld be passed in as arg
-        var dropdown = $jq( "select#orgRequesterId" );
+        var dropdown = jQuery( "select#orgRequesterId" );
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         <% if(restrictNewReferringSiteEntries) { %>
 			clearNonMatching = true;
