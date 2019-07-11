@@ -73,7 +73,7 @@ public class PatientHistoryHistoryService extends AbstractHistoryService {
 		for( ObservationHistory observation :observationList){
 			newValueMap.put(observation.getId(), getObservationValue(observation));
 			
-			history.setId(observation.getId());
+			history.setReferenceId(observation.getId());
 			history.setReferenceTable(OBSERVATION_HISTORY_TABLE_ID);
             historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(history));
         }
@@ -83,7 +83,7 @@ public class PatientHistoryHistoryService extends AbstractHistoryService {
 		SampleOrganization sampleOrg = sampleOrganizationService.getDataBySample(sample);
 		if (sampleOrg != null) {
 			newValueMap.put(ORGANIZATION_ATTRIBUTE, sampleOrg.getOrganization().getOrganizationName());
-			history.setId(sampleOrg.getId());
+			history.setReferenceId(sampleOrg.getId());
 			history.setReferenceTable(SAMPLE_ORG_TABLE_ID);
 			List<History> orgHistory = historyService.getHistoryByRefIdAndRefTableId(history);
 			historyList.addAll(orgHistory);

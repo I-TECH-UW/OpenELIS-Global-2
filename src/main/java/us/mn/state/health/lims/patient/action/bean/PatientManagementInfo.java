@@ -320,9 +320,7 @@ public class PatientManagementInfo implements Serializable {
 	}
 
 	public List<IdValuePair> getGenders() {
-		if (genders == null) {
 			genders = DisplayListService.getInstance().getList(ListType.GENDERS);
-		}
 
 		return genders;
 	}

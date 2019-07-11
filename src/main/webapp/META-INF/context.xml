@@ -6,5 +6,5 @@
         password="clinlims" 
         type="javax.sql.DataSource" 
         url="jdbc:postgresql://localhost:5433/ci_general_9.6" 
-        username="clinlims"/>3
+        username="clinlims"/>
 </Context>

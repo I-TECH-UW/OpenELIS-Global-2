@@ -12,6 +12,7 @@
 	<parameter name="populationTotal" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="siteName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="reportTitle" class="java.lang.String"/>
+	<parameter name="imagesPath" class="java.lang.String"/>
 	<parameter name="referralSiteName" class="java.lang.String"/>
 	<parameter name="labName1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labName2" class="java.lang.String"/>
@@ -159,6 +160,9 @@
 				<reportElement x="0" y="0" width="572" height="136"/>
 				<subreportParameter name="labName2">
 					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="imagesPath">
+					<subreportParameterExpression><![CDATA[$P{imagesPath}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>

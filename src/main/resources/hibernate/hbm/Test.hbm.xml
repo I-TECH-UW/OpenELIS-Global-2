@@ -11,7 +11,7 @@
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
-        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select">
+        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select" lazy="false">
             <column name="TEST_SECTION_ID" precision="10" scale="0" />
         </many-to-one>
         <many-to-one name="label" class="us.mn.state.health.lims.label.valueholder.Label" fetch="select">

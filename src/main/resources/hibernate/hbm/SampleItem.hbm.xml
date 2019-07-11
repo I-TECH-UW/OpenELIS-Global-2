@@ -26,7 +26,7 @@
             <column name="SOURCE_ID" precision="10" scale="0" />
         </property>
 
-		<many-to-one name="typeOfSample" class="us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample" fetch="select">
+		<many-to-one name="typeOfSample" class="us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample" fetch="select" lazy="false">
             <column name="TYPEOSAMP_ID" precision="10" scale="0" />
         </many-to-one>
 
