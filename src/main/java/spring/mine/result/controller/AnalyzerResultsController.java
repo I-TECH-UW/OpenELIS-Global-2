@@ -639,7 +639,7 @@ public class AnalyzerResultsController extends BaseController {
 				QAService qa = new QAService(event);
 				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
 						&& qa.getObservationValue(QAObservationType.SECTION)
-								.equals(analysis.getTestSection().getNameKey())) {
+						.equals(analysis.getTestSection().getNameKey())) {
 					return true;
 				}
 			}
@@ -654,7 +654,7 @@ public class AnalyzerResultsController extends BaseController {
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
 	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
 			@ModelAttribute("form") @Validated({ Paging.class,
-					AnalyzerResultsForm.AnalyzerResuts.class }) AnalyzerResultsForm form,
+				AnalyzerResultsForm.AnalyzerResuts.class }) AnalyzerResultsForm form,
 			BindingResult result, RedirectAttributes redirectAttibutes) {
 		if (result.hasErrors()) {
 			saveErrors(result);
@@ -1059,7 +1059,7 @@ public class AnalyzerResultsController extends BaseController {
 		sample.setReceivedDate(new Date(new java.util.Date().getTime()));
 		sample.setSysUserId(getSysUserId(request));
 
-		sampleHuman.setPatient(PatientUtil.getUnknownPatient());
+		sampleHuman.setPatientId(PatientUtil.getUnknownPatient().getId());
 		sampleHuman.setSysUserId(getSysUserId(request));
 
 		Patient patient = PatientUtil.getUnknownPatient();

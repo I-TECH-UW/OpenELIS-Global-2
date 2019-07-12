@@ -50,100 +50,100 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 		super(SampleHuman.class);
 	}
 
-//	@Override
-//	public void deleteData(List sampleHumans) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < sampleHumans.size(); i++) {
-//				SampleHuman data = (SampleHuman) sampleHumans.get(i);
-//
-//				SampleHuman oldData = readSampleHuman(data.getId());
-//				SampleHuman newData = new SampleHuman();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "SAMPLE_HUMAN";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (Exception e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SampleHumanDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleHuman AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < sampleHumans.size(); i++) {
-//				SampleHuman data = (SampleHuman) sampleHumans.get(i);
-//				// bugzilla 2206
-//				data = readSampleHuman(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (Exception e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SampleHumanDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
-//		}
-//	}
-//
-//	@Override
-//	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException {
-//
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(sampleHuman);
-//			sampleHuman.setId(id);
-//
-//			// bugzilla 1824 inserts will be logged in history table
-//
-//			String sysUserId = sampleHuman.getSysUserId();
-//			String tableName = "SAMPLE_HUMAN";
-//			auditDAO.saveNewHistory(sampleHuman, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (Exception e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SampleHumanDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleHuman insertData()", e);
-//		}
-//
-//		return true;
-//	}
+	//	@Override
+	//	public void deleteData(List sampleHumans) throws LIMSRuntimeException {
+	//		// add to audit trail
+	//		try {
+	//
+	//			for (int i = 0; i < sampleHumans.size(); i++) {
+	//				SampleHuman data = (SampleHuman) sampleHumans.get(i);
+	//
+	//				SampleHuman oldData = readSampleHuman(data.getId());
+	//				SampleHuman newData = new SampleHuman();
+	//
+	//				String sysUserId = data.getSysUserId();
+	//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+	//				String tableName = "SAMPLE_HUMAN";
+	//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+	//			}
+	//		} catch (Exception e) {
+	//			// bugzilla 2154
+	//			LogEvent.logError("SampleHumanDAOImpl", "AuditTrail deleteData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in SampleHuman AuditTrail deleteData()", e);
+	//		}
+	//
+	//		try {
+	//			for (int i = 0; i < sampleHumans.size(); i++) {
+	//				SampleHuman data = (SampleHuman) sampleHumans.get(i);
+	//				// bugzilla 2206
+	//				data = readSampleHuman(data.getId());
+	//				entityManager.unwrap(Session.class).delete(data);
+	//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
+	//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
+	//			}
+	//		} catch (Exception e) {
+	//			// bugzilla 2154
+	//			LogEvent.logError("SampleHumanDAOImpl", "deleteData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
+	//		}
+	//	}
+	//
+	//	@Override
+	//	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException {
+	//
+	//		try {
+	//			String id = (String) entityManager.unwrap(Session.class).save(sampleHuman);
+	//			sampleHuman.setId(id);
+	//
+	//			// bugzilla 1824 inserts will be logged in history table
+	//
+	//			String sysUserId = sampleHuman.getSysUserId();
+	//			String tableName = "SAMPLE_HUMAN";
+	//			auditDAO.saveNewHistory(sampleHuman, sysUserId, tableName);
+	//
+	//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+	//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+	//
+	//		} catch (Exception e) {
+	//			// bugzilla 2154
+	//			LogEvent.logError("SampleHumanDAOImpl", "insertData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in SampleHuman insertData()", e);
+	//		}
+	//
+	//		return true;
+	//	}
 
-//	@Override
-//	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException {
-//
-//		SampleHuman oldData = readSampleHuman(sampleHuman.getId());
-//		SampleHuman newData = sampleHuman;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = sampleHuman.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "SAMPLE_HUMAN";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleHuman AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(sampleHuman);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleHuman);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleHuman);
-//		} catch (Exception e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleHuman updateData()", e);
-//		}
-//	}
+	//	@Override
+	//	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException {
+	//
+	//		SampleHuman oldData = readSampleHuman(sampleHuman.getId());
+	//		SampleHuman newData = sampleHuman;
+	//
+	//		// add to audit trail
+	//		try {
+	//
+	//			String sysUserId = sampleHuman.getSysUserId();
+	//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+	//			String tableName = "SAMPLE_HUMAN";
+	//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+	//		} catch (Exception e) {
+	//			// bugzilla 2154
+	//			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in SampleHuman AuditTrail updateData()", e);
+	//		}
+	//
+	//		try {
+	//			entityManager.unwrap(Session.class).merge(sampleHuman);
+	//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
+	//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+	//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleHuman);
+	//			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleHuman);
+	//		} catch (Exception e) {
+	//			// bugzilla 2154
+	//			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in SampleHuman updateData()", e);
+	//		}
+	//	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -207,7 +207,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
 	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
 		Patient patient = null;
 		try {
-			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patient.id = patient.id and sampleHuman.sampleId = :sId";
+			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
 			Query query = entityManager.unwrap(Session.class).createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			patient = (Patient) query.uniqueResult();

@@ -339,7 +339,7 @@ public class SamplePatientUpdateData {
 	public void buildSampleHuman() {
 		sampleHuman.setSysUserId(currentUserId);
 		sampleHuman.setSampleId(sample.getId());
-		sampleHuman.setPatient(patientService.get(patientId));
+		sampleHuman.setPatientId(patientId);
 		if (provider != null) {
 			sampleHuman.setProviderId(provider.getId());
 		}
