@@ -155,7 +155,7 @@ public abstract class Accessioner implements IAccessioner {
 	{
 		analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized));
 		analysisDone
-				.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
+		.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
 		analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled));
 	}
 
@@ -168,7 +168,7 @@ public abstract class Accessioner implements IAccessioner {
 
 	static {
 		SAMPLE_TABLE_ID = SpringContext.getBean(ReferenceTablesService.class).getReferenceTableByName("sample").getId();
-//		OBSERVATION_HISTORY_YES_ID = new DictionaryServiceImpl().getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)").getId();
+		//		OBSERVATION_HISTORY_YES_ID = new DictionaryServiceImpl().getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)").getId();
 	}
 
 	/**
@@ -363,8 +363,8 @@ public abstract class Accessioner implements IAccessioner {
 		// under investigation row are being lost. Until we fix that the notes
 		// will be attached to the sample with note type of "UnderInvestigation"
 		if (// OBSERVATION_HISTORY_YES_ID.equals(observationData.getUnderInvestigation()) &&
-			// <-- not sure of the business rules around this
-		!GenericValidator.isBlankOrNull(projectData.getUnderInvestigationNote())) {
+				// <-- not sure of the business rules around this
+				!GenericValidator.isBlankOrNull(projectData.getUnderInvestigationNote())) {
 
 			Note note = new Note();
 			note.setNoteType(Note.EXTERNAL);
@@ -406,7 +406,7 @@ public abstract class Accessioner implements IAccessioner {
 	 * default
 	 */
 	private void persisteSampleItemsChanged() {
-//		analysisService.delete(analysisToDelete);
+		//		analysisService.delete(analysisToDelete);
 		analysisService.deleteAll(analysisToDelete);
 		sampleItemService.deleteAll(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
@@ -559,13 +559,13 @@ public abstract class Accessioner implements IAccessioner {
 			sample = new Sample();
 			if (sampleId == null) {
 				return false; // it brand new, no existing accessionNumber in
-								// use, not known sampleId provided
+				// use, not known sampleId provided
 			} else {
 				sample = knownSampleTemplate();
 				sampleService.getData(sample);
 				sample.setAccessionNumber(accessionNumber);
 				return true; // it existed previously, but we have a new
-								// (edited) accesionNumber
+				// (edited) accesionNumber
 			}
 		}
 	}
@@ -757,13 +757,13 @@ public abstract class Accessioner implements IAccessioner {
 			oldSampleOrg.setSample(sample);
 			sampleOrganizationService.getDataBySample(oldSampleOrg);
 			if (oldSampleOrg.getOrganization() != null) { // there may not be an
-															// organiztion
-															// attached yet
+				// organiztion
+				// attached yet
 				String oldOrganizationId = oldSampleOrg.getOrganization().getId();
 				if (oldOrganizationId.equals(organizationId)) {
 					return; // we have an existing sample with the right
-							// organization already, so don't bother with delete
-							// or insert
+					// organization already, so don't bother with delete
+					// or insert
 				}
 				oldSampleOrg.setSysUserId(sysUserId);
 				oldSampleOrg.setOrganization(org);
@@ -896,7 +896,7 @@ public abstract class Accessioner implements IAccessioner {
 	protected void persistSampleOrganization() {
 		for (SampleOrganization so : sampleOrganizations) {
 			// we are in the same transaction, we do not need to reload the sample
-//			sampleService.getData(sample);
+			//			sampleService.getData(sample);
 			so.setSample(sample);
 			if (so.getId() == null) {
 				sampleOrganizationService.insert(so);
@@ -1082,7 +1082,7 @@ public abstract class Accessioner implements IAccessioner {
 			sample.setSysUserId(sysUserId);
 			if (sample.getId() != null) {
 				sampleService.update(sample);
-//				HibernateUtil.getSession().evict(sample);
+				//				HibernateUtil.getSession().evict(sample);
 			} else {
 				sampleService.insertDataWithAccessionNumber(sample);
 			}
@@ -1102,7 +1102,7 @@ public abstract class Accessioner implements IAccessioner {
 	 */
 	protected void persistSampleHuman() {
 		if (sampleHuman != null) {
-			sampleHuman.setPatient(patientInDB);
+			sampleHuman.setPatientId(patientInDB.getId());
 			sampleHuman.setSampleId(sample.getId());
 			// we do not store any doctor name as a provider in SampleHuman
 			sampleHuman.setSysUserId(sysUserId);
