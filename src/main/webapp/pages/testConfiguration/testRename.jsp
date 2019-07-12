@@ -35,8 +35,8 @@
 
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
     function makeDirty(){
@@ -53,16 +53,16 @@
     }
 
     function setForEditing(testId, name) {
-        $jq("#editDiv").show();
-        $jq("#testName").text(name);
-        $jq(".error").each(function (index, value) {
+        jQuery("#editDiv").show();
+        jQuery("#testName").text(name);
+        jQuery(".error").each(function (index, value) {
             value.value = "";
-            $jq(value).removeClass("error");
-            $jq(value).removeClass("confirmation");
+            jQuery(value).removeClass("error");
+            jQuery(value).removeClass("confirmation");
         });
-        $jq("#testId").val(testId);
-        $jq(".test").each(function () {
-            var element = $jq(this);
+        jQuery("#testId").val(testId);
+        jQuery(".test").each(function () {
+            var element = jQuery(this);
             element.prop("disabled", "disabled");
             element.addClass("disabled-text-button");
         });
@@ -78,12 +78,12 @@
 
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
-            $jq("#nameEnglish").text(response["name"]["english"]);
-            $jq("#nameFrench").text(response["name"]["french"]);
-            $jq("#reportNameEnglish").text(response["reportingName"]["english"]);
-            $jq("#reportNameFrench").text(response["reportingName"]["french"]);
-            $jq(".required").each(function () {
-                $jq(this).val("");
+            jQuery("#nameEnglish").text(response["name"]["english"]);
+            jQuery("#nameFrench").text(response["name"]["french"]);
+            jQuery("#reportNameEnglish").text(response["reportingName"]["english"]);
+            jQuery("#reportNameFrench").text(response["reportingName"]["french"]);
+            jQuery(".required").each(function () {
+                jQuery(this).val("");
             });
         }
 
@@ -92,8 +92,8 @@
 
     function confirmValues() {
         var hasError = false;
-        $jq(".required").each(function () {
-            var input = $jq(this);
+        jQuery(".required").each(function () {
+            var input = jQuery(this);
             if (!input.val() || input.val().strip().length == 0) {
                 input.addClass("error");
                 hasError = true;
@@ -103,40 +103,40 @@
         if (hasError) {
             alert('<%=MessageUtil.getContextualMessage("error.all.required")%>');
         } else {
-            $jq(".required").each(function () {
-                var element = $jq(this);
+            jQuery(".required").each(function () {
+                var element = jQuery(this);
                 element.prop("readonly", true);
                 element.addClass("confirmation");
             });
-            $jq(".requiredlabel").each(function () {
-                $jq(this).hide();
+            jQuery(".requiredlabel").each(function () {
+                jQuery(this).hide();
             });
-            $jq("#editButtons").hide();
-            $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
+            jQuery("#editButtons").hide();
+            jQuery("#confirmationButtons").show();
+            jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
         }
     }
 
     function rejectConfirmation() {
-        $jq(".required").each(function () {
-            var element = $jq(this);
+        jQuery(".required").each(function () {
+            var element = jQuery(this);
             element.removeProp("readonly");
             element.removeClass("confirmation");
         });
-        $jq(".requiredlabel").each(function () {
-            $jq(this).show();
+        jQuery(".requiredlabel").each(function () {
+            jQuery(this).show();
         });
 
-        $jq("#editButtons").show();
-        $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
+        jQuery("#editButtons").show();
+        jQuery("#confirmationButtons").hide();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
     }
 
     function cancel() {
-        $jq("#editDiv").hide();
-        $jq("#testId").val("");
-        $jq(".test").each(function () {
-            var element = $jq(this);
+        jQuery("#editDiv").hide();
+        jQuery("#testId").val("");
+        jQuery(".test").each(function () {
+            var element = jQuery(this);
             element.removeProp("disabled");
             element.removeClass("disabled-text-button");
         });
@@ -144,7 +144,7 @@
     }
 
     function handleInput(element) {
-        $jq(element).removeClass("error");
+        jQuery(element).removeClass("error");
         makeDirty();
     }
 

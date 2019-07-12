@@ -1,18 +1,18 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ */
 package us.mn.state.health.lims.audittrail.daoimpl;
 
 import java.lang.reflect.Field;
@@ -34,6 +34,7 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.LabelValuePair;
+import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
@@ -41,16 +42,16 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 public class AuditTrailServiceImpl implements AuditTrailService {
 
 	@Autowired
-	ReferenceTablesService referenceTablesService;
+	private ReferenceTablesService referenceTablesService;
 	@Autowired
-	HistoryService historyService;
+	private HistoryService historyService;
 
 	// For an insert log the id, sys_user_id, ref id, reftable, timestamp, activity
 	// (='I'). The change column would be blank, since the
 	// before data did not contain anything. Note: This requires making the changes
 	// column (in history table) nullable
 	@Override
-	public void saveNewHistory(Object newObject, String sysUserId, String tableName) throws LIMSRuntimeException {
+	public void saveNewHistory(BaseObject newObject, String sysUserId, String tableName) throws LIMSRuntimeException {
 
 		ReferenceTables referenceTables = new ReferenceTables();
 		referenceTables.setTableName(tableName);
@@ -83,13 +84,11 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 		History hist = new History();
 
 		try {
-			Method m1 = newObject.getClass().getMethod("getStringId", new Class[0]);
-			String referenceId = (String) m1.invoke(newObject, (Object[]) new Class[0]);
+			String referenceId = newObject.getStringId();
 			hist.setReferenceId(referenceId);
 			hist.setSysUserId(sysUserId);
 
-			Method m3 = newObject.getClass().getMethod("getLastupdated", new Class[0]);
-			Timestamp timestamp = (Timestamp) m3.invoke(newObject, (Object[]) new Class[0]);
+			Timestamp timestamp = newObject.getLastupdated();
 			if (timestamp == null) {
 				timestamp = new Timestamp(System.currentTimeMillis());
 			}
@@ -106,7 +105,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	}
 
 	@Override
-	public void saveHistory(Object newObject, Object existingObject, String sysUserId, String event, String tableName)
+	public void saveHistory(BaseObject newObject, BaseObject existingObject, String sysUserId, String event, String tableName)
 			throws LIMSRuntimeException {
 
 		// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
@@ -114,7 +113,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 		referenceTables.setTableName(tableName);
 		ReferenceTables rt = referenceTablesService.getReferenceTableByName(referenceTables);
 
-//		bugzilla 2111: if keepHistory is N then return - don't throw exception
+		//		bugzilla 2111: if keepHistory is N then return - don't throw exception
 		if (rt != null && !rt.getKeepHistory().equals(IActionConstants.YES)) {
 			// bugzilla 2154
 			LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: REF TABLE KEEP_HISTORY IS N");
@@ -151,8 +150,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 			if ((xml != null) && (xml.length() > 0)) {
 				History hist = new History();
 
-				Method m1 = existingObject.getClass().getMethod("getId", new Class[0]);
-				String referenceId = (String) m1.invoke(existingObject, (Object[]) new Class[0]);
+				String referenceId = null;
+				if (newObject != null && event.equals(IActionConstants.AUDIT_TRAIL_UPDATE)) {
+					referenceId = newObject.getStringId();
+				} else if (event.equals(IActionConstants.AUDIT_TRAIL_DELETE)) {
+					referenceId = existingObject.getStringId();
+				}
 				hist.setReferenceId(referenceId);
 				hist.setSysUserId(sysUserId);
 
@@ -235,7 +238,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String getChanges(Object newObject, Object existingObject, String tableName) {
+	private String getChanges(BaseObject newObject, BaseObject existingObject, String tableName) {
 
 		// bugzilla 1857
 		Vector<Object> optionList = new Vector<>();
@@ -469,12 +472,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -501,12 +504,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -533,12 +536,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -565,12 +568,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -597,12 +600,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -629,12 +632,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -661,12 +664,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -693,12 +696,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -725,12 +728,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -757,12 +760,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -789,12 +792,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -821,12 +824,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -853,12 +856,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -885,12 +888,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -917,12 +920,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -949,12 +952,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -981,12 +984,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -1013,12 +1016,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -1045,12 +1048,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -1077,12 +1080,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -1109,12 +1112,12 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 					String oldID = "";
 					String newID = "";
 					if (o1 != null) {
-						Method m11 = o1.getClass().getMethod("getId", new Class[0]);
+						Method m11 = o1.getClass().getMethod("getStringId", new Class[0]);
 						oldID = (String) m11.invoke(o1, (Object[]) new Class[0]);
 					}
 
 					if (o2 != null) {
-						Method m22 = o2.getClass().getMethod("getId", new Class[0]);
+						Method m22 = o2.getClass().getMethod("getStringId", new Class[0]);
 						newID = (String) m22.invoke(o2, (Object[]) new Class[0]);
 					}
 
@@ -1163,7 +1166,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 		}
 
 		if (((fieldName != null) && (fieldName.length() > 0)) &&
-		// bugzilla 2578 (blank to filled in collection date does not appear in history
+				// bugzilla 2578 (blank to filled in collection date does not appear in history
 				((propertyPreUpdateState != null))) {
 			if (propertyPreUpdateState.equals("{null}") || propertyPreUpdateState.equals("null")) {
 				lvb = new LabelValuePair();
@@ -1208,28 +1211,28 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	@Override
 	@Transactional(readOnly = true)
 	public String getXML(String table, String id) throws LIMSRuntimeException {
-//		org.hibernate.Session session = sessionFactory.getCurrentSession();
-//		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
-//
-//		Element elem = (Element) dom4jSession.createQuery("from " + table + " where id=" + id).uniqueResult();
-//		java.io.StringWriter sw = new java.io.StringWriter();
-//		if (elem != null) {
-//			try {
-//				Document doc = DocumentHelper.createDocument();
-//				doc.add(elem);
-//				OutputFormat format = OutputFormat.createPrettyPrint();
-//				XMLWriter writer = new XMLWriter(sw, format);
-//				writer.write(doc);
-//				writer.flush();
-//				writer.close();
-//
-//				return sw.toString();
-//			} catch (Exception e) {
-//				// buzilla 2154
-//				LogEvent.logError("AuditTrailDAOImpl", "getXML()", e.toString());
-//				throw new LIMSRuntimeException("Error in AuditTrail getXML()", e);
-//			}
-//		}
+		//		org.hibernate.Session session = sessionFactory.getCurrentSession();
+		//		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
+		//
+		//		Element elem = (Element) dom4jSession.createQuery("from " + table + " where id=" + id).uniqueResult();
+		//		java.io.StringWriter sw = new java.io.StringWriter();
+		//		if (elem != null) {
+		//			try {
+		//				Document doc = DocumentHelper.createDocument();
+		//				doc.add(elem);
+		//				OutputFormat format = OutputFormat.createPrettyPrint();
+		//				XMLWriter writer = new XMLWriter(sw, format);
+		//				writer.write(doc);
+		//				writer.flush();
+		//				writer.close();
+		//
+		//				return sw.toString();
+		//			} catch (Exception e) {
+		//				// buzilla 2154
+		//				LogEvent.logError("AuditTrailDAOImpl", "getXML()", e.toString());
+		//				throw new LIMSRuntimeException("Error in AuditTrail getXML()", e);
+		//			}
+		//		}
 		return null;
 	}
 
@@ -1243,22 +1246,22 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	@Override
 	@Transactional(readOnly = true)
 	public String getXMLData(String table, String id) throws LIMSRuntimeException {
-//		StringBuffer xml;
-//
-//		LogEvent.logDebug("AuditTrailDAOImpl", "getXMLData()", "getting History instance");
-//		try {
-//			String out = (String) HibernateUtil
-//					.getSession().createSQLQuery("select to_char(dbms_xmlgen.getxml('select * from " + table
-//							+ " where id=" + id + "')) as xml from dual")
-//					.addScalar("xml", Hibernate.STRING).uniqueResult();
-//			xml = new StringBuffer().append(out);
-//
-//			return xml.toString();
-//
-//		} catch (Exception e) {
-//			LogEvent.logError("AuditTrailDAOImpl", "getXMLData()", e.toString());
-//			throw new LIMSRuntimeException("Error in AuditTrail getXMLData()", e);
-//		}
+		//		StringBuffer xml;
+		//
+		//		LogEvent.logDebug("AuditTrailDAOImpl", "getXMLData()", "getting History instance");
+		//		try {
+		//			String out = (String) HibernateUtil
+		//					.getSession().createSQLQuery("select to_char(dbms_xmlgen.getxml('select * from " + table
+		//							+ " where id=" + id + "')) as xml from dual")
+		//					.addScalar("xml", Hibernate.STRING).uniqueResult();
+		//			xml = new StringBuffer().append(out);
+		//
+		//			return xml.toString();
+		//
+		//		} catch (Exception e) {
+		//			LogEvent.logError("AuditTrailDAOImpl", "getXMLData()", e.toString());
+		//			throw new LIMSRuntimeException("Error in AuditTrail getXMLData()", e);
+		//		}
 		return null;
 	}
 
@@ -1268,57 +1271,57 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	 * @param history valueholder
 	 * @return list of history objects
 	 */
-//	@Override
-//	@Transactional(readOnly = true)
-//	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
-//		return getHistoryByRefIdAndRefTableId(history.getReferenceId(), history.getReferenceTable());
-//	}
+	//	@Override
+	//	@Transactional(readOnly = true)
+	//	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
+	//		return getHistoryByRefIdAndRefTableId(history.getReferenceId(), history.getReferenceTable());
+	//	}
 
-//	@Override
-//	@Transactional(readOnly = true)
-//	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
-//		List list;
-//
-//		try {
-//
-//			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//			query.setInteger("refId", Integer.parseInt(refId));
-//			query.setInteger("tableId", Integer.parseInt(tableId));
-//
-//			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//		} catch (HibernateException e) {
-//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
-//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
-//		}
-//		return list;
-//	}
+	//	@Override
+	//	@Transactional(readOnly = true)
+	//	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
+	//		List list;
+	//
+	//		try {
+	//
+	//			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
+	//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+	//			query.setInteger("refId", Integer.parseInt(refId));
+	//			query.setInteger("tableId", Integer.parseInt(tableId));
+	//
+	//			list = query.list();
+	//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+	//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+	//		} catch (HibernateException e) {
+	//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
+	//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
+	//		}
+	//		return list;
+	//	}
 
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	@Transactional(readOnly = true)
-//	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
-//			throws LIMSRuntimeException {
-//		String sql = "from History h where h.referenceTable = :tableId and (h.timestamp between :start and :end)  order by h.referenceId, h.timestamp desc";
-//
-//		try {
-//
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//			query.setInteger("tableId", Integer.parseInt(referenceTableId));
-//			query.setTimestamp("start", start);
-//			query.setTimestamp("end", end);
-//
-//			List<History> list = query.list();
-//			// closeSession(); // CSL remove old
-//			return list;
-//		} catch (Exception e) {
-//			handleException(e, "getHistoryByRefTableIdAndDateRange");
-//		}
-//
-//		return null;
-//	}
+	//	@SuppressWarnings("unchecked")
+	//	@Override
+	//	@Transactional(readOnly = true)
+	//	public List<History> getHistoryByRefTableIdAndDateRange(String referenceTableId, Date start, Date end)
+	//			throws LIMSRuntimeException {
+	//		String sql = "from History h where h.referenceTable = :tableId and (h.timestamp between :start and :end)  order by h.referenceId, h.timestamp desc";
+	//
+	//		try {
+	//
+	//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+	//			query.setInteger("tableId", Integer.parseInt(referenceTableId));
+	//			query.setTimestamp("start", start);
+	//			query.setTimestamp("end", end);
+	//
+	//			List<History> list = query.list();
+	//			// closeSession(); // CSL remove old
+	//			return list;
+	//		} catch (Exception e) {
+	//			handleException(e, "getHistoryByRefTableIdAndDateRange");
+	//		}
+	//
+	//		return null;
+	//	}
 
 	/**
 	 * Get list of history records by systemUser, date and referenceTableId
@@ -1326,68 +1329,68 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	 * @param history valueholder
 	 * @return list of history objects
 	 */
-//	@Override
-//	@Transactional(readOnly = true)
-//	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException {
-//		List list;
-//
-//		try {
-//
-//			String sql;
-//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
-//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
-//					if (history.getTimestamp() != null) {
-//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-//					} else {
-//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
-//					}
-//				} else {
-//					if (history.getTimestamp() != null) {
-//						sql = "from History h where h.referenceTable = :param1 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY')order by h.sysUserId asc, h.timestamp desc";
-//					} else {
-//						sql = "from History h where h.referenceTable = :param1 order by h.sysUserId asc, h.timestamp desc";
-//					}
-//				}
-//			} else {
-//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
-//					if (history.getTimestamp() != null) {
-//						sql = "from History h where h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-//					} else {
-//						sql = "from History h where h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
-//					}
-//				} else {
-//					if (history.getTimestamp() != null) {
-//						sql = "from History h where trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
-//					} else {
-//						sql = "from History h order by h.sysUserId asc, h.timestamp desc";
-//					}
-//				}
-//			}
-//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-//
-//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
-//				query.setParameter("param1", history.getReferenceTable());
-//			}
-//			if (!StringUtil.isNullorNill(history.getSysUserId())) {
-//				query.setParameter("param2", history.getSysUserId());
-//			}
-//
-//			if (history.getTimestamp() != null) {
-//				query.setParameter("param3", DateUtil.convertTimestampToStringDate(history.getTimestamp()));
-//			}
-//
-//			list = query.list();
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
-//					"getting History List");
-//
-//		} catch (Exception e) {
-//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()", e.toString());
-//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
-//		}
-//		return list;
-//	}
+	//	@Override
+	//	@Transactional(readOnly = true)
+	//	public List getHistoryBySystemUserAndDateAndRefTableId(History history) throws LIMSRuntimeException {
+	//		List list;
+	//
+	//		try {
+	//
+	//			String sql;
+	//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
+	//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
+	//					if (history.getTimestamp() != null) {
+	//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+	//					} else {
+	//						sql = "from History h where h.referenceTable = :param1 and h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
+	//					}
+	//				} else {
+	//					if (history.getTimestamp() != null) {
+	//						sql = "from History h where h.referenceTable = :param1 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY')order by h.sysUserId asc, h.timestamp desc";
+	//					} else {
+	//						sql = "from History h where h.referenceTable = :param1 order by h.sysUserId asc, h.timestamp desc";
+	//					}
+	//				}
+	//			} else {
+	//				if (!StringUtil.isNullorNill(history.getSysUserId())) {
+	//					if (history.getTimestamp() != null) {
+	//						sql = "from History h where h.sysUserId = :param2 and trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+	//					} else {
+	//						sql = "from History h where h.sysUserId = :param2 order by h.sysUserId asc, h.timestamp desc";
+	//					}
+	//				} else {
+	//					if (history.getTimestamp() != null) {
+	//						sql = "from History h where trunc(h.timestamp) = TO_DATE(:param3, 'MM-DD-YYYY') order by h.sysUserId asc, h.timestamp desc";
+	//					} else {
+	//						sql = "from History h order by h.sysUserId asc, h.timestamp desc";
+	//					}
+	//				}
+	//			}
+	//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+	//
+	//			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
+	//				query.setParameter("param1", history.getReferenceTable());
+	//			}
+	//			if (!StringUtil.isNullorNill(history.getSysUserId())) {
+	//				query.setParameter("param2", history.getSysUserId());
+	//			}
+	//
+	//			if (history.getTimestamp() != null) {
+	//				query.setParameter("param3", DateUtil.convertTimestampToStringDate(history.getTimestamp()));
+	//			}
+	//
+	//			list = query.list();
+	//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+	//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+	//			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
+	//					"getting History List");
+	//
+	//		} catch (Exception e) {
+	//			LogEvent.logError("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()", e.toString());
+	//			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
+	//		}
+	//		return list;
+	//	}
 
 	/**
 	 * Read the blob and convert to xml string
@@ -1395,21 +1398,21 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	 * @param id the primary id
 	 * @return a string
 	 */
-//	@Override
-//	public String retrieveBlobData(String id) throws LIMSRuntimeException {
-//		byte[] bindata = new byte[1024];
-//		try {
-//			History history = sessionFactory.getCurrentSession().get(History.class, id);
-//			if (history != null) {
-//				bindata = history.getChanges();
-//			}
-//		} catch (Exception e) {
-//			// buzilla 2154
-//			LogEvent.logError("AuditTrailDAOImpl", "retrieveBlobData()", e.toString());
-//			throw new LIMSRuntimeException("Error in AuditTrail retrieveBlobData()", e);
-//		}
-//		return new String(bindata);
-//	}
+	//	@Override
+	//	public String retrieveBlobData(String id) throws LIMSRuntimeException {
+	//		byte[] bindata = new byte[1024];
+	//		try {
+	//			History history = sessionFactory.getCurrentSession().get(History.class, id);
+	//			if (history != null) {
+	//				bindata = history.getChanges();
+	//			}
+	//		} catch (Exception e) {
+	//			// buzilla 2154
+	//			LogEvent.logError("AuditTrailDAOImpl", "retrieveBlobData()", e.toString());
+	//			throw new LIMSRuntimeException("Error in AuditTrail retrieveBlobData()", e);
+	//		}
+	//		return new String(bindata);
+	//	}
 
 	/**
 	 * Save the object into history table
@@ -1418,16 +1421,16 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 	 */
 	private void insertData(History history) throws LIMSRuntimeException {
 		historyService.insert(history);
-//		try {
-//			String id = (String) sessionFactory.getCurrentSession().save(history);
-//			history.setId(id);
-//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-//		} catch (Exception e) {
-//			// buzilla 2154
-//			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in AuditTrail insertData()", e);
-//		}
+		//		try {
+		//			String id = (String) sessionFactory.getCurrentSession().save(history);
+		//			history.setId(id);
+		//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+		//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+		//		} catch (Exception e) {
+		//			// buzilla 2154
+		//			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());
+		//			throw new LIMSRuntimeException("Error in AuditTrail insertData()", e);
+		//		}
 	}
 
 }

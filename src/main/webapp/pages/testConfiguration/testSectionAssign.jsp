@@ -54,12 +54,12 @@
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready( function(){
-        $jq(".sortable").sortable({
+    jQuery(document).ready( function(){
+        jQuery(".sortable").sortable({
             stop: function( ) {makeDirty();}
         });
     });
@@ -79,50 +79,50 @@
 
     function testSelected(input, id, currentTestSection, onlyOneTestInSection, testSectionId) {
         makeDirty();
-        $jq(".test").each(function () {
-            $jq(this).attr("disabled", "disabled");
-            $jq(this).addClass("disabled-text-button");
+        jQuery(".test").each(function () {
+            jQuery(this).attr("disabled", "disabled");
+            jQuery(this).addClass("disabled-text-button");
         });
 
-        $jq(".selectedTestName").text(input.value);
-        $jq("#action").text('<spring:message code="label.button.edit"/>');
-        $jq("#fromTestSection").text(currentTestSection);
-        $jq("#testId").val(id);
-        $jq("#deactivateTestSectionId").val(onlyOneTestInSection ? testSectionId : "");
-        $jq("#warnDeactivteTestSection").text(currentTestSection);
-        $jq(".edit-step").show();
-        $jq(".select-step").hide();
-        $jq(window).scrollTop(0);
+        jQuery(".selectedTestName").text(input.value);
+        jQuery("#action").text('<spring:message code="label.button.edit"/>');
+        jQuery("#fromTestSection").text(currentTestSection);
+        jQuery("#testId").val(id);
+        jQuery("#deactivateTestSectionId").val(onlyOneTestInSection ? testSectionId : "");
+        jQuery("#warnDeactivteTestSection").text(currentTestSection);
+        jQuery(".edit-step").show();
+        jQuery(".select-step").hide();
+        jQuery(window).scrollTop(0);
 
     }
 
     function testSectionSelected( selection){
-        var optionId = $jq(selection).val();
-        $jq("#saveButton").attr("disabled", (0 == optionId));
-        $jq("#toTestSection").text($jq("#option_" + optionId).text());
-        $jq("#testSectionId").val(optionId);
+        var optionId = jQuery(selection).val();
+        jQuery("#saveButton").attr("disabled", (0 == optionId));
+        jQuery("#toTestSection").text(jQuery("#option_" + optionId).text());
+        jQuery("#testSectionId").val(optionId);
     }
 
     function confirmValues() {
-        $jq("#editButtons").hide();
-        $jq(".confirmation-step").show();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
-        if( $jq("#deactivateTestSectionId").val().length > 0){
-            $jq("#deatcitvateWarning").show();
+        jQuery("#editButtons").hide();
+        jQuery(".confirmation-step").show();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
+        if( jQuery("#deactivateTestSectionId").val().length > 0){
+            jQuery("#deatcitvateWarning").show();
         }else{
-            $jq("#deatcitvateWarning").hide();
+            jQuery("#deatcitvateWarning").hide();
         }
 
-        $jq("#testSectionSelection").attr("disabled", true);
+        jQuery("#testSectionSelection").attr("disabled", true);
 
     }
 
     function rejectConfirmation() {
-        $jq("#editButtons").show();
-        $jq(".confirmation-step").hide();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
+        jQuery("#editButtons").show();
+        jQuery(".confirmation-step").hide();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
 
-        $jq("#testSectionSelection").attr("disabled", false);
+        jQuery("#testSectionSelection").attr("disabled", false);
     }
 
 

@@ -50,12 +50,12 @@
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
 <script type="text/javascript">
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready( function(){
-        $jq(".sortable").sortable({
+    jQuery(document).ready( function(){
+        jQuery(".sortable").sortable({
             stop: function( ) {makeDirty();}
         });
     });
@@ -75,21 +75,21 @@
 
 
     function confirmValues() {
-        $jq("#editButtons").hide();
-        $jq("#confirmationButtons").show();
-        $jq("#editMessage").hide();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
+        jQuery("#editButtons").hide();
+        jQuery("#confirmationButtons").show();
+        jQuery("#editMessage").hide();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
 
-        $jq(".sortable").sortable("disable");
+        jQuery(".sortable").sortable("disable");
     }
 
     function rejectConfirmation() {
-        $jq("#editButtons").show();
-        $jq("#confirmationButtons").hide();
-        $jq("#editMessage").show();
-        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
+        jQuery("#editButtons").show();
+        jQuery("#confirmationButtons").hide();
+        jQuery("#editMessage").show();
+        jQuery("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
 
-        $jq(".sortable").sortable("enable");
+        jQuery(".sortable").sortable("enable");
     }
 
     function buildJSONList(){
@@ -97,14 +97,14 @@
         var jsonObj = {};
         jsonObj.sampleTypes = [];
 
-        $jq("li.sortItem").each(function(){
+        jQuery("li.sortItem").each(function(){
             jsonBlob = {};
-            jsonBlob.id = $jq(this).val();
+            jsonBlob.id = jQuery(this).val();
             jsonBlob.sortOrder = sortOrder++;
             jsonObj.sampleTypes[sortOrder - 1] = jsonBlob;
         });
 
-        $jq("#jsonChangeList").val(JSON.stringify(jsonObj));
+        jQuery("#jsonChangeList").val(JSON.stringify(jsonObj));
     }
     function savePage() {
         buildJSONList();

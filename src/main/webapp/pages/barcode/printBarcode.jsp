@@ -89,7 +89,7 @@ function disablePrint() {
 
 //search patients using labNo
 function searchPatients() {
-    var labNumber = $jq("#searchValue").val();
+    var labNumber = jQuery("#searchValue").val();
     var lastName = "";
     var firstName = "";
     var STNumber = "";
@@ -97,10 +97,10 @@ function searchPatients() {
     var nationalID = "";
 
 	newSearchInfo = false;
-    $jq("#resultsDiv").hide();
-    $jq("#barcodeArea").hide();
-    $jq("#searchLabNumber").val('');
-    $jq("#searchLabNumber").val(labNumber);
+    jQuery("#resultsDiv").hide();
+    jQuery("#barcodeArea").hide();
+    jQuery("#searchLabNumber").val('');
+    jQuery("#searchLabNumber").val(labNumber);
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
 
@@ -272,8 +272,8 @@ function /*void*/ doNothing(){
 }
 
 function enableSearchButton(eventCode){
-    var valueElem = $jq("#searchValue");
-    var searchButton = $jq("#searchButton");
+    var valueElem = jQuery("#searchValue");
+    var searchButton = jQuery("#searchButton");
     if( valueElem.val()){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
@@ -287,7 +287,7 @@ function enableSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
-    var accessionNumber = $jq("#searchValue").val();
+    var accessionNumber = jQuery("#searchValue").val();
 
     $("searchResultsDiv").style.display = "none";
     var form = document.getElementById("mainForm");
@@ -295,8 +295,8 @@ function handleSelectedPatient(){
     if( !(typeof requestType === 'undefined') ){
         form.action += "&type=" + requestType;
     }
-    $jq("#accessionNumber").val($jq("#searchValue").val());
-    $jq("#patientId").val(patientSelectID);
+    jQuery("#accessionNumber").val(jQuery("#searchValue").val());
+    jQuery("#patientId").val(patientSelectID);
     
     form.submit();
 }
@@ -319,7 +319,7 @@ function printBarcode(button) {
         labNo = button.id;
         quantity = 1;
         }
-        $jq("#searchLabNumber").val('');
+        jQuery("#searchLabNumber").val('');
         document.getElementById("ifbarcode").src = 'LabelMakerServlet?labNo=' + labNo + '&type='
                 + type + '&patientId=' + patientId + '&quantity=' + quantity;
         document.getElementById("barcodeArea").show();

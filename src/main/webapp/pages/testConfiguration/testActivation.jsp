@@ -40,11 +40,11 @@
 <script type="text/javascript">
     var backFunction = selectBack;
 
-    if (!$jq) {
-        var $jq = jQuery.noConflict();
+    if (!jQuery) {
+        var jQuery = jQuery.noConflict();
     }
 
-    $jq(document).ready( function() {
+    jQuery(document).ready( function() {
         configureForSelect();
     });
 
@@ -66,7 +66,7 @@
         form.submit();
     }
     function checkedChanged(isActive, element) {
-        var jqueriedElement = $jq(element);
+        var jqueriedElement = jQuery(element);
         var activate, deactivate;
 
         //   alert( element.checked + ":"+ isActive + " -> " + (element.checked == isActive));
@@ -79,10 +79,10 @@
             jqueriedElement.addClass("activationChanged");
         }
 
-        deactivate = $jq(".active.activationChanged").length;
-        activate = $jq(".inactive.activationChanged").length;
+        deactivate = jQuery(".active.activationChanged").length;
+        activate = jQuery(".inactive.activationChanged").length;
 
-        $jq("#nextButtonSelect").attr('disabled', ( deactivate == 0 && activate == 0));
+        jQuery("#nextButtonSelect").attr('disabled', ( deactivate == 0 && activate == 0));
 
         if(  deactivate == 0 && activate == 0){
             makeClean();
@@ -92,10 +92,10 @@
     }
 
     function nextStepFromSelect() {
-        var deactivate = $jq(".active.activationChanged").length;
-        var activate = $jq(".inactive.activationChanged").length;
+        var deactivate = jQuery(".active.activationChanged").length;
+        var activate = jQuery(".inactive.activationChanged").length;
 
-        $jq("#activateSection input").prop("disabled", true);
+        jQuery("#activateSection input").prop("disabled", true);
         //next button is disabled if activate and deactivate = 0
         if (activate == 0) {
             configureForConfirmation();
@@ -108,8 +108,8 @@
     }
 
     function nextStepToConfirmation(){
-        var deactivate = $jq(".active.activationChanged").length;
-        var activate = $jq(".inactive.activationChanged").length;
+        var deactivate = jQuery(".active.activationChanged").length;
+        var activate = jQuery(".inactive.activationChanged").length;
         configureForConfirmation();
         confirmationStep(activate, deactivate);
 
@@ -131,27 +131,27 @@
             listDeactivatedItems(jsonObj);
         }
 
-        $jq("#jsonChangeList").val(JSON.stringify(jsonObj));
+        jQuery("#jsonChangeList").val(JSON.stringify(jsonObj));
     }
 
     function listActivatedItems( jsonObj){
         var activateSampleType = true;
-        var activateTestList = $jq("#testActivateList");
-        var activateSampleList = $jq("#sampleTypeActivateList");
+        var activateTestList = jQuery("#testActivateList");
+        var activateSampleList = jQuery("#sampleTypeActivateList");
         var jsonBlob, sortOrder;
 
-        $jq("#testActivate").show();
-        $jq("#sortOrderList ul.sortable").each(function(){
+        jQuery("#testActivate").show();
+        jQuery("#sortOrderList ul.sortable").each(function(){
             activateTestList.append("<br />");
-            activateTestList.append( $jq(this).val());
+            activateTestList.append( jQuery(this).val());
             activateTestList.append("<br />");
             sortOrder = 0;
-            $jq(this).find("li").each(function(){
+            jQuery(this).find("li").each(function(){
                 jsonBlob = {};
-                jsonBlob.id = $jq(this).val();
-                jsonBlob.activated = $jq(this).hasClass("altered");
+                jsonBlob.id = jQuery(this).val();
+                jsonBlob.activated = jQuery(this).hasClass("altered");
                 if( jsonBlob.activated){
-                    activateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + $jq(this).text() );
+                    activateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + jQuery(this).text() );
                     activateTestList.append("<br />");
                 }
                 jsonBlob.sortOrder = sortOrder++;
@@ -160,19 +160,19 @@
 
         });
 
-        $jq("#sampleTypeSortOrder ul.sortable").each(function(){
+        jQuery("#sampleTypeSortOrder ul.sortable").each(function(){
             sortOrder = 0;
-            $jq(this).find("li").each(function(){
+            jQuery(this).find("li").each(function(){
               //  if( activateSampleType){
                 console.log("activating sample type");
-                    $jq("#sampleTypeActivate").show();
+                    jQuery("#sampleTypeActivate").show();
                     activateSampleType = false;
               //  }
                 jsonBlob = {};
-                jsonBlob.id = $jq(this).val();
-                jsonBlob.activated = $jq(this).hasClass("altered");
+                jsonBlob.id = jQuery(this).val();
+                jsonBlob.activated = jQuery(this).hasClass("altered");
                 if( jsonBlob.activated){
-                    activateSampleList.append( $jq(this).text() );
+                    activateSampleList.append( jQuery(this).text() );
                     activateSampleList.append("<br />");
                 }
                 jsonBlob.sortOrder = sortOrder++;
@@ -184,13 +184,13 @@
 
     function listDeactivatedItems(jsonObj) {
         var sampleType, deactivatedTests, jsonBlob;
-        var deactivateTestList = $jq("#testDeactivateList");
-        var deactivateSampleList = $jq("#sampleTypeDeactivateList");
+        var deactivateTestList = jQuery("#testDeactivateList");
+        var deactivateSampleList = jQuery("#sampleTypeDeactivateList");
 
 
-        $jq("#testDeactivate").show();
-        $jq(".activeSampleType").each(function () {
-            sampleType = $jq(this);
+        jQuery("#testDeactivate").show();
+        jQuery(".activeSampleType").each(function () {
+            sampleType = jQuery(this);
             deactivatedTests = sampleType.parent().find(".active.activationChanged");
 
             if (deactivatedTests.length > 0) {
@@ -200,9 +200,9 @@
                 deactivateTestList.append("<br />");
                 deactivatedTests.each(function () {
                     jsonBlob = {};
-                    jsonBlob.id = $jq(this).val();
+                    jsonBlob.id = jQuery(this).val();
                     jsonObj.deactivateTest[jsonObj.deactivateTest.length] = jsonBlob;
-                    deactivateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + $jq(this).siblings("span").text());
+                    deactivateTestList.append("&nbsp;&nbsp;&nbsp;&nbsp;" + jQuery(this).siblings("span").text());
                     deactivateTestList.append("<br />");
                 });
 
@@ -210,7 +210,7 @@
                     jsonBlob = {};
                     jsonBlob.id = sampleType.find("input").val();
                     jsonObj.deactivateSample[jsonObj.deactivateSample.length] = jsonBlob;
-                    $jq("#sampleTypeDeactivate").show();
+                    jQuery("#sampleTypeDeactivate").show();
                     deactivateSampleList.append(sampleType.text());
                     deactivateSampleList.append("<br/>");
                 }
@@ -222,16 +222,16 @@
     function sortStep() {
         configureForSort();
         createSortingUI();
-        $jq(".sortable").sortable();
-        $jq(".sortable").disableSelection();
+        jQuery(".sortable").sortable();
+        jQuery(".sortable").disableSelection();
     }
 
     function createSortingUI() {
         var sortColumnCount = 0;
-        var sortDiv = $jq("#sortOrderList");
-        var table = $jq(document.createElement("table"));
-        var headerRow = $jq(document.createElement("tr"));
-        var bodyRow = $jq(document.createElement("tr"));
+        var sortDiv = jQuery("#sortOrderList");
+        var table = jQuery(document.createElement("table"));
+        var headerRow = jQuery(document.createElement("tr"));
+        var bodyRow = jQuery(document.createElement("tr"));
         var addActiveSampleTypesToSort = true;
         var sampleType, activatedTests;
         var headerCell, bodyCell;
@@ -240,15 +240,15 @@
         table.append(bodyRow);
         table.attr("width", "100%");
 
-        $jq(".activeSampleType,.inactiveSampleType").each(function () {
-            sampleType = $jq(this);
+        jQuery(".activeSampleType,.inactiveSampleType").each(function () {
+            sampleType = jQuery(this);
             activatedTests = sampleType.parent().find(".inactive.activationChanged");
             if (activatedTests.length > 0) {
                 if (sortColumnCount >= <%=columns %>) {
                     sortDiv.append(table);
-                    table = $jq(document.createElement("table"));
-                    headerRow = $jq(document.createElement("tr"));
-                    bodyRow = $jq(document.createElement("tr"));
+                    table = jQuery(document.createElement("table"));
+                    headerRow = jQuery(document.createElement("tr"));
+                    bodyRow = jQuery(document.createElement("tr"));
                     table.append(headerRow);
                     table.append(bodyRow);
                     table.attr("width", "100%");
@@ -256,12 +256,12 @@
                 }
 
 
-                headerCell = $jq(document.createElement("th"));
+                headerCell = jQuery(document.createElement("th"));
                 headerCell.attr("width", '25%');
                 headerCell.text(sampleType.text());
                 headerRow.append(headerCell);
 
-                bodyCell = $jq(document.createElement("td"));
+                bodyCell = jQuery(document.createElement("td"));
                 insertSortableTestList(bodyCell, sampleType, activatedTests);
                 bodyRow.append(bodyCell);
                 sortColumnCount++;
@@ -270,21 +270,21 @@
 
         if (sortColumnCount < <%=columns %>) {
             while (sortColumnCount < <%=columns %>) {
-                headerCell = $jq(document.createElement("td"));
+                headerCell = jQuery(document.createElement("td"));
                 headerRow.append(headerCell);
                 sortColumnCount++;
             }
         }
         sortDiv.append(table);
 
-        $jq(".inactiveSampleType").each(function () {
-            sampleType = $jq(this);
+        jQuery(".inactiveSampleType").each(function () {
+            sampleType = jQuery(this);
             activatedTests = sampleType.parent().find(".inactive.activationChanged");
             if (activatedTests.length > 0) {
-                var UL = $jq("#sampleTypeSortList");
+                var UL = jQuery("#sampleTypeSortList");
                 if( addActiveSampleTypesToSort){
-                    $jq("#sampleTypeSortOrder").show();
-                    addSampleTypeListElements($jq(".activeSampleType"), UL, false);
+                    jQuery("#sampleTypeSortOrder").show();
+                    addSampleTypeListElements(jQuery(".activeSampleType"), UL, false);
                     addActiveSampleTypesToSort = false;
                 }
 
@@ -295,7 +295,7 @@
     }
 
     function insertSortableTestList(cell, sampleType, activatedTests) {
-        var UL = $jq(document.createElement("ul"));
+        var UL = jQuery(document.createElement("ul"));
         UL.val(sampleType.text());
         var tests = sampleType.parent().find(".sortable-test");
         UL.addClass("sortable");
@@ -308,10 +308,10 @@
     function addTestListElements(tests, UL, activated) {
         var LI, test;
         tests.each(function () {
-            test = $jq(this);
+            test = jQuery(this);
             //make sure it test has not been deactivated
             if (activated || !test.hasClass("activationChanged")) {
-                LI = createLI($jq(this).parent().find("span").text(), $jq(this).val(), activated);
+                LI = createLI(jQuery(this).parent().find("span").text(), jQuery(this).val(), activated);
                 UL.append(LI);
             }
         });
@@ -320,7 +320,7 @@
     function addSampleTypeListElements(sampleTypes, UL, highlight) {
 
         sampleTypes.each(function () {
-            addSampleTypeListElement($jq(this), UL, highlight);
+            addSampleTypeListElement(jQuery(this), UL, highlight);
         });
     }
 
@@ -329,7 +329,7 @@
     }
 
     function createLI( name, value, highlight){
-        var LI = $jq(document.createElement("li"));
+        var LI = jQuery(document.createElement("li"));
         var span;
 
         LI.val(value);
@@ -338,7 +338,7 @@
             LI.addClass("altered");
         }
 
-        span = $jq(document.createElement("span"));
+        span = jQuery(document.createElement("span"));
         span.addClass("ui-icon ui-icon-arrowthick-2-n-s");
         LI.append(span);
         LI.append(name);
@@ -360,50 +360,50 @@
 
     function confirmBack(){
 
-       if($jq("#testActivationSortButton").is(":visible")){
+       if(jQuery("#testActivationSortButton").is(":visible")){
            configureForSort();
        } else{
            configureForSelect();
        }
     }
     function configureForSelect() {
-        $jq("#step").text("<%=MessageUtil.getContextualMessage("label.testActivate")%>");
-        $jq("#instructions").text("<spring:message code="instructions.test.activation" htmlEscape="false"/>");
-        $jq("#activateSection input").prop("disabled", false);
-        $jq(".selectHide").hide();
-        $jq(".selectShow").show();
-        $jq(".selectClear").empty();
+        jQuery("#step").text("<%=MessageUtil.getContextualMessage("label.testActivate")%>");
+        jQuery("#instructions").text("<spring:message code="instructions.test.activation" htmlEscape="false"/>");
+        jQuery("#activateSection input").prop("disabled", false);
+        jQuery(".selectHide").hide();
+        jQuery(".selectShow").show();
+        jQuery(".selectClear").empty();
         backFunction = selectBack;
     }
 
     function configureForSort() {
-        $jq("#step").text("Sort");
-        $jq("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.sort")%>");
-        $jq(".sortHide").hide();
-        $jq(".sortShow").show();
+        jQuery("#step").text("Sort");
+        jQuery("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.sort")%>");
+        jQuery(".sortHide").hide();
+        jQuery(".sortShow").show();
 
         //The reason for the li is that the sample sortable UL is hardcoded as sortable, even if it has no contents
-        if( $jq(".sortable li").length > 0) {
-            $jq(".sortable").sortable("enable");
+        if( jQuery(".sortable li").length > 0) {
+            jQuery(".sortable").sortable("enable");
         }
 
         backFunction = sortBack;
     }
 
     function configureForConfirmation() {
-        $jq("#step").text("<%=MessageUtil.getContextualMessage("label.testActivate.confirm")%>");
-        $jq("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.confirm")%>");
-        $jq(".confirmHide").hide();
-        $jq(".confirmShow").show();
+        jQuery("#step").text("<%=MessageUtil.getContextualMessage("label.testActivate.confirm")%>");
+        jQuery("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.confirm")%>");
+        jQuery(".confirmHide").hide();
+        jQuery(".confirmShow").show();
 
         //The reason for the li is that the sample sortable UL is hardcoded as sortable, even if it has no contents
-        if( $jq(".sortable li").length > 0) {
-            $jq(".sortable").sortable("disable");
+        if( jQuery(".sortable li").length > 0) {
+            jQuery(".sortable").sortable("disable");
         }
 
-        if($jq("#testActivationSort").is(":visible")){
-            $jq("#testActivationSortButton").show();
-            $jq("#testActivationSort").hide();
+        if(jQuery("#testActivationSort").is(":visible")){
+            jQuery("#testActivationSortButton").show();
+            jQuery("#testActivationSort").hide();
         }
 
         backFunction = confirmBack;

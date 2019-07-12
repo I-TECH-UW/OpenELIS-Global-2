@@ -49,7 +49,7 @@ if (form == null) {
 <script type="text/javascript"
 	src="<%=basePath%>scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript">
-var  $jq = jQuery.noConflict();
+var  jQuery = jQuery.noConflict();
 </script>
 <script
 	src="<%=basePath%>scripts/additional_utilities.js"></script>

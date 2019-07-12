@@ -141,7 +141,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 	private QaObservationService qaObservationService;
 	@Autowired
 	private OrganizationService orgService;
-//	private  final OrganizationOrganizationTypeService orgOrgTypeService ;
+	//	private  final OrganizationOrganizationTypeService orgOrgTypeService ;
 	@Autowired
 	private PersonAddressService personAddressService;
 	@Autowired
@@ -228,7 +228,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 			if (isNewSample) {
 				sampleService.insertDataWithAccessionNumber(sample);
 
-				sampleHuman.setPatient(patient);
+				sampleHuman.setPatientId(patient.getId());
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
 				sampleHumanService.insert(sampleHuman);
@@ -239,7 +239,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 			if (updateSampleHuman) {
 				sampleHuman.setProviderId(provider.getId());
 				sampleHuman.setSampleId(sample.getId());
-				sampleHuman.setPatient(patient);
+				sampleHuman.setPatientId(patient.getId());
 				sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 				sampleHumanService.update(sampleHuman);
 			}
@@ -696,7 +696,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 
 	private void addNoteToSampleIfNeeded() {
 		String noteText = webData.getNoteText();// newOrBlankFieldValue(webData.getNewNoteText(),
-												// webData.getNoteText());
+		// webData.getNoteText());
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			Note note = findExistingSampleNote();
 			if (note != null) {

@@ -63,7 +63,7 @@ function /*boolean*/ hasRequriedValues(){
 }
 
 function testConnection( identifier){
-	testConnectionOnServer(identifier, $jq("#" + identifier).val(), processTestSuccess);
+	testConnectionOnServer(identifier, jQuery("#" + identifier).val(), processTestSuccess);
 }
 
 function  /*void*/ processTestSuccess(xhr){

@@ -39,34 +39,34 @@ function saveAndExit() {
 }
 
 function dateChange() {
-	var month = $jq("#month").val();
-	var year = $jq("#year").val();
+	var month = jQuery("#month").val();
+	var year = jQuery("#year").val();
 	window.location.replace("DataSubmission.do?month=" + month + "&year=" + year);
 }
 
 function editUrl() {
-	$jq("#url").removeAttr("disabled");
+	jQuery("#url").removeAttr("disabled");
 }
 
 function checkURL() {
-	return $jq("#url").val() != "";
+	return jQuery("#url").val() != "";
 }
 
 function showsubmitting() {
 	if( typeof(showSuccessMessage) != 'undefined' ){
 	   	showSuccessMessage( false );
 	}
-   $jq("#sending").show();
+   jQuery("#sending").show();
 	window.location = '#sending';
 }
 
 function confirmSentWarning() {
 	var sentIndicators = [];
 	var message = "<spring:message code="datasubmission.warning.sent" arguments="month, year"/>";
-	$jq("span.<%=DataIndicator.SENT%>").each(function() {
+	jQuery("span.<%=DataIndicator.SENT%>").each(function() {
 		sentIndicators.push(this.id);
 	});
-	$jq("span.<%=DataIndicator.RECEIVED%>").each(function() {
+	jQuery("span.<%=DataIndicator.RECEIVED%>").each(function() {
 		sentIndicators.push(this.id);
 	});
 	for (var i = 0; i < sentIndicators.length; i++) {

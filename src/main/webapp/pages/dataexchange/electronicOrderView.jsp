@@ -17,21 +17,21 @@ function sortBy(sortOption) {
 }
 
 function nextPage() {
-	var sortOption = $jq("#sortSelect").val();
+	var sortOption = jQuery("#sortSelect").val();
 	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption + "&page=" + (pageNumber + 1);
 }
 
 function prevPage() {
-	var sortOption = $jq("#sortSelect").val();
+	var sortOption = jQuery("#sortSelect").val();
 	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption + "&page=" + (pageNumber - 1);
 }
 
-$jq(window).load(function(){	
-	$jq('button.prevButton').each(function(){
-		$jq(this).prop('disabled', firstPage);
+jQuery(window).load(function(){	
+	jQuery('button.prevButton').each(function(){
+		jQuery(this).prop('disabled', firstPage);
 	});
-	$jq('button.nextButton').each(function(){
-		$jq(this).prop('disabled', lastPage);
+	jQuery('button.nextButton').each(function(){
+		jQuery(this).prop('disabled', lastPage);
 	});
 });
 </script>

@@ -53,7 +53,7 @@ var dirty = false;
 
 var confirmNewTypeMessage = "<spring:message code='nonConformant.confirm.newType.message'/>";
 
-/* $jq(function() {
+/* jQuery(function() {
 	var eventsTable = $('qaEventsTable');
 	if (eventsTable === null) {
 		return;
@@ -267,13 +267,13 @@ function setSave(){
 		//all this crap is to make sure there is not an enabled new row that has no value for the required field then none of the 
 		//other fields have values		
 	if( validToSave){
-		$jq("#qaEventsTable tbody tr").each( function(rowIndex, rowElement){
-			var jqRow = $jq(rowElement);
+		jQuery("#qaEventsTable tbody tr").each( function(rowIndex, rowElement){
+			var jqRow = jQuery(rowElement);
 			if(validToSave && jqRow.is(":visible")){
 				//if row is visible and the required field is blank make sure no other field has a value
 				if( !(jqRow.find(".qaEventEnable").is(":checked") ) && requiredSelectionsNotDone( jqRow ) ){
 					jqRow.find(".qaEventElement").each( function(index, element){
-						var cellValue = $jq(element).val(); 
+						var cellValue = jQuery(element).val(); 
 						if( !(cellValue.length == 0 || cellValue == "0" )){
 							validToSave = false;
 							return;
@@ -797,8 +797,8 @@ tweekSampleTypeOptions();
 
 <% if( FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST_USER_ADDABLE)){ %>
 // Moving autocomplete to end - needs to be at bottom for IE to trigger properly
-$jq(document).ready( function() {
-     	var dropdown = $jq( "select#site" );
+jQuery(document).ready( function() {
+     	var dropdown = jQuery( "select#site" );
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         clearNonMatching = false;
         capitialize = true;

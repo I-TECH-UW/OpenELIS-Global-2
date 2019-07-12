@@ -51,7 +51,7 @@
 <script type="text/javascript">
     var currentSampleType = "";
 
-    $jq(document).ready(function(){
+    jQuery(document).ready(function(){
         <%if( request.getAttribute(IActionConstants.FWD_SUCCESS) != null &&
         ((Boolean)request.getAttribute(IActionConstants.FWD_SUCCESS)) ) { %>
         if( typeof(showSuccessMessage) != 'undefined' ){
@@ -61,15 +61,15 @@
     });
 
     function convertToJQueryMultiselect(){
-        $jq("select[multiple]").asmSelect({
+        jQuery("select[multiple]").asmSelect({
             removeLabel: "X"
         });
 
-        $jq("select[multiple]").change(function (e, data) {
+        jQuery("select[multiple]").change(function (e, data) {
             handleMultiSelectChange(e, data);
         });
 
-        $jq(".asmContainer").css("display", "inline-block");
+        jQuery(".asmContainer").css("display", "inline-block");
     }
 
     function handleMultiSelectChange(e, data){
@@ -98,8 +98,8 @@
 
 
     function sampleTypeChanged(selectElement) {
-        $jq("#verifySampleTypeSpan").text($jq(selectElement).find(":selected").text());
-        currentSampleType = $jq(selectElement).find(":selected").text();
+        jQuery("#verifySampleTypeSpan").text(jQuery(selectElement).find(":selected").text());
+        currentSampleType = jQuery(selectElement).find(":selected").text();
         if (selectElement.value != 0) {
             getAllTestsForSampleType(selectElement.value, testsForSampleTypeSuccess);
         }
@@ -114,13 +114,13 @@
 
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
-            currentSelection = $jq("#currentTestSelection");
-            replacementSelectionSpan = $jq("#replacementTestSelectionSpan");
+            currentSelection = jQuery("#currentTestSelection");
+            replacementSelectionSpan = jQuery("#replacementTestSelectionSpan");
             currentSelection.empty();
             replacementSelectionSpan.empty();
-            replacementSelection = $jq('<select>').attr('multiple', 'multiple').attr('title', 'multiple').attr('id', 'replacementTestSelection');
+            replacementSelection = jQuery('<select>').attr('multiple', 'multiple').attr('title', 'multiple').attr('id', 'replacementTestSelection');
             replacementSelectionSpan.append(replacementSelection);
-            option = $jq('<option/>').attr({"value" : 0});
+            option = jQuery('<option/>').attr({"value" : 0});
             currentSelection.append(option);
 
             for( i = 0; i < response["tests"].length; i++){
@@ -131,21 +131,21 @@
             }
         }
 
-        if(!$jq('#includeInactive').is(":checked")){
-            $jq(".inactiveTest").hide();
+        if(!jQuery('#includeInactive').is(":checked")){
+            jQuery(".inactiveTest").hide();
         }
 
         convertToJQueryMultiselect();
 
-        $jq("#testSelection").show();
-        $jq("#sampleSelectionDiv").hide();
-        $jq("#nextStepButton").attr("disabled", "disabled");
-        if($jq("#cancelOnly").is(":checked")){ $jq("#cancelOnly").click();}
+        jQuery("#testSelection").show();
+        jQuery("#sampleSelectionDiv").hide();
+        jQuery("#nextStepButton").attr("disabled", "disabled");
+        if(jQuery("#cancelOnly").is(":checked")){ jQuery("#cancelOnly").click();}
     }
 
     function createOption(jsonTest){
         //alert(jsonTest.name);
-        var  option = $jq('<option/>');
+        var  option = jQuery('<option/>');
         option.attr({ 'value': jsonTest.id }).text(jsonTest.name);
         if( jsonTest.isActive == 'N'){
             option.addClass("inactiveTest");
@@ -154,14 +154,14 @@
     }
 
     function removeMultiSelect(){
-        $jq('.asmListItemRemove').each(function(i) {
-            $jq(this).click();
+        jQuery('.asmListItemRemove').each(function(i) {
+            jQuery(this).click();
         });
     }
     function currentTestChanged(currentTestSelection){
         if( currentTestSelection.value == 0){
-            $jq("#sampleSelectionDiv").hide();
-            $jq("#nextStepButton").attr('disabled', 'disabled');
+            jQuery("#sampleSelectionDiv").hide();
+            jQuery("#nextStepButton").attr('disabled', 'disabled');
         }else{
             getPendingAnalysisForTest( currentTestSelection.value, analysisForTestSuccess);
         }
@@ -175,13 +175,13 @@
 
         if (message.firstChild.nodeValue == "valid") {
             response = JSON.parse(formField.firstChild.nodeValue);
-            addLabNoCoumns(response["notStarted"], $jq("#notStartedSamplesSpan"),$jq("#notStartedSamplesCheckBox"), true );
-            addLabNoCoumns(response["technicianRejection"], $jq("#technicianRejectedSamplesSpan"), $jq("#technicianRejectedSamplesCheckBox"), true );
-            addLabNoCoumns(response["biologistRejection"], $jq("#biologistRejectedSamplesSpan"), $jq("#biologistRejectedSamplesCheckBox"), true );
-            addLabNoCoumns(response["notValidated"], $jq("#notValidatedSamplesSpan"),$jq("#notValidatedSamplesCheckBox"), false );
+            addLabNoCoumns(response["notStarted"], jQuery("#notStartedSamplesSpan"),jQuery("#notStartedSamplesCheckBox"), true );
+            addLabNoCoumns(response["technicianRejection"], jQuery("#technicianRejectedSamplesSpan"), jQuery("#technicianRejectedSamplesCheckBox"), true );
+            addLabNoCoumns(response["biologistRejection"], jQuery("#biologistRejectedSamplesSpan"), jQuery("#biologistRejectedSamplesCheckBox"), true );
+            addLabNoCoumns(response["notValidated"], jQuery("#notValidatedSamplesSpan"),jQuery("#notValidatedSamplesCheckBox"), false );
         }
         enableNextStepButton();
-        $jq("#sampleSelectionDiv").show();
+        jQuery("#sampleSelectionDiv").show();
     }
 
     function addLabNoCoumns(jsonAnalysisGroup, column, allCheckbox, checked){
@@ -200,7 +200,7 @@
         }
 
         for( i = 0; i < jsonAnalysisGroup.length; i++){
-            checkbox = $jq('<input/>').attr('type', 'checkbox').attr('value', jsonAnalysisGroup[i]["id"]).change(enableNextStepButton).addClass("labNoSelect");
+            checkbox = jQuery('<input/>').attr('type', 'checkbox').attr('value', jsonAnalysisGroup[i]["id"]).change(enableNextStepButton).addClass("labNoSelect");
             if( checked){
                 checkbox.attr('checked','checked');
             }
@@ -213,21 +213,21 @@
 
     function showHideInactiveTest(inactiveTestCheckbox){
         if( inactiveTestCheckbox.checked){
-            $jq(".inactiveTest").show();
+            jQuery(".inactiveTest").show();
         }else{
-            $jq(".inactiveTest").hide();
-            $jq("#currentTestSelection").val(0);
+            jQuery(".inactiveTest").hide();
+            jQuery("#currentTestSelection").val(0);
         }
     }
 
     function applyAll(checkAll, spanId){
         if(checkAll.checked){
-            $jq("#" + spanId + " > :input").each(function(){
-                $jq(this).attr('checked', 'checked');
+            jQuery("#" + spanId + " > :input").each(function(){
+                jQuery(this).attr('checked', 'checked');
             });
         }else{
-            $jq("#" + spanId + " > :input").each(function(){
-                $jq(this).removeAttr('checked');
+            jQuery("#" + spanId + " > :input").each(function(){
+                jQuery(this).removeAttr('checked');
             });
         }
         enableNextStepButton();
@@ -236,56 +236,56 @@
     function handleCancelOnly(checkboxElement){
         if( checkboxElement.checked){
             alert("<spring:message code="warning.test.batch.reassignment.cancel" />");
-            $jq("#replacementTestSelectionSpan").hide();
+            jQuery("#replacementTestSelectionSpan").hide();
         }else{
-            $jq("#replacementTestSelectionSpan").show();
+            jQuery("#replacementTestSelectionSpan").show();
         }
 
         enableNextStepButton();
     }
 
     function enableNextStepButton(){
-        if( ($jq(".labNoSelect:checked").length > 0) && ($jq("#cancelOnly").is(":checked") || $jq('.asmListItemRemove').length > 0)){
-            $jq("#nextStepButton").removeAttr("disabled");
+        if( (jQuery(".labNoSelect:checked").length > 0) && (jQuery("#cancelOnly").is(":checked") || jQuery('.asmListItemRemove').length > 0)){
+            jQuery("#nextStepButton").removeAttr("disabled");
         }else{
-            $jq("#nextStepButton").attr("disabled", "disabled");
+            jQuery("#nextStepButton").attr("disabled", "disabled");
         }
     }
 
 
     function restoreSelect(){
-        $jq("#selectDiv").show();
-        $jq("#verifyDiv").hide();
+        jQuery("#selectDiv").show();
+        jQuery("#verifyDiv").hide();
 
     }
     function nextStep() {
-        $jq("#selectDiv").hide();
+        jQuery("#selectDiv").hide();
         buildVerify();
-        $jq("#verifyDiv").show();
+        jQuery("#verifyDiv").show();
     }
 
     function buildVerify(){
         var jsonWad = {};
-        var canceledTest = $jq("#currentTestSelection :selected");
+        var canceledTest = jQuery("#currentTestSelection :selected");
         var toTestStrings = "";
         var count = 0;
 
-        $jq(".testReplaceFrom").text(canceledTest.text());
+        jQuery(".testReplaceFrom").text(canceledTest.text());
         jsonWad["current"] = canceledTest.text();
         jsonWad["sampleType"] = currentSampleType;
 
-        if($jq('#cancelOnly:checked').length == 1){
-            $jq("#verifyReplaceMessage").hide();
-            $jq("#verifyCancelMessage").show();
+        if(jQuery('#cancelOnly:checked').length == 1){
+            jQuery("#verifyReplaceMessage").hide();
+            jQuery("#verifyCancelMessage").show();
         }else{
             jsonWad["replace"] = [];
-            $jq("#replacementTestSelection option:selected").each(function(i) {
-                toTestStrings += ", " + $jq(this).text();
-                jsonWad["replace"][count++] = $jq(this).val();
+            jQuery("#replacementTestSelection option:selected").each(function(i) {
+                toTestStrings += ", " + jQuery(this).text();
+                jsonWad["replace"][count++] = jQuery(this).val();
             });
-            $jq("#testReplaceTo").text(toTestStrings);
-            $jq("#verifyCancelMessage").hide();
-            $jq("#verifyReplaceMessage").show();
+            jQuery("#testReplaceTo").text(toTestStrings);
+            jQuery("#verifyCancelMessage").hide();
+            jQuery("#verifyReplaceMessage").show();
         }
 
         setUpSampleVerification( "notStartedSamplesSpan",
@@ -309,23 +309,23 @@
                 jsonWad["changeNotValidated"] = [],
                 jsonWad["noChangeNotValidated"] = []);
 
-        $jq("#jsonWad").val(JSON.stringify(jsonWad));
+        jQuery("#jsonWad").val(JSON.stringify(jsonWad));
     }
 
     function setUpSampleVerification( live, change, noChange, jsonChange, jsonNoChange){
         var count = 0;
-        var verify = $jq("#" + change);
+        var verify = jQuery("#" + change);
         verify.empty();
-        $jq("#" + live + " :checked").each(function(){
+        jQuery("#" + live + " :checked").each(function(){
             verify.append(this.nextSibling.nodeValue);
             verify.append("<br>");
             jsonChange[count++] = this.value;
         });
 
         count = 0;
-        verify = $jq("#" + noChange);
+        verify = jQuery("#" + noChange);
         verify.empty();
-        $jq("#" + live + " > input:not(:checked)").each(function(){
+        jQuery("#" + live + " > input:not(:checked)").each(function(){
             verify.append(this.nextSibling.nodeValue);
             verify.append("<br>");
             jsonNoChange[count++] = this.value;

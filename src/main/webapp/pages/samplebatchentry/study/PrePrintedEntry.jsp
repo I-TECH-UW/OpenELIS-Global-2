@@ -83,8 +83,8 @@ function checkSampleEnteredSuccess(xhr) {
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     if (message.firstChild.nodeValue == "SAMPLE_FOUND") {
     	moveAccessionToRecentArea();
-    	$jq("#labNo").val("");
-        $jq("#labNo").trigger('keyup');
+    	jQuery("#labNo").val("");
+        jQuery("#labNo").trigger('keyup');
     	setSave();
     } else {
         alert("<spring:message code='error.notentered' />");    	
@@ -93,11 +93,11 @@ function checkSampleEnteredSuccess(xhr) {
 
 //Add accession number to recent area
 function moveAccessionToRecentArea() {
-	var $recentTextArea = $jq("#recentSummary");
+	var $recentTextArea = jQuery("#recentSummary");
 	if ($recentTextArea.val()) {
 		lineSeparator = "\n";
 	}
-	var newRecent = $jq("#labNo").val() + lineSeparator + $recentTextArea.val();
+	var newRecent = jQuery("#labNo").val() + lineSeparator + $recentTextArea.val();
 	if ((newRecent.match(/\n/g)||[]).length >= 3) {
 		newRecent = newRecent.slice(0,newRecent.lastIndexOf("\n"));
 	}

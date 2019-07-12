@@ -37,4 +37,19 @@ public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> i
 	public List getHistoryByRefIdAndRefTableId(String id, String table) throws LIMSRuntimeException {
 		return baseObjectDAO.getHistoryByRefIdAndRefTableId(id, table);
 	}
+
+	@Override
+	public String insert(History history) {
+		return baseObjectDAO.insert(history);
+	}
+
+	@Override
+	public History update(History history) {
+		return baseObjectDAO.update(history);
+	}
+
+	@Override
+	public void delete(History history) {
+		baseObjectDAO.delete(history);
+	}
 }

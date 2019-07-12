@@ -49,7 +49,7 @@ if (form == null) {
 <script type="text/javascript"
 	src="<%=basePath%>scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript">
-var  $jq = jQuery.noConflict();
+var  jQuery = jQuery.noConflict();
 </script>
 <script
 	src="<%=basePath%>scripts/additional_utilities.js"></script>
@@ -82,16 +82,16 @@ function cancelAction() {
 		redirect = "Home.do";
 	}
 	if (${form.submitOnCancel}) {
-		$jq('#mainForm').attr('action', redirect);
-		$jq('#mainForm').attr('method', method);		
-		$jq('#mainForm').submit();
+		jQuery('#mainForm').attr('action', redirect);
+		jQuery('#mainForm').attr('method', method);		
+		jQuery('#mainForm').submit();
 	} else {
 		window.location = redirect;
 	}
 }
 
 function setMainFormMethod(method) {
-	$jq('#mainForm').attr('method', method);
+	jQuery('#mainForm').attr('method', method);
 }
 
 function navigationAction(form, action, validate, parameters) {

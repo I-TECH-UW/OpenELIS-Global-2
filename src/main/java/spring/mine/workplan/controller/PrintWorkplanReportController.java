@@ -82,6 +82,8 @@ public class PrintWorkplanReportController extends BaseController {
 			ServletOutputStream servletOutputStream = response.getOutputStream();
 			response.setContentType("application/pdf");
 			response.setContentLength(bytes.length);
+			String downloadFilename = "WorkplanReport";
+			response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
 
 			servletOutputStream.write(bytes, 0, bytes.length);
 			servletOutputStream.flush();

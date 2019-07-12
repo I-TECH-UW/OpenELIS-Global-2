@@ -155,7 +155,7 @@
         var success = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue == "valid";
 
         if (success) {
-            $jq("#requesterCodeId").val(code.getAttribute("value"));
+            jQuery("#requesterCodeId").val(code.getAttribute("value"));
         }
     }
 
@@ -169,7 +169,7 @@
     }
 
     function setOrderModified(){
-        $jq("#orderModified").val("true");
+        jQuery("#orderModified").val("true");
         orderChanged = true;
         if( window.makeDirty ){ makeDirty(); }
 
@@ -558,14 +558,14 @@
 
     <% if( FormFields.getInstance().useField( Field.TEST_LOCATION_CODE ) ){%>
     function showTestLocationCode(){
-            if(( $jq("#testLocationCodeId option").length -1 ) == $jq("#testLocationCodeId option:selected").index() ){
-                $jq("#testLocationCodeOtherId").show();
+            if(( jQuery("#testLocationCodeId option").length -1 ) == jQuery("#testLocationCodeId option:selected").index() ){
+                jQuery("#testLocationCodeOtherId").show();
             }
     }
     <% } %>
 
-    $jq(document).ready(function () {
-        var dropdown = $jq("select#requesterId");
+    jQuery(document).ready(function () {
+        var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         <% if(restrictNewReferringSiteEntries) { %>
        			clearNonMatching = true;
@@ -574,7 +574,7 @@
         <% } %>
         capitialize = true;
         // Actually executes autocomplete
-        dropdown.combobox();
+//         dropdown.combobox();
         invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
         maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
