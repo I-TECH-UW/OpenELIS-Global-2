@@ -1314,9 +1314,10 @@ function  processSubjectNumberSuccess(xhr){
 				<td>
 					<form:select path="patientProperties.education" id="educationID">
 					<option value="0" ></option>
-					<c:forEach items="${patientProperties.educationList}" var="education" >
-					<option value="${education.value}" >${education.value}</option>
-					</c:forEach>
+					<form:options items="${patientProperties.educationList}" itemLabel="value" itemValue="value"/>
+<%-- 					<c:forEach items="${patientProperties.educationList}" var="education" > --%>
+<%-- 					<option value="${education.value}" >${education.value}</option> --%>
+<%-- 					</c:forEach> --%>
 					</form:select>
 					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.education"

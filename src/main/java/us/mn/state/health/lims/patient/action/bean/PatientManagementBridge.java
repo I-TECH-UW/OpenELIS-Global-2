@@ -57,26 +57,36 @@ public class PatientManagementBridge {
 		info.setReadOnly(readOnly);
 
 		if (patient != null) {
-			PatientService patientPatientService = SpringContext.getBean(PatientService.class);
+			PatientService patientService = SpringContext.getBean(PatientService.class);
 			PersonService personService = SpringContext.getBean(PersonService.class);
 			personService.getData(patient.getPerson());
-			Map<String, String> addressComponents = patientPatientService.getAddressComponents(patient);
-			info.setFirstName(patientPatientService.getFirstName(patient));
-			info.setLastName(patientPatientService.getLastName(patient));
+			Map<String, String> addressComponents = patientService.getAddressComponents(patient);
+			info.setFirstName(patientService.getFirstName(patient));
+			info.setLastName(patientService.getLastName(patient));
 			info.setAddressDepartment(addressComponents.get(PatientServiceImpl.ADDRESS_DEPT));
 			info.setCommune(addressComponents.get(PatientServiceImpl.ADDRESS_COMMUNE));
 			info.setCity(addressComponents.get(PatientServiceImpl.ADDRESS_CITY));
 			info.setStreetAddress(addressComponents.get(PatientServiceImpl.ADDRESS_STREET));
-			info.setGender(readOnly ? patientPatientService.getLocalizedGender(patient)
-					: patientPatientService.getGender(patient));
-			info.setBirthDateForDisplay(patientPatientService.getBirthdayForDisplay(patient));
-			info.setNationalId(patientPatientService.getNationalId(patient));
-			info.setSTnumber(patientPatientService.getSTNumber(patient));
-			info.setMothersInitial(patientPatientService.getMothersInitial(patient));
+			info.setGender(readOnly ? patientService.getLocalizedGender(patient)
+					: patientService.getGender(patient));
+			info.setBirthDateForDisplay(patientService.getBirthdayForDisplay(patient));
+			info.setNationalId(patientService.getNationalId(patient));
+			info.setSTnumber(patientService.getSTNumber(patient));
+			info.setSubjectNumber(patientService.getSubjectNumber(patient));
+			info.setEducation(patientService.getEducation(patient));
+			
+			info.setMaritialStatus(patientService.getMaritalStatus(patient));
+			info.setEducation(patientService.getEducation(patient));
+			info.setNationality(patientService.getNationality(patient));
+			info.setOtherNationality(patientService.getOtherNationality(patient));
+			info.setHealthDistrict(patientService.getHealthDistrict(patient));
+			info.setHealthRegion(patientService.getHealthRegion(patient));
+			
+			info.setMothersInitial(patientService.getMothersInitial(patient));
 			if (readOnly) {
 				info.setAge(DateUtil.getCurrentAgeForDate(
 						DateUtil.convertStringDateStringTimeToTimestamp(
-								patientPatientService.getBirthdayForDisplay(patient), null),
+								patientService.getBirthdayForDisplay(patient), null),
 						DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null)));
 			}
 		}
