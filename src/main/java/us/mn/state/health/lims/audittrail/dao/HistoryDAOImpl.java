@@ -13,25 +13,27 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 
 @Component
-@Transactional 
+@Transactional
 public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements HistoryDAO {
-  HistoryDAOImpl() {
-    super(History.class);
-  }
-  
-  public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
-	  History history = new History();
-	  history.setId(refId);
-	  history.setReferenceTable(tableId);
-	  return getHistoryByRefIdAndRefTableId(history);
-  }
-  
+	HistoryDAOImpl() {
+		super(History.class);
+	}
+
+	@Override
+	public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
+		History history = new History();
+		history.setReferenceId(refId);
+		history.setReferenceTable(tableId);
+		return getHistoryByRefIdAndRefTableId(history);
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
-		String refId = history.getReferenceId(); 
+		String refId = history.getReferenceId();
 		String tableId = history.getReferenceTable();
 		List list;
-		
+
 		try {
 			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
 			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
