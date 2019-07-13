@@ -65,6 +65,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 	public static String PATIENT_HEALTH_REGION_IDENTITY;
 	public static String PATIENT_OB_NUMBER_IDENTITY;
 	public static String PATIENT_PC_NUMBER_IDENTITY;
+	public static String PATIENT_NATIONALITY;
+	public static String PATIENT_OTHER_NATIONALITY;
 
 	@Autowired
 	private PatientDAO baseObjectDAO;
@@ -165,6 +167,16 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 		patientType = identityTypeService.getNamedIdentityType("PC_NUMBER");
 		if (patientType != null) {
 			PATIENT_PC_NUMBER_IDENTITY = patientType.getId();
+		}
+
+		patientType = identityTypeService.getNamedIdentityType("NATIONALITY");
+		if (patientType != null) {
+			PATIENT_NATIONALITY = patientType.getId();
+		}
+
+		patientType = identityTypeService.getNamedIdentityType("OTHER NATIONALITY");
+		if (patientType != null) {
+			PATIENT_OTHER_NATIONALITY = patientType.getId();
 		}
 
 	}
@@ -483,6 +495,18 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
 	@Override
 	@Transactional(readOnly = true)
+	public String getNationality(Patient patient) {
+		return getIdentityInfo(patient, PATIENT_NATIONALITY);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getOtherNationality(Patient patient) {
+		return getIdentityInfo(patient, PATIENT_OTHER_NATIONALITY);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public void getData(Patient patient) {
 		getBaseObjectDAO().getData(patient);
 
@@ -689,7 +713,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
 					if ((listIdentity.getIdentityData() == null && !GenericValidator.isBlankOrNull(paramValue))
 							|| (listIdentity.getIdentityData() != null
-									&& !listIdentity.getIdentityData().equals(paramValue))) {
+							&& !listIdentity.getIdentityData().equals(paramValue))) {
 						listIdentity.setIdentityData(paramValue);
 						patientIdentityService.update(listIdentity);
 					}
