@@ -48,6 +48,9 @@
         <property name="cellPhone" type="java.lang.String">
             <column name="CELL_PHONE" />
         </property>
+        <property name="primaryPhone" type="java.lang.String">
+            <column name="primary_phone" />
+        </property>
         <property name="fax" type="java.lang.String">
             <column name="FAX" />
         </property>

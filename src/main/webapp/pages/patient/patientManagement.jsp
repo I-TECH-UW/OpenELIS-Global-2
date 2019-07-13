@@ -86,7 +86,7 @@ String formName;
 
 <script type="text/javascript" >
 
-var jQuery = jQuery.noConflict();
+var $jq = jQuery.noConflict();
 
 /*the prefix pt_ is being used for scoping.  Since this is being used as a tile there may be collisions with other
   tiles with simular names.  Only those elements that may cause confusion are being tagged, and we know which ones will collide
@@ -556,9 +556,10 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 	var nationality = getSelectIndexFor( "nationalityID", getXMLValue(response, "nationality"));
 	var otherNationality = getXMLValue( response, "otherNationality");
 	var maritialStatus = getSelectIndexFor( "maritialStatusID", getXMLValue(response, "maritialStatus"));
-	var healthRegion = getSelectIndexByTextFor( "healthRegionID", getXMLValue(response, "healthRegion"));
+	var healthRegion = getSelectIndexFor( "healthRegionID", getXMLValue(response, "healthRegion"));
 	var healthDistrict = getXMLValue(response, "healthDistrict");
 	var guid = getXMLValue( response, "guid");
+	var phoneNumber = getXMLValue(response, "phoneNumber");
 
 	setPatientInfo( nationalIDValue,
 					STValue,
@@ -585,7 +586,8 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					maritialStatus,
 					healthRegion,
 					healthDistrict,
-					guid );
+					guid,
+					phoneNumber);
 
 }
 
@@ -623,7 +625,7 @@ function /*void*/ clearErrors(){
 
 function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
 		patientType, insurance, occupation, patientUpdated, personUpdated, motherInitial, commune, addressDept, educationId, nationalId, nationalOther,
-		maritialStatusId, healthRegionId, healthDistrictId, guid ) {
+		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber ) {
 
 	clearErrors();
 
@@ -643,18 +645,19 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	$("patientLastUpdated").value = patientUpdated == undefined ? "" : patientUpdated;
 	$("personLastUpdated").value = personUpdated == undefined ? "" : personUpdated;
 	$("patientGUID_ID").value = guid == undefined ? "" : guid;
+	$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;
+	$("genderID").selectedIndex = gender == undefined ? 0 : gender;
 	if(supportPatientNationality){
 		$("nationalityID").selectedIndex = nationalId == undefined ? 0 : nationalId; 
 		$("nationalityOtherId").value = nationalOther == undefined ? "" : nationalOther;}
 	if( supportEducation){ $("educationID").selectedIndex =  educationId == undefined ? 0 : educationId;}
 	if( supportMaritialStatus){ $("maritialStatusID").selectedIndex = maritialStatusId == undefined ? 0 : maritialStatusId;}
 	if( supportHealthRegion){ 
-		var healthRegion = $("healthRegionID"); 
-		healthRegion.selectedIndex = healthRegionId == undefined ? 0 : healthRegionId;
-		$("shadowHealthRegion").value = healthRegion.options[healthRegion.selectedIndex].label;}
+		$("healthRegionID").selectedIndex = healthRegionId == undefined ? 0 : healthRegionId;
+	}
 	if( supportHealthDistrict){
-		if($("healthRegionID").selectedIndex != 0){
-			getDistrictsForRegion( $("healthRegionID").value, healthDistrictId, healthDistrictSuccess, null);
+		if(document.getElementById("healthRegionID").selectedIndex != 0){
+			getDistrictsForRegion( document.getElementById("healthRegionID").value, healthDistrictId, healthDistrictSuccess, null);
 		} 
 	}
 
@@ -673,16 +676,14 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 
 	}
 	if (dob == undefined) {
-		$("dateOfBirthID").value = "";
-		$("age").value = "";
+		document.getElementById("dateOfBirthID").value = "";
+		document.getElementById("age").value = "";
 	} else {
-		var dobElement = $("dateOfBirthID");
-		dobElement.value = dob;
-        checkValidAgeDate(dobElement);
+		var dobElement = document.getElementById("dateOfBirthID").value = dob;
+		updatePatientAge( $("dateOfBirthID") );
 	}
 
-	document.getElementById("genderID").selectedIndex = gender == undefined ? 0 : gender;
-	if(supportPatientType){document.getElementById("patientTypeID").selectedIndex = patientType == undefined ? 0 : patientType; }
+	if(supportPatientType){$("patientTypeID").selectedIndex = patientType == undefined ? 0 : patientType; }
 
 	// run this b/c dynamically populating the fields does not constitute an onchange event to populate the patmgmt tile
 	// this is the fx called by the onchange event if manually changing the fields
@@ -755,7 +756,6 @@ function clearDeptMessage(){
 }
 
 function updateHealthDistrict( regionElement){
-	$("shadowHealthRegion").value = regionElement.options[regionElement.selectedIndex].text;
 	getDistrictsForRegion( regionElement.value, "", healthDistrictSuccess, null);
 }
 
@@ -774,6 +774,7 @@ function healthDistrictSuccess( xhr ){
 		healthDistrict.options.length = 0;
 		healthDistrict.options[0] = new Option('', '');
 		for( ;i < districts.length; ++i){
+			<!-- 			is this supposed to be value value or value id? -->
 			healthDistrict.options[i + 1] = new Option(districts[i].attributes.getNamedItem("value").value, districts[i].attributes.getNamedItem("value").value);
 		}
 	}
@@ -1098,9 +1099,7 @@ function  processSubjectNumberSuccess(xhr){
 						 onchange="updatePatientEditStatus();clearDeptMessage();"
 					     id="departmentID" > --%>
 			<option value="0" ></option>
-			<c:forEach items="${form.patientProperties.addressDepartments}" var="address" >
-			<option value="${address.id}">${address.dictEntry} </option>
-			</c:forEach>
+			<form:options items="${patientProperties.addressDepartments}" itemLabel="dictEntry" itemValue="id"/>
 			<%-- <html:optionsCollection name="${form.formName}" property="patientProperties.addressDepartments" label="dictEntry" value="id" /> --%>
 			<%-- </html:select> --%><br>
 			</form:select>
@@ -1121,7 +1120,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>:</td>
 			<td>
-				<form:input path="patientProperties.phone" onchange="validatePhoneNumber( this );" maxLength="35"/>
+				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="validatePhoneNumber( this );" maxLength="35"/>
 <%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />
  --%>			</td>
 		</tr>
@@ -1141,12 +1140,9 @@ function  processSubjectNumberSuccess(xhr){
 			<html:optionsCollection name="${form.formName}" property="patientProperties.healthRegions" label="value" value="id" />
 			</html:select> --%>
 			
-			<form:hidden path="patientProperties.healthRegion" id="shadowHealthRegion"/>
 			<form:select path="patientProperties.healthRegion" onchange="updateHealthDistrict( this );" id="healthRegionID">
 			<option value="0" ></option>
-			<c:forEach items="${form.patientProperties.healthRegions}" var="healthRegions" >
-			<option value="${healthRegions.id}" >${healthRegions.value}</option>
-			</c:forEach>
+			<form:options items="${patientProperties.healthRegions}" itemLabel="value" itemValue="id"/>
 			</form:select>
 		</td>	
 	</tr>		
@@ -1166,6 +1162,8 @@ function  processSubjectNumberSuccess(xhr){
 			
 			<form:select path="patientProperties.healthDistrict" id="healthDistrictID" disabled="true">
 			<option value="0" ></option>
+<!-- 			is this supposed to be value value or value id? -->
+			<form:options items="${patientProperties.healthDistricts}" itemLabel="value" itemValue="value"/>
 			</form:select>
 		</td>	
 	</tr>		
@@ -1236,9 +1234,7 @@ function  processSubjectNumberSuccess(xhr){
 				<nested:optionsCollection name='${form.formName}' property="patientProperties.genders"   label="value" value="id" />
 			</nested:select> --%>
 			<option value=" " ></option>
-			<c:forEach items="${patientProperties.genders}" var="gender" >
-				<option value="${gender.id}">${gender.value}</option>
-			</c:forEach>
+			<form:options items="${patientProperties.genders}" itemLabel="value" itemValue="id"/>
 			</form:select>
             <%-- </logic:equal> --%>
             </c:if>
@@ -1259,9 +1255,7 @@ function  processSubjectNumberSuccess(xhr){
 		<td>
 			<form:select path="patientProperties.patientType" onchange="updatePatientEditStatus();" id="patientTypeID">
 			<option value="0" ></option>
-			<c:forEach items="${patientProperties.patientTypes}" var="patientType" >
-				<option value="${patientType.id}" >${patientType.value}</option>
-				</c:forEach>
+			<form:options items="${patientProperties.patientTypes}" itemLabel="value" itemValue="id"/>
 				</form:select>
 			<%-- <nested:select name='${form.formName}'
 						 property="patientProperties.patientType"
@@ -1276,8 +1270,7 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="patient.insuranceNumber" />:
 		</td>
 		<td>
-		<form:select path="patientProperties.insuranceNumber" onchange="updatePatientEditStatus();" id="insuranceID">
-		</form:select>
+		<form:input path="patientProperties.insuranceNumber" onchange="updatePatientEditStatus();" id="insuranceID"/>
 		
 			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.insuranceNumber"
@@ -1297,8 +1290,7 @@ function  processSubjectNumberSuccess(xhr){
 		<spring:message code="patient.occupation" />:
 	</td>
 	<td>
-		<form:select path="patientProperties.occupation" onchange="updatePatientEditStatus();" id="occupationID">
-		</form:select>
+		<form:input path="patientProperties.occupation" onchange="updatePatientEditStatus();" id="occupationID"/>
 		<%-- <nested:text name='${form.formName}'
 				  property="patientProperties.occupation"
 				  onchange="updatePatientEditStatus();"
@@ -1315,9 +1307,6 @@ function  processSubjectNumberSuccess(xhr){
 					<form:select path="patientProperties.education" id="educationID">
 					<option value="0" ></option>
 					<form:options items="${patientProperties.educationList}" itemLabel="value" itemValue="value"/>
-<%-- 					<c:forEach items="${patientProperties.educationList}" var="education" > --%>
-<%-- 					<option value="${education.value}" >${education.value}</option> --%>
-<%-- 					</c:forEach> --%>
 					</form:select>
 					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.education"
@@ -1334,9 +1323,7 @@ function  processSubjectNumberSuccess(xhr){
 				<td>
 					<form:select path="patientProperties.maritialStatus" id="maritialStatusID">
 					<option value="0" ></option>
-					<c:forEach items="${patientProperties.maritialList}" var="maritial" >
-					<option value="${maritial.value}" >${maritial.value}</option>
-					</c:forEach>
+					<form:options items="${patientProperties.maritialList}" itemLabel="value" itemValue="value"/>
 					</form:select>
 					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.maritialStatus"
@@ -1353,9 +1340,7 @@ function  processSubjectNumberSuccess(xhr){
 				<td>
 					<form:select path="patientProperties.nationality" id="nationalityID">
 					<option value="0" ></option>
-					<c:forEach items="${patientProperties.nationalityList}" var="nationality" >
-					<option value="${nationality.value}" >${nationality.value}</option>
-					</c:forEach>
+					<form:options items="${patientProperties.nationalityList}" itemLabel="value" itemValue="value"/>
 					</form:select>
 					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.nationality"

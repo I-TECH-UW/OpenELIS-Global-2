@@ -149,12 +149,12 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 			PATIENT_MARITAL_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeService.getNamedIdentityType("HEALTH_DISTRICT");
+		patientType = identityTypeService.getNamedIdentityType("HEALTH DISTRICT");
 		if (patientType != null) {
 			PATIENT_HEALTH_DISTRICT_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeService.getNamedIdentityType("HEALTH_REGION");
+		patientType = identityTypeService.getNamedIdentityType("HEALTH REGION");
 		if (patientType != null) {
 			PATIENT_HEALTH_REGION_IDENTITY = patientType.getId();
 		}

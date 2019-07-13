@@ -17,12 +17,14 @@
 package us.mn.state.health.lims.patient.action.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.validator.ValidationHelper;
@@ -31,6 +33,7 @@ import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidDate;
 import spring.service.dictionary.DictionaryService;
+import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientTypeService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -39,6 +42,7 @@ import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
+import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
@@ -129,7 +133,7 @@ public class PatientManagementInfo implements Serializable {
 	private String occupation;
 	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class })
-	private String phone;
+	private String primaryPhone;
 	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String healthRegion;
 	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
@@ -343,16 +347,27 @@ public class PatientManagementInfo implements Serializable {
 		return addressDepartments;
 	}
 
-	public String getPhone() {
-		return phone;
+	public String getPrimaryPhone() {
+		return primaryPhone;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setPrimaryPhone(String primaryPhone) {
+		this.primaryPhone = primaryPhone;
 	}
 
 	public List<IdValuePair> getHealthRegions() {
 		return DisplayListService.getInstance().getList(ListType.PATIENT_HEALTH_REGIONS);
+	}
+
+	public List<IdValuePair> getHealthDistricts() {
+		List<IdValuePair> districtsList = new ArrayList<>();
+		if (!GenericValidator.isBlankOrNull(healthRegion)) {
+			List<Organization> districts = SpringContext.getBean(OrganizationService.class).getOrganizationsByParentId( healthRegion);
+			for (Organization district : districts) {
+				districtsList.add(new IdValuePair(district.getId(), district.getOrganizationName()));
+			}
+		}
+		return districtsList;
 	}
 
 	public String getHealthRegion() {
