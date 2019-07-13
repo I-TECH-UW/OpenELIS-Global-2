@@ -51,6 +51,12 @@ public class AnyAccessionValidator implements IAccessionNumberValidator {
 	}
 
 	@Override
+	public int getMinAccessionLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
 		// TODO Auto-generated method stub
 		return false;

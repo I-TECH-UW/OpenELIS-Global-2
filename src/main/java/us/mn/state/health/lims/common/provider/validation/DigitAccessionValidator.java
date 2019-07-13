@@ -25,7 +25,7 @@ import spring.service.sample.SampleService;
 import spring.util.SpringContext;
 
 public class DigitAccessionValidator implements IAccessionNumberValidator {
-	
+
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	private String incrementStartingValue = "0000001";
@@ -90,7 +90,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 			return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
 		case USED_FAIL:
 			return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
-					+ getNextAvailableAccessionNumber(null);
+			+ getNextAvailableAccessionNumber(null);
 		case FORMAT_FAIL:
 			return getInvalidFormatMessage(results);
 		default:
@@ -135,6 +135,11 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 	@Override
 	public int getMaxAccessionLength() {
 		return maxLength;
+	}
+
+	@Override
+	public int getMinAccessionLength() {
+		return getMaxAccessionLength();
 	}
 
 	// recordType parameter is not used in this case

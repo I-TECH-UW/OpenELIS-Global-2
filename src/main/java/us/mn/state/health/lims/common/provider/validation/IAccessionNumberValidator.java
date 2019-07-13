@@ -1,20 +1,20 @@
 /**
-* The contents of this file are subject to the Mozilla  License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla  License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ *
+ * Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package us.mn.state.health.lims.common.provider.validation;
 
 
@@ -22,18 +22,18 @@ package us.mn.state.health.lims.common.provider.validation;
  * @author paulsc
  *
  */
- public interface IAccessionNumberValidator {
+public interface IAccessionNumberValidator {
 
-	 enum ValidationResults {
-	   SUCCESS, SITE_FAIL, YEAR_FAIL, USED_FAIL, IS_NOT_USED_FAIL, LENGTH_FAIL, FORMAT_FAIL, PROGRAM_FAIL, REQUIRED_FAIL,
-	   PATIENT_STATUS_FAIL, SAMPLE_STATUS_FAIL, SAMPLE_FOUND, SAMPLE_NOT_FOUND
+	enum ValidationResults {
+		SUCCESS, SITE_FAIL, YEAR_FAIL, USED_FAIL, IS_NOT_USED_FAIL, LENGTH_FAIL, FORMAT_FAIL, PROGRAM_FAIL, REQUIRED_FAIL,
+		PATIENT_STATUS_FAIL, SAMPLE_STATUS_FAIL, SAMPLE_FOUND, SAMPLE_NOT_FOUND
 	}
 
 
 	/**
 	 * @return does this accession number have a program code as part of it
 	 */
-	 boolean needProgramCode();
+	boolean needProgramCode();
 
 	/**
 	 * @param accessionNumber -- The number to be checked
@@ -43,7 +43,7 @@ package us.mn.state.health.lims.common.provider.validation;
 	 * @return One of the possible results for validation
 	 * @throws IllegalArgumentException
 	 */
-	 ValidationResults validFormat(String accessionNumber, boolean checkDate) throws IllegalArgumentException;
+	ValidationResults validFormat(String accessionNumber, boolean checkDate) throws IllegalArgumentException;
 
 
 	/**
@@ -52,49 +52,51 @@ package us.mn.state.health.lims.common.provider.validation;
 	 * @param results -- the result for which the message is wanted
 	 * @return -- the message
 	 */
-	 String getInvalidMessage(ValidationResults results);
+	String getInvalidMessage(ValidationResults results);
 
-    /**
-     * Helper method for getting an appropriate message for a format validation result
-     *
-     * @param results -- the result for which the message is wanted
-     * @return -- the message
-     */
-     String getInvalidFormatMessage(ValidationResults results);
+	/**
+	 * Helper method for getting an appropriate message for a format validation result
+	 *
+	 * @param results -- the result for which the message is wanted
+	 * @return -- the message
+	 */
+	String getInvalidFormatMessage(ValidationResults results);
 
 	/**
 	 * @param programCode -- if used, may be null otherwise
 	 * @return The first accession number if no others are have been generated
 	 */
-	 String createFirstAccessionNumber(String programCode);
+	String createFirstAccessionNumber(String programCode);
 
 
-	 String incrementAccessionNumber(String currentHighAccessionNumber);
+	String incrementAccessionNumber(String currentHighAccessionNumber);
 
 	/**
 	 * @param programCode -- code if needed, may be null
 	 * @return The next available number, may be null if one can not be generated.
 	 */
-	 String getNextAvailableAccessionNumber(String programCode);
+	String getNextAvailableAccessionNumber(String programCode);
 
-	 int getMaxAccessionLength();
+	int getMaxAccessionLength();
 
-	 boolean accessionNumberIsUsed(String accessionNumber, String recordType);
+	int getMinAccessionLength();
 
-	 ValidationResults  checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired, String projectFormName);
-	
+	boolean accessionNumberIsUsed(String accessionNumber, String recordType);
+
+	ValidationResults  checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired, String projectFormName);
+
 	/**
 	 * Get the part of the accession number which should not change.  ie. for Haiti it would be the site number, for Cote d'Ivoire it would
-	 * be the Program prefix 
+	 * be the Program prefix
 	 * @return
 	 */
-	 int getInvarientLength();
-	
+	int getInvarientLength();
+
 	/**
 	 * The max length - the invarientLength
 	 * @return
 	 */
-	 int getChangeableLength();
+	int getChangeableLength();
 
-     String getPrefix();
+	String getPrefix();
 }
