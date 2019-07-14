@@ -686,7 +686,7 @@ function  processPhoneSuccess(xhr){
 						name='qaEvents'
 						indexed = 'true'
 						size = '12'
-						onchange="makeDirty();validateRecordNumber(this)" />		 
+						onchange="setSave();makeDirty();validateRecordNumber(this)" />		 
 				</td>
 			<% } %>
 				<td style="display: none">
@@ -701,7 +701,7 @@ function  processPhoneSuccess(xhr){
 						         indexed="true" 
 						         disabled = "true"						    
 						         style="width: 99%" 
-						         onchange='makeDirty();'>
+						         onchange='setSave();makeDirty();'>
 						<option value="0"></option>
 						<form:options items="${form.qaEventTypes}" itemLabel="value" itemValue="id" />
 					</form:select>
@@ -709,7 +709,7 @@ function  processPhoneSuccess(xhr){
 				<td>
                     <form:select path="qaEvents[${iter.index}].sampleType" id='sampleType${iter.index}' name="qaEvents"
 						cssClass="readOnly qaEventElement typeOfSample requiredField" disabled="false"
-						onchange='makeDirty();'
+						onchange='setSave();makeDirty();'
 						cssStyle="width: 99%">
                         <option value="0"></option>
                         <option value="-1" <c:if test="${qaEvents.sampleType != null and qaEvent.sampleType == '-1'}"> selected='selected' </c:if>></option>
@@ -720,7 +720,7 @@ function  processPhoneSuccess(xhr){
 					<form:select path="qaEvents[${iter.index}].section" name="qaEvents" id='section${iter.index}'
 						cssClass="readOnly qaEventElement" disabled="false"
 						style="width: 99%"
-						onchange='makeDirty();'>
+						onchange='setSave();makeDirty();'>
 						<option ></option>
 						<form:options items="${form.sections}" itemLabel="localizedName" itemValue="nameKey" />
 					</form:select>
@@ -728,7 +728,7 @@ function  processPhoneSuccess(xhr){
 				<td>
 					<form:input path="qaEvents[${iter.index}].authorizer" id='author${iter.index}' name="qaEvents"
 						cssClass="readOnly qaEventElement" disabled="false"
-						onchange='makeDirty();'
+						onchange='setSave();makeDirty();'
 						cssStyle="width: 99%" />
 				</td>
 				<td>
@@ -736,13 +736,13 @@ function  processPhoneSuccess(xhr){
 					           name="qaEvents"
 							   cssClass="qaEventElement" 
 							   disabled="false"
-							   onchange='makeDirty();'
+							   onchange='setSave();makeDirty();'
 							   cssStyle="width: 99%" />
 				</td>
 				<td>
 					<form:checkbox path="qaEvents[${iter.index}].remove" id='remove${iter.index}' name="qaEvents"
 						cssClass="qaEventEnable"
-						onclick='makeDirty(); enableDisableIfChecked(this)' />
+						onclick='setSave();makeDirty(); enableDisableIfChecked(this)' />
 				</td>
 			</tr>
 		</c:forEach>
