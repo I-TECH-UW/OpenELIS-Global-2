@@ -1,7 +1,9 @@
 package spring.mine.reports.controller;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 
 import javax.servlet.ServletContext;
@@ -26,6 +28,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.reports.form.ReportForm;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.IReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService.ReportType;
@@ -68,7 +71,7 @@ public class ReportController extends BaseController {
 	@RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
 	public ModelAndView showReportPrint(HttpServletRequest request, HttpServletResponse response,
 			@ModelAttribute("form") @Valid ReportForm form, BindingResult result, SessionStatus status)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+					throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL, form);
@@ -129,6 +132,12 @@ public class ReportController extends BaseController {
 		if (reportPath == null) {
 			ClassLoader classLoader = getClass().getClassLoader();
 			reportPath = classLoader.getResource("reports").getPath();
+			try {
+				reportPath = URLDecoder.decode(reportPath, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				throw new LIMSRuntimeException(e);
+			}
 		}
 		return reportPath;
 	}
@@ -136,6 +145,12 @@ public class ReportController extends BaseController {
 	public String getImagesPath() {
 		if (imagesPath == null) {
 			imagesPath = context.getRealPath("") + "static" + File.separator + "images" + File.separator;
+			try {
+				imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				throw new LIMSRuntimeException(e);
+			}
 		}
 		return imagesPath;
 	}

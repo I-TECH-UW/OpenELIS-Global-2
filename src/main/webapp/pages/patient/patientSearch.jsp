@@ -290,11 +290,20 @@ function enableSearchButton(eventCode){
     var valueElem = jQuery("#searchValue");
     var criteriaElem  = jQuery('#searchCriteria');
     var searchButton = jQuery("#searchButton");
-    if( valueElem.val() && criteriaElem.val() != "0"){
+    if( valueElem.val() && criteriaElem.val() != "0" && criteriaElem.val() != "5"){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
         }
+    }else if(criteriaElem.val() == "5"){
+    	if (valueElem.val().length >= <%= Integer.toString(accessionNumberValidator.getMinAccessionLength()) %>) {
+        	searchButton.removeAttr("disabled");
+            if( eventCode == 13 ){
+                searchButton.click();
+            }
+    	} else {
+            searchButton.attr("disabled", "disabled");
+    	}
     }else{
         searchButton.attr("disabled", "disabled");
     }

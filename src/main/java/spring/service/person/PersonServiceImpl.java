@@ -125,7 +125,11 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 			return "";
 		}
 
-		String phone = person.getHomePhone();
+		String phone = person.getPrimaryPhone();
+
+		if (GenericValidator.isBlankOrNull(phone)) {
+			phone = person.getHomePhone();
+		}
 
 		if (GenericValidator.isBlankOrNull(phone)) {
 			phone = person.getCellPhone();

@@ -74,14 +74,15 @@ public class PatientManagementBridge {
 			info.setSTnumber(patientService.getSTNumber(patient));
 			info.setSubjectNumber(patientService.getSubjectNumber(patient));
 			info.setEducation(patientService.getEducation(patient));
-			
+
 			info.setMaritialStatus(patientService.getMaritalStatus(patient));
 			info.setEducation(patientService.getEducation(patient));
 			info.setNationality(patientService.getNationality(patient));
 			info.setOtherNationality(patientService.getOtherNationality(patient));
 			info.setHealthDistrict(patientService.getHealthDistrict(patient));
 			info.setHealthRegion(patientService.getHealthRegion(patient));
-			
+			info.setPrimaryPhone(patient.getPerson().getPrimaryPhone());
+
 			info.setMothersInitial(patientService.getMothersInitial(patient));
 			if (readOnly) {
 				info.setAge(DateUtil.getCurrentAgeForDate(

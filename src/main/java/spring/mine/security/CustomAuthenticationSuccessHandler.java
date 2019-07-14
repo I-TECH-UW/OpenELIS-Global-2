@@ -24,7 +24,6 @@ import spring.service.systemusermodule.PermissionModuleService;
 import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
@@ -36,15 +35,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
 	@Autowired
-	LoginService loginService;
+	private LoginService loginService;
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 	@Autowired
-	PermissionModuleService<PermissionModule> permissionModuleService;
+	private PermissionModuleService<PermissionModule> permissionModuleService;
 	@Autowired
-	SystemUserService systemUserService;
-	@Autowired
-	UserModuleService userModuleService;
+	private SystemUserService systemUserService;
 
 	public static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 

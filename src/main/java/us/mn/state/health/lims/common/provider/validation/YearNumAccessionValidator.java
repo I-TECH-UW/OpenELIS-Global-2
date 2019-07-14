@@ -26,7 +26,7 @@ import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.DateUtil;
 
 public class YearNumAccessionValidator implements IAccessionNumberValidator {
-	
+
 	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
 	private String incrementStartingValue = "000001";
@@ -112,7 +112,7 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 			return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
 		case USED_FAIL:
 			return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
-					+ getNextAvailableAccessionNumber(null);
+			+ getNextAvailableAccessionNumber(null);
 		case YEAR_FAIL:
 		case FORMAT_FAIL:
 			return getInvalidFormatMessage(results);
@@ -151,6 +151,11 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 	@Override
 	public int getMaxAccessionLength() {
 		return acccessionLength;
+	}
+
+	@Override
+	public int getMinAccessionLength() {
+		return getMaxAccessionLength();
 	}
 
 	// recordType parameter is not used in this case

@@ -37,9 +37,9 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
 	@Autowired
-	UserModuleService userModuleService;
+	private UserModuleService userModuleService;
 	@Autowired
-	SystemModuleUrlService systemModuleUrlService;
+	private SystemModuleUrlService systemModuleUrlService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -94,11 +94,11 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 		for (SystemModuleUrl sysModUrl : sysModsByUrl) {
-			if (!accessMap.contains(sysModUrl.getSystemModule().getSystemModuleName())) {
-				return false;
+			if (accessMap.contains(sysModUrl.getSystemModule().getSystemModuleName())) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private List<SystemModuleUrl> filterParamMatches(HttpServletRequest request, List<SystemModuleUrl> sysModsByUrl) {

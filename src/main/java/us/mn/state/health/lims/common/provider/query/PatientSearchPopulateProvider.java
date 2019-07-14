@@ -1,19 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+ *
+ */
 package us.mn.state.health.lims.common.provider.query;
 
 import java.io.IOException;
@@ -137,7 +137,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
 		XMLUtil.appendKeyValue("city", getAddress(person, ADDRESS_PART_VILLAGE_ID), xml);
 		XMLUtil.appendKeyValue("birthplace", patient.getBirthPlace(), xml);
 		XMLUtil.appendKeyValue("faxNumber", person.getFax(), xml);
-		XMLUtil.appendKeyValue("phoneNumber", person.getHomePhone(), xml);
+		XMLUtil.appendKeyValue("phoneNumber", person.getPrimaryPhone(), xml);
 		XMLUtil.appendKeyValue("email", person.getEmail(), xml);
 		XMLUtil.appendKeyValue("gender", patient.getGender(), xml);
 		XMLUtil.appendKeyValue("patientType", getPatientType(patient), xml);

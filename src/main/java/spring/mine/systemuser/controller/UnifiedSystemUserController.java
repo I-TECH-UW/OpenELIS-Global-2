@@ -537,6 +537,7 @@ public class UnifiedSystemUserController extends BaseController {
 		login.setLoginName(form.getUserLoginName());
 		if (passwordUpdated) {
 			login.setPassword(form.getUserPassword());
+			loginService.hashPassword(login, login.getPassword());
 		}
 		login.setPasswordExpiredDateForDisplay(form.getExpirationDate());
 		if (RESERVED_ADMIN_NAME.equals(form.getUserLoginName())) {
