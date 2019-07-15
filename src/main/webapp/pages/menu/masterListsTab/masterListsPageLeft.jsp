@@ -23,19 +23,19 @@
 	<%-- similar code will need to be added in the left panel and in tabs.js for any menu tab that has the submenu on the left hand side--%>
 
 	<ul id="masterListsSubMenu.do" class="leftnavigation">
-		 <%-- <%
+		  <%
 			if ("true"
 					.equals(ConfigurationProperties
 							.getInstance()
 							.getPropertyValueLowerCase(
 									ConfigurationProperties.Property.TrainingInstallation))) {
 		%>
-		<li><a href=<c:url value="/DatabaseCleaningRequest"/> >
+		<li><a href=<c:url value="/DatabaseCleaningRequest.do"/> >
 				<spring:message code="database.clean" />
 			</a></li>
 		<%
 			}
-		%> --%>
+		%> 
 		<%
 			if (adminFields.useField(Field.AnalyzerTestNameMenu)) {
 		%>
