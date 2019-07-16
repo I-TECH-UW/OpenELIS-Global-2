@@ -40,6 +40,8 @@ if (form == null) {
 %>
 
 <head>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" media="screen" type="text/css"
 	href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
 <script type="text/javascript"
