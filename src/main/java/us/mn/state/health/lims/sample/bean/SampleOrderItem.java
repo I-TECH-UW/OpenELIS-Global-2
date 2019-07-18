@@ -34,7 +34,9 @@ import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
 import spring.mine.validation.annotations.ValidTime;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
@@ -110,11 +112,11 @@ public class SampleOrderItem implements Serializable {
 			SamplePatientEntryBatch.class })
 	private String providerId;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String providerFirstName;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String providerLastName;
 

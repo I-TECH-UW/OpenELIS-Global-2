@@ -10,7 +10,9 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
 import spring.mine.validation.annotations.ValidTime;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
@@ -67,10 +69,10 @@ public class PatientEntryByProjectForm extends BaseForm {
 	@Min(0)
 	private Integer centerCode;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.FIRST_NAME)
 	private String firstName = "";
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.LAST_NAME)
 	private String lastName = "";
 
 	@Pattern(regexp = ValidationHelper.GENDER_REGEX)

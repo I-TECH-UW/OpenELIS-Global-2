@@ -1,16 +1,16 @@
 package spring.mine.login.form;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.Password;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 
 public class ChangePasswordLoginForm extends BaseForm {
 
 	@NotBlank
-	@Pattern(regexp = ValidationHelper.USERNAME_REGEX)
+	@ValidName(nameType = NameType.USERNAME, message = "username is invalid")
 	private String loginName = "";
 
 	// in validator

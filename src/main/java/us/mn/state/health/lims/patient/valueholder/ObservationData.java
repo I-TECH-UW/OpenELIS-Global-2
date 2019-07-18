@@ -1,19 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+ *
+ */
 package us.mn.state.health.lims.patient.valueholder;
 
 import java.io.Serializable;
@@ -29,6 +29,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 
@@ -64,7 +66,7 @@ public class ObservationData implements Serializable {
 	private String nationalityOther;
 	@SafeHtml
 	private String legalResidence;
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.FULL_NAME)
 	private String nameOfDoctor;
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvProphylaxisBenefit;
@@ -234,10 +236,10 @@ public class ObservationData implements Serializable {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidInfantCotrimoxazole;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.FULL_NAME)
 	private String nameOfRequestor;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.FULL_NAME)
 	private String nameOfSampler;
 
 	/**
@@ -1358,7 +1360,7 @@ public class ObservationData implements Serializable {
 	public void setVlSuckle(String vlSuckle) {
 		this.vlSuckle = vlSuckle;
 	}
-//-------------
+	//-------------
 
 	public String getPriorVLLab() {
 		return priorVLLab;
