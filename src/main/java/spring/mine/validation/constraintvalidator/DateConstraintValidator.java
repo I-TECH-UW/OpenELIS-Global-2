@@ -6,7 +6,6 @@ import javax.validation.ConstraintValidatorContext;
 import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 public class DateConstraintValidator implements ConstraintValidator<ValidDate, String> {
 
@@ -19,7 +18,7 @@ public class DateConstraintValidator implements ConstraintValidator<ValidDate, S
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (GenericValidator.isBlankOrNull(value)) {
+		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
 			return true;
 		}
 		String datePortion = value;
@@ -41,7 +40,7 @@ public class DateConstraintValidator implements ConstraintValidator<ValidDate, S
 			}
 
 		}
-
+		datePortion = datePortion.replaceAll("xx", "01");
 		String result = CustomDateValidator.getInstance().validateDate(
 				CustomDateValidator.getInstance().getDate(datePortion), validateDateConstraint.relative());
 		if (!IActionConstants.VALID.equals(result)) {
