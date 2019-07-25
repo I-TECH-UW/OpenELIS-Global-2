@@ -184,6 +184,7 @@
 
 <form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterId" />
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
+<form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
 <div id=orderDisplay <%= acceptExternalOrders? "style='display:none'" : ""  %> >
 <table style="width:100%">
@@ -496,11 +497,7 @@
     <td>
         <form:select path="sampleOrderItems.paymentOptionSelection" onchange="setOrderModified();" >
             <option value=''></option>
-            <c:forEach var="optionValue" items="${form.sampleOrderItems.paymentOptions}">
-                <option value='${optionValue.id}'<%--  <%=optionValue.getId().equals(sampleOrderItem.getPaymentOptionSelection() ) ? "selected='selected'" : ""%> --%>>
-                    ${optionValue.value}
-                </option>
-            </c:forEach>
+            <form:options items="${form.sampleOrderItems.paymentOptions}" itemLabel="value" itemValue="id"/>
         </form:select>
     </td>
 </tr>
@@ -528,11 +525,7 @@
                      onchange="setOrderModified(); testLocationCodeChanged( this )"
                      id="testLocationCodeId">
             <option value=''></option>
-            <c:forEach var="optionValue" items="${form.sampleOrderItems.testLocationCodeList}">                           
-                <option value='${optionValue.id}' <%-- <%=optionValue.getId().equals(sampleOrderItem.getTestLocationCode() ) ? "selected='selected'" : ""%> --%> >
-                    ${optionValue.value}
-                </option>
-            </c:forEach>
+            <form:options items="${form.sampleOrderItems.testLocationCodeList}" itemLabel="value" itemValue="id"/>
         </form:select>
         &nbsp;
         <form:input

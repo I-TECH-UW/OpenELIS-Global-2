@@ -5,7 +5,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.login.valueholder.Login;
 
@@ -20,10 +19,6 @@ public class LoginValidator implements Validator {
 	// basic validation at any point in execution
 	@Override
 	public void validate(Object target, Errors errors) {
-		Login login = (Login) target;
-
-		ValidationHelper.validateField(login.getLoginName(), "loginName", errors, true, 20,
-				ValidationHelper.USERNAME_REGEX);
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "login.password.error");
 	}

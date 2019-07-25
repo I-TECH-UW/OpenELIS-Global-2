@@ -10,6 +10,8 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -34,7 +36,7 @@ public class SampleEditForm extends BaseForm {
 	@NotNull(groups = { SampleEdit.class })
 	private Boolean isEditable = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SampleEdit.class })
+	@ValidName(nameType = NameType.FULL_NAME, groups = { SampleEdit.class })
 	private String patientName = "";
 
 	@ValidDate(relative = DateRelation.PAST)

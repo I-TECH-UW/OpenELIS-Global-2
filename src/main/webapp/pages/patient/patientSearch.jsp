@@ -327,6 +327,7 @@ function handleSelectedPatient(){
     if( !(typeof requestType === 'undefined') ){
     	searchUrl += "&type=" + requestType;
     }
+    window.onbeforeunload = null;
     window.location = searchUrl;
 }
 </script>
@@ -417,12 +418,12 @@ function handleSelectedPatient(){
 			</tr>
 		</table>
 		<br/>
-		<%-- <c:if test="${!empty patientSearch.selectedPatientActionButtonTest}">
+		 <c:if test="${!empty patientSearch.selectedPatientActionButtonText}">
             <input type="button"
-                   value="${patientSearch.selectedPatientActionButtonTest}"
+                   value="${patientSearch.selectedPatientActionButtonText}"
                    id="selectPatientButtonID"
                    onclick="handleSelectedPatient()" />
-        </c:if> --%>
+        </c:if> 
 		</div>
 	</div>
 

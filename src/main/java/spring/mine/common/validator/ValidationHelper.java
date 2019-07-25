@@ -7,7 +7,6 @@ import org.springframework.validation.Errors;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 public class ValidationHelper {
 
@@ -15,24 +14,23 @@ public class ValidationHelper {
 	private ValidationHelper() {
 	}
 
-	public static final String NAME_REGEX = "(?i)^[ a-zàâçéèêëîïôûùüÿñæœ'.-]*$";
-	public static final String USERNAME_REGEX = "(?i)^[a-z0-9àâçéèêëîïôûùüÿñæœ._@-]*$";
-	public static final String MESSAGE_KEY_REGEX = "(?i)^$|^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
 	public static final String PATIENT_ID_REGEX = "(?i)^[a-z0-9/]*$";
-	public static final String ID_REGEX = "^[0-9]*$";
 	public static final String PHONE_REGEX = "^[-+()0-9 ]*$";
 	public static final String GENDER_REGEX = "^$|^M$|^F$";
+	public static final String MESSAGE_KEY_REGEX = "(?i)^$|^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
+	public static final String ID_REGEX = "^[0-9]*$";
 	public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
 	public static final String FLOAT_REGEX = "^[+-]?Infinity$|^([+-]?\\d*\\.?\\d*)$";
 
 	private static final String DEFAULT_PREFIX = "Field ";
+
 
 	/*
 	 * STRING METHODS
 	 */
 
 	public static void validateFieldRequired(String value, String name, String displayName, Errors errors) {
-		if (GenericValidator.isBlankOrNull(value) || value.equals("null")) {
+		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value) || value.equals("null")) {
 			errors.rejectValue(name, "error.field.required", new Object[] { displayName },
 					DEFAULT_PREFIX + displayName + " is required");
 		}
@@ -166,7 +164,7 @@ public class ValidationHelper {
 			}
 			validateDateField(value, name, displayName, errors, relative);
 		} else {
-			if (GenericValidator.isBlankOrNull(value)) {
+			if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
 				return;
 			}
 			validateDateField(value, name, displayName, errors, relative);
@@ -178,7 +176,7 @@ public class ValidationHelper {
 		if (required) {
 			validateFieldRequired(value, name, displayName, errors);
 		} else {
-			if (GenericValidator.isBlankOrNull(value)) {
+			if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
 				return;
 			}
 			validateTimeField(value, name, displayName, errors);

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    
+ <changeSet author="csteele" id="1">
+    <preConditions onFail="MARK_RAN">
+    	<sqlCheck expectedResult="0">
+	    		select count(*) from clinlims.site_information_domain where "name" = 'validationConfig';
+	    	</sqlCheck>  		
+    </preConditions>
+    <comment>Add validation configuration domain to site_information_domain</comment>
+    <sql>
+	INSERT INTO clinlims.site_information_domain ("id", "name", "description") VALUES (nextval('clinlims.site_information_domain_seq'), 'validationConfig', 'Items that have to do with common field validation');
+		
+	</sql>
+</changeSet>
+    
+ <changeSet author="csteele" id="2">
+    <preConditions onFail="MARK_RAN">
+    	<sqlCheck expectedResult="0">
+	    		select count(*) from clinlims.site_information where "domain_id" = (SELECT "id" from clinlims.site_information_domain WHERE "name" = 'validationConfig');
+	    	</sqlCheck>  		
+    </preConditions>
+    <comment>Add validation configurations to site_information</comment>
+    <sql>
+	INSERT INTO clinlims.site_information ("id", "name", "description", "value", "encrypted", "domain_id", "value_type", "instruction_key", "description_key") VALUES (nextval('clinlims.site_information_seq'), 'firstNameCharset', 'allowed characters in first name fields', 'a-zàâçéèêëîïôûùüÿñæœ -', 'false', (SELECT id FROM clinlims.site_information_domain where "name" = 'validationConfig'), 'text', 'instructions.validationconfig.firstname', 'siteInfo.validationConfig.firstname');
+
+	INSERT INTO clinlims.site_information ("id", "name", "description", "value", "encrypted", "domain_id", "value_type", "instruction_key", "description_key") VALUES (nextval('clinlims.site_information_seq'), 'lastNameCharset', 'allowed characters in last name fields', 'a-zàâçéèêëîïôûùüÿñæœ -', 'false', (SELECT id FROM clinlims.site_information_domain where "name" = 'validationConfig'), 'text', 'instructions.validationconfig.lastname', 'siteInfo.validationConfig.lastname');
+
+	INSERT INTO clinlims.site_information ("id", "name", "description", "value", "encrypted", "domain_id", "value_type", "instruction_key", "description_key") VALUES (nextval('clinlims.site_information_seq'), 'userNameCharset', 'allowed characters in username fields', 'a-zàâçéèêëîïôûùüÿñæœ ._@-', 'false', (SELECT id FROM clinlims.site_information_domain where "name" = 'validationConfig'), 'text', 'instructions.validationconfig.username', 'siteInfo.validationConfig.username');
+
+	INSERT INTO clinlims.site_information ("id", "name", "description", "value", "encrypted", "domain_id", "value_type", "instruction_key", "description_key") VALUES (nextval('clinlims.site_information_seq'), 'patientIdCharset', 'allowed characters in patient identifier fields', 'a-z0-9/àâçéèêëîïôûùüÿñæœ', 'false', (SELECT id FROM clinlims.site_information_domain where "name" = 'validationConfig'), 'text', 'instructions.validationconfig.patientid', 'siteInfo.validationConfig.patientid');
+		
+	</sql>
+</changeSet>
+
+</databaseChangeLog>

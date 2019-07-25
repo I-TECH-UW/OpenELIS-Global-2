@@ -1,5 +1,7 @@
 package spring.mine.login.controller;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -16,7 +18,11 @@ import spring.mine.login.form.LoginForm;
 public class LoginPageController extends BaseController {
 
 	@RequestMapping(value = "/LoginPage", method = RequestMethod.GET)
-	public ModelAndView showLoginPage(HttpServletRequest request) {
+	public ModelAndView showLoginPage(HttpServletRequest request, Principal principal) {
+		if (principal != null) {
+			return new ModelAndView(findForward(HOME_PAGE));
+		}
+
 		String forward = FWD_SUCCESS;
 		LoginForm form = new LoginForm();
 

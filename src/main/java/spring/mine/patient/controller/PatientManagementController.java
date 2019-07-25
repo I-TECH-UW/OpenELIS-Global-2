@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +33,6 @@ import spring.service.search.SearchResultsService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -78,9 +77,9 @@ public class PatientManagementController extends BaseController {
 
 	@RequestMapping(value = "/PatientManagement", method = RequestMethod.POST)
 	public ModelAndView showPatientManagementUpdate(HttpServletRequest request,
-			@ModelAttribute("form") @Valid SamplePatientEntryForm form, BindingResult result,
+			@ModelAttribute("form") @Validated(SamplePatientEntryForm.SamplePatientEntry.class) SamplePatientEntryForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+					throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		form.setPatientSearch(new PatientSearch());
 		formValidator.validate(form, result);
@@ -158,11 +157,11 @@ public class PatientManagementController extends BaseController {
 	private void validatePatientInfo(Errors errors, PatientManagementInfo patientInfo) {
 		if (ConfigurationProperties.getInstance()
 				.isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false")) {
-			String newSTNumber = GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
+			String newSTNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
 					: patientInfo.getSTnumber();
-			String newSubjectNumber = GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
+			String newSubjectNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
 					: patientInfo.getSubjectNumber();
-			String newNationalId = GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
+			String newNationalId = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
 					: patientInfo.getNationalId();
 
 			List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber,
@@ -193,7 +192,7 @@ public class PatientManagementController extends BaseController {
 		String birthDate = patientInfo.getBirthDateForDisplay();
 		boolean validBirthDateFormat = true;
 
-		if (!GenericValidator.isBlankOrNull(birthDate)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(birthDate)) {
 			validBirthDateFormat = birthDate.length() == 10;
 			// the regex matches ambiguous day and month or ambiguous day or completely
 			// formed date
@@ -210,13 +209,13 @@ public class PatientManagementController extends BaseController {
 
 	private void setLastUpdatedTimeStamps(PatientManagementInfo patientInfo, Patient patient) {
 		String patientUpdate = patientInfo.getPatientLastUpdated();
-		if (!GenericValidator.isBlankOrNull(patientUpdate)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(patientUpdate)) {
 			Timestamp timeStamp = Timestamp.valueOf(patientUpdate);
 			patient.setLastupdated(timeStamp);
 		}
 
 		String personUpdate = patientInfo.getPersonLastUpdated();
-		if (!GenericValidator.isBlankOrNull(personUpdate)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(personUpdate)) {
 			Timestamp timeStamp = Timestamp.valueOf(personUpdate);
 			patient.getPerson().setLastupdated(timeStamp);
 		}

@@ -1,19 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+ *
+ */
 package us.mn.state.health.lims.dataexchange.resultreporting.beans;
 
 import java.io.Serializable;
@@ -24,6 +24,8 @@ import org.hibernate.validator.constraints.URL;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.resultreporting.form.ResultReportingConfigurationForm;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 
 public class ReportingConfiguration implements Serializable {
 
@@ -43,7 +45,7 @@ public class ReportingConfiguration implements Serializable {
 
 	private boolean showAuthentication = false;
 
-	@Pattern(regexp = ValidationHelper.USERNAME_REGEX, groups = {
+	@ValidName(nameType = NameType.USERNAME, message = "username is invalid", groups = {
 			ResultReportingConfigurationForm.ResultReportConfig.class })
 	private String userName;
 

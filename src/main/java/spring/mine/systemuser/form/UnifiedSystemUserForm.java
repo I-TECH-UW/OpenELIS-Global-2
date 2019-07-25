@@ -9,6 +9,8 @@ import javax.validation.constraints.Pattern;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 
@@ -20,7 +22,7 @@ public class UnifiedSystemUserForm extends BaseForm {
 	private String systemUserId = "";
 
 	@NotBlank
-	@Pattern(regexp = ValidationHelper.USERNAME_REGEX)
+	@ValidName(nameType = NameType.USERNAME, message = "username is invalid")
 	private String userLoginName = "";
 
 	// in validator
@@ -30,11 +32,11 @@ public class UnifiedSystemUserForm extends BaseForm {
 	private String confirmPassword = "";
 
 	@NotBlank
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.FIRST_NAME)
 	private String userFirstName = "";
 
 	@NotBlank
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@ValidName(nameType = NameType.LAST_NAME)
 	private String userLastName = "";
 
 	// for display

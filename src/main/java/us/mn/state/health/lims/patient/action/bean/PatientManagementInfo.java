@@ -32,6 +32,8 @@ import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import spring.service.dictionary.DictionaryService;
 import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientTypeService;
@@ -80,19 +82,19 @@ public class PatientManagementInfo implements Serializable {
 
 	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
 			SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class })
 	private String lastName;
 	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
 			SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class })
 	private String firstName;
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.FULL_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class })
 	private String aka;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+	@ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
 			SamplePatientEntryBatch.class })
 	private String mothersName;
 	@Size(max = 1)

@@ -13,7 +13,9 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidName;
 import spring.mine.validation.annotations.ValidTime;
+import spring.mine.validation.constraintvalidator.NameValidator.NameType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.project.valueholder.Project;
@@ -109,7 +111,7 @@ public class NonConformityForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String commentId = "";
 
-//	@NotNull(groups = { NonConformity.class })
+	//	@NotNull(groups = { NonConformity.class })
 	private Boolean commentNew;
 
 	@SafeHtml(groups = { NonConformity.class })
@@ -127,10 +129,10 @@ public class NonConformityForm extends BaseForm {
 	@NotNull(groups = { NonConformity.class })
 	private String providerNew = "";
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { NonConformity.class })
+	@ValidName(nameType = NameType.LAST_NAME, groups = { NonConformity.class })
 	private String providerLastName = "";
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { NonConformity.class })
+	@ValidName(nameType = NameType.FIRST_NAME, groups = { NonConformity.class })
 	private String providerFirstName = "";
 
 	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { NonConformity.class })
