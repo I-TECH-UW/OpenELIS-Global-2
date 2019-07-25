@@ -1,6 +1,7 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
          import="java.util.List,
+         		 java.util.Locale,
                  us.mn.state.health.lims.test.valueholder.TestSection,
                  us.mn.state.health.lims.test.valueholder.TestCatalog,
                  us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
@@ -137,16 +138,37 @@ which closes it the last time through--%>
             <td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.name" /></span></td>
             <td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.report.name" /></span></td>
         </tr>
-        <tr>
-            <td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishName()%></b>
-            </td>
-            <td width="25%"><span class="catalog-label">Fr.</span> <b><%=bean.getFrenchName()%></b>
-            </td>
-            <td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishReportName()%></b>
-            </td>
-            <td width="25%"><span class="catalog-label">Fr.</span> <b><%=bean.getFrenchReportName()%></b>
-            </td>
-        </tr>
+				<%
+					int i = 0;
+					while (i < bean.getLocalization().getAllActiveLocales().size()) {
+						Locale locale1 = bean.getLocalization().getAllActiveLocales().get(i++); 
+						Locale locale2 = null;
+						if (i < bean.getLocalization().getAllActiveLocales().size()) {
+							locale2 = bean.getLocalization().getAllActiveLocales().get(i++); 
+						}
+						if (locale2 != null) {
+					%>
+				<tr>
+					<td width="25%"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+					<td width="25%"><span class="catalog-label"><%=locale2.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale2) %></b>
+					</td>
+					<td width="25%"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+					<td width="25%"><span class="catalog-label"><%=locale2.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale2) %></b>
+					</td>
+				</tr>
+					<%	} else { %>
+				<tr>
+					<td colspan="2"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+					<td colspan="2"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+				</tr>
+					<%
+						}
+					}
+				%>
         <tr>
             <td><b><%=bean.getActive()%></b>
             </td>

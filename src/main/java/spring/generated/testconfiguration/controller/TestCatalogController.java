@@ -23,7 +23,6 @@ import spring.service.resultlimit.ResultLimitService;
 import spring.service.test.TestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
@@ -90,10 +89,8 @@ public class TestCatalogController extends BaseController {
 			TestCatalog catalog = new TestCatalog();
 			String resultType = testService.getResultType(test);
 			catalog.setId(test.getId());
-			catalog.setEnglishName(test.getLocalizedTestName().getEnglish());
-			catalog.setFrenchName(test.getLocalizedTestName().getFrench());
-			catalog.setEnglishReportName(test.getLocalizedReportingName().getEnglish());
-			catalog.setFrenchReportName(test.getLocalizedReportingName().getFrench());
+			catalog.setLocalization(test.getLocalizedTestName());
+			catalog.setReportLocalization(test.getLocalizedReportingName());
 			if (NumberUtils.isNumber(test.getSortOrder())) {
 				catalog.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
 			}
@@ -175,7 +172,7 @@ public class TestCatalogController extends BaseController {
 			String displayValue = dictionary.getLocalizedName();
 
 			if ("unknown".equals(displayValue)) {
-				displayValue = !GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
+				displayValue = !org.apache.commons.validator.GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
 						: dictionary.getLocalAbbreviation();
 			}
 

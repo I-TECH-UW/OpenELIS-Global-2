@@ -3,6 +3,7 @@ package spring.mine.siteinformation.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
@@ -81,14 +81,14 @@ public class SiteInformationController extends BaseController {
 			"/SiteInformation", "/NextPreviousNonConformityConfiguration", "/NextPreviousWorkplanConfiguration",
 			"/NextPreviousPrintedReportsConfiguration", "/NextPreviousSampleEntryConfig",
 			"/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig", "/NextPreviousPatientConfiguration",
-			"/NextPreviousSiteInformation" }, method = RequestMethod.GET)
+	"/NextPreviousSiteInformation" }, method = RequestMethod.GET)
 	// TODO decide if still needing NextPrevious (functionality is not implemented)
-	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
+	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") SiteInformationForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 		// protect form from injection arbitrary values on the get step (since csrf is
 		// not checked at this stage)
 		form = resetFormToType(form, SiteInformationForm.class);
-		setupFormForRequest((SiteInformationForm) form, request);
+		setupFormForRequest(form, request);
 
 		String id = request.getParameter(ID);
 
@@ -199,13 +199,9 @@ public class SiteInformationController extends BaseController {
 		return GenericValidator.isBlankOrNull(instruction) ? siteInformation.getDescription() : instruction;
 	}
 
-	private void setLocalizationValues(BaseForm form, SiteInformation siteInformation)
-			throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	private void setLocalizationValues(SiteInformationForm form, SiteInformation siteInformation) {
 		if ("localization".equals(siteInformation.getTag())) {
-			Localization localization = localizationService.get(siteInformation.getValue());
-			PropertyUtils.setProperty(form, "englishValue", localization.getEnglish());
-			PropertyUtils.setProperty(form, "frenchValue", localization.getFrench());
-
+			form.setLocalization(localizationService.get(siteInformation.getValue()));
 		}
 	}
 
@@ -218,7 +214,7 @@ public class SiteInformationController extends BaseController {
 
 	@RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
 			"/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-			"/SiteInformation" }, method = RequestMethod.POST)
+	"/SiteInformation" }, method = RequestMethod.POST)
 	public ModelAndView showUpdateSiteInformation(HttpServletRequest request,
 			@ModelAttribute("form") @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes) {
@@ -241,8 +237,7 @@ public class SiteInformationController extends BaseController {
 		// localization table
 		if ("localization".equals(form.getString("tag"))) {
 			String localizationId = form.getString("value");
-			forward = validateAndUpdateLocalization(request, localizationId, form.getString("englishValue"),
-					form.getString("frenchValue"));
+			forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
 		} else {
 			forward = validateAndUpdateSiteInformation(request, form, isNew);
 		}
@@ -256,15 +251,15 @@ public class SiteInformationController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, String english,
-			String french) {
+	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, Localization newLocalization) {
 		Localization localization = localizationService.get(localizationId);
 		localization.setSysUserId(getSysUserId(request));
 		String forward = FWD_SUCCESS_INSERT;
-		if (localizationService.languageChanged(localization, english, french)) {
+		if (localizationService.languageChanged(localization, newLocalization)) {
 			Errors errors;
-			localization.setEnglish(english);
-			localization.setFrench(french);
+			for (Locale locale : newLocalization.getAllActiveLocales()) {
+				localization.setLocalizedValue(locale, newLocalization.getLocalizedValue(locale));
+			}
 			try {
 				localizationService.update(localization);
 			} catch (LIMSRuntimeException lre) {
@@ -277,7 +272,7 @@ public class SiteInformationController extends BaseController {
 		return forward;
 	}
 
-	public String validateAndUpdateSiteInformation(HttpServletRequest request, BaseForm form,
+	public String validateAndUpdateSiteInformation(HttpServletRequest request, SiteInformationForm form,
 			boolean newSiteInformation) {
 
 		String name = form.getString("paramName");
@@ -364,7 +359,7 @@ public class SiteInformationController extends BaseController {
 	 * "/UpdateNextPreviousSiteInformation" }, method = RequestMethod.POST) public
 	 * ModelAndView showNextPreviousSiteInformation(HttpServletRequest request,
 	 *
-	 * @ModelAttribute("form") BaseForm form, BindingResult result,
+	 * @ModelAttribute("form") SiteInformationForm form, BindingResult result,
 	 * RedirectAttributes redirectAttributes) { String forward = FWD_SUCCESS_INSERT;
 	 * request.setAttribute(ALLOW_EDITS_KEY, TRUE);
 	 * request.setAttribute(PREVIOUS_DISABLED, FALSE);
@@ -427,8 +422,8 @@ public class SiteInformationController extends BaseController {
 	@RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
 			"/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
 			"/CancelMenuStatementConfig", "/CancelPatientConfiguration",
-			"/CancelSiteInformation" }, method = RequestMethod.GET)
-	public ModelAndView cancelSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+	"/CancelSiteInformation" }, method = RequestMethod.GET)
+	public ModelAndView cancelSiteInformation(HttpServletRequest request, @ModelAttribute("form") SiteInformationForm form,
 			SessionStatus status) {
 		status.setComplete();
 		return findForward(FWD_CANCEL, form);

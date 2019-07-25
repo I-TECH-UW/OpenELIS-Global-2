@@ -14,10 +14,8 @@ import spring.service.common.BaseObjectServiceImpl;
 import spring.service.systemusersection.SystemUserSectionService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -26,10 +24,8 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 @Service
 @DependsOn({ "springContext" })
 public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String>
-		implements TestSectionService, LocaleChangeListener {
+implements TestSectionService, LocaleChangeListener {
 
-	private String languageLocale = ConfigurationProperties.getInstance()
-			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private Map<String, String> testUnitIdToNameMap;
 
 	protected TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
@@ -63,7 +59,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
 	@Override
 	public void localeChanged(String locale) {
-		languageLocale = locale;
 		testNamesChanged();
 	}
 
@@ -106,13 +101,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 	}
 
 	private String buildTestSectionName(TestSection testSection) {
-		Localization localization = testSection.getLocalization();
-
-		if (languageLocale.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
+		return testSection.getLocalization().getLocalizedValue();
 	}
 
 	@Override

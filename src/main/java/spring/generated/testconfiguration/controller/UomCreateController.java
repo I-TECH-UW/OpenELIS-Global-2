@@ -2,6 +2,7 @@ package spring.generated.testconfiguration.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -21,7 +22,6 @@ import spring.service.localization.LocalizationService;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
@@ -56,20 +56,20 @@ public class UomCreateController extends BaseController {
 		List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
-					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
+					getExistingUomNames(uoms, Locale.ENGLISH));
 			PropertyUtils.setProperty(form, "existingFrenchNames",
-					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));
+					getExistingUomNames(uoms, Locale.FRENCH));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private String getExistingUomNames(List<UnitOfMeasure> uoms, ConfigurationProperties.LOCALE locale) {
+	private String getExistingUomNames(List<UnitOfMeasure> uoms, Locale locale) {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (UnitOfMeasure uom : uoms) {
-			builder.append(localizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
+			builder.append(uom.getLocalization().getLocalizedValue(locale));
 			builder.append(NAME_SEPARATOR);
 		}
 

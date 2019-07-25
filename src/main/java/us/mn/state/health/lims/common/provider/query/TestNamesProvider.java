@@ -17,6 +17,7 @@ package us.mn.state.health.lims.common.provider.query;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,19 +82,28 @@ public class TestNamesProvider extends BaseQueryProvider {
 			Localization reportNameLocalization = test.getLocalizedReportingName();
 
 			JSONObject nameObject = new JSONObject();
-			nameObject.put("english", nameLocalization.getEnglish());
-			nameObject.put("french", nameLocalization.getFrench());
+			addAllLocalizations(nameObject, nameLocalization);
+			//			nameObject.put("english", nameLocalization.getEnglish());
+			//			nameObject.put("french", nameLocalization.getFrench());
 			jsonResult.put("name", nameObject);
 
 			JSONObject reportingNameObject = new JSONObject();
-			reportingNameObject.put("english", reportNameLocalization.getEnglish());
-			reportingNameObject.put("french", reportNameLocalization.getFrench());
+			addAllLocalizations(reportingNameObject, reportNameLocalization);
+			//			reportingNameObject.put("english", reportNameLocalization.getEnglish());
+			//			reportingNameObject.put("french", reportNameLocalization.getFrench());
 			jsonResult.put("reportingName", reportingNameObject);
 
 			return VALID;
 		}
 
 		return INVALID;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addAllLocalizations(JSONObject jsonObject, Localization localization) {
+		for (Locale locale :  localization.getLocalesWithValue()) {
+			jsonObject.put(locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(), localization.getLocalizedValue(locale));
+		}
 	}
 
 	@Override

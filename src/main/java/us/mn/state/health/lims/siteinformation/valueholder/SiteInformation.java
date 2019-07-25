@@ -1,27 +1,30 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ *
+ * Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package us.mn.state.health.lims.siteinformation.valueholder;
+
+import java.util.Locale;
 
 import org.hibernate.validator.constraints.URL;
 
 import spring.mine.datasubmission.form.DataSubmissionForm;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
+import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
 public class SiteInformation extends BaseObject<String> {
@@ -40,13 +43,10 @@ public class SiteInformation extends BaseObject<String> {
 	private ValueHolder domain = new ValueHolder();
 	private int group;
 	private String tag;
-	private String localization;
+	private Localization localization;
 	private ValueHolder schedule = new ValueHolder();
 	private String dictionaryCategoryId;
 	private String descriptionKey;
-
-	private String englishValue;
-	private String frenchValue;
 
 	public int getGroup() {
 		return group;
@@ -142,11 +142,11 @@ public class SiteInformation extends BaseObject<String> {
 		return dictionaryCategoryId;
 	}
 
-	public String getLocalization() {
+	public Localization getLocalization() {
 		return localization;
 	}
 
-	public void setLocalization(String localization) {
+	public void setLocalization(Localization localization) {
 		this.localization = localization;
 	}
 
@@ -164,23 +164,7 @@ public class SiteInformation extends BaseObject<String> {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return englishValue;
-	}
-
-	public void setEnglishValue(String englishValue) {
-		this.englishValue = englishValue;
-	}
-
-	public String getEnglishValue() {
-		return englishValue;
-	}
-
-	public void setFrenchValue(String frenchValue) {
-		this.frenchValue = frenchValue;
-	}
-
-	public String getFrenchValue() {
-		return frenchValue;
+		return localization.getLocalizedValue(Locale.ENGLISH);
 	}
 
 }

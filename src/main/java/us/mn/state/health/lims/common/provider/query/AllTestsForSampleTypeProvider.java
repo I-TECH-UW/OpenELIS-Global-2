@@ -81,7 +81,7 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 
 		for (Test test : tests) {
 			JSONObject testObject = new JSONObject();
-			testObject.put("name", localizationService.getLocalizedValue(test.getLocalizedTestName()));
+			testObject.put("name", test.getLocalizedTestName().getLocalizedValue());
 			testObject.put("id", test.getId());
 			testObject.put("isActive", test.getIsActive());
 			testArray.add(testObject);

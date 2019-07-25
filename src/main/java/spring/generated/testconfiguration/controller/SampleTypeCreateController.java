@@ -2,6 +2,7 @@ package spring.generated.testconfiguration.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,7 +24,6 @@ import spring.service.testconfiguration.SampleTypeCreateService;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
@@ -62,19 +62,19 @@ public class SampleTypeCreateController extends BaseController {
 					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
 			List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
-					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
+					getExistingTestNames(typeOfSamples, Locale.ENGLISH));
 			PropertyUtils.setProperty(form, "existingFrenchNames",
-					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.FRENCH));
+					getExistingTestNames(typeOfSamples, Locale.FRENCH));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String getExistingTestNames(List<TypeOfSample> typeOfSamples, ConfigurationProperties.LOCALE locale) {
+	private String getExistingTestNames(List<TypeOfSample> typeOfSamples, Locale locale) {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TypeOfSample typeOfSample : typeOfSamples) {
-			builder.append(localizationService.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
+			builder.append(typeOfSample.getLocalization().getLocalizedValue(locale));
 			builder.append(NAME_SEPARATOR);
 		}
 

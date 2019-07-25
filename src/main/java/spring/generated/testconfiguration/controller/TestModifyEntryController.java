@@ -47,7 +47,6 @@ import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -149,10 +148,8 @@ public class TestModifyEntryController extends BaseController {
 			TestService testService = SpringContext.getBean(TestService.class);
 			String resultType = testService.getResultType(test);
 			bean.setId(test.getId());
-			bean.setEnglishName(test.getLocalizedTestName().getEnglish());
-			bean.setFrenchName(test.getLocalizedTestName().getFrench());
-			bean.setEnglishReportName(test.getLocalizedReportingName().getEnglish());
-			bean.setFrenchReportName(test.getLocalizedReportingName().getFrench());
+			bean.setLocalization(test.getLocalizedTestName());
+			bean.setReportLocalization(test.getLocalizedReportingName());
 			bean.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
 			bean.setTestUnit(testService.getTestSectionName(test));
 			bean.setPanel(createPanelList(testService, test));
@@ -261,7 +258,7 @@ public class TestModifyEntryController extends BaseController {
 			String displayValue = dictionary.getLocalizedName();
 
 			if ("unknown".equals(displayValue)) {
-				displayValue = !GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
+				displayValue = !org.apache.commons.validator.GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
 						: dictionary.getLocalAbbreviation();
 			}
 
@@ -317,7 +314,7 @@ public class TestModifyEntryController extends BaseController {
 			String displayId = dictionary.getId();
 
 			if ("unknown".equals(displayId)) {
-				displayId = !GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
+				displayId = !org.apache.commons.validator.GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
 						: dictionary.getLocalAbbreviation();
 			}
 
@@ -370,7 +367,7 @@ public class TestModifyEntryController extends BaseController {
 					return result;
 				}
 
-				return GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
+				return org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
 						: Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
 			}
 		});
@@ -525,7 +522,7 @@ public class TestModifyEntryController extends BaseController {
 				.isDictionaryVarientById(testAddParams.resultTypeId);
 		List<TestSet> testSets = new ArrayList<>();
 		UnitOfMeasure uom = null;
-		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
 			uom = unitOfMeasureService.getUnitOfMeasureById(testAddParams.uomId);
 		}
 		TestSection testSection = testSectionService.get(testAddParams.testSectionId);
@@ -588,7 +585,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private ArrayList<ResultLimit> createDictionaryResultLimit(TestAddParams testAddParams) {
 		ArrayList<ResultLimit> resultLimits = new ArrayList<>();
-		if (!GenericValidator.isBlankOrNull(testAddParams.dictionaryReferenceId)) {
+		if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(testAddParams.dictionaryReferenceId)) {
 			ResultLimit limit = new ResultLimit();
 			limit.setResultTypeId(testAddParams.resultTypeId);
 			limit.setDictionaryNormalId(testAddParams.dictionaryReferenceId);

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,7 +26,6 @@ import spring.service.role.RoleService;
 import spring.service.testconfiguration.PanelCreateService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -75,9 +75,9 @@ public class PanelCreateController extends BaseController {
 		List<Panel> panels = panelService.getAllPanels();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
-					getExistingTestNames(panels, ConfigurationProperties.LOCALE.ENGLISH));
+					getExistingTestNames(panels, Locale.ENGLISH));
 			PropertyUtils.setProperty(form, "existingFrenchNames",
-					getExistingTestNames(panels, ConfigurationProperties.LOCALE.FRENCH));
+					getExistingTestNames(panels, Locale.FRENCH));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,11 +104,11 @@ public class PanelCreateController extends BaseController {
 		}
 	}
 
-	private String getExistingTestNames(List<Panel> panels, ConfigurationProperties.LOCALE locale) {
+	private String getExistingTestNames(List<Panel> panels, Locale locale) {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (Panel panel : panels) {
-			builder.append(localizationService.getLocalizationValueByLocal(locale, panel.getLocalization()));
+			builder.append(panel.getLocalization().getLocalizedValue(locale));
 			builder.append(NAME_SEPARATOR);
 		}
 

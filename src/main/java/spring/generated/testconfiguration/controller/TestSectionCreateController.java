@@ -2,6 +2,7 @@ package spring.generated.testconfiguration.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,7 +24,6 @@ import spring.service.test.TestSectionService;
 import spring.service.testconfiguration.TestSectionCreateService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
@@ -61,20 +61,20 @@ public class TestSectionCreateController extends BaseController {
 					DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
 			List<TestSection> testSections = testSectionService.getAllTestSections();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
-					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
+					getExistingTestNames(testSections, Locale.ENGLISH));
 
 			PropertyUtils.setProperty(form, "existingFrenchNames",
-					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.FRENCH));
+					getExistingTestNames(testSections, Locale.FRENCH));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String getExistingTestNames(List<TestSection> testSections, ConfigurationProperties.LOCALE locale) {
+	private String getExistingTestNames(List<TestSection> testSections, Locale locale) {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TestSection testSection : testSections) {
-			builder.append(localizationService.getLocalizationValueByLocal(locale, testSection.getLocalization()));
+			builder.append(testSection.getLocalization().getLocalizedValue(locale));
 			builder.append(NAME_SEPARATOR);
 		}
 

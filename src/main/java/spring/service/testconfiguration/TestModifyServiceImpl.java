@@ -1,6 +1,7 @@
 package spring.service.testconfiguration;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,15 +60,15 @@ public class TestModifyServiceImpl implements TestModifyService {
 			item.setSysUserId(currentUserId);
 			resultLimitService.delete(item);
 		}
-//		resultLimitService.delete(resultLimitItems);
+		//		resultLimitService.delete(resultLimitItems);
 
 		for (TestSet set : testSets) {
 			set.test.setSysUserId(currentUserId);
 			set.test.setLocalizedTestName(nameLocalization);
 			set.test.setLocalizedReportingName(reportingNameLocalization);
 
-//gnr: based on testAddUpdate,
-//added existing testId to process in createTestSets using testAddParams.testId, delete then insert to modify for most elements
+			//gnr: based on testAddUpdate,
+			//added existing testId to process in createTestSets using testAddParams.testId, delete then insert to modify for most elements
 
 			for (Test test : set.sortedTests) {
 				test.setSysUserId(currentUserId);
@@ -76,8 +77,7 @@ public class TestModifyServiceImpl implements TestModifyService {
 				// }
 			}
 
-			updateTestNames(testAddParams.testId, nameLocalization.getEnglish(), nameLocalization.getFrench(),
-					reportingNameLocalization.getEnglish(), reportingNameLocalization.getFrench(), currentUserId);
+			updateTestNames(testAddParams.testId, nameLocalization, reportingNameLocalization, currentUserId);
 			updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId);
 
 			set.sampleTypeTest.setSysUserId(currentUserId);
@@ -116,18 +116,17 @@ public class TestModifyServiceImpl implements TestModifyService {
 		}
 	}
 
-	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
-			String reportNameFrench, String userId) {
+	private void updateTestNames(String testId, Localization nameLocalization, Localization reportingNameLocalization,  String userId) {
 		Test test = testService.get(testId);
 
 		if (test != null) {
 			Localization name = test.getLocalizedTestName();
 			Localization reportingName = test.getLocalizedReportingName();
-			name.setEnglish(nameEnglish.trim());
-			name.setFrench(nameFrench.trim());
+			for (Locale locale : localizationService.getAllActiveLocales()) {
+				name.setLocalizedValue(locale, nameLocalization.getLocalizedValue(locale).trim());
+				reportingName.setLocalizedValue(locale, reportingNameLocalization.getLocalizedValue(locale).trim());
+			}
 			name.setSysUserId(userId);
-			reportingName.setEnglish(reportNameEnglish.trim());
-			reportingName.setFrench(reportNameFrench.trim());
 			reportingName.setSysUserId(userId);
 
 			localizationService.update(name);

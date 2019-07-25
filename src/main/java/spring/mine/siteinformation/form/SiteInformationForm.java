@@ -2,6 +2,7 @@ package spring.mine.siteinformation.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -9,6 +10,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
+import us.mn.state.health.lims.localization.valueholder.Localization;
 
 public class SiteInformationForm extends BaseForm {
 	@NotNull
@@ -47,11 +49,8 @@ public class SiteInformationForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.MESSAGE_KEY_REGEX)
 	private String descriptionKey = "";
 
-	@SafeHtml
-	private String englishValue = "";
-
-	@SafeHtml
-	private String frenchValue = "";
+	@Valid
+	private Localization localization;
 
 	public SiteInformationForm() {
 		setFormName("siteInformationForm");
@@ -137,19 +136,11 @@ public class SiteInformationForm extends BaseForm {
 		this.descriptionKey = descriptionKey;
 	}
 
-	public String getEnglishValue() {
-		return englishValue;
+	public void setLocalization(Localization localization) {
+		this.localization = localization;
 	}
 
-	public void setEnglishValue(String englishValue) {
-		this.englishValue = englishValue;
-	}
-
-	public String getFrenchValue() {
-		return frenchValue;
-	}
-
-	public void setFrenchValue(String frenchValue) {
-		this.frenchValue = frenchValue;
+	public Localization getLocalization() {
+		return this.localization;
 	}
 }

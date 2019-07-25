@@ -44,7 +44,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 	@RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
 			"/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
 			"/MenuStatementConfigMenu", "/PatientConfigurationMenu",
-			"/SiteInformationMenu" }, method = RequestMethod.GET)
+	"/SiteInformationMenu" }, method = RequestMethod.GET)
 	public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		SiteInformationMenuForm form = new SiteInformationMenuForm();
@@ -132,8 +132,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 		configurationList = siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
 		for (SiteInformation siteInformation : configurationList) {
 			if ("localization".equals(siteInformation.getTag())) {
-				siteInformation.setEnglishValue(localizationService.get(siteInformation.getValue()).getEnglish());
-				siteInformation.setFrenchValue(localizationService.get(siteInformation.getValue()).getFrench());
+				siteInformation.setLocalization(localizationService.get(siteInformation.getValue()));
 			}
 		}
 
@@ -179,10 +178,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 		try {
 			siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
-//			for (String siteInformationId : selectedIDs) {
-//				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
-//				siteInformationService.delete(siteInformationId, getSysUserId(request));
-//			}
+			//			for (String siteInformationId : selectedIDs) {
+			//				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
+			//				siteInformationService.delete(siteInformationId, getSysUserId(request));
+			//			}
 
 		} catch (LIMSRuntimeException lre) {
 			String errorMsg;

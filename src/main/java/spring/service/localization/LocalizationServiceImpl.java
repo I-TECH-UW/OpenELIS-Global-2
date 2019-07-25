@@ -1,8 +1,9 @@
 package spring.service.localization;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -11,14 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.localization.dao.LocalizationDAO;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 
 @Service
 @DependsOn({ "springContext", "localeResolver" })
 public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization, String>
-		implements LocalizationService {
+implements LocalizationService {
 
 	public enum LocalizationType {
 		TEST_NAME("test name"), REPORTING_TEST_NAME("test report name"), BANNER_LABEL("Site information banner test"),
@@ -56,70 +56,27 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 	}
 
 	@Override
-	public String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
-		if (locale == ConfigurationProperties.LOCALE.FRENCH) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
-	}
-
-	@Override
 	public String getCurrentLocale() {
 		return LocaleContextHolder.getLocale().getLanguage();
 	}
 
 	@Override
-	public boolean languageChanged(Localization localization, String english, String french) {
-		if (localization == null || GenericValidator.isBlankOrNull(french) || GenericValidator.isBlankOrNull(english)) {
+	public boolean languageChanged(Localization localization, Localization newLocalization) {
+		if (localization == null || newLocalization.getLocalesWithValue().size() == 0) {
 			return false;
 		}
-		if (english.equals(localization.getEnglish()) && french.equals(localization.getFrench())) {
-			return false;
+		boolean languageChanged = false;
+		for (Locale locale: newLocalization.getLocalesWithValue()) {
+			if (!newLocalization.getLocalizedValue(locale).equals(localization.getLocalizedValue(locale))) {
+				languageChanged = true;
+			}
 		}
-		return true;
+		return languageChanged;
 	}
 
 	@Override
 	public String getLocalizedValueById(String id) {
-		return getLocalizedValue(
-				baseObjectDAO.get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization")));
-	}
-
-	@Override
-	public String getLocalizedValue(Localization localization, String locale) {
-		if (Locale.forLanguageTag(locale).getLanguage().equals(Locale.FRENCH.getLanguage())) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
-	}
-
-	@Override
-	public String getLocalizedValue(Localization localization, Locale locale) {
-		if (locale.equals(Locale.FRENCH)) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
-	}
-
-	@Override
-	public String getLocalizedValue(Localization localization) {
-		if (localization == null) {
-			return "";
-		}
-
-		if (LocaleContextHolder.getLocale().getLanguage().equals(Locale.FRENCH.getLanguage())) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
-//		if (LANGUAGE_LOCALE.equals(ConfigurationProperties.LOCALE.FRENCH.getRepresentation())) {
-//			return localization.getFrench();
-//		} else {
-//			return localization.getEnglish();
-//		}
+		return baseObjectDAO.get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization")).getLocalizedValue();
 	}
 
 	/**
@@ -132,34 +89,34 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 	 *         is empty or null or the french and english match what is already in
 	 *         the object
 	 */
-//	public boolean updateLocalizationIfNeeded(String english, String french) {
-//		if (localization == null || GenericValidator.isBlankOrNull(french) || GenericValidator.isBlankOrNull(english)) {
-//			return false;
-//		}
-//
-//		if (localization == null) {
-//			return false;
-//		}
-//
-//		if (english.equals(localization.getEnglish()) && french.equals(localization.getFrench())) {
-//			return false;
-//		}
-//
-//		localization.setEnglish(english);
-//		localization.setFrench(french);
-//		return true;
-//	}
+	//	public boolean updateLocalizationIfNeeded(String english, String french) {
+	//		if (localization == null || GenericValidator.isBlankOrNull(french) || GenericValidator.isBlankOrNull(english)) {
+	//			return false;
+	//		}
+	//
+	//		if (localization == null) {
+	//			return false;
+	//		}
+	//
+	//		if (english.equals(localization.getEnglish()) && french.equals(localization.getFrench())) {
+	//			return false;
+	//		}
+	//
+	//		localization.setEnglish(english);
+	//		localization.setFrench(french);
+	//		return true;
+	//	}
 
-//	@Transactional(readOnly = true)
-//	public Localization getLocalization() {
-//		return localization;
-//	}
+	//	@Transactional(readOnly = true)
+	//	public Localization getLocalization() {
+	//		return localization;
+	//	}
 
-//	public void setCurrentUserId(String currentUserId) {
-//		if (localization != null) {
-//			localization.setSysUserId(currentUserId);
-//		}
-//	}
+	//	public void setCurrentUserId(String currentUserId) {
+	//		if (localization != null) {
+	//			localization.setSysUserId(currentUserId);
+	//		}
+	//	}
 
 	public static Localization createNewLocalization(String english, String french, LocalizationType type) {
 		Localization localization = new Localization();
@@ -179,5 +136,10 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 	public void updateTestNames(Localization name, Localization reportingName) {
 		update(name);
 		update(reportingName);
+	}
+
+	@Override
+	public List<Locale> getAllActiveLocales() {
+		return Arrays.asList(Locale.ENGLISH, Locale.FRENCH);
 	}
 }

@@ -2,206 +2,188 @@ package us.mn.state.health.lims.test.valueholder;
 
 import java.util.List;
 
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
+import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
 
 public class TestCatalog {
 	private String id;
-    private String englishName;
-    private String frenchName;
-    private String englishReportName;
-    private String frenchReportName;
-    private String testUnit;
-    private String sampleType;
-    private String panel;
-    private String resultType;
-    private String uom = "n/a";
-    private String significantDigits = "n/a";
-    private String loinc;
-    private String active;
-    private String orderable;
-    private boolean hasDictionaryValues = false;
-    private List<String> dictionaryValues;
-    private List<String> dictionaryIds;
-    private String referenceValue;
-    private String referenceId;
-    private boolean hasLimitValues = false;
-    private List<ResultLimitBean> resultLimits;
-    private int testSortOrder = Integer.MAX_VALUE;
-    
-    public String getId() {
-        return id;
-    }
+	private Localization localization;
+	private Localization reportLocalization;
+	private String testUnit;
+	private String sampleType;
+	private String panel;
+	private String resultType;
+	private String uom = "n/a";
+	private String significantDigits = "n/a";
+	private String loinc;
+	private String active;
+	private String orderable;
+	private boolean hasDictionaryValues = false;
+	private List<String> dictionaryValues;
+	private List<String> dictionaryIds;
+	private String referenceValue;
+	private String referenceId;
+	private boolean hasLimitValues = false;
+	private List<ResultLimitBean> resultLimits;
+	private int testSortOrder = Integer.MAX_VALUE;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public String getEnglishName() {
-        return englishName;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setEnglishName(String englishName) {
-        this.englishName = englishName;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getFrenchName() {
-        return frenchName;
-    }
+	public Localization getLocalization() {
+		return localization;
+	}
 
-    public void setFrenchName(String frenchName) {
-        this.frenchName = frenchName;
-    }
+	public void setLocalization(Localization localization) {
+		this.localization = localization;
+	}
 
-    public String getEnglishReportName() {
-        return englishReportName;
-    }
+	public Localization getReportLocalization() {
+		return reportLocalization;
+	}
 
-    public void setEnglishReportName(String englishReportName) {
-        this.englishReportName = englishReportName;
-    }
+	public void setReportLocalization(Localization reportLocalization) {
+		this.reportLocalization = reportLocalization;
+	}
 
-    public String getFrenchReportName() {
-        return frenchReportName;
-    }
+	public String getTestUnit() {
+		return testUnit;
+	}
 
-    public void setFrenchReportName(String frenchReportName) {
-        this.frenchReportName = frenchReportName;
-    }
+	public void setTestUnit(String testUnit) {
+		this.testUnit = testUnit;
+	}
 
-    public String getTestUnit() {
-        return testUnit;
-    }
+	public String getSampleType() {
+		return sampleType;
+	}
 
-    public void setTestUnit(String testUnit) {
-        this.testUnit = testUnit;
-    }
+	public void setSampleType(String sampleType) {
+		this.sampleType = sampleType;
+	}
 
-    public String getSampleType() {
-        return sampleType;
-    }
+	public String getPanel() {
+		return panel;
+	}
 
-    public void setSampleType(String sampleType) {
-        this.sampleType = sampleType;
-    }
+	public void setPanel(String panel) {
+		this.panel = panel;
+	}
 
-    public String getPanel() {
-        return panel;
-    }
+	public String getResultType() {
+		return resultType;
+	}
 
-    public void setPanel(String panel) {
-        this.panel = panel;
-    }
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
+	}
 
-    public String getResultType() {
-        return resultType;
-    }
+	public String getUom() {
+		return uom;
+	}
 
-    public void setResultType(String resultType) {
-        this.resultType = resultType;
-    }
+	public void setUom(String uom) {
+		this.uom = org.apache.commons.validator.GenericValidator.isBlankOrNull(uom) ? "n/a" : uom;
+	}
 
-    public String getUom() {
-        return uom;
-    }
+	public String getActive() {
+		return active;
+	}
 
-    public void setUom(String uom) {
-        this.uom = GenericValidator.isBlankOrNull(uom) ? "n/a" : uom;
-    }
+	public void setActive(String active) {
+		this.active = active;
+	}
 
-    public String getActive() {
-        return active;
-    }
+	public String getOrderable() {
+		return orderable;
+	}
 
-    public void setActive(String active) {
-        this.active = active;
-    }
+	public void setOrderable(String orderable) {
+		this.orderable = orderable;
+	}
 
-    public String getOrderable() {
-        return orderable;
-    }
+	public String getLoinc() {
+		return loinc;
+	}
 
-    public void setOrderable(String orderable) {
-        this.orderable = orderable;
-    }
-    
-    public String getLoinc() {
-        return loinc;
-    }
-    
-    public void setLoinc(String loinc) {
-    	this.loinc = loinc;
-    }
+	public void setLoinc(String loinc) {
+		this.loinc = loinc;
+	}
 
-    public String getSignificantDigits() {
-        return significantDigits;
-    }
+	public String getSignificantDigits() {
+		return significantDigits;
+	}
 
-    public void setSignificantDigits(String significantDigits) {
-        this.significantDigits = significantDigits;
-    }
+	public void setSignificantDigits(String significantDigits) {
+		this.significantDigits = significantDigits;
+	}
 
-    public boolean isHasDictionaryValues() {
-        return hasDictionaryValues;
-    }
+	public boolean isHasDictionaryValues() {
+		return hasDictionaryValues;
+	}
 
-    public void setHasDictionaryValues(boolean hasDictionaryValues) {
-        this.hasDictionaryValues = hasDictionaryValues;
-    }
-    
-    public List<String> getDictionaryValues() {
-        return dictionaryValues;
-    }
+	public void setHasDictionaryValues(boolean hasDictionaryValues) {
+		this.hasDictionaryValues = hasDictionaryValues;
+	}
 
-    public void setDictionaryValues(List<String> dictionaryValues) {
-        this.dictionaryValues = dictionaryValues;
-    }
-    
-    public List<String> getDictionaryIds() {
-        return dictionaryIds;
-    }
+	public List<String> getDictionaryValues() {
+		return dictionaryValues;
+	}
 
-    public void setDictionaryIds(List<String> dictionaryIds) {
-        this.dictionaryIds = dictionaryIds;
-    }
+	public void setDictionaryValues(List<String> dictionaryValues) {
+		this.dictionaryValues = dictionaryValues;
+	}
 
-    public String getReferenceValue() {
-        return referenceValue;
-    }
+	public List<String> getDictionaryIds() {
+		return dictionaryIds;
+	}
 
-    public void setReferenceValue(String referenceValue) {
-        this.referenceValue = referenceValue;
-    }
-    
-    public String getReferenceId() {
-        return referenceId;
-    }
+	public void setDictionaryIds(List<String> dictionaryIds) {
+		this.dictionaryIds = dictionaryIds;
+	}
 
-    public void setReferenceId(String referenceId) {
-        this.referenceId = referenceId;
-    }
+	public String getReferenceValue() {
+		return referenceValue;
+	}
 
-    public boolean isHasLimitValues() {
-        return hasLimitValues;
-    }
+	public void setReferenceValue(String referenceValue) {
+		this.referenceValue = referenceValue;
+	}
 
-    public void setHasLimitValues(boolean hasLimitValues) {
-        this.hasLimitValues = hasLimitValues;
-    }
+	public String getReferenceId() {
+		return referenceId;
+	}
 
-    public List<ResultLimitBean> getResultLimits() {
-        return resultLimits;
-    }
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
 
-    public void setResultLimits(List<ResultLimitBean> resultLimits) {
-        this.resultLimits = resultLimits;
-    }
+	public boolean isHasLimitValues() {
+		return hasLimitValues;
+	}
 
-    public int getTestSortOrder() {
-        return testSortOrder;
-    }
+	public void setHasLimitValues(boolean hasLimitValues) {
+		this.hasLimitValues = hasLimitValues;
+	}
 
-    public void setTestSortOrder(int testSortOrder) {
-        this.testSortOrder = testSortOrder;
-    }
+	public List<ResultLimitBean> getResultLimits() {
+		return resultLimits;
+	}
+
+	public void setResultLimits(List<ResultLimitBean> resultLimits) {
+		this.resultLimits = resultLimits;
+	}
+
+	public int getTestSortOrder() {
+		return testSortOrder;
+	}
+
+	public void setTestSortOrder(int testSortOrder) {
+		this.testSortOrder = testSortOrder;
+	}
 }
