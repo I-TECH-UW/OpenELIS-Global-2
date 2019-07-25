@@ -1,25 +1,23 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ *
+ * Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package us.mn.state.health.lims.common.util;
 
 import java.io.InputStream;
-import java.sql.Date;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +27,7 @@ import java.util.Properties;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 
@@ -41,10 +40,10 @@ public class SystemConfiguration {
 	private static String propertyFile = "/SystemConfiguration.properties";
 
 	private static SystemConfiguration config = null;
-    private List<LocaleChangeListener> localChangeListeners = new ArrayList<LocaleChangeListener>();
+	private List<LocaleChangeListener> localChangeListeners = new ArrayList<>();
 
 	private Properties properties = null;
-	private Map<String, Locale> localePropertyToLocaleMap = new HashMap<String, Locale>();
+	private Map<String, Locale> localePropertyToLocaleMap = new HashMap<>();
 
 	private SystemConfiguration() {
 		InputStream propertyStream = null;
@@ -66,8 +65,8 @@ public class SystemConfiguration {
 					propertyStream.close();
 					propertyStream = null;
 				} catch (Exception e) {
-                    //bugzilla 2154
-			        LogEvent.logError("SystemConfiguration","Constructor final",e.toString());
+					//bugzilla 2154
+					LogEvent.logError("SystemConfiguration","Constructor final",e.toString());
 				}
 			}
 
@@ -84,15 +83,15 @@ public class SystemConfiguration {
 				}
 			}
 		}
-		
-		
-		
+
+
+
 		return config;
 	}
 
-    public void addLocalChangeListener(LocaleChangeListener listener){
-        localChangeListeners.add(listener);
-    }
+	public void addLocalChangeListener(LocaleChangeListener listener){
+		localChangeListeners.add(listener);
+	}
 	public int getDefaultPageSize() {
 		String pageSize = properties.getProperty("page.defaultPageSize");
 		if (pageSize != null) {
@@ -102,7 +101,7 @@ public class SystemConfiguration {
 		return 20;
 	}
 
-//bugzilla 1742
+	//bugzilla 1742
 	public int getDefaultTreePageSize() {
 		String pageSize = properties.getProperty("page.tree.defaultPageSize");
 		if (pageSize != null) {
@@ -121,29 +120,29 @@ public class SystemConfiguration {
 	}
 
 	public Locale getDefaultLocale() {
-        return getLocaleByLocalString( ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE) );
+		return getLocaleByLocalString( ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE) );
 	}
 
-    public Locale getLocaleByLocalString( String localeString){
-        Locale locale = localePropertyToLocaleMap.get(localeString);
+	public Locale getLocaleByLocalString( String localeString){
+		Locale locale = localePropertyToLocaleMap.get(localeString);
 
-        if( locale == null){
-            if (localeString != null && localeString.length() == 5) {
-                locale = new Locale(localeString.substring(0, 2), localeString.substring(3));
-                localePropertyToLocaleMap.put(localeString, locale);
-            }
-        }
+		if( locale == null){
+			if (localeString != null && localeString.length() == 5) {
+				locale = new Locale(localeString.substring(0, 2), localeString.substring(3));
+				localePropertyToLocaleMap.put(localeString, locale);
+			}
+		}
 
-        return locale == null ? Locale.US : locale;
-    }
+		return locale == null ? Locale.US : locale;
+	}
 
 	public void setDefaultLocale( String locale ){
 		ConfigurationProperties.getInstance().setPropertyValue(Property.DEFAULT_LANG_LOCALE, locale);
-        for( LocaleChangeListener listener : localChangeListeners){
-            listener.localeChanged(locale);
-        }
+		for( LocaleChangeListener listener : localChangeListeners){
+			listener.localeChanged(locale);
+		}
 	}
-	
+
 	public String getDefaultEncoding() {
 		String encodingString = properties.getProperty("default.encoding");
 		if (encodingString != null) {
@@ -334,7 +333,7 @@ public class SystemConfiguration {
 		return "H";
 	}
 
-   //bugzilla 1387 rename this method so more generic
+	//bugzilla 1387 rename this method so more generic
 	public String getAnimalDomain() {
 		String def = properties
 				.getProperty("domain.animal");
@@ -387,20 +386,20 @@ public class SystemConfiguration {
 	// bugzilla 1546
 	public String getSampleStatusType() {
 		String def = properties
-		.getProperty("sample.status");
-        if (def != null) {
-	       return def;
-        }
-        return "";
+				.getProperty("sample.status");
+		if (def != null) {
+			return def;
+		}
+		return "";
 	}
 
 	public String getAnalysisStatusType() {
 		String def = properties
-		.getProperty("analysis.status");
-        if (def != null) {
-	       return def;
-        }
-        return "";
+				.getProperty("analysis.status");
+		if (def != null) {
+			return def;
+		}
+		return "";
 	}
 
 	//bugzilla 2380
@@ -694,12 +693,12 @@ public class SystemConfiguration {
 
 	//1742 openreports static ids (tests, projects etc.)
 	public String getStaticIdByName(String name) {
-	   String testId = properties.getProperty(name);
-	   //System.out.println("SystemConfig getting test by name " + name);
-	   if (testId != null) {
-	       return testId;
-	   }
-	   return "";
+		String testId = properties.getProperty(name);
+		//System.out.println("SystemConfig getting test by name " + name);
+		if (testId != null) {
+			return testId;
+		}
+		return "";
 	}
 
 	public String getDefaultDataSource() {
@@ -862,18 +861,18 @@ public class SystemConfiguration {
 	//Encrypted PDF Path
 	public String getEncryptedPdfPath() {
 		String string = properties.getProperty("encrypted.pdf.path");
-        if (string != null) {
-            return string;
-        }
+		if (string != null) {
+			return string;
+		}
 		return "/export/project/phl/scans";
-    }
+	}
 
 	//Allow to view the encrypted pdf
 	public String getEnabledSamplePdf() {
 		String string = properties.getProperty("enable.sample.pdf");
 		if (string != null) {
 			return string;
-	}
+		}
 		return "Y";
 	}
 
@@ -884,14 +883,14 @@ public class SystemConfiguration {
 			return string;
 		}
 		return "NBS-Panel";
-    }
+	}
 	public String getNewbornTypeOfSample() {
 		String string = properties.getProperty("newborn.typeOfSample");
 		if (string != null) {
 			return string;
 		}
 		return "DRIED BLOOD SPOT CARD";
-    }
+	}
 
 	//bugzilla 2529, 2530
 	public String getNewbornDomain() {
@@ -900,7 +899,7 @@ public class SystemConfiguration {
 			return string;
 		}
 		return "N";
-    }
+	}
 
 
 	//for testing only to inject values
@@ -911,7 +910,7 @@ public class SystemConfiguration {
 	public String getProgramCodes() {
 		String codes = properties.getProperty("programcodes");
 
-        return (codes == null ? "" : codes);
+		return (codes == null ? "" : codes);
 	}
 
 	//for testing only to inject values
@@ -927,7 +926,7 @@ public class SystemConfiguration {
 		return "M";
 	}
 
-    //we are letting the date locale differ from the default locale. Not a good thing
+	//we are letting the date locale differ from the default locale. Not a good thing
 	public Locale getDateLocale() {
 		String localeString = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE);
 		Locale locale = Locale.US;
@@ -959,19 +958,20 @@ public class SystemConfiguration {
 	}
 
 	public String getPatternForDateLocale(){
-		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, getDateLocale());
-		// yyyy/mm/dd
-		Date date = Date.valueOf("2000-01-02");
-		String pattern = dateFormat.format(date);
-		pattern = pattern.replaceFirst("01", "MM");
-		pattern = pattern.replaceFirst("02", "DD");
-		pattern = pattern.replaceFirst("00", "YYYY");
-		return pattern;
+		return MessageUtil.getMessage("date.format.validate").toUpperCase();
+		//		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, getDateLocale());
+		//		// yyyy/mm/dd
+		//		Date date = Date.valueOf("2000-01-02");
+		//		String pattern = dateFormat.format(date);
+		//		pattern = pattern.replaceFirst("01", "MM");
+		//		pattern = pattern.replaceFirst("02", "DD");
+		//		pattern = pattern.replaceFirst("00", "YYYY");
+		//		return pattern;
 	}
 
 	public boolean errorsToScreen() {
 		String id = properties.getProperty("errors.to.screen");
-        return id == null ? false : Boolean.valueOf(id.trim());
+		return id == null ? false : Boolean.valueOf(id.trim());
 	}
 
 	public String getPermissionAgent(){
