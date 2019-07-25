@@ -478,7 +478,7 @@ function /*boolean*/ handleEnterEvent(){
 							   cssClass="${resultList.isHighlighted ? 'invalidHighlight' : ''}
 							   		  ${resultList.reflexGroup ? ' reflexGroup_' += resultList.sampleGroupingNumber : ''}  
 							          ${resultList.childReflex ? ' childReflex_' += resultList.sampleGroupingNumber : ''}"
-							   onchange='markUpdated(); makeDirty(); updateLogValue(this, ${iter.index}); trim(this, "${resultList.significantDigits}");
+							   onchange='markUpdated(); makeDirty(); updateLogValue(this, ${iter.index}); trim(this, "${resultList.significantDigits}"); showHideNotes(${iter.index});
 								         ${(resultList.reflexGroup && (not resultList.childReflex)) ? "updateReflexChild(" += resulList.sampleGroupingNumber += " ); " : ""}'
 								                />
 						<c:out value="${resultList.units}"/>

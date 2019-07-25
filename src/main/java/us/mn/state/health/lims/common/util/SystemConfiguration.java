@@ -958,7 +958,9 @@ public class SystemConfiguration {
 	}
 
 	public String getPatternForDateLocale(){
-		return MessageUtil.getMessage("date.format.validate").toUpperCase();
+		Locale locale = getLocaleByLocalString(
+				ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE));
+		return MessageUtil.getMessage("date.format.formatKey", locale).toUpperCase();
 		//		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, getDateLocale());
 		//		// yyyy/mm/dd
 		//		Date date = Date.valueOf("2000-01-02");
