@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.formfields.FormFields,
-                 us.mn.state.health.lims.common.formfields.FormFields.Field,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.patient.action.bean.PatientManagementInfo" %>
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.formfields.FormFields,
+                 org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.patient.action.bean.PatientManagementInfo" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

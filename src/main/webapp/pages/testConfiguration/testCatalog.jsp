@@ -2,12 +2,12 @@
          contentType="text/html; charset=utf-8"
          import="java.util.List,
          		 java.util.Locale,
-                 us.mn.state.health.lims.test.valueholder.TestSection,
-                 us.mn.state.health.lims.test.valueholder.TestCatalog,
-                 us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
-                 us.mn.state.health.lims.common.util.IdValuePair,
-                 us.mn.state.health.lims.common.action.IActionConstants,
-                 spring.mine.internationalization.MessageUtil" %>
+                 org.openelisglobal.test.valueholder.TestSection,
+                 org.openelisglobal.test.valueholder.TestCatalog,
+                 org.openelisglobal.testconfiguration.beans.ResultLimitBean,
+                 org.openelisglobal.common.util.IdValuePair,
+                 org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

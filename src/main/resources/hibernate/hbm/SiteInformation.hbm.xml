@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="us.mn.state.health.lims.siteinformation.valueholder">
+<hibernate-mapping package="org.openelisglobal.siteinformation.valueholder">
     <class name="SiteInformation" table="site_information" optimistic-lock="version" dynamic-update="true">
-		  <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+		  <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			   <column name="ID" precision="10" scale="0"/>
-			   <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+			   <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
 			    	<param name="sequence_name">site_information_seq</param>
 			   </generator>
 		  </id>
@@ -19,11 +19,11 @@
 		  <property name="instructionKey" type="java.lang.String" column="instruction_key" not-null="false"/>
 		  <property name="tag" type="java.lang.String" column="tag" />
 		  <property name="group" type="java.lang.Integer" column="`group`" />
-		  <property name="dictionaryCategoryId" column="dictionary_category_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
-		  <many-to-one name="domain" class="us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain" fetch="select" lazy="false">
+		  <property name="dictionaryCategoryId" column="dictionary_category_id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" />
+		  <many-to-one name="domain" class="org.openelisglobal.siteinformation.valueholder.SiteInformationDomain" fetch="select" lazy="false">
             <column name="domain_id" precision="10" scale="0" />
           </many-to-one>
-          <many-to-one name="schedule" class="us.mn.state.health.lims.scheduler.valueholder.CronScheduler" fetch="select" lazy="false">
+          <many-to-one name="schedule" class="org.openelisglobal.scheduler.valueholder.CronScheduler" fetch="select" lazy="false">
             <column name="schedule_id" precision="10" scale="0" />
           </many-to-one>
            <property name="descriptionKey"  type="java.lang.String" column="description_key" />

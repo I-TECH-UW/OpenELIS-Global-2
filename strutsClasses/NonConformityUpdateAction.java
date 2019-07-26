@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.qaevent.action.retroCI;
+package org.openelisglobal.qaevent.action.retroCI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,18 +25,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateData;
-import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateWorker;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.qaevent.worker.NonConformityUpdateData;
+import org.openelisglobal.qaevent.worker.NonConformityUpdateWorker;
 
 public class NonConformityUpdateAction extends BaseAction {
     /*
      * (non-Javadoc)
      * 
      * @see
-     * us.mn.state.health.lims.common.action.BaseAction#performAction(org.apache
+     * org.openelisglobal.common.action.BaseAction#performAction(org.apache
      * .struts.action.ActionMapping, org.apache.struts.action.ActionForm,
      * javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)

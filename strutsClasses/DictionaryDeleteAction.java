@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.dictionary.action;
+package org.openelisglobal.dictionary.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +28,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.login.valueholder.UserSessionData;
 
 /**
  * @author diane benz

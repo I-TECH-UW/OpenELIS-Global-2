@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.siteinformation.action;
+package org.openelisglobal.siteinformation.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +27,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
 
 
 public class SiteInformationDeleteAction extends BaseAction {

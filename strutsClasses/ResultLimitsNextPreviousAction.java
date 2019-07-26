@@ -5,7 +5,7 @@
  * @author TienDH
  * @date Aug 20, 2007
  */
-package us.mn.state.health.lims.resultlimits.action;
+package org.openelisglobal.resultlimits.action;
 
 import java.util.List;
 
@@ -16,12 +16,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
+import org.openelisglobal.resultlimits.daoimpl.ResultLimitDAOImpl;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 
 public class ResultLimitsNextPreviousAction extends BaseAction {
 

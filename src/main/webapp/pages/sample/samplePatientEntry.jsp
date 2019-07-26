@@ -1,15 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.SystemConfiguration,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-                 us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-                 us.mn.state.health.lims.common.formfields.FormFields,
-                 us.mn.state.health.lims.common.formfields.FormFields.Field,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 spring.mine.internationalization.MessageUtil,
-                 us.mn.state.health.lims.sample.bean.SampleOrderItem,
-                 us.mn.state.health.lims.sample.util.AccessionNumberUtil" %>
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.util.SystemConfiguration,
+                 org.openelisglobal.common.util.ConfigurationProperties,
+                 org.openelisglobal.common.util.ConfigurationProperties.Property,
+                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+                 org.openelisglobal.common.formfields.FormFields,
+                 org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.internationalization.MessageUtil,
+                 org.openelisglobal.sample.bean.SampleOrderItem,
+                 org.openelisglobal.sample.util.AccessionNumberUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

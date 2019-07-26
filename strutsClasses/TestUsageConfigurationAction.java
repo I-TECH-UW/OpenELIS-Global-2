@@ -14,7 +14,7 @@
 * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package us.mn.state.health.lims.dataexchange.aggregatereporting.action;
+package org.openelisglobal.dataexchange.aggregatereporting.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -28,19 +28,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
-import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
-import us.mn.state.health.lims.scheduler.daoimpl.CronSchedulerDAOImpl;
-import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
+import org.openelisglobal.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
+import org.openelisglobal.scheduler.dao.CronSchedulerDAO;
+import org.openelisglobal.scheduler.daoimpl.CronSchedulerDAOImpl;
+import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public class TestUsageConfigurationAction extends BaseAction {
 	

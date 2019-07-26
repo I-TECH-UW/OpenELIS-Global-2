@@ -13,14 +13,14 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import javax.servlet.jsp.JspException;
 
 import org.apache.struts.taglib.TagUtils;
 
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 
 /**
  * @author Benzd1 bugzilla 1351

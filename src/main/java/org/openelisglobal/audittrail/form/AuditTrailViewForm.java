@@ -1,0 +1,75 @@
+package org.openelisglobal.audittrail.form;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.sample.bean.SampleOrderItem;
+
+// used for viewing only, does not need validation
+public class AuditTrailViewForm extends BaseForm {
+
+	@SafeHtml
+	private String accessionNumberSearch = "";
+
+	@Valid
+	private List<AuditTrailItem> log;
+
+	@SafeHtml
+	private String accessionNumber = "";
+
+	@Valid
+	private SampleOrderItem sampleOrderItems;
+
+	@Valid
+	private PatientManagementInfo patientProperties;
+
+	public AuditTrailViewForm() {
+		setFormName("AuditTrailViewForm");
+	}
+
+	public String getAccessionNumberSearch() {
+		return accessionNumberSearch;
+	}
+
+	public void setAccessionNumberSearch(String accessionNumberSearch) {
+		this.accessionNumberSearch = accessionNumberSearch;
+	}
+
+	public List<AuditTrailItem> getLog() {
+		return log;
+	}
+
+	public void setLog(List<AuditTrailItem> log) {
+		this.log = log;
+	}
+
+	public String getAccessionNumber() {
+		return accessionNumber;
+	}
+
+	public void setAccessionNumber(String accessionNumber) {
+		this.accessionNumber = accessionNumber;
+	}
+
+	public SampleOrderItem getSampleOrderItems() {
+		return sampleOrderItems;
+	}
+
+	public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
+		this.sampleOrderItems = sampleOrderItems;
+	}
+
+	public PatientManagementInfo getPatientProperties() {
+		return patientProperties;
+	}
+
+	public void setPatientProperties(PatientManagementInfo patientProperties) {
+		this.patientProperties = patientProperties;
+	}
+}

@@ -3,10 +3,10 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.scriptlet.valueholder.Scriptlet" table="SCRIPTLET" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.scriptlet.valueholder.Scriptlet" table="SCRIPTLET" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">scriptlet_seq</param>
             </generator> 
         </id>
@@ -27,37 +27,37 @@
             <key>
                 <column name="SCRIPTLET_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.test.valueholder.Test" />
+            <one-to-many class="org.openelisglobal.test.valueholder.Test" />
         </set>
         <set name="testResults" inverse="true">
             <key>
                 <column name="SCRIPTLET_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.testresult.valueholder.TestResult" />
+            <one-to-many class="org.openelisglobal.testresult.valueholder.TestResult" />
         </set>
         <set name="labels" inverse="true">
             <key>
                 <column name="SCRIPTLET_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.label.valueholder.Label" />
+            <one-to-many class="org.openelisglobal.label.valueholder.Label" />
         </set>
         <set name="projects" inverse="true">
             <key>
                 <column name="SCRIPTLET_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.project.valueholder.Project" />
+            <one-to-many class="org.openelisglobal.project.valueholder.Project" />
         </set>
         <set name="methodResults" inverse="true">
             <key>
                 <column name="SCRIP_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.methodresult.valueholder.MethodResult" />
+            <one-to-many class="org.openelisglobal.methodresult.valueholder.MethodResult" />
         </set>
         <set name="auxFields" inverse="true">
             <key>
                 <column name="SCRIPTLET_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.auxfield.valueholder.AuxField" />
+            <one-to-many class="org.openelisglobal.auxfield.valueholder.AuxField" />
         </set>
 -->        
     </class>

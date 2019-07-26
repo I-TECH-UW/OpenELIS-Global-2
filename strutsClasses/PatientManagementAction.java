@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.patient.action;
+package org.openelisglobal.patient.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +25,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 
 public class PatientManagementAction extends BaseAction {
 

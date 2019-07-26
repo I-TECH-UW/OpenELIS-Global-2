@@ -13,7 +13,7 @@
  *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,27 +31,27 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import spring.service.localization.LocalizationServiceImpl;
-import spring.service.resultlimit.ResultLimitServiceImpl;
-import us.mn.state.health.lims.common.services.TestService;
-import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
-import us.mn.state.health.lims.testconfiguration.beans.TestCatalogBean;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
-import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.localization.service.LocalizationServiceImpl;
+import org.openelisglobal.resultlimit.service.ResultLimitServiceImpl;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testconfiguration.beans.ResultLimitBean;
+import org.openelisglobal.testconfiguration.beans.TestCatalogBean;
+import org.openelisglobal.testresult.daoimpl.TestResultDAOImpl;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public class TestModifyAction extends BaseAction {
 	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();

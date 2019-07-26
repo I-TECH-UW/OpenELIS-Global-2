@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.Versioning,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.util.Versioning,
                  org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>

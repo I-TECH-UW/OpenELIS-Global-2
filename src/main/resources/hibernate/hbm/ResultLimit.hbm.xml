@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="us.mn.state.health.lims.resultlimits.valueholder">
+<hibernate-mapping package="org.openelisglobal.resultlimits.valueholder">
     <class name="ResultLimit" table="RESULT_LIMITS" optimistic-lock="version" dynamic-update="true">
-  <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+  <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
    <column name="ID" precision="10" scale="0"/>
-   <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+   <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
     <param name="sequence_name">result_limits_seq</param>
    </generator>
   </id>
        
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
  
-        <property name="testId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="testId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="TEST_ID" precision="10" scale="0" not-null="true" />
   </property>
         
-        <property name="resultTypeId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="resultTypeId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
    <column name="TEST_RESULT_TYPE_ID" not-null="true"/>
   </property>
 
@@ -47,7 +47,7 @@
 		<property name="highValid"  type="org.hibernate.type.DoubleType">
    <column name="high_valid"/>
   </property>
- <property name="dictionaryNormalId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" column="normal_dictionary_id"/>
+ <property name="dictionaryNormalId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" column="normal_dictionary_id"/>
  <property name="alwaysValidate" type="boolean" column="always_validate"/>
  </class>
 </hibernate-mapping>

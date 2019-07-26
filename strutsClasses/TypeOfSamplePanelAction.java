@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.typeofsample.action;
+package org.openelisglobal.typeofsample.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -27,11 +27,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.panel.dao.PanelDAO;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 
 public class TypeOfSamplePanelAction extends BaseAction {
 

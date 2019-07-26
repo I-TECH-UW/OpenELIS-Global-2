@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,12 +29,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.test.valueholder.Test;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleServiceImpl;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.test.valueholder.Test;
 
 public class SampleTypeTestAssignAction extends BaseAction {
     @Override  

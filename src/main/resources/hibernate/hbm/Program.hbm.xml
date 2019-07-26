@@ -3,10 +3,10 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.program.valueholder.Program" table="PROGRAM" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.program.valueholder.Program" table="PROGRAM" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">program_seq</param>
             </generator>
         </id>

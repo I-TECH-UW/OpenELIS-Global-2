@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.util.ConfigurationProperties,
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.common.util.ConfigurationProperties,
 			org.owasp.encoder.Encode,
-			us.mn.state.health.lims.common.util.Versioning"%>
+			org.openelisglobal.common.util.Versioning"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

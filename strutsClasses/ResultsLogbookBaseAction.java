@@ -14,12 +14,12 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.result.action;
+package org.openelisglobal.result.action;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.StringUtil;
 
 public abstract class ResultsLogbookBaseAction extends BaseAction {
 

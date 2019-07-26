@@ -13,7 +13,7 @@
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.resultlimits.action;
+package org.openelisglobal.resultlimits.action;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,19 +28,19 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
-import us.mn.state.health.lims.resultlimits.form.ResultLimitsLink;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeoftestresult.dao.TypeOfTestResultDAO;
-import us.mn.state.health.lims.typeoftestresult.daoimpl.TypeOfTestResultDAOImpl;
-import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
+import org.openelisglobal.resultlimits.daoimpl.ResultLimitDAOImpl;
+import org.openelisglobal.resultlimits.form.ResultLimitsLink;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeoftestresult.dao.TypeOfTestResultDAO;
+import org.openelisglobal.typeoftestresult.daoimpl.TypeOfTestResultDAOImpl;
+import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 
 
 public class ResultLimitsMenuAction extends BaseMenuAction {

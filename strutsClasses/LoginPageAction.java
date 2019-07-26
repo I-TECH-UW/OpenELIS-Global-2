@@ -13,7 +13,7 @@
  * 
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  */
-package us.mn.state.health.lims.login.action;
+package org.openelisglobal.login.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,9 +23,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.SystemConfiguration;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)

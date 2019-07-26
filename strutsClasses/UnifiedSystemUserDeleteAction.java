@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.systemuser.action;
+package org.openelisglobal.systemuser.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,20 +31,20 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
-import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
-import us.mn.state.health.lims.userrole.valueholder.UserRole;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.daoimpl.LoginDAOImpl;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.userrole.valueholder.UserRole;
 
 
 public class UnifiedSystemUserDeleteAction extends BaseAction {

@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.workplan.action;
+package org.openelisglobal.workplan.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,32 +31,32 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
-import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
-import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
-import us.mn.state.health.lims.test.beanItems.TestResultItem;
-//import us.mn.state.health.lims.test.valueholder.TestSection;
+import org.openelisglobal.analysis.dao.AnalysisDAO;
+import org.openelisglobal.analysis.daoimpl.AnalysisDAOImpl;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.ObservationHistoryService;
+import org.openelisglobal.common.services.ObservationHistoryService.ObservationType;
+import org.openelisglobal.common.services.QAService;
+import org.openelisglobal.common.services.QAService.QAObservationType;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.panel.dao.PanelDAO;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.panelitem.dao.PanelItemDAO;
+import org.openelisglobal.panelitem.daoimpl.PanelItemDAOImpl;
+import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleqaevent.dao.SampleQaEventDAO;
+import org.openelisglobal.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
+import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.test.beanItems.TestResultItem;
+//import org.openelisglobal.test.valueholder.TestSection;
 
 public class WorkplanByPanelAction extends BaseWorkplanAction {
 

@@ -1,19 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants"%>
+	import="org.openelisglobal.common.action.IActionConstants"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="java.util.List, java.util.Locale,
-                 us.mn.state.health.lims.testconfiguration.beans.TestCatalogBean"%>
-<%@ page import="us.mn.state.health.lims.common.util.IdValuePair"%>
-<%@ page import="spring.mine.internationalization.MessageUtil"%>
-<%@ page import="us.mn.state.health.lims.common.util.Versioning"%>
+                 org.openelisglobal.testconfiguration.beans.TestCatalogBean"%>
+<%@ page import="org.openelisglobal.common.util.IdValuePair"%>
+<%@ page import="org.openelisglobal.internationalization.MessageUtil"%>
+<%@ page import="org.openelisglobal.common.util.Versioning"%>
 <%@ page
-	import="us.mn.state.health.lims.common.util.SystemConfiguration"%>
+	import="org.openelisglobal.common.util.SystemConfiguration"%>
 <%@ page
-	import="spring.service.typeoftestresult.TypeOfTestResultServiceImpl"%>
+	import="org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl"%>
 <%@ page
-	import="us.mn.state.health.lims.common.provider.query.EntityNamesProvider"%>
+	import="org.openelisglobal.common.provider.query.EntityNamesProvider"%>
 <%@ page
-	import="us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean"%>
+	import="org.openelisglobal.testconfiguration.beans.ResultLimitBean"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

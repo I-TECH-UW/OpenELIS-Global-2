@@ -7,14 +7,14 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				 us.mn.state.health.lims.common.util.ConfigurationProperties,
-				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-				 spring.mine.internationalization.MessageUtil,
-				 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.login.valueholder.UserSessionData,
-				 us.mn.state.health.lims.menu.util.MenuUtil,
-				 spring.mine.common.form.BaseForm,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+				 org.openelisglobal.common.util.ConfigurationProperties,
+				 org.openelisglobal.common.util.ConfigurationProperties.Property,
+				 org.openelisglobal.internationalization.MessageUtil,
+				 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.login.valueholder.UserSessionData,
+				 org.openelisglobal.menu.util.MenuUtil,
+				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
 
 <%!String path = "";

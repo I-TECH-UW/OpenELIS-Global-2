@@ -1,8 +1,8 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.localization.valueholder.Localization,
-			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.localization.valueholder.Localization,
+			org.openelisglobal.siteinformation.valueholder.SiteInformation,
 			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>

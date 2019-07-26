@@ -15,7 +15,7 @@
 *  
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.login.action;
+package org.openelisglobal.login.action;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,26 +29,26 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.userModuleService;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
-import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
-import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionAgentModuleDAO;
-import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
-import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.dao.userModuleService;
+import org.openelisglobal.login.daoimpl.LoginDAOImpl;
+import org.openelisglobal.login.daoimpl.userModuleServiceImpl;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemusermodule.dao.PermissionAgentModuleDAO;
+import org.openelisglobal.systemusermodule.daoimpl.RoleModuleDAOImpl;
+import org.openelisglobal.systemusermodule.valueholder.RoleModule;
+import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
 
 /**
  *  @author     Hung Nguyen (Hung.Nguyen@health.state.mn.us)

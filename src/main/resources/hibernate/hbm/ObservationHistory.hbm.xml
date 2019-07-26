@@ -19,24 +19,24 @@ Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 Contributor(s): CIRG, University of Washington, Seattle WA.
 -->
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory" table="observation_history">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.observationhistory.valueholder.ObservationHistory" table="observation_history">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">observation_history_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
-        <property name="observationHistoryTypeId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="observationHistoryTypeId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="observation_history_type_id" precision="10" scale="0" />
         </property>
-        <property name="patientId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="patientId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="patient_id" precision="10" scale="0" not-null="true" />
         </property>
-        <property name="sampleId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="sampleId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="sample_id" precision="10" scale="0" not-null="true" />
         </property>
-        <property name="sampleItemId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="sampleItemId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="sample_item_id" precision="10" scale="0" not-null="false" />
         </property>
         <property name="value" type="java.lang.String">

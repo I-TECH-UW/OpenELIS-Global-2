@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.testanalyte.form;
+package org.openelisglobal.testanalyte.form;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.ConversionException;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.log.LogEvent;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.log.LogEvent;
 
 //We have some dynamically (through javascript) created collections that need to be initialized
 public class TestAnalyteTestResultActionForm extends BaseActionForm {

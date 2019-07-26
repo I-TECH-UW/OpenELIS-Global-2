@@ -1,6 +1,6 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="spring.mine.internationalization.MessageUtil"
+         import="org.openelisglobal.internationalization.MessageUtil"
         %>
 
 

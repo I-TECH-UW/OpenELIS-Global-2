@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.sample.action;
+package org.openelisglobal.sample.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -35,46 +35,46 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.services.SampleService;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.login.dao.userModuleService;
-import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
-import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.sample.bean.SampleEditItem;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
-import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.analysis.dao.AnalysisDAO;
+import org.openelisglobal.analysis.daoimpl.AnalysisDAOImpl;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IPatientService;
+import org.openelisglobal.common.services.PatientService;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.services.SampleService;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.login.dao.userModuleService;
+import org.openelisglobal.login.daoimpl.userModuleServiceImpl;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.sample.bean.SampleEditItem;
+import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.daoimpl.SampleDAOImpl;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.daoimpl.SampleHumanDAOImpl;
+import org.openelisglobal.sampleitem.dao.SampleItemDAO;
+import org.openelisglobal.sampleitem.daoimpl.SampleItemDAOImpl;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleTestDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
 
 public class SampleEditAction extends BaseAction {
 

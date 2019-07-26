@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.Resources;
 import org.apache.struts.validator.ValidatorPlugIn;
 
-import spring.mine.internationalization.MessageUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * Custom tag that generates JavaScript for client side validation based

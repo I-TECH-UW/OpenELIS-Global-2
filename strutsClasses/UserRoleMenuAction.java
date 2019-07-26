@@ -15,7 +15,7 @@
 *  
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.userrole.action;
+package org.openelisglobal.userrole.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
-import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
-import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
-import us.mn.state.health.lims.userrole.valueholder.UserRole;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.role.dao.RoleDAO;
+import org.openelisglobal.role.daoimpl.RoleDAOImpl;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.userrole.valueholder.UserRole;
 
 
 public class UserRoleMenuAction extends BaseMenuAction {

@@ -3,20 +3,20 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.samplenewborn.valueholder.SampleNewborn" table="SAMPLE_NEWBORN" optimistic-lock="version" dynamic-update="true" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.samplenewborn.valueholder.SampleNewborn" table="SAMPLE_NEWBORN" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
             <generator class="assigned"/>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <property name="weight" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="weight" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="WEIGHT" precision="5" scale="0" />
         </property>
         <property name="multiBirth" type="java.lang.String"> 
             <column name="MULTI_BIRTH" length="1" />
         </property>
-        <property name="birthOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="birthOrder" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="BIRTH_ORDER" precision="2" scale="0" />
         </property>
 		<property name="gestationalWeek" type="double">

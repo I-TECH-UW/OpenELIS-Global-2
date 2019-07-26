@@ -3,16 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.address.valueholder.AddressPart" table="address_part" optimistic-lock="version" dynamic-update="true" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.address.valueholder.AddressPart" table="address_part" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">address_part_seq</param>
             </generator>
         </id>
 
 		<property name="partName" column="part_name" type="string" />
-		<property name="displayOrder" column="display_order" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+		<property name="displayOrder" column="display_order" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" />
  		<property name="nameKey" type="java.lang.String">
             <column name="display_key" length="60" not-null="false" />
         </property>

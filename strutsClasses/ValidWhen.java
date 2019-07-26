@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.util.validator;
+package org.openelisglobal.common.util.validator;
 
 import java.io.StringReader;
 
@@ -28,7 +28,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.validator.Resources;
 import org.apache.struts.validator.validwhen.ValidWhenLexer;
 
-import us.mn.state.health.lims.common.log.LogEvent;
+import org.openelisglobal.common.log.LogEvent;
 
 /**
  * This class contains the validwhen validation that is used in the

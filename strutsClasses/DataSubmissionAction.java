@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.datasubmission.action;
+package org.openelisglobal.datasubmission.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +11,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.datasubmission.DataIndicatorFactory;
-import us.mn.state.health.lims.datasubmission.dao.DataIndicatorDAO;
-import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
-import us.mn.state.health.lims.datasubmission.daoimpl.DataIndicatorDAOImpl;
-import us.mn.state.health.lims.datasubmission.daoimpl.TypeOfDataIndicatorDAOImpl;
-import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
-import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.datasubmission.DataIndicatorFactory;
+import org.openelisglobal.datasubmission.dao.DataIndicatorDAO;
+import org.openelisglobal.datasubmission.dao.TypeOfDataIndicatorDAO;
+import org.openelisglobal.datasubmission.daoimpl.DataIndicatorDAOImpl;
+import org.openelisglobal.datasubmission.daoimpl.TypeOfDataIndicatorDAOImpl;
+import org.openelisglobal.datasubmission.valueholder.DataIndicator;
+import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
 
 public class DataSubmissionAction extends BaseAction {
 

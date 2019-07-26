@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.workplan.action;
+package org.openelisglobal.workplan.action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,17 +30,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.paging.PagingBean;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.resultvalidation.action.util.ResultValidationItem;
-import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
-import us.mn.state.health.lims.resultvalidation.util.ResultsValidationRetroCIUtility;
+import org.openelisglobal.analysis.dao.AnalysisDAO;
+import org.openelisglobal.analysis.daoimpl.AnalysisDAOImpl;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.paging.PagingBean;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.resultvalidation.action.util.ResultValidationItem;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.resultvalidation.util.ResultsValidationRetroCIUtility;
 
 public class ElisaAlgorithmWorkplanAction extends BaseWorkplanAction {
 

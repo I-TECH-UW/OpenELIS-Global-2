@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.login.action;
+package org.openelisglobal.login.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,11 +25,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.resources.ResourceLocator;
 
 public abstract class LoginBaseAction extends Action implements IActionConstants {
 	String pageSubtitle = null;

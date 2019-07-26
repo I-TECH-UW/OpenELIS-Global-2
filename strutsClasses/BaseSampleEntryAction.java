@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.sample.action;
+package org.openelisglobal.sample.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -29,27 +29,27 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.dictionary.ObservationHistoryList;
-import us.mn.state.health.lims.gender.dao.GenderDAO;
-import us.mn.state.health.lims.gender.daoimpl.GenderDAOImpl;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.util.OrganizationTypeList;
-import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.RequestType;
-import us.mn.state.health.lims.patient.util.PatientUtil;
-import us.mn.state.health.lims.patient.valueholder.ObservationData;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.gender.dao.GenderDAO;
+import org.openelisglobal.gender.daoimpl.GenderDAOImpl;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.util.OrganizationTypeList;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.saving.Accessioner;
+import org.openelisglobal.patient.saving.RequestType;
+import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.project.dao.ProjectDAO;
+import org.openelisglobal.project.daoimpl.ProjectDAOImpl;
 
 
 /**

@@ -5,7 +5,7 @@
  * @author TienDH
  * @date Aug 20, 2007
  */
-package us.mn.state.health.lims.patienttype.action;
+package org.openelisglobal.patienttype.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,17 +17,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientTypeDAOImpl;
-import us.mn.state.health.lims.patienttype.valueholder.PatientType;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.patienttype.dao.PatientTypeDAO;
+import org.openelisglobal.patienttype.daoimpl.PatientTypeDAOImpl;
+import org.openelisglobal.patienttype.valueholder.PatientType;
 
 public class PatientTypeUpdateAction extends BaseAction {
 

@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.organization.action;
+package org.openelisglobal.organization.action;
 
 import java.util.List;
 
@@ -24,14 +24,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
 
 /**
  * @author diane benz

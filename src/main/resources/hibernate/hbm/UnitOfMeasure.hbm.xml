@@ -3,10 +3,10 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure" table="UNIT_OF_MEASURE" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure" table="UNIT_OF_MEASURE" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">unit_of_measure_seq</param>
             </generator>   
         </id>
@@ -23,19 +23,19 @@
             <key>
                 <column name="UOM_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.inventoryitem.valueholder.InventoryItem" />
+            <one-to-many class="org.openelisglobal.inventoryitem.valueholder.InventoryItem" />
         </set>
         <set name="tests" inverse="true">
             <key>
                 <column name="UOM_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.test.valueholder.Test" />
+            <one-to-many class="org.openelisglobal.test.valueholder.Test" />
         </set>
         <set name="qcs" inverse="true">
             <key>
                 <column name="UOM_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.qc.valueholder.Qc" />
+            <one-to-many class="org.openelisglobal.qc.valueholder.Qc" />
         </set>
 -->        
     </class>

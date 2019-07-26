@@ -1,0 +1,130 @@
+package org.openelisglobal.testconfiguration.form;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.validator.ValidationHelper;
+
+public class PanelCreateForm extends BaseForm {
+	// for display
+	private List existingPanelList;
+
+	// for display
+	private List inactivePanelList;
+
+	// for display
+	private Map existingPanelMap;
+
+	// for display
+	private Map inactivePanelMap;
+
+	// for display
+	private List existingSampleTypeList;
+
+	// for display
+	private String existingEnglishNames;
+
+	// for display
+	private String existingFrenchNames;
+
+	@NotBlank
+	@SafeHtml
+	private String panelEnglishName;
+
+	@SafeHtml
+	private String panelFrenchName;
+
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	private String sampleTypeId;
+
+	public PanelCreateForm() {
+		setFormName("panelCreateForm");
+	}
+
+	public List getExistingPanelList() {
+		return existingPanelList;
+	}
+
+	public void setExistingPanelList(List existingPanelList) {
+		this.existingPanelList = existingPanelList;
+	}
+
+	public List getInactivePanelList() {
+		return inactivePanelList;
+	}
+
+	public void setInactivePanelList(List inactivePanelList) {
+		this.inactivePanelList = inactivePanelList;
+	}
+
+	public Map getExistingPanelMap() {
+		return existingPanelMap;
+	}
+
+	public void setExistingPanelMap(Map existingPanelMap) {
+		this.existingPanelMap = existingPanelMap;
+	}
+
+	public Map getInactivePanelMap() {
+		return inactivePanelMap;
+	}
+
+	public void setInactivePanelMap(Map inactivePanelMap) {
+		this.inactivePanelMap = inactivePanelMap;
+	}
+
+	public List getExistingSampleTypeList() {
+		return existingSampleTypeList;
+	}
+
+	public void setExistingSampleTypeList(List existingSampleTypeList) {
+		this.existingSampleTypeList = existingSampleTypeList;
+	}
+
+	public String getExistingEnglishNames() {
+		return existingEnglishNames;
+	}
+
+	public void setExistingEnglishNames(String existingEnglishNames) {
+		this.existingEnglishNames = existingEnglishNames;
+	}
+
+	public String getExistingFrenchNames() {
+		return existingFrenchNames;
+	}
+
+	public void setExistingFrenchNames(String existingFrenchNames) {
+		this.existingFrenchNames = existingFrenchNames;
+	}
+
+	public String getPanelEnglishName() {
+		return panelEnglishName;
+	}
+
+	public void setPanelEnglishName(String panelEnglishName) {
+		this.panelEnglishName = panelEnglishName;
+	}
+
+	public String getPanelFrenchName() {
+		return panelFrenchName;
+	}
+
+	public void setPanelFrenchName(String panelFrenchName) {
+		this.panelFrenchName = panelFrenchName;
+	}
+
+	public String getSampleTypeId() {
+		return sampleTypeId;
+	}
+
+	public void setSampleTypeId(String sampleTypeId) {
+		this.sampleTypeId = sampleTypeId;
+	}
+}

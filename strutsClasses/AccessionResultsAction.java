@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.result.action;
+package org.openelisglobal.result.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -32,29 +32,29 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.inventory.action.InventoryUtility;
-import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.login.dao.userModuleService;
-import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
-import us.mn.state.health.lims.result.action.util.ResultsPaging;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
-import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.test.beanItems.TestResultItem;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.inventory.action.InventoryUtility;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.login.dao.userModuleService;
+import org.openelisglobal.login.daoimpl.userModuleServiceImpl;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.role.daoimpl.RoleDAOImpl;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.daoimpl.SampleDAOImpl;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.dao.SampleHumanDAO;
+import org.openelisglobal.samplehuman.daoimpl.SampleHumanDAOImpl;
+import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
 
 public class AccessionResultsAction extends BaseAction {
 

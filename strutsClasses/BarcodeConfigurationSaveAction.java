@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.barcode.action;
+package org.openelisglobal.barcode.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,17 +9,17 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 /**
  * Action class for saving bar code configuration. Navigated to on "save" by

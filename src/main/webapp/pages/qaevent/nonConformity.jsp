@@ -1,16 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-		import="us.mn.state.health.lims.common.action.IActionConstants,
-				us.mn.state.health.lims.common.formfields.FormFields,
-                us.mn.state.health.lims.common.formfields.FormFields.Field,
-                us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-                us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-                us.mn.state.health.lims.common.provider.validation.NonConformityRecordNumberValidationProvider,
-                us.mn.state.health.lims.common.services.PhoneNumberService,
-                us.mn.state.health.lims.common.util.DateUtil,
-                spring.mine.internationalization.MessageUtil, 
-                us.mn.state.health.lims.common.util.Versioning,
-                us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem,
-                us.mn.state.health.lims.common.util.ConfigurationProperties" %>
+		import="org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.common.formfields.FormFields,
+                org.openelisglobal.common.formfields.FormFields.Field,
+                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+                org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
+                org.openelisglobal.common.services.PhoneNumberService,
+                org.openelisglobal.common.util.DateUtil,
+                org.openelisglobal.internationalization.MessageUtil, 
+                org.openelisglobal.common.util.Versioning,
+                org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem,
+                org.openelisglobal.common.util.ConfigurationProperties" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

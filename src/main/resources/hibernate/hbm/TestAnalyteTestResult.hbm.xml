@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.testanalyte.valueholder.TestAnalyteTestResult" table="TEST_ANALYTE_TEST_RESULT" >
+    <class name="org.openelisglobal.testanalyte.valueholder.TestAnalyteTestResult" table="TEST_ANALYTE_TEST_RESULT" >
         <id name="testAnalyteTestResultId" type="java.lang.String">
             <column name="testAnalyteTestResultId" length="81" />
             <generator class="assigned"/>

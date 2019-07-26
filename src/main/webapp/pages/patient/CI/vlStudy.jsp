@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-	        us.mn.state.health.lims.common.util.DateUtil"%>
+	import="org.openelisglobal.common.action.IActionConstants,
+	        org.openelisglobal.common.util.DateUtil"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

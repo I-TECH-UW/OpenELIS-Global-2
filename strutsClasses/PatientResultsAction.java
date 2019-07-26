@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.result.action;
+package org.openelisglobal.result.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -31,22 +31,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.inventory.action.InventoryUtility;
-import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
-import us.mn.state.health.lims.result.action.util.ResultsPaging;
-import us.mn.state.health.lims.test.beanItems.TestResultItem;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.inventory.action.InventoryUtility;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.dao.PatientDAO;
+import org.openelisglobal.patient.daoimpl.PatientDAOImpl;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.test.beanItems.TestResultItem;
 
 public class PatientResultsAction extends BaseAction {
 

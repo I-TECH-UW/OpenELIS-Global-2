@@ -1,16 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.formfields.FormFields.Field,
-                 us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-                 us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-                 us.mn.state.health.lims.common.services.PhoneNumberService,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-                 spring.mine.internationalization.MessageUtil,
-                 us.mn.state.health.lims.common.util.IdValuePair,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.common.util.DateUtil,
-                 us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.formfields.FormFields" %>
+         import="org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+                 org.openelisglobal.common.services.PhoneNumberService,
+                 org.openelisglobal.common.util.ConfigurationProperties,
+                 org.openelisglobal.common.util.ConfigurationProperties.Property,
+                 org.openelisglobal.internationalization.MessageUtil,
+                 org.openelisglobal.common.util.IdValuePair,
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.common.util.DateUtil,
+                 org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.formfields.FormFields" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

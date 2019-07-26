@@ -1,8 +1,8 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			spring.mine.internationalization.MessageUtil" %>
-<%@ page import="spring.mine.common.constants.Constants" %>
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.internationalization.MessageUtil" %>
+<%@ page import="org.openelisglobal.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

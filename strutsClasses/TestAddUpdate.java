@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,39 +35,39 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import spring.service.localization.LocalizationServiceImpl;
-import spring.service.test.TestSectionServiceImpl;
-import us.mn.state.health.lims.common.services.TestService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.dao.LocalizationDAO;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
-import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
-import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
-import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
-import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.localization.service.LocalizationServiceImpl;
+import org.openelisglobal.test.service.TestSectionServiceImpl;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleServiceImpl;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.localization.dao.LocalizationDAO;
+import org.openelisglobal.localization.daoimpl.LocalizationDAOImpl;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.panelitem.dao.PanelItemDAO;
+import org.openelisglobal.panelitem.daoimpl.PanelItemDAOImpl;
+import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
+import org.openelisglobal.resultlimits.daoimpl.ResultLimitDAOImpl;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testresult.dao.TestResultDAO;
+import org.openelisglobal.testresult.daoimpl.TestResultDAOImpl;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleTestDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.openelisglobal.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
+import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class TestAddUpdate extends BaseAction {
     private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();

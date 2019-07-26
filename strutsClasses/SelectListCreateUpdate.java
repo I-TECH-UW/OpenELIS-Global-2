@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,24 +25,24 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.DynaValidatorForm;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
-import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
-import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemmodule.dao.SystemModuleDAO;
-import us.mn.state.health.lims.systemmodule.daoimpl.SystemModuleDAOImpl;
-import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
-import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
-import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.localization.daoimpl.LocalizationDAOImpl;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.role.dao.RoleDAO;
+import org.openelisglobal.role.daoimpl.RoleDAOImpl;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.systemmodule.dao.SystemModuleDAO;
+import org.openelisglobal.systemmodule.daoimpl.SystemModuleDAOImpl;
+import org.openelisglobal.systemmodule.valueholder.SystemModule;
+import org.openelisglobal.systemusermodule.daoimpl.RoleModuleDAOImpl;
+import org.openelisglobal.systemusermodule.valueholder.RoleModule;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 public class SelectListCreateUpdate extends BaseAction {
     @Override

@@ -3,15 +3,15 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
     
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.inventory.valueholder.InventoryLocation" table="inventory_location" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.inventory.valueholder.InventoryLocation" table="inventory_location" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">inventory_location_seq</param>
             </generator> 
         </id>
        
-        <many-to-one name="inventoryItem" class="us.mn.state.health.lims.inventory.valueholder.InventoryItem" fetch="select" lazy="false">
+        <many-to-one name="inventoryItem" class="org.openelisglobal.inventory.valueholder.InventoryItem" fetch="select" lazy="false">
             <column name="INV_ITEM_ID" precision="10" scale="0" />
         </many-to-one>
 

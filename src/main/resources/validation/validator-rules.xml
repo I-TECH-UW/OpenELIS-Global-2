@@ -170,7 +170,7 @@
 
       <validator name="validwhen"
           msg="errors.required"
-                 classname="us.mn.state.health.lims.common.util.validator.ValidWhen"
+                 classname="org.openelisglobal.common.util.validator.ValidWhen"
                  method="validateValidWhen"
                  methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
@@ -473,7 +473,7 @@
                   msg="errors.double"/>
 
      <validator name="time"
-            classname="us.mn.state.health.lims.common.util.validator.FieldChecks"
+            classname="org.openelisglobal.common.util.validator.FieldChecks"
                method="validateTime"
          methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
@@ -486,7 +486,7 @@
                   
  
       <validator name="date"
-            classname="us.mn.state.health.lims.common.util.validator.FieldChecks"
+            classname="org.openelisglobal.common.util.validator.FieldChecks"
                method="validateDate"
          methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,

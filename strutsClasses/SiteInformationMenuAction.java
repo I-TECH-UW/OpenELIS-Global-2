@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.siteinformation.action;
+package org.openelisglobal.siteinformation.action;
 
 import java.util.List;
 
@@ -26,10 +26,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public class SiteInformationMenuAction extends BaseMenuAction {
 	private String titleKey = null;

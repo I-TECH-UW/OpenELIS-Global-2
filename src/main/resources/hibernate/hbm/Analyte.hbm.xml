@@ -3,16 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.analyte.valueholder.Analyte" table="ANALYTE" optimistic-lock="version" dynamic-update="true" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.analyte.valueholder.Analyte" table="ANALYTE" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-			<generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+			<generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">analyte_seq</param>
             </generator> 			
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <property name="selectedAnalyteId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="selectedAnalyteId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ANALYTE_ID" precision="10" scale="0" />
         </property>
         <property name="analyteName" type="java.lang.String">
@@ -34,37 +34,37 @@
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.qcanalytes.valueholder.QcAnalytes" />
+            <one-to-many class="org.openelisglobal.qcanalytes.valueholder.QcAnalytes" />
         </set>
         <set name="auxFields" inverse="true">
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.auxfield.valueholder.AuxField" />
+            <one-to-many class="org.openelisglobal.auxfield.valueholder.AuxField" />
         </set>
         <set name="methodAnalytes" inverse="true">
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.methodanalyte.valueholder.MethodAnalyte" />
+            <one-to-many class="org.openelisglobal.methodanalyte.valueholder.MethodAnalyte" />
         </set>
         <set name="results" inverse="true">
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.result.valueholder.Result" />
+            <one-to-many class="org.openelisglobal.result.valueholder.Result" />
         </set>
         <set name="instrumentAnalytes" inverse="true">
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.instrumentanalyte.valueholder.InstrumentAnalyte" />
+            <one-to-many class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte" />
         </set>
         <set name="testAnalytes" inverse="true">
             <key>
                 <column name="ANALYTE_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte" />
+            <one-to-many class="org.openelisglobal.testanalyte.valueholder.TestAnalyte" />
         </set>
 -->        
     </class>

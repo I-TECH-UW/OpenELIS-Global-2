@@ -13,7 +13,7 @@
  *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.List;
 
@@ -25,14 +25,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public class SampleTypeRenameAction extends BaseAction {
 

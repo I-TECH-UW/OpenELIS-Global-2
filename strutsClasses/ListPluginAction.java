@@ -15,7 +15,7 @@
 *
 */
 
-package us.mn.state.health.lims.analyzer.action;
+package org.openelisglobal.analyzer.action;
 
 import java.util.List;
 
@@ -27,11 +27,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.plugin.PluginLoader;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.plugin.PluginLoader;
 
 public class ListPluginAction extends BaseAction {
 

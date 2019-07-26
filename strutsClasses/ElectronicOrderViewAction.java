@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.dataexchange.order.action;
+package org.openelisglobal.dataexchange.order.action;
 
 import java.util.List;
 
@@ -10,14 +10,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
-import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
-import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.statusofsample.dao.StatusOfSampleDAO;
-import us.mn.state.health.lims.statusofsample.daoimpl.StatusOfSampleDAOImpl;
-import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
+import org.openelisglobal.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.statusofsample.dao.StatusOfSampleDAO;
+import org.openelisglobal.statusofsample.daoimpl.StatusOfSampleDAOImpl;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 
 public class ElectronicOrderViewAction extends BaseAction {
 

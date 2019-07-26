@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.action;
+package org.openelisglobal.common.action;
 
 import org.apache.struts.validator.DynaValidatorForm;
 
