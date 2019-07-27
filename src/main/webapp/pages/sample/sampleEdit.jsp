@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
-				us.mn.state.health.lims.common.formfields.FormFields,
-				us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
-	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-		        us.mn.state.health.lims.sample.util.AccessionNumberUtil,
-		        us.mn.state.health.lims.sample.bean.SampleEditItem" %>
+         import="org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.common.formfields.FormFields,
+				org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil,
+	            org.openelisglobal.common.util.ConfigurationProperties.Property,
+		        org.openelisglobal.sample.util.AccessionNumberUtil,
+		        org.openelisglobal.sample.bean.SampleEditItem" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

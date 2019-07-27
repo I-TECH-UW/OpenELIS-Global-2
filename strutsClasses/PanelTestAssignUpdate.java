@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
                                                                                                                                                           
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.List;
 
@@ -28,17 +28,17 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
-import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.panelitem.dao.PanelItemDAO;
+import org.openelisglobal.panelitem.daoimpl.PanelItemDAOImpl;
+import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
 
 
 public class PanelTestAssignUpdate extends BaseAction {

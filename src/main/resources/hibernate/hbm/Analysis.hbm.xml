@@ -3,37 +3,37 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.analysis.valueholder.Analysis" table="ANALYSIS" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.analysis.valueholder.Analysis" table="ANALYSIS" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">analysis_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-		<many-to-one name="parentResult" class="us.mn.state.health.lims.result.valueholder.Result" fetch="select">
+		<many-to-one name="parentResult" class="org.openelisglobal.result.valueholder.Result" fetch="select">
             <column name="PARENT_RESULT_ID" precision="10" scale="0" />
         </many-to-one>
-		<many-to-one name="parentAnalysis" class="us.mn.state.health.lims.analysis.valueholder.Analysis" fetch="select">
+		<many-to-one name="parentAnalysis" class="org.openelisglobal.analysis.valueholder.Analysis" fetch="select">
             <column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select" lazy="false" >
+        <many-to-one name="test" class="org.openelisglobal.test.valueholder.Test" fetch="select" lazy="false" >
             <column name="TEST_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="sampleItem" class="us.mn.state.health.lims.sampleitem.valueholder.SampleItem" fetch="select" lazy="false">
+        <many-to-one name="sampleItem" class="org.openelisglobal.sampleitem.valueholder.SampleItem" fetch="select" lazy="false">
             <column name="SAMPITEM_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select" lazy="false">
+        <many-to-one name="testSection" class="org.openelisglobal.test.valueholder.TestSection" fetch="select" lazy="false">
             <column name="TEST_SECT_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select" lazy="false">
+        <many-to-one name="panel" class="org.openelisglobal.panel.valueholder.Panel" fetch="select" lazy="false">
             <column name="panel_id" precision="10" scale="0" />
         </many-to-one>
-        <property name="revision" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="revision" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="REVISION" precision="22" scale="0" />
         </property>
-        <property name="status" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="status" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="STATUS" length="3" />
         </property>
         <property name="startedDate" type="java.sql.Date">
@@ -80,7 +80,7 @@
         </property>
 		<property name="triggeredReflex" type="boolean" column="reflex_trigger"  />
 		<property name="statusId"
-				  type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"
+				  type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
             	  column="status_id"
             	  precision="10" />
         <property name="referredOut" column="referred_out" type="java.lang.Boolean" />

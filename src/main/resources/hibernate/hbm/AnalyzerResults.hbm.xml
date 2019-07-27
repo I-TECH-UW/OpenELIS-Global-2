@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults" table="ANALYZER_RESULTS" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.analyzerresults.valueholder.AnalyzerResults" table="ANALYZER_RESULTS" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">analyzer_results_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
         <property name="analyzerId"
-        		  type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"
+        		  type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
         		  column="ANALYZER_ID" precision="10" scale="0" />
         <property name="accessionNumber" type="java.lang.String" column="ACCESSION_NUMBER" length="20" />
         <property name="testName" type="java.lang.String" column="test_name"  />
@@ -21,12 +21,12 @@
         <property name="units" type="java.lang.String" column="UNITS"  />
         <property name="isControl" type="java.lang.Boolean" column="ISCONTROL" length="1" />
         <property name="duplicateAnalyzerResultId"
-        		  type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"
+        		  type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
         		  column="DUPLICATE_ID" length="10" />
         <property name="ReadOnly" type="java.lang.Boolean" column="read_only" length="1" />
         <property name="completeDate" type="timestamp" column="complete_date" />
         <property name="testId"
-                  type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"
+                  type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
 				  column="test_id" />
 	    <property name="resultType" type="java.lang.String" column="test_result_type" length="1" />
     </class>

@@ -13,11 +13,11 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import javax.servlet.jsp.JspException;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.util.StringUtil;
 
 /**
  * Renders an HTML BUTTON tag within the Struts framework.

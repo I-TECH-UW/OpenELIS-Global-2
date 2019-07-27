@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openElisGlobalPlugin>
+<version>1.0</version>
+<analyzerImporter>
+<extension_point path="org.openelisglobal.plugin.AnalyzerImporterPlugin" >
+    <extension path="oe.plugin.analyzer.CobasC111Analyzer" />   
+    <description value="Cobas C111" />
+</extension_point>
+</analyzerImporter>
+<menu>
+    <extension_point path="org.openelisglobal.plugin.MenuPlugin" >
+    <extension path="oe.plugin.analyzer.CobasC111Menu" />   
+    <description value="Menu for Cobas C111" />
+</extension_point>
+</menu>
+<permission>
+    <extension_point path="org.openelisglobal.plugin.PermissionPlugin" >
+        <extension path="oe.plugin.analyzer.CobasC111Permission" />
+        <description value="Cobas C111 Analyzer permission" />
+    </extension_point>
+</permission>
+</openElisGlobalPlugin>

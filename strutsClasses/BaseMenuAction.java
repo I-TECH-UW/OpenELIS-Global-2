@@ -13,7 +13,7 @@
  *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  */
-package us.mn.state.health.lims.common.action;
+package org.openelisglobal.common.action;
 
 import java.util.List;
 
@@ -26,11 +26,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
+import org.openelisglobal.common.dao.BaseDAO;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
 
 public abstract class BaseMenuAction extends BaseAction implements IActionConstants {
 

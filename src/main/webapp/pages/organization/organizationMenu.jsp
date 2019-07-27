@@ -1,9 +1,9 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.organization.valueholder.Organization,
-			us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.formfields.FormFields,
-			spring.mine.internationalization.MessageUtil" %>
+	import="org.openelisglobal.organization.valueholder.Organization,
+			org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.common.formfields.FormFields,
+			org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

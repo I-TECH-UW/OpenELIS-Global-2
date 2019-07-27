@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.workplan.action;
+package org.openelisglobal.workplan.action;
 
 import java.io.File;
 import java.util.HashMap;
@@ -34,23 +34,23 @@ import org.apache.struts.action.ActionMessages;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
-import us.mn.state.health.lims.workplan.reports.IWorkplanReport;
-import us.mn.state.health.lims.workplan.reports.TestSectionWorkplanReport;
-import us.mn.state.health.lims.workplan.reports.TestWorkplanReport;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.workplan.reports.ElisaWorkplanReport;
+import org.openelisglobal.workplan.reports.IWorkplanReport;
+import org.openelisglobal.workplan.reports.TestSectionWorkplanReport;
+import org.openelisglobal.workplan.reports.TestWorkplanReport;
 
 public class PrintWorkplanReportAction extends BaseAction {
 
 	private final TestDAO testDAO = new TestDAOImpl();
-	private static us.mn.state.health.lims.workplan.reports.IWorkplanReport workplanReport;
+	private static org.openelisglobal.workplan.reports.IWorkplanReport workplanReport;
 	private String reportPath;
 
 	@Override

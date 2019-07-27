@@ -1,19 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants"%>
+	import="org.openelisglobal.common.action.IActionConstants"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="java.util.List,
-                 us.mn.state.health.lims.testconfiguration.beans.TestCatalogBean"%>
-<%@ page import="us.mn.state.health.lims.common.util.IdValuePair"%>
-<%@ page import="spring.mine.internationalization.MessageUtil"%>
-<%@ page import="us.mn.state.health.lims.common.util.Versioning"%>
+	import="java.util.List, java.util.Locale,
+                 org.openelisglobal.testconfiguration.beans.TestCatalogBean"%>
+<%@ page import="org.openelisglobal.common.util.IdValuePair"%>
+<%@ page import="org.openelisglobal.internationalization.MessageUtil"%>
+<%@ page import="org.openelisglobal.common.util.Versioning"%>
 <%@ page
-	import="us.mn.state.health.lims.common.util.SystemConfiguration"%>
+	import="org.openelisglobal.common.util.SystemConfiguration"%>
 <%@ page
-	import="spring.service.typeoftestresult.TypeOfTestResultServiceImpl"%>
+	import="org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl"%>
 <%@ page
-	import="us.mn.state.health.lims.common.provider.query.EntityNamesProvider"%>
+	import="org.openelisglobal.common.provider.query.EntityNamesProvider"%>
 <%@ page
-	import="us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean"%>
+	import="org.openelisglobal.testconfiguration.beans.ResultLimitBean"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -1634,16 +1634,37 @@ td {
 					<td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.name" /></span></td>
 					<td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.report.name" /></span></td>
 				</tr>
+				<%
+					int i = 0;
+					while (i < bean.getLocalization().getAllActiveLocales().size()) {
+						Locale locale1 = bean.getLocalization().getAllActiveLocales().get(i++); 
+						Locale locale2 = null;
+						if (i < bean.getLocalization().getAllActiveLocales().size()) {
+							locale2 = bean.getLocalization().getAllActiveLocales().get(i++); 
+						}
+						if (locale2 != null) {
+					%>
 				<tr>
-					<td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishName()%></b>
+					<td width="25%"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale1) %></b>
 					</td>
-					<td width="25%"><span class="catalog-label">Fr.</span> <b><%=bean.getFrenchName()%></b>
+					<td width="25%"><span class="catalog-label"><%=locale2.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale2) %></b>
 					</td>
-					<td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishReportName()%></b>
+					<td width="25%"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale1) %></b>
 					</td>
-					<td width="25%"><span class="catalog-label">Fr.</span> <b><%=bean.getFrenchReportName()%></b>
+					<td width="25%"><span class="catalog-label"><%=locale2.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale2) %></b>
 					</td>
 				</tr>
+					<%	} else { %>
+				<tr>
+					<td colspan="2"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+					<td colspan="2"><span class="catalog-label"><%=locale1.getLanguage() %>.</span> <b><%=bean.getReportLocalization().getLocalizedValue(locale1) %></b>
+					</td>
+				</tr>
+					<%
+						}
+					}
+				%>
 				<tr>
 					<td><b><%=bean.getActive()%></b></td>
 					<td><b><%=bean.getOrderable()%></b></td>

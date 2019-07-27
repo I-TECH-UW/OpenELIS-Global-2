@@ -13,19 +13,19 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.testanalyte.action;
+package org.openelisglobal.testanalyte.action;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
-import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
-import us.mn.state.health.lims.testreflex.daoimpl.TestReflexDAOImpl;
-import us.mn.state.health.lims.testresult.valueholder.TestResult;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.result.dao.ResultDAO;
+import org.openelisglobal.result.daoimpl.ResultDAOImpl;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.testreflex.dao.TestReflexDAO;
+import org.openelisglobal.testreflex.daoimpl.TestReflexDAOImpl;
+import org.openelisglobal.testresult.valueholder.TestResult;
 
 public abstract class TestAnalyteTestResultBaseAction extends BaseAction {
 

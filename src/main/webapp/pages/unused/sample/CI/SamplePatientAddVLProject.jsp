@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
-				us.mn.state.health.lims.common.util.SystemConfiguration,
-				us.mn.state.health.lims.common.util.ConfigurationProperties,
-				us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-		        us.mn.state.health.lims.common.formfields.FormFields,
-	            us.mn.state.health.lims.common.util.Versioning,
-                us.mn.state.health.lims.login.valueholder.UserSessionData,
+         import="org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.common.util.SystemConfiguration,
+				org.openelisglobal.common.util.ConfigurationProperties,
+				org.openelisglobal.common.util.ConfigurationProperties.Property,
+		        org.openelisglobal.common.formfields.FormFields,
+	            org.openelisglobal.common.util.Versioning,
+                org.openelisglobal.login.valueholder.UserSessionData,
 		        java.util.HashSet"%>
 
 <%@ page isELIgnored="false" %>
@@ -83,8 +83,8 @@ projectChecker = null;
  * A list of answers that equate to yes in certain lists when comparing (cross check or 2nd entry for a match).
  */
 yesesInDiseases = [
-     <%= us.mn.state.health.lims.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId() %>,
-	 <%= us.mn.state.health.lims.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId() %>
+     <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId() %>,
+	 <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId() %>
 	 ];
 
 function /*void*/ makeDirty(){

@@ -1,6 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants"
+	import="org.openelisglobal.common.action.IActionConstants"
 %>
 
 <%@ page isELIgnored="false" %>

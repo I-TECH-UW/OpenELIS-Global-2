@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.sample.action;
+package org.openelisglobal.sample.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
@@ -12,19 +12,19 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.ObservationHistoryList;
-import us.mn.state.health.lims.organization.util.OrganizationTypeList;
-import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
-import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.sample.util.CI.ProjectForm;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.organization.util.OrganizationTypeList;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.sample.util.CI.ProjectForm;
 
 /**
  * The SampleEntryByProjectAction class represents the initial Action for the

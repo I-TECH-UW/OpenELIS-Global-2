@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.dataexchange.resultreporting.action;
+package org.openelisglobal.dataexchange.resultreporting.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +30,17 @@ import org.apache.struts.action.DynaActionForm;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.scheduler.LateStartScheduler;
-import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
-import us.mn.state.health.lims.scheduler.daoimpl.CronSchedulerDAOImpl;
-import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.scheduler.LateStartScheduler;
+import org.openelisglobal.scheduler.dao.CronSchedulerDAO;
+import org.openelisglobal.scheduler.daoimpl.CronSchedulerDAOImpl;
+import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public class ResultReportingConfigurationUpdateAction extends BaseAction {
 

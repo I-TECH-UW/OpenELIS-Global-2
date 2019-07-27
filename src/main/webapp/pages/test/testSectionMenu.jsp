@@ -1,7 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.test.valueholder.TestSection,
-			us.mn.state.health.lims.common.action.IActionConstants" %>
+	import="org.openelisglobal.test.valueholder.TestSection,
+			org.openelisglobal.common.action.IActionConstants" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -41,7 +41,7 @@
 	   </th>
 	   
 	</tr>
-	<logic:iterate id="testSec" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.test.valueholder.TestSection">
+	<logic:iterate id="testSec" indexId="ctr" name="${form.formName}" property="menuList" type="org.openelisglobal.test.valueholder.TestSection">
 	<bean:define id="testSecID" name="testSec" property="id"/>
 	
 	  <tr>	

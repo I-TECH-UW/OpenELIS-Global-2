@@ -3,16 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection" table="TEST_SECTION" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.renametestsection.valueholder.RenameTestSection" table="TEST_SECTION" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">test_section_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="organization" class="us.mn.state.health.lims.organization.valueholder.Organization" fetch="select">
+        <many-to-one name="organization" class="org.openelisglobal.organization.valueholder.Organization" fetch="select">
             <column name="ORG_ID" precision="10" scale="0" />
         </many-to-one>
         <property name="testSectionName" type="java.lang.String">
@@ -26,11 +26,11 @@
         </property>
 
   		<property name="isActive" column="is_active"  type="java.lang.String"/>      
-        <many-to-one name="localization" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" >
+        <many-to-one name="localization" class="org.openelisglobal.localization.valueholder.Localization" fetch="select" >
             <column name="name_localization_id" precision="10" scale="0" />
         </many-to-one>
         
-        <many-to-one name="parentTestSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select">
+        <many-to-one name="parentTestSection" class="org.openelisglobal.test.valueholder.TestSection" fetch="select">
              <column name="PARENT_TEST_SECTION" precision="10" scale="0" />
         </many-to-one>
 

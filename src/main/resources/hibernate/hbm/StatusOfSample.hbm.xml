@@ -3,11 +3,11 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample" table="STATUS_OF_SAMPLE" optimistic-lock="version" dynamic-update="true">
+    <class name="org.openelisglobal.statusofsample.valueholder.StatusOfSample" table="STATUS_OF_SAMPLE" optimistic-lock="version" dynamic-update="true">
 
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
         	<column name="ID" precision="10" scale="0" />
-        	<generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+        	<generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
         		<param name="sequence_name">status_of_sample_seq</param>
         	</generator>
         </id>
@@ -19,7 +19,7 @@
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION"  length="240"/>
         </property>
-        <property name="code" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="code" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="CODE" length="3" />
         </property>
         <property name="statusType" type="java.lang.String">

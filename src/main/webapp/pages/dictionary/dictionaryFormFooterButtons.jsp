@@ -1,9 +1,9 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-            us.mn.state.health.lims.common.util.Versioning,
-	        us.mn.state.health.lims.common.util.SystemConfiguration,
-	        spring.mine.internationalization.MessageUtil"
+	import="org.openelisglobal.common.action.IActionConstants,
+            org.openelisglobal.common.util.Versioning,
+	        org.openelisglobal.common.util.SystemConfiguration,
+	        org.openelisglobal.internationalization.MessageUtil"
 %>
 
 <%@ page isELIgnored="false" %>

@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.samplebatchentry.action;
+package org.openelisglobal.samplebatchentry.action;
 
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -16,24 +16,24 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.provider.validation.DateValidationProvider;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.sample.action.BaseSampleEntryAction;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.provider.validation.DateValidationProvider;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.sample.action.BaseSampleEntryAction;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 
 public class SampleBatchEntryAction extends BaseSampleEntryAction {
 

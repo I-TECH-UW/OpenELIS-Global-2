@@ -14,7 +14,7 @@
  * Copyright (C) I-TECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.resultvalidation.action;
+package org.openelisglobal.resultvalidation.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +28,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.resultvalidation.action.util.ResultValidationPaging;
-import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
-import us.mn.state.health.lims.resultvalidation.util.ResultsValidationRetroCIUtility;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.resultvalidation.action.util.ResultValidationPaging;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.resultvalidation.util.ResultsValidationRetroCIUtility;
 
 public class ResultValidationRetroCIAction extends BaseResultValidationRetroCIAction {
 

@@ -14,7 +14,7 @@
 * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package us.mn.state.health.lims.audittrail.action;
+package org.openelisglobal.audittrail.action;
 
 import java.util.List;
 
@@ -27,11 +27,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
-import us.mn.state.health.lims.audittrail.action.workers.AuditTrailViewWorker;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
+import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
+import org.openelisglobal.audittrail.action.workers.AuditTrailViewWorker;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
 
 public class AuditTrailViewAction extends BaseAction {
 

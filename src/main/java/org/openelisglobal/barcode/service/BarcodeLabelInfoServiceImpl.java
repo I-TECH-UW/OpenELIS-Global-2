@@ -1,0 +1,31 @@
+package org.openelisglobal.barcode.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO;
+import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
+
+@Service
+public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLabelInfo, String>
+		implements BarcodeLabelInfoService {
+	@Autowired
+	protected BarcodeLabelInfoDAO baseObjectDAO;
+
+	BarcodeLabelInfoServiceImpl() {
+		super(BarcodeLabelInfo.class);
+	}
+
+	@Override
+	protected BarcodeLabelInfoDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BarcodeLabelInfo getDataByCode(String code) {
+		return getMatch("code", code).orElse(null);
+	}
+}

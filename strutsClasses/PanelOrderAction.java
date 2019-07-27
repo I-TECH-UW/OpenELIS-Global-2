@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +30,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panel.valueholder.PanelSortOrderComparator;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
 
 public class PanelOrderAction extends BaseAction {
     @Override

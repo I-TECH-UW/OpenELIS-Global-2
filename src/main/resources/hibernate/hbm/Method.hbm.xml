@@ -3,10 +3,10 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.method.valueholder.Method" table="METHOD" optimistic-lock="version" dynamic-update="true" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.method.valueholder.Method" table="METHOD" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">method_seq</param>
             </generator>	
         </id>
@@ -36,25 +36,25 @@
             <key>
                 <column name="METHOD_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.instrumentanalyte.valueholder.InstrumentAnalyte" />
+            <one-to-many class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte" />
         </set>
         <set name="methodResults" inverse="true">
             <key>
                 <column name="METHOD_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.methodresult.valueholder.MethodResult" />
+            <one-to-many class="org.openelisglobal.methodresult.valueholder.MethodResult" />
         </set>
         <set name="methodAnalytes" inverse="true">
             <key>
                 <column name="METHOD_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.methodanalyte.valueholder.MethodAnalyte" />
+            <one-to-many class="org.openelisglobal.methodanalyte.valueholder.MethodAnalyte" />
         </set>
         <set name="tests" inverse="true">
             <key>
                 <column name="METHOD_ID" precision="10" scale="0" />
             </key>
-            <one-to-many class="us.mn.state.health.lims.test.valueholder.Test" />
+            <one-to-many class="org.openelisglobal.test.valueholder.Test" />
         </set>
 -->        
     </class>

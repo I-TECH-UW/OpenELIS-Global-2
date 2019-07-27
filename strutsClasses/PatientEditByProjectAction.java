@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.patient.action;
+package org.openelisglobal.patient.action;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,14 +26,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.patient.action.bean.PatientSearch;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.patient.action.bean.PatientSearch;
 
 
 /**
- * Action for Côte d'Ivoire study based patient edit.
+ * Action for Cï¿½te d'Ivoire study based patient edit.
  * @author pahill
  * @since 2010-04-16
  */

@@ -3,8 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.sampletracking.valueholder.SampleTracking" table="SAMPLETRACKING" >
-        <id name="accNum" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.sampletracking.valueholder.SampleTracking" table="SAMPLETRACKING" >
+        <id name="accNum" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="accNum" length="10" />
             <generator class="assigned"/>
         </id>  	
@@ -20,7 +20,7 @@
         <property name="patientFirstName" type="java.lang.String">
             <column name="PATIENTFIRSTNAME" length="20" />
         </property>
-        <property name="organizationLocalAbbreviation" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="organizationLocalAbbreviation" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ORG_LOCAL_ABBREV" length="10" />
         </property>
         <property name="orgName" type="java.lang.String">
@@ -29,13 +29,13 @@
         <property name="recdDate" type="java.lang.String">
             <column name="RECDDATE" length="7" />
         </property>
-        <property name="tosId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="tosId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="TOSID" length="10" />
         </property>
         <property name="tosDesc" type="java.lang.String">
             <column name="TOSDESC" length="20" />
         </property>
-        <property name="sosId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="sosId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="SOSID" length="10" />
         </property>
         <property name="sosDesc" type="java.lang.String">

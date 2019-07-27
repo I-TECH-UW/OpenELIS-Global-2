@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.patient.action;
+package org.openelisglobal.patient.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -35,37 +35,37 @@ import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.validation.Errors;
 
-import spring.mine.common.validator.BaseErrors;
-import spring.mine.sample.form.SamplePatientEntryForm;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
-import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.address.valueholder.PersonAddress;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
-import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientPatientTypeDAOImpl;
-import us.mn.state.health.lims.patienttype.util.PatientTypeMap;
-import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
-import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.address.dao.AddressPartDAO;
+import org.openelisglobal.address.dao.PersonAddressDAO;
+import org.openelisglobal.address.daoimpl.AddressPartDAOImpl;
+import org.openelisglobal.address.daoimpl.PersonAddressDAOImpl;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.PersonAddress;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.dao.PatientDAO;
+import org.openelisglobal.patient.daoimpl.PatientDAOImpl;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.dao.PatientIdentityDAO;
+import org.openelisglobal.patientidentity.daoimpl.PatientIdentityDAOImpl;
+import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+import org.openelisglobal.patienttype.dao.PatientPatientTypeDAO;
+import org.openelisglobal.patienttype.daoimpl.PatientPatientTypeDAOImpl;
+import org.openelisglobal.patienttype.util.PatientTypeMap;
+import org.openelisglobal.patienttype.valueholder.PatientPatientType;
+import org.openelisglobal.person.dao.PersonDAO;
+import org.openelisglobal.person.daoimpl.PersonDAOImpl;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.sample.dao.SearchResultsDAO;
+import org.openelisglobal.sample.daoimpl.SearchResultsDAOImp;
 
 public class PatientManagementUpdateAction extends BaseAction implements IPatientUpdate {
 
@@ -165,10 +165,10 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see us.mn.state.health.lims.patient.action.IPatientUpdate#preparePatientData
+	 * @see org.openelisglobal.patient.action.IPatientUpdate#preparePatientData
 	 * (org.apache.struts.action.ActionMapping,
 	 * javax.servlet.http.HttpServletRequest,
-	 * us.mn.state.health.lims.common.action.BaseActionForm)
+	 * org.openelisglobal.common.action.BaseActionForm)
 	 */
 	public Errors preparePatientData(ActionMapping mapping, HttpServletRequest request,
 			PatientManagementInfo patientInfo)
@@ -288,8 +288,8 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * us.mn.state.health.lims.patient.action.IPatientUpdate#setPatientUpdateStatus
-	 * (us.mn.state.health.lims.common.action.BaseActionForm)
+	 * org.openelisglobal.patient.action.IPatientUpdate#setPatientUpdateStatus
+	 * (org.openelisglobal.common.action.BaseActionForm)
 	 */
 	@Override
 	public void setPatientUpdateStatus(PatientManagementInfo patientInfo) {
@@ -309,7 +309,7 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * us.mn.state.health.lims.patient.action.IPatientUpdate#getPatientUpdateStatus
+	 * org.openelisglobal.patient.action.IPatientUpdate#getPatientUpdateStatus
 	 * ()
 	 */
 	@Override

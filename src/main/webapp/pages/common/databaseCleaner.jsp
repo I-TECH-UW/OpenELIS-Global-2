@@ -1,6 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.util.StringUtil"
+	import="org.openelisglobal.common.util.StringUtil"
 %>
 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

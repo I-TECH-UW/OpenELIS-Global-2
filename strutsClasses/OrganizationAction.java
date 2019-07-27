@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.organization.action;
+package org.openelisglobal.organization.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -29,30 +29,30 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.OrganizationAddressDAOImpl;
-import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationTypeDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.organization.valueholder.OrganizationType;
+import org.openelisglobal.address.dao.AddressPartDAO;
+import org.openelisglobal.address.dao.OrganizationAddressDAO;
+import org.openelisglobal.address.daoimpl.AddressPartDAOImpl;
+import org.openelisglobal.address.daoimpl.OrganizationAddressDAOImpl;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.OrganizationAddress;
+import org.openelisglobal.citystatezip.dao.CityStateZipDAO;
+import org.openelisglobal.citystatezip.daoimpl.CityStateZipDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.dao.OrganizationOrganizationTypeDAO;
+import org.openelisglobal.organization.dao.OrganizationTypeDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
+import org.openelisglobal.organization.daoimpl.OrganizationTypeDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 
 /**
  * @author diane benz

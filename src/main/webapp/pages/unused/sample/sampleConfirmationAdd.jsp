@@ -1,14 +1,14 @@
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.formfields.FormFields,
-			us.mn.state.health.lims.common.formfields.FormFields.Field,
-			us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-			us.mn.state.health.lims.common.util.DateUtil,
-			spring.mine.internationalization.MessageUtil,
-			us.mn.state.health.lims.common.util.Versioning,
-			us.mn.state.health.lims.common.util.IdValuePair"%>
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.common.formfields.FormFields,
+			org.openelisglobal.common.formfields.FormFields.Field,
+			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			org.openelisglobal.common.util.DateUtil,
+			org.openelisglobal.internationalization.MessageUtil,
+			org.openelisglobal.common.util.Versioning,
+			org.openelisglobal.common.util.IdValuePair"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

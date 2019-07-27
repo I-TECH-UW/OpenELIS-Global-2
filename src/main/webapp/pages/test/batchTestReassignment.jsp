@@ -1,11 +1,11 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
          import="java.util.List,
-         		us.mn.state.health.lims.common.action.IActionConstants,
-          		us.mn.state.health.lims.common.util.IdValuePair,
-          		spring.mine.internationalization.MessageUtil,
-         		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.test.action.BatchTestStatusChangeBean" %>
+         		org.openelisglobal.common.action.IActionConstants,
+          		org.openelisglobal.common.util.IdValuePair,
+          		org.openelisglobal.internationalization.MessageUtil,
+         		org.openelisglobal.common.util.Versioning,
+         		org.openelisglobal.test.action.BatchTestStatusChangeBean" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

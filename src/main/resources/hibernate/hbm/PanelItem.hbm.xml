@@ -3,25 +3,25 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.panelitem.valueholder.PanelItem" table="PANEL_ITEM" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.panelitem.valueholder.PanelItem" table="PANEL_ITEM" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
             	<param name="sequence_name">panel_item_seq</param>
             </generator>
         </id>
 
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select" lazy="false">
+        <many-to-one name="panel" class="org.openelisglobal.panel.valueholder.Panel" fetch="select" lazy="false">
             <column name="PANEL_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         
-         <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select" lazy="false">
+         <many-to-one name="test" class="org.openelisglobal.test.valueholder.Test" fetch="select" lazy="false">
             <column name="TEST_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         
-        <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="sortOrder" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="SORT_ORDER" precision="22" scale="0" />
         </property>
         <!--bugzilla 2559-->

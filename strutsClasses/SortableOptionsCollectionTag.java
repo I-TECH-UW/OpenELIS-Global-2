@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ import org.apache.struts.taglib.TagUtils;
 import org.apache.struts.taglib.html.Constants;
 import org.apache.struts.taglib.html.SelectTag;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.util.StringUtil;
 
 /**
  * @author benzd1
@@ -36,7 +36,7 @@ import us.mn.state.health.lims.common.util.StringUtil;
  * Test dropdown: display label as test.name dash test.description and allow toggling between
  * sorting by test.name and test.description. If sorting by test.description render labels
  * as alternateLabel (test.description dash test.name) property defined in 
- * us.mn.state.health.lims.test.valueholder.Test
+ * org.openelisglobal.test.valueholder.Test
  */
 public class SortableOptionsCollectionTag extends OptionsCollectionTag {
 

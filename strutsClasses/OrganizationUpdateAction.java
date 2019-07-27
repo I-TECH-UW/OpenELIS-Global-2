@@ -13,7 +13,7 @@
  *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  */
-package us.mn.state.health.lims.organization.action;
+package org.openelisglobal.organization.action;
 
 import java.util.List;
 
@@ -27,34 +27,34 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.OrganizationAddressDAOImpl;
-import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.provider.validation.CityStateZipComboValidationProvider;
-import us.mn.state.health.lims.common.provider.validation.CityValidationProvider;
-import us.mn.state.health.lims.common.provider.validation.ZipValidationProvider;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.address.dao.AddressPartDAO;
+import org.openelisglobal.address.dao.OrganizationAddressDAO;
+import org.openelisglobal.address.daoimpl.AddressPartDAOImpl;
+import org.openelisglobal.address.daoimpl.OrganizationAddressDAOImpl;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.OrganizationAddress;
+import org.openelisglobal.citystatezip.dao.CityStateZipDAO;
+import org.openelisglobal.citystatezip.daoimpl.CityStateZipDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.CityStateZipComboValidationProvider;
+import org.openelisglobal.common.provider.validation.CityValidationProvider;
+import org.openelisglobal.common.provider.validation.ZipValidationProvider;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.dao.OrganizationOrganizationTypeDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
 
 /**
  * @author diane benz

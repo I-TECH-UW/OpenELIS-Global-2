@@ -3,20 +3,20 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.audittrail.valueholder.History" table="HISTORY" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.audittrail.valueholder.History" table="HISTORY" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">history_seq</param>
             </generator> 
         </id>
-        <property name="sysUserId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="sysUserId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="SYS_USER_ID" precision="10" scale="0" not-null="true" />
         </property>
-        <property name="referenceId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="referenceId" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="REFERENCE_ID" precision="22" scale="0" not-null="true" />
         </property>
-        <property name="referenceTable" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <property name="referenceTable" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="REFERENCE_TABLE" precision="22" scale="0" not-null="true" />
         </property>
         <property name="timestamp" type="java.sql.Timestamp">

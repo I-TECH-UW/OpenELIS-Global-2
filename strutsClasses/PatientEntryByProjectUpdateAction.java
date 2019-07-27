@@ -15,7 +15,7 @@
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.patient.action;
+package org.openelisglobal.patient.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,17 +25,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
-import us.mn.state.health.lims.patient.saving.PatientEntry;
-import us.mn.state.health.lims.patient.saving.PatientEntryAfterAnalyzer;
-import us.mn.state.health.lims.patient.saving.PatientEntryAfterSampleEntry;
-import us.mn.state.health.lims.patient.saving.PatientSecondEntry;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.patient.saving.Accessioner;
+import org.openelisglobal.patient.saving.PatientEditUpdate;
+import org.openelisglobal.patient.saving.PatientEntry;
+import org.openelisglobal.patient.saving.PatientEntryAfterAnalyzer;
+import org.openelisglobal.patient.saving.PatientEntryAfterSampleEntry;
+import org.openelisglobal.patient.saving.PatientSecondEntry;
 
 /***
- * Action controller for Côte d'Ivoire 
+ * Action controller for Cï¿½te d'Ivoire 
  * @author pahill
  * @since 2010-04-12
  */

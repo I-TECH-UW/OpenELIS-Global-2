@@ -1,7 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.userrole.valueholder.UserRole" %>
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.userrole.valueholder.UserRole" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

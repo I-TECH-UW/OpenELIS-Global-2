@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.samplebatchentry.action;
+package org.openelisglobal.samplebatchentry.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,15 +8,15 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.sample.action.BaseSampleEntryAction;
-import us.mn.state.health.lims.sample.form.ProjectData;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.sample.action.BaseSampleEntryAction;
+import org.openelisglobal.sample.form.ProjectData;
 
 public class SampleBatchEntrySetupAction extends BaseSampleEntryAction {
 

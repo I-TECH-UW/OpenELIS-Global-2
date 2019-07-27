@@ -2,11 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="us.mn.state.health.lims.systemusermodule.valueholder">
+<hibernate-mapping package="org.openelisglobal.systemusermodule.valueholder">
     <class name="RoleModule" table="SYSTEM_ROLE_MODULE" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">system_user_module_seq</param>
             </generator>   
         </id>                                            
@@ -23,10 +23,10 @@
         <property name="hasDelete" type="java.lang.String">
             <column name="HAS_DELETE" length="1" />
         </property>
-        <many-to-one name="role" class="us.mn.state.health.lims.role.valueholder.Role" fetch="select">
+        <many-to-one name="role" class="org.openelisglobal.role.valueholder.Role" fetch="select">
             <column name="SYSTEM_ROLE_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="systemModule" class="us.mn.state.health.lims.systemmodule.valueholder.SystemModule" fetch="select">
+        <many-to-one name="systemModule" class="org.openelisglobal.systemmodule.valueholder.SystemModule" fetch="select">
             <column name="SYSTEM_MODULE_ID" precision="10" scale="0" />
         </many-to-one>                     
      </class>

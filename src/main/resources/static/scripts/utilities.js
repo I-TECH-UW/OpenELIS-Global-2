@@ -163,7 +163,7 @@ processDateSuccessById(xhr) {
 }
 
 /*
- * evaluates if the given date is valid.  Delegates to us.mn.state.health.lims.common.util.validator.DateValidater
+ * evaluates if the given date is valid.  Delegates to org.openelisglobal.common.util.validator.DateValidater
  *
  * date -- the date to be evaluated -- required
  * successCallback -- function to be called if call is successful -- required

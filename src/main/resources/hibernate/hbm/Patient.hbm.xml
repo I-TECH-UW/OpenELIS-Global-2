@@ -3,16 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.patient.valueholder.Patient" table="PATIENT" optimistic-lock="version" dynamic-update="true" >
-        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+    <class name="org.openelisglobal.patient.valueholder.Patient" table="PATIENT" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">patient_seq</param>
             </generator>     
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="person" class="us.mn.state.health.lims.person.valueholder.Person" fetch="select" lazy="false">
+        <many-to-one name="person" class="org.openelisglobal.person.valueholder.Person" fetch="select" lazy="false">
             <column name="PERSON_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         <property name="race" type="java.lang.String">

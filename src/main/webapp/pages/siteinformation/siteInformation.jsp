@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
-                 spring.mine.internationalization.MessageUtil" %>
+         import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -56,10 +56,16 @@
     </c:if>
     <c:if test="${not form.encrypted}">
         <c:if test="${form.tag == 'localization'}" >
-            <label for="english" ><spring:message code="label.english" /></label>
-            <form:input path="englishValue" size="60" maxlength="120" cssClass="inputWidget" id="english"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<label for="french" ><spring:message code="label.french" /></label>
-            <form:input path="frenchValue" size="60" maxlength="120" cssClass="inputWidget" id="french"/>
+        	<table>
+        	<c:forEach items="${form.localization.localesSortedForDisplay}" var="locale" varStatus="iter">
+        		<c:if test="${iter.index % 2 == 0 }"> <tr> </c:if>
+        		<td>
+	            <label for="${locale.displayLanguage}"><c:out value="${locale.displayLanguage}"/>: </label>
+	            <form:input path="localization.localeValues['${locale}']" size="60" maxlength="120" cssClass="inputWidget" id="${locale.displayLanguage}"/>
+        		</td>
+        		<c:if test="${iter.index % 2 == 1 }"> </tr> </c:if>
+        	</c:forEach>
+        	</table>
         </c:if>
         <c:if test="${form.tag != 'localization'}">
             <form:input path="value" size="60" maxlength="120" cssClass="inputWidget"/>

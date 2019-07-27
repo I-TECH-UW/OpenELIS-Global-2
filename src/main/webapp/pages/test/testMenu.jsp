@@ -1,6 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants" %>
+	import="org.openelisglobal.common.action.IActionConstants" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -44,7 +44,7 @@
 	   	  <spring:message code="test.sortOrder"/>
 	   </th> 
     </tr>
-	<logic:iterate id="tst" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.test.valueholder.Test">
+	<logic:iterate id="tst" indexId="ctr" name="${form.formName}" property="menuList" type="org.openelisglobal.test.valueholder.Test">
 	<bean:define id="tstID" name="tst" property="id"/>
 	  <tr>
 	   <td class="textcontent">

@@ -1,10 +1,10 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-	spring.mine.internationalization.MessageUtil,
-	us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-    us.mn.state.health.lims.common.util.Versioning,
-	us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator"
+	import="org.openelisglobal.common.action.IActionConstants,
+	org.openelisglobal.internationalization.MessageUtil,
+	org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+    org.openelisglobal.common.util.Versioning,
+	org.openelisglobal.common.provider.validation.IAccessionNumberValidator"
 %>
 
 <%@ page isELIgnored="false" %>

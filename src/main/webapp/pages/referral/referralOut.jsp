@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.DateUtil,
-                 spring.mine.internationalization.MessageUtil,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.util.DateUtil,
+                 org.openelisglobal.internationalization.MessageUtil,
                  java.util.List,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.referral.action.beanitems.ReferralItem,
-                 us.mn.state.health.lims.common.util.IdValuePair,
-                 us.mn.state.health.lims.referral.action.beanitems.ReferredTest" %>
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.referral.action.beanitems.ReferralItem,
+                 org.openelisglobal.common.util.IdValuePair,
+                 org.openelisglobal.referral.action.beanitems.ReferredTest" %>
 
 
 <%@ page isELIgnored="false" %>

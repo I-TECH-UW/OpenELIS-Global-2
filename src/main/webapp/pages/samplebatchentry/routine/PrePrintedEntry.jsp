@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-                 us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator" %>
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator" %>
                  
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

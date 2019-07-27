@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.patient.action;
+package org.openelisglobal.patient.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -28,16 +28,16 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.dictionary.ObservationHistoryList;
-import us.mn.state.health.lims.organization.util.OrganizationTypeList;
-import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.RequestType;
-import us.mn.state.health.lims.patient.util.PatientUtil;
-import us.mn.state.health.lims.patient.valueholder.ObservationData;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.organization.util.OrganizationTypeList;
+import org.openelisglobal.patient.saving.Accessioner;
+import org.openelisglobal.patient.saving.RequestType;
+import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.patient.valueholder.ObservationData;
 
 /**
  * Base class to share between setup actions and update actions for both entry and edit of patient.

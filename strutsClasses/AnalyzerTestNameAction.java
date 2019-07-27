@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.analyzerimport.action;
+package org.openelisglobal.analyzerimport.action;
 
 import java.util.List;
 
@@ -28,13 +28,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
-import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
+import org.openelisglobal.analyzer.dao.AnalyzerDAO;
+import org.openelisglobal.analyzer.daoimpl.AnalyzerDAOImpl;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
 
 public class AnalyzerTestNameAction extends BaseAction {
 

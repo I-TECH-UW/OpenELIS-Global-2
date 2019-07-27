@@ -15,7 +15,7 @@
 * 
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.inventory.action;
+package org.openelisglobal.inventory.action;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,36 +34,36 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
-import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
-import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryItemDAOImpl;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryLocationDAOImpl;
-import us.mn.state.health.lims.inventory.daoimpl.InventoryReceiptDAOImpl;
-import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
-import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
-import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.scriptlet.dao.ScriptletDAO;
-import us.mn.state.health.lims.scriptlet.daoimpl.ScriptletDAOImpl;
-import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.inventory.dao.InventoryItemDAO;
+import org.openelisglobal.inventory.dao.InventoryLocationDAO;
+import org.openelisglobal.inventory.dao.InventoryReceiptDAO;
+import org.openelisglobal.inventory.daoimpl.InventoryItemDAOImpl;
+import org.openelisglobal.inventory.daoimpl.InventoryLocationDAOImpl;
+import org.openelisglobal.inventory.daoimpl.InventoryReceiptDAOImpl;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.inventory.valueholder.InventoryItem;
+import org.openelisglobal.inventory.valueholder.InventoryLocation;
+import org.openelisglobal.inventory.valueholder.InventoryReceipt;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.scriptlet.dao.ScriptletDAO;
+import org.openelisglobal.scriptlet.daoimpl.ScriptletDAOImpl;
+import org.openelisglobal.scriptlet.valueholder.Scriptlet;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
 
 public class InventoryUpdateAction extends BaseAction {
 
