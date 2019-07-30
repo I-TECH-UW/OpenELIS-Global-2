@@ -1,12 +1,14 @@
+====================
 Analyzer plugins
-## Background
+=====================
+-Background
 
 We support two models of importing analyzer results. The older model,
 which we are phasing out, has the code for importing analyzer results as
 part of the core of OpenELIS. The newer model which all new analyzers
 should use is a plugin model.
 
-## Basics
+-Basics
 
 There is a directory <AppRoot>/plugin in OpenElis. Any jar file in this
 directory will be processed and if it is a valid analyzer plugin it will
