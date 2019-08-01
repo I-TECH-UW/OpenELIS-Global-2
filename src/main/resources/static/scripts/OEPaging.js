@@ -13,9 +13,9 @@ function OEPager(formName, sufix) {
 		//this.form.action = this.formName.sub('Form', '') +".do?page=" + (this.currentPageNumber + 1) + this.sufix;
 		var url = window.location.href;
 		if (url.indexOf("RetroC")!==-1){
-			this.form.action = this.formName.sub('Form', '') +"RetroC.do?page=" + (this.currentPageNumber + 1) + this.sufix;
+			this.form.action = this.formName.sub('Form', '') +"RetroC.do?paging=true&page=" + (this.currentPageNumber + 1) + this.sufix;
 		}
-		else { this.form.action = this.formName.sub('Form', '') +".do?page=" + (this.currentPageNumber + 1) + this.sufix;}
+		else { this.form.action = this.formName.sub('Form', '') +".do?paging=true&page=" + (this.currentPageNumber + 1) + this.sufix;}
 		//'<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
@@ -25,23 +25,23 @@ function OEPager(formName, sufix) {
 		//this.form.action = this.formName.sub('Form', '') +"RetroC.do?page=" + (this.currentPageNumber - 1) + this.sufix;
 		var url = window.location.href;
 		if (url.indexOf("RetroC")!==-1){
-			this.form.action = this.formName.sub('Form', '') +"RetroC.do?page=" + (this.currentPageNumber - 1) + this.sufix;
+			this.form.action = this.formName.sub('Form', '') +"RetroC.do?paging=true&page=" + (this.currentPageNumber - 1) + this.sufix;
 		}
-		else { this.form.action = this.formName.sub('Form', '') +".do?page=" + (this.currentPageNumber - 1) + this.sufix;}
+		else { this.form.action = this.formName.sub('Form', '') +".do?paging=true&page=" + (this.currentPageNumber - 1) + this.sufix;}
 		//		+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
 
 	this.jumpToPage = function(page) {
 		window.onbeforeunload = null;
-		this.form.action = this.formName.sub('Form', '') + ".do?page=" + page + this.sufix;
+		this.form.action = this.formName.sub('Form', '') + ".do?paging=true&page=" + page + this.sufix;
 			//+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
 
 	this.jumpToPageToSearch = function(page, term) {
 		window.onbeforeunload = null;
-		this.form.action = this.formName.sub('Form', '') + ".do?page=" + page + "&searchTerm=" + term + this.sufix;
+		this.form.action = this.formName.sub('Form', '') + ".do?paging=true&page=" + page + "&searchTerm=" + term + this.sufix;
 			//+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
