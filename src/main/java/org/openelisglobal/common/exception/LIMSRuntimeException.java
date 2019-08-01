@@ -29,90 +29,96 @@ import org.apache.commons.logging.Log;
  * Specialized exceptions should extend this class.
  */
 public class LIMSRuntimeException extends RuntimeException {
-	private Exception exception; // Holds the detailed exception
+    private Exception exception; // Holds the detailed exception
 
-	/**
-	 * Creates a new LIMSException wrapping another exception including a detailed
-	 * message.
-	 *
-	 * @param String    the detailed message
-	 * @param Exception the wrapped exception
-	 */
-	public LIMSRuntimeException(String pMessage, Exception pException) {
-		super(pMessage);
-		exception = pException;
-	}
+    /**
+     * Creates a new LIMSException wrapping another exception including a detailed
+     * message.
+     *
+     * @param String    the detailed message
+     * @param Exception the wrapped exception
+     */
+    public LIMSRuntimeException(String pMessage, Exception pException) {
+        super(pMessage);
+        exception = pException;
+    }
 
-	/**
-	 * Creates a new LIMSException wrapping another exception including a detailed
-	 * message. Takes a Log object, and will log the same message as an error.
-	 *
-	 * @param String    the detailed message
-	 * @param Exception the wrapped exception
-	 * @param Log       the Log to write a message to
-	 */
-	public LIMSRuntimeException(String pMessage, Exception pException, Log pLog) {
-		super(pMessage);
-		exception = pException;
-		if (pLog != null) {
-			pLog.error(pMessage, pException);
-		}
-	}
+    /**
+     * Creates a new LIMSException wrapping another exception including a detailed
+     * message. Takes a Log object, and will log the same message as an error.
+     *
+     * @param String    the detailed message
+     * @param Exception the wrapped exception
+     * @param Log       the Log to write a message to
+     */
+    public LIMSRuntimeException(String pMessage, Exception pException, Log pLog) {
+        super(pMessage);
+        exception = pException;
+        if (pLog != null) {
+            pLog.error(pMessage, pException);
+        }
+    }
 
-	/**
-	 * Creates a new LIMSException with a detailed message
-	 *
-	 * @param String the detailed message
-	 */
-	public LIMSRuntimeException(String pMessage) {
-		this(pMessage, null);
-	}
+    /**
+     * Creates a new LIMSException with a detailed message
+     *
+     * @param String the detailed message
+     */
+    public LIMSRuntimeException(String pMessage) {
+        this(pMessage, null);
+    }
 
-	/**
-	 * Creates a new LIMSException wrapping another exception
-	 *
-	 * @param Exception the wrapped exception
-	 */
-	public LIMSRuntimeException(Exception pException) {
-		this(null, pException);
-	}
+    /**
+     * Creates a new LIMSException wrapping another exception
+     *
+     * @param Exception the wrapped exception
+     */
+    public LIMSRuntimeException(Exception pException) {
+        this(null, pException);
+    }
 
-	/**
-	 * Retreive the wrapped exception
-	 *
-	 * @return Exception the Wrapped exception
-	 */
-	public Exception getException() {
-		return exception;
-	}
+    /**
+     * Retreive the wrapped exception
+     *
+     * @return Exception the Wrapped exception
+     */
+    public Exception getException() {
+        return exception;
+    }
 
-	/**
-	 * Retrieves the root cause exception.
-	 *
-	 * @return the root cause exception.
-	 */
-	public Exception getRootCause() {
-		if (exception instanceof LIMSRuntimeException) {
-			return ((LIMSRuntimeException) exception).getRootCause();
-		}
-		return exception == null ? this : exception;
-	}
+    /**
+     * Retrieves the root cause exception.
+     *
+     * @return the root cause exception.
+     */
+    public Exception getRootCause() {
+        if (exception instanceof LIMSRuntimeException) {
+            return ((LIMSRuntimeException) exception).getRootCause();
+        }
+        return exception == null ? this : exception;
+    }
 
-	@Override
-	public void printStackTrace() {
-		exception.printStackTrace();
-		super.printStackTrace();
-	}
+    @Override
+    public void printStackTrace() {
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        super.printStackTrace();
+    }
 
-	@Override
-	public void printStackTrace(PrintStream s) {
-		exception.printStackTrace(s);
-		super.printStackTrace(s);
-	}
+    @Override
+    public void printStackTrace(PrintStream s) {
+        if (exception != null) {
+            exception.printStackTrace(s);
+        }
+        super.printStackTrace(s);
+    }
 
-	@Override
-	public void printStackTrace(PrintWriter s) {
-		exception.printStackTrace(s);
-		super.printStackTrace(s);
-	}
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        if (exception != null) {
+            exception.printStackTrace(s);
+        }
+        super.printStackTrace(s);
+    }
 }
