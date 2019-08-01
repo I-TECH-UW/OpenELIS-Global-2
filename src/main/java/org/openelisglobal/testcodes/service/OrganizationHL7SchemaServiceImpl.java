@@ -12,17 +12,17 @@ import org.openelisglobal.testcodes.valueholder.OrganizationSchemaPK;
 
 @Service
 public class OrganizationHL7SchemaServiceImpl extends BaseObjectServiceImpl<OrganizationHL7Schema, OrganizationSchemaPK>
-		implements OrganizationHL7SchemaService {
-	@Autowired
-	protected OrganizationHL7SchemaDAO baseObjectDAO;
+        implements OrganizationHL7SchemaService {
+    @Autowired
+    protected OrganizationHL7SchemaDAO baseObjectDAO;
 
-	OrganizationHL7SchemaServiceImpl() {
-		super(OrganizationHL7Schema.class);
-		defaultSortOrder = new ArrayList<>();
-	}
+    OrganizationHL7SchemaServiceImpl() {
+        super(OrganizationHL7Schema.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-	@Override
-	protected OrganizationHL7SchemaDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected OrganizationHL7SchemaDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

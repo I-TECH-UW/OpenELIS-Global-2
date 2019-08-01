@@ -27,7 +27,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.sampleproject.dao.SampleProjectDAO;
@@ -44,9 +44,9 @@ import org.openelisglobal.sampleproject.valueholder.SampleProject;
 @Transactional
 public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> implements SampleProjectDAO {
 
-	public SampleProjectDAOImpl() {
-		super(SampleProject.class);
-	}
+    public SampleProjectDAOImpl() {
+        super(SampleProject.class);
+    }
 
 //	@Override
 //	public void deleteData(List sampleProjs) throws LIMSRuntimeException {
@@ -146,110 +146,110 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
-		try {
-			SampleProject data = entityManager.unwrap(Session.class).get(SampleProject.class, sampleProj.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (data != null) {
-				PropertyUtils.copyProperties(sampleProj, data);
-			} else {
-				sampleProj.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
+        try {
+            SampleProject data = entityManager.unwrap(Session.class).get(SampleProject.class, sampleProj.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (data != null) {
+                PropertyUtils.copyProperties(sampleProj, data);
+            } else {
+                sampleProj.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleProjectDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleProject getData()", e);
+        }
+    }
 
-	public SampleProject readSampleProject(String idString) {
-		SampleProject sp = null;
-		try {
-			sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
-		}
+    public SampleProject readSampleProject(String idString) {
+        SampleProject sp = null;
+        try {
+            sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
+        }
 
-		return sp;
-	}
+        return sp;
+    }
 
-	// AIS - bugzilla 1851
-	// Diane - bugzilla 1920
-	@Override
-	@Transactional(readOnly = true)
-	public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
-		List sampleProjects = new ArrayList();
+    // AIS - bugzilla 1851
+    // Diane - bugzilla 1920
+    @Override
+    @Transactional(readOnly = true)
+    public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
+        List sampleProjects = new ArrayList();
 
-		try {
-			String sql = "from SampleProject sp where sp.project = :param";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", projId);
+        try {
+            String sql = "from SampleProject sp where sp.project = :param";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", projId);
 
-			sampleProjects = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            sampleProjects = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return sampleProjects;
+            return sampleProjects;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl", "getSampleProjectsByProjId()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleProjectDAOImpl", "getSampleProjectsByProjId()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
-		List<SampleProject> sampleProjects = null;
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
+        List<SampleProject> sampleProjects = null;
 
-		try {
-			String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("sampleId", Integer.parseInt(id));
+        try {
+            String sql = "from SampleProject sp where sp.sample.id = :sampleId";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("sampleId", Integer.parseInt(id));
 
-			sampleProjects = query.list();
-			// closeSession(); // CSL remove old
+            sampleProjects = query.list();
+            // closeSession(); // CSL remove old
 
-		} catch (Exception e) {
-			handleException(e, "getSampleProjectBySampleId");
-		}
+        } catch (Exception e) {
+            handleException(e, "getSampleProjectBySampleId");
+        }
 
-		return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
-	}
+        return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
-			Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
-		List<SampleProject> list = null;
-		try {
-			String sql = "FROM SampleProject as sp "
-					+ " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
-					+ " AND   so.organization.id = :organizationId ) ";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+            Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
+        List<SampleProject> list = null;
+        try {
+            String sql = "FROM SampleProject as sp "
+                    + " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
+                    + " AND   so.organization.id = :organizationId ) ";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			query.setString("projectName", projectName);
-			query.setDate("dateLow", lowReceivedDate);
-			query.setDate("dateHigh", highReceivedDate);
-			query.setInteger("organizationId", Integer.valueOf(organizationId));
-			list = query.list();
-		} catch (Exception e) {
-			LogEvent.logError("SampleDAOImpl", "getSamplesByOrganiztionAndReceivedOnRange()", e.toString());
-			throw new LIMSRuntimeException(
-					"Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
-		}
+            query.setString("projectName", projectName);
+            query.setDate("dateLow", lowReceivedDate);
+            query.setDate("dateHigh", highReceivedDate);
+            query.setInteger("organizationId", Integer.valueOf(organizationId));
+            list = query.list();
+        } catch (Exception e) {
+            LogEvent.logError("SampleDAOImpl", "getSamplesByOrganiztionAndReceivedOnRange()", e.toString());
+            throw new LIMSRuntimeException(
+                    "Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
 }

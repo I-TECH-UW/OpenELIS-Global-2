@@ -48,30 +48,28 @@ public class RoutineColumnBuilder extends CIRoutineColumnBuilder {
     @Override
     public void makeSQL() {
         query = new StringBuilder();
-        String lowDatePostgres =  postgresDateFormat.format(dateRange.getLowDate());
+        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
         String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
-        query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION );
+        query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // more cross tabulation of other columns goes where
         query.append(SELECT_ALL_DEMOGRAPHIC_AND_RESULTS);
 
         // FROM clause for ordinary lab (sample and patient) tables
-        query.append(FROM_SAMPLE_PATIENT_ORGANIZATION );
+        query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
         // all observation history from expressions
         appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
-        
+
         appendResultCrosstab(lowDatePostgres, highDatePostgres);
 
-        // and finally the join that puts these all together. Each cross table should be listed here otherwise it's not in the result and you'll get a full join
+        // and finally the join that puts these all together. Each cross table should be
+        // listed here otherwise it's not in the result and you'll get a full join
         query.append(buildWhereSamplePatienOrgSQL(lowDatePostgres, highDatePostgres)
-                        // insert joining of any other crosstab here.
-                        + "\n AND s.id = demo.samp_id "  
-                        + "\n AND s.id = result.samp_id "
-                        + "\n ORDER BY s.accession_number "
-                        );
-        // no don't insert another crosstab or table here, go up before the main WHERE clause
+                // insert joining of any other crosstab here.
+                + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
+        // no don't insert another crosstab or table here, go up before the main WHERE
+        // clause
         return;
     }
-      
-    
+
 }

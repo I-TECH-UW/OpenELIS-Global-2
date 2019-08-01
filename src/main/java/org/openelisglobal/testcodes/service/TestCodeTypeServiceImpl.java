@@ -9,28 +9,29 @@ import org.openelisglobal.testcodes.dao.TestCodeTypeDAO;
 import org.openelisglobal.testcodes.valueholder.TestCodeType;
 
 @Service
-public class TestCodeTypeServiceImpl extends BaseObjectServiceImpl<TestCodeType, String> implements TestCodeTypeService {
-	@Autowired
-	protected TestCodeTypeDAO baseObjectDAO;
+public class TestCodeTypeServiceImpl extends BaseObjectServiceImpl<TestCodeType, String>
+        implements TestCodeTypeService {
+    @Autowired
+    protected TestCodeTypeDAO baseObjectDAO;
 
-	TestCodeTypeServiceImpl() {
-		super(TestCodeType.class);
-	}
+    TestCodeTypeServiceImpl() {
+        super(TestCodeType.class);
+    }
 
-	@Override
-	protected TestCodeTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected TestCodeTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestCodeType getTestCodeTypeById(String id) {
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeById(String id) {
         return getBaseObjectDAO().getTestCodeTypeById(id);
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestCodeType getTestCodeTypeByName(String name) {
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeByName(String name) {
         return getBaseObjectDAO().getTestCodeTypeByName(name);
-	}
+    }
 }

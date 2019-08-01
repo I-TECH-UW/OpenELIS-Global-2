@@ -18,39 +18,39 @@ public class AnalyzerReaderUtil {
 //	private SampleDAO sampleDAO = new SampleDAOImpl();
 //	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 //	private ResultDAO resultDAO = new ResultDAOImpl();
-	
-	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-	protected ResultService resultService = SpringContext.getBean(ResultService.class);
-	
-	public AnalyzerResults createAnalyzerResultFromDB(AnalyzerResults resultFromAnalyzer) {
 
-		Sample sample = sampleService.getSampleByAccessionNumber(resultFromAnalyzer.getAccessionNumber());
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    protected ResultService resultService = SpringContext.getBean(ResultService.class);
 
-		if( sample != null && sample.getId() != null){
-			List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
-			String acceptedStatusId = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+    public AnalyzerResults createAnalyzerResultFromDB(AnalyzerResults resultFromAnalyzer) {
 
-			for(Analysis analysis : analysisList ){
-				if(analysis.getStatusId().equals(acceptedStatusId) && analysis.getTest().getId().equals(resultFromAnalyzer.getTestId())){
-					List<Result> resultList = resultService.getResultsByAnalysis(analysis);
-					if( resultList.size() > 0){
-						try {
-							AnalyzerResults resultFromDB = (AnalyzerResults) resultFromAnalyzer.clone();
-							resultFromDB.setResult(resultList.get(resultList.size() - 1 ).getValue());
-							resultFromDB.setCompleteDate(new Timestamp(analysis.getCompletedDate().getTime()));
-							resultFromDB.setReadOnly(true);
-							resultFromDB.setResultType(resultFromAnalyzer.getResultType());
-							return resultFromDB;
-						} catch (CloneNotSupportedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
+        Sample sample = sampleService.getSampleByAccessionNumber(resultFromAnalyzer.getAccessionNumber());
 
+        if (sample != null && sample.getId() != null) {
+            List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
+            String acceptedStatusId = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+
+            for (Analysis analysis : analysisList) {
+                if (analysis.getStatusId().equals(acceptedStatusId)
+                        && analysis.getTest().getId().equals(resultFromAnalyzer.getTestId())) {
+                    List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+                    if (resultList.size() > 0) {
+                        try {
+                            AnalyzerResults resultFromDB = (AnalyzerResults) resultFromAnalyzer.clone();
+                            resultFromDB.setResult(resultList.get(resultList.size() - 1).getValue());
+                            resultFromDB.setCompleteDate(new Timestamp(analysis.getCompletedDate().getTime()));
+                            resultFromDB.setReadOnly(true);
+                            resultFromDB.setResultType(resultFromAnalyzer.getResultType());
+                            return resultFromDB;
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
 }

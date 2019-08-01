@@ -7,21 +7,21 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 
 public interface PermissionModuleService<T extends PermissionModule> extends BaseObjectService<T, String> {
-	void getData(T permissionModule);
+    void getData(T permissionModule);
 
-	List getAllPermissionModules();
+    List getAllPermissionModules();
 
-	Integer getTotalPermissionModuleCount();
+    Integer getTotalPermissionModuleCount();
 
-	List getPageOfPermissionModules(int startingRecNo);
+    List getPageOfPermissionModules(int startingRecNo);
 
-	List getNextPermissionModuleRecord(String id);
+    List getNextPermissionModuleRecord(String id);
 
-	List getAllPermissionModulesByAgentId(int systemUserId);
+    List getAllPermissionModulesByAgentId(int systemUserId);
 
-	boolean doesUserHaveAnyModules(int userId);
+    boolean doesUserHaveAnyModules(int userId);
 
-	List getPreviousPermissionModuleRecord(String id);
+    List getPreviousPermissionModuleRecord(String id);
 
-	Set<String> getAllPermittedPagesFromAgentId(int roleId);
+    Set<String> getAllPermittedPagesFromAgentId(int roleId);
 }

@@ -16,37 +16,37 @@ import org.openelisglobal.resultlimits.form.ResultLimitsForm;
 //seemingly unused controller
 @Controller
 public class NextPreviousResultLimitsController extends BaseController {
-	@RequestMapping(value = "/NextPreviousResultLimits", method = RequestMethod.GET)
-	public ModelAndView showNextPreviousResultLimits(HttpServletRequest request,
-			@ModelAttribute("form") ResultLimitsForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ResultLimitsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/NextPreviousResultLimits", method = RequestMethod.GET)
+    public ModelAndView showNextPreviousResultLimits(HttpServletRequest request,
+            @ModelAttribute("form") ResultLimitsForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new ResultLimitsForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "/ResultLimits.do";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "resultLimitsDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/ResultLimits.do";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "resultLimitsDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

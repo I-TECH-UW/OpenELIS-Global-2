@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class SampleTypeOrderUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/SampleTypeOrderUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleTypeOrderUpdate(HttpServletRequest request,
-      @ModelAttribute("form") SampleTypeOrderForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleTypeOrderForm();
-    }
+    @RequestMapping(value = "/SampleTypeOrderUpdate", method = RequestMethod.GET)
+    public ModelAndView showSampleTypeOrderUpdate(HttpServletRequest request,
+            @ModelAttribute("form") SampleTypeOrderForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleTypeOrderForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/SampleTypeOrder.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/SampleTypeOrder.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

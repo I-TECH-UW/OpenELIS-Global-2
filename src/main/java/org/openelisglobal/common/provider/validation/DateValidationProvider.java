@@ -31,39 +31,39 @@ import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation
 
 public class DateValidationProvider extends BaseValidationProvider {
 
-	public DateValidationProvider() {
-		super();
-	}
+    public DateValidationProvider() {
+        super();
+    }
 
-	public DateValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public DateValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		// get id from request
-		String dateString = request.getParameter("date");
-		String relative = request.getParameter("relativeToNow");
-		String formField = request.getParameter("field");
+        // get id from request
+        String dateString = request.getParameter("date");
+        String relative = request.getParameter("relativeToNow");
+        String formField = request.getParameter("field");
 
-		String result = INVALID;
+        String result = INVALID;
 
-		if (DateUtil.yearSpecified(dateString)) {
-			dateString = DateUtil.normalizeAmbiguousDate(dateString);
-			Date date = getDate(dateString);
-			result = validateDate(date, relative);
-		}
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+        if (DateUtil.yearSpecified(dateString)) {
+            dateString = DateUtil.normalizeAmbiguousDate(dateString);
+            Date date = getDate(dateString);
+            result = validateDate(date, relative);
+        }
+        ajaxServlet.sendData(formField, result, request, response);
+    }
 
-	public Date getDate(String date) {
-		return CustomDateValidator.getInstance().getDate(date);
-	}
+    public Date getDate(String date) {
+        return CustomDateValidator.getInstance().getDate(date);
+    }
 
-	public String validateDate(Date date, String relative) {
-		return CustomDateValidator.getInstance().validateDate(date, DateRelation.valueOf(relative.toUpperCase()));
-	}
+    public String validateDate(Date date, String relative) {
+        return CustomDateValidator.getInstance().validateDate(date, DateRelation.valueOf(relative.toUpperCase()));
+    }
 
 }

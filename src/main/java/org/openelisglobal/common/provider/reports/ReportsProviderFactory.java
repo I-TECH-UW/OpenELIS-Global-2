@@ -24,8 +24,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
 
 /**
- * This class will abstract the ReportsProvider creation. It will read the
- * name of the class file from properties file and create the class
+ * This class will abstract the ReportsProvider creation. It will read the name
+ * of the class file from properties file and create the class
  * 
  * @version 1.0
  * @author diane benz
@@ -34,122 +34,113 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 
 public class ReportsProviderFactory {
 
-	private static ReportsProviderFactory instance; // Instance of this
+    private static ReportsProviderFactory instance; // Instance of this
 
-	// class
+    // class
 
-	// Properties object that holds reports provider mappings
-	private Properties reportsProviderClassMap = null;
+    // Properties object that holds reports provider mappings
+    private Properties reportsProviderClassMap = null;
 
-	/**
-	 * Singleton global access for ReportsProviderFactory
-	 * 
-	 */
+    /**
+     * Singleton global access for ReportsProviderFactory
+     * 
+     */
 
-	public static ReportsProviderFactory getInstance() {
-		if (instance == null) {
-			synchronized (ReportsProviderFactory.class) {
-				if (instance == null) {
-					instance = new ReportsProviderFactory();
-				}
-			}
+    public static ReportsProviderFactory getInstance() {
+        if (instance == null) {
+            synchronized (ReportsProviderFactory.class) {
+                if (instance == null) {
+                    instance = new ReportsProviderFactory();
+                }
+            }
 
-		}
-		return instance;
-	}
+        }
+        return instance;
+    }
 
-	/**
-	 * Create an object for the full class name passed in.
-	 * 
-	 * @param String
-	 *            full class name
-	 * @return Object Created object
-	 */
-	protected Object createObject(String className) throws LIMSRuntimeException {
-		Object object = null;
-		try {
-			Class classDefinition = Class.forName(className);
-			object = classDefinition.newInstance();
-		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("ReportsProviderFactory","createObject()",e.toString());			
-			throw new LIMSRuntimeException("Unable to create an object for "
-					+ className, e, LogEvent.getLog(ReportsProviderFactory.class));
-		}
-		return object;
-	}
+    /**
+     * Create an object for the full class name passed in.
+     * 
+     * @param String full class name
+     * @return Object Created object
+     */
+    protected Object createObject(String className) throws LIMSRuntimeException {
+        Object object = null;
+        try {
+            Class classDefinition = Class.forName(className);
+            object = classDefinition.newInstance();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReportsProviderFactory", "createObject()", e.toString());
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
+                    LogEvent.getLog(ReportsProviderFactory.class));
+        }
+        return object;
+    }
 
-	/**
-	 * Search for the ReportsProvider implementation class name in the
-	 * Reports.properties file for the given ReportsProvider name
-	 * 
-	 * @param String
-	 *            ReportsProvider name e.g
-	 *            "MycologyWorksheetProvider"
-	 * @return String Full implementation class e.g
-	 *         "org.openelisglobal.common.reports.provider"
-	 */
-	protected String getReportsProviderClassName(
-			String reportsProvidername) throws LIMSRuntimeException {
-		if (reportsProviderClassMap == null) { // Need to load the property
-			// object with the class
-			// mappings
-			ResourceLocator rl = ResourceLocator.getInstance();
-			InputStream propertyStream = null;
-			// Now load a java.util.Properties object with the properties
-			reportsProviderClassMap = new Properties();
-			try {
-				propertyStream = rl
-						.getNamedResourceAsInputStream(ResourceLocator.REPORTS_PROPERTIES);
+    /**
+     * Search for the ReportsProvider implementation class name in the
+     * Reports.properties file for the given ReportsProvider name
+     * 
+     * @param String ReportsProvider name e.g "MycologyWorksheetProvider"
+     * @return String Full implementation class e.g
+     *         "org.openelisglobal.common.reports.provider"
+     */
+    protected String getReportsProviderClassName(String reportsProvidername) throws LIMSRuntimeException {
+        if (reportsProviderClassMap == null) { // Need to load the property
+            // object with the class
+            // mappings
+            ResourceLocator rl = ResourceLocator.getInstance();
+            InputStream propertyStream = null;
+            // Now load a java.util.Properties object with the properties
+            reportsProviderClassMap = new Properties();
+            try {
+                propertyStream = rl.getNamedResourceAsInputStream(ResourceLocator.REPORTS_PROPERTIES);
 
-				reportsProviderClassMap.load(propertyStream);
-			} catch (IOException e) {
-				//bugzilla 2154
-				LogEvent.logError("ReportsProviderFactory","getReportsProviderClassName()",e.toString());			
-				throw new LIMSRuntimeException(
-						"Unable to load reports provider class mappings.",
-						e, LogEvent.getLog(ReportsProviderFactory.class));
-			} finally {
-				if (null != propertyStream) {
-					try {
-						propertyStream.close();
-						propertyStream = null;
-					} catch (Exception e) {
-						//bugzilla 2154
-						LogEvent.logError("ReportsProviderFactory","getReportsProviderClassName()",e.toString());
-					}
-				}
-			}
-		}
+                reportsProviderClassMap.load(propertyStream);
+            } catch (IOException e) {
+                // bugzilla 2154
+                LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e,
+                        LogEvent.getLog(ReportsProviderFactory.class));
+            } finally {
+                if (null != propertyStream) {
+                    try {
+                        propertyStream.close();
+                        propertyStream = null;
+                    } catch (Exception e) {
+                        // bugzilla 2154
+                        LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                    }
+                }
+            }
+        }
 
-		String mapping = reportsProviderClassMap
-				.getProperty(reportsProvidername);
-		if (mapping == null) {
-    		//bugzilla 2154    		
-    		LogEvent.logError("ReportsProviderFactory","getReportsProviderClassName()",reportsProvidername);
-			throw new LIMSRuntimeException(
-					"getReportsProviderClassName - Unable to find mapping for "
-							+ reportsProvidername);
-		}
-		return mapping;
-	}
+        String mapping = reportsProviderClassMap.getProperty(reportsProvidername);
+        if (mapping == null) {
+            // bugzilla 2154
+            LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", reportsProvidername);
+            throw new LIMSRuntimeException(
+                    "getReportsProviderClassName - Unable to find mapping for " + reportsProvidername);
+        }
+        return mapping;
+    }
 
-	/**
-	 * Reports Provider creation method
-	 * 
-	 * @param name
-	 * @return Reports Provider object
-	 * 
-	 */
-	public BaseReportsProvider getReportsProvider(String name)
-			throws LIMSRuntimeException {
-		BaseReportsProvider provider = null;
+    /**
+     * Reports Provider creation method
+     * 
+     * @param name
+     * @return Reports Provider object
+     * 
+     */
+    public BaseReportsProvider getReportsProvider(String name) throws LIMSRuntimeException {
+        BaseReportsProvider provider = null;
 
-		String className = getReportsProviderClassName(name);
+        String className = getReportsProviderClassName(name);
 
-		provider = (BaseReportsProvider) createObject(className);
+        provider = (BaseReportsProvider) createObject(className);
 
-		return provider;
-	}
+        return provider;
+    }
 
 }

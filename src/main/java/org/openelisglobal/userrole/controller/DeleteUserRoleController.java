@@ -16,36 +16,36 @@ import org.openelisglobal.userrole.form.UserRoleMenuForm;
 //seemingly unused controller
 @Controller
 public class DeleteUserRoleController extends BaseController {
-	@RequestMapping(value = "/DeleteUserRole", method = RequestMethod.GET)
-	public ModelAndView showDeleteUserRole(HttpServletRequest request, @ModelAttribute("form") UserRoleMenuForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new UserRoleMenuForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/DeleteUserRole", method = RequestMethod.GET)
+    public ModelAndView showDeleteUserRole(HttpServletRequest request, @ModelAttribute("form") UserRoleMenuForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new UserRoleMenuForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "/UserRoleMenu.do";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "/UserRoleMenu.do";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/UserRoleMenu.do";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "/UserRoleMenu.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

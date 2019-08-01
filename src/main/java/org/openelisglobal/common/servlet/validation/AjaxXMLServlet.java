@@ -32,43 +32,43 @@ import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 public class AjaxXMLServlet extends AjaxServlet {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
+    @Override
+    public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
 
-		if (!StringUtil.isNullorNill(field)) {
+        if (!StringUtil.isNullorNill(field)) {
 
-			response.setContentType("text/xml");
-			response.setHeader("Cache-Control", "no-cache");
-			response.getWriter().write("<fieldmessage>");
-			response.getWriter().write("<formfield>" + field + "</formfield>");
-			response.getWriter().write("<message>" + message + "</message>");
-			response.getWriter().write("</fieldmessage>");
-		} else {
-			// System.out.println("Returning no content with field " + field + " message " +
-			// message);
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-		}
-	}
+            response.setContentType("text/xml");
+            response.setHeader("Cache-Control", "no-cache");
+            response.getWriter().write("<fieldmessage>");
+            response.getWriter().write("<formfield>" + field + "</formfield>");
+            response.getWriter().write("<message>" + message + "</message>");
+            response.getWriter().write("</fieldmessage>");
+        } else {
+            // System.out.println("Returning no content with field " + field + " message " +
+            // message);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+    }
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException, LIMSRuntimeException {
-		// check for authentication
-		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-		if (userModuleService.isSessionExpired(request)) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-			return;
-		}
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException, LIMSRuntimeException {
+        // check for authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        if (userModuleService.isSessionExpired(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
 
-		String valProvider = request.getParameter("provider");
-		BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
-		provider.setServlet(this);
-		provider.processRequest(new SecureXmlHttpServletRequest(request), response);
-	}
+        String valProvider = request.getParameter("provider");
+        BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
+        provider.setServlet(this);
+        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+    }
 
 }

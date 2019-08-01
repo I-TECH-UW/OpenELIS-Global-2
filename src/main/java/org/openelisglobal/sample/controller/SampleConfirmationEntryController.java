@@ -15,35 +15,32 @@ import org.openelisglobal.sample.form.SampleConfirmationEntryForm;
 
 @Controller
 public class SampleConfirmationEntryController extends BaseController {
-  @RequestMapping(
-      value = "/SampleConfirmationEntry",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleConfirmationEntry(HttpServletRequest request,
-      @ModelAttribute("form") SampleConfirmationEntryForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleConfirmationEntryForm();
-    }
+    @RequestMapping(value = "/SampleConfirmationEntry", method = RequestMethod.GET)
+    public ModelAndView showSampleConfirmationEntry(HttpServletRequest request,
+            @ModelAttribute("form") SampleConfirmationEntryForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleConfirmationEntryForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "sampleConfirmationEntryDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "sampleConfirmationEntryDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

@@ -30,62 +30,67 @@ import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessage
 
 public abstract class IndicatorReport extends Report {
 
-	protected String lowerDateRange;
-	protected String upperDateRange;
-	protected Date lowDate;
-	protected Date highDate;
-	
-	public void setRequestParameters(BaseForm form) {
-        new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(), null ).setRequestParameters( form );
-	}
+    protected String lowerDateRange;
+    protected String upperDateRange;
+    protected Date lowDate;
+    protected Date highDate;
 
-	protected void createReportParameters(){
-		super.createReportParameters();
+    public void setRequestParameters(BaseForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(),
+                null).setRequestParameters(form);
+    }
 
-		reportParameters.put("startDate", lowerDateRange);
-		reportParameters.put("stopDate", upperDateRange);
-		reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
-		reportParameters.put("directorName", ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
-		reportParameters.put("labName1", getLabNameLine1());
-		reportParameters.put("labName2", getLabNameLine2());
-		reportParameters.put("reportTitle", getNameForReport());
-		if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")){
+    protected void createReportParameters() {
+        super.createReportParameters();
+
+        reportParameters.put("startDate", lowerDateRange);
+        reportParameters.put("stopDate", upperDateRange);
+        reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
+        reportParameters.put("directorName",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
+        reportParameters.put("labName1", getLabNameLine1());
+        reportParameters.put("labName2", getLabNameLine2());
+        reportParameters.put("reportTitle", getNameForReport());
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
             reportParameters.put("headerName", "CILNSPHeader.jasper");
-        }else{
+        } else {
             reportParameters.put("headerName", "GeneralHeader.jasper");
         }
-	}
-	
-	protected void setDateRange(BaseForm form) {
-		errorFound = false;
-		lowerDateRange = form.getString("lowerDateRange");
-		upperDateRange = form.getString("upperDateRange");
+    }
 
-		if (GenericValidator.isBlankOrNull(lowerDateRange)) {
-			errorFound = true;
-			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
-			errorMsgs.add(msgs);
-		}
+    protected void setDateRange(BaseForm form) {
+        errorFound = false;
+        lowerDateRange = form.getString("lowerDateRange");
+        upperDateRange = form.getString("upperDateRange");
 
-		if (GenericValidator.isBlankOrNull(upperDateRange)) {
-			upperDateRange = lowerDateRange;
-		}
+        if (GenericValidator.isBlankOrNull(lowerDateRange)) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
+            errorMsgs.add(msgs);
+        }
 
-		try {
-			lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
-			highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
-		} catch (LIMSRuntimeException re) {
-			errorFound = true;
-			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
-			errorMsgs.add(msgs);
-		}
-	}
+        if (GenericValidator.isBlankOrNull(upperDateRange)) {
+            upperDateRange = lowerDateRange;
+        }
 
-	abstract protected String getNameForReportRequest();
-	abstract protected String getNameForReport();
-	abstract protected String getLabNameLine1();
-	abstract protected String getLabNameLine2();
+        try {
+            lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
+            highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
+        } catch (LIMSRuntimeException re) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
+            errorMsgs.add(msgs);
+        }
+    }
+
+    abstract protected String getNameForReportRequest();
+
+    abstract protected String getNameForReport();
+
+    abstract protected String getLabNameLine1();
+
+    abstract protected String getLabNameLine2();
 
 }

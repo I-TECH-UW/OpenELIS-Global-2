@@ -7,37 +7,37 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 
 public interface TestSectionService extends BaseObjectService<TestSection, String> {
-	void getData(TestSection testSection);
+    void getData(TestSection testSection);
 
-	List getTestSections(String filter);
+    List getTestSections(String filter);
 
-	TestSection getTestSectionByName(String testSection);
+    TestSection getTestSectionByName(String testSection);
 
-	TestSection getTestSectionByName(TestSection testSection);
+    TestSection getTestSectionByName(TestSection testSection);
 
-	List getNextTestSectionRecord(String id);
+    List getNextTestSectionRecord(String id);
 
-	List getPageOfTestSections(int startingRecNo);
+    List getPageOfTestSections(int startingRecNo);
 
-	Integer getTotalTestSectionCount();
+    Integer getTotalTestSectionCount();
 
-	List getPreviousTestSectionRecord(String id);
+    List getPreviousTestSectionRecord(String id);
 
-	List<TestSection> getAllTestSections();
+    List<TestSection> getAllTestSections();
 
-	List getTestSectionsBySysUserId(String filter, int sysUserId);
+    List getTestSectionsBySysUserId(String filter, int sysUserId);
 
-	List getAllTestSectionsBySysUserId(int sysUserId);
+    List getAllTestSectionsBySysUserId(int sysUserId);
 
-	TestSection getTestSectionById(String testSectionId);
+    TestSection getTestSectionById(String testSectionId);
 
-	List<TestSection> getAllInActiveTestSections();
+    List<TestSection> getAllInActiveTestSections();
 
-	List<TestSection> getAllActiveTestSections();
+    List<TestSection> getAllActiveTestSections();
 
-	List<Test> getTestsInSection(String id);
+    List<Test> getTestsInSection(String id);
 
-	String getUserLocalizedTesSectionName(TestSection testSection);
+    String getUserLocalizedTesSectionName(TestSection testSection);
 
-	void refreshNames();
+    void refreshNames();
 }

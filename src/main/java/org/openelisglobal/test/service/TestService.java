@@ -13,98 +13,98 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface TestService extends BaseObjectService<Test, String> {
 
-	void getData(Test test);
+    void getData(Test test);
 
-	Test getActiveTestById(Integer id);
+    Test getActiveTestById(Integer id);
 
-	Test getTestByUserLocalizedName(String testName);
+    Test getTestByUserLocalizedName(String testName);
 
-	Integer getTotalTestCount();
+    Integer getTotalTestCount();
 
-	List getNextTestRecord(String id);
+    List getNextTestRecord(String id);
 
-	List<Test> getAllActiveTests(boolean onlyTestsFullySetup);
+    List<Test> getAllActiveTests(boolean onlyTestsFullySetup);
 
-	List getTestsByTestSectionAndMethod(String filter, String filter2);
+    List getTestsByTestSectionAndMethod(String filter, String filter2);
 
-	List<Test> getTestsByTestSectionId(String id);
+    List<Test> getTestsByTestSectionId(String id);
 
-	List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId);
+    List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId);
 
-	Integer getTotalSearchedTestCount(String searchString);
+    Integer getTotalSearchedTestCount(String searchString);
 
-	Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString);
+    Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString);
 
-	List<Test> getActiveTestByName(String testName);
+    List<Test> getActiveTestByName(String testName);
 
-	List getPreviousTestRecord(String id);
+    List getPreviousTestRecord(String id);
 
-	List getTestsByTestSection(String filter);
+    List getTestsByTestSection(String filter);
 
-	List getPageOfSearchedTests(int startingRecNo, String searchString);
+    List getPageOfSearchedTests(int startingRecNo, String searchString);
 
-	List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup);
+    List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup);
 
-	List getMethodsByTestSection(String filter);
+    List getMethodsByTestSection(String filter);
 
-	List<Test> getActiveTestsByLoinc(String loincCode);
+    List<Test> getActiveTestsByLoinc(String loincCode);
 
-	List<Test> getAllActiveOrderableTests();
+    List<Test> getAllActiveOrderableTests();
 
-	Test getTestByDescription(String description);
+    Test getTestByDescription(String description);
 
-	List<Test> getTestsByLoincCode(String loincCode);
+    List<Test> getTestsByLoincCode(String loincCode);
 
-	List<Test> getAllOrderBy(String columnName);
+    List<Test> getAllOrderBy(String columnName);
 
-	boolean isTestFullySetup(Test test);
+    boolean isTestFullySetup(Test test);
 
-	Test getTestById(Test test);
+    Test getTestById(Test test);
 
-	Test getTestById(String testId);
+    Test getTestById(String testId);
 
-	List getTestsByMethod(String filter);
+    List getTestsByMethod(String filter);
 
-	List getPageOfTests(int startingRecNo);
+    List getPageOfTests(int startingRecNo);
 
-	List getTests(String filter, boolean onlyTestsFullySetup);
+    List getTests(String filter, boolean onlyTestsFullySetup);
 
-	List<Test> getAllTests(boolean onlyTestsFullySetup);
+    List<Test> getAllTests(boolean onlyTestsFullySetup);
 
-	Test getTestByName(Test test);
+    Test getTestByName(Test test);
 
-	Test getTestByName(String testName);
+    Test getTestByName(String testName);
 
-	Test getTestByGUID(String guid);
+    Test getTestByGUID(String guid);
 
-	Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString);
+    Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString);
 
-	Integer getNextAvailableSortOrderByTestSection(Test test);
+    Integer getNextAvailableSortOrderByTestSection(Test test);
 
-	List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString);
+    List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString);
 
-	void localeChanged(String locale);
+    void localeChanged(String locale);
 
-	void refreshTestNames();
+    void refreshTestNames();
 
-	String getTestMethodName(Test test);
+    String getTestMethodName(Test test);
 
-	List<TestResult> getPossibleTestResults(Test test);
+    List<TestResult> getPossibleTestResults(Test test);
 
-	String getUOM(Test test, boolean isCD4Conclusion);
+    String getUOM(Test test, boolean isCD4Conclusion);
 
-	boolean isReportable(Test test);
+    boolean isReportable(Test test);
 
-	String getSortOrder(Test test);
+    String getSortOrder(Test test);
 
-	TypeOfSample getTypeOfSample(Test test);
+    TypeOfSample getTypeOfSample(Test test);
 
-	List<Panel> getPanels(Test test);
+    List<Panel> getPanels(Test test);
 
-	String getTestSectionName(Test test);
+    String getTestSectionName(Test test);
 
-	ResultDisplayType getDisplayTypeForTestMethod(Test test);
+    ResultDisplayType getDisplayTypeForTestMethod(Test test);
 
-	String getResultType(Test test);
+    String getResultType(Test test);
 
 }

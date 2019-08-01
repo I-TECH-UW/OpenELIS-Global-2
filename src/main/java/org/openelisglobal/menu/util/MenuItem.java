@@ -24,32 +24,33 @@ import java.util.List;
 import org.openelisglobal.menu.valueholder.Menu;
 
 public class MenuItem {
-	private Menu menu;
-	
-	private List<MenuItem> childMenus = new ArrayList<MenuItem>();
+    private Menu menu;
 
-	public void setChildMenus(List<MenuItem> childMenus) {
-		this.childMenus = childMenus;
-	}
+    private List<MenuItem> childMenus = new ArrayList<MenuItem>();
 
-	public List<MenuItem> getChildMenus() {
-		return childMenus;
-	}
+    public void setChildMenus(List<MenuItem> childMenus) {
+        this.childMenus = childMenus;
+    }
 
-	public void setMenu(Menu menu) {
-		this.menu = menu;
-	}
+    public List<MenuItem> getChildMenus() {
+        return childMenus;
+    }
 
-	public Menu getMenu() {
-		return menu;
-	}
-	
-	public void sortChildren(){
-		Collections.sort(childMenus, new Comparator<MenuItem>(){
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
 
-			@Override
-			public int compare(MenuItem o1, MenuItem o2) {
-				return o1.getMenu().getPresentationOrder() - o2.getMenu().getPresentationOrder(); 
-			}});
-	}
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void sortChildren() {
+        Collections.sort(childMenus, new Comparator<MenuItem>() {
+
+            @Override
+            public int compare(MenuItem o1, MenuItem o2) {
+                return o1.getMenu().getPresentationOrder() - o2.getMenu().getPresentationOrder();
+            }
+        });
+    }
 }

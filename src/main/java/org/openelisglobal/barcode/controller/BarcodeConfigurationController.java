@@ -25,119 +25,119 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 @Controller
 public class BarcodeConfigurationController extends BaseController {
-	@Autowired
-	private BarcodeInformationService barcodeInformationService;
+    @Autowired
+    private BarcodeInformationService barcodeInformationService;
 
-	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
-	public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		BarcodeConfigurationForm form = new BarcodeConfigurationForm();
+    @RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
+    public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String forward = FWD_SUCCESS;
+        BarcodeConfigurationForm form = new BarcodeConfigurationForm();
 
-		addFlashMsgsToRequest(request);
-		form.setCancelAction("MasterListsPage.do");
+        addFlashMsgsToRequest(request);
+        form.setCancelAction("MasterListsPage.do");
 
-		setFields(form);
+        setFields(form);
 
-		request.getSession().setAttribute(SAVE_DISABLED, "false");
+        request.getSession().setAttribute(SAVE_DISABLED, "false");
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	/**
-	 * Set the form fields with those values stored in the database
-	 *
-	 * @param form The form to populate
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 */
-	private void setFields(BaseForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    /**
+     * Set the form fields with those values stored in the database
+     *
+     * @param form The form to populate
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    private void setFields(BaseForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		// get the dimension values
-		String heightOrderLabels = ConfigurationProperties.getInstance()
-				.getPropertyValue(Property.ORDER_BARCODE_HEIGHT);
-		String widthOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH);
-		String heightSpecimenLabels = ConfigurationProperties.getInstance()
-				.getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT);
-		String widthSpecimenLabels = ConfigurationProperties.getInstance()
-				.getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH);
-		// set the dimension values
-		PropertyUtils.setProperty(form, "heightOrderLabels", Float.parseFloat(heightOrderLabels));
-		PropertyUtils.setProperty(form, "widthOrderLabels", Float.parseFloat(widthOrderLabels));
-		PropertyUtils.setProperty(form, "heightSpecimenLabels", Float.parseFloat(heightSpecimenLabels));
-		PropertyUtils.setProperty(form, "widthSpecimenLabels", Float.parseFloat(widthSpecimenLabels));
+        // get the dimension values
+        String heightOrderLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.ORDER_BARCODE_HEIGHT);
+        String widthOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH);
+        String heightSpecimenLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT);
+        String widthSpecimenLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH);
+        // set the dimension values
+        PropertyUtils.setProperty(form, "heightOrderLabels", Float.parseFloat(heightOrderLabels));
+        PropertyUtils.setProperty(form, "widthOrderLabels", Float.parseFloat(widthOrderLabels));
+        PropertyUtils.setProperty(form, "heightSpecimenLabels", Float.parseFloat(heightSpecimenLabels));
+        PropertyUtils.setProperty(form, "widthSpecimenLabels", Float.parseFloat(widthSpecimenLabels));
 
-		// get the maximum print values
-		String numOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
-		String numSpecimenLabels = ConfigurationProperties.getInstance()
-				.getPropertyValue(Property.MAX_SPECIMEN_PRINTED);
-		String numAliquotLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
-		// set the maximum print values
-		PropertyUtils.setProperty(form, "numOrderLabels", Integer.parseInt(numOrderLabels));
-		PropertyUtils.setProperty(form, "numSpecimenLabels", Integer.parseInt(numSpecimenLabels));
-		PropertyUtils.setProperty(form, "numAliquotLabels", Integer.parseInt(numAliquotLabels));
+        // get the maximum print values
+        String numOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
+        String numSpecimenLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.MAX_SPECIMEN_PRINTED);
+        String numAliquotLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
+        // set the maximum print values
+        PropertyUtils.setProperty(form, "numOrderLabels", Integer.parseInt(numOrderLabels));
+        PropertyUtils.setProperty(form, "numSpecimenLabels", Integer.parseInt(numSpecimenLabels));
+        PropertyUtils.setProperty(form, "numAliquotLabels", Integer.parseInt(numAliquotLabels));
 
-		// get the optional specimen values
-		String collectionDateCheck = ConfigurationProperties.getInstance()
-				.getPropertyValue(Property.SPECIMEN_FIELD_DATE);
-		String testsCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
-		String patientSexCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
-		// set the optional specimen values
-		PropertyUtils.setProperty(form, "collectionDateCheck", Boolean.valueOf(collectionDateCheck));
-		PropertyUtils.setProperty(form, "testsCheck", Boolean.valueOf(testsCheck));
-		PropertyUtils.setProperty(form, "patientSexCheck", Boolean.valueOf(patientSexCheck));
-	}
+        // get the optional specimen values
+        String collectionDateCheck = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.SPECIMEN_FIELD_DATE);
+        String testsCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
+        String patientSexCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
+        // set the optional specimen values
+        PropertyUtils.setProperty(form, "collectionDateCheck", Boolean.valueOf(collectionDateCheck));
+        PropertyUtils.setProperty(form, "testsCheck", Boolean.valueOf(testsCheck));
+        PropertyUtils.setProperty(form, "patientSexCheck", Boolean.valueOf(patientSexCheck));
+    }
 
-	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)
-	public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
-			@ModelAttribute("form") @Valid BarcodeConfigurationForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
-		if (result.hasErrors()) {
-			saveErrors(result);
-			form.setCancelAction("MasterListsPage.do");
-			return findForward(FWD_FAIL_INSERT, form);
-		}
+    @RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)
+    public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
+            @ModelAttribute("form") @Valid BarcodeConfigurationForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form.setCancelAction("MasterListsPage.do");
+            return findForward(FWD_FAIL_INSERT, form);
+        }
 
-		// ensure transaction block
-		try {
-			barcodeInformationService.updateBarcodeInfoFromForm(form, getSysUserId(request));
-		} catch (LIMSRuntimeException lre) {
-			result.reject("barcode.config.error.insert");
-		} finally {
-			ConfigurationProperties.forceReload();
-		}
+        // ensure transaction block
+        try {
+            barcodeInformationService.updateBarcodeInfoFromForm(form, getSysUserId(request));
+        } catch (LIMSRuntimeException lre) {
+            result.reject("barcode.config.error.insert");
+        } finally {
+            ConfigurationProperties.forceReload();
+        }
 
-		if (result.hasErrors()) {
-			saveErrors(result);
-			return findForward(FWD_FAIL_INSERT, form);
-		}
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL_INSERT, form);
+        }
 
-		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-		return findForward(FWD_SUCCESS_INSERT, form);
-	}
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        return findForward(FWD_SUCCESS_INSERT, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "BarcodeConfigurationDefinition";
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/BarcodeConfiguration.do";
-		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "BarcodeConfigurationDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "BarcodeConfigurationDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/BarcodeConfiguration.do";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "BarcodeConfigurationDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return "barcodeconfiguration.browse.title";
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return "barcodeconfiguration.browse.title";
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return "barcodeconfiguration.browse.title";
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return "barcodeconfiguration.browse.title";
+    }
 }

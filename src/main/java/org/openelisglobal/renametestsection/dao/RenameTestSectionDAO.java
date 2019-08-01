@@ -35,26 +35,26 @@ public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String>
 
 //	public void deleteData(List testSections) throws LIMSRuntimeException;
 
-	public List getAllTestSections() throws LIMSRuntimeException;
+    public List getAllTestSections() throws LIMSRuntimeException;
 
-	public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(RenameTestSection testSection) throws LIMSRuntimeException;
+    public void getData(RenameTestSection testSection) throws LIMSRuntimeException;
 
 //	public void updateData(RenameTestSection testSection) throws LIMSRuntimeException;
 
-	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
+    public List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException;
 
-	public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException;
+    public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException;
 
-	public List getTestSections(String filter) throws LIMSRuntimeException;
+    public List getTestSections(String filter) throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	public Integer getTotalTestSectionCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    public Integer getTotalTestSectionCount() throws LIMSRuntimeException;
 
-	public RenameTestSection getTestSectionById(String id);
+    public RenameTestSection getTestSectionById(String id);
 
-	boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException;
+    boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException;
 }

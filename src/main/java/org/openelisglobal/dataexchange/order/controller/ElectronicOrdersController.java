@@ -26,68 +26,68 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
-	@Autowired
-	StatusOfSampleService statusOfSampleService;
-	@Autowired
-	ElectronicOrderService electronicOrderService;
+    @Autowired
+    StatusOfSampleService statusOfSampleService;
+    @Autowired
+    ElectronicOrderService electronicOrderService;
 
-	@InitBinder
-	public void initBinder(final WebDataBinder webdataBinder) {
-		webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
-				new ElectronicOrderSortOrderCategoryConvertor());
-	}
+    @InitBinder
+    public void initBinder(final WebDataBinder webdataBinder) {
+        webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
+                new ElectronicOrderSortOrderCategoryConvertor());
+    }
 
-	@RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
-	public ModelAndView showElectronicOrders(HttpServletRequest request,
-			@ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
-		// if invalid request, default to basic values
-		if (result.hasErrors()) {
-			saveErrors(result);
-			form.setSortOrder(ElectronicOrder.SortOrder.LAST_UPDATED);
-			form.setPage(1);
-		}
+    @RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
+    public ModelAndView showElectronicOrders(HttpServletRequest request,
+            @ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
+        // if invalid request, default to basic values
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form.setSortOrder(ElectronicOrder.SortOrder.LAST_UPDATED);
+            form.setPage(1);
+        }
 
-		List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersOrderedBy(form.getSortOrder());
+        List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersOrderedBy(form.getSortOrder());
 
-		// correct for proper bounds
-		int startIndex = (form.getPage() - 1) * 50;
-		startIndex = startIndex > eOrders.size() ? 0 : startIndex;
-		int endIndex = startIndex + 50 > eOrders.size() ? eOrders.size() : startIndex + 50;
+        // correct for proper bounds
+        int startIndex = (form.getPage() - 1) * 50;
+        startIndex = startIndex > eOrders.size() ? 0 : startIndex;
+        int endIndex = startIndex + 50 > eOrders.size() ? eOrders.size() : startIndex + 50;
 
-		// set attributes for use in jsp
-		request.setAttribute("startIndex", startIndex);
-		request.setAttribute("endIndex", endIndex);
-		request.setAttribute("total", eOrders.size());
+        // set attributes for use in jsp
+        request.setAttribute("startIndex", startIndex);
+        request.setAttribute("endIndex", endIndex);
+        request.setAttribute("total", eOrders.size());
 
-		// get section of list for display on current page
-		eOrders = eOrders.subList(startIndex, endIndex);
-		for (ElectronicOrder eOrder : eOrders) {
-			StatusOfSample status = new StatusOfSample();
-			status.setId(eOrder.getStatusId());
-			statusOfSampleService.get(eOrder.getStatusId());
-			eOrder.setStatus(status);
-		}
-		form.setEOrders(eOrders);
+        // get section of list for display on current page
+        eOrders = eOrders.subList(startIndex, endIndex);
+        for (ElectronicOrder eOrder : eOrders) {
+            StatusOfSample status = new StatusOfSample();
+            status.setId(eOrder.getStatusId());
+            statusOfSampleService.get(eOrder.getStatusId());
+            eOrder.setStatus(status);
+        }
+        form.setEOrders(eOrders);
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "electronicOrderViewDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "electronicOrderViewDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return "eorder.browse.title";
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return "eorder.browse.title";
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return "eorder.browse.title";
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return "eorder.browse.title";
+    }
 }

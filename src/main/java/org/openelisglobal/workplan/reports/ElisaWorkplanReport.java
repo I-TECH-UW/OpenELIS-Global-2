@@ -26,41 +26,41 @@ import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 
 public class ElisaWorkplanReport implements IWorkplanReport {
 
-	private final String fileName = "ElisaWorkplan";
-	private final HashMap<String, Object> parameterMap = new HashMap<>();
-	private String testSection = "";
-	private String messageKey = "banner.menu.workplan.";
-	protected String reportPath = "";
+    private final String fileName = "ElisaWorkplan";
+    private final HashMap<String, Object> parameterMap = new HashMap<>();
+    private String testSection = "";
+    private String messageKey = "banner.menu.workplan.";
+    protected String reportPath = "";
 
-	public ElisaWorkplanReport(String testSection) {
-		messageKey = messageKey + testSection;
-		testSection = MessageUtil.getContextualMessage(messageKey);
-		this.testSection = testSection;
-	}
+    public ElisaWorkplanReport(String testSection) {
+        messageKey = messageKey + testSection;
+        testSection = MessageUtil.getContextualMessage(messageKey);
+        this.testSection = testSection;
+    }
 
-	@Override
-	public String getFileName() {
-		return fileName;
-	}
+    @Override
+    public String getFileName() {
+        return fileName;
+    }
 
-	@Override
-	public HashMap<String, Object> getParameters() {
-		parameterMap.put("testSection", testSection);
-		return parameterMap;
+    @Override
+    public HashMap<String, Object> getParameters() {
+        parameterMap.put("testSection", testSection);
+        return parameterMap;
 
-	}
+    }
 
-	@Override
-	public List<?> prepareRows(BaseForm form) {
+    @Override
+    public List<?> prepareRows(BaseForm form) {
 
-		List<AnalysisItem> workplanTests = (List<AnalysisItem>) form.get("resultList");
-		return workplanTests;
-	}
+        List<AnalysisItem> workplanTests = (List<AnalysisItem>) form.get("resultList");
+        return workplanTests;
+    }
 
-	@Override
-	public void setReportPath(String reportPath) {
-		this.reportPath = reportPath;
+    @Override
+    public void setReportPath(String reportPath) {
+        this.reportPath = reportPath;
 
-	}
+    }
 
 }

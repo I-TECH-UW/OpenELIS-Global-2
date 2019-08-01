@@ -19,7 +19,7 @@ package org.openelisglobal.scheduler.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.scheduler.dao.CronSchedulerDAO;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 
@@ -27,9 +27,9 @@ import org.openelisglobal.scheduler.valueholder.CronScheduler;
 @Transactional
 public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> implements CronSchedulerDAO {
 
-	public CronSchedulerDAOImpl() {
-		super(CronScheduler.class);
-	}
+    public CronSchedulerDAOImpl() {
+        super(CronScheduler.class);
+    }
 
 //	@Override
 //	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException {

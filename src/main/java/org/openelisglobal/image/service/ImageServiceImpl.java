@@ -9,17 +9,17 @@ import org.openelisglobal.image.valueholder.Image;
 
 @Service
 public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> implements ImageService {
-	@Autowired
-	protected ImageDAO baseObjectDAO;
+    @Autowired
+    protected ImageDAO baseObjectDAO;
 
-	ImageServiceImpl() {
-		super(Image.class);
-		disableLogging();
-	}
+    ImageServiceImpl() {
+        super(Image.class);
+        disableLogging();
+    }
 
-	@Override
-	protected ImageDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ImageDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
 }

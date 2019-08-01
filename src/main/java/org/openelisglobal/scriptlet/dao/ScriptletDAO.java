@@ -35,25 +35,25 @@ public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
 //	public void deleteData(List scriptlets) throws LIMSRuntimeException;
 
-	public List getAllScriptlets() throws LIMSRuntimeException;
+    public List getAllScriptlets() throws LIMSRuntimeException;
 
-	public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException;
+    public void getData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
 //	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-	public List getScriptlets(String filter) throws LIMSRuntimeException;
+    public List getScriptlets(String filter) throws LIMSRuntimeException;
 
-	public List getNextScriptletRecord(String id) throws LIMSRuntimeException;
+    public List getNextScriptletRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException;
 
-	public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException;
+    public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-	public Integer getTotalScriptletCount() throws LIMSRuntimeException;
+    public Integer getTotalScriptletCount() throws LIMSRuntimeException;
 
-	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException;
+    public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException;
 
-	boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException;
+    boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException;
 }

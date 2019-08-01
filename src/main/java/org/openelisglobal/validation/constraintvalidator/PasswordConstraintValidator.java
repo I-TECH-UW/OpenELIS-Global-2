@@ -10,22 +10,22 @@ import org.openelisglobal.common.util.validator.GenericValidator;
 
 public class PasswordConstraintValidator implements ConstraintValidator<Password, String> {
 
-	Password passwordConstraint;
+    Password passwordConstraint;
 
-	@Override
-	public void initialize(Password constraint) {
-		passwordConstraint = constraint;
-	}
+    @Override
+    public void initialize(Password constraint) {
+        passwordConstraint = constraint;
+    }
 
-	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (GenericValidator.isBlankOrNull(value)) {
-			return true;
-		}
-		if (passwordConstraint.state().equals(PasswordState.PRE_HASH)) {
-			return PasswordValidationFactory.getPasswordValidator().passwordValid(value);
-		} else {
-			return true;
-		}
-	}
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (GenericValidator.isBlankOrNull(value)) {
+            return true;
+        }
+        if (passwordConstraint.state().equals(PasswordState.PRE_HASH)) {
+            return PasswordValidationFactory.getPasswordValidator().passwordValid(value);
+        } else {
+            return true;
+        }
+    }
 }

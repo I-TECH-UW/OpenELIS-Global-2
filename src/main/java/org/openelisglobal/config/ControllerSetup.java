@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.InitBinder;
 @ControllerAdvice
 public class ControllerSetup {
 
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(false);
-		binder.registerCustomEditor(String.class, stringTrimmer);
-	}
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(false);
+        binder.registerCustomEditor(String.class, stringTrimmer);
+    }
 
 }

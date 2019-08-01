@@ -7,7 +7,7 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public interface UserService {
 
-	void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
-			List<String> selectedRoles, String loggedOnUserId);
+    void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
+            List<String> selectedRoles, String loggedOnUserId);
 
 }

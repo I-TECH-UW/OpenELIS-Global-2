@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class TestSectionTestAssignUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/TestSectionTestAssignUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestSectionTestAssignUpdate(HttpServletRequest request,
-      @ModelAttribute("form") TestSectionTestAssignForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestSectionTestAssignForm();
-    }
+    @RequestMapping(value = "/TestSectionTestAssignUpdate", method = RequestMethod.GET)
+    public ModelAndView showTestSectionTestAssignUpdate(HttpServletRequest request,
+            @ModelAttribute("form") TestSectionTestAssignForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new TestSectionTestAssignForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/TestSectionTestAssign.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/TestSectionTestAssign.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

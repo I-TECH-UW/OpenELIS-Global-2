@@ -26,267 +26,267 @@ import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 //TODO unused
 public class ResultLimitsLink {
 
-	private static final String NO_VALUE_READ_ONLY = "-";
-	private static final String NO_VALUE_READ_WRITE = "";
-	private static final double POS_DEFAULT = Double.POSITIVE_INFINITY;
-	private static final double NEG_DEFAULT = Double.NEGATIVE_INFINITY;
-	private static final double ZERO_DEFAULT = 0;
-	private static final double MONTH_TO_DAY = 362.0 / 12.0;
+    private static final String NO_VALUE_READ_ONLY = "-";
+    private static final String NO_VALUE_READ_WRITE = "";
+    private static final double POS_DEFAULT = Double.POSITIVE_INFINITY;
+    private static final double NEG_DEFAULT = Double.NEGATIVE_INFINITY;
+    private static final double ZERO_DEFAULT = 0;
+    private static final double MONTH_TO_DAY = 362.0 / 12.0;
 
-	private boolean readWrite = true;
+    private boolean readWrite = true;
 
-	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	private String id;
-	private String testId;
-	private String resultTypeId;
-	private String gender;
-	private double minAge = 0.0;
-	private double maxAge = Double.POSITIVE_INFINITY;
-	private double lowNormal = Double.NEGATIVE_INFINITY;
-	private double highNormal = Double.POSITIVE_INFINITY;
-	private double lowValid = Double.NEGATIVE_INFINITY;
-	private double highValid = Double.POSITIVE_INFINITY;
-	private String testName;
-	private String resultType;
-	private String dictionaryNormal;
+    private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    private String id;
+    private String testId;
+    private String resultTypeId;
+    private String gender;
+    private double minAge = 0.0;
+    private double maxAge = Double.POSITIVE_INFINITY;
+    private double lowNormal = Double.NEGATIVE_INFINITY;
+    private double highNormal = Double.POSITIVE_INFINITY;
+    private double lowValid = Double.NEGATIVE_INFINITY;
+    private double highValid = Double.POSITIVE_INFINITY;
+    private String testName;
+    private String resultType;
+    private String dictionaryNormal;
 
-	public void setReadWrite(boolean readWrite) {
-		this.readWrite = readWrite;
-	}
+    public void setReadWrite(boolean readWrite) {
+        this.readWrite = readWrite;
+    }
 
-	public void setResultLimit(ResultLimit limit) {
-		setId(limit.getId());
-		setTestId(limit.getTestId());
-		setResultTypeId(limit.getResultTypeId());
-		setGender(limit.getGender());
-		setMinAge(limit.getMinAge());
-		setMaxAge(limit.getMaxAge());
-		setLowNormal(limit.getLowNormal());
-		setHighNormal(limit.getHighNormal());
-		setLowValid(limit.getLowValid());
-		setHighValid(limit.getHighValid());
-		if (!GenericValidator.isBlankOrNull(limit.getDictionaryNormalId())) {
-			Dictionary normal = dictionaryService.getDictionaryById(limit.getDictionaryNormalId());
-			if (normal != null) {
-				setDictionaryNormal(normal.getDictEntry());
-			}
-		}
+    public void setResultLimit(ResultLimit limit) {
+        setId(limit.getId());
+        setTestId(limit.getTestId());
+        setResultTypeId(limit.getResultTypeId());
+        setGender(limit.getGender());
+        setMinAge(limit.getMinAge());
+        setMaxAge(limit.getMaxAge());
+        setLowNormal(limit.getLowNormal());
+        setHighNormal(limit.getHighNormal());
+        setLowValid(limit.getLowValid());
+        setHighValid(limit.getHighValid());
+        if (!GenericValidator.isBlankOrNull(limit.getDictionaryNormalId())) {
+            Dictionary normal = dictionaryService.getDictionaryById(limit.getDictionaryNormalId());
+            if (normal != null) {
+                setDictionaryNormal(normal.getDictEntry());
+            }
+        }
 
-	}
+    }
 
-	public ResultLimit getResultLimit() {
-		ResultLimit limit = new ResultLimit();
+    public ResultLimit getResultLimit() {
+        ResultLimit limit = new ResultLimit();
 
-		return populateResultLimit(limit);
-	}
+        return populateResultLimit(limit);
+    }
 
-	public ResultLimit populateResultLimit(ResultLimit limit) {
+    public ResultLimit populateResultLimit(ResultLimit limit) {
 
-		if (limit == null) {
-			limit = new ResultLimit();
-		}
+        if (limit == null) {
+            limit = new ResultLimit();
+        }
 
-		limit.setId(id);
-		limit.setTestId(testId);
-		limit.setResultTypeId(resultTypeId);
-		limit.setGender(gender);
-		limit.setMinAge(getMinAge());
-		limit.setMaxAge(getMaxAge());
-		limit.setLowNormal(getLowNormal());
-		limit.setHighNormal(getHighNormal());
-		limit.setLowValid(getLowValid());
-		limit.setHighValid(getHighValid());
-		limit.setDictionaryNormalId(getDictionaryNormal());
+        limit.setId(id);
+        limit.setTestId(testId);
+        limit.setResultTypeId(resultTypeId);
+        limit.setGender(gender);
+        limit.setMinAge(getMinAge());
+        limit.setMaxAge(getMaxAge());
+        limit.setLowNormal(getLowNormal());
+        limit.setHighNormal(getHighNormal());
+        limit.setLowValid(getLowValid());
+        limit.setHighValid(getHighValid());
+        limit.setDictionaryNormalId(getDictionaryNormal());
 
-		return limit;
-	}
+        return limit;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getTestId() {
-		return testId;
-	}
+    public String getTestId() {
+        return testId;
+    }
 
-	public void setTestId(String testId) {
-		this.testId = testId;
-	}
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-	public String getResultTypeId() {
-		return resultTypeId;
-	}
+    public String getResultTypeId() {
+        return resultTypeId;
+    }
 
-	public void setResultTypeId(String resultTypeId) {
-		this.resultTypeId = resultTypeId;
-	}
+    public void setResultTypeId(String resultTypeId) {
+        this.resultTypeId = resultTypeId;
+    }
 
-	public String getMinAgeDisplay() {
-		return getDisplayValue(minAge);
-	}
+    public String getMinAgeDisplay() {
+        return getDisplayValue(minAge);
+    }
 
-	public String getMinDayAgeDisplay() {
-		int dayAge = minAge == Double.NEGATIVE_INFINITY ? Integer.MIN_VALUE
-				: (int) (minAge * MONTH_TO_DAY + (minAge / 48.0));
-		return getIntDisplayValue(dayAge);
-	}
+    public String getMinDayAgeDisplay() {
+        int dayAge = minAge == Double.NEGATIVE_INFINITY ? Integer.MIN_VALUE
+                : (int) (minAge * MONTH_TO_DAY + (minAge / 48.0));
+        return getIntDisplayValue(dayAge);
+    }
 
-	public void setMinAgeDisplay(String minAgeDisplay) {
-		minAge = saftelyGetValue(minAgeDisplay, ZERO_DEFAULT);
-	}
+    public void setMinAgeDisplay(String minAgeDisplay) {
+        minAge = saftelyGetValue(minAgeDisplay, ZERO_DEFAULT);
+    }
 
-	public String getMaxAgeDisplay() {
-		return getDisplayValue(maxAge);
-	}
+    public String getMaxAgeDisplay() {
+        return getDisplayValue(maxAge);
+    }
 
-	public String getMaxDayAgeDisplay() {
-		int dayAge = maxAge == Double.POSITIVE_INFINITY ? Integer.MAX_VALUE
-				: (int) (maxAge * MONTH_TO_DAY + (maxAge / 48.0));
-		return getIntDisplayValue(dayAge);
-	}
+    public String getMaxDayAgeDisplay() {
+        int dayAge = maxAge == Double.POSITIVE_INFINITY ? Integer.MAX_VALUE
+                : (int) (maxAge * MONTH_TO_DAY + (maxAge / 48.0));
+        return getIntDisplayValue(dayAge);
+    }
 
-	public void setMaxAgeDisplay(String maxAgeDisplay) {
-		maxAge = saftelyGetValue(maxAgeDisplay, POS_DEFAULT);
-	}
+    public void setMaxAgeDisplay(String maxAgeDisplay) {
+        maxAge = saftelyGetValue(maxAgeDisplay, POS_DEFAULT);
+    }
 
-	public String getLowNormalDisplay() {
-		return getDisplayValue(lowNormal);
-	}
+    public String getLowNormalDisplay() {
+        return getDisplayValue(lowNormal);
+    }
 
-	public void setLowNormalDisplay(String lowNormalDisplay) {
-		lowNormal = saftelyGetValue(lowNormalDisplay, NEG_DEFAULT);
-	}
+    public void setLowNormalDisplay(String lowNormalDisplay) {
+        lowNormal = saftelyGetValue(lowNormalDisplay, NEG_DEFAULT);
+    }
 
-	public String getHighNormalDisplay() {
-		return getDisplayValue(highNormal);
-	}
+    public String getHighNormalDisplay() {
+        return getDisplayValue(highNormal);
+    }
 
-	public void setHighNormalDisplay(String highNormalDisplay) {
-		highNormal = saftelyGetValue(highNormalDisplay, POS_DEFAULT);
-	}
+    public void setHighNormalDisplay(String highNormalDisplay) {
+        highNormal = saftelyGetValue(highNormalDisplay, POS_DEFAULT);
+    }
 
-	public String getLowValidDisplay() {
-		return getDisplayValue(lowValid);
-	}
+    public String getLowValidDisplay() {
+        return getDisplayValue(lowValid);
+    }
 
-	public void setLowValidDisplay(String lowValidDisplay) {
-		lowValid = saftelyGetValue(lowValidDisplay, NEG_DEFAULT);
-	}
+    public void setLowValidDisplay(String lowValidDisplay) {
+        lowValid = saftelyGetValue(lowValidDisplay, NEG_DEFAULT);
+    }
 
-	public String getHighValidDisplay() {
-		return getDisplayValue(highValid);
-	}
+    public String getHighValidDisplay() {
+        return getDisplayValue(highValid);
+    }
 
-	public void setHighValidDisplay(String highValidDisplay) {
-		highValid = saftelyGetValue(highValidDisplay, POS_DEFAULT);
-	}
+    public void setHighValidDisplay(String highValidDisplay) {
+        highValid = saftelyGetValue(highValidDisplay, POS_DEFAULT);
+    }
 
-	private double getMinAge() {
-		return minAge;
-	}
+    private double getMinAge() {
+        return minAge;
+    }
 
-	private void setMinAge(double minAge) {
-		this.minAge = minAge;
-	}
+    private void setMinAge(double minAge) {
+        this.minAge = minAge;
+    }
 
-	private double getMaxAge() {
-		return maxAge;
-	}
+    private double getMaxAge() {
+        return maxAge;
+    }
 
-	private void setMaxAge(double maxAge) {
-		this.maxAge = maxAge;
-	}
+    private void setMaxAge(double maxAge) {
+        this.maxAge = maxAge;
+    }
 
-	private double getLowNormal() {
-		return lowNormal;
-	}
+    private double getLowNormal() {
+        return lowNormal;
+    }
 
-	private void setLowNormal(double lowNormal) {
-		this.lowNormal = lowNormal;
-	}
+    private void setLowNormal(double lowNormal) {
+        this.lowNormal = lowNormal;
+    }
 
-	private double getHighNormal() {
-		return highNormal;
-	}
+    private double getHighNormal() {
+        return highNormal;
+    }
 
-	private void setHighNormal(double highNormal) {
-		this.highNormal = highNormal;
-	}
+    private void setHighNormal(double highNormal) {
+        this.highNormal = highNormal;
+    }
 
-	private double getLowValid() {
-		return lowValid;
-	}
+    private double getLowValid() {
+        return lowValid;
+    }
 
-	private void setLowValid(double lowValid) {
-		this.lowValid = lowValid;
-	}
+    private void setLowValid(double lowValid) {
+        this.lowValid = lowValid;
+    }
 
-	private double getHighValid() {
-		return highValid;
-	}
+    private double getHighValid() {
+        return highValid;
+    }
 
-	private void setHighValid(double highValid) {
-		this.highValid = highValid;
-	}
+    private void setHighValid(double highValid) {
+        this.highValid = highValid;
+    }
 
-	public String getGender() {
-		return gender;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	public String getTestName() {
-		return testName == null ? getTestId() : testName;
-	}
+    public String getTestName() {
+        return testName == null ? getTestId() : testName;
+    }
 
-	public void setTestName(String testName) {
-		this.testName = testName;
-	}
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-	public String getResultType() {
-		return resultType == null ? getResultTypeId() : resultType;
-	}
+    public String getResultType() {
+        return resultType == null ? getResultTypeId() : resultType;
+    }
 
-	public void setResultType(String resultType) {
-		this.resultType = resultType;
-	}
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
 
-	private String getDisplayValue(double value) {
-		if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
-			return readWrite ? NO_VALUE_READ_WRITE : NO_VALUE_READ_ONLY;
-		} else {
-			return Double.toString(Math.floor(value / 12.0));
-		}
-	}
+    private String getDisplayValue(double value) {
+        if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
+            return readWrite ? NO_VALUE_READ_WRITE : NO_VALUE_READ_ONLY;
+        } else {
+            return Double.toString(Math.floor(value / 12.0));
+        }
+    }
 
-	private String getIntDisplayValue(int value) {
-		if (value == Integer.MAX_VALUE || value == Integer.MIN_VALUE) {
-			return readWrite ? NO_VALUE_READ_WRITE : NO_VALUE_READ_ONLY;
-		} else {
-			return Integer.toString(value);
-		}
-	}
+    private String getIntDisplayValue(int value) {
+        if (value == Integer.MAX_VALUE || value == Integer.MIN_VALUE) {
+            return readWrite ? NO_VALUE_READ_WRITE : NO_VALUE_READ_ONLY;
+        } else {
+            return Integer.toString(value);
+        }
+    }
 
-	private double saftelyGetValue(String value, double defaultValue) {
+    private double saftelyGetValue(String value, double defaultValue) {
 
-		try {
-			return Double.parseDouble(value);
-		} catch (NumberFormatException nfe) {
-			return defaultValue;
-		}
-	}
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
 
-	public String getDictionaryNormal() {
-		return dictionaryNormal;
-	}
+    public String getDictionaryNormal() {
+        return dictionaryNormal;
+    }
 
-	public void setDictionaryNormal(String dictionaryNormal) {
-		this.dictionaryNormal = dictionaryNormal;
-	}
+    public void setDictionaryNormal(String dictionaryNormal) {
+        this.dictionaryNormal = dictionaryNormal;
+    }
 }

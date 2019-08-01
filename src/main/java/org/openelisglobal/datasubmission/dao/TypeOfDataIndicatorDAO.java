@@ -8,11 +8,11 @@ import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
 
 public interface TypeOfDataIndicatorDAO extends BaseDAO<TypeOfDataIndicator, String> {
 
-	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
+    public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
 
-	public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException;
+    public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException;
 
-	public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() throws LIMSRuntimeException;
+    public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() throws LIMSRuntimeException;
 
 //	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
 

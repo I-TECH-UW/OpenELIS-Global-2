@@ -34,59 +34,59 @@ import org.openelisglobal.common.util.IdValuePair;
  */
 public class ReportSpecificationList implements Serializable {
 
-	private final String label;
-	private final List<IdValuePair> list;
+    private final String label;
+    private final List<IdValuePair> list;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String selection;
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String selection;
 
-	public ReportSpecificationList() {
-		label = "";
-		list = new ArrayList<>();
-	}
+    public ReportSpecificationList() {
+        label = "";
+        list = new ArrayList<>();
+    }
 
-	public ReportSpecificationList(List<IdValuePair> list, String label) {
-		this.label = label;
-		this.list = list;
-	}
+    public ReportSpecificationList(List<IdValuePair> list, String label) {
+        this.label = label;
+        this.list = list;
+    }
 
-	public void setRequestParameters(BaseForm form) {
-		try {
-			PropertyUtils.setProperty(form, "selectList", this);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-	}
+    public void setRequestParameters(BaseForm form) {
+        try {
+            PropertyUtils.setProperty(form, "selectList", this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public List<IdValuePair> getList() {
-		return list;
-	}
+    public List<IdValuePair> getList() {
+        return list;
+    }
 
-	public String getSelection() {
-		return selection;
-	}
+    public String getSelection() {
+        return selection;
+    }
 
-	public void setSelection(String selection) {
-		this.selection = selection;
-	}
+    public void setSelection(String selection) {
+        this.selection = selection;
+    }
 
-	public String getSelectionAsName() {
-		String selection = getSelection();
+    public String getSelectionAsName() {
+        String selection = getSelection();
 
-		for (IdValuePair pair : getList()) {
-			if (selection.equals(pair.getId())) {
-				return pair.getValue();
-			}
-		}
+        for (IdValuePair pair : getList()) {
+            if (selection.equals(pair.getId())) {
+                return pair.getValue();
+            }
+        }
 
-		return "";
-	}
+        return "";
+    }
 }

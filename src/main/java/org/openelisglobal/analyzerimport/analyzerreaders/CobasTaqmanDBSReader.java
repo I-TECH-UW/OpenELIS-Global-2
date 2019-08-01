@@ -34,141 +34,141 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 
-	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	protected TestService testService = SpringContext.getBean(TestService.class);
-	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+    protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
-	private int ORDER_NUMBER = 0;
-	private int ORDER_DATE = 0;
-	private int RESULT = 0;
-	private int SAMPLE_TYPE = 0;
+    private int ORDER_NUMBER = 0;
+    private int ORDER_DATE = 0;
+    private int RESULT = 0;
+    private int SAMPLE_TYPE = 0;
 
-	private final String TEST_NAME = "HIQCAP48";
-	private final String DELIMITER = "\\t";
-	private final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
-	private final String VALID_PREFIXES = "LART,LDBS,LRTN,LIND,LSPE";
-	private String NEGATIVE_ID;
-	private String POSITIVE_ID;
+    private final String TEST_NAME = "HIQCAP48";
+    private final String DELIMITER = "\\t";
+    private final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
+    private final String VALID_PREFIXES = "LART,LDBS,LRTN,LIND,LSPE";
+    private String NEGATIVE_ID;
+    private String POSITIVE_ID;
 
-	private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
-	private String error;
+    private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
+    private String error;
 
-	public CobasTaqmanDBSReader() {
-		Test test = testService.getActiveTestByName("DNA PCR").get(0);
-		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
+    public CobasTaqmanDBSReader() {
+        Test test = testService.getActiveTestByName("DNA PCR").get(0);
+        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 
-		for (TestResult testResult : testResults) {
-			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
-			if ("Positive".equals(dictionary.getDictEntry())) {
-				POSITIVE_ID = dictionary.getId();
-			} else if ("Negative".equals(dictionary.getDictEntry())) {
-				NEGATIVE_ID = dictionary.getId();
-			}
-		}
-	}
+        for (TestResult testResult : testResults) {
+            Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
+            if ("Positive".equals(dictionary.getDictEntry())) {
+                POSITIVE_ID = dictionary.getId();
+            } else if ("Negative".equals(dictionary.getDictEntry())) {
+                NEGATIVE_ID = dictionary.getId();
+            }
+        }
+    }
 
-	@Override
-	public boolean insert(List<String> lines, String currentUserId) {
-		error = null;
-		boolean successful = true;
+    @Override
+    public boolean insert(List<String> lines, String currentUserId) {
+        error = null;
+        boolean successful = true;
 
-		List<AnalyzerResults> results = new ArrayList<>();
+        List<AnalyzerResults> results = new ArrayList<>();
 
-		boolean columnsFound = manageColumns(lines.get(0));
+        boolean columnsFound = manageColumns(lines.get(0));
 
-		if (!columnsFound) {
-			error = "Cobas Taqman DBS analyzer: Unable to find correct columns in file #";
-			return false;
-		}
+        if (!columnsFound) {
+            error = "Cobas Taqman DBS analyzer: Unable to find correct columns in file #";
+            return false;
+        }
 
-		MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
-				TEST_NAME);
+        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
+                TEST_NAME);
 
-		if (mappedName == null) {
-			mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
-					TEST_NAME);
-		}
+        if (mappedName == null) {
+            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
+                    TEST_NAME);
+        }
 
-		for (int i = 1; i < lines.size(); ++i) {
-			createAnalyzerResultFromLine(lines.get(i), results, mappedName);
-		}
+        for (int i = 1; i < lines.size(); ++i) {
+            createAnalyzerResultFromLine(lines.get(i), results, mappedName);
+        }
 
-		if (results.size() > 0) {
-			try {
-				persistResults(results, currentUserId);
-			} catch (LIMSRuntimeException lre) {
-				error = "Cobas Taqman DBS analyzer: Unable to save to database";
-				successful = false;
-			}
-		}
-		return successful;
-	}
+        if (results.size() > 0) {
+            try {
+                persistResults(results, currentUserId);
+            } catch (LIMSRuntimeException lre) {
+                error = "Cobas Taqman DBS analyzer: Unable to save to database";
+                successful = false;
+            }
+        }
+        return successful;
+    }
 
-	private boolean manageColumns(String line) {
-		String[] fields = line.split(DELIMITER);
+    private boolean manageColumns(String line) {
+        String[] fields = line.split(DELIMITER);
 
-		for (int i = 0; i < fields.length; i++) {
-			String header = fields[i].replace("\"", "");
+        for (int i = 0; i < fields.length; i++) {
+            String header = fields[i].replace("\"", "");
 
-			if ("Order Number".equals(header)) {
-				ORDER_NUMBER = i;
-			} else if ("Order Date/Time".equals(header)) {
-				ORDER_DATE = i;
-			} else if ("Result".equals(header)) {
-				RESULT = i;
-			} else if ("Sample Type".equals(header)) {
-				SAMPLE_TYPE = i;
-			}
-		}
-		return ORDER_DATE != 0 && ORDER_NUMBER != 0 && RESULT != 0 && SAMPLE_TYPE != 0;
-	}
+            if ("Order Number".equals(header)) {
+                ORDER_NUMBER = i;
+            } else if ("Order Date/Time".equals(header)) {
+                ORDER_DATE = i;
+            } else if ("Result".equals(header)) {
+                RESULT = i;
+            } else if ("Sample Type".equals(header)) {
+                SAMPLE_TYPE = i;
+            }
+        }
+        return ORDER_DATE != 0 && ORDER_NUMBER != 0 && RESULT != 0 && SAMPLE_TYPE != 0;
+    }
 
-	private void addValueToResults(List<AnalyzerResults> resultList, AnalyzerResults result) {
-		resultList.add(result);
+    private void addValueToResults(List<AnalyzerResults> resultList, AnalyzerResults result) {
+        resultList.add(result);
 
-		AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(result);
-		if (resultFromDB != null) {
-			resultList.add(resultFromDB);
-		}
-	}
+        AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(result);
+        if (resultFromDB != null) {
+            resultList.add(resultFromDB);
+        }
+    }
 
-	private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList,
-			MappedTestName mappedName) {
-		String[] fields = line.split(DELIMITER);
+    private void createAnalyzerResultFromLine(String line, List<AnalyzerResults> resultList,
+            MappedTestName mappedName) {
+        String[] fields = line.split(DELIMITER);
 
-		AnalyzerResults analyzerResults = new AnalyzerResults();
+        AnalyzerResults analyzerResults = new AnalyzerResults();
 
-		String result = getAppropriateResults(fields[RESULT]);
-		String accessionNumber = fields[ORDER_NUMBER].replace("\"", "").trim();
+        String result = getAppropriateResults(fields[RESULT]);
+        String accessionNumber = fields[ORDER_NUMBER].replace("\"", "").trim();
 
-		analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
-		analyzerResults.setResult(result);
-		analyzerResults.setCompleteDate(DateUtil
-				.convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
-		analyzerResults.setTestId(mappedName.getTestId());
-		analyzerResults.setIsControl(!VALID_PREFIXES.contains(accessionNumber.subSequence(0, 3)));
-		analyzerResults.setTestName(mappedName.getOpenElisTestName());
-		analyzerResults.setResultType("D");
+        analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
+        analyzerResults.setResult(result);
+        analyzerResults.setCompleteDate(DateUtil
+                .convertStringDateToTimestampWithPattern(fields[ORDER_DATE].replace("\"", "").trim(), DATE_PATTERN));
+        analyzerResults.setTestId(mappedName.getTestId());
+        analyzerResults.setIsControl(!VALID_PREFIXES.contains(accessionNumber.subSequence(0, 3)));
+        analyzerResults.setTestName(mappedName.getOpenElisTestName());
+        analyzerResults.setResultType("D");
 
-		if (analyzerResults.getIsControl()) {
-			if (!"S".equals(fields[SAMPLE_TYPE].replace("\"", "").trim())) {
-				accessionNumber += ":" + fields[SAMPLE_TYPE].replace("\"", "").trim();
-			}
-		} else {
-			accessionNumber = accessionNumber.substring(0, 9);
-		}
+        if (analyzerResults.getIsControl()) {
+            if (!"S".equals(fields[SAMPLE_TYPE].replace("\"", "").trim())) {
+                accessionNumber += ":" + fields[SAMPLE_TYPE].replace("\"", "").trim();
+            }
+        } else {
+            accessionNumber = accessionNumber.substring(0, 9);
+        }
 
-		analyzerResults.setAccessionNumber(accessionNumber);
+        analyzerResults.setAccessionNumber(accessionNumber);
 
-		addValueToResults(resultList, analyzerResults);
-	}
+        addValueToResults(resultList, analyzerResults);
+    }
 
-	private String getAppropriateResults(String result) {
-		result = result.replace("\"", "").trim();
-		if ("Target Not Detected".equals(result)) {
-			result = NEGATIVE_ID;
-		} else {
-			result = POSITIVE_ID;
+    private String getAppropriateResults(String result) {
+        result = result.replace("\"", "").trim();
+        if ("Target Not Detected".equals(result)) {
+            result = NEGATIVE_ID;
+        } else {
+            result = POSITIVE_ID;
 // save this until we finish w/ requirements
 //			String workingResult = result.split("\\(")[0].replace("<", "").replace("E", "");
 //			String[] splitResult = workingResult.split("\\+");
@@ -176,12 +176,12 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 //			if (Double.parseDouble(splitResult[0]) * Math.pow(10, Double.parseDouble(splitResult[1])) < THREASHOLD) {
 //				result = UNDER_THREASHOLD;
 //			}
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
-	@Override
-	public String getError() {
-		return error;
-	}
+    @Override
+    public String getError() {
+        return error;
+    }
 }

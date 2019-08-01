@@ -9,15 +9,15 @@ import org.openelisglobal.region.valueholder.Region;
 
 @Service
 public class RegionServiceImpl extends BaseObjectServiceImpl<Region, String> implements RegionService {
-	@Autowired
-	protected RegionDAO baseObjectDAO;
+    @Autowired
+    protected RegionDAO baseObjectDAO;
 
-	RegionServiceImpl() {
-		super(Region.class);
-	}
+    RegionServiceImpl() {
+        super(Region.class);
+    }
 
-	@Override
-	protected RegionDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected RegionDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -19,50 +19,50 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class DictionaryCategory extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String description;
-	
-	//bugzilla 2061-2063
-	private String localAbbreviation;
+    private String description;
 
-    //bugzilla 2061-2063
-	private String categoryName;
+    // bugzilla 2061-2063
+    private String localAbbreviation;
 
-	public DictionaryCategory() {
-		super();
-	}
+    // bugzilla 2061-2063
+    private String categoryName;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public DictionaryCategory() {
+        super();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getCategoryName() {
-		return categoryName;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-	public String getLocalAbbreviation() {
-		return localAbbreviation;
-	}
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
-	public void setLocalAbbreviation(String localAbbreviation) {
-		this.localAbbreviation = localAbbreviation;
-	}
-	
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
+    }
+
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
+
 }

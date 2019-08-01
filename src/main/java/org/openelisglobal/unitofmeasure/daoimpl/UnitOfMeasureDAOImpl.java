@@ -23,7 +23,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -37,9 +37,9 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 @Transactional
 public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> implements UnitOfMeasureDAO {
 
-	public UnitOfMeasureDAOImpl() {
-		super(UnitOfMeasure.class);
-	}
+    public UnitOfMeasureDAOImpl() {
+        super(UnitOfMeasure.class);
+    }
 
 //	@Override
 //	public void deleteData(List unitOfMeasures) throws LIMSRuntimeException {
@@ -148,22 +148,22 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException {
-		String sql = "from UnitOfMeasure uom where id = :id";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("id", Integer.parseInt(uomId));
-			UnitOfMeasure uom = (UnitOfMeasure) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return uom;
-		} catch (HibernateException e) {
-			handleException(e, "getUnitOfMeeasureById");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException {
+        String sql = "from UnitOfMeasure uom where id = :id";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("id", Integer.parseInt(uomId));
+            UnitOfMeasure uom = (UnitOfMeasure) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return uom;
+        } catch (HibernateException e) {
+            handleException(e, "getUnitOfMeeasureById");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public void getData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
@@ -319,7 +319,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //		return getTotalCount("UnitOfMeasure", UnitOfMeasure.class);
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -341,7 +341,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //		return list;
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -362,35 +362,35 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //		return list;
 //	}
 
-	@Override
-	public boolean duplicateUnitOfMeasureExists(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
-		try {
-			List list;
+    @Override
+    public boolean duplicateUnitOfMeasureExists(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
+        try {
+            List list;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from UnitOfMeasure t where trim(lower(t.unitOfMeasureName)) = :param and t.id != :param2";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from UnitOfMeasure t where trim(lower(t.unitOfMeasureName)) = :param and t.id != :param2";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String unitOfMeasureId = "0";
-			if (!StringUtil.isNullorNill(unitOfMeasure.getId())) {
-				unitOfMeasureId = unitOfMeasure.getId();
-			}
-			query.setInteger("param2", Integer.parseInt(unitOfMeasureId));
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String unitOfMeasureId = "0";
+            if (!StringUtil.isNullorNill(unitOfMeasure.getId())) {
+                unitOfMeasureId = unitOfMeasure.getId();
+            }
+            query.setInteger("param2", Integer.parseInt(unitOfMeasureId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return !list.isEmpty();
+            return !list.isEmpty();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("UnitOfMeasureDAOImpl", "duplicateUnitOfMeasureExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateUnitOfMeasureExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("UnitOfMeasureDAOImpl", "duplicateUnitOfMeasureExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateUnitOfMeasureExists()", e);
+        }
+    }
 }

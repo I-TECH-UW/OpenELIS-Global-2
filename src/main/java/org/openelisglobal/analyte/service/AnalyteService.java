@@ -5,6 +5,6 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 
 public interface AnalyteService extends BaseObjectService<Analyte, String> {
 
-	Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase);
+    Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase);
 
 }

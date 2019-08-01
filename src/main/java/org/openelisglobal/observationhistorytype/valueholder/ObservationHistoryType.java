@@ -14,59 +14,59 @@ import org.openelisglobal.common.valueholder.SimpleBaseEntity;
  */
 
 public class ObservationHistoryType extends BaseObject<String> implements SimpleBaseEntity<String> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Fields
+    // Fields
 
-	private String id;
-	private String typeName;
-	private String description;
+    private String id;
+    private String typeName;
+    private String description;
 
-	// Constructors
+    // Constructors
 
-	public ObservationHistoryType() {
-	}
+    public ObservationHistoryType() {
+    }
 
-	/** minimal constructor */
-	public ObservationHistoryType(String id, String typeName, String description) {
-		setId(id);
-		this.typeName = typeName;
-		this.description = description;
-	}
+    /** minimal constructor */
+    public ObservationHistoryType(String id, String typeName, String description) {
+        setId(id);
+        this.typeName = typeName;
+        this.description = description;
+    }
 
-	/** full constructor */
-	public ObservationHistoryType(String id, String typeName, String description, Timestamp lastupdated) {
-		setId(id);
-		this.typeName = typeName;
-		this.description = description;
-		setLastupdated(lastupdated);
-	}
+    /** full constructor */
+    public ObservationHistoryType(String id, String typeName, String description, Timestamp lastupdated) {
+        setId(id);
+        this.typeName = typeName;
+        this.description = description;
+        setLastupdated(lastupdated);
+    }
 
-	// Property accessors
+    // Property accessors
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	public String getTypeName() {
-		return typeName;
-	}
+    public String getTypeName() {
+        return typeName;
+    }
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

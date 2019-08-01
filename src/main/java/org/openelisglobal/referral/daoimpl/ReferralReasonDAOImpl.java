@@ -24,7 +24,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralReasonDAO;
 import org.openelisglobal.referral.valueholder.ReferralReason;
@@ -32,34 +32,34 @@ import org.openelisglobal.referral.valueholder.ReferralReason;
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> implements ReferralReasonDAO {
-	public ReferralReasonDAOImpl() {
-		super(ReferralReason.class);
-	}
+    public ReferralReasonDAOImpl() {
+        super(ReferralReason.class);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
-		String sql = "from ReferralReason";
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
+        String sql = "from ReferralReason";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			List<ReferralReason> reasons = query.list();
-			// closeSession(); // CSL remove old
-			return reasons;
-		} catch (HibernateException e) {
-			handleException(e, "getAllReferralReasons");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<ReferralReason> reasons = query.list();
+            // closeSession(); // CSL remove old
+            return reasons;
+        } catch (HibernateException e) {
+            handleException(e, "getAllReferralReasons");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(ReferralReason entity) {
-		// TODO Auto-generated method stub
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(ReferralReason entity) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }

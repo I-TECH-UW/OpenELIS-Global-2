@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class PanelRenameUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/PanelRenameUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showPanelRenameUpdate(HttpServletRequest request,
-      @ModelAttribute("form") PanelRenameEntryForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new PanelRenameEntryForm();
-    }
+    @RequestMapping(value = "/PanelRenameUpdate", method = RequestMethod.GET)
+    public ModelAndView showPanelRenameUpdate(HttpServletRequest request,
+            @ModelAttribute("form") PanelRenameEntryForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new PanelRenameEntryForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/PanelRenameEntry.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/PanelRenameEntry.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

@@ -16,37 +16,37 @@ import org.openelisglobal.workplan.form.WorkplanForm;
 //seemingly unused controller
 @Controller
 public class ElisaAlgorithmWorkplanController extends BaseController {
-	@RequestMapping(value = "/ElisaAlgorithmWorkplan", method = RequestMethod.GET)
-	public ModelAndView showElisaAlgorithmWorkplan(HttpServletRequest request,
-			@ModelAttribute("form") WorkplanForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new WorkplanForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/ElisaAlgorithmWorkplan", method = RequestMethod.GET)
+    public ModelAndView showElisaAlgorithmWorkplan(HttpServletRequest request,
+            @ModelAttribute("form") WorkplanForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new WorkplanForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "elisaAlgorithmResultValidationDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "homePageDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "elisaAlgorithmResultValidationDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

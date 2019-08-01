@@ -22,78 +22,78 @@ import org.openelisglobal.person.valueholder.Person;
 
 public class Provider extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String externalId;
+    private String externalId;
 
-	private String npi;
+    private String npi;
 
-	private String providerType;
+    private String providerType;
 
-	private ValueHolderInterface person;
+    private ValueHolderInterface person;
 
-	private String selectedPersonId;
+    private String selectedPersonId;
 
-	public Provider() {
-		super();
-		this.person = new ValueHolder();
+    public Provider() {
+        super();
+        this.person = new ValueHolder();
 
-	}
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getExternalId() {
-		return externalId;
-	}
+    public String getExternalId() {
+        return externalId;
+    }
 
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-	public String getNpi() {
-		return npi;
-	}
+    public String getNpi() {
+        return npi;
+    }
 
-	public void setNpi(String npi) {
-		this.npi = npi;
-	}
+    public void setNpi(String npi) {
+        this.npi = npi;
+    }
 
-	public String getProviderType() {
-		return providerType;
-	}
+    public String getProviderType() {
+        return providerType;
+    }
 
-	public void setProviderType(String providerType) {
-		this.providerType = providerType;
-	}
+    public void setProviderType(String providerType) {
+        this.providerType = providerType;
+    }
 
-	public Person getPerson() {
-		return (Person) this.person.getValue();
-	}
+    public Person getPerson() {
+        return (Person) this.person.getValue();
+    }
 
-	protected ValueHolderInterface getPersonHolder() {
-		return this.person;
-	}
+    protected ValueHolderInterface getPersonHolder() {
+        return this.person;
+    }
 
-	public void setPerson(Person person) {
-		this.person.setValue(person);
-	}
+    public void setPerson(Person person) {
+        this.person.setValue(person);
+    }
 
-	protected void setPersonHolder(ValueHolderInterface person) {
-		this.person = person;
-	}
+    protected void setPersonHolder(ValueHolderInterface person) {
+        this.person = person;
+    }
 
-	public void setSelectedPersonId(String selectedPersonId) {
-		this.selectedPersonId = selectedPersonId;
-	}
+    public void setSelectedPersonId(String selectedPersonId) {
+        this.selectedPersonId = selectedPersonId;
+    }
 
-	public String getSelectedPersonId() {
-		return this.selectedPersonId;
-	}
+    public String getSelectedPersonId() {
+        return this.selectedPersonId;
+    }
 
 }

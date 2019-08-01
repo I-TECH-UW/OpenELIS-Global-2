@@ -2,8 +2,8 @@ package org.openelisglobal.scheduler.independentthreads;
 
 public interface IMalariaResultExporter {
 
-	void setSleepInMins(long period);
+    void setSleepInMins(long period);
 
-	void start();
+    void start();
 
 }

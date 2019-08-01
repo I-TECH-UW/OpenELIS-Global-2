@@ -9,15 +9,15 @@ import org.openelisglobal.label.valueholder.Label;
 
 @Service
 public class LabelServiceImpl extends BaseObjectServiceImpl<Label, String> implements LabelService {
-	@Autowired
-	protected LabelDAO baseObjectDAO;
+    @Autowired
+    protected LabelDAO baseObjectDAO;
 
-	LabelServiceImpl() {
-		super(Label.class);
-	}
+    LabelServiceImpl() {
+        super(Label.class);
+    }
 
-	@Override
-	protected LabelDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected LabelDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -17,15 +17,15 @@ import org.openelisglobal.validation.constraintvalidator.PasswordConstraintValid
 @Documented
 public @interface Password {
 
-	public enum PasswordState {
-		PRE_HASH, POST_HASH
-	}
+    public enum PasswordState {
+        PRE_HASH, POST_HASH
+    }
 
-	String message() default "must be complex enough";
+    String message() default "must be complex enough";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	PasswordState state() default PasswordState.PRE_HASH;
+    PasswordState state() default PasswordState.PRE_HASH;
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

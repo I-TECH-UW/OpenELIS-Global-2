@@ -31,26 +31,26 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
  */
 public interface StatusOfSampleDAO extends BaseDAO<StatusOfSample, String> {
 
-	// bugzilla 1942
-	public StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) throws LIMSRuntimeException;
+    // bugzilla 1942
+    public StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) throws LIMSRuntimeException;
 
 //	public boolean insertData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
 
-	public List getAllStatusOfSamples() throws LIMSRuntimeException;
+    public List getAllStatusOfSamples() throws LIMSRuntimeException;
 
-	public List getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
+    public void getData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
 
 //	public void updateData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
 
-	public List getNextStatusOfSampleRecord(String id) throws LIMSRuntimeException;
+    public List getNextStatusOfSampleRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousStatusOfSampleRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousStatusOfSampleRecord(String id) throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException;
 
-	boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException;
+    boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException;
 
 }

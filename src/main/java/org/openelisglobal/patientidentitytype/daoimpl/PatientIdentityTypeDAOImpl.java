@@ -26,7 +26,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.patientidentitytype.dao.PatientIdentityTypeDAO;
 import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
@@ -34,33 +34,33 @@ import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
 @Component
 @Transactional
 public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String>
-		implements PatientIdentityTypeDAO {
+        implements PatientIdentityTypeDAO {
 
-	public PatientIdentityTypeDAOImpl() {
-		super(PatientIdentityType.class);
-	}
+    public PatientIdentityTypeDAOImpl() {
+        super(PatientIdentityType.class);
+    }
 
-	@SuppressWarnings("unused")
-	private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
+    @SuppressWarnings("unused")
+    private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
-		List<PatientIdentityType> list = null;
-		try {
-			String sql = "from PatientIdentityType";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
+        List<PatientIdentityType> list = null;
+        try {
+            String sql = "from PatientIdentityType";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "getAllPatientIdenityTypes");
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (HibernateException e) {
+            handleException(e, "getAllPatientIdenityTypes");
+        }
 
-		return list;
-	}
+        return list;
+    }
 
 //	@Override
 //	public void insertData(PatientIdentityType patientIdentityType) throws LIMSRuntimeException {
@@ -85,43 +85,43 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 //		}
 //	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
-			throws LIMSRuntimeException {
-		try {
-			String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
+            throws LIMSRuntimeException {
+        try {
+            String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
+            query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
-			List<PatientIdentityType> list = query.list();
-			// closeSession(); // CSL remove old
+            List<PatientIdentityType> list = query.list();
+            // closeSession(); // CSL remove old
 
-			return list.size() > 0;
+            return list.size() > 0;
 
-		} catch (HibernateException e) {
-			handleException(e, "duplicatePatientIdentityTypeExists");
-		}
+        } catch (HibernateException e) {
+            handleException(e, "duplicatePatientIdentityTypeExists");
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
-		String sql = "from PatientIdentityType t where t.identityType = :identityType";
+    @Override
+    @Transactional(readOnly = true)
+    public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
+        String sql = "from PatientIdentityType t where t.identityType = :identityType";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("identityType", name);
-			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return pit;
-		} catch (HibernateException e) {
-			handleException(e, "getNamedIdentityType");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("identityType", name);
+            PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return pit;
+        } catch (HibernateException e) {
+            handleException(e, "getNamedIdentityType");
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

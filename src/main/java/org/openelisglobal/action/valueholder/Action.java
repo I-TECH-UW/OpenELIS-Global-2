@@ -20,61 +20,60 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Action extends BaseObject<String> {
 
-	private String code;
+    private String code;
 
-	private String id;
+    private String id;
 
-	private String description;
-	
-	private String type;
-	
-	//(concatenate action code name/desc)
-	private String actionDisplayValue;
+    private String description;
 
-	public Action() {
-		super();
-	}
+    private String type;
 
-	public String getCode() {
-		return code;
-	}
+    // (concatenate action code name/desc)
+    private String actionDisplayValue;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public Action() {
+        super();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getActionDisplayValue() {
-		if (!StringUtil.isNullorNill(this.code)) {
-			actionDisplayValue = code + "-" + description;
-		} else {
-			actionDisplayValue = description;
-		}
-		return actionDisplayValue;
-	}
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getActionDisplayValue() {
+        if (!StringUtil.isNullorNill(this.code)) {
+            actionDisplayValue = code + "-" + description;
+        } else {
+            actionDisplayValue = description;
+        }
+        return actionDisplayValue;
+    }
 
 }

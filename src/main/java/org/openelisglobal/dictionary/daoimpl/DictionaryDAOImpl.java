@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.openelisglobal.common.action.IActionConstants;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -43,9 +43,9 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 @Transactional
 public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implements DictionaryDAO {
 
-	public DictionaryDAOImpl() {
-		super(Dictionary.class);
-	}
+    public DictionaryDAOImpl() {
+        super(Dictionary.class);
+    }
 
 //	@Override
 //	public void deleteData(List dictionarys) throws LIMSRuntimeException {
@@ -118,7 +118,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return true;
 //	}
 
-	// modified for bugzilla 2061-2063
+    // modified for bugzilla 2061-2063
 //	@Override
 //	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException {
 //		Session session = entityManager.unwrap(Session.class);
@@ -178,24 +178,24 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
-		try {
-			Dictionary d = entityManager.unwrap(Session.class).get(Dictionary.class, dictionary.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (d != null) {
-				PropertyUtils.copyProperties(dictionary, d);
-			} else {
-				dictionary.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Dictionary dictionary) throws LIMSRuntimeException {
+        try {
+            Dictionary d = entityManager.unwrap(Session.class).get(Dictionary.class, dictionary.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (d != null) {
+                PropertyUtils.copyProperties(dictionary, d);
+            } else {
+                dictionary.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("DictionaryDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in Dictionary getData()", e);
+        }
+    }
 
 //	@Override
 //	public List getAllDictionarys() throws LIMSRuntimeException {
@@ -243,7 +243,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return list;
 //	}
 
-	// bugzilla 1413
+    // bugzilla 1413
 //	@Override
 //	public List getPagesOfSearchedDictionarys(int startingRecNo, String searchString) throws LIMSRuntimeException {
 //		List list = new Vector();
@@ -279,7 +279,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return list;
 //	}
 
-	// end bugzilla 1413
+    // end bugzilla 1413
 
 //	public Dictionary readDictionary(String idString) {
 //		Dictionary dictionary = null;
@@ -309,125 +309,125 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return getPreviousRecord(id, "Dictionary", Dictionary.class);
 //	}
 
-	// this is for autocomplete
-	// modified for 2062
-	@Override
-	@Transactional(readOnly = true)
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String categoryFilter)
-			throws LIMSRuntimeException {
-		try {
-			String sql = "";
+    // this is for autocomplete
+    // modified for 2062
+    @Override
+    @Transactional(readOnly = true)
+    public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String categoryFilter)
+            throws LIMSRuntimeException {
+        try {
+            String sql = "";
 
-			if (filter != null) {
-				// bugzilla 1847: use dictEntryDisplayValue
-				// bugzilla 2440 sql is incorrect - duplicate entries displaying
-				// in dropdown
-				if (!StringUtil.isNullorNill(categoryFilter)) {
-					sql = "from Dictionary d "
-							+ "where (d.localAbbreviation is not null and upper(d.localAbbreviation) || "
-							+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
-							+ " || upper(d.dictEntry) like upper(:param1) and d.isActive= " + enquote(YES)
-							+ " and d.dictionaryCategory.categoryName = :param2)"
-							+ " OR (d.localAbbreviation is null and upper(d.dictEntry) like upper(:param1) and d.isActive= "
-							+ enquote(YES) + " and d.dictionaryCategory.categoryName = :param2)";
-				} else {
-					sql = "from Dictionary d "
-							+ "where (d.localAbbreviation is not null and upper(d.localAbbreviation) || "
-							+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
-							+ " || upper(d.dictEntry) like upper(:param1) and d.isActive= " + enquote(YES) + ")"
-							+ " OR (d.localAbbreviation is null and upper(d.dictEntry) like upper(:param1) and d.isActive= "
-							+ enquote(YES) + ")";
-				}
-			} else {
-				if (!StringUtil.isNullorNill(categoryFilter)) {
-					sql = "from Dictionary d where d.dictEntry like :param1 and d.isActive= " + enquote(YES)
-							+ " and d.dictionaryCategory.categoryName = :param2";
-				} else {
-					sql = "from Dictionary d where d.dictEntry like :param1 and d.isActive= " + enquote(YES);
-				}
-			}
+            if (filter != null) {
+                // bugzilla 1847: use dictEntryDisplayValue
+                // bugzilla 2440 sql is incorrect - duplicate entries displaying
+                // in dropdown
+                if (!StringUtil.isNullorNill(categoryFilter)) {
+                    sql = "from Dictionary d "
+                            + "where (d.localAbbreviation is not null and upper(d.localAbbreviation) || "
+                            + enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
+                            + " || upper(d.dictEntry) like upper(:param1) and d.isActive= " + enquote(YES)
+                            + " and d.dictionaryCategory.categoryName = :param2)"
+                            + " OR (d.localAbbreviation is null and upper(d.dictEntry) like upper(:param1) and d.isActive= "
+                            + enquote(YES) + " and d.dictionaryCategory.categoryName = :param2)";
+                } else {
+                    sql = "from Dictionary d "
+                            + "where (d.localAbbreviation is not null and upper(d.localAbbreviation) || "
+                            + enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
+                            + " || upper(d.dictEntry) like upper(:param1) and d.isActive= " + enquote(YES) + ")"
+                            + " OR (d.localAbbreviation is null and upper(d.dictEntry) like upper(:param1) and d.isActive= "
+                            + enquote(YES) + ")";
+                }
+            } else {
+                if (!StringUtil.isNullorNill(categoryFilter)) {
+                    sql = "from Dictionary d where d.dictEntry like :param1 and d.isActive= " + enquote(YES)
+                            + " and d.dictionaryCategory.categoryName = :param2";
+                } else {
+                    sql = "from Dictionary d where d.dictEntry like :param1 and d.isActive= " + enquote(YES);
+                }
+            }
 
-			sql += " order by d.dictEntry asc";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param1", filter + "%");
-			if (!StringUtil.isNullorNill(categoryFilter)) {
-				query.setParameter("param2", categoryFilter);
-			}
+            sql += " order by d.dictEntry asc";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param1", filter + "%");
+            if (!StringUtil.isNullorNill(categoryFilter)) {
+                query.setParameter("param2", categoryFilter);
+            }
 
-			@SuppressWarnings("unchecked")
-			List<Dictionary> list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            @SuppressWarnings("unchecked")
+            List<Dictionary> list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list;
+            return list;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrys()", e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrys()", e.toString());
+            throw new LIMSRuntimeException(
+                    "Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
+        }
+    }
 
-	// bugzilla 2063 - this is when we know the category (local_abbrev) and we
-	// need list of entries
+    // bugzilla 2063 - this is when we know the category (local_abbrev) and we
+    // need list of entries
 //	@Override
 //	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)
 //			throws LIMSRuntimeException {
 //		return getDictionaryEntrysByCategoryAbbreviation("localAbbreviation", categoryFilter, true);
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String categoryName)
-			throws LIMSRuntimeException {
-		List<Dictionary> entries = getDictionaryEntrysByCategoryAbbreviation("categoryName", categoryName, false);
-		BaseObject.sortByLocalizedName(entries);
-		return entries;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String categoryName)
+            throws LIMSRuntimeException {
+        List<Dictionary> entries = getDictionaryEntrysByCategoryAbbreviation("categoryName", categoryName, false);
+        BaseObject.sortByLocalizedName(entries);
+        return entries;
+    }
 
-	/**
-	 * @see DictionaryDAO#getDictionaryEntrysByCategoryAbbreviation(String, String,
-	 *      boolean)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
-			boolean orderByDictEntry) throws LIMSRuntimeException {
-		try {
-			String sql = "from Dictionary d where d.isActive= " + enquote(YES);
+    /**
+     * @see DictionaryDAO#getDictionaryEntrysByCategoryAbbreviation(String, String,
+     *      boolean)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
+            boolean orderByDictEntry) throws LIMSRuntimeException {
+        try {
+            String sql = "from Dictionary d where d.isActive= " + enquote(YES);
 
-			if (!StringUtil.isNullorNill(fieldValue)) {
-				sql += " and d.dictionaryCategory." + fieldName + " = :param1";
-			}
+            if (!StringUtil.isNullorNill(fieldValue)) {
+                sql += " and d.dictionaryCategory." + fieldName + " = :param1";
+            }
 
-			if (orderByDictEntry) {
-				sql += " order by d.dictEntry asc";
-			} else {
-				sql += " order by d.sortOrder asc";
-			}
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param1", fieldValue);
+            if (orderByDictEntry) {
+                sql += " order by d.dictEntry asc";
+            } else {
+                sql += " order by d.sortOrder asc";
+            }
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param1", fieldValue);
 
-			@SuppressWarnings("unchecked")
-			List<Dictionary> list = query.list();
-			return list;
+            @SuppressWarnings("unchecked")
+            List<Dictionary> list = query.list();
+            return list;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrysByCategoryAbbreviation()", e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrysByCategoryAbbreviation()", e.toString());
+            throw new LIMSRuntimeException(
+                    "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
+        }
+    }
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	@Override
 //	public Integer getTotalDictionaryCount() throws LIMSRuntimeException {
 //		return getTotalCount("Dictionary", Dictionary.class);
 //	}
 
-	// bugzilla 1427
+    // bugzilla 1427
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //		int currentId = (Integer.valueOf(id)).intValue();
@@ -460,7 +460,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return list;
 //	}
 
-	// bugzilla 1427
+    // bugzilla 1427
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //		int currentId = (Integer.valueOf(id)).intValue();
@@ -493,53 +493,53 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return list;
 //	}
 
-	/*
-	 * note 1: The case of no category will throw a conversion error for postgres
-	 * note 2: The error message claims that there is a duplicate entry, it can also
-	 * be a duplicate abbreviation in the same category
-	 */
-	// not case sensitive hemolysis and Hemolysis are considered duplicates
-	// description within category is unique AND local abbreviation within category
-	// is unique
-	@Override
-	public boolean duplicateDictionaryExists(Dictionary dictionary) throws LIMSRuntimeException {
-		try {
-			String sql = null;
-			if (dictionary.getDictionaryCategory() != null) {
-				sql = "from Dictionary t where "
-						+ "((trim(lower(t.dictEntry)) = :param and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3) "
-						+ "or "
-						+ "(trim(lower(t.localAbbreviation)) = :param4 and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3)) ";
+    /*
+     * note 1: The case of no category will throw a conversion error for postgres
+     * note 2: The error message claims that there is a duplicate entry, it can also
+     * be a duplicate abbreviation in the same category
+     */
+    // not case sensitive hemolysis and Hemolysis are considered duplicates
+    // description within category is unique AND local abbreviation within category
+    // is unique
+    @Override
+    public boolean duplicateDictionaryExists(Dictionary dictionary) throws LIMSRuntimeException {
+        try {
+            String sql = null;
+            if (dictionary.getDictionaryCategory() != null) {
+                sql = "from Dictionary t where "
+                        + "((trim(lower(t.dictEntry)) = :param and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3) "
+                        + "or "
+                        + "(trim(lower(t.localAbbreviation)) = :param4 and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3)) ";
 
-			} else {
-				sql = "from Dictionary t where "
-						+ "((trim(lower(t.dictEntry)) = :param and t.dictionaryCategory is null and t.id != :param3) "
-						+ "or "
-						+ "(trim(lower(t.localAbbreviation)) = :param4 and t.dictionaryCategory is null and t.id != :param3)) ";
+            } else {
+                sql = "from Dictionary t where "
+                        + "((trim(lower(t.dictEntry)) = :param and t.dictionaryCategory is null and t.id != :param3) "
+                        + "or "
+                        + "(trim(lower(t.localAbbreviation)) = :param4 and t.dictionaryCategory is null and t.id != :param3)) ";
 
-			}
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
-			query.setParameter("param4", dictionary.getLocalAbbreviation().toLowerCase().trim());
-			if (dictionary.getDictionaryCategory() != null) {
-				query.setParameter("param2", dictionary.getDictionaryCategory().getCategoryName().toLowerCase().trim());
-			}
+            }
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
+            query.setParameter("param4", dictionary.getLocalAbbreviation().toLowerCase().trim());
+            if (dictionary.getDictionaryCategory() != null) {
+                query.setParameter("param2", dictionary.getDictionaryCategory().getCategoryName().toLowerCase().trim());
+            }
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String dictId = "0";
-			if (!StringUtil.isNullorNill(dictionary.getId())) {
-				dictId = dictionary.getId();
-			}
-			query.setInteger("param3", Integer.parseInt(dictId));
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String dictId = "0";
+            if (!StringUtil.isNullorNill(dictionary.getId())) {
+                dictId = dictionary.getId();
+            }
+            query.setInteger("param3", Integer.parseInt(dictId));
 
-			return !query.list().isEmpty();
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
-		}
-	}
+            return !query.list().isEmpty();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
+        }
+    }
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -614,35 +614,35 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		}
 //	}
 
-	// bugzilla 2061-2063
-	@Override
-	public boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
-		try {
-			String sql = "";
-			// TODO: when we add other tables that reference dictionary we need
-			// to check those here
-			// also
-			// check references from other tables depending on dictionary
-			// category local abbrev code
-			if (dictionary.getDictionaryCategory().getLocalAbbreviation()
-					.equals(SystemConfiguration.getInstance().getQaEventDictionaryCategoryType())) {
-				sql = "from QaEvent q where q.type = :param";
-				// bugzilla 2221: at this time there are only 2 categories as
-				// far as this isFrozen() logic:
-				// either referenced in QA_EVENT.TYPE OR in TEST_RESULT.VALUE
-			} else {
-				sql = "from TestResult tr where tr.value = :param and tr.test.isActive = " + enquote(YES);
-			}
+    // bugzilla 2061-2063
+    @Override
+    public boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
+        try {
+            String sql = "";
+            // TODO: when we add other tables that reference dictionary we need
+            // to check those here
+            // also
+            // check references from other tables depending on dictionary
+            // category local abbrev code
+            if (dictionary.getDictionaryCategory().getLocalAbbreviation()
+                    .equals(SystemConfiguration.getInstance().getQaEventDictionaryCategoryType())) {
+                sql = "from QaEvent q where q.type = :param";
+                // bugzilla 2221: at this time there are only 2 categories as
+                // far as this isFrozen() logic:
+                // either referenced in QA_EVENT.TYPE OR in TEST_RESULT.VALUE
+            } else {
+                sql = "from TestResult tr where tr.value = :param and tr.test.isActive = " + enquote(YES);
+            }
 
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", dictionary.getId());
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", dictionary.getId());
 
-			return !query.list().isEmpty();
-		} catch (Exception e) {
-			LogEvent.logError("DictionaryDAOImpl", "dictionaryIsInUse()", e.toString());
-			throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
-		}
-	}
+            return !query.list().isEmpty();
+        } catch (Exception e) {
+            LogEvent.logError("DictionaryDAOImpl", "dictionaryIsInUse()", e.toString());
+            throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
+        }
+    }
 
 //	@Override
 //	public Integer getTotalSearchedDictionaryCount(String searchString) throws LIMSRuntimeException {
@@ -706,19 +706,19 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return null;
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
-		try {
-			Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
-			// closeSession(); // CSL remove old
-			return dictionary;
-		} catch (Exception e) {
-			handleException(e, "getDictionaryById");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
+        try {
+            Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
+            // closeSession(); // CSL remove old
+            return dictionary;
+        } catch (Exception e) {
+            handleException(e, "getDictionaryById");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription)
@@ -758,21 +758,21 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		return null;
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
-		String sql = "from Dictionary d where d.id = :id";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("id", Integer.parseInt(dictionaryId));
-			Dictionary dictionary = (Dictionary) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return dictionary;
+    @Override
+    @Transactional(readOnly = true)
+    public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
+        String sql = "from Dictionary d where d.id = :id";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("id", Integer.parseInt(dictionaryId));
+            Dictionary dictionary = (Dictionary) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return dictionary;
 
-		} catch (HibernateException e) {
-			handleException(e, "getDataForId");
-		}
-		return null;
-	}
+        } catch (HibernateException e) {
+            handleException(e, "getDataForId");
+        }
+        return null;
+    }
 
 }

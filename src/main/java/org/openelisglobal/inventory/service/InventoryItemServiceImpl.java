@@ -12,28 +12,28 @@ import org.openelisglobal.inventory.valueholder.InventoryItem;
 
 @Service
 public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryItem, String>
-		implements InventoryItemService {
-	@Autowired
-	protected InventoryItemDAO baseObjectDAO;
+        implements InventoryItemService {
+    @Autowired
+    protected InventoryItemDAO baseObjectDAO;
 
-	InventoryItemServiceImpl() {
-		super(InventoryItem.class);
-	}
+    InventoryItemServiceImpl() {
+        super(InventoryItem.class);
+    }
 
-	@Override
-	protected InventoryItemDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected InventoryItemDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	public InventoryItem readInventoryItem(String idString) {
-		return getBaseObjectDAO().readInventoryItem(idString);
-	}
+    @Override
+    public InventoryItem readInventoryItem(String idString) {
+        return getBaseObjectDAO().readInventoryItem(idString);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<InventoryItem> getAllInventoryItems() {
-		return getBaseObjectDAO().getAllInventoryItems();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventoryItem> getAllInventoryItems() {
+        return getBaseObjectDAO().getAllInventoryItems();
+    }
 
 }

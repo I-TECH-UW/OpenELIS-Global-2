@@ -26,7 +26,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -42,9 +42,9 @@ import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 @Transactional
 public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> implements TestAnalyteDAO {
 
-	public TestAnalyteDAOImpl() {
-		super(TestAnalyte.class);
-	}
+    public TestAnalyteDAOImpl() {
+        super(TestAnalyte.class);
+    }
 
 //	@Override
 //	public void deleteData(List testAnalytes) throws LIMSRuntimeException {
@@ -141,175 +141,175 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
-		try {
-			TestAnalyte anal = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (anal != null) {
-				PropertyUtils.copyProperties(testAnalyte, anal);
-			} else {
-				testAnalyte.setId(null);
-			}
+    @Override
+    @Transactional(readOnly = true)
+    public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
+        try {
+            TestAnalyte anal = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (anal != null) {
+                PropertyUtils.copyProperties(testAnalyte, anal);
+            } else {
+                testAnalyte.setId(null);
+            }
 
-			return anal;
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestAnalyteDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte getData()", e);
-		}
-	}
+            return anal;
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestAnalyteDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllTestAnalytes() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from TestAnalyte";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytes()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytes()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllTestAnalytes() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from TestAnalyte";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytes()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytes()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from TestAnalyte t order by t.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            String sql = "from TestAnalyte t order by t.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestAnalyteDAOImpl", "getPageOfTestAnalytes()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte getPageOfTestAnalytes()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestAnalyteDAOImpl", "getPageOfTestAnalytes()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte getPageOfTestAnalytes()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public TestAnalyte readTestAnalyte(String idString) {
-		TestAnalyte ta = null;
-		try {
-			ta = entityManager.unwrap(Session.class).get(TestAnalyte.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestAnalyteDAOImpl", "readTestAnalyte()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte readTestAnalyte()", e);
-		}
+    public TestAnalyte readTestAnalyte(String idString) {
+        TestAnalyte ta = null;
+        try {
+            ta = entityManager.unwrap(Session.class).get(TestAnalyte.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestAnalyteDAOImpl", "readTestAnalyte()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte readTestAnalyte()", e);
+        }
 
-		return ta;
+        return ta;
 
-	}
+    }
 
-	// this is for autocomplete
-	// TODO: need to convert to hibernate ( not in use??? )
-	@Override
-	@Transactional(readOnly = true)
-	public List getTestAnalytes(String filter) throws LIMSRuntimeException {
+    // this is for autocomplete
+    // TODO: need to convert to hibernate ( not in use??? )
+    @Override
+    @Transactional(readOnly = true)
+    public List getTestAnalytes(String filter) throws LIMSRuntimeException {
 
-		return null;
-		/*
-		 * try { DatabaseSession aSession = getSession(); ReadAllQuery query = new
-		 * ReadAllQuery(TestAnalyte.class); ExpressionBuilder builder = new
-		 * ExpressionBuilder(); Expression exp = null; if (filter != null) { exp =
-		 * builder.get("testAnalyteName").toUpperCase().like( filter.toUpperCase() +
-		 * "%"); } else { exp = builder.get("testAnalyteName").like(filter + "%"); }
-		 *
-		 * // Expression exp1 = builder.get("isActive").equal(true); // exp =
-		 * exp.and(exp1);
-		 *
-		 * query.setSelectionCriteria(exp);
-		 * query.addAscendingOrdering("testAnalyteName");
-		 *
-		 * System.out.println("This is query " + query.getSQLString()); List
-		 * testAnalytes = (Vector) aSession.executeQuery(query);
-		 *
-		 * System.out.println("This is size of list retrieved " + testAnalytes.size() +
-		 * " " + testAnalytes.get(0)); return testAnalytes;
-		 *
-		 * } catch (Exception e) { throw new LIMSRuntimeException(
-		 * "Error in TestAnalyte getTestAnalytes(String filter)", e); }
-		 */
-	}
+        return null;
+        /*
+         * try { DatabaseSession aSession = getSession(); ReadAllQuery query = new
+         * ReadAllQuery(TestAnalyte.class); ExpressionBuilder builder = new
+         * ExpressionBuilder(); Expression exp = null; if (filter != null) { exp =
+         * builder.get("testAnalyteName").toUpperCase().like( filter.toUpperCase() +
+         * "%"); } else { exp = builder.get("testAnalyteName").like(filter + "%"); }
+         *
+         * // Expression exp1 = builder.get("isActive").equal(true); // exp =
+         * exp.and(exp1);
+         *
+         * query.setSelectionCriteria(exp);
+         * query.addAscendingOrdering("testAnalyteName");
+         *
+         * System.out.println("This is query " + query.getSQLString()); List
+         * testAnalytes = (Vector) aSession.executeQuery(query);
+         *
+         * System.out.println("This is size of list retrieved " + testAnalytes.size() +
+         * " " + testAnalytes.get(0)); return testAnalytes;
+         *
+         * } catch (Exception e) { throw new LIMSRuntimeException(
+         * "Error in TestAnalyte getTestAnalytes(String filter)", e); }
+         */
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "TestAnalyte", TestAnalyte.class);
+        return getNextRecord(id, "TestAnalyte", TestAnalyte.class);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "TestAnalyte", TestAnalyte.class);
-	}
+        return getPreviousRecord(id, "TestAnalyte", TestAnalyte.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException {
-		TestAnalyte newTestAnalyte;
-		try {
-			newTestAnalyte = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestAnalyteDAOImpl", "getTestAnalyteById()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte getTestAnalyteById()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException {
+        TestAnalyte newTestAnalyte;
+        try {
+            newTestAnalyte = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestAnalyteDAOImpl", "getTestAnalyteById()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte getTestAnalyteById()", e);
+        }
 
-		return newTestAnalyte;
+        return newTestAnalyte;
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException {
-		List list;
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException {
+        List list;
 
-		if (test == null || StringUtil.isNullorNill(test.getId())) {
-			return new ArrayList();
-		}
+        if (test == null || StringUtil.isNullorNill(test.getId())) {
+            return new ArrayList();
+        }
 
-		try {
-			String sql = "from TestAnalyte t where t.test = :testId order by t.sortOrder asc";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("testId", Integer.parseInt(test.getId()));
+        try {
+            String sql = "from TestAnalyte t where t.test = :testId order by t.sortOrder asc";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("testId", Integer.parseInt(test.getId()));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytesPerTest()", e.toString());
-			throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytesPerTest()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytesPerTest()", e.toString());
+            throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytesPerTest()", e);
+        }
 
-		return list;
+        return list;
 
-	}
+    }
 
 }

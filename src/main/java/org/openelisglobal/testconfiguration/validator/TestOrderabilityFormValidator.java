@@ -15,37 +15,37 @@ import org.openelisglobal.common.log.LogEvent;
 @Component
 public class TestOrderabilityFormValidator implements Validator {
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return TestOrderabilityForm.class.isAssignableFrom(clazz);
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return TestOrderabilityForm.class.isAssignableFrom(clazz);
+    }
 
-	@Override
-	public void validate(Object target, Errors errors) {
-		TestOrderabilityForm form = (TestOrderabilityForm) target;
+    @Override
+    public void validate(Object target, Errors errors) {
+        TestOrderabilityForm form = (TestOrderabilityForm) target;
 
-		try {
-			JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
+        try {
+            JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
 
-			JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
-			for (int i = 0; i < activateTests.size(); ++i) {
-				JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
+            JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
+            for (int i = 0; i < activateTests.size(); ++i) {
+                JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
 
-				ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList",
-						"activateTests[" + i + "] id", errors, true);
-			}
+                ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList",
+                        "activateTests[" + i + "] id", errors, true);
+            }
 
-			JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
-			for (int i = 0; i < deactivateTests.size(); ++i) {
-				JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
+            JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
+            for (int i = 0; i < deactivateTests.size(); ++i) {
+                JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
 
-				ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
-						"deactivateTests[" + i + "] id", errors, true);
-			}
-		} catch (ParseException e) {
-			LogEvent.logError("TestOrderabilityFormValidator", "validate()", e.toString());
-			errors.rejectValue("jsonChangeList", "error.field.format.json");
-		}
-	}
+                ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
+                        "deactivateTests[" + i + "] id", errors, true);
+            }
+        } catch (ParseException e) {
+            LogEvent.logError("TestOrderabilityFormValidator", "validate()", e.toString());
+            errors.rejectValue("jsonChangeList", "error.field.format.json");
+        }
+    }
 
 }

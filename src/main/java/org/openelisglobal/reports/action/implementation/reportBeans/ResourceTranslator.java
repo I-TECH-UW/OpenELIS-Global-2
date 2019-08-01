@@ -39,124 +39,124 @@ import org.openelisglobal.gender.valueholder.Gender;
  * @since Feb 1, 2011
  */
 public class ResourceTranslator<T extends BaseObject> {
-	/**
-	 * placed on values that are not actually translated
-	 */
-	public static final String NOT_FOUND_TAG = "%%";
-	protected Map<String, T> map = new HashMap<>();
+    /**
+     * placed on values that are not actually translated
+     */
+    public static final String NOT_FOUND_TAG = "%%";
+    protected Map<String, T> map = new HashMap<>();
 
-	/**
-	 *
-	 */
-	public ResourceTranslator(List<T> ts) {
-		for (T t : ts) {
-			map.put(getKey(t), t);
-		}
-	}
+    /**
+     *
+     */
+    public ResourceTranslator(List<T> ts) {
+        for (T t : ts) {
+            map.put(getKey(t), t);
+        }
+    }
 
-	/**
-	 * What part of the entity is used to lookup the record to find the localized
-	 * name?
-	 *
-	 * @param some object
-	 * @return some value of some field in that object, typicaly the ID.
-	 */
-	@SuppressWarnings("unchecked")
-	protected String getKey(T t) {
-		return ((SimpleBaseEntity<String>) t).getId();
-	}
+    /**
+     * What part of the entity is used to lookup the record to find the localized
+     * name?
+     *
+     * @param some object
+     * @return some value of some field in that object, typicaly the ID.
+     */
+    @SuppressWarnings("unchecked")
+    protected String getKey(T t) {
+        return ((SimpleBaseEntity<String>) t).getId();
+    }
 
-	/**
-	 * if it is not found in the translator, just return the original value.
-	 */
-	public String translateOrNot(String original) {
-		String translation = translate(original);
-		if (translation.startsWith(NOT_FOUND_TAG)) {
-			return original;
-		} else {
-			return translation;
-		}
-	}
+    /**
+     * if it is not found in the translator, just return the original value.
+     */
+    public String translateOrNot(String original) {
+        String translation = translate(original);
+        if (translation.startsWith(NOT_FOUND_TAG)) {
+            return original;
+        } else {
+            return translation;
+        }
+    }
 
-	/**
-	 * This implements what CI was looking for. Get the localized string, and if it
-	 * starts with a number just show that.
-	 *
-	 * @param id
-	 * @return
-	 */
-	public String translate(String id) {
-		String resource = translateRaw(id);
-		int dash = resource.indexOf('=');
-		dash = (dash > 1) ? dash : resource.length();
-		String userId = resource.substring(0, dash);
-		return userId;
-	}
+    /**
+     * This implements what CI was looking for. Get the localized string, and if it
+     * starts with a number just show that.
+     *
+     * @param id
+     * @return
+     */
+    public String translate(String id) {
+        String resource = translateRaw(id);
+        int dash = resource.indexOf('=');
+        dash = (dash > 1) ? dash : resource.length();
+        String userId = resource.substring(0, dash);
+        return userId;
+    }
 
-	public String translateRaw(String id) {
-		if ("0".equals(id)) {
-			return "";
-		}
-		T t = map.get(id);
-		if (t == null) {
-			return NOT_FOUND_TAG + " " + id + " not found in " + this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
-		}
-		String resource = t.getLocalizedName();
-		return resource;
-	}
+    public String translateRaw(String id) {
+        if ("0".equals(id)) {
+            return "";
+        }
+        T t = map.get(id);
+        if (t == null) {
+            return NOT_FOUND_TAG + " " + id + " not found in " + this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
+        }
+        String resource = t.getLocalizedName();
+        return resource;
+    }
 
-	public static class GenderTranslator extends ResourceTranslator<Gender> {
-		private static GenderTranslator instance = null;
+    public static class GenderTranslator extends ResourceTranslator<Gender> {
+        private static GenderTranslator instance = null;
 
-		public static GenderTranslator getInstance() {
-			if (instance == null) {
-				instance = new GenderTranslator();
-			}
-			return instance;
-		}
+        public static GenderTranslator getInstance() {
+            if (instance == null) {
+                instance = new GenderTranslator();
+            }
+            return instance;
+        }
 
-		/**
-		 * Apparently at some locations there is a "0" gender meaning none. so here we
-		 * just translate 0/1 to M,F
-		 *
-		 * @see org.openelisglobal.reports.action.implementation.reportBeans.ResourceTranslator#translate(java.lang.String)
-		 */
-		@Override
-		public String translate(String id) {
-			if ("0".equals(id)) {
-				return "";
-			}
-			return super.translate(id);
-		}
+        /**
+         * Apparently at some locations there is a "0" gender meaning none. so here we
+         * just translate 0/1 to M,F
+         *
+         * @see org.openelisglobal.reports.action.implementation.reportBeans.ResourceTranslator#translate(java.lang.String)
+         */
+        @Override
+        public String translate(String id) {
+            if ("0".equals(id)) {
+                return "";
+            }
+            return super.translate(id);
+        }
 
-		private GenderTranslator() {
-			super(SpringContext.getBean(GenderService.class).getAll());
-		}
+        private GenderTranslator() {
+            super(SpringContext.getBean(GenderService.class).getAll());
+        }
 
-		@Override
-		protected String getKey(Gender d) {
-			return d.getGenderType();
-		}
-	}
+        @Override
+        protected String getKey(Gender d) {
+            return d.getGenderType();
+        }
+    }
 
-	public static class DictionaryTranslator extends ResourceTranslator<Dictionary> {
-		private static DictionaryTranslator instance = null;
+    public static class DictionaryTranslator extends ResourceTranslator<Dictionary> {
+        private static DictionaryTranslator instance = null;
 
-		public static DictionaryTranslator getInstance() {
-			if (instance == null) {
-				instance = new DictionaryTranslator();
-			}
-			return instance;
-		}
+        public static DictionaryTranslator getInstance() {
+            if (instance == null) {
+                instance = new DictionaryTranslator();
+            }
+            return instance;
+        }
 
-		@SuppressWarnings("unchecked")
-		public DictionaryTranslator() {
-			super(SpringContext.getBean(DictionaryService.class).getAll());
-		}
+        @SuppressWarnings("unchecked")
+        public DictionaryTranslator() {
+            super(SpringContext.getBean(DictionaryService.class).getAll());
+        }
 
-		@Override
-		protected String getKey(Dictionary d) {
-			return d.getId();
-		}
-	}
+        @Override
+        protected String getKey(Dictionary d) {
+            return d.getId();
+        }
+    }
 }

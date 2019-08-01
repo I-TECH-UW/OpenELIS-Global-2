@@ -39,102 +39,102 @@ import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public class NoteHistoryService extends AbstractHistoryService {
 
-	protected NoteService noteService = SpringContext.getBean(NoteService.class);
-	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+    protected NoteService noteService = SpringContext.getBean(NoteService.class);
+    protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
-	private Map<String, String> noteIdToIndicatorMap;
+    private Map<String, String> noteIdToIndicatorMap;
 
-	public NoteHistoryService(Sample sample) {
-		setUpForNotes(sample);
-	}
+    public NoteHistoryService(Sample sample) {
+        setUpForNotes(sample);
+    }
 
-	@SuppressWarnings("unchecked")
-	private void setUpForNotes(Sample sample) {
-		noteIdToIndicatorMap = new HashMap<>();
+    @SuppressWarnings("unchecked")
+    private void setUpForNotes(Sample sample) {
+        noteIdToIndicatorMap = new HashMap<>();
 
-		historyList = new ArrayList<>();
+        historyList = new ArrayList<>();
 
-		addAnalysisNotes(sample);
-		addOrderNotes(sample);
-		addQANotes(sample);
-		newValueMap = new HashMap<>();
-	}
+        addAnalysisNotes(sample);
+        addOrderNotes(sample);
+        addQANotes(sample);
+        newValueMap = new HashMap<>();
+    }
 
-	private void addAnalysisNotes(Sample sample) {
-		History searchHistory = new History();
-		searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		List<Analysis> analysisList = sampleSampleService.getAnalysis(sample);
-		Note searchNote = new Note();
-		searchNote.setReferenceTableId(AnalysisServiceImpl.TABLE_REFERENCE_ID);
-		for (Analysis analysis : analysisList) {
-			searchNote.setReferenceId(analysis.getId());
+    private void addAnalysisNotes(Sample sample) {
+        History searchHistory = new History();
+        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+        SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+        List<Analysis> analysisList = sampleSampleService.getAnalysis(sample);
+        Note searchNote = new Note();
+        searchNote.setReferenceTableId(AnalysisServiceImpl.TABLE_REFERENCE_ID);
+        for (Analysis analysis : analysisList) {
+            searchNote.setReferenceId(analysis.getId());
 
-			List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
+            List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
 
-			for (Note note : notes) {
-				searchHistory.setReferenceId(note.getId());
-				noteIdToIndicatorMap.put(note.getId(), analysis.getTest().getTestName());
-				historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
-			}
-		}
-	}
+            for (Note note : notes) {
+                searchHistory.setReferenceId(note.getId());
+                noteIdToIndicatorMap.put(note.getId(), analysis.getTest().getTestName());
+                historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+            }
+        }
+    }
 
-	private void addOrderNotes(Sample sample) {
-		History searchHistory = new History();
-		searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+    private void addOrderNotes(Sample sample) {
+        History searchHistory = new History();
+        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
 
-		Note searchNote = new Note();
-		searchNote.setReferenceTableId(SampleServiceImpl.TABLE_REFERENCE_ID);
-		searchNote.setReferenceId(sample.getId());
+        Note searchNote = new Note();
+        searchNote.setReferenceTableId(SampleServiceImpl.TABLE_REFERENCE_ID);
+        searchNote.setReferenceId(sample.getId());
 
-		List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
+        List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
 
-		for (Note note : notes) {
-			searchHistory.setReferenceId(note.getId());
-			noteIdToIndicatorMap.put(note.getId(), MessageUtil.getMessage("auditTrail.order"));
-			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
-		}
-	}
+        for (Note note : notes) {
+            searchHistory.setReferenceId(note.getId());
+            noteIdToIndicatorMap.put(note.getId(), MessageUtil.getMessage("auditTrail.order"));
+            historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+        }
+    }
 
-	private void addQANotes(Sample sample) {
-		History searchHistory = new History();
-		searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+    private void addQANotes(Sample sample) {
+        History searchHistory = new History();
+        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
 
-		Note searchNote = new Note();
-		searchNote.setReferenceTableId(QAService.TABLE_REFERENCE_ID);
+        Note searchNote = new Note();
+        searchNote.setReferenceTableId(QAService.TABLE_REFERENCE_ID);
 
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
+        SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+        List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
 
-		for (SampleQaEvent qaEvent : qaEventList) {
-			searchNote.setReferenceId(qaEvent.getId());
-			List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
+        for (SampleQaEvent qaEvent : qaEventList) {
+            searchNote.setReferenceId(qaEvent.getId());
+            List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
 
-			for (Note note : notes) {
-				searchHistory.setReferenceId(note.getId());
-				noteIdToIndicatorMap.put(note.getId(), qaEvent.getQaEvent().getLocalizedName());
-				historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
-			}
-		}
-	}
+            for (Note note : notes) {
+                searchHistory.setReferenceId(note.getId());
+                noteIdToIndicatorMap.put(note.getId(), qaEvent.getQaEvent().getLocalizedName());
+                historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+            }
+        }
+    }
 
-	@Override
-	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		Note note = noteService.getData(history.getReferenceId());
-		identifier = noteIdToIndicatorMap.get(history.getReferenceId());
-		AuditTrailItem audit = getCoreTrail(history);
-		audit.setNewValue(note.getText());
-		items.add(audit);
-	}
+    @Override
+    protected void addInsertion(History history, List<AuditTrailItem> items) {
+        Note note = noteService.getData(history.getReferenceId());
+        identifier = noteIdToIndicatorMap.get(history.getReferenceId());
+        AuditTrailItem audit = getCoreTrail(history);
+        audit.setNewValue(note.getText());
+        items.add(audit);
+    }
 
-	@Override
-	protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
+    @Override
+    protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
 
-	}
+    }
 
-	@Override
-	protected String getObjectName() {
-		return MessageUtil.getMessage("note.note");
-	}
+    @Override
+    protected String getObjectName() {
+        return MessageUtil.getMessage("note.note");
+    }
 }

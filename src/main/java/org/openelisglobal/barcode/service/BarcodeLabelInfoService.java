@@ -5,5 +5,5 @@ import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
 
 public interface BarcodeLabelInfoService extends BaseObjectService<BarcodeLabelInfo, String> {
 
-	BarcodeLabelInfo getDataByCode(String code);
+    BarcodeLabelInfo getDataByCode(String code);
 }

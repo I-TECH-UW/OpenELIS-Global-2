@@ -19,68 +19,68 @@ import org.openelisglobal.inventory.valueholder.InventoryReceipt;
 @Scope("prototype")
 public class InventoryUtility {
 
-	public static final String HIV = "HIV";
-	public static final String SYPHILIS = "SYPHILIS";
+    public static final String HIV = "HIV";
+    public static final String SYPHILIS = "SYPHILIS";
 
-	private boolean onlyActiveInventory = false;
+    private boolean onlyActiveInventory = false;
 
-	@Autowired
-	InventoryReceiptService receiptService;
-	@Autowired
-	InventoryLocationService locationService;
+    @Autowired
+    InventoryReceiptService receiptService;
+    @Autowired
+    InventoryLocationService locationService;
 
-	public List<InventoryKitItem> getExistingActiveInventory() {
-		onlyActiveInventory = true;
+    public List<InventoryKitItem> getExistingActiveInventory() {
+        onlyActiveInventory = true;
 
-		try {
-			return getExistingInventory();
-		} finally {
-			onlyActiveInventory = false;
-		}
+        try {
+            return getExistingInventory();
+        } finally {
+            onlyActiveInventory = false;
+        }
 
-	}
+    }
 
-	public List<InventoryKitItem> getExistingInventory() {
-		List<InventoryKitItem> list = new ArrayList<>();
+    public List<InventoryKitItem> getExistingInventory() {
+        List<InventoryKitItem> list = new ArrayList<>();
 
-		List<InventoryLocation> inventoryList = locationService.getAll();
+        List<InventoryLocation> inventoryList = locationService.getAll();
 
-		for (InventoryLocation location : inventoryList) {
+        for (InventoryLocation location : inventoryList) {
 
-			InventoryItem inventoryItem = location.getInventoryItem();
+            InventoryItem inventoryItem = location.getInventoryItem();
 
-			if (!onlyActiveInventory || isActive(inventoryItem)) {
-				InventoryReceipt receipt = receiptService.getInventoryReceiptByInventoryItemId(inventoryItem.getId());
-				InventoryKitItem item = createInventoryItem(inventoryItem, location, receipt);
-				list.add(item);
-			}
-		}
+            if (!onlyActiveInventory || isActive(inventoryItem)) {
+                InventoryReceipt receipt = receiptService.getInventoryReceiptByInventoryItemId(inventoryItem.getId());
+                InventoryKitItem item = createInventoryItem(inventoryItem, location, receipt);
+                list.add(item);
+            }
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	private InventoryKitItem createInventoryItem(InventoryItem item, InventoryLocation location,
-			InventoryReceipt receipt) {
+    private InventoryKitItem createInventoryItem(InventoryItem item, InventoryLocation location,
+            InventoryReceipt receipt) {
 
-		InventoryKitItem kitItem = new InventoryKitItem();
+        InventoryKitItem kitItem = new InventoryKitItem();
 
-		kitItem.setType(item.getDescription());
-		kitItem.setKitName(item.getName());
-		kitItem.setReceiveDate(DateUtil.convertTimestampToStringDate(receipt.getReceivedDate()));
-		kitItem.setExpirationDate(DateUtil.convertTimestampToStringDate(location.getExpirationDate()));
-		kitItem.setLotNumber(location.getLotNumber());
-		kitItem.setSource(receipt.getOrganization().getOrganizationName());
-		kitItem.setOrganizationId(receipt.getOrganization().getId());
-		kitItem.setInventoryItemId(item.getId());
-		kitItem.setInventoryLocationId(location.getId());
-		kitItem.setInventoryReceiptId(receipt.getId());
-		kitItem.setIsActive(isActive(item));
+        kitItem.setType(item.getDescription());
+        kitItem.setKitName(item.getName());
+        kitItem.setReceiveDate(DateUtil.convertTimestampToStringDate(receipt.getReceivedDate()));
+        kitItem.setExpirationDate(DateUtil.convertTimestampToStringDate(location.getExpirationDate()));
+        kitItem.setLotNumber(location.getLotNumber());
+        kitItem.setSource(receipt.getOrganization().getOrganizationName());
+        kitItem.setOrganizationId(receipt.getOrganization().getId());
+        kitItem.setInventoryItemId(item.getId());
+        kitItem.setInventoryLocationId(location.getId());
+        kitItem.setInventoryReceiptId(receipt.getId());
+        kitItem.setIsActive(isActive(item));
 
-		return kitItem;
-	}
+        return kitItem;
+    }
 
-	private boolean isActive(InventoryItem inventoryItem) {
-		return "Y".equals(inventoryItem.getIsActive());
-	}
+    private boolean isActive(InventoryItem inventoryItem) {
+        return "Y".equals(inventoryItem.getIsActive());
+    }
 
 }

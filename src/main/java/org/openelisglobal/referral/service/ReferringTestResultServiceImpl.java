@@ -12,22 +12,22 @@ import org.openelisglobal.referral.valueholder.ReferringTestResult;
 
 @Service
 public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult, String>
-		implements ReferringTestResultService {
-	@Autowired
-	protected ReferringTestResultDAO baseObjectDAO;
+        implements ReferringTestResultService {
+    @Autowired
+    protected ReferringTestResultDAO baseObjectDAO;
 
-	ReferringTestResultServiceImpl() {
-		super(ReferringTestResult.class);
-	}
+    ReferringTestResultServiceImpl() {
+        super(ReferringTestResult.class);
+    }
 
-	@Override
-	protected ReferringTestResultDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ReferringTestResultDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
-		return baseObjectDAO.getReferringTestResultsForSampleItem(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
+        return baseObjectDAO.getReferringTestResultsForSampleItem(id);
+    }
 }

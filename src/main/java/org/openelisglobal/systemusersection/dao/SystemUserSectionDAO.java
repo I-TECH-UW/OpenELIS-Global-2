@@ -30,22 +30,22 @@ public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String>
 
 //	public void deleteData(List systemUserSection) throws LIMSRuntimeException;
 
-	public List getAllSystemUserSections() throws LIMSRuntimeException;
+    public List getAllSystemUserSections() throws LIMSRuntimeException;
 
-	public List getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+    public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
 //	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 //
-	public List getNextSystemUserSectionRecord(String id) throws LIMSRuntimeException;
+    public List getNextSystemUserSectionRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousSystemUserSectionRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousSystemUserSectionRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
+    public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
 
-	public List getAllSystemUserSectionsBySystemUserId(int systemUserId) throws LIMSRuntimeException;
+    public List getAllSystemUserSectionsBySystemUserId(int systemUserId) throws LIMSRuntimeException;
 
-	boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+    boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
 }

@@ -40,127 +40,127 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class AnalyzerImportServlet extends HttpServlet {
 
-	protected LoginService loginService = SpringContext.getBean(LoginService.class);
-	protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
+    protected LoginService loginService = SpringContext.getBean(LoginService.class);
+    protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
-	private static final long serialVersionUID = 1L;
-	private static final String USER = "user";
-	private static final String PASSWORD = "password";
-	private String systemUserId;
+    private static final long serialVersionUID = 1L;
+    private static final String USER = "user";
+    private static final String PASSWORD = "password";
+    private String systemUserId;
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		String password = null;
-		String user = null;
-		AnalyzerReader reader = null;
-		boolean fileRead = false;
+        String password = null;
+        String user = null;
+        AnalyzerReader reader = null;
+        boolean fileRead = false;
 
-		InputStream stream = null;
+        InputStream stream = null;
 
-		try {
-			ServletFileUpload upload = new ServletFileUpload();
+        try {
+            ServletFileUpload upload = new ServletFileUpload();
 
-			FileItemIterator iterator = upload.getItemIterator(request);
-			while (iterator.hasNext()) {
-				FileItemStream item = iterator.next();
-				stream = item.openStream();
+            FileItemIterator iterator = upload.getItemIterator(request);
+            while (iterator.hasNext()) {
+                FileItemStream item = iterator.next();
+                stream = item.openStream();
 
-				String name = null;
+                String name = null;
 
-				if (item.isFormField()) {
+                if (item.isFormField()) {
 
-					if (PASSWORD.equals(item.getFieldName())) {
-						password = streamToString(stream);
-					} else if (USER.equals(item.getFieldName())) {
-						user = streamToString(stream);
-					}
+                    if (PASSWORD.equals(item.getFieldName())) {
+                        password = streamToString(stream);
+                    } else if (USER.equals(item.getFieldName())) {
+                        user = streamToString(stream);
+                    }
 
-				} else {
+                } else {
 
-					name = item.getName();
+                    name = item.getName();
 
-					reader = AnalyzerReaderFactory.getReaderFor(name);
+                    reader = AnalyzerReaderFactory.getReaderFor(name);
 
-					if (reader != null) {
-						fileRead = reader.readStream(new InputStreamReader(stream));
-					}
-				}
+                    if (reader != null) {
+                        fileRead = reader.readStream(new InputStreamReader(stream));
+                    }
+                }
 
-				stream.close();
-			}
-		} catch (Exception ex) {
-			throw new ServletException(ex);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// LOG.warning(e.toString());
-				}
-			}
-		}
+                stream.close();
+            }
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    // LOG.warning(e.toString());
+                }
+            }
+        }
 
-		if (GenericValidator.isBlankOrNull(user) || GenericValidator.isBlankOrNull(password)) {
-			response.getWriter().print("missing user");
-			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-			return;
-		}
+        if (GenericValidator.isBlankOrNull(user) || GenericValidator.isBlankOrNull(password)) {
+            response.getWriter().print("missing user");
+            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+            return;
+        }
 
-		if (!userValid(user, password)) {
-			response.getWriter().print("invalid user/password");
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return;
-		}
+        if (!userValid(user, password)) {
+            response.getWriter().print("invalid user/password");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
-		if (fileRead) {
-			boolean successful = reader.insertAnalyzerData(systemUserId);
+        if (fileRead) {
+            boolean successful = reader.insertAnalyzerData(systemUserId);
 
-			if (successful) {
-				response.getWriter().print("success");
-				response.setStatus(HttpServletResponse.SC_OK);
-				return;
-			} else {
-				response.getWriter().print(reader.getError());
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			}
+            if (successful) {
+                response.getWriter().print("success");
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            } else {
+                response.getWriter().print(reader.getError());
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
 
-		} else {
-			response.getWriter().print(reader.getError());
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
+        } else {
+            response.getWriter().print(reader.getError());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
-	}
+    }
 
-	private boolean userValid(String user, String password) {
-		Login login = new Login();
-		login.setLoginName(user);
-		login.setPassword(password);
+    private boolean userValid(String user, String password) {
+        Login login = new Login();
+        login.setLoginName(user);
+        login.setPassword(password);
 
 //		LoginDAO loginDAO = new LoginDAOImpl();
 
-		login = loginService.getValidatedLogin(user, password).orElse(null);
+        login = loginService.getValidatedLogin(user, password).orElse(null);
 
-		if (login == null) {
-			return false;
-		} else {
+        if (login == null) {
+            return false;
+        } else {
 //			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-			SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
-			systemUserId = systemUser.getId();
-		}
+            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
+            systemUserId = systemUser.getId();
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private String streamToString(InputStream stream) throws IOException {
-		StringBuilder builder = new StringBuilder();
-		int len;
-		byte[] buffer = new byte[1024];
-		while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-			builder.append(new String(buffer, 0, len));
-		}
-		return builder.toString();
-	}
+    private String streamToString(InputStream stream) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        int len;
+        byte[] buffer = new byte[1024];
+        while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
+            builder.append(new String(buffer, 0, len));
+        }
+        return builder.toString();
+    }
 }

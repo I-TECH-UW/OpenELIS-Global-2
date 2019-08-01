@@ -12,28 +12,28 @@ import org.openelisglobal.menu.valueholder.Menu;
 
 @Service
 public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> implements MenuService {
-	@Autowired
-	protected MenuDAO baseObjectDAO;
+    @Autowired
+    protected MenuDAO baseObjectDAO;
 
-	MenuServiceImpl() {
-		super(Menu.class);
-		disableLogging();
-	}
+    MenuServiceImpl() {
+        super(Menu.class);
+        disableLogging();
+    }
 
-	@Override
-	protected MenuDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected MenuDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Menu getMenuByElementId(String elementId) {
-		return getMatch("elementId", elementId).orElse(null);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Menu getMenuByElementId(String elementId) {
+        return getMatch("elementId", elementId).orElse(null);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<Menu> getAllActiveMenus() {
-		return getAllMatching("isActive", true);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<Menu> getAllActiveMenus() {
+        return getAllMatching("isActive", true);
+    }
 }

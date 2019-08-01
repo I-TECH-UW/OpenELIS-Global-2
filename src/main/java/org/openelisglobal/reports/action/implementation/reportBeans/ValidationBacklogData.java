@@ -18,19 +18,22 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public class ValidationBacklogData {
 
-	private String testSection;
-	private String count;
-	
-	public String getTestSection(){
-		return testSection;
-	}
-	public void setTestSection(String testSection){
-		this.testSection = testSection;
-	}
-	public String getCount(){
-		return count;
-	}
-	public void setCount(String count){
-		this.count = count;
-	}
+    private String testSection;
+    private String count;
+
+    public String getTestSection() {
+        return testSection;
+    }
+
+    public void setTestSection(String testSection) {
+        this.testSection = testSection;
+    }
+
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
 }

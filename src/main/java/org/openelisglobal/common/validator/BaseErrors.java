@@ -8,23 +8,23 @@ import org.springframework.validation.AbstractBindingResult;
 @Scope("prototype")
 public class BaseErrors extends AbstractBindingResult {
 
-	public BaseErrors() {
-		super("");
-		// TODO Auto-generated constructor stub
-	}
+    public BaseErrors() {
+        super("");
+        // TODO Auto-generated constructor stub
+    }
 
-	boolean error = false;
+    boolean error = false;
 
-	@Override
-	protected Object getActualFieldValue(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    protected Object getActualFieldValue(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Object getTarget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Object getTarget() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

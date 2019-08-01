@@ -38,103 +38,103 @@ import org.openelisglobal.test.valueholder.Test;
 @Service
 public class PluginAnalyzerService {
 
-	private static PluginAnalyzerService INSTANCE;
+    private static PluginAnalyzerService INSTANCE;
 
-	@Autowired
-	private AnalyzerTestMappingService analyzerMappingService;
-	@Autowired
-	private AnalyzerService analyzerService;
-	@Autowired
-	private TestService testService;
+    @Autowired
+    private AnalyzerTestMappingService analyzerMappingService;
+    @Autowired
+    private AnalyzerService analyzerService;
+    @Autowired
+    private TestService testService;
 
-	private List<AnalyzerTestMapping> existingMappings;
+    private List<AnalyzerTestMapping> existingMappings;
 
-	@PostConstruct
-	private void registerInstance() {
-		INSTANCE = this;
-	}
+    @PostConstruct
+    private void registerInstance() {
+        INSTANCE = this;
+    }
 
-	public static PluginAnalyzerService getInstance() {
-		return INSTANCE;
-	}
+    public static PluginAnalyzerService getInstance() {
+        return INSTANCE;
+    }
 
-	public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
-		AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
-	}
+    public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
+        AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
+    }
 
-	public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
-		Analyzer analyzer = analyzerService.getAnalyzerByName(name);
-		if (analyzer != null && analyzer.getId() != null) {
-			analyzer.setActive(true);
-			registerAanlyzerInCache(name, analyzer.getId());
-		} else {
-			if (analyzer == null) {
-				analyzer = new Analyzer();
-				analyzer.setActive(true);
-				analyzer.setName(name);
-			}
-			analyzer.setDescription(description);
-		}
+    public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
+        Analyzer analyzer = analyzerService.getAnalyzerByName(name);
+        if (analyzer != null && analyzer.getId() != null) {
+            analyzer.setActive(true);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } else {
+            if (analyzer == null) {
+                analyzer = new Analyzer();
+                analyzer.setActive(true);
+                analyzer.setName(name);
+            }
+            analyzer.setDescription(description);
+        }
 
-		List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
-		if (!testMappings.isEmpty() && existingMappings == null) {
-			existingMappings = analyzerMappingService.getAll();
-		}
+        List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
+        if (!testMappings.isEmpty() && existingMappings == null) {
+            existingMappings = analyzerMappingService.getAll();
+        }
 
-		analyzer.setSysUserId("1");
+        analyzer.setSysUserId("1");
 
-		try {
-			analyzerService.persistData(analyzer, testMappings, existingMappings);
-			registerAanlyzerInCache(name, analyzer.getId());
-		} catch (Exception lre) {
-			LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", lre);
-		}
-		return analyzer.getId();
-	}
+        try {
+            analyzerService.persistData(analyzer, testMappings, existingMappings);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } catch (Exception lre) {
+            LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", lre);
+        }
+        return analyzer.getId();
+    }
 
-	private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
-		ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
-		for (TestMapping names : nameMappings) {
-			String testId = getIdForTestName(names.getDbbTestName());
+    private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
+        ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
+        for (TestMapping names : nameMappings) {
+            String testId = getIdForTestName(names.getDbbTestName());
 
-			AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
-			analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
-			analyzerMapping.setTestId(testId);
-			testMappings.add(analyzerMapping);
-		}
-		return testMappings;
-	}
+            AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
+            analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
+            analyzerMapping.setTestId(testId);
+            testMappings.add(analyzerMapping);
+        }
+        return testMappings;
+    }
 
-	private String getIdForTestName(String dbbTestName) {
-		Test test = testService.getTestByName(dbbTestName);
-		if (test != null) {
-			return test.getId();
-		}
-		LogEvent.logError("PluginAnalyzerService", "createTestMappings",
-				"Unable to find test " + dbbTestName + " in test catalog");
-		return null;
-	}
+    private String getIdForTestName(String dbbTestName) {
+        Test test = testService.getTestByName(dbbTestName);
+        if (test != null) {
+            return test.getId();
+        }
+        LogEvent.logError("PluginAnalyzerService", "createTestMappings",
+                "Unable to find test " + dbbTestName + " in test catalog");
+        return null;
+    }
 
-	private void registerAanlyzerInCache(String name, String id) {
-		AnalyzerTestNameCache.instance().registerPluginAnalyzer(name, id);
-	}
+    private void registerAanlyzerInCache(String name, String id) {
+        AnalyzerTestNameCache.instance().registerPluginAnalyzer(name, id);
+    }
 
-	public static class TestMapping {
-		private final String analyzerTestName;
-		private final String dbbTestName;
+    public static class TestMapping {
+        private final String analyzerTestName;
+        private final String dbbTestName;
 
-		public TestMapping(String analyzerTestName, String dbbTestName) {
-			this.analyzerTestName = analyzerTestName;
-			this.dbbTestName = dbbTestName;
-		}
+        public TestMapping(String analyzerTestName, String dbbTestName) {
+            this.analyzerTestName = analyzerTestName;
+            this.dbbTestName = dbbTestName;
+        }
 
-		public String getAnalyzerTestName() {
-			return analyzerTestName;
-		}
+        public String getAnalyzerTestName() {
+            return analyzerTestName;
+        }
 
-		public String getDbbTestName() {
-			return dbbTestName;
-		}
-	}
+        public String getDbbTestName() {
+            return dbbTestName;
+        }
+    }
 
 }

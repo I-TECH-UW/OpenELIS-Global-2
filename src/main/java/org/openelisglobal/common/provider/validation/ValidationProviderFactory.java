@@ -34,121 +34,115 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 
 public class ValidationProviderFactory {
 
-	private static ValidationProviderFactory instance; // Instance of this
+    private static ValidationProviderFactory instance; // Instance of this
 
-	// class
+    // class
 
-	// Properties object that holds validation provider mappings
-	private Properties validationProviderClassMap = null;
+    // Properties object that holds validation provider mappings
+    private Properties validationProviderClassMap = null;
 
-	/**
-	 * Singleton global access for ValidationProviderFactory
-	 * 
-	 */
+    /**
+     * Singleton global access for ValidationProviderFactory
+     * 
+     */
 
-	public static ValidationProviderFactory getInstance() {
-		if (instance == null) {
-			synchronized (ValidationProviderFactory.class) {
-				if (instance == null) {
-					instance = new ValidationProviderFactory();
-				}
-			}
+    public static ValidationProviderFactory getInstance() {
+        if (instance == null) {
+            synchronized (ValidationProviderFactory.class) {
+                if (instance == null) {
+                    instance = new ValidationProviderFactory();
+                }
+            }
 
-		}
-		return instance;
-	}
+        }
+        return instance;
+    }
 
-	/**
-	 * Create an object for the full class name passed in.
-	 * 
-	 * @param String
-	 *            full class name
-	 * @return Object Created object
-	 */
-	protected Object createObject(String className) throws LIMSRuntimeException {
-		Object object = null;
-		try {
-			Class classDefinition = Class.forName(className);
-			object = classDefinition.newInstance();
-		} catch (Exception e) {
-            //bugzilla 2154 
-			LogEvent.logError("ValidationProviderFactory","createObject()",e.toString());
-			throw new LIMSRuntimeException("Unable to create an object for "
-					+ className, e, LogEvent.getLog(ValidationProviderFactory.class));
-		}
-		return object;
-	}
+    /**
+     * Create an object for the full class name passed in.
+     * 
+     * @param String full class name
+     * @return Object Created object
+     */
+    protected Object createObject(String className) throws LIMSRuntimeException {
+        Object object = null;
+        try {
+            Class classDefinition = Class.forName(className);
+            object = classDefinition.newInstance();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ValidationProviderFactory", "createObject()", e.toString());
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
+                    LogEvent.getLog(ValidationProviderFactory.class));
+        }
+        return object;
+    }
 
-	/**
-	 * Search for the ValidationProvider implementation class name in the
-	 * Validation.properties file for the given ValidationProvider name
-	 * 
-	 * @param String
-	 *            ValidationProvider name e.g "OrganizationLocalAbbreviationValidationProvider"
-	 * @return String Full implementation class e.g
-	 *         "org.openelisglobal.common.validation.provider"
-	 */
-	protected String getValidationProviderClassName(
-			String validationProvidername) throws LIMSRuntimeException {
-		if (validationProviderClassMap == null) { // Need to load the property
-			// object with the class
-			// mappings
-			ResourceLocator rl = ResourceLocator.getInstance();
-			InputStream propertyStream = null;
-			// Now load a java.util.Properties object with the properties
-			validationProviderClassMap = new Properties();
-			try {
-				propertyStream = rl
-						.getNamedResourceAsInputStream(ResourceLocator.AJAX_PROPERTIES);
+    /**
+     * Search for the ValidationProvider implementation class name in the
+     * Validation.properties file for the given ValidationProvider name
+     * 
+     * @param String ValidationProvider name e.g
+     *               "OrganizationLocalAbbreviationValidationProvider"
+     * @return String Full implementation class e.g
+     *         "org.openelisglobal.common.validation.provider"
+     */
+    protected String getValidationProviderClassName(String validationProvidername) throws LIMSRuntimeException {
+        if (validationProviderClassMap == null) { // Need to load the property
+            // object with the class
+            // mappings
+            ResourceLocator rl = ResourceLocator.getInstance();
+            InputStream propertyStream = null;
+            // Now load a java.util.Properties object with the properties
+            validationProviderClassMap = new Properties();
+            try {
+                propertyStream = rl.getNamedResourceAsInputStream(ResourceLocator.AJAX_PROPERTIES);
 
-				validationProviderClassMap.load(propertyStream);
-			} catch (IOException e) {
-                //bugzilla 2154
-			    LogEvent.logError("ValidationProviderFactory","getValidationProviderClassName()",e.toString());
-				throw new LIMSRuntimeException(
-						"Unable to load validation provider class mappings.",
-						e, LogEvent.getLog(ValidationProviderFactory.class));
-			} finally {
-				if (null != propertyStream) {
-					try {
-						propertyStream.close();
-						propertyStream = null;
-					} catch (Exception e) {
-                		//bugzilla 2154
-			    		LogEvent.logError("ValidationProviderFactory","getValidationProviderClassName()",e.toString());
-					}
-				}
-			}
-		}
+                validationProviderClassMap.load(propertyStream);
+            } catch (IOException e) {
+                // bugzilla 2154
+                LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()", e.toString());
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
+                        LogEvent.getLog(ValidationProviderFactory.class));
+            } finally {
+                if (null != propertyStream) {
+                    try {
+                        propertyStream.close();
+                        propertyStream = null;
+                    } catch (Exception e) {
+                        // bugzilla 2154
+                        LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()",
+                                e.toString());
+                    }
+                }
+            }
+        }
 
-		String mapping = validationProviderClassMap
-				.getProperty(validationProvidername);
-		if (mapping == null) {
-			//bugzilla 2154
-			LogEvent.logError("ValidationProviderFactory","getValidationProviderClassName()",validationProvidername);
-			throw new LIMSRuntimeException(
-					"getValidationProviderClassName - Unable to find mapping for "
-							+ validationProvidername);
-		}
-		return mapping;
-	}
+        String mapping = validationProviderClassMap.getProperty(validationProvidername);
+        if (mapping == null) {
+            // bugzilla 2154
+            LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()", validationProvidername);
+            throw new LIMSRuntimeException(
+                    "getValidationProviderClassName - Unable to find mapping for " + validationProvidername);
+        }
+        return mapping;
+    }
 
-	/**
-	 * Validation Provider creation method
-	 * 
-	 * @param name
-	 * @return Validation Provider object
-	 * 
-	 */
-	public BaseValidationProvider getValidationProvider(String name)
-			throws LIMSRuntimeException {
-		BaseValidationProvider provider = null;
+    /**
+     * Validation Provider creation method
+     * 
+     * @param name
+     * @return Validation Provider object
+     * 
+     */
+    public BaseValidationProvider getValidationProvider(String name) throws LIMSRuntimeException {
+        BaseValidationProvider provider = null;
 
-		String className = getValidationProviderClassName(name);
+        String className = getValidationProviderClassName(name);
 
-		provider = (BaseValidationProvider) createObject(className);
+        provider = (BaseValidationProvider) createObject(className);
 
-		return provider;
-	}
+        return provider;
+    }
 
 }

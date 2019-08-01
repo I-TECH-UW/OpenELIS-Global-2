@@ -24,278 +24,278 @@ import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 
 public class TestResultsXmit {
 
-	/**
-	 * A String representing the patientId whom the analysis has been done for.
-	 */
-	private String patientGUID;
+    /**
+     * A String representing the patientId whom the analysis has been done for.
+     */
+    private String patientGUID;
 
-	private CodedValueXmit test;
+    private CodedValueXmit test;
 
-	private CodedValueXmit sampleType;
-	
-	private TestRangeXmit normalRange;
-	
-	private String status;
-	
-	public CodedValueXmit getTest() {
-		return test;
-	}
+    private CodedValueXmit sampleType;
 
-	public void setTest(CodedValueXmit test) {
-		this.test = test;
-	}
+    private TestRangeXmit normalRange;
 
-	public CodedValueXmit getSampleType() {
-		return sampleType;
-	}
+    private String status;
 
-	public void setSampleType(CodedValueXmit sampleType) {
-		this.sampleType = sampleType;
-	}
+    public CodedValueXmit getTest() {
+        return test;
+    }
 
-	/**
-	 * The date representing when the test has been done
-	 */
-	private Date testDate;
-	
-	private String accessionNumber;
-	
-	private String referringOrderNumber;
-	
-	/**
-	 * A List representing all results for the given test and analysis.
-	 */
-	private List<ResultXmit> results;
+    public void setTest(CodedValueXmit test) {
+        this.test = test;
+    }
 
-	public TestResultsXmit() {
-		results = new ArrayList<ResultXmit>();
-	}
+    public CodedValueXmit getSampleType() {
+        return sampleType;
+    }
 
-	/**
-	 * @return the results
-	 */
-	public List<ResultXmit> getResults() {
-		return results;
-	}
+    public void setSampleType(CodedValueXmit sampleType) {
+        this.sampleType = sampleType;
+    }
 
-	/**
-	 * @param results
-	 *            the results to set
-	 */
-	public void setResults(List<ResultXmit> results) {
-		this.results = results;
-	}
+    /**
+     * The date representing when the test has been done
+     */
+    private Date testDate;
 
-	public void setPatientGUID(String patientGUID) {
-		this.patientGUID = patientGUID;
-	}
+    private String accessionNumber;
 
-	public String getPatientGUID() {
-		return patientGUID;
-	}
+    private String referringOrderNumber;
 
-	public void setTestDate(Date testDate) {
-		this.testDate = testDate;
-	}
+    /**
+     * A List representing all results for the given test and analysis.
+     */
+    private List<ResultXmit> results;
 
-	public Date getTestDate() {
-		return testDate;
-	}
+    public TestResultsXmit() {
+        results = new ArrayList<ResultXmit>();
+    }
 
-	public String getAccessionNumber() {
-		return accessionNumber;
-	}
+    /**
+     * @return the results
+     */
+    public List<ResultXmit> getResults() {
+        return results;
+    }
 
-	public void setAccessionNumber(String accessionNumber) {
-		this.accessionNumber = accessionNumber;
-	}
+    /**
+     * @param results the results to set
+     */
+    public void setResults(List<ResultXmit> results) {
+        this.results = results;
+    }
 
-	public String getReferringOrderNumber() {
-		return referringOrderNumber;
-	}
+    public void setPatientGUID(String patientGUID) {
+        this.patientGUID = patientGUID;
+    }
 
-	public void setReferringOrderNumber(String referringOrderNumber) {
-		this.referringOrderNumber = referringOrderNumber;
-	}
+    public String getPatientGUID() {
+        return patientGUID;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setTestDate(Date testDate) {
+        this.testDate = testDate;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public Date getTestDate() {
+        return testDate;
+    }
 
-	public void setNormalRange(TestRangeXmit normalRange) {
-		this.normalRange = normalRange;
-	}
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
 
-	public TestRangeXmit getNormalRange() {
-		return normalRange;
-	}
-	
-	/**
-	 * The section for the test
-	 */
-	private String testSection;
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
-	public void setTestSection(String section) {
-		this.testSection = section;
-	}
-	
-	public String getTestSection() {
-		return testSection;
-	}
+    public String getReferringOrderNumber() {
+        return referringOrderNumber;
+    }
 
-	/**
-	 * Valid range min/max
-	 */
-	private TestRangeXmit validRange;
-	
-	public void setValidRange(TestRangeXmit validRange) {
-		this.validRange = validRange;
-	}
+    public void setReferringOrderNumber(String referringOrderNumber) {
+        this.referringOrderNumber = referringOrderNumber;
+    }
 
-	public TestRangeXmit getValidRange() {
-		return validRange;
-	}
-	
-	/**
-	 * The notes for the test, concatenated into one string
-	 */
-	private String testNotes;
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setTestNotes(String notes) {
-		this.testNotes = notes;
-	}
-	
-	public String getTestNotes() {
-		return testNotes;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	/**
-	 * Following elements are for malaria case reports only
-	 */
-	private String patientFirstName;
+    public void setNormalRange(TestRangeXmit normalRange) {
+        this.normalRange = normalRange;
+    }
 
-	public void setPatientFirstName(String fname) {
-		this.patientFirstName = fname;
-	}
-	
-	public String getPatientFirstName() {
-		return patientFirstName;
-	}
+    public TestRangeXmit getNormalRange() {
+        return normalRange;
+    }
 
-	private String patientLastName;
+    /**
+     * The section for the test
+     */
+    private String testSection;
 
-	public void setPatientLastName(String lname) {
-		this.patientLastName = lname;
-	}
-	
-	public String getPatientLastName() {
-		return patientLastName;
-	}
+    public void setTestSection(String section) {
+        this.testSection = section;
+    }
 
-	private String patientSTID;
+    public String getTestSection() {
+        return testSection;
+    }
 
-	public void setPatientSTID(String patientSTID) {
-		this.patientSTID = patientSTID;
-	}
-	
-	public String getPatientSTID() {
-		return patientSTID;
-	}
+    /**
+     * Valid range min/max
+     */
+    private TestRangeXmit validRange;
 
-	private String patientGender;
+    public void setValidRange(TestRangeXmit validRange) {
+        this.validRange = validRange;
+    }
 
-	public void setPatientGender(String gender) {
-		this.patientGender = gender;
-	}
-	
-	public String getPatientGender() {
-		return patientGender;
-	}
+    public TestRangeXmit getValidRange() {
+        return validRange;
+    }
 
-	private String patientStreetAddress;
+    /**
+     * The notes for the test, concatenated into one string
+     */
+    private String testNotes;
 
-	public void setPatientStreetAddress(String addr) {
-		this.patientStreetAddress = addr;
-	}
-	
-	public String getPatientStreetAddress() {
-		return patientStreetAddress;
-	}
+    public void setTestNotes(String notes) {
+        this.testNotes = notes;
+    }
 
-	private String patientCity;
+    public String getTestNotes() {
+        return testNotes;
+    }
 
-	public void setPatientCity(String city) {
-		this.patientCity = city;
-	}
-	
-	public String getPatientCity() {
-		return patientCity;
-	}
+    /**
+     * Following elements are for malaria case reports only
+     */
+    private String patientFirstName;
 
-	private String patientState;
+    public void setPatientFirstName(String fname) {
+        this.patientFirstName = fname;
+    }
 
-	public void setPatientState(String state) {
-		this.patientState = state;
-	}
-	
-	public String getPatientState() {
-		return patientState;
-	}
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
 
-	private String patientZipCode;
+    private String patientLastName;
 
-	public void setPatientZipCode(String zip) {
-		this.patientZipCode = zip;
-	}
-	
-	public String getPatientZipCode() {
-		return patientZipCode;
-	}
+    public void setPatientLastName(String lname) {
+        this.patientLastName = lname;
+    }
 
-	private String patientCountry;
+    public String getPatientLastName() {
+        return patientLastName;
+    }
 
-	public void setPatientCountry(String country) {
-		this.patientCountry = country;
-	}
-	
-	public String getPatientCountry() {
-		return patientCountry;
-	}
+    private String patientSTID;
 
-	private String patientBirthdate;
+    public void setPatientSTID(String patientSTID) {
+        this.patientSTID = patientSTID;
+    }
 
-	public void setPatientBirthdate(String birthdate) {
-		this.patientBirthdate = birthdate;
-	}
-	
-	public String getPatientBirthdate() {
-		return patientBirthdate;
-	}
+    public String getPatientSTID() {
+        return patientSTID;
+    }
 
-	private String patientTelephone;
+    private String patientGender;
 
-	public void setPatientTelephone(String telephone) {
-		this.patientTelephone = telephone;
-	}
-	
-	public String getatientTelephone() {
-		return patientTelephone;
-	}
-	/**
-	 * End malaria case report elements
-	 */
-	
-	private Event resultsEvent;
+    public void setPatientGender(String gender) {
+        this.patientGender = gender;
+    }
 
-	public void setResultsEvent(Event resultsEvent) {
-		this.resultsEvent = resultsEvent;		
-	}
+    public String getPatientGender() {
+        return patientGender;
+    }
 
-	public Event getResultsEvent() {
-		return resultsEvent;		
-	}
+    private String patientStreetAddress;
+
+    public void setPatientStreetAddress(String addr) {
+        this.patientStreetAddress = addr;
+    }
+
+    public String getPatientStreetAddress() {
+        return patientStreetAddress;
+    }
+
+    private String patientCity;
+
+    public void setPatientCity(String city) {
+        this.patientCity = city;
+    }
+
+    public String getPatientCity() {
+        return patientCity;
+    }
+
+    private String patientState;
+
+    public void setPatientState(String state) {
+        this.patientState = state;
+    }
+
+    public String getPatientState() {
+        return patientState;
+    }
+
+    private String patientZipCode;
+
+    public void setPatientZipCode(String zip) {
+        this.patientZipCode = zip;
+    }
+
+    public String getPatientZipCode() {
+        return patientZipCode;
+    }
+
+    private String patientCountry;
+
+    public void setPatientCountry(String country) {
+        this.patientCountry = country;
+    }
+
+    public String getPatientCountry() {
+        return patientCountry;
+    }
+
+    private String patientBirthdate;
+
+    public void setPatientBirthdate(String birthdate) {
+        this.patientBirthdate = birthdate;
+    }
+
+    public String getPatientBirthdate() {
+        return patientBirthdate;
+    }
+
+    private String patientTelephone;
+
+    public void setPatientTelephone(String telephone) {
+        this.patientTelephone = telephone;
+    }
+
+    public String getatientTelephone() {
+        return patientTelephone;
+    }
+
+    /**
+     * End malaria case report elements
+     */
+
+    private Event resultsEvent;
+
+    public void setResultsEvent(Event resultsEvent) {
+        this.resultsEvent = resultsEvent;
+    }
+
+    public Event getResultsEvent() {
+        return resultsEvent;
+    }
 }

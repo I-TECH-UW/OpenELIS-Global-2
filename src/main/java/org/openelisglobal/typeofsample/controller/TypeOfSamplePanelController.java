@@ -16,37 +16,37 @@ import org.openelisglobal.typeofsample.form.TypeOfSamplePanelForm;
 //seemingly unused controller
 @Controller
 public class TypeOfSamplePanelController extends BaseController {
-	@RequestMapping(value = "/TypeOfSamplePanel", method = RequestMethod.GET)
-	public ModelAndView showTypeOfSamplePanel(HttpServletRequest request,
-			@ModelAttribute("form") TypeOfSamplePanelForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TypeOfSamplePanelForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/TypeOfSamplePanel", method = RequestMethod.GET)
+    public ModelAndView showTypeOfSamplePanel(HttpServletRequest request,
+            @ModelAttribute("form") TypeOfSamplePanelForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new TypeOfSamplePanelForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "typeOfSamplePanelDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "haitiMasterListsPageDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "typeOfSamplePanelDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "haitiMasterListsPageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

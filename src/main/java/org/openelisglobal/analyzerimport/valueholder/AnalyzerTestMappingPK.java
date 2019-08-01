@@ -21,20 +21,23 @@ import java.io.Serializable;
 
 public class AnalyzerTestMappingPK implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String analyzerId;
-	private String analyzerTestName;
+    private static final long serialVersionUID = 1L;
+    private String analyzerId;
+    private String analyzerTestName;
 
-	public String getAnalyzerId() {
-		return analyzerId;
-	}
-	public void setAnalyzerId(String analyzerId) {
-		this.analyzerId = analyzerId;
-	}
-	public String getAnalyzerTestName() {
-		return analyzerTestName;
-	}
-	public void setAnalyzerTestName(String analyzerTestName) {
-		this.analyzerTestName = analyzerTestName;
-	}
+    public String getAnalyzerId() {
+        return analyzerId;
+    }
+
+    public void setAnalyzerId(String analyzerId) {
+        this.analyzerId = analyzerId;
+    }
+
+    public String getAnalyzerTestName() {
+        return analyzerTestName;
+    }
+
+    public void setAnalyzerTestName(String analyzerTestName) {
+        this.analyzerTestName = analyzerTestName;
+    }
 }

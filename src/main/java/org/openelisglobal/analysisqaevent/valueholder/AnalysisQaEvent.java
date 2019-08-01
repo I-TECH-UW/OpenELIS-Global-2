@@ -27,126 +27,124 @@ import org.openelisglobal.qaevent.valueholder.QaEvent;
 
 public class AnalysisQaEvent extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String qaEventId;
+    private String qaEventId;
 
-	private ValueHolderInterface qaEvent;
+    private ValueHolderInterface qaEvent;
 
-	private String analysisId;
+    private String analysisId;
 
-	private ValueHolderInterface analysis;
+    private ValueHolderInterface analysis;
 
-	private Date completedDate;
+    private Date completedDate;
 
-	private String completedDateForDisplay;
-	
-	private String analysisQaEventDisplayValue;
+    private String completedDateForDisplay;
 
-	public AnalysisQaEvent() {
-		super();
-		this.analysis = new ValueHolder();
-		this.qaEvent = new ValueHolder();
-	}
+    private String analysisQaEventDisplayValue;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public AnalysisQaEvent() {
+        super();
+        this.analysis = new ValueHolder();
+        this.qaEvent = new ValueHolder();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	// ANALYSIS
-	public Analysis getAnalysis() {
-		return (Analysis) this.analysis.getValue();
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setAnalysis(ValueHolderInterface analysis) {
-		this.analysis = analysis;
-	}
+    // ANALYSIS
+    public Analysis getAnalysis() {
+        return (Analysis) this.analysis.getValue();
+    }
 
-	public void setAnalysis(Analysis analysis) {
-		this.analysis.setValue(analysis);
-	}
+    public void setAnalysis(ValueHolderInterface analysis) {
+        this.analysis = analysis;
+    }
 
-	protected ValueHolderInterface getAnalysisHolder() {
-		return this.analysis;
-	}
+    public void setAnalysis(Analysis analysis) {
+        this.analysis.setValue(analysis);
+    }
 
-	protected void setAnalysisHolder(ValueHolderInterface analysis) {
-		this.analysis = analysis;
-	}
+    protected ValueHolderInterface getAnalysisHolder() {
+        return this.analysis;
+    }
 
-	// QA_EVENT
-	public QaEvent getQaEvent() {
-		return (QaEvent) this.qaEvent.getValue();
-	}
+    protected void setAnalysisHolder(ValueHolderInterface analysis) {
+        this.analysis = analysis;
+    }
 
-	public void setQaEvent(ValueHolderInterface qaEvent) {
-		this.qaEvent = qaEvent;
-	}
+    // QA_EVENT
+    public QaEvent getQaEvent() {
+        return (QaEvent) this.qaEvent.getValue();
+    }
 
-	public void setQaEvent(QaEvent qaEvent) {
-		this.qaEvent.setValue(qaEvent);
-	}
+    public void setQaEvent(ValueHolderInterface qaEvent) {
+        this.qaEvent = qaEvent;
+    }
 
-	protected ValueHolderInterface getQaEventHolder() {
-		return this.qaEvent;
-	}
+    public void setQaEvent(QaEvent qaEvent) {
+        this.qaEvent.setValue(qaEvent);
+    }
 
-	protected void setQaEventHolder(ValueHolderInterface qaEvent) {
-		this.qaEvent = qaEvent;
-	}
+    protected ValueHolderInterface getQaEventHolder() {
+        return this.qaEvent;
+    }
 
-	public String getAnalysisId() {
-		return analysisId;
-	}
+    protected void setQaEventHolder(ValueHolderInterface qaEvent) {
+        this.qaEvent = qaEvent;
+    }
 
-	public void setAnalysisId(String analysisId) {
-		this.analysisId = analysisId;
-	}
+    public String getAnalysisId() {
+        return analysisId;
+    }
 
-	public Date getCompletedDate() {
-		return completedDate;
-	}
+    public void setAnalysisId(String analysisId) {
+        this.analysisId = analysisId;
+    }
 
-	public void setCompletedDate(Date completedDate) {
-		this.completedDate = completedDate;
-		this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(	completedDate);
-	}
+    public Date getCompletedDate() {
+        return completedDate;
+    }
 
-	public String getCompletedDateForDisplay() {
-		return completedDateForDisplay;
-	}
+    public void setCompletedDate(Date completedDate) {
+        this.completedDate = completedDate;
+        this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(completedDate);
+    }
 
-	public void setCompletedDateForDisplay(String completedDateForDisplay) {
-		this.completedDateForDisplay = completedDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.completedDate = DateUtil.convertStringDateToSqlDate(
-				completedDateForDisplay, locale);
-	}
+    public String getCompletedDateForDisplay() {
+        return completedDateForDisplay;
+    }
 
-	public String getQaEventId() {
-		return qaEventId;
-	}
+    public void setCompletedDateForDisplay(String completedDateForDisplay) {
+        this.completedDateForDisplay = completedDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.completedDate = DateUtil.convertStringDateToSqlDate(completedDateForDisplay, locale);
+    }
 
-	public void setQaEventId(String qaEventId) {
-		this.qaEventId = qaEventId;
-	}
+    public String getQaEventId() {
+        return qaEventId;
+    }
 
-	public String getAnalysisQaEventDisplayValue() {
-		if (analysis != null && qaEvent != null) {
-			Analysis analysis = getAnalysis();
-			String testDisplayValue = analysis.getTest().getTestDisplayValue();
-			QaEvent qaEvent = getQaEvent();
-			String qaEventDisplayValue = qaEvent.getQaEventDisplayValue();
-			analysisQaEventDisplayValue = testDisplayValue + " | " + qaEventDisplayValue;
-		} else {
-			analysisQaEventDisplayValue = "NO VALUES AVAILABLE";
-		}
-		return analysisQaEventDisplayValue;
-	}
+    public void setQaEventId(String qaEventId) {
+        this.qaEventId = qaEventId;
+    }
+
+    public String getAnalysisQaEventDisplayValue() {
+        if (analysis != null && qaEvent != null) {
+            Analysis analysis = getAnalysis();
+            String testDisplayValue = analysis.getTest().getTestDisplayValue();
+            QaEvent qaEvent = getQaEvent();
+            String qaEventDisplayValue = qaEvent.getQaEventDisplayValue();
+            analysisQaEventDisplayValue = testDisplayValue + " | " + qaEventDisplayValue;
+        } else {
+            analysisQaEventDisplayValue = "NO VALUES AVAILABLE";
+        }
+        return analysisQaEventDisplayValue;
+    }
 }

@@ -27,55 +27,55 @@ import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 
 public class Versioning {
 
-	private static final String PROPERTY_FILE = "/build.properties";
-	private static String buildNumber = "Not set";
-	private static String releaseNumber = " ";
+    private static final String PROPERTY_FILE = "/build.properties";
+    private static String buildNumber = "Not set";
+    private static String releaseNumber = " ";
 
-	static {
-		InputStream propertyStream = null;
-		Properties properties = null;
+    static {
+        InputStream propertyStream = null;
+        Properties properties = null;
 
-		try {
-			propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
+        try {
+            propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
 
-			properties = new Properties();
+            properties = new Properties();
 
-			properties.load(propertyStream);
+            properties.load(propertyStream);
 
-		} catch (Exception e) {
-			LogEvent.logError("Versioning", "", e.toString());
-		} finally {
-			if (null != propertyStream) {
-				try {
-					propertyStream.close();
-					propertyStream = null;
-				} catch (Exception e) {
-					LogEvent.logError("Versioning", "static initializer", e.toString());
-				}
-			}
-		}
-		if (properties != null) {
-			releaseNumber = properties.getProperty("release", " ");
-			buildNumber = properties.getProperty("build", "Not set");
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("Versioning", "", e.toString());
+        } finally {
+            if (null != propertyStream) {
+                try {
+                    propertyStream.close();
+                    propertyStream = null;
+                } catch (Exception e) {
+                    LogEvent.logError("Versioning", "static initializer", e.toString());
+                }
+            }
+        }
+        if (properties != null) {
+            releaseNumber = properties.getProperty("release", " ");
+            buildNumber = properties.getProperty("build", "Not set");
+        }
+    }
 
-	public static String getDatabaseVersion() {
-		DatabaseChangeLogService databaseChangeLogService = SpringContext.getBean(DatabaseChangeLogService.class);
-		DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
+    public static String getDatabaseVersion() {
+        DatabaseChangeLogService databaseChangeLogService = SpringContext.getBean(DatabaseChangeLogService.class);
+        DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
 
-		if (changeLog != null) {
-			return changeLog.getAuthor() + "/" + changeLog.getId() + "/" + changeLog.getFileName();
-		}
+        if (changeLog != null) {
+            return changeLog.getAuthor() + "/" + changeLog.getId() + "/" + changeLog.getFileName();
+        }
 
-		return "";
-	}
+        return "";
+    }
 
-	public static String getBuildNumber() {
-		return buildNumber;
-	}
+    public static String getBuildNumber() {
+        return buildNumber;
+    }
 
-	public static String getReleaseNumber() {
-		return releaseNumber;
-	}
+    public static String getReleaseNumber() {
+        return releaseNumber;
+    }
 }

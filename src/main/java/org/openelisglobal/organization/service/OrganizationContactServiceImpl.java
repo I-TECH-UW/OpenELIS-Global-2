@@ -12,23 +12,23 @@ import org.openelisglobal.organization.valueholder.OrganizationContact;
 
 @Service
 public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<OrganizationContact, String>
-		implements OrganizationContactService {
-	@Autowired
-	protected OrganizationContactDAO baseObjectDAO;
+        implements OrganizationContactService {
+    @Autowired
+    protected OrganizationContactDAO baseObjectDAO;
 
-	OrganizationContactServiceImpl() {
-		super(OrganizationContact.class);
-	}
+    OrganizationContactServiceImpl() {
+        super(OrganizationContact.class);
+    }
 
-	@Override
-	protected OrganizationContactDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected OrganizationContactDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<OrganizationContact> getListForOrganizationId(String orgId) {
-		return getBaseObjectDAO().getListForOrganizationId(orgId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationContact> getListForOrganizationId(String orgId) {
+        return getBaseObjectDAO().getListForOrganizationId(orgId);
+    }
 
 }

@@ -13,29 +13,29 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrd
 
 @Service
 public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String>
-		implements ElectronicOrderService {
-	@Autowired
-	protected ElectronicOrderDAO baseObjectDAO;
+        implements ElectronicOrderService {
+    @Autowired
+    protected ElectronicOrderDAO baseObjectDAO;
 
-	ElectronicOrderServiceImpl() {
-		super(ElectronicOrder.class);
-	}
+    ElectronicOrderServiceImpl() {
+        super(ElectronicOrder.class);
+    }
 
-	@Override
-	protected ElectronicOrderDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ElectronicOrderDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
-		return getBaseObjectDAO().getAllElectronicOrdersOrderedBy(order);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
+        return getBaseObjectDAO().getAllElectronicOrdersOrderedBy(order);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) {
-		return getBaseObjectDAO().getElectronicOrdersByExternalId(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) {
+        return getBaseObjectDAO().getElectronicOrdersByExternalId(id);
+    }
 
 }

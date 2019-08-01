@@ -15,35 +15,35 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class UomRenameUpdateController extends BaseController {
-	@RequestMapping(value = "/UomRenameUpdate", method = RequestMethod.GET)
-	public ModelAndView showUomRenameUpdate(HttpServletRequest request,
-			@ModelAttribute("form") UomRenameEntryForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new UomRenameEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/UomRenameUpdate", method = RequestMethod.GET)
+    public ModelAndView showUomRenameUpdate(HttpServletRequest request,
+            @ModelAttribute("form") UomRenameEntryForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new UomRenameEntryForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "/UomRenameEntry.do";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/UomRenameEntry.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

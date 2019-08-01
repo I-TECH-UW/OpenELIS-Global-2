@@ -24,7 +24,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.result.dao.ResultInventoryDAO;
@@ -35,28 +35,28 @@ import org.openelisglobal.result.valueholder.ResultInventory;
 @Transactional
 public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String> implements ResultInventoryDAO {
 
-	public ResultInventoryDAOImpl() {
-		super(ResultInventory.class);
-	}
+    public ResultInventoryDAOImpl() {
+        super(ResultInventory.class);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
-		List<ResultInventory> resultInventories;
-		try {
-			String sql = "from ResultInventory";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			resultInventories = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("ResultInventoryDAOImpl", "getAllResultInventorys()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultInventory getAllResultInventorys()", e);
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
+        List<ResultInventory> resultInventories;
+        try {
+            String sql = "from ResultInventory";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            resultInventories = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("ResultInventoryDAOImpl", "getAllResultInventorys()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultInventory getAllResultInventorys()", e);
+        }
 
-		return resultInventories;
-	}
+        return resultInventories;
+    }
 
 //	@Override
 //	public void deleteData(List resultInventories) throws LIMSRuntimeException {
@@ -145,74 +145,75 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(ResultInventory resultInventory) throws LIMSRuntimeException {
-		try {
-			ResultInventory tmpResultInventory = entityManager.unwrap(Session.class).get(ResultInventory.class,
-					resultInventory.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (tmpResultInventory != null) {
-				PropertyUtils.copyProperties(resultInventory, tmpResultInventory);
-			} else {
-				resultInventory.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ResultInventoryDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultInventory getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(ResultInventory resultInventory) throws LIMSRuntimeException {
+        try {
+            ResultInventory tmpResultInventory = entityManager.unwrap(Session.class).get(ResultInventory.class,
+                    resultInventory.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (tmpResultInventory != null) {
+                PropertyUtils.copyProperties(resultInventory, tmpResultInventory);
+            } else {
+                resultInventory.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("ResultInventoryDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultInventory getData()", e);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
-		List<ResultInventory> resultInventories = null;
-		try {
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
+        List<ResultInventory> resultInventories = null;
+        try {
 
-			String sql = "from ResultInventory r where r.resultId = :resultId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("resultId", Integer.parseInt(result.getId()));
+            String sql = "from ResultInventory r where r.resultId = :resultId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("resultId", Integer.parseInt(result.getId()));
 
-			resultInventories = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            resultInventories = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return resultInventories;
+            return resultInventories;
 
-		} catch (Exception e) {
-			LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryByResult()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryByResult()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryByResult()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryByResult()", e);
+        }
+    }
 
-	public ResultInventory readResultInventory(String idString) {
-		ResultInventory data = null;
-		try {
-			data = entityManager.unwrap(Session.class).get(ResultInventory.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("ResultInventoryDAOImpl", "readResultInventory()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultInventory readResultInventory()", e);
-		}
+    public ResultInventory readResultInventory(String idString) {
+        ResultInventory data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(ResultInventory.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("ResultInventoryDAOImpl", "readResultInventory()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultInventory readResultInventory()", e);
+        }
 
-		return data;
-	}
+        return data;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException {
-		try {
-			ResultInventory re = entityManager.unwrap(Session.class).get(ResultInventory.class, resultInventory.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			return re;
-		} catch (Exception e) {
-			LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryById()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryById()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException {
+        try {
+            ResultInventory re = entityManager.unwrap(Session.class).get(ResultInventory.class,
+                    resultInventory.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            return re;
+        } catch (Exception e) {
+            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryById()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryById()", e);
+        }
+    }
 
 }

@@ -8,49 +8,49 @@ import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, String> {
-	void getData(TypeOfSample typeOfSample);
+    void getData(TypeOfSample typeOfSample);
 
-	String getNameForTypeOfSampleId(String id);
+    String getNameForTypeOfSampleId(String id);
 
-	List getAllTypeOfSamples();
+    List getAllTypeOfSamples();
 
-	List<TypeOfSample> getAllTypeOfSamplesSortOrdered();
+    List<TypeOfSample> getAllTypeOfSamplesSortOrdered();
 
-	List getTypesForDomain(TypeOfSampleDAO.SampleDomain domain);
+    List getTypesForDomain(TypeOfSampleDAO.SampleDomain domain);
 
-	List getPreviousTypeOfSampleRecord(String id);
+    List getPreviousTypeOfSampleRecord(String id);
 
-	Integer getTotalTypeOfSampleCount();
+    Integer getTotalTypeOfSampleCount();
 
-	List getNextTypeOfSampleRecord(String id);
+    List getNextTypeOfSampleRecord(String id);
 
-	TypeOfSample getTypeOfSampleById(String typeOfSampleId);
+    TypeOfSample getTypeOfSampleById(String typeOfSampleId);
 
-	TypeOfSample getSampleTypeFromTest(Test test);
+    TypeOfSample getSampleTypeFromTest(Test test);
 
-	List<TypeOfSample> getTypesForDomainBySortOrder(TypeOfSampleDAO.SampleDomain human);
+    List<TypeOfSample> getTypesForDomainBySortOrder(TypeOfSampleDAO.SampleDomain human);
 
-	List getPageOfTypeOfSamples(int startingRecNo);
+    List getPageOfTypeOfSamples(int startingRecNo);
 
-	List getTypes(String filter, String domain);
+    List getTypes(String filter, String domain);
 
-	TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain);
+    TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain);
 
-	TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase);
+    TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase);
 
-	List<Test> getAllTestsBySampleTypeId(String sampleTypeId);
+    List<Test> getAllTestsBySampleTypeId(String sampleTypeId);
 
-	List<Test> getActiveTestsBySampleTypeId(String sampleType, boolean b);
+    List<Test> getActiveTestsBySampleTypeId(String sampleType, boolean b);
 
-	TypeOfSample getTransientTypeOfSampleById(String sampleTypeId);
+    TypeOfSample getTransientTypeOfSampleById(String sampleTypeId);
 
-	void clearCache();
+    void clearCache();
 
-	TypeOfSample getTypeOfSampleForTest(String testId);
+    TypeOfSample getTypeOfSampleForTest(String testId);
 
-	String getTypeOfSampleNameForId(String id);
+    String getTypeOfSampleNameForId(String id);
 
-	String getTypeOfSampleIdForLocalAbbreviation(String name);
+    String getTypeOfSampleIdForLocalAbbreviation(String name);
 
-	List<TypeOfSample> getTypeOfSampleForPanelId(String id);
+    List<TypeOfSample> getTypeOfSampleForPanelId(String id);
 }

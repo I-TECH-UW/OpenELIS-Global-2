@@ -21,6 +21,7 @@ import java.util.List;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerLineInserter;
 
 public interface AnalyzerImporterPlugin extends APlugin {
-    public boolean isTargetAnalyzer( List<String> lines);
+    public boolean isTargetAnalyzer(List<String> lines);
+
     public AnalyzerLineInserter getAnalyzerLineInserter();
 }

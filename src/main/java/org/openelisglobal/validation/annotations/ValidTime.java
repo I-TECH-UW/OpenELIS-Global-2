@@ -17,9 +17,9 @@ import org.openelisglobal.validation.constraintvalidator.TimeConstraintValidator
 @Documented
 public @interface ValidTime {
 
-	String message() default "Invalid time format";
+    String message() default "Invalid time format";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

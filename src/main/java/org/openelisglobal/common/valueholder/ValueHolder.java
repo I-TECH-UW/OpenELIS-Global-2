@@ -21,8 +21,9 @@ import org.openelisglobal.common.log.LogEvent;
 
 /**
  * <p>
- * <b>Purpose</b>: Act as a place holder for a variable that required a value holder interface.
- * This class should be used to initialze an objects attributes that are using indirection is their mappings.
+ * <b>Purpose</b>: Act as a place holder for a variable that required a value
+ * holder interface. This class should be used to initialze an objects
+ * attributes that are using indirection is their mappings.
  */
 public class ValueHolder implements ValueHolderInterface, Cloneable, Serializable {
 
@@ -32,16 +33,14 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
     protected Object value;
 
     /**
-     * PUBLIC:
-     * Initialize the holder.
+     * PUBLIC: Initialize the holder.
      */
     public ValueHolder() {
         super();
     }
 
     /**
-     * PUBLIC:
-     * Initialize the holder with an object.
+     * PUBLIC: Initialize the holder with an object.
      */
     public ValueHolder(Object value) {
         this.value = value;
@@ -54,35 +53,32 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
         try {
             return super.clone();
         } catch (CloneNotSupportedException exception) {
-            //bugzilla 2154
-			LogEvent.logError("ValueHolder","clone()",exception.toString());
+            // bugzilla 2154
+            LogEvent.logError("ValueHolder", "clone()", exception.toString());
         }
 
         return null;
     }
 
     /**
-     * PUBLIC:
-     * Return the wrapped object.
+     * PUBLIC: Return the wrapped object.
      */
     public synchronized Object getValue() {
         return value;
     }
 
     /**
-     * PUBLIC:
-     * Return a boolean indicating whether the
-     * wrapped object has been set or not.
+     * PUBLIC: Return a boolean indicating whether the wrapped object has been set
+     * or not.
      */
     public boolean isInstantiated() {
-        // Always return true since we consider 
+        // Always return true since we consider
         // null to be a valid wrapped object.
         return true;
     }
 
     /**
-     * PUBLIC:
-     * Set the wrapped object.
+     * PUBLIC: Set the wrapped object.
      */
     public void setValue(Object value) {
         this.value = value;

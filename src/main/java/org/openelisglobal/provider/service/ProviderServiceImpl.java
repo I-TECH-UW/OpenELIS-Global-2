@@ -13,52 +13,52 @@ import org.openelisglobal.provider.valueholder.Provider;
 
 @Service
 public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String> implements ProviderService {
-	@Autowired
-	protected ProviderDAO baseObjectDAO;
+    @Autowired
+    protected ProviderDAO baseObjectDAO;
 
-	ProviderServiceImpl() {
-		super(Provider.class);
-	}
+    ProviderServiceImpl() {
+        super(Provider.class);
+    }
 
-	@Override
-	protected ProviderDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ProviderDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(Provider provider) {
-		getBaseObjectDAO().getData(provider);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Provider provider) {
+        getBaseObjectDAO().getData(provider);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfProviders(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfProviders(startingRecNo);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfProviders(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfProviders(startingRecNo);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllProviders() {
-		return getBaseObjectDAO().getAllProviders();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllProviders() {
+        return getBaseObjectDAO().getAllProviders();
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextProviderRecord(String id) {
-		return getBaseObjectDAO().getNextProviderRecord(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextProviderRecord(String id) {
+        return getBaseObjectDAO().getNextProviderRecord(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousProviderRecord(String id) {
-		return getBaseObjectDAO().getPreviousProviderRecord(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousProviderRecord(String id) {
+        return getBaseObjectDAO().getPreviousProviderRecord(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Provider getProviderByPerson(Person person) {
-		return getBaseObjectDAO().getProviderByPerson(person);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Provider getProviderByPerson(Person person) {
+        return getBaseObjectDAO().getProviderByPerson(person);
+    }
 }

@@ -25,7 +25,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -40,9 +40,9 @@ import org.openelisglobal.test.valueholder.TestSection;
 @Transactional
 public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> implements TestSectionDAO {
 
-	public TestSectionDAOImpl() {
-		super(TestSection.class);
-	}
+    public TestSectionDAOImpl() {
+        super(TestSection.class);
+    }
 
 //	@Override
 //	public void deleteData(List testSections) throws LIMSRuntimeException {
@@ -151,392 +151,392 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(TestSection testSection) throws LIMSRuntimeException {
-		try {
-			TestSection testSec = entityManager.unwrap(Session.class).get(TestSection.class, testSection.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (testSec != null) {
-				PropertyUtils.copyProperties(testSection, testSec);
-			} else {
-				testSection.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(TestSection testSection) throws LIMSRuntimeException {
+        try {
+            TestSection testSec = entityManager.unwrap(Session.class).get(TestSection.class, testSection.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (testSec != null) {
+                PropertyUtils.copyProperties(testSection, testSec);
+            } else {
+                testSection.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("TestSectionDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getData()", e);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
-		List<TestSection> list = null;
-		try {
-			String sql = "from TestSection";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
-		}
-		return list;
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
+        List<TestSection> list = null;
+        try {
+            String sql = "from TestSection";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
+        }
+        return list;
+    }
 
-	/**
-	 * Get all the test sections assigned to this specific user
-	 *
-	 * @param sysUserId the user system id
-	 * @return list of tests
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
-		List list = new Vector();
+    /**
+     * Get all the test sections assigned to this specific user
+     *
+     * @param sysUserId the user system id
+     * @return list of tests
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
+        List list = new Vector();
 
-		String sql = "";
+        String sql = "";
 
-		try {
-			// moved into service layer
+        try {
+            // moved into service layer
 //			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 //			for (int i = 0; i < userTestSectionList.size(); i++) {
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				sql = "from TestSection where id in (" + sectionIdList + ")";
-			} else {
-				return list;
-			}
+            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+                sql = "from TestSection where id in (" + sectionIdList + ")";
+            } else {
+                return list;
+            }
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
-		}
-		return list;
-	}
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
+        }
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			// bugzilla 1399
-			String sql = "from TestSection t order by t.organization.organizationName, t.testSectionName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            // bugzilla 1399
+            String sql = "from TestSection t order by t.organization.organizationName, t.testSectionName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public TestSection readTestSection(String idString) {
-		TestSection ts = null;
-		try {
-			ts = entityManager.unwrap(Session.class).get(TestSection.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection readCity()", e);
-		}
+    public TestSection readTestSection(String idString) {
+        TestSection ts = null;
+        try {
+            ts = entityManager.unwrap(Session.class).get(TestSection.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection readCity()", e);
+        }
 
-		return ts;
-	}
+        return ts;
+    }
 
-	// this is for autocomplete
-	@Override
-	@Transactional(readOnly = true)
-	public List getTestSections(String filter) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", filter + "%");
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
-		}
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List getTestSections(String filter) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", filter + "%");
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	// this is for autocomplete
-	@Override
-	@Transactional(readOnly = true)
-	public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
-			throws LIMSRuntimeException {
-		List list = new Vector();
-		String sql = "";
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+            throws LIMSRuntimeException {
+        List list = new Vector();
+        String sql = "";
 
-		try {
-			// this part has been moved into the service layer
+        try {
+            // this part has been moved into the service layer
 //			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 //			for (int i = 0; i < userTestSectionList.size(); i++) {
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-				sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
-						+ sectionIdList + ") order by upper(t.testSectionName)";
-			} else {
-				return list;
-			}
+            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
+                        + sectionIdList + ") order by upper(t.testSectionName)";
+            } else {
+                return list;
+            }
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", filter + "%");
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
-		}
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", filter + "%");
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "TestSection", TestSection.class);
+        return getNextRecord(id, "TestSection", TestSection.class);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "TestSection", TestSection.class);
-	}
+        return getPreviousRecord(id, "TestSection", TestSection.class);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
-		try {
-			String sql = "from TestSection t where t.testSectionName = :param";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", testSection.getTestSectionName());
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
+        try {
+            String sql = "from TestSection t where t.testSectionName = :param";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", testSection.getTestSectionName());
 
-			List<TestSection> list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            List<TestSection> list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (!list.isEmpty()) {
-				return list.get(0);
-			}
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
 
-			return null;
+            return null;
 
-		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl", "getTestSectionByName()", e.toString());
-			throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("TestSectionDAOImpl", "getTestSectionByName()", e.toString());
+            throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
+        }
+    }
 
-	// bugzilla 1411
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
-		return getTotalCount("TestSection", TestSection.class);
-	}
+    // bugzilla 1411
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
+        return getTotalCount("TestSection", TestSection.class);
+    }
 
 //	bugzilla 1427
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		// bugzilla 1908
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of record with
-			// id = currentId
-			String sql = "select ts.id from TestSection ts "
-					+ " order by ts.organization.organizationName, ts.testSectionName";
+        List list = new Vector();
+        // bugzilla 1908
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of record with
+            // id = currentId
+            String sql = "select ts.id from TestSection ts "
+                    + " order by ts.organization.organizationName, ts.testSectionName";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+                    .setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getNextRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	// bugzilla 1427
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    // bugzilla 1427
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		// bugzilla 1908
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of record with
-			// id = currentId
-			String sql = "select ts.id from TestSection ts "
-					+ " order by ts.organization.organizationName desc, ts.testSectionName desc";
+        List list = new Vector();
+        // bugzilla 1908
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of record with
+            // id = currentId
+            String sql = "select ts.id from TestSection ts "
+                    + " order by ts.organization.organizationName desc, ts.testSectionName desc";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
+                    .setFirstResult(rrn + 1).setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TestSectionDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	public boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
-		try {
+    @Override
+    public boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
+        try {
 
-			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			query.setParameter("name", testSection.getTestSectionName().toLowerCase().trim());
+            query.setParameter("name", testSection.getTestSectionName().toLowerCase().trim());
 
-			String testSectionId = "0";
-			if (!StringUtil.isNullorNill(testSection.getId())) {
-				testSectionId = testSection.getId();
-			}
-			query.setInteger("id", Integer.parseInt(testSectionId));
+            String testSectionId = "0";
+            if (!StringUtil.isNullorNill(testSection.getId())) {
+                testSectionId = testSection.getId();
+            }
+            query.setInteger("id", Integer.parseInt(testSectionId));
 
-			List list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            List list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return !list.isEmpty();
+            return !list.isEmpty();
 
-		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl", "duplicateTestSectionExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("TestSectionDAOImpl", "duplicateTestSectionExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<TestSection> getAllActiveTestSections() {
-		String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
+    @Override
+    @Transactional(readOnly = true)
+    public List<TestSection> getAllActiveTestSections() {
+        String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			@SuppressWarnings("unchecked")
-			List<TestSection> sections = query.list();
-			// closeSession(); // CSL remove old
-			return sections;
-		} catch (HibernateException e) {
-			handleException(e, "getAllActiveTestSections");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            @SuppressWarnings("unchecked")
+            List<TestSection> sections = query.list();
+            // closeSession(); // CSL remove old
+            return sections;
+        } catch (HibernateException e) {
+            handleException(e, "getAllActiveTestSections");
+        }
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<TestSection> getAllInActiveTestSections() {
-		String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
+    @Override
+    @Transactional(readOnly = true)
+    public List<TestSection> getAllInActiveTestSections() {
+        String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			List<TestSection> sections = query.list();
-			// closeSession(); // CSL remove old
-			return sections;
-		} catch (HibernateException e) {
-			handleException(e, "getAllInActiveTestSections");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<TestSection> sections = query.list();
+            // closeSession(); // CSL remove old
+            return sections;
+        } catch (HibernateException e) {
+            handleException(e, "getAllInActiveTestSections");
+        }
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
-		try {
-			String sql = "from TestSection t where t.testSectionName = :name order by t.sortOrderInt";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("name", testSection);
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
+        try {
+            String sql = "from TestSection t where t.testSectionName = :name order by t.sortOrderInt";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("name", testSection);
 
-			List<TestSection> list = query.list();
+            List<TestSection> list = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			if (!list.isEmpty()) {
-				return list.get(0);
-			}
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
 
-		} catch (Exception e) {
-			handleException(e, "getTestSectionByName");
-		}
+        } catch (Exception e) {
+            handleException(e, "getTestSectionByName");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestSection getTestSectionById(String testSectionId) {
-		try {
-			TestSection testSection = entityManager.unwrap(Session.class).get(TestSection.class, testSectionId);
-			// closeSession(); // CSL remove old
-			return testSection;
-		} catch (HibernateException e) {
-			handleException(e, "getTestSectionById");
-		}
-		return null;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public TestSection getTestSectionById(String testSectionId) {
+        try {
+            TestSection testSection = entityManager.unwrap(Session.class).get(TestSection.class, testSectionId);
+            // closeSession(); // CSL remove old
+            return testSection;
+        } catch (HibernateException e) {
+            handleException(e, "getTestSectionById");
+        }
+        return null;
+    }
 
 }

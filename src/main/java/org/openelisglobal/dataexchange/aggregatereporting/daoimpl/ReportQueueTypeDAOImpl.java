@@ -22,33 +22,33 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 
 @Component
-@Transactional 
+@Transactional
 public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String> implements ReportQueueTypeDAO {
 
-	public ReportQueueTypeDAOImpl() {
-		super(ReportQueueType.class);
-	}
+    public ReportQueueTypeDAOImpl() {
+        super(ReportQueueType.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException {
-		String sql = "from ReportQueueType rqt where rqt.name = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "from ReportQueueType rqt where rqt.name = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", name);
-			ReportQueueType type = (ReportQueueType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return type;
-		} catch (HibernateException e) {
-			handleException(e, "getReportQueueTypeByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", name);
+            ReportQueueType type = (ReportQueueType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getReportQueueTypeByName");
+        }
+        return null;
+    }
 }

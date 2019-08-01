@@ -31,59 +31,58 @@ import org.openelisglobal.result.valueholder.Result;
 /**
  */
 public class ActivityReportByPanel extends ActivityReport implements IReportCreator, IReportParameterSetter {
-	private String panelName;
+    private String panelName;
 
-	@Override
-	public void setRequestParameters(BaseForm form) {
-		new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
-				MessageUtil.getMessage("report.activity.report.base") + " "
-						+ MessageUtil.getMessage("report.by.panel"),
-				MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
-		new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS),
-				MessageUtil.getMessage("workplan.panel.types")).setRequestParameters(form);
-	}
+    @Override
+    public void setRequestParameters(BaseForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
+                MessageUtil.getMessage("report.activity.report.base") + " " + MessageUtil.getMessage("report.by.panel"),
+                MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
+        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS),
+                MessageUtil.getMessage("workplan.panel.types")).setRequestParameters(form);
+    }
 
-	@Override
-	protected String getActivityLabel() {
-		return "Panel: " + panelName;
-	}
+    @Override
+    protected String getActivityLabel() {
+        return "Panel: " + panelName;
+    }
 
-	@Override
-	protected void buildReportContent(ReportSpecificationList panelSelection) {
-		panelName = panelSelection.getSelectionAsName();
-		createReportParameters();
+    @Override
+    protected void buildReportContent(ReportSpecificationList panelSelection) {
+        panelName = panelSelection.getSelectionAsName();
+        createReportParameters();
 
-		List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInPanel(dateRange.getLowDate(),
-				dateRange.getHighDate(), panelSelection.getSelection());
-		ArrayList<ActivityReportBean> rawResults = new ArrayList<>(resultList.size());
-		testsResults = new ArrayList<>();
+        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInPanel(dateRange.getLowDate(),
+                dateRange.getHighDate(), panelSelection.getSelection());
+        ArrayList<ActivityReportBean> rawResults = new ArrayList<>(resultList.size());
+        testsResults = new ArrayList<>();
 
-		String currentAnalysisId = "-1";
-		for (Result result : resultList) {
-			if (result.getAnalysis() != null) {
-				if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
-					rawResults.add(createActivityReportBean(result, true));
-					currentAnalysisId = result.getAnalysis().getId();
-				}
-			}
-		}
+        String currentAnalysisId = "-1";
+        for (Result result : resultList) {
+            if (result.getAnalysis() != null) {
+                if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
+                    rawResults.add(createActivityReportBean(result, true));
+                    currentAnalysisId = result.getAnalysis().getId();
+                }
+            }
+        }
 
-		Collections.sort(rawResults, new Comparator<ActivityReportBean>() {
-			@Override
-			public int compare(ActivityReportBean o1, ActivityReportBean o2) {
-				return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-			}
-		});
+        Collections.sort(rawResults, new Comparator<ActivityReportBean>() {
+            @Override
+            public int compare(ActivityReportBean o1, ActivityReportBean o2) {
+                return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+            }
+        });
 
-		String currentAccessionNumber = "";
-		for (ActivityReportBean item : rawResults) {
-			if (!currentAccessionNumber.equals(item.getAccessionNumber())) {
-				testsResults.add(createIdentityActivityBean(item, false));
-				currentAccessionNumber = item.getAccessionNumber();
-			}
-			// hokey way to remove collection date
-			item.setCollectionDate(" ");
-			testsResults.add(item);
-		}
-	}
+        String currentAccessionNumber = "";
+        for (ActivityReportBean item : rawResults) {
+            if (!currentAccessionNumber.equals(item.getAccessionNumber())) {
+                testsResults.add(createIdentityActivityBean(item, false));
+                currentAccessionNumber = item.getAccessionNumber();
+            }
+            // hokey way to remove collection date
+            item.setCollectionDate(" ");
+            testsResults.add(item);
+        }
+    }
 }

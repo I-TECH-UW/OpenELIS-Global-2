@@ -7,16 +7,17 @@ import org.openelisglobal.common.dao.EnumValueItemImplDAO;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 
 @Service
-public class EnumValueItemImplServiceImpl extends BaseObjectServiceImpl<EnumValueItemImpl, String> implements EnumValueItemImplService {
-	@Autowired
-	protected EnumValueItemImplDAO baseObjectDAO;
+public class EnumValueItemImplServiceImpl extends BaseObjectServiceImpl<EnumValueItemImpl, String>
+        implements EnumValueItemImplService {
+    @Autowired
+    protected EnumValueItemImplDAO baseObjectDAO;
 
-	EnumValueItemImplServiceImpl() {
-		super(EnumValueItemImpl.class);
-	}
+    EnumValueItemImplServiceImpl() {
+        super(EnumValueItemImpl.class);
+    }
 
-	@Override
-	protected EnumValueItemImplDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected EnumValueItemImplDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

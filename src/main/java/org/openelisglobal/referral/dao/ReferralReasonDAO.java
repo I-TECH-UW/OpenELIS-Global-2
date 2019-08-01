@@ -23,7 +23,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.valueholder.ReferralReason;
 
 public interface ReferralReasonDAO extends BaseDAO<ReferralReason, String> {
-	public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException;
+    public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException;
 
-	public void getData(ReferralReason entity);
+    public void getData(ReferralReason entity);
 }

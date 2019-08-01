@@ -37,16 +37,16 @@ public interface SampleHumanDAO extends BaseDAO<SampleHuman, String> {
 
 //	public void deleteData(List sampleHumans) throws LIMSRuntimeException;
 
-	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException;
+    public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
 //	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
-	public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException;
+    public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException;
 
-	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException;
+    public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException;
 
-	public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException;
+    public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException;
 
-	public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException;
+    public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException;
 
 }

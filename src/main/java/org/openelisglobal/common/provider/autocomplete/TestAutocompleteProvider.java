@@ -41,23 +41,23 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author Darren L. Spurgeon
  */
 public class TestAutocompleteProvider extends BaseAutocompleteProvider {
-	
-	protected TestService testService = SpringContext.getBean(TestService.class);
 
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected TestService testService = SpringContext.getBean(TestService.class);
 
- 		//System.out.println("I am in AutocompleteTestServlet "
-		//		+ request.getParameter("testName"));
-		String testName = request.getParameter("testName");
-		//System.out.println("AutocompleteTestServlet testName " + testName);
-		//bugzilla 2291
-		List list = testService.getTests(testName, false);
-		return list;
-	}
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // System.out.println("I am in AutocompleteTestServlet "
+        // + request.getParameter("testName"));
+        String testName = request.getParameter("testName");
+        // System.out.println("AutocompleteTestServlet testName " + testName);
+        // bugzilla 2291
+        List list = testService.getTests(testName, false);
+        return list;
+    }
 
 }

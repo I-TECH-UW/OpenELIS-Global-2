@@ -25,7 +25,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportExternalImportDAO;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
@@ -33,35 +33,35 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 @Component
 @Transactional
 public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport, String>
-		implements ReportExternalImportDAO {
+        implements ReportExternalImportDAO {
 
-	public ReportExternalImportDAOImpl() {
-		super(ReportExternalImport.class);
-	}
+    public ReportExternalImportDAOImpl() {
+        super(ReportExternalImport.class);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
-			throws LIMSRuntimeException {
-		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
+            throws LIMSRuntimeException {
+        String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setTimestamp("lower", lower);
-			query.setTimestamp("upper", upper);
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setTimestamp("lower", lower);
+            query.setTimestamp("upper", upper);
 
-			List<ReportExternalImport> reports = query.list();
+            List<ReportExternalImport> reports = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return reports;
-		} catch (HibernateException e) {
-			handleException(e, "getReportsInDateRangeSorted");
-		}
+            return reports;
+        } catch (HibernateException e) {
+            handleException(e, "getReportsInDateRangeSorted");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
@@ -94,84 +94,84 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 //		}
 //	}
 
-	public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
+    public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
 
-		try {
-			ReportExternalImport data = entityManager.unwrap(Session.class).get(ReportExternalImport.class, idString);
-			// closeSession(); // CSL remove old
-			return data;
-		} catch (HibernateException e) {
-			handleException(e, "readReportExternalImport");
-		}
-		return null;
-	}
+        try {
+            ReportExternalImport data = entityManager.unwrap(Session.class).get(ReportExternalImport.class, idString);
+            // closeSession(); // CSL remove old
+            return data;
+        } catch (HibernateException e) {
+            handleException(e, "readReportExternalImport");
+        }
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<String> getUniqueSites() throws LIMSRuntimeException {
-		String sql = "select distinct sending_site from clinlims.report_external_import ";
-		try {
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			List<String> sites = query.list();
-			// closeSession(); // CSL remove old
-			return sites;
-		} catch (HibernateException e) {
-			handleException(e, "getUniqueSites");
-		}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getUniqueSites() throws LIMSRuntimeException {
+        String sql = "select distinct sending_site from clinlims.report_external_import ";
+        try {
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            List<String> sites = query.list();
+            // closeSession(); // CSL remove old
+            return sites;
+        } catch (HibernateException e) {
+            handleException(e, "getUniqueSites");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
-			throws LIMSRuntimeException {
-		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
+            throws LIMSRuntimeException {
+        String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setTimestamp("lower", lower);
-			query.setTimestamp("upper", upper);
-			query.setString("site", site);
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setTimestamp("lower", lower);
+            query.setTimestamp("upper", upper);
+            query.setString("site", site);
 
-			List<ReportExternalImport> reports = query.list();
+            List<ReportExternalImport> reports = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return reports;
-		} catch (HibernateException e) {
-			handleException(e, "getReportsInDateRangeSortedForSite");
-		}
+            return reports;
+        } catch (HibernateException e) {
+            handleException(e, "getReportsInDateRangeSortedForSite");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
-			throws LIMSRuntimeException {
-		String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
+            throws LIMSRuntimeException {
+        String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setDate("eventDate", importReport.getEventDate());
-			query.setString("site", importReport.getSendingSite());
-			query.setString("type", importReport.getReportType());
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setDate("eventDate", importReport.getEventDate());
+            query.setString("site", importReport.getSendingSite());
+            query.setString("type", importReport.getReportType());
 
-			List<ReportExternalImport> reports = query.list();
+            List<ReportExternalImport> reports = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return reports.isEmpty() ? new ReportExternalImport() : reports.get(0);
+            return reports.isEmpty() ? new ReportExternalImport() : reports.get(0);
 
-		} catch (HibernateException e) {
-			handleException(e, "getReportByEventDateSiteType");
-		}
+        } catch (HibernateException e) {
+            handleException(e, "getReportByEventDateSiteType");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

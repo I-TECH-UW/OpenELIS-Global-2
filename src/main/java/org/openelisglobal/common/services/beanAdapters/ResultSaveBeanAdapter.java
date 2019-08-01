@@ -22,7 +22,7 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 
 public class ResultSaveBeanAdapter {
 
-    public static ResultSaveBean fromTestResultItem( TestResultItem item){
+    public static ResultSaveBean fromTestResultItem(TestResultItem item) {
         ResultSaveBean bean = new ResultSaveBean();
 
         bean.setHasQualifiedResult(item.isHasQualifiedResult());
@@ -53,11 +53,10 @@ public class ResultSaveBeanAdapter {
         bean.setQualifiedResultValue(item.getQualifiedResultValue());
         bean.setQualifiedDictionaryId(item.getQualifiedDictionaryId());
         bean.setResultId(item.getResultId());
-        bean.setResultValue(item.getResult() );
-        //bean.setReportable("N");
+        bean.setResultValue(item.getResult());
+        // bean.setReportable("N");
         bean.setSignificantDigits(item.getSignificantDigits());
 
         return bean;
     }
 }
-

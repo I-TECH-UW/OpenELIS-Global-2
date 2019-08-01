@@ -39,7 +39,7 @@ public interface MethodDAO extends BaseDAO<Method, String> {
 
 //	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException;
 
-	public List getMethods(String filter) throws LIMSRuntimeException;
+    public List getMethods(String filter) throws LIMSRuntimeException;
 
 //	public void getData(Method method) throws LIMSRuntimeException;
 
@@ -51,9 +51,9 @@ public interface MethodDAO extends BaseDAO<Method, String> {
 
 //	public Method getMethodByName(Method method) throws LIMSRuntimeException;
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	public Integer getTotalMethodCount() throws LIMSRuntimeException;
 
-	boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
+    boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
 
 }

@@ -26,7 +26,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
@@ -42,9 +42,9 @@ import org.openelisglobal.person.valueholder.Person;
 @Transactional
 public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements PatientDAO {
 
-	public PatientDAOImpl() {
-		super(Patient.class);
-	}
+    public PatientDAOImpl() {
+        super(Patient.class);
+    }
 
 //	@Override
 //	public void deleteData(List patients) throws LIMSRuntimeException {
@@ -138,259 +138,259 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Patient getData(String patientId) throws LIMSRuntimeException {
-		try {
-			Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patientId);
-			// closeSession(); // CSL remove old
-			if (pat != null) {
-				updateDisplayValues(pat);
-			}
-			return pat;
-		} catch (HibernateException e) {
-			handleException(e, "getData(patientId)");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getData(String patientId) throws LIMSRuntimeException {
+        try {
+            Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patientId);
+            // closeSession(); // CSL remove old
+            if (pat != null) {
+                updateDisplayValues(pat);
+            }
+            return pat;
+        } catch (HibernateException e) {
+            handleException(e, "getData(patientId)");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(Patient patient) throws LIMSRuntimeException {
-		try {
-			Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patient.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (pat != null) {
-				updateDisplayValues(pat);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Patient patient) throws LIMSRuntimeException {
+        try {
+            Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patient.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (pat != null) {
+                updateDisplayValues(pat);
 
-				PropertyUtils.copyProperties(patient, pat);
-			} else {
-				patient.setId(null);
-			}
+                PropertyUtils.copyProperties(patient, pat);
+            } else {
+                patient.setId(null);
+            }
 
-		} catch (Exception e) {
-			LogEvent.logError("PatientDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient getData()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("PatientDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in Patient getData()", e);
+        }
+    }
 
-	private void updateDisplayValues(Patient pat) {
-		if (pat.getBirthDate() != null && pat.getBirthDateForDisplay() == null) {
-			pat.setBirthDateForDisplay(DateUtil.convertTimestampToStringDate(pat.getBirthDate()));
-		}
-		if (pat.getBirthTime() != null) {
-			pat.setBirthTimeForDisplay(DateUtil.convertSqlDateToStringDate(pat.getBirthTime()));
-		}
-		if (pat.getDeathDate() != null) {
-			pat.setDeathDateForDisplay(DateUtil.convertSqlDateToStringDate(pat.getDeathDate()));
-		}
-	}
+    private void updateDisplayValues(Patient pat) {
+        if (pat.getBirthDate() != null && pat.getBirthDateForDisplay() == null) {
+            pat.setBirthDateForDisplay(DateUtil.convertTimestampToStringDate(pat.getBirthDate()));
+        }
+        if (pat.getBirthTime() != null) {
+            pat.setBirthTimeForDisplay(DateUtil.convertSqlDateToStringDate(pat.getBirthTime()));
+        }
+        if (pat.getDeathDate() != null) {
+            pat.setDeathDateForDisplay(DateUtil.convertSqlDateToStringDate(pat.getDeathDate()));
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllPatients() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Patient";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient getAllPatients()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllPatients() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from Patient";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
+            throw new LIMSRuntimeException("Error in Patient getAllPatients()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
-		List patients = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
+        List patients = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from Patient t order by t.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            String sql = "from Patient t order by t.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			patients = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            patients = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "getPageOfPatients()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient getPageOfPatients()", e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("PatientDAOImpl", "getPageOfPatients()", e.toString());
+            throw new LIMSRuntimeException("Error in Patient getPageOfPatients()", e);
+        }
 
-		return patients;
-	}
+        return patients;
+    }
 
-	@Override
-	public Patient readPatient(String idString) {
-		Patient pat = null;
-		try {
-			pat = entityManager.unwrap(Session.class).get(Patient.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
-			throw new LIMSRuntimeException("Error in Patient readPatient()", e);
-		}
+    @Override
+    public Patient readPatient(String idString) {
+        Patient pat = null;
+        try {
+            pat = entityManager.unwrap(Session.class).get(Patient.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
+            throw new LIMSRuntimeException("Error in Patient readPatient()", e);
+        }
 
-		return pat;
-	}
+        return pat;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextPatientRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextPatientRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "Patient", Patient.class);
+        return getNextRecord(id, "Patient", Patient.class);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousPatientRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "Patient", Patient.class);
-	}
+        return getPreviousRecord(id, "Patient", Patient.class);
+    }
 
-	@Override
-	public boolean externalIDExists(String patientExternalID) {
+    @Override
+    public boolean externalIDExists(String patientExternalID) {
 
-		List results;
+        List results;
 
-		try {
-			String sql = "From Patient where external_id = :patientID";
+        try {
+            String sql = "From Patient where external_id = :patientID";
 
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("patientID", patientExternalID);
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("patientID", patientExternalID);
 
-			results = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Patient readPatient()", e);
-		}
+            results = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new LIMSRuntimeException("Error in Patient readPatient()", e);
+        }
 
-		return !results.isEmpty();
-	}
+        return !results.isEmpty();
+    }
 
-	@SuppressWarnings("unchecked")
-	protected Patient getPatientByStringProperty(String propertyName, String propertyValue) {
-		List<Patient> patients;
+    @SuppressWarnings("unchecked")
+    protected Patient getPatientByStringProperty(String propertyName, String propertyValue) {
+        List<Patient> patients;
 
-		try {
-			String sql = "From Patient p where p." + propertyName + " = :" + propertyName;
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString(propertyName, propertyValue);
-			patients = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
-		}
-		return patients.isEmpty() ? null : patients.get(0);
-	}
+        try {
+            String sql = "From Patient p where p." + propertyName + " = :" + propertyName;
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString(propertyName, propertyValue);
+            patients = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
+        }
+        return patients.isEmpty() ? null : patients.get(0);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Patient getPatientByNationalId(String nationalId) {
-		return getPatientByStringProperty("nationalId", nationalId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientByNationalId(String nationalId) {
+        return getPatientByStringProperty("nationalId", nationalId);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
-		try {
-			String sql = "From Patient p where p.nationalId = :nationalId";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("nationalId", nationalId);
-			List<Patient> patients = query.list();
-			// closeSession(); // CSL remove old
-			return patients;
-		} catch (Exception e) {
-			handleException(e, "getPatientsByNationalId");
-		}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
+        try {
+            String sql = "From Patient p where p.nationalId = :nationalId";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("nationalId", nationalId);
+            List<Patient> patients = query.list();
+            // closeSession(); // CSL remove old
+            return patients;
+        } catch (Exception e) {
+            handleException(e, "getPatientsByNationalId");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Patient getPatientByExternalId(String externalId) {
-		return getPatientByStringProperty("externalId", externalId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientByExternalId(String externalId) {
+        return getPatientByStringProperty("externalId", externalId);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
-		List<Patient> patients;
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
+        List<Patient> patients;
 
-		try {
-			String sql = "From Patient p where p.person.id = :personID";
+        try {
+            String sql = "From Patient p where p.person.id = :personID";
 
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("personID", Integer.parseInt(person.getId()));
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("personID", Integer.parseInt(person.getId()));
 
-			patients = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
-		}
+            patients = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
+        }
 
-		return patients.size() > 0 ? patients.get(0) : null;
-	}
+        return patients.size() > 0 ? patients.get(0) : null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
-			String project) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
+            String project) throws LIMSRuntimeException {
 
-		boolean useIdList = inclusiveStatusIdList != null && inclusiveStatusIdList.size() > 0;
+        boolean useIdList = inclusiveStatusIdList != null && inclusiveStatusIdList.size() > 0;
 
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("select COALESCE(pat.national_id, pat.external_id) as subjectNo from clinlims.sample s ");
-		sqlBuilder.append("join clinlims.sample_projects sp on sp.samp_id = s.id ");
-		sqlBuilder.append("join clinlims.project p on sp.proj_id = p.id ");
-		sqlBuilder.append("join clinlims.sample_human sh on sh.samp_id = s.id ");
-		sqlBuilder.append("join clinlims.patient pat on pat.id = sh.patient_id  ");
-		sqlBuilder.append("where p.name = :project ");
-		if (useIdList) {
-			sqlBuilder.append("and s.status_id in(:statusIdList) ");
-		}
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("select COALESCE(pat.national_id, pat.external_id) as subjectNo from clinlims.sample s ");
+        sqlBuilder.append("join clinlims.sample_projects sp on sp.samp_id = s.id ");
+        sqlBuilder.append("join clinlims.project p on sp.proj_id = p.id ");
+        sqlBuilder.append("join clinlims.sample_human sh on sh.samp_id = s.id ");
+        sqlBuilder.append("join clinlims.patient pat on pat.id = sh.patient_id  ");
+        sqlBuilder.append("where p.name = :project ");
+        if (useIdList) {
+            sqlBuilder.append("and s.status_id in(:statusIdList) ");
+        }
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sqlBuilder.toString());
-			if (useIdList) {
-				query.setParameterList("statusIdList", inclusiveStatusIdList);
-			}
-			query.setString("project", project);
+        try {
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sqlBuilder.toString());
+            if (useIdList) {
+                query.setParameterList("statusIdList", inclusiveStatusIdList);
+            }
+            query.setString("project", project);
 
-			List<String> subjectList = query.list();
-			// closeSession(); // CSL remove old
+            List<String> subjectList = query.list();
+            // closeSession(); // CSL remove old
 
-			return subjectList;
-		} catch (Exception e) {
-			handleException(e, "getPatientIdentityBySampleStatusIdAndProject");
-		}
+            return subjectList;
+        } catch (Exception e) {
+            handleException(e, "getPatientIdentityBySampleStatusIdAndProject");
+        }
 
-		return new ArrayList<>();
-	}
+        return new ArrayList<>();
+    }
 
 }

@@ -30,21 +30,21 @@ public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
 //	public void deleteData(List systemModule) throws LIMSRuntimeException;
 
-	public List getAllSystemModules() throws LIMSRuntimeException;
+    public List getAllSystemModules() throws LIMSRuntimeException;
 
-	public List getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(SystemModule systemModule) throws LIMSRuntimeException;
+    public void getData(SystemModule systemModule) throws LIMSRuntimeException;
 
 //	public void updateData(SystemModule systemModule) throws LIMSRuntimeException;
 
-	public List getNextSystemModuleRecord(String id) throws LIMSRuntimeException;
+    public List getNextSystemModuleRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousSystemModuleRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousSystemModuleRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
+    public Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
 
-	public SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException;
+    public SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException;
 
-	public boolean duplicateSystemModuleExists(SystemModule systemModule);
+    public boolean duplicateSystemModuleExists(SystemModule systemModule);
 }

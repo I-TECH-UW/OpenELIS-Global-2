@@ -7,7 +7,7 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 public interface TestAddService {
 
-	void addTests(List<TestSet> testSets, Localization nameLocalization, Localization reportingNameLocalization,
-			String currentUserId);
+    void addTests(List<TestSet> testSets, Localization nameLocalization, Localization reportingNameLocalization,
+            String currentUserId);
 
 }

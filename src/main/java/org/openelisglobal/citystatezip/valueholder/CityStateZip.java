@@ -17,110 +17,110 @@ package org.openelisglobal.citystatezip.valueholder;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
-public class CityStateZip extends BaseObject<String>  {
+public class CityStateZip extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String city;
-	
-	private String state;
-	
-	private String zipCode;
-	
-	private String countyFips;
-	
-	private String county;
-	
-	private String regionId;
-	
-	private String region;
-	
-	private String stateFips;
-	
-	private String stateName;
+    private String city;
 
-	public CityStateZip() {
-		super();
-	}
+    private String state;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String zipCode;
 
-	public String getId() {
-		return id;
-	}
+    private String countyFips;
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    private String county;
 
-	public String getCity() {
-		return city;
-	}
+    private String regionId;
 
-	public String getCounty() {
-		return county;
-	}
+    private String region;
 
-	public void setCounty(String county) {
-		this.county = county;
-	}
+    private String stateFips;
 
-	public String getCountyFips() {
-		return countyFips;
-	}
+    private String stateName;
 
-	public void setCountyFips(String countyFips) {
-		this.countyFips = countyFips;
-	}
+    public CityStateZip() {
+        super();
+    }
 
-	public String getRegion() {
-		return region;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setRegion(String region) {
-		this.region = region;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getRegionId() {
-		return regionId;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setRegionId(String regionId) {
-		this.regionId = regionId;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getCounty() {
+        return county;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setCounty(String county) {
+        this.county = county;
+    }
 
-	public String getStateFips() {
-		return stateFips;
-	}
+    public String getCountyFips() {
+        return countyFips;
+    }
 
-	public void setStateFips(String stateFips) {
-		this.stateFips = stateFips;
-	}
+    public void setCountyFips(String countyFips) {
+        this.countyFips = countyFips;
+    }
 
-	public String getStateName() {
-		return stateName;
-	}
+    public String getRegion() {
+        return region;
+    }
 
-	public void setStateName(String stateName) {
-		this.stateName = stateName;
-	}
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
-	public String getZipCode() {
-		return zipCode;
-	}
+    public String getRegionId() {
+        return regionId;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getStateFips() {
+        return stateFips;
+    }
+
+    public void setStateFips(String stateFips) {
+        this.stateFips = stateFips;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
 }

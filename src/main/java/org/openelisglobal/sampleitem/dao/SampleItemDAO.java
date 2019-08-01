@@ -37,28 +37,28 @@ public interface SampleItemDAO extends BaseDAO<SampleItem, String> {
 
 //	public void deleteData(List<SampleItem> sampleItems) throws LIMSRuntimeException;
 
-	public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException;
+    public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException;
 
-	public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException;
+    public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(SampleItem sampleItem) throws LIMSRuntimeException;
+    public void getData(SampleItem sampleItem) throws LIMSRuntimeException;
 
 //	public void updateData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-	public List<SampleItem> getNextSampleItemRecord(String id) throws LIMSRuntimeException;
+    public List<SampleItem> getNextSampleItemRecord(String id) throws LIMSRuntimeException;
 
-	public List<SampleItem> getPreviousSampleItemRecord(String id) throws LIMSRuntimeException;
+    public List<SampleItem> getPreviousSampleItemRecord(String id) throws LIMSRuntimeException;
 
-	public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException;
+    public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException;
 
-	public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException;
 
-	public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample)
-			throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample)
+            throws LIMSRuntimeException;
 
-	public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList)
-			throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList)
+            throws LIMSRuntimeException;
 
-	public SampleItem getData(String sampleItemId) throws LIMSRuntimeException;
+    public SampleItem getData(String sampleItemId) throws LIMSRuntimeException;
 
 }

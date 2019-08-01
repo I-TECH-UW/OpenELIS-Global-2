@@ -15,38 +15,38 @@ import org.openelisglobal.sample.controller.BaseSampleEntryController;
 
 @Controller
 public class SampleEntryByProjectSaveController extends BaseSampleEntryController {
-	@RequestMapping(value = "/SampleEntryByProjectSave", method = RequestMethod.POST)
-	public ModelAndView showSampleEntryByProjectSave(HttpServletRequest request,
-			@ModelAttribute("form") SampleEntryByProjectForm form) throws Exception {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleEntryByProjectForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/SampleEntryByProjectSave", method = RequestMethod.POST)
+    public ModelAndView showSampleEntryByProjectSave(HttpServletRequest request,
+            @ModelAttribute("form") SampleEntryByProjectForm form) throws Exception {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleEntryByProjectForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
+    @Override
+    protected String findLocalForward(String forward) {
 
-		if (FWD_SUCCESS.equals(forward)) {
-			return "forward:/SampleEntryByProject.do?forward=success";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "sampleEntryByProjectDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+        if (FWD_SUCCESS.equals(forward)) {
+            return "forward:/SampleEntryByProject.do?forward=success";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "sampleEntryByProjectDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

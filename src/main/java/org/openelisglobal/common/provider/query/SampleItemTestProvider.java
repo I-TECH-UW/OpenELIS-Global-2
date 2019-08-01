@@ -50,125 +50,124 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
  * @since Aug 16, 2010
  */
 public class SampleItemTestProvider extends BaseQueryProvider {
-	
-	protected static AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
 
-	/**
-	 * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		/**
-		 * The primary Key for a sample
-		 */
-		String sampleKey = request.getParameter("sampleKey");
-		/**
-		 * the particular project form we are trying to fill validate.
-		 */
-		String projectFormName = request.getParameter("projectFormName");
+    protected static AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
 
-		/**
-		 * the name (something derived from html form id) of the check box for
-		 * the relevant sample item type
-		 */
-		String sampleItemTypeTag = request.getParameter("sampleItemTypeTag");
+    /**
+     * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        /**
+         * The primary Key for a sample
+         */
+        String sampleKey = request.getParameter("sampleKey");
+        /**
+         * the particular project form we are trying to fill validate.
+         */
+        String projectFormName = request.getParameter("projectFormName");
 
-		/**
-		 * the name (something derived from html form id)
-		 */
-		String testTag = request.getParameter("testTag");
+        /**
+         * the name (something derived from html form id) of the check box for the
+         * relevant sample item type
+         */
+        String sampleItemTypeTag = request.getParameter("sampleItemTypeTag");
 
-		StringBuilder xml = new StringBuilder();
-		String result = VALID;
+        /**
+         * the name (something derived from html form id)
+         */
+        String testTag = request.getParameter("testTag");
 
-		boolean isChecked;
-		if (GenericValidator.isBlankOrNull(testTag)) {
-			isChecked = wasSampleTypeSelected(sampleKey, projectFormName, sampleItemTypeTag);
-		} else {
-			try {
-				isChecked = wasTestSelected(sampleKey, projectFormName, sampleItemTypeTag, testTag);
-			} catch (Exception e) {
-				throw new ServletException(e);
-			}
-		}
+        StringBuilder xml = new StringBuilder();
+        String result = VALID;
 
-		xml.append(isChecked);
+        boolean isChecked;
+        if (GenericValidator.isBlankOrNull(testTag)) {
+            isChecked = wasSampleTypeSelected(sampleKey, projectFormName, sampleItemTypeTag);
+        } else {
+            try {
+                isChecked = wasTestSelected(sampleKey, projectFormName, sampleItemTypeTag, testTag);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        }
 
-		ajaxServlet.sendData(xml.toString(), result, request, response);
-	}
+        xml.append(isChecked);
 
-	/**
-	 * Figure out if the given "test" (actually something of a test panel) Ask
-	 * the project form mapper
-	 *
-	 */
-	private boolean wasTestSelected(String sampleKey, String projectFormName, String sampleItemType, String testTag)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		ProjectData projectData = new ProjectData();
-		Map<String, Boolean> miniForm = new HashMap<String, Boolean>();
-		miniForm.put(sampleItemType + "Taken", Boolean.TRUE);
-		miniForm.put(testTag, Boolean.TRUE);
-		PropertyUtils.copyProperties(projectData, miniForm);
+        ajaxServlet.sendData(xml.toString(), result, request, response);
+    }
 
-		List<Analysis> analysis = findAnalysis(sampleKey, projectFormName, projectData);
-		return analysis.size() != 0;
-	}
+    /**
+     * Figure out if the given "test" (actually something of a test panel) Ask the
+     * project form mapper
+     *
+     */
+    private boolean wasTestSelected(String sampleKey, String projectFormName, String sampleItemType, String testTag)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        ProjectData projectData = new ProjectData();
+        Map<String, Boolean> miniForm = new HashMap<String, Boolean>();
+        miniForm.put(sampleItemType + "Taken", Boolean.TRUE);
+        miniForm.put(testTag, Boolean.TRUE);
+        PropertyUtils.copyProperties(projectData, miniForm);
 
-	/***
-	 * Fill in one (or more?) sampleType fields of project data and one (or
-	 * more?) *Test fields, e.g. transaminaseTest and you'll get back a list
-	 * Analysis which where submitted because of that selection.
-	 *
-	 * @param sampleKey
-	 *            - PK of a sample
-	 * @param projectFormName
-	 *            particular study we are working on
-	 * @param projectData
-	 *            the data with two flags set.
-	 * @return List of analysis
-	 */
-	// TODO PAHill - refactor - needs to be moved to some type of a utility
-	// class.
-	public static List<Analysis> findAnalysis(String sampleKey, String projectFormName, ProjectData projectData) {
-		IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName, null);
-		projectFormMapper.setProjectData(projectData);
-		List<TypeOfSampleTests> typeOfSampleTestsList = projectFormMapper.getTypeOfSampleTests();
-		if (typeOfSampleTestsList.size() == 0) {
-			throw new IllegalArgumentException("The combination of sampleItem type and test (panel) is not valid.");
-		}
-		TypeOfSampleTests sampleTests = typeOfSampleTestsList.get(0);
-		List<Test> tests = sampleTests.tests;
+        List<Analysis> analysis = findAnalysis(sampleKey, projectFormName, projectData);
+        return analysis.size() != 0;
+    }
 
-		List<Integer> testIds = new ArrayList<Integer>();
-		for (Test test : tests) {
-			testIds.add(Integer.valueOf(test.getId()));
-		}
-		return analysisService.getAnalysisBySampleAndTestIds(sampleKey, testIds);
+    /***
+     * Fill in one (or more?) sampleType fields of project data and one (or more?)
+     * *Test fields, e.g. transaminaseTest and you'll get back a list Analysis which
+     * where submitted because of that selection.
+     *
+     * @param sampleKey       - PK of a sample
+     * @param projectFormName particular study we are working on
+     * @param projectData     the data with two flags set.
+     * @return List of analysis
+     */
+    // TODO PAHill - refactor - needs to be moved to some type of a utility
+    // class.
+    public static List<Analysis> findAnalysis(String sampleKey, String projectFormName, ProjectData projectData) {
+        IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName,
+                null);
+        projectFormMapper.setProjectData(projectData);
+        List<TypeOfSampleTests> typeOfSampleTestsList = projectFormMapper.getTypeOfSampleTests();
+        if (typeOfSampleTestsList.size() == 0) {
+            throw new IllegalArgumentException("The combination of sampleItem type and test (panel) is not valid.");
+        }
+        TypeOfSampleTests sampleTests = typeOfSampleTestsList.get(0);
+        List<Test> tests = sampleTests.tests;
 
-	}
+        List<Integer> testIds = new ArrayList<Integer>();
+        for (Test test : tests) {
+            testIds.add(Integer.valueOf(test.getId()));
+        }
+        return analysisService.getAnalysisBySampleAndTestIds(sampleKey, testIds);
 
-	private boolean wasSampleTypeSelected(String sampleId, String projectFormName, String sampleItemType) {
-		String sampleItemDesc = changeUIIdToDescription(sampleItemType);
-		IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName, null);
-		TypeOfSample typeOfSample = projectFormMapper.getTypeOfSample(sampleItemDesc);
-		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
-		for (SampleItem sampleItem : sampleItems) {
-			if (sampleItem.getTypeOfSampleId().equals(typeOfSample.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    }
 
+    private boolean wasSampleTypeSelected(String sampleId, String projectFormName, String sampleItemType) {
+        String sampleItemDesc = changeUIIdToDescription(sampleItemType);
+        IProjectFormMapper projectFormMapper = new ProjectFormMapperFactory().getProjectInitializer(projectFormName,
+                null);
+        TypeOfSample typeOfSample = projectFormMapper.getTypeOfSample(sampleItemDesc);
+        List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
+        for (SampleItem sampleItem : sampleItems) {
+            if (sampleItem.getTypeOfSampleId().equals(typeOfSample.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private String changeUIIdToDescription(String sampleTypeId) {
-		String description = sampleTypeId;
-		int i = sampleTypeId.indexOf("Tube");
-		if (i != -1) {
-			description = sampleTypeId.substring(0, i) + " Tube";
-		}
-		return description;
-	}
+    private String changeUIIdToDescription(String sampleTypeId) {
+        String description = sampleTypeId;
+        int i = sampleTypeId.indexOf("Tube");
+        if (i != -1) {
+            description = sampleTypeId.substring(0, i) + " Tube";
+        }
+        return description;
+    }
 }

@@ -35,142 +35,142 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 @Service
 public class ReportTrackingService implements IReportTrackingService {
-	public enum ReportType {
-		PATIENT, NON_CONFORMITY_NOTIFICATION, RESULT_EXPORT, MALARIA_CASE
-	}
+    public enum ReportType {
+        PATIENT, NON_CONFORMITY_NOTIFICATION, RESULT_EXPORT, MALARIA_CASE
+    }
 
-	@Autowired
-	private DocumentTrackService documentTrackService;
-	@Autowired
-	private DocumentTypeService documentTypeService;
-	@Autowired
-	private ReferenceTablesService referenceTablesService;
+    @Autowired
+    private DocumentTrackService documentTrackService;
+    @Autowired
+    private DocumentTypeService documentTypeService;
+    @Autowired
+    private ReferenceTablesService referenceTablesService;
 
-	private String PATIENT_DOCUMENT_TYPE_ID;
-	private String NON_CONFORMITY_DOCUMENT_TYPE_ID;
-	private String RESULT_EXPORT_DOCUMENT_TYPE_ID;
-	private String MALARIA_CASE_DOCUMENT_TYPE_ID;
+    private String PATIENT_DOCUMENT_TYPE_ID;
+    private String NON_CONFORMITY_DOCUMENT_TYPE_ID;
+    private String RESULT_EXPORT_DOCUMENT_TYPE_ID;
+    private String MALARIA_CASE_DOCUMENT_TYPE_ID;
 
-	@PostConstruct
-	private void initialize() {
-		PATIENT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("patientReport").getId();
-		NON_CONFORMITY_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("nonConformityNotification")
-				.getId();
-		RESULT_EXPORT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
-		MALARIA_CASE_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("malariaCase").getId();
-	}
+    @PostConstruct
+    private void initialize() {
+        PATIENT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("patientReport").getId();
+        NON_CONFORMITY_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("nonConformityNotification")
+                .getId();
+        RESULT_EXPORT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
+        MALARIA_CASE_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("malariaCase").getId();
+    }
 
-	@Override
-	@Transactional
-	public void addReports(List<String> refIds, ReportType type, String name, String currentSystemUserId) {
+    @Override
+    @Transactional
+    public void addReports(List<String> refIds, ReportType type, String name, String currentSystemUserId) {
 
-		String refTableId = getReferenceTable(type);
+        String refTableId = getReferenceTable(type);
 
-		for (String id : refIds) {
-			DocumentTrack docTrack = new DocumentTrack();
-			docTrack.setDocumentTypeId(getReportTypeId(type));
-			docTrack.setRecordId(id);
-			docTrack.setReportTime(DateUtil.getNowAsTimestamp());
-			docTrack.setDocumentName(name);
-			docTrack.setTableId(refTableId);
-			docTrack.setSysUserId(currentSystemUserId);
-			DocumentTrack parent = getParent(id, refTableId, docTrack.getDocumentTypeId());
-			if (parent != null) {
-				docTrack.setParent(parent);
-			}
-			documentTrackService.insert(docTrack);
+        for (String id : refIds) {
+            DocumentTrack docTrack = new DocumentTrack();
+            docTrack.setDocumentTypeId(getReportTypeId(type));
+            docTrack.setRecordId(id);
+            docTrack.setReportTime(DateUtil.getNowAsTimestamp());
+            docTrack.setDocumentName(name);
+            docTrack.setTableId(refTableId);
+            docTrack.setSysUserId(currentSystemUserId);
+            DocumentTrack parent = getParent(id, refTableId, docTrack.getDocumentTypeId());
+            if (parent != null) {
+                docTrack.setParent(parent);
+            }
+            documentTrackService.insert(docTrack);
 
-		}
+        }
 
-	}
+    }
 
-	private DocumentTrack getParent(String id, String refTableId, String documentTypeId) {
-		List<DocumentTrack> docs = documentTrackService.getByTypeRecordAndTable(documentTypeId, refTableId, id);
-		return docs.isEmpty() ? null : docs.get(docs.size() - 1);
-	}
+    private DocumentTrack getParent(String id, String refTableId, String documentTypeId) {
+        List<DocumentTrack> docs = documentTrackService.getByTypeRecordAndTable(documentTypeId, refTableId, id);
+        return docs.isEmpty() ? null : docs.get(docs.size() - 1);
+    }
 
-	private String getReferenceTable(ReportType type) {
-		switch (type) {
-		case PATIENT: {
-			return referenceTablesService.getReferenceTableByName("SAMPLE").getId();
-		}
-		case NON_CONFORMITY_NOTIFICATION: {
-			return referenceTablesService.getReferenceTableByName("SAMPLE_QAEVENT").getId();
-		}
-		case MALARIA_CASE: {
-			return referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
-		}
-		case RESULT_EXPORT: {
-			return referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
-		}
+    private String getReferenceTable(ReportType type) {
+        switch (type) {
+        case PATIENT: {
+            return referenceTablesService.getReferenceTableByName("SAMPLE").getId();
+        }
+        case NON_CONFORMITY_NOTIFICATION: {
+            return referenceTablesService.getReferenceTableByName("SAMPLE_QAEVENT").getId();
+        }
+        case MALARIA_CASE: {
+            return referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
+        }
+        case RESULT_EXPORT: {
+            return referenceTablesService.getReferenceTableByName("ANALYSIS").getId();
+        }
 
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private String getReportTypeId(ReportType type) {
-		switch (type) {
-		case PATIENT: {
-			return PATIENT_DOCUMENT_TYPE_ID;
-		}
-		case NON_CONFORMITY_NOTIFICATION: {
-			return NON_CONFORMITY_DOCUMENT_TYPE_ID;
-		}
-		case RESULT_EXPORT: {
-			return RESULT_EXPORT_DOCUMENT_TYPE_ID;
-		}
-		case MALARIA_CASE: {
-			return MALARIA_CASE_DOCUMENT_TYPE_ID;
-		}
+    private String getReportTypeId(ReportType type) {
+        switch (type) {
+        case PATIENT: {
+            return PATIENT_DOCUMENT_TYPE_ID;
+        }
+        case NON_CONFORMITY_NOTIFICATION: {
+            return NON_CONFORMITY_DOCUMENT_TYPE_ID;
+        }
+        case RESULT_EXPORT: {
+            return RESULT_EXPORT_DOCUMENT_TYPE_ID;
+        }
+        case MALARIA_CASE: {
+            return MALARIA_CASE_DOCUMENT_TYPE_ID;
+        }
 
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public List<DocumentTrack> getReportsForSample(Sample sample, ReportType type) {
-		return documentTrackService.getByTypeRecordAndTable(getReportTypeId(type), getReferenceTable(type),
-				sample.getId());
-	}
+    @Override
+    public List<DocumentTrack> getReportsForSample(Sample sample, ReportType type) {
+        return documentTrackService.getByTypeRecordAndTable(getReportTypeId(type), getReferenceTable(type),
+                sample.getId());
+    }
 
-	@Override
-	public List<DocumentTrack> getReportsForSampleAndReportName(Sample sample, ReportType type, String name) {
-		return documentTrackService.getByTypeRecordAndTableAndName(getReportTypeId(type), getReferenceTable(type),
-				sample.getId(), name);
-	}
+    @Override
+    public List<DocumentTrack> getReportsForSampleAndReportName(Sample sample, ReportType type, String name) {
+        return documentTrackService.getByTypeRecordAndTableAndName(getReportTypeId(type), getReferenceTable(type),
+                sample.getId(), name);
+    }
 
-	@Override
-	public DocumentTrack getLastReportForSample(Sample sample, ReportType type) {
-		List<DocumentTrack> reports = getReportsForSample(sample, type);
-		return reports.isEmpty() ? null : reports.get(reports.size() - 1);
-	}
+    @Override
+    public DocumentTrack getLastReportForSample(Sample sample, ReportType type) {
+        List<DocumentTrack> reports = getReportsForSample(sample, type);
+        return reports.isEmpty() ? null : reports.get(reports.size() - 1);
+    }
 
-	@Override
-	public DocumentTrack getLastNamedReportForSample(Sample sample, ReportType type, String name) {
-		if (sample == null || type == null || GenericValidator.isBlankOrNull(name)) {
-			return null;
-		}
+    @Override
+    public DocumentTrack getLastNamedReportForSample(Sample sample, ReportType type, String name) {
+        if (sample == null || type == null || GenericValidator.isBlankOrNull(name)) {
+            return null;
+        }
 
-		List<DocumentTrack> reports = getReportsForSampleAndReportName(sample, type, name);
-		return reports.isEmpty() ? null : reports.get(reports.size() - 1);
-	}
+        List<DocumentTrack> reports = getReportsForSampleAndReportName(sample, type, name);
+        return reports.isEmpty() ? null : reports.get(reports.size() - 1);
+    }
 
-	@Override
-	public Timestamp getTimeOfLastReport(Sample sample, ReportType type) {
-		DocumentTrack report = getLastReportForSample(sample, type);
-		return report == null ? null : report.getReportTime();
-	}
+    @Override
+    public Timestamp getTimeOfLastReport(Sample sample, ReportType type) {
+        DocumentTrack report = getLastReportForSample(sample, type);
+        return report == null ? null : report.getReportTime();
+    }
 
-	@Override
-	public Timestamp getTimeOfLastNamedReport(Sample sample, ReportType type, String name) {
-		DocumentTrack report = getLastNamedReportForSample(sample, type, name);
-		return report == null ? null : report.getReportTime();
-	}
+    @Override
+    public Timestamp getTimeOfLastNamedReport(Sample sample, ReportType type, String name) {
+        DocumentTrack report = getLastNamedReportForSample(sample, type, name);
+        return report == null ? null : report.getReportTime();
+    }
 
-	@Override
-	public DocumentTrack getDocumentForId(String id) {
-		return documentTrackService.get(id);
-	}
+    @Override
+    public DocumentTrack getDocumentForId(String id) {
+        return documentTrackService.get(id);
+    }
 }

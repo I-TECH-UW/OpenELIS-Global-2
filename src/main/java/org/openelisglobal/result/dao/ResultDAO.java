@@ -40,52 +40,52 @@ public interface ResultDAO extends BaseDAO<Result, String> {
 
 //	public void deleteData(List results) throws LIMSRuntimeException;
 
-	public List getAllResults() throws LIMSRuntimeException;
+    public List getAllResults() throws LIMSRuntimeException;
 
-	public List getPageOfResults(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfResults(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Result result) throws LIMSRuntimeException;
+    public void getData(Result result) throws LIMSRuntimeException;
 
 //	public void updateData(Result result) throws LIMSRuntimeException;
 
-	public List getNextResultRecord(String id) throws LIMSRuntimeException;
+    public List getNextResultRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousResultRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousResultRecord(String id) throws LIMSRuntimeException;
 
-	public Result getResultById(Result result) throws LIMSRuntimeException;
+    public Result getResultById(Result result) throws LIMSRuntimeException;
 
-	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta)
-			throws LIMSRuntimeException;
+    public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta)
+            throws LIMSRuntimeException;
 
-	public void getResultByTestResult(Result result, TestResult testResult) throws LIMSRuntimeException;
+    public void getResultByTestResult(Result result, TestResult testResult) throws LIMSRuntimeException;
 
-	public List<Result> getResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException;
+    public List<Result> getResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException;
 
-	public List<Result> getReportableResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException;
+    public List<Result> getReportableResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException;
 
-	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList)
-			throws LIMSRuntimeException;
+    public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList)
+            throws LIMSRuntimeException;
 
-	public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException;
+    public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException;
 
-	public Result getResultById(String resultId) throws LIMSRuntimeException;
+    public Result getResultById(String resultId) throws LIMSRuntimeException;
 
 //	public void deleteData(Result result) throws LIMSRuntimeException;
 
-	public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException;
+    public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException;
 
-	public List<Result> getResultsForTestAndSample(String sampleId, String testId);
+    public List<Result> getResultsForTestAndSample(String sampleId, String testId);
 
-	public List<Result> getResultsForSample(Sample sample) throws LIMSRuntimeException;
+    public List<Result> getResultsForSample(Sample sample) throws LIMSRuntimeException;
 
-	public List<Result> getChildResults(String resultId) throws LIMSRuntimeException;
+    public List<Result> getChildResults(String resultId) throws LIMSRuntimeException;
 
-	public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
-			throws LIMSRuntimeException;
+    public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
+            throws LIMSRuntimeException;
 
-	public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
-			throws LIMSRuntimeException;
+    public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
+            throws LIMSRuntimeException;
 
-	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
-			throws LIMSRuntimeException;
+    public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
+            throws LIMSRuntimeException;
 }

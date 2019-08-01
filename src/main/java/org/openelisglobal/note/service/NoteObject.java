@@ -4,10 +4,10 @@ import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 
 public interface NoteObject {
 
-	String getTableId();
+    String getTableId();
 
-	String getObjectId();
+    String getObjectId();
 
-	BoundTo getBoundTo();
+    BoundTo getBoundTo();
 
 }

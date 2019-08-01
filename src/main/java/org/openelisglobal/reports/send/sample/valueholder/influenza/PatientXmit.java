@@ -18,112 +18,110 @@ package org.openelisglobal.reports.send.sample.valueholder.influenza;
 import org.openelisglobal.common.util.StringUtil;
 
 /**
- * @author diane benz 
- *  bugzilla 2393
+ * @author diane benz bugzilla 2393
  */
-public class PatientXmit extends
-		org.openelisglobal.patient.valueholder.Patient {
+public class PatientXmit extends org.openelisglobal.patient.valueholder.Patient {
 
-	private String lastName;
+    private String lastName;
 
-	private String firstName;
-	
-	private String middleName;
+    private String firstName;
 
-	private String streetAddress;
-	
-	private String multipleUnit;
+    private String middleName;
 
-	private String city;
+    private String streetAddress;
 
-	private String state;
+    private String multipleUnit;
 
-	private String zipCode;
-	
-	private String county;
-	
-	public PatientXmit() {
-	}
+    private String city;
 
-	public String getCounty() {
-		return county;
-	}
+    private String state;
 
-	public void setCounty(String county) {
-		this.county = county;
-	}
+    private String zipCode;
 
-	public String getCity() {
-		if (!StringUtil.isNullorNill(city)) {
-			city.trim();
-		}
-		return city;
-	}
+    private String county;
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public PatientXmit() {
+    }
 
-	public String getState() {
-		if (!StringUtil.isNullorNill(state)) {
-			state.trim();
-		}
-		return state;
-	}
+    public String getCounty() {
+        return county;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setCounty(String county) {
+        this.county = county;
+    }
 
-	public String getStreetAddress() {
-		return streetAddress;
-	}
+    public String getCity() {
+        if (!StringUtil.isNullorNill(city)) {
+            city.trim();
+        }
+        return city;
+    }
 
-	public void setStreetAddress(String streetAddress) {
-		this.streetAddress = streetAddress;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getZipCode() {
-		if (!StringUtil.isNullorNill(zipCode)) {
-			zipCode.trim();
-		}
-		return zipCode;
-	}
+    public String getState() {
+        if (!StringUtil.isNullorNill(state)) {
+            state.trim();
+        }
+        return state;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getStreetAddress() {
+        return streetAddress;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getZipCode() {
+        if (!StringUtil.isNullorNill(zipCode)) {
+            zipCode.trim();
+        }
+        return zipCode;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public String getMiddleName() {
-		return middleName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getMultipleUnit() {
-		return multipleUnit;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setMultipleUnit(String multipleUnit) {
-		this.multipleUnit = multipleUnit;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getMultipleUnit() {
+        return multipleUnit;
+    }
+
+    public void setMultipleUnit(String multipleUnit) {
+        this.multipleUnit = multipleUnit;
+    }
 
 }

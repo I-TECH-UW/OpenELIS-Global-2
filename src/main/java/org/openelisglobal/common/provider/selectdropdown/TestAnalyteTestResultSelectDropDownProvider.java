@@ -51,64 +51,63 @@ import org.openelisglobal.testresult.valueholder.TestResultComparator;
  * @author Darren L. Spurgeon
  */
 public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropDownProvider {
-	
-	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	protected TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
-	protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
-	
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
 
-		//System.out
-		//		.println("I am in TestAnalyteTestResultSelectDropDownProvider ");
+    protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    protected TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
+    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
-		String testAnalyteId = request.getParameter("testAnalyteId");
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		List listOfTestResults = new ArrayList();
+        // System.out
+        // .println("I am in TestAnalyteTestResultSelectDropDownProvider ");
 
-		TestAnalyte testAnalyte = new TestAnalyte();
+        String testAnalyteId = request.getParameter("testAnalyteId");
 
-		if (!StringUtil.isNullorNill(testAnalyteId)) {
-			testAnalyte.setId(testAnalyteId);
-			testAnalyteService.getData(testAnalyte);
-			listOfTestResults = testResultService
-					.getTestResultsByTestAndResultGroup(testAnalyte);
-		}
+        List listOfTestResults = new ArrayList();
 
-		//System.out.println("Returning from Running getTestResultsByTestAndResultGr ");
-		//System.out.println("size ofo list " + listOfTestResults.size());
-		if ( listOfTestResults != null && listOfTestResults.size() > 0 ) {
-			for (int i = 0;i < listOfTestResults.size();i++) {
-				//System.out.println("one elem " + listOfTestResults.get(i));
-			}
-		}
-		// for testResults load the value field with dict entry if needed
-		List list = new ArrayList();
-		for (int i = 0; i < listOfTestResults.size(); i++) {
-			TestResult tr = new TestResult();
-			tr = (TestResult) listOfTestResults.get(i);
-			if (tr.getTestResultType().equals(
-					SystemConfiguration.getInstance().getDictionaryType())) {
-				// get from dictionary
-				Dictionary dictionary = new Dictionary();
-				dictionary.setId(tr.getValue());
-				dictionaryService.getData(dictionary);
-				// System.out.println("setting dictEntry "
-				// + dictionary.getDictEntry());
-				//bugzilla 1847: use dictEntryDisplayValue
-				tr.setValue(dictionary.getDictEntryDisplayValue());
+        TestAnalyte testAnalyte = new TestAnalyte();
 
-			}
-			list.add(tr);
-		}
+        if (!StringUtil.isNullorNill(testAnalyteId)) {
+            testAnalyte.setId(testAnalyteId);
+            testAnalyteService.getData(testAnalyte);
+            listOfTestResults = testResultService.getTestResultsByTestAndResultGroup(testAnalyte);
+        }
 
-		Collections.sort(list, TestResultComparator.VALUE_COMPARATOR);
+        // System.out.println("Returning from Running getTestResultsByTestAndResultGr
+        // ");
+        // System.out.println("size ofo list " + listOfTestResults.size());
+        if (listOfTestResults != null && listOfTestResults.size() > 0) {
+            for (int i = 0; i < listOfTestResults.size(); i++) {
+                // System.out.println("one elem " + listOfTestResults.get(i));
+            }
+        }
+        // for testResults load the value field with dict entry if needed
+        List list = new ArrayList();
+        for (int i = 0; i < listOfTestResults.size(); i++) {
+            TestResult tr = new TestResult();
+            tr = (TestResult) listOfTestResults.get(i);
+            if (tr.getTestResultType().equals(SystemConfiguration.getInstance().getDictionaryType())) {
+                // get from dictionary
+                Dictionary dictionary = new Dictionary();
+                dictionary.setId(tr.getValue());
+                dictionaryService.getData(dictionary);
+                // System.out.println("setting dictEntry "
+                // + dictionary.getDictEntry());
+                // bugzilla 1847: use dictEntryDisplayValue
+                tr.setValue(dictionary.getDictEntryDisplayValue());
 
-		return list;
-	}
+            }
+            list.add(tr);
+        }
+
+        Collections.sort(list, TestResultComparator.VALUE_COMPARATOR);
+
+        return list;
+    }
 
 }

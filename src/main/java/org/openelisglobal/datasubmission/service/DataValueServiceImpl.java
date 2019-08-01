@@ -9,16 +9,16 @@ import org.openelisglobal.datasubmission.valueholder.DataValue;
 
 @Service
 public class DataValueServiceImpl extends BaseObjectServiceImpl<DataValue, String> implements DataValueService {
-	@Autowired
-	protected DataValueDAO baseObjectDAO;
+    @Autowired
+    protected DataValueDAO baseObjectDAO;
 
-	DataValueServiceImpl() {
-		super(DataValue.class);
-	}
+    DataValueServiceImpl() {
+        super(DataValue.class);
+    }
 
-	@Override
-	protected DataValueDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected DataValueDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
 }

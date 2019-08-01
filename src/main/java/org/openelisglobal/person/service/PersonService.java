@@ -7,36 +7,36 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.person.valueholder.Person;
 
 public interface PersonService extends BaseObjectService<Person, String> {
-	void getData(Person person);
+    void getData(Person person);
 
-	List getNextPersonRecord(String id);
+    List getNextPersonRecord(String id);
 
-	List getPreviousPersonRecord(String id);
+    List getPreviousPersonRecord(String id);
 
-	Person getPersonByLastName(String lastName);
+    Person getPersonByLastName(String lastName);
 
-	List getPageOfPersons(int startingRecNo);
+    List getPageOfPersons(int startingRecNo);
 
-	List getAllPersons();
+    List getAllPersons();
 
-	Person getPersonById(String personId);
+    Person getPersonById(String personId);
 
-	String getFirstName(Person person);
+    String getFirstName(Person person);
 
-	String getLastName(Person person);
+    String getLastName(Person person);
 
-	String getLastFirstName(Person person);
+    String getLastFirstName(Person person);
 
-	Map<String, String> getAddressComponents(Person person);
+    Map<String, String> getAddressComponents(Person person);
 
-	String getPhone(Person person);
+    String getPhone(Person person);
 
-	String getWorkPhone(Person person);
+    String getWorkPhone(Person person);
 
-	String getCellPhone(Person person);
+    String getCellPhone(Person person);
 
-	String getFax(Person person);
+    String getFax(Person person);
 
-	String getEmail(Person person);
+    String getEmail(Person person);
 
 }

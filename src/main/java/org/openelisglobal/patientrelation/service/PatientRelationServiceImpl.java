@@ -8,16 +8,17 @@ import org.openelisglobal.patientrelation.dao.PatientRelationDAO;
 import org.openelisglobal.patientrelation.valueholder.PatientRelation;
 
 @Service
-public class PatientRelationServiceImpl extends BaseObjectServiceImpl<PatientRelation, String> implements PatientRelationService {
-	@Autowired
-	protected PatientRelationDAO baseObjectDAO;
+public class PatientRelationServiceImpl extends BaseObjectServiceImpl<PatientRelation, String>
+        implements PatientRelationService {
+    @Autowired
+    protected PatientRelationDAO baseObjectDAO;
 
-	PatientRelationServiceImpl() {
-		super(PatientRelation.class);
-	}
+    PatientRelationServiceImpl() {
+        super(PatientRelation.class);
+    }
 
-	@Override
-	protected PatientRelationDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected PatientRelationDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

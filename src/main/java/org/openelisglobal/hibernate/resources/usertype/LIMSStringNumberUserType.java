@@ -41,94 +41,94 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
  */
 public class LIMSStringNumberUserType implements UserType {
 
-	private static final int[] SQL_TYPES = { Types.NUMERIC };
+    private static final int[] SQL_TYPES = { Types.NUMERIC };
 
-	public LIMSStringNumberUserType() {
-		super();
-	}
+    public LIMSStringNumberUserType() {
+        super();
+    }
 
-	@Override
-	public int[] sqlTypes() {
-		return SQL_TYPES;
-	}
+    @Override
+    public int[] sqlTypes() {
+        return SQL_TYPES;
+    }
 
-	@Override
-	public Class returnedClass() {
-		return String.class;
-	}
+    @Override
+    public Class returnedClass() {
+        return String.class;
+    }
 
-	@Override
-	public boolean equals(Object x, Object y) throws HibernateException {
-		return (x == y) || (x != null && y != null && (x.equals(y)));
-	}
+    @Override
+    public boolean equals(Object x, Object y) throws HibernateException {
+        return (x == y) || (x != null && y != null && (x.equals(y)));
+    }
 
-	@Override
-	public Object deepCopy(Object value) throws HibernateException {
-		if (value == null) {
-			return null;
-		}
-		return new String((String) value);
-	}
+    @Override
+    public Object deepCopy(Object value) throws HibernateException {
+        if (value == null) {
+            return null;
+        }
+        return new String((String) value);
+    }
 
-	@Override
-	public boolean isMutable() {
-		return false;
-	}
+    @Override
+    public boolean isMutable() {
+        return false;
+    }
 
-	@Override
-	public Object assemble(Serializable arg0, Object arg1) throws HibernateException {
-		return deepCopy(arg0);
-	}
+    @Override
+    public Object assemble(Serializable arg0, Object arg1) throws HibernateException {
+        return deepCopy(arg0);
+    }
 
-	@Override
-	public Serializable disassemble(Object value) {
-		return (Serializable) deepCopy(value);
-	}
+    @Override
+    public Serializable disassemble(Object value) {
+        return (Serializable) deepCopy(value);
+    }
 
-	/*
-	 * (non-Javadoc) (at) see org (dot)
-	 * hibernate.usertype.UserType#hashCode(java.lang.Object)
-	 */
-	@Override
-	public int hashCode(Object arg0) throws HibernateException {
-		return arg0.hashCode();
-	}
+    /*
+     * (non-Javadoc) (at) see org (dot)
+     * hibernate.usertype.UserType#hashCode(java.lang.Object)
+     */
+    @Override
+    public int hashCode(Object arg0) throws HibernateException {
+        return arg0.hashCode();
+    }
 
-	/*
-	 * (non-Javadoc) (at) see org (dot)
-	 * hibernate.usertype.UserType#replace(java.lang.Object, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public Object replace(Object arg0, Object arg1, Object arg2) throws HibernateException {
-		return deepCopy(arg0);
-	}
+    /*
+     * (non-Javadoc) (at) see org (dot)
+     * hibernate.usertype.UserType#replace(java.lang.Object, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public Object replace(Object arg0, Object arg1, Object arg2) throws HibernateException {
+        return deepCopy(arg0);
+    }
 
-	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
-			throws HibernateException, SQLException {
-		int value = rs.getInt(names[0]);
-		return rs.wasNull() ? null : String.valueOf(value);
-	}
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
+        int value = rs.getInt(names[0]);
+        return rs.wasNull() ? null : String.valueOf(value);
+    }
 
-	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
-			throws HibernateException, SQLException {
-		if (value == null) {
-			st.setNull(index, Types.NUMERIC);
-		} else {
-			if (value instanceof String) {
-				if (value.equals("")) {
-					st.setNull(index, Types.NUMERIC);
-				} else {
-					st.setInt(index, Integer.parseInt((String) value));
-				}
-			} else {
-				throw new LIMSRuntimeException("Incorrect Mapping using this UserType LIMSStringNumberUserType");
-			}
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
+        if (value == null) {
+            st.setNull(index, Types.NUMERIC);
+        } else {
+            if (value instanceof String) {
+                if (value.equals("")) {
+                    st.setNull(index, Types.NUMERIC);
+                } else {
+                    st.setInt(index, Integer.parseInt((String) value));
+                }
+            } else {
+                throw new LIMSRuntimeException("Incorrect Mapping using this UserType LIMSStringNumberUserType");
+            }
 
-		}
+        }
 
-	}
+    }
 
 }

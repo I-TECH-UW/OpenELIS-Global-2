@@ -8,12 +8,12 @@ import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 
 public interface AnalyzerResultsService extends BaseObjectService<AnalyzerResults, String> {
 
-	AnalyzerResults readAnalyzerResults(String idString);
+    AnalyzerResults readAnalyzerResults(String idString);
 
-	List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId);
+    List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId);
 
-	void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId);
+    void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId);
 
-	void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults, List<SampleGrouping> sampleGroupList,
-			String sysUserId);
+    void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults, List<SampleGrouping> sampleGroupList,
+            String sysUserId);
 }

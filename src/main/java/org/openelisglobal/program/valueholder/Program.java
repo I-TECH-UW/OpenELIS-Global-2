@@ -19,38 +19,38 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Program extends BaseObject<String> {
 
-	private String code;
+    private String code;
 
-	private String id;
+    private String id;
 
-	private String programName;
+    private String programName;
 
-	public Program() {
-		super();
-	}
+    public Program() {
+        super();
+    }
 
-	public String getCode() {
-		return this.code;
-	}
+    public String getCode() {
+        return this.code;
+    }
 
-	public String getId() {
-		return this.id;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	public String getProgramName() {
-		return this.programName;
-	}
+    public String getProgramName() {
+        return this.programName;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setProgramName(String programName) {
-		this.programName = programName;
-	}
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
 
 }

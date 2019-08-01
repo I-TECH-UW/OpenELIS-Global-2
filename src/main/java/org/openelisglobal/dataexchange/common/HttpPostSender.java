@@ -30,35 +30,36 @@ import org.openelisglobal.common.log.LogEvent;
 
 public class HttpPostSender extends HttpSender {
 
-	@Override
-	public boolean sendMessage() {
-	
-		errors = new ArrayList<String>();
-		
-		if (GenericValidator.isBlankOrNull(message) || GenericValidator.isBlankOrNull(url)) {
-			LogEvent.logWarn("HttpPutSender", "send message", "The " + message == null ? " message " : "url" + " is null"  );
-			errors.add("send message The " + (message == null ? " message " : "url") + " is null"  );
-			errors.add("Application not configured correctly for sending results");
-			return false;
-		}
-	
-		HttpClient httpclient = new HttpClient();
-		setTimeout(httpclient);
-	
-		PostMethod httpPost = new PostMethod( url );
-		
-		RequestEntity requestEntity = null;
-		try {
-			requestEntity = new StringRequestEntity(message, "text/plain", "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-	
-		httpPost.setRequestEntity(requestEntity);
-	
-		sendByHttp(httpclient, httpPost);
-	
-		return returnStatus == HttpStatus.SC_OK;	
-	}
+    @Override
+    public boolean sendMessage() {
+
+        errors = new ArrayList<String>();
+
+        if (GenericValidator.isBlankOrNull(message) || GenericValidator.isBlankOrNull(url)) {
+            LogEvent.logWarn("HttpPutSender", "send message",
+                    "The " + message == null ? " message " : "url" + " is null");
+            errors.add("send message The " + (message == null ? " message " : "url") + " is null");
+            errors.add("Application not configured correctly for sending results");
+            return false;
+        }
+
+        HttpClient httpclient = new HttpClient();
+        setTimeout(httpclient);
+
+        PostMethod httpPost = new PostMethod(url);
+
+        RequestEntity requestEntity = null;
+        try {
+            requestEntity = new StringRequestEntity(message, "text/plain", "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+
+        httpPost.setRequestEntity(requestEntity);
+
+        sendByHttp(httpclient, httpPost);
+
+        return returnStatus == HttpStatus.SC_OK;
+    }
 
 }

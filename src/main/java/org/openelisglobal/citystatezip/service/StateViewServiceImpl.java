@@ -9,15 +9,15 @@ import org.openelisglobal.citystatezip.valueholder.StateView;
 
 @Service
 public class StateViewServiceImpl extends BaseObjectServiceImpl<StateView, String> implements StateViewService {
-	@Autowired
-	protected StateViewDAO baseObjectDAO;
+    @Autowired
+    protected StateViewDAO baseObjectDAO;
 
-	StateViewServiceImpl() {
-		super(StateView.class);
-	}
+    StateViewServiceImpl() {
+        super(StateView.class);
+    }
 
-	@Override
-	protected StateViewDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected StateViewDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

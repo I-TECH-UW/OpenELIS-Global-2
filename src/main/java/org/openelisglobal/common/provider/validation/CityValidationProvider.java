@@ -29,53 +29,51 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
 
 /**
- * @author benzd1
- * bugzilla 1765 changed to validate city only (combination of city/zip is validated elsewhere)
+ * @author benzd1 bugzilla 1765 changed to validate city only (combination of
+ *         city/zip is validated elsewhere)
  */
 public class CityValidationProvider extends BaseValidationProvider {
-	
-	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public CityValidationProvider() {
-		super();
-	}
+    protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public CityValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public CityValidationProvider() {
+        super();
+    }
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    public CityValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-		// get id from request
-		String city = (String) request.getParameter("id");
-		String formField = (String) request.getParameter("field");
-		String result = validate(city);
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+        // get id from request
+        String city = (String) request.getParameter("id");
+        String formField = (String) request.getParameter("field");
+        String result = validate(city);
+        ajaxServlet.sendData(formField, result, request, response);
+    }
 
-	public String validate(String city)
-			throws LIMSRuntimeException {
+    public String validate(String city) throws LIMSRuntimeException {
 
-		StringBuffer s = new StringBuffer();
+        StringBuffer s = new StringBuffer();
 
-		if (!StringUtil.isNullorNill(city)) {
-		    //bugzilla 1545
-			CityStateZip cityStateZip = new CityStateZip();
-			cityStateZip.setCity(city.trim());
-			cityStateZip = cityStateZipService.getCity(cityStateZip);
-			
-			if (cityStateZip == null) {
-				s.append(INVALID);
-			} else {
+        if (!StringUtil.isNullorNill(city)) {
+            // bugzilla 1545
+            CityStateZip cityStateZip = new CityStateZip();
+            cityStateZip.setCity(city.trim());
+            cityStateZip = cityStateZipService.getCity(cityStateZip);
+
+            if (cityStateZip == null) {
+                s.append(INVALID);
+            } else {
                 s.append(VALID);
-			}
-		}	else {
-			s.append(VALID);
-		}
+            }
+        } else {
+            s.append(VALID);
+        }
 
-		return s.toString();
-	}
+        return s.toString();
+    }
 
 }

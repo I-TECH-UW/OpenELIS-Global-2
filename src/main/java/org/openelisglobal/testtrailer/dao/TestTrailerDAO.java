@@ -35,24 +35,24 @@ public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
 //	public void deleteData(List testTrailers) throws LIMSRuntimeException;
 
-	public List getAllTestTrailers() throws LIMSRuntimeException;
+    public List getAllTestTrailers() throws LIMSRuntimeException;
 
-	public List getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException;
+    public void getData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
 //	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-	public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException;
+    public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTestTrailerRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTestTrailerRecord(String id) throws LIMSRuntimeException;
 
-	public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException;
+    public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-	public List getTestTrailers(String filter) throws LIMSRuntimeException;
+    public List getTestTrailers(String filter) throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	public Integer getTotalTestTrailerCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    public Integer getTotalTestTrailerCount() throws LIMSRuntimeException;
 
-	boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException;
+    boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException;
 }

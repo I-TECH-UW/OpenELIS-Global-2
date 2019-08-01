@@ -8,7 +8,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 
 public interface SystemModuleUrlService extends BaseObjectService<SystemModuleUrl, String> {
-	List<SystemModuleUrl> getByUrlPath(String urlPath);
+    List<SystemModuleUrl> getByUrlPath(String urlPath);
 
-	List<SystemModuleUrl> getByRequest(HttpServletRequest request);
+    List<SystemModuleUrl> getByRequest(HttpServletRequest request);
 }

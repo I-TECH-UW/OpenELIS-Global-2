@@ -27,27 +27,27 @@ import org.openelisglobal.dataexchange.malariareporting.MalariaReportingUpdate;
 import org.openelisglobal.dataexchange.resultreporting.ResultReportingUpdate;
 
 public class ResultUpdateRegister {
-	static public List<IResultUpdate> getRegisteredUpdaters(){
-		List<IResultUpdate> updaters = new ArrayList<IResultUpdate>();
-		
-		//kluge at this point, should be discoverable
-		if( shouldReport(Property.reportResults)){
-			updaters.add( new ResultReportingUpdate());
-		}
-		
-		if( shouldReport(Property.malariaCaseReport)){
-			updaters.add( new MalariaReportingUpdate());
-		}
-		
-		if( shouldReport(Property.testUsageReporting)){
-			updaters.add(new TestUsageUpdate());
-		}
-		return updaters;
-	}
-	
-	static private boolean shouldReport(Property property) {
-		String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(property);
-		return ( "true".equals(reportResults) || "enable".equals(reportResults) );
-	}
+    static public List<IResultUpdate> getRegisteredUpdaters() {
+        List<IResultUpdate> updaters = new ArrayList<IResultUpdate>();
+
+        // kluge at this point, should be discoverable
+        if (shouldReport(Property.reportResults)) {
+            updaters.add(new ResultReportingUpdate());
+        }
+
+        if (shouldReport(Property.malariaCaseReport)) {
+            updaters.add(new MalariaReportingUpdate());
+        }
+
+        if (shouldReport(Property.testUsageReporting)) {
+            updaters.add(new TestUsageUpdate());
+        }
+        return updaters;
+    }
+
+    static private boolean shouldReport(Property property) {
+        String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(property);
+        return ("true".equals(reportResults) || "enable".equals(reportResults));
+    }
 
 }

@@ -44,26 +44,26 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class OrganizationAutocompleteProvider extends BaseAutocompleteProvider {
 
-	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-	
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	@SuppressWarnings("unchecked")
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		List list = null;
+    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
-		String orgName = request.getParameter("organizationName");
-		String orgTypeName = request.getParameter("orgType");
-		if( GenericValidator.isBlankOrNull(orgTypeName)){
-			list = organizationService.getOrganizations(orgName);
-		}else{
-			list = organizationService.getOrganizationsByTypeNameAndLeadingChars(orgName, orgTypeName);
-		}
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    @SuppressWarnings("unchecked")
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List list = null;
 
-		return list;
-	}
+        String orgName = request.getParameter("organizationName");
+        String orgTypeName = request.getParameter("orgType");
+        if (GenericValidator.isBlankOrNull(orgTypeName)) {
+            list = organizationService.getOrganizations(orgName);
+        } else {
+            list = organizationService.getOrganizationsByTypeNameAndLeadingChars(orgName, orgTypeName);
+        }
+
+        return list;
+    }
 
 }

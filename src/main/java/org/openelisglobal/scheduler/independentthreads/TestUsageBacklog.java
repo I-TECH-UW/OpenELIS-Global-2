@@ -46,116 +46,116 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueu
 @Service
 public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
 
-	@Autowired
-	private ReportExternalExportService reportExternalExportService;
-	@Autowired
-	private AnalysisService analysisService;
-	@Autowired
-	private ReportQueueTypeService reportQueueTypeService;
+    @Autowired
+    private ReportExternalExportService reportExternalExportService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private ReportQueueTypeService reportQueueTypeService;
 
-	private static String TEST_UTALIZATION_ID;
+    private static String TEST_UTALIZATION_ID;
 
-	@PostConstruct
-	public void initializeGlobalVariables() {
-		ReportQueueType queueType = reportQueueTypeService.getReportQueueTypeByName("labIndicator");
+    @PostConstruct
+    public void initializeGlobalVariables() {
+        ReportQueueType queueType = reportQueueTypeService.getReportQueueTypeByName("labIndicator");
 
-		if (queueType != null) {
-			TEST_UTALIZATION_ID = queueType.getId();
-		}
-	}
+        if (queueType != null) {
+            TEST_UTALIZATION_ID = queueType.getId();
+        }
+    }
 
-	@Override
-	@Transactional
-	public void run() {
-		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.testUsageReporting, "true")) {
-			handleBacklog();
-		}
-	}
+    @Override
+    @Transactional
+    public void run() {
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.testUsageReporting, "true")) {
+            handleBacklog();
+        }
+    }
 
-	private void handleBacklog() {
-		System.out.println("Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
-		LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
-				"Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+    private void handleBacklog() {
+        System.out.println("Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
+                "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
-		Timestamp latestCollectionDate = getLatestCollectionDate();
+        Timestamp latestCollectionDate = getLatestCollectionDate();
 
-		if (latestCollectionDate == null) {
-			for (int i = 120; i >= 0; i--) {
-				writeReportForDayPeriod(i);
-			}
-		} else {
-			int daysInPast = DateUtil.getDaysInPastForDate(latestCollectionDate) - 1;
-			for (int i = daysInPast; i >= 0; i--) {
-				writeReportForDayPeriod(i);
-			}
-		}
+        if (latestCollectionDate == null) {
+            for (int i = 120; i >= 0; i--) {
+                writeReportForDayPeriod(i);
+            }
+        } else {
+            int daysInPast = DateUtil.getDaysInPastForDate(latestCollectionDate) - 1;
+            for (int i = daysInPast; i >= 0; i--) {
+                writeReportForDayPeriod(i);
+            }
+        }
 
-	}
+    }
 
-	private Timestamp getLatestCollectionDate() {
-		ReportExternalExport report = reportExternalExportService.getLatestEventReportExport(TEST_UTALIZATION_ID);
-		if (report != null) {
-			return report.getEventDate();
-		}
+    private Timestamp getLatestCollectionDate() {
+        ReportExternalExport report = reportExternalExportService.getLatestEventReportExport(TEST_UTALIZATION_ID);
+        if (report != null) {
+            return report.getEventDate();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	private void writeReportForDayPeriod(int daysAgo) {
-		Timestamp dayOne = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo);
-		Timestamp dayTwo = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo - 1);
+    @SuppressWarnings("unchecked")
+    private void writeReportForDayPeriod(int daysAgo) {
+        Timestamp dayOne = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo);
+        Timestamp dayTwo = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo - 1);
 
-		List<Analysis> analysisList = analysisService.getAnalysisCompleteInRange(dayOne, dayTwo);
+        List<Analysis> analysisList = analysisService.getAnalysisCompleteInRange(dayOne, dayTwo);
 
-		Map<String, Integer> testBucket = new HashMap<>();
-		for (String key : TestServiceImpl.getMap(TestServiceImpl.Entity.TEST_AUGMENTED_NAME).keySet()) {
-			testBucket.put(key, 0);
-		}
+        Map<String, Integer> testBucket = new HashMap<>();
+        for (String key : TestServiceImpl.getMap(TestServiceImpl.Entity.TEST_AUGMENTED_NAME).keySet()) {
+            testBucket.put(key, 0);
+        }
 
-		for (Analysis analysis : analysisList) {
-			if ("Y".equals(analysis.getTest().getIsActive())) {
-				String testId = analysis.getTest().getId();
-				testBucket.put(testId, testBucket.get(testId).intValue() + 1);
-			}
-		}
+        for (Analysis analysis : analysisList) {
+            if ("Y".equals(analysis.getTest().getIsActive())) {
+                String testId = analysis.getTest().getId();
+                testBucket.put(testId, testBucket.get(testId).intValue() + 1);
+            }
+        }
 
-		JSONObject json = new JSONObject();
-		for (String id : testBucket.keySet()) {
-			if (testBucket.get(id).intValue() > 0) {
-				json.put(TestServiceImpl.getMap(TestServiceImpl.Entity.TEST_AUGMENTED_NAME).get(id),
-						testBucket.get(id));
-			}
-		}
+        JSONObject json = new JSONObject();
+        for (String id : testBucket.keySet()) {
+            if (testBucket.get(id).intValue() > 0) {
+                json.put(TestServiceImpl.getMap(TestServiceImpl.Entity.TEST_AUGMENTED_NAME).get(id),
+                        testBucket.get(id));
+            }
+        }
 
-		StringWriter out = new StringWriter();
-		try {
-			json.writeJSONString(out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String jsonText = out.toString().replace("\n", "");
+        StringWriter out = new StringWriter();
+        try {
+            json.writeJSONString(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String jsonText = out.toString().replace("\n", "");
 
-		ReportExternalExport report = new ReportExternalExport();
-		report.setEventDate(dayOne);
-		report.setTypeId(TEST_UTALIZATION_ID);
+        ReportExternalExport report = new ReportExternalExport();
+        report.setEventDate(dayOne);
+        report.setTypeId(TEST_UTALIZATION_ID);
 
-		report = reportExternalExportService.getReportByEventDateAndType(report);
-		report.setSend(true);
-		report.setData(jsonText); // buffer.toString());
-		report.setCollectionDate(DateUtil.getNowAsTimestamp());
-		report.setSysUserId("1");
+        report = reportExternalExportService.getReportByEventDateAndType(report);
+        report.setSend(true);
+        report.setData(jsonText); // buffer.toString());
+        report.setCollectionDate(DateUtil.getNowAsTimestamp());
+        report.setSysUserId("1");
 
-		try {
-			if (report.getId() == null) {
-				reportExternalExportService.insert(report);
-			} else {
-				reportExternalExportService.insert(report);
-			}
+        try {
+            if (report.getId() == null) {
+                reportExternalExportService.insert(report);
+            } else {
+                reportExternalExportService.insert(report);
+            }
 
-		} catch (LIMSRuntimeException e) {
-			LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeReportForDayPeriod()", e);
-			throw e;
-		}
-	}
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeReportForDayPeriod()", e);
+            throw e;
+        }
+    }
 }

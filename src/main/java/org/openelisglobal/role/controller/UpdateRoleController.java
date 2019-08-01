@@ -16,36 +16,36 @@ import org.openelisglobal.role.form.RoleForm;
 //seemingly unused controller
 @Controller
 public class UpdateRoleController extends BaseController {
-	@RequestMapping(value = "/UpdateRole", method = RequestMethod.GET)
-	public ModelAndView showUpdateRole(HttpServletRequest request, @ModelAttribute("form") RoleForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new RoleForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/UpdateRole", method = RequestMethod.GET)
+    public ModelAndView showUpdateRole(HttpServletRequest request, @ModelAttribute("form") RoleForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new RoleForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "/Role.do";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "/Role.do";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "/Role.do";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "/Role.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

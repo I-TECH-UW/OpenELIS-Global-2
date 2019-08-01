@@ -27,7 +27,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
@@ -38,11 +38,11 @@ import org.openelisglobal.userrole.valueholder.UserRolePK;
 @Transactional
 public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implements UserRoleDAO {
 
-	public UserRoleDAOImpl() {
-		super(UserRole.class);
-	}
+    public UserRoleDAOImpl() {
+        super(UserRole.class);
+    }
 
-	// @Override
+    // @Override
 //	public void deleteData(List<UserRole> roles) throws LIMSRuntimeException {
 //		// add to audit trail
 //		try {
@@ -209,61 +209,61 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		return getPreviousRecord(id, "UserRole", UserRole.class);
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
-		List<String> userRoles;
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
+        List<String> userRoles;
 
-		try {
-			String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("userId", Integer.parseInt(userId));
-			userRoles = query.list();
-		} catch (Exception e) {
-			LogEvent.logError("UserRoleDAOImpl", "getUserRolesForUser()", e.toString());
-			throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
-		}
-		return userRoles;
-	}
+        try {
+            String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("userId", Integer.parseInt(userId));
+            userRoles = query.list();
+        } catch (Exception e) {
+            LogEvent.logError("UserRoleDAOImpl", "getUserRolesForUser()", e.toString());
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
+        }
+        return userRoles;
+    }
 
-	@Override
-	public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException {
-		boolean inRole;
-		try {
-			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
-					+ "where sur.system_user_id = :userId and sr.name = :roleName";
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("userId", Integer.parseInt(userId));
-			query.setString("roleName", roleName);
-			int result = ((BigInteger) query.uniqueResult()).intValue();
+    @Override
+    public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException {
+        boolean inRole;
+        try {
+            String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
+                    + "where sur.system_user_id = :userId and sr.name = :roleName";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("userId", Integer.parseInt(userId));
+            query.setString("roleName", roleName);
+            int result = ((BigInteger) query.uniqueResult()).intValue();
 
-			inRole = result != 0;
-		} catch (HibernateException he) {
-			LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
-			throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
-		}
+            inRole = result != 0;
+        } catch (HibernateException he) {
+            LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
+        }
 
-		return inRole;
-	}
+        return inRole;
+    }
 
-	@Override
-	public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException {
-		boolean inRole;
+    @Override
+    public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException {
+        boolean inRole;
 
-		try {
-			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
-					+ "where sur.system_user_id = :userId and sr.name in (:roleNames)";
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("userId", Integer.parseInt(userId));
-			query.setParameterList("roleNames", roleNames);
-			int result = ((BigInteger) query.uniqueResult()).intValue();
+        try {
+            String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
+                    + "where sur.system_user_id = :userId and sr.name in (:roleNames)";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("userId", Integer.parseInt(userId));
+            query.setParameterList("roleNames", roleNames);
+            int result = ((BigInteger) query.uniqueResult()).intValue();
 
-			inRole = result != 0;
-		} catch (HibernateException he) {
-			LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
-			throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
-		}
+            inRole = result != 0;
+        } catch (HibernateException he) {
+            LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
+        }
 
-		return inRole;
-	}
+        return inRole;
+    }
 }

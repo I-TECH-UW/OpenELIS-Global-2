@@ -38,20 +38,20 @@ public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent, String> {
 
 //	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException;
 
-	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
 //	public void updateData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-	public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-	public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException;
+    public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException;
 
-	public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-	public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException;
+    public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException;
 
-	public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException;
+    public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException;
 
-	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException;
+    public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException;
 
 }

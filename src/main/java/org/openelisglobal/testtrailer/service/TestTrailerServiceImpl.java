@@ -13,92 +13,92 @@ import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 
 @Service
 public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, String> implements TestTrailerService {
-	@Autowired
-	protected TestTrailerDAO baseObjectDAO;
+    @Autowired
+    protected TestTrailerDAO baseObjectDAO;
 
-	TestTrailerServiceImpl() {
-		super(TestTrailer.class);
-	}
+    TestTrailerServiceImpl() {
+        super(TestTrailer.class);
+    }
 
-	@Override
-	protected TestTrailerDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected TestTrailerDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(TestTrailer testTrailer) {
-		getBaseObjectDAO().getData(testTrailer);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(TestTrailer testTrailer) {
+        getBaseObjectDAO().getData(testTrailer);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfTestTrailers(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfTestTrailers(startingRecNo);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfTestTrailers(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfTestTrailers(startingRecNo);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextTestTrailerRecord(String id) {
-		return getBaseObjectDAO().getNextTestTrailerRecord(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextTestTrailerRecord(String id) {
+        return getBaseObjectDAO().getNextTestTrailerRecord(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalTestTrailerCount() {
-		return getBaseObjectDAO().getTotalTestTrailerCount();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalTestTrailerCount() {
+        return getBaseObjectDAO().getTotalTestTrailerCount();
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestTrailer getTestTrailerByName(TestTrailer testTrailer) {
-		return getBaseObjectDAO().getTestTrailerByName(testTrailer);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public TestTrailer getTestTrailerByName(TestTrailer testTrailer) {
+        return getBaseObjectDAO().getTestTrailerByName(testTrailer);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousTestTrailerRecord(String id) {
-		return getBaseObjectDAO().getPreviousTestTrailerRecord(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousTestTrailerRecord(String id) {
+        return getBaseObjectDAO().getPreviousTestTrailerRecord(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllTestTrailers() {
-		return getBaseObjectDAO().getAllTestTrailers();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllTestTrailers() {
+        return getBaseObjectDAO().getAllTestTrailers();
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getTestTrailers(String filter) {
-		return getBaseObjectDAO().getTestTrailers(filter);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List getTestTrailers(String filter) {
+        return getBaseObjectDAO().getTestTrailers(filter);
+    }
 
-	@Override
-	public String insert(TestTrailer testTrailer) {
-		if (duplicateTestTrailerExists(testTrailer)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
-		}
-		return super.insert(testTrailer);
-	}
+    @Override
+    public String insert(TestTrailer testTrailer) {
+        if (duplicateTestTrailerExists(testTrailer)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
+        }
+        return super.insert(testTrailer);
+    }
 
-	@Override
-	public TestTrailer save(TestTrailer testTrailer) {
-		if (duplicateTestTrailerExists(testTrailer)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
-		}
-		return super.save(testTrailer);
-	}
+    @Override
+    public TestTrailer save(TestTrailer testTrailer) {
+        if (duplicateTestTrailerExists(testTrailer)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
+        }
+        return super.save(testTrailer);
+    }
 
-	@Override
-	public TestTrailer update(TestTrailer testTrailer) {
-		if (duplicateTestTrailerExists(testTrailer)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
-		}
-		return super.update(testTrailer);
-	}
+    @Override
+    public TestTrailer update(TestTrailer testTrailer) {
+        if (duplicateTestTrailerExists(testTrailer)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + testTrailer.getTestTrailerName());
+        }
+        return super.update(testTrailer);
+    }
 
-	private boolean duplicateTestTrailerExists(TestTrailer testTrailer) {
-		return baseObjectDAO.duplicateTestTrailerExists(testTrailer);
-	}
+    private boolean duplicateTestTrailerExists(TestTrailer testTrailer) {
+        return baseObjectDAO.duplicateTestTrailerExists(testTrailer);
+    }
 }

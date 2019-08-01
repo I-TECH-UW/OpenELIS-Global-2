@@ -43,10 +43,11 @@ import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
  * @since Jul 14, 2010
  */
 public class SampleSearchPopulateProvider extends BaseQueryProvider {
-	
-	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	protected SampleOrganizationService sampleOrganizationService = SpringContext.getBean(SampleOrganizationService.class);
+
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+    protected SampleOrganizationService sampleOrganizationService = SpringContext
+            .getBean(SampleOrganizationService.class);
 
     /**
      * @throws LIMSInvalidConfigurationException
@@ -54,8 +55,8 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-                    IOException {
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String patientID = (String) request.getParameter("patientKey");
         String accessionNo = (String) request.getParameter("accessionNo");
 
@@ -70,7 +71,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
             patientID = statusSet.getPatientId();
         }
 
-        if ( sample == null ) {
+        if (sample == null) {
             xml.append("empty");
             // result = MessageUtil.getMessage("xxx");
         } else {
@@ -81,27 +82,25 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
 
     }
 
-
     /**
      * @param sample a sample found in the DB
      * @param xml
      */
     private void createReturnXML(Sample sample, String patientId, StringBuilder xml) {
-          XMLUtil.appendKeyValue("patientPK", patientId, xml );
-          XMLUtil.appendKeyValue("samplePK", sample.getId(), xml);
-          XMLUtil.appendKeyValue("labNo", sample.getAccessionNumber(), xml);
-          XMLUtil.appendKeyValue("receivedDateForDisplay", sample.getReceivedDateForDisplay(), xml);
-          XMLUtil.appendKeyValue("collectionDateForDisplay", sample.getCollectionDateForDisplay(), xml);
-          XMLUtil.appendKeyValue("receivedTimeForDisplay", sample.getReceivedTimeForDisplay( ), xml);
-          XMLUtil.appendKeyValue("collectionTimeForDisplay", sample.getCollectionTimeForDisplay(), xml);
-          
+        XMLUtil.appendKeyValue("patientPK", patientId, xml);
+        XMLUtil.appendKeyValue("samplePK", sample.getId(), xml);
+        XMLUtil.appendKeyValue("labNo", sample.getAccessionNumber(), xml);
+        XMLUtil.appendKeyValue("receivedDateForDisplay", sample.getReceivedDateForDisplay(), xml);
+        XMLUtil.appendKeyValue("collectionDateForDisplay", sample.getCollectionDateForDisplay(), xml);
+        XMLUtil.appendKeyValue("receivedTimeForDisplay", sample.getReceivedTimeForDisplay(), xml);
+        XMLUtil.appendKeyValue("collectionTimeForDisplay", sample.getCollectionTimeForDisplay(), xml);
 
-          Organization o = getOrganizationForSample(sample);
-          if ( o != null ) {
-              XMLUtil.appendKeyValue("centerName", o.getOrganizationName(), xml);
-              XMLUtil.appendKeyValue("centerCode", o.getId(), xml );
-          }
-     }
+        Organization o = getOrganizationForSample(sample);
+        if (o != null) {
+            XMLUtil.appendKeyValue("centerName", o.getOrganizationName(), xml);
+            XMLUtil.appendKeyValue("centerCode", o.getId(), xml);
+        }
+    }
 
     /**
      * @param sample
@@ -114,7 +113,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
         return so.getOrganization();
     }
 
-    private Sample getSampleForPatientID(String patientID)  {
+    private Sample getSampleForPatientID(String patientID) {
         List<Sample> samples = sampleHumanService.getSamplesForPatient(patientID);
         Sample sample = findBestMatch(samples);
         // Reread in order to fill in pretend columns (aka accessionNumber)

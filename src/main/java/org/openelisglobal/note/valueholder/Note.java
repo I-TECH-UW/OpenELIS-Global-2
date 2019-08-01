@@ -27,93 +27,90 @@ public class Note extends BaseObject<String> {
     public static final String REJECT_REASON = "R";
     public static final String NON_CONFORMITY = "N";
 
-	private String id;
+    private String id;
 
     private SystemUser systemUser;
-    
+
     private String systemUserId;
-    
-	private String referenceId;
-	
-	private String referenceTableId;
 
-	private String noteType;
+    private String referenceId;
 
-	private String subject;
+    private String referenceTableId;
 
-	private String text;
+    private String noteType;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String subject;
 
-	public String getId() {
-		return id;
-	}
+    private String text;
 
-	public String getNoteType() {
-		return noteType;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setNoteType(String noteType) {
-		this.noteType = noteType;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getReferenceId() {
-		return referenceId;
-	}
+    public String getNoteType() {
+        return noteType;
+    }
 
-	public void setReferenceId(String referenceId) {
-		this.referenceId = referenceId;
-	}
+    public void setNoteType(String noteType) {
+        this.noteType = noteType;
+    }
 
-	public String getReferenceTableId() {
-		return referenceTableId;
-	}
+    public String getReferenceId() {
+        return referenceId;
+    }
 
-	public void setReferenceTableId(String referenceTableId) {
-		this.referenceTableId = referenceTableId;
-	}
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
 
-	public String getSubject() {
-		return subject;
-	}
+    public String getReferenceTableId() {
+        return referenceTableId;
+    }
 
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    public void setReferenceTableId(String referenceTableId) {
+        this.referenceTableId = referenceTableId;
+    }
 
-	public void setSystemUser(SystemUser systemUser) {
-		this.systemUser = systemUser;
-	}
-	
-	public SystemUser getSystemUser() {
-		return this.systemUser;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser = systemUser;
+    }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+    public SystemUser getSystemUser() {
+        return this.systemUser;
+    }
 
-	public String getSystemUserId() {
-		return systemUserId;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public void setSystemUserId(String systemUserId) {
-		this.systemUserId = systemUserId;
-	}
+    public void setText(String text) {
+        this.text = text;
+    }
 
-	public void setReferenceTables(ReferenceTables referenceTables) {
-		if( referenceTables != null){
-			setReferenceTableId(referenceTables.getId());
-		}
-	}
+    public String getSystemUserId() {
+        return systemUserId;
+    }
 
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
+
+    public void setReferenceTables(ReferenceTables referenceTables) {
+        if (referenceTables != null) {
+            setReferenceTableId(referenceTables.getId());
+        }
+    }
 
 }
-

@@ -10,83 +10,86 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class BarcodeLabelInfo extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  //PK
-  private String id;
-  //Other values to persist
-  private int numPrinted;
-  private String code;
-  private String type;
+    // PK
+    private String id;
+    // Other values to persist
+    private int numPrinted;
+    private String code;
+    private String type;
 
-  public BarcodeLabelInfo() {
-    super();
-    numPrinted = 0;
-  }
-
-  public BarcodeLabelInfo(String code) {
-    super();
-    this.code = code;
-    numPrinted = 0;
-    type = parseCodeForType();
-  }
-
-  public void incrementNumPrinted() {
-    ++numPrinted;
-  }
-
-  /**
-   * Determines the type of label based on the given code
-   * @return    The type of label this code belongs to
-   */
-  public String parseCodeForType() {
-    if (code.contains("-")) {
-      return "aliquot";
-    } else if (code.contains(".")) {
-      return "specimen";
-    } else {
-      return "order";
+    public BarcodeLabelInfo() {
+        super();
+        numPrinted = 0;
     }
-  }
-  
-  /**
-   * Get the id (PK of the object in the database)
-   * @return    PK
-   */
-  public String getId() {
-    return id;
-  }
 
-  /**
-   * Set the id (PK of the object in the database)
-   * @param id    PK
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
+    public BarcodeLabelInfo(String code) {
+        super();
+        this.code = code;
+        numPrinted = 0;
+        type = parseCodeForType();
+    }
 
-  public int getNumPrinted() {
-    return numPrinted;
-  }
+    public void incrementNumPrinted() {
+        ++numPrinted;
+    }
 
-  public void setNumPrinted(int numPrinted) {
-    this.numPrinted = numPrinted;
-  }
+    /**
+     * Determines the type of label based on the given code
+     * 
+     * @return The type of label this code belongs to
+     */
+    public String parseCodeForType() {
+        if (code.contains("-")) {
+            return "aliquot";
+        } else if (code.contains(".")) {
+            return "specimen";
+        } else {
+            return "order";
+        }
+    }
 
-  public String getCode() {
-    return code;
-  }
+    /**
+     * Get the id (PK of the object in the database)
+     * 
+     * @return PK
+     */
+    public String getId() {
+        return id;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    /**
+     * Set the id (PK of the object in the database)
+     * 
+     * @param id PK
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public int getNumPrinted() {
+        return numPrinted;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setNumPrinted(int numPrinted) {
+        this.numPrinted = numPrinted;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

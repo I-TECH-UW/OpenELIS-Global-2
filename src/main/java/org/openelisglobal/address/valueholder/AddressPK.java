@@ -20,23 +20,25 @@ import java.io.Serializable;
 
 public class AddressPK implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String targetId;
-	private String addressPartId;
+    private String targetId;
+    private String addressPartId;
 
-	public String getTargetId() {
-		return targetId;
-	}
-	public void setTargetId(String targetId) {
-		this.targetId = targetId;
-	}
-	public String getAddressPartId() {
-		return addressPartId;
-	}
-	public void setAddressPartId(String addressPartId) {
-		this.addressPartId = addressPartId;
-	}
+    public String getTargetId() {
+        return targetId;
+    }
 
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getAddressPartId() {
+        return addressPartId;
+    }
+
+    public void setAddressPartId(String addressPartId) {
+        this.addressPartId = addressPartId;
+    }
 
 }

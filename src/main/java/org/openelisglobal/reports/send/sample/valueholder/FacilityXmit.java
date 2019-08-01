@@ -17,80 +17,78 @@ package org.openelisglobal.reports.send.sample.valueholder;
 
 import org.openelisglobal.common.util.StringUtil;
 
-public class FacilityXmit extends
-		org.openelisglobal.provider.valueholder.Provider {
+public class FacilityXmit extends org.openelisglobal.provider.valueholder.Provider {
 
-	private String streetAddress;
+    private String streetAddress;
 
-	private String city;
+    private String city;
 
-	private String state;
+    private String state;
 
-	private String zipCode;
-	
-	private String department;
-	
-	private String organizationName;
-	
+    private String zipCode;
 
-	public String getDepartment() {
-		return department;
-	}
+    private String department;
 
-	public void setDepartment(String department) {
-		this.department = department;
-	}
+    private String organizationName;
 
-	public FacilityXmit() {
-	}
+    public String getDepartment() {
+        return department;
+    }
 
-	public String getCity() {
-		if (!StringUtil.isNullorNill(city)) {
-			city.trim();
-		}
-		return city;
-	}
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public FacilityXmit() {
+    }
 
-	public String getState() {
-		if (!StringUtil.isNullorNill(state)) {
-			city.trim();
-		}
-		return state;
-	}
+    public String getCity() {
+        if (!StringUtil.isNullorNill(city)) {
+            city.trim();
+        }
+        return city;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getStreetAddress() {
-		return streetAddress;
-	}
+    public String getState() {
+        if (!StringUtil.isNullorNill(state)) {
+            city.trim();
+        }
+        return state;
+    }
 
-	public void setStreetAddress(String streetAddress) {
-		this.streetAddress = streetAddress;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public String getZipCode() {
-		if (!StringUtil.isNullorNill(zipCode)) {
-			zipCode.trim();
-		}
-		return zipCode;
-	}
+    public String getStreetAddress() {
+        return streetAddress;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
 
-	public String getOrganizationName() {
-		return organizationName;
-	}
+    public String getZipCode() {
+        if (!StringUtil.isNullorNill(zipCode)) {
+            zipCode.trim();
+        }
+        return zipCode;
+    }
 
-	public void setOrganizationName(String organizationName) {
-		this.organizationName = organizationName;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
 }

@@ -32,111 +32,111 @@ import org.openelisglobal.testreflex.action.util.TestReflexUtil;
 
 @Service
 public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String>
-		implements AnalyzerResultsService {
-	@Autowired
-	protected AnalyzerResultsDAO baseObjectDAO;
+        implements AnalyzerResultsService {
+    @Autowired
+    protected AnalyzerResultsDAO baseObjectDAO;
 
-	@Autowired
-	private NoteService noteService;
-	@Autowired
-	private SampleHumanService sampleHumanService;
-	@Autowired
-	private SampleItemService sampleItemService;
-	@Autowired
-	private SampleService sampleService;
-	@Autowired
-	private AnalysisService analysisService;
-	@Autowired
-	private ResultService resultService;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
+    private SampleHumanService sampleHumanService;
+    @Autowired
+    private SampleItemService sampleItemService;
+    @Autowired
+    private SampleService sampleService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private ResultService resultService;
 
-	AnalyzerResultsServiceImpl() {
-		super(AnalyzerResults.class);
-	}
+    AnalyzerResultsServiceImpl() {
+        super(AnalyzerResults.class);
+    }
 
-	@Override
-	protected AnalyzerResultsDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected AnalyzerResultsDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
-		return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
+        return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
+    }
 
-	@Override
-	public AnalyzerResults readAnalyzerResults(String idString) {
-		return getBaseObjectDAO().readAnalyzerResults(idString);
-	}
+    @Override
+    public AnalyzerResults readAnalyzerResults(String idString) {
+        return getBaseObjectDAO().readAnalyzerResults(idString);
+    }
 
-	@Override
-	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) {
-		try {
-			for (AnalyzerResults result : results) {
-				boolean duplicateByAccessionAndTestOnly = false;
-				List<AnalyzerResults> previousResults = baseObjectDAO.getDuplicateResultByAccessionAndTest(result);
-				AnalyzerResults previousResult = null;
+    @Override
+    public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) {
+        try {
+            for (AnalyzerResults result : results) {
+                boolean duplicateByAccessionAndTestOnly = false;
+                List<AnalyzerResults> previousResults = baseObjectDAO.getDuplicateResultByAccessionAndTest(result);
+                AnalyzerResults previousResult = null;
 
-				// This next block may seem more complicated then it need be but it covers the
-				// case where there may be a third duplicate
-				// and it covers rereading the same file
-				if (previousResults != null) {
-					duplicateByAccessionAndTestOnly = true;
-					for (AnalyzerResults foundResult : previousResults) {
-						previousResult = foundResult;
-						if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
-							duplicateByAccessionAndTestOnly = false;
-							break;
-						}
-					}
-				}
+                // This next block may seem more complicated then it need be but it covers the
+                // case where there may be a third duplicate
+                // and it covers rereading the same file
+                if (previousResults != null) {
+                    duplicateByAccessionAndTestOnly = true;
+                    for (AnalyzerResults foundResult : previousResults) {
+                        previousResult = foundResult;
+                        if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
+                            duplicateByAccessionAndTestOnly = false;
+                            break;
+                        }
+                    }
+                }
 
-				if (duplicateByAccessionAndTestOnly) {
-					result.setDuplicateAnalyzerResultId(previousResult.getId());
-					result.setReadOnly(true);
-				}
+                if (duplicateByAccessionAndTestOnly) {
+                    result.setDuplicateAnalyzerResultId(previousResult.getId());
+                    result.setReadOnly(true);
+                }
 
-				if (previousResults == null || duplicateByAccessionAndTestOnly) {
+                if (previousResults == null || duplicateByAccessionAndTestOnly) {
 
-					String id = insert(result);
-					result.setId(id);
+                    String id = insert(result);
+                    result.setId(id);
 
-					if (duplicateByAccessionAndTestOnly) {
-						previousResult.setDuplicateAnalyzerResultId(id);
-						previousResult.setSysUserId(sysUserId);
-					}
+                    if (duplicateByAccessionAndTestOnly) {
+                        previousResult.setDuplicateAnalyzerResultId(id);
+                        previousResult.setSysUserId(sysUserId);
+                    }
 
-					if (duplicateByAccessionAndTestOnly) {
-						update(previousResult);
-					}
-				}
-			}
+                    if (duplicateByAccessionAndTestOnly) {
+                        update(previousResult);
+                    }
+                }
+            }
 
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
+            throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
+        }
+    }
 
-	@Override
-	@Transactional
-	public void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
-			List<SampleGrouping> sampleGroupList, String sysUserId) {
-		removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults);
+    @Override
+    @Transactional
+    public void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
+            List<SampleGrouping> sampleGroupList, String sysUserId) {
+        removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults);
 
-		insertResults(sampleGroupList, sysUserId);
+        insertResults(sampleGroupList, sysUserId);
 
-	}
+    }
 
-	private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
-		deleteAll(deletableAnalyzerResults);
-	}
+    private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
+        deleteAll(deletableAnalyzerResults);
+    }
 
-	private boolean insertResults(List<SampleGrouping> sampleGroupList, String sysUserId) {
-		for (SampleGrouping grouping : sampleGroupList) {
-			if (grouping.addSample) {
+    private boolean insertResults(List<SampleGrouping> sampleGroupList, String sysUserId) {
+        for (SampleGrouping grouping : sampleGroupList) {
+            if (grouping.addSample) {
 //				try {
-				sampleService.insertDataWithAccessionNumber(grouping.sample);
+                sampleService.insertDataWithAccessionNumber(grouping.sample);
 //				} catch (LIMSRuntimeException lre) {
 //					Errors errors = new BaseErrors();
 //					String errorMsg = "warning.duplicate.accession";
@@ -144,90 +144,90 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 //					saveErrors(errors);
 //					return false;
 //				}
-			} else if (grouping.updateSample) {
-				sampleService.update(grouping.sample);
-			}
+            } else if (grouping.updateSample) {
+                sampleService.update(grouping.sample);
+            }
 
-			String sampleId = grouping.sample.getId();
+            String sampleId = grouping.sample.getId();
 
-			if (grouping.addSample) {
-				grouping.sampleHuman.setSampleId(sampleId);
-				sampleHumanService.insert(grouping.sampleHuman);
+            if (grouping.addSample) {
+                grouping.sampleHuman.setSampleId(sampleId);
+                sampleHumanService.insert(grouping.sampleHuman);
 
-				RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null
-						? RecordStatus.NotRegistered
-						: null;
-				RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
-						? RecordStatus.NotRegistered
-						: null;
-				StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
-						grouping.patient, patientStatus, sysUserId);
-			}
+                RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null
+                        ? RecordStatus.NotRegistered
+                        : null;
+                RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
+                        ? RecordStatus.NotRegistered
+                        : null;
+                StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
+                        grouping.patient, patientStatus, sysUserId);
+            }
 
-			if (grouping.addSampleItem) {
-				grouping.sampleItem.setSample(grouping.sample);
-				sampleItemService.insert(grouping.sampleItem);
-			}
+            if (grouping.addSampleItem) {
+                grouping.sampleItem.setSample(grouping.sample);
+                sampleItemService.insert(grouping.sampleItem);
+            }
 
-			for (int i = 0; i < grouping.analysisList.size(); i++) {
+            for (int i = 0; i < grouping.analysisList.size(); i++) {
 
-				Analysis analysis = grouping.analysisList.get(i);
-				if (GenericValidator.isBlankOrNull(analysis.getId())) {
-					analysis.setSampleItem(grouping.sampleItem);
-					analysisService.insert(analysis);
-				} else {
-					analysisService.update(analysis);
-				}
+                Analysis analysis = grouping.analysisList.get(i);
+                if (GenericValidator.isBlankOrNull(analysis.getId())) {
+                    analysis.setSampleItem(grouping.sampleItem);
+                    analysisService.insert(analysis);
+                } else {
+                    analysisService.update(analysis);
+                }
 
-				Result result = grouping.resultList.get(i);
-				if (GenericValidator.isBlankOrNull(result.getId())) {
-					result.setAnalysis(analysis);
-					setAnalyte(result);
-					resultService.insert(result);
-				} else {
-					resultService.update(result);
-				}
+                Result result = grouping.resultList.get(i);
+                if (GenericValidator.isBlankOrNull(result.getId())) {
+                    result.setAnalysis(analysis);
+                    setAnalyte(result);
+                    resultService.insert(result);
+                } else {
+                    resultService.update(result);
+                }
 
-				Note note = grouping.noteList.get(i);
+                Note note = grouping.noteList.get(i);
 
-				if (note != null) {
-					note.setReferenceId(result.getId());
-					noteService.insert(note);
-				}
-			}
-		}
+                if (note != null) {
+                    note.setReferenceId(result.getId());
+                    noteService.insert(note);
+                }
+            }
+        }
 
-		TestReflexUtil testReflexUtil = new TestReflexUtil();
-		testReflexUtil.setCurrentUserId(sysUserId);
-		testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
+        TestReflexUtil testReflexUtil = new TestReflexUtil();
+        testReflexUtil.setCurrentUserId(sysUserId);
+        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
 
-		return true;
-	}
+        return true;
+    }
 
-	private List<TestReflexBean> convertGroupListToTestReflexBeans(List<SampleGrouping> sampleGroupList) {
-		List<TestReflexBean> reflexBeanList = new ArrayList<>();
+    private List<TestReflexBean> convertGroupListToTestReflexBeans(List<SampleGrouping> sampleGroupList) {
+        List<TestReflexBean> reflexBeanList = new ArrayList<>();
 
-		for (SampleGrouping sampleGroup : sampleGroupList) {
-			if (sampleGroup.accepted) {
-				for (Result result : sampleGroup.resultList) {
-					TestReflexBean reflex = new TestReflexBean();
-					reflex.setPatient(sampleGroup.patient);
-					reflex.setTriggersToSelectedReflexesMap(sampleGroup.triggersToSelectedReflexesMap);
-					reflex.setResult(result);
-					reflex.setSample(sampleGroup.sample);
-					reflexBeanList.add(reflex);
-				}
-			}
-		}
+        for (SampleGrouping sampleGroup : sampleGroupList) {
+            if (sampleGroup.accepted) {
+                for (Result result : sampleGroup.resultList) {
+                    TestReflexBean reflex = new TestReflexBean();
+                    reflex.setPatient(sampleGroup.patient);
+                    reflex.setTriggersToSelectedReflexesMap(sampleGroup.triggersToSelectedReflexesMap);
+                    reflex.setResult(result);
+                    reflex.setSample(sampleGroup.sample);
+                    reflexBeanList.add(reflex);
+                }
+            }
+        }
 
-		return reflexBeanList;
-	}
+        return reflexBeanList;
+    }
 
-	private void setAnalyte(Result result) {
-		TestAnalyte testAnalyte = ResultUtil.getTestAnalyteForResult(result);
+    private void setAnalyte(Result result) {
+        TestAnalyte testAnalyte = ResultUtil.getTestAnalyteForResult(result);
 
-		if (testAnalyte != null) {
-			result.setAnalyte(testAnalyte.getAnalyte());
-		}
-	}
+        if (testAnalyte != null) {
+            result.setAnalyte(testAnalyte.getAnalyte());
+        }
+    }
 }

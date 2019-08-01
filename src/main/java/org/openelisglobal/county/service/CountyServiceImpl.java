@@ -9,15 +9,15 @@ import org.openelisglobal.county.valueholder.County;
 
 @Service
 public class CountyServiceImpl extends BaseObjectServiceImpl<County, String> implements CountyService {
-	@Autowired
-	protected CountyDAO baseObjectDAO;
+    @Autowired
+    protected CountyDAO baseObjectDAO;
 
-	CountyServiceImpl() {
-		super(County.class);
-	}
+    CountyServiceImpl() {
+        super(County.class);
+    }
 
-	@Override
-	protected CountyDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected CountyDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

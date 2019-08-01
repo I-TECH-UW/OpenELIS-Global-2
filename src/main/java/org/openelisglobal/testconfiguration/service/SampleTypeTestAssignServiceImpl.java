@@ -12,35 +12,35 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 @Service
 public class SampleTypeTestAssignServiceImpl implements SampleTypeTestAssignService {
 
-	@Autowired
-	private TypeOfSampleService typeOfSampleService;
-	@Autowired
-	private TypeOfSampleTestService typeOfSampleTestService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private TypeOfSampleTestService typeOfSampleTestService;
 
-	@Override
-	@Transactional
-	public void update(TypeOfSample typeOfSample, String testId, String typeOfSamplesTestID, String sampleTypeId,
-			boolean deleteExistingTypeOfSampleTest, boolean updateTypeOfSample, TypeOfSample deActivateTypeOfSample,
-			String systemUserId) {
-		if (deleteExistingTypeOfSampleTest) {
-			typeOfSampleTestService.delete(typeOfSamplesTestID, systemUserId);
-		}
+    @Override
+    @Transactional
+    public void update(TypeOfSample typeOfSample, String testId, String typeOfSamplesTestID, String sampleTypeId,
+            boolean deleteExistingTypeOfSampleTest, boolean updateTypeOfSample, TypeOfSample deActivateTypeOfSample,
+            String systemUserId) {
+        if (deleteExistingTypeOfSampleTest) {
+            typeOfSampleTestService.delete(typeOfSamplesTestID, systemUserId);
+        }
 
-		if (updateTypeOfSample) {
-			typeOfSampleService.update(typeOfSample);
-		}
+        if (updateTypeOfSample) {
+            typeOfSampleService.update(typeOfSample);
+        }
 
-		TypeOfSampleTest typeOfSampleTest = new TypeOfSampleTest();
-		typeOfSampleTest.setTestId(testId);
-		typeOfSampleTest.setTypeOfSampleId(sampleTypeId);
-		typeOfSampleTest.setSysUserId(systemUserId);
-		typeOfSampleTest.setLastupdatedFields();
+        TypeOfSampleTest typeOfSampleTest = new TypeOfSampleTest();
+        typeOfSampleTest.setTestId(testId);
+        typeOfSampleTest.setTypeOfSampleId(sampleTypeId);
+        typeOfSampleTest.setSysUserId(systemUserId);
+        typeOfSampleTest.setLastupdatedFields();
 
-		typeOfSampleTestService.insert(typeOfSampleTest);
+        typeOfSampleTestService.insert(typeOfSampleTest);
 
-		if (deActivateTypeOfSample != null) {
-			typeOfSampleService.update(deActivateTypeOfSample);
-		}
-	}
+        if (deActivateTypeOfSample != null) {
+            typeOfSampleService.update(deActivateTypeOfSample);
+        }
+    }
 
 }

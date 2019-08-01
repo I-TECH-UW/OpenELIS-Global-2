@@ -7,18 +7,18 @@ import org.openelisglobal.systemmodule.valueholder.SystemModule;
 
 public interface SystemModuleService extends BaseObjectService<SystemModule, String> {
 
-	void getData(SystemModule systemModule);
+    void getData(SystemModule systemModule);
 
-	Integer getTotalSystemModuleCount();
+    Integer getTotalSystemModuleCount();
 
-	List getPageOfSystemModules(int startingRecNo);
+    List getPageOfSystemModules(int startingRecNo);
 
-	List getNextSystemModuleRecord(String id);
+    List getNextSystemModuleRecord(String id);
 
-	List getAllSystemModules();
+    List getAllSystemModules();
 
-	List getPreviousSystemModuleRecord(String id);
+    List getPreviousSystemModuleRecord(String id);
 
-	SystemModule getSystemModuleByName(String name);
+    SystemModule getSystemModuleByName(String name);
 
 }

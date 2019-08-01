@@ -24,35 +24,40 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
 
 public class TestReflexBean {
-	private Sample sample;
-	private Result result;
-	private Patient patient;
-	private Map<String,List<String>> triggersToSelectedReflexesMap;
-	
-	public Sample getSample() {
-		return sample;
-	}
-	public void setSample(Sample sample) {
-		this.sample = sample;
-	}
-	public Result getResult() {
-		return result;
-	}
-	public void setResult(Result result) {
-		this.result = result;
-	}
-	public Patient getPatient() {
-		return patient;
-	}
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
+    private Sample sample;
+    private Result result;
+    private Patient patient;
+    private Map<String, List<String>> triggersToSelectedReflexesMap;
 
-    public Map<String, List<String>> getTriggersToSelectedReflexesMap(){
+    public Sample getSample() {
+        return sample;
+    }
+
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public Map<String, List<String>> getTriggersToSelectedReflexesMap() {
         return triggersToSelectedReflexesMap;
     }
 
-    public void setTriggersToSelectedReflexesMap( Map<String, List<String>> triggersToSelectedReflexesMap ){
+    public void setTriggersToSelectedReflexesMap(Map<String, List<String>> triggersToSelectedReflexesMap) {
         this.triggersToSelectedReflexesMap = triggersToSelectedReflexesMap;
     }
 }

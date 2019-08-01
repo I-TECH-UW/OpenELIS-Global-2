@@ -22,28 +22,28 @@ import java.util.Map;
 
 public abstract class AFormFields {
 
-	protected abstract HashMap<FormFields.Field, Boolean> getSetAttributes();
+    protected abstract HashMap<FormFields.Field, Boolean> getSetAttributes();
 
-	protected abstract HashMap<FormFields.Field, Boolean> getDefaultAttributes();
+    protected abstract HashMap<FormFields.Field, Boolean> getDefaultAttributes();
 
-	public Map<FormFields.Field, Boolean> getFieldFormSet() throws IllegalStateException {
+    public Map<FormFields.Field, Boolean> getFieldFormSet() throws IllegalStateException {
 
-		boolean patientRequired;
-		Map<FormFields.Field, Boolean> defaultAttributes = getDefaultAttributes();
-		Map<FormFields.Field, Boolean> setAttributes = getSetAttributes();
+        boolean patientRequired;
+        Map<FormFields.Field, Boolean> defaultAttributes = getDefaultAttributes();
+        Map<FormFields.Field, Boolean> setAttributes = getSetAttributes();
 
-		patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
-		if (defaultAttributes == null) {
-			defaultAttributes = new HashMap<>();
-		}
+        patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
+        if (defaultAttributes == null) {
+            defaultAttributes = new HashMap<>();
+        }
 
-		if (setAttributes == null) {
-			setAttributes = new HashMap<>();
-		}
+        if (setAttributes == null) {
+            setAttributes = new HashMap<>();
+        }
 
-		defaultAttributes.putAll(setAttributes);
-		patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
+        defaultAttributes.putAll(setAttributes);
+        patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
 
-		return defaultAttributes;
-	}
+        return defaultAttributes;
+    }
 }

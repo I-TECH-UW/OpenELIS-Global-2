@@ -8,16 +8,17 @@ import org.openelisglobal.sampleqaeventaction.dao.SampleQaEventActionDAO;
 import org.openelisglobal.sampleqaeventaction.valueholder.SampleQaEventAction;
 
 @Service
-public class SampleQaEventActionServiceImpl extends BaseObjectServiceImpl<SampleQaEventAction, String> implements SampleQaEventActionService {
-	@Autowired
-	protected SampleQaEventActionDAO baseObjectDAO;
+public class SampleQaEventActionServiceImpl extends BaseObjectServiceImpl<SampleQaEventAction, String>
+        implements SampleQaEventActionService {
+    @Autowired
+    protected SampleQaEventActionDAO baseObjectDAO;
 
-	SampleQaEventActionServiceImpl() {
-		super(SampleQaEventAction.class);
-	}
+    SampleQaEventActionServiceImpl() {
+        super(SampleQaEventAction.class);
+    }
 
-	@Override
-	protected SampleQaEventActionDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SampleQaEventActionDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -12,35 +12,35 @@ import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
 
 @Service
 public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOfDataIndicator, String>
-		implements TypeOfDataIndicatorService {
-	@Autowired
-	protected TypeOfDataIndicatorDAO baseObjectDAO;
+        implements TypeOfDataIndicatorService {
+    @Autowired
+    protected TypeOfDataIndicatorDAO baseObjectDAO;
 
-	TypeOfDataIndicatorServiceImpl() {
-		super(TypeOfDataIndicator.class);
-	}
+    TypeOfDataIndicatorServiceImpl() {
+        super(TypeOfDataIndicator.class);
+    }
 
-	@Override
-	protected TypeOfDataIndicatorDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected TypeOfDataIndicatorDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(TypeOfDataIndicator typeOfIndicator) {
-		getBaseObjectDAO().getData(typeOfIndicator);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(TypeOfDataIndicator typeOfIndicator) {
+        getBaseObjectDAO().getData(typeOfIndicator);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TypeOfDataIndicator getTypeOfDataIndicator(String id) {
-		return getBaseObjectDAO().getTypeOfDataIndicator(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public TypeOfDataIndicator getTypeOfDataIndicator(String id) {
+        return getBaseObjectDAO().getTypeOfDataIndicator(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() {
-		return getBaseObjectDAO().getAllTypeOfDataIndicator();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfDataIndicator> getAllTypeOfDataIndicator() {
+        return getBaseObjectDAO().getAllTypeOfDataIndicator();
+    }
 }

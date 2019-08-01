@@ -6,17 +6,17 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 
 public interface SystemUserSectionService extends BaseObjectService<SystemUserSection, String> {
-	void getData(SystemUserSection systemUserSection);
+    void getData(SystemUserSection systemUserSection);
 
-	List getAllSystemUserSections();
+    List getAllSystemUserSections();
 
-	List getPageOfSystemUserSections(int startingRecNo);
+    List getPageOfSystemUserSections(int startingRecNo);
 
-	List getNextSystemUserSectionRecord(String id);
+    List getNextSystemUserSectionRecord(String id);
 
-	Integer getTotalSystemUserSectionCount();
+    Integer getTotalSystemUserSectionCount();
 
-	List getPreviousSystemUserSectionRecord(String id);
+    List getPreviousSystemUserSectionRecord(String id);
 
-	List getAllSystemUserSectionsBySystemUserId(int systemUserId);
+    List getAllSystemUserSectionsBySystemUserId(int systemUserId);
 }

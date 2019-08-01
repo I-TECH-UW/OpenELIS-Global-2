@@ -26,125 +26,137 @@ import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
- *  @author     Hung Nguyen (Hung.Nguyen@health.state.mn.us)
+ * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 public class Login extends BaseObject<String> {
 
-	private String id;
-	@NotBlank
-	@ValidName(nameType = NameType.USERNAME, message = "username is invalid")
-	private String loginName;
-	private String password;
-	private String newPassword;
-	private String confirmPassword;
-	private Date passwordExpiredDT;
-	private String passwordExpiredDateForDisplay;
-	private String accountLocked;
-	private String accountDisabled;
-	private String isAdmin;
-	private int passwordExpiredDayNo;
-	private int systemUserId;
-	private String userTimeOut;
+    private String id;
+    @NotBlank
+    @ValidName(nameType = NameType.USERNAME, message = "username is invalid")
+    private String loginName;
+    private String password;
+    private String newPassword;
+    private String confirmPassword;
+    private Date passwordExpiredDT;
+    private String passwordExpiredDateForDisplay;
+    private String accountLocked;
+    private String accountDisabled;
+    private String isAdmin;
+    private int passwordExpiredDayNo;
+    private int systemUserId;
+    private String userTimeOut;
 
-	public Login() {
-		super();
-	}
+    public Login() {
+        super();
+    }
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setIsAdmin(String isAdmin) {
-		this.isAdmin = isAdmin;
-	}
-	public String getIsAdmin() {
-		return isAdmin;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	public void setUserTimeOut(String userTimeOut) {
-		this.userTimeOut = userTimeOut;
-	}
-	public String getUserTimeOut() {
-		return userTimeOut;
-	}
+    public void setIsAdmin(String isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 
-	public void setSystemUserId(int systemUserId) {
-		this.systemUserId = systemUserId;
-	}
-	public int getSystemUserId() {
-		return systemUserId;
-	}
+    public String getIsAdmin() {
+        return isAdmin;
+    }
 
-	public void setPasswordExpiredDayNo(int passwordExpiredDayNo) {
-		this.passwordExpiredDayNo = passwordExpiredDayNo;
-	}
-	public int getPasswordExpiredDayNo() {
-		return passwordExpiredDayNo;
-	}
+    public void setUserTimeOut(String userTimeOut) {
+        this.userTimeOut = userTimeOut;
+    }
 
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
-	}
-	public String getLoginName() {
-		return loginName;
-	}
+    public String getUserTimeOut() {
+        return userTimeOut;
+    }
 
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setSystemUserId(int systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
-	public String getNewPassword() {
-		return newPassword;
-	}
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
-	}
+    public int getSystemUserId() {
+        return systemUserId;
+    }
 
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
+    public void setPasswordExpiredDayNo(int passwordExpiredDayNo) {
+        this.passwordExpiredDayNo = passwordExpiredDayNo;
+    }
 
-	public Date getPasswordExpiredDate() {
-		return passwordExpiredDT;
-	}
-	public void setPasswordExpiredDate(Date passwordExpiredDT) {
-		this.passwordExpiredDT = passwordExpiredDT;
-		this.passwordExpiredDateForDisplay = DateUtil.convertSqlDateToStringDate(passwordExpiredDT);
-	}
+    public int getPasswordExpiredDayNo() {
+        return passwordExpiredDayNo;
+    }
 
-	public void setPasswordExpiredDateForDisplay(String passwordExpiredDTForDisplay) {
-		this.passwordExpiredDateForDisplay = passwordExpiredDTForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-		this.passwordExpiredDT = DateUtil.convertStringDateToSqlDate(this.passwordExpiredDateForDisplay, locale);
-	}
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
 
-	public String getPasswordExpiredDateForDisplay() {
-		return passwordExpiredDateForDisplay;
-	}
+    public String getLoginName() {
+        return loginName;
+    }
 
-	public String getAccountLocked() {
-		return accountLocked;
-	}
-	public void setAccountLocked(String accountLocked) {
-		this.accountLocked = accountLocked;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getAccountDisabled() {
-		return accountDisabled;
-	}
-	public void setAccountDisabled(String accountDisabled) {
-		this.accountDisabled = accountDisabled;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public Date getPasswordExpiredDate() {
+        return passwordExpiredDT;
+    }
+
+    public void setPasswordExpiredDate(Date passwordExpiredDT) {
+        this.passwordExpiredDT = passwordExpiredDT;
+        this.passwordExpiredDateForDisplay = DateUtil.convertSqlDateToStringDate(passwordExpiredDT);
+    }
+
+    public void setPasswordExpiredDateForDisplay(String passwordExpiredDTForDisplay) {
+        this.passwordExpiredDateForDisplay = passwordExpiredDTForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.passwordExpiredDT = DateUtil.convertStringDateToSqlDate(this.passwordExpiredDateForDisplay, locale);
+    }
+
+    public String getPasswordExpiredDateForDisplay() {
+        return passwordExpiredDateForDisplay;
+    }
+
+    public String getAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(String accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public String getAccountDisabled() {
+        return accountDisabled;
+    }
+
+    public void setAccountDisabled(String accountDisabled) {
+        this.accountDisabled = accountDisabled;
+    }
 }

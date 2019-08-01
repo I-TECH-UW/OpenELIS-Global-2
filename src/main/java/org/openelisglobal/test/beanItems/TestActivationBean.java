@@ -21,8 +21,7 @@ import java.util.List;
 
 import org.openelisglobal.common.util.IdValuePair;
 
-
-public class TestActivationBean implements Serializable{
+public class TestActivationBean implements Serializable {
     private IdValuePair sampleType;
     private List<IdValuePair> activeTests;
     private List<IdValuePair> inactiveTests;

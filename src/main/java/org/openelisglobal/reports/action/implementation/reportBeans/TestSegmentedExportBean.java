@@ -16,24 +16,24 @@
  */
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
-public class TestSegmentedExportBean{
+public class TestSegmentedExportBean {
 
-	private String siteCode = "";
-	private String nationalId = "";
-	private String firstName = "";
-	private String lastName = "";
-	private String gender = "";
-	private String DOB = "";
-	private String age = "";
-	private String accessionNumber = "";
-	private String status = "";
-	private String sampleType = "";
-	private String receptionDate = "";
-	private String referringSiteName = "";
-	private String testBench = "";
-	private String testName = "";
-	private String result = "";
-	private String resultDate = "";
+    private String siteCode = "";
+    private String nationalId = "";
+    private String firstName = "";
+    private String lastName = "";
+    private String gender = "";
+    private String DOB = "";
+    private String age = "";
+    private String accessionNumber = "";
+    private String status = "";
+    private String sampleType = "";
+    private String receptionDate = "";
+    private String referringSiteName = "";
+    private String testBench = "";
+    private String testName = "";
+    private String result = "";
+    private String resultDate = "";
     private String department = "";
     private String collectionDate = "";
     private String collectionTime = "";
@@ -43,31 +43,31 @@ public class TestSegmentedExportBean{
     private static final String header = "CODSITE,LNSPID,FIRSTNAME,LASTNAME,SEX,DOB,AGE,SPECIMENID,STATUT,SPECIMEN,COLLECTDATE,COLLECTTIME,RECEIPTDATE,RECEIPTTIME,SPECIMEN_PROVENANCE,DEPARTEMENT,CATEGORIE,TEST,RESULTAT,RESULTDATE,NOTES";
     private static final String depersonalizedeader = "SPECIMEN,COLLECTDATE,COLLECTTIME,RECEIPTDATE,RECEIPTTIME,SPECIMEN_PROVENANCE,DEPARTEMENT,CATEGORIE,TEST,RESULTAT,RESULTDATE,NOTES";
 
-	public String getAsCSVString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append(siteCode);
-		builder.append(",");
-		builder.append(nationalId);
-		builder.append(",");
-		builder.append(firstName);
-		builder.append(",");
-		builder.append(lastName);
-		builder.append(",");
-		builder.append(gender);
-		builder.append(",");
-		builder.append(DOB);
-		builder.append(",");
-		builder.append(age);
-		builder.append(",");
-		builder.append(accessionNumber);
-		builder.append(",");
-		builder.append(status);
-		builder.append(",");
-		builder.append(getAsDepersonalizedCSVString());
-		return builder.toString();
-	}
+    public String getAsCSVString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(siteCode);
+        builder.append(",");
+        builder.append(nationalId);
+        builder.append(",");
+        builder.append(firstName);
+        builder.append(",");
+        builder.append(lastName);
+        builder.append(",");
+        builder.append(gender);
+        builder.append(",");
+        builder.append(DOB);
+        builder.append(",");
+        builder.append(age);
+        builder.append(",");
+        builder.append(accessionNumber);
+        builder.append(",");
+        builder.append(status);
+        builder.append(",");
+        builder.append(getAsDepersonalizedCSVString());
+        return builder.toString();
+    }
 
-    public String getAsDepersonalizedCSVString(){
+    public String getAsDepersonalizedCSVString() {
         StringBuilder builder = new StringBuilder();
         builder.append(sampleType);
         builder.append(",");
@@ -85,27 +85,29 @@ public class TestSegmentedExportBean{
         builder.append(",");
         builder.append(testBench);
         builder.append(",");
-        builder.append(testName.replace( ",", "." ));
+        builder.append(testName.replace(",", "."));
         builder.append(",");
         builder.append(result);
         builder.append(",");
         builder.append(resultDate);
         builder.append(",");
-        builder.append( notes );
+        builder.append(notes);
 
         return builder.toString();
     }
-    public static String getHeader(){
-		return header;
-	}
-    public static String getDepersonalizedHeader(){
-       return depersonalizedeader;
+
+    public static String getHeader() {
+        return header;
     }
-    
+
+    public static String getDepersonalizedHeader() {
+        return depersonalizedeader;
+    }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
-    
+
     public void setCollectionDate(String collectionDate) {
         this.collectionDate = collectionDate == null ? "" : collectionDate;
     }
@@ -117,72 +119,72 @@ public class TestSegmentedExportBean{
     public void setReceptionTime(String receptionTime) {
         this.receptionTime = receptionTime;
     }
-    
-	public void setSiteCode(String siteCode){
-		this.siteCode = siteCode == null ? "" : siteCode;
-	}
 
-	public void setNationalId(String nationalId){
-		this.nationalId = nationalId == null ? "" : nationalId;
-	}
+    public void setSiteCode(String siteCode) {
+        this.siteCode = siteCode == null ? "" : siteCode;
+    }
 
-	public void setFirstName(String firstName){
-		this.firstName = firstName == null ? "" : firstName;
-	}
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId == null ? "" : nationalId;
+    }
 
-	public void setLastName(String lastName){
-		this.lastName = lastName == null ? "" : lastName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName == null ? "" : firstName;
+    }
 
-	public void setGender(String gender){
-		this.gender = gender == null ? "" : gender;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName == null ? "" : lastName;
+    }
 
-	public void setDOB(String dOB){
-		DOB = dOB == null ? "" : dOB;
-	}
+    public void setGender(String gender) {
+        this.gender = gender == null ? "" : gender;
+    }
 
-	public void setAge(String age){
-		this.age = age == null ? "" : age;
-	}
+    public void setDOB(String dOB) {
+        DOB = dOB == null ? "" : dOB;
+    }
 
-	public void setAccessionNumber(String accessionNumber){
-		this.accessionNumber = accessionNumber == null ? "" : accessionNumber;
-	}
+    public void setAge(String age) {
+        this.age = age == null ? "" : age;
+    }
 
-	public void setStatus(String status){
-		this.status = status == null ? "" : status;
-	}
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber == null ? "" : accessionNumber;
+    }
 
-	public void setSampleType(String sampleType){
-		this.sampleType = sampleType == null ? "" : sampleType;
-	}
+    public void setStatus(String status) {
+        this.status = status == null ? "" : status;
+    }
 
-	public void setReceptionDate(String receptionDate){
-		this.receptionDate = receptionDate == null ? "" : receptionDate;
-	}
+    public void setSampleType(String sampleType) {
+        this.sampleType = sampleType == null ? "" : sampleType;
+    }
 
-	public void setReferringSiteName(String referringSiteName){
-		this.referringSiteName = referringSiteName == null ? "" : referringSiteName;
-	}
+    public void setReceptionDate(String receptionDate) {
+        this.receptionDate = receptionDate == null ? "" : receptionDate;
+    }
 
-	public void setTestBench(String testBench){
-		this.testBench = testBench == null ? "" : testBench;
-	}
+    public void setReferringSiteName(String referringSiteName) {
+        this.referringSiteName = referringSiteName == null ? "" : referringSiteName;
+    }
 
-	public void setTestName(String testName){
-		this.testName = testName == null ? "" : testName;
-	}
+    public void setTestBench(String testBench) {
+        this.testBench = testBench == null ? "" : testBench;
+    }
 
-	public void setResult(String result){
-		this.result = result == null ? "" : result;
-	}
+    public void setTestName(String testName) {
+        this.testName = testName == null ? "" : testName;
+    }
 
-	public void setResultDate(String resultDate){
-		this.resultDate = resultDate == null ? "" : resultDate;
-	}
+    public void setResult(String result) {
+        this.result = result == null ? "" : result;
+    }
 
-    public void setDepartment( String department ){
+    public void setResultDate(String resultDate) {
+        this.resultDate = resultDate == null ? "" : resultDate;
+    }
+
+    public void setDepartment(String department) {
         this.department = department;
     }
 }

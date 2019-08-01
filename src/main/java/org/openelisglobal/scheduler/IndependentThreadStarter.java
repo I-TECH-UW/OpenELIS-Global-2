@@ -30,37 +30,37 @@ import org.openelisglobal.scheduler.independentthreads.ITestUsageBacklog;
 @Service
 public class IndependentThreadStarter {
 
-	@Autowired
-	private IResultExporter resultExporter;
-	@Autowired
-	private IMalariaResultExporter malariaResultExporter;
-	@Autowired
-	private ITestUsageBacklog testUsageBacklog;
+    @Autowired
+    private IResultExporter resultExporter;
+    @Autowired
+    private IMalariaResultExporter malariaResultExporter;
+    @Autowired
+    private ITestUsageBacklog testUsageBacklog;
 
-	public void startThreads() {
-		String reportInterval = ConfigurationProperties.getInstance().getPropertyValue(Property.resultsResendTime);
-		if (!GenericValidator.isBlankOrNull(reportInterval)) {
-			Long period = 30L;
+    public void startThreads() {
+        String reportInterval = ConfigurationProperties.getInstance().getPropertyValue(Property.resultsResendTime);
+        if (!GenericValidator.isBlankOrNull(reportInterval)) {
+            Long period = 30L;
 
-			try {
-				period = Long.parseLong(reportInterval);
-			} catch (NumberFormatException e) {
-				LogEvent.logError("IndependentThreadStarter", "start", "Unable to parse " + reportInterval);
-			}
+            try {
+                period = Long.parseLong(reportInterval);
+            } catch (NumberFormatException e) {
+                LogEvent.logError("IndependentThreadStarter", "start", "Unable to parse " + reportInterval);
+            }
 
-			resultExporter.setSleepInMin(period);
-			resultExporter.start();
-			malariaResultExporter.setSleepInMins(period);
-			malariaResultExporter.start();
-			testUsageBacklog.start();
-		}
+            resultExporter.setSleepInMin(period);
+            resultExporter.start();
+            malariaResultExporter.setSleepInMins(period);
+            malariaResultExporter.start();
+            testUsageBacklog.start();
+        }
 
-	}
+    }
 
-	public void stopThreads() {
-		if (resultExporter != null) {
-			resultExporter.stopExports();
-		}
-	}
+    public void stopThreads() {
+        if (resultExporter != null) {
+            resultExporter.stopExports();
+        }
+    }
 
 }

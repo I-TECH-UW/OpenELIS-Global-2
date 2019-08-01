@@ -12,29 +12,29 @@ import org.openelisglobal.common.management.form.PanelManagementForm;
 
 @Controller
 public class PanelManagementController extends BaseController {
-	@RequestMapping(value = "/PanelManagement", method = { RequestMethod.GET, RequestMethod.POST })
-	public ModelAndView showPanelManagement(HttpServletRequest request) {
-		PanelManagementForm form = new PanelManagementForm();
+    @RequestMapping(value = "/PanelManagement", method = { RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView showPanelManagement(HttpServletRequest request) {
+        PanelManagementForm form = new PanelManagementForm();
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "panelManagementDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "panelManagementDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

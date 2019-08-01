@@ -15,37 +15,34 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class SampleEntryVLController extends BaseController {
-  @RequestMapping(
-      value = "/SampleEntryVL",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleEntryVL(HttpServletRequest request,
-      @ModelAttribute("form") SampleEntryByProjectForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleEntryByProjectForm();
-    }
+    @RequestMapping(value = "/SampleEntryVL", method = RequestMethod.GET)
+    public ModelAndView showSampleEntryVL(HttpServletRequest request,
+            @ModelAttribute("form") SampleEntryByProjectForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleEntryByProjectForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if ("vl_entry".equals(forward)) {
-      return "sampleEntryVLDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if ("vl_entry".equals(forward)) {
+            return "sampleEntryVLDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

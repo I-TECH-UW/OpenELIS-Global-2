@@ -18,45 +18,45 @@ import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public class QaHistoryService extends AbstractHistoryService {
 
-	protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
-	protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+    protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
+    protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
-	public QaHistoryService(Sample sample) {
-		setUpForSample(sample);
-	}
+    public QaHistoryService(Sample sample) {
+        setUpForSample(sample);
+    }
 
-	@SuppressWarnings("unchecked")
-	private void setUpForSample(Sample sample) {
-		SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
-		List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
+    @SuppressWarnings("unchecked")
+    private void setUpForSample(Sample sample) {
+        SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+        List<SampleQaEvent> qaEventList = sampleSampleService.getSampleQAEventList(sample);
 
-		History searchHistory = new History();
-		searchHistory.setReferenceTable(QAService.TABLE_REFERENCE_ID);
-		historyList = new ArrayList<>();
+        History searchHistory = new History();
+        searchHistory.setReferenceTable(QAService.TABLE_REFERENCE_ID);
+        historyList = new ArrayList<>();
 
-		for (SampleQaEvent event : qaEventList) {
-			searchHistory.setReferenceId(event.getId());
-			historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
-		}
+        for (SampleQaEvent event : qaEventList) {
+            searchHistory.setReferenceId(event.getId());
+            historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+        }
 
-		newValueMap = new HashMap<>();
-	}
+        newValueMap = new HashMap<>();
+    }
 
-	@Override
-	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		identifier = sampleQaEventService.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
-		items.add(getCoreTrail(history));
-	}
+    @Override
+    protected void addInsertion(History history, List<AuditTrailItem> items) {
+        identifier = sampleQaEventService.getData(history.getReferenceId()).getQaEvent().getLocalizedName();
+        items.add(getCoreTrail(history));
+    }
 
-	@Override
-	protected String getObjectName() {
-		return MessageUtil.getMessage("qaevent.browse.title");
-	}
+    @Override
+    protected String getObjectName() {
+        return MessageUtil.getMessage("qaevent.browse.title");
+    }
 
-	@Override
-	protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
-		changeMap.put(STATUS_ATTRIBUTE, "Gail");
+    @Override
+    protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
+        changeMap.put(STATUS_ATTRIBUTE, "Gail");
 
-	}
+    }
 
 }

@@ -21,7 +21,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.samplepdf.dao.SamplePdfDAO;
@@ -31,57 +31,57 @@ import org.openelisglobal.samplepdf.valueholder.SamplePdf;
  * @author Hung Nguyen
  */
 @Component
-@Transactional 
+@Transactional
 public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements SamplePdfDAO {
 
-	public SamplePdfDAOImpl() {
-		super(SamplePdf.class);
-	}
+    public SamplePdfDAOImpl() {
+        super(SamplePdf.class);
+    }
 
-	@Override
-	public boolean isAccessionNumberFound(int accessionNumber) throws LIMSRuntimeException {
-		Boolean isFound = false;
-		try {
-			String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", accessionNumber);
-			List list = query.list();
-			if ((list != null) && !list.isEmpty()) {
-				isFound = true;
-			}
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
-			throw new LIMSRuntimeException("Error in SamplePdf isAccessionNumberFound()", e);
-		}
+    @Override
+    public boolean isAccessionNumberFound(int accessionNumber) throws LIMSRuntimeException {
+        Boolean isFound = false;
+        try {
+            String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", accessionNumber);
+            List list = query.list();
+            if ((list != null) && !list.isEmpty()) {
+                isFound = true;
+            }
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
+            throw new LIMSRuntimeException("Error in SamplePdf isAccessionNumberFound()", e);
+        }
 
-		return isFound;
-	}
+        return isFound;
+    }
 
-	// bugzilla 2529,2530,2531
-	@Override
-	@Transactional(readOnly = true)
-	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
-		try {
-			String sql = "from SamplePdf s where s.accessionNumber = :param";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", samplePdf.getAccessionNumber());
+    // bugzilla 2529,2530,2531
+    @Override
+    @Transactional(readOnly = true)
+    public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
+        try {
+            String sql = "from SamplePdf s where s.accessionNumber = :param";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", samplePdf.getAccessionNumber());
 
-			List list = query.list();
-			if ((list != null) && !list.isEmpty()) {
-				samplePdf = (SamplePdf) list.get(0);
-			}
+            List list = query.list();
+            if ((list != null) && !list.isEmpty()) {
+                samplePdf = (SamplePdf) list.get(0);
+            }
 
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-		} catch (Exception e) {
-			LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());
-			throw new LIMSRuntimeException("Error in SamplePdf getSamplePdfByAccessionNumber()", e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());
+            throw new LIMSRuntimeException("Error in SamplePdf getSamplePdfByAccessionNumber()", e);
+        }
 
-		return samplePdf;
-	}
+        return samplePdf;
+    }
 }

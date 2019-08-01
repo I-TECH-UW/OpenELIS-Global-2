@@ -16,7 +16,6 @@
  */
 package org.openelisglobal.dataexchange.common;
 
-
 import java.util.ArrayList;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -26,33 +25,32 @@ import org.apache.commons.validator.GenericValidator;
 
 import org.openelisglobal.common.log.LogEvent;
 
-public class HttpGetSender extends HttpSender  {
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.openelisglobal.dataexchange.IExternalSender#sendMessage()
-	 */
-	@Override
-	public boolean sendMessage() {
+public class HttpGetSender extends HttpSender {
 
-		errors = new ArrayList<String>();
-		
-		if ( GenericValidator.isBlankOrNull(url)) {
-			LogEvent.logWarn("HttpGetSender", "send message", "The url is null"  );
-			errors.add("send message The url is null"  );
-			return false;
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.openelisglobal.dataexchange.IExternalSender#sendMessage()
+     */
+    @Override
+    public boolean sendMessage() {
 
-		HttpClient httpclient = new HttpClient();
-		setTimeout(httpclient);
+        errors = new ArrayList<String>();
 
-		GetMethod httpGet = new GetMethod( url );
-		
-		sendByHttp(httpclient, httpGet);
+        if (GenericValidator.isBlankOrNull(url)) {
+            LogEvent.logWarn("HttpGetSender", "send message", "The url is null");
+            errors.add("send message The url is null");
+            return false;
+        }
 
-		return returnStatus == HttpStatus.SC_OK;	
-	}
+        HttpClient httpclient = new HttpClient();
+        setTimeout(httpclient);
+
+        GetMethod httpGet = new GetMethod(url);
+
+        sendByHttp(httpclient, httpGet);
+
+        return returnStatus == HttpStatus.SC_OK;
+    }
 
 }

@@ -16,29 +16,29 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //	@ComponentScans(value = { @ComponentScan("com.howtodoinjava.demo.spring")})
 public class HibernateConfig {
 
-	@Autowired
-	private ApplicationContext context;
+    @Autowired
+    private ApplicationContext context;
 
-	static HibernateTransactionManager transactionManager;
-	static LocalSessionFactoryBean factoryBean;
+    static HibernateTransactionManager transactionManager;
+    static LocalSessionFactoryBean factoryBean;
 
-	@Bean
-	public LocalSessionFactoryBean getSessionFactory() {
-		if (factoryBean == null) {
-			factoryBean = new LocalSessionFactoryBean();
-			factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
-		}
-		return factoryBean;
-	}
+    @Bean
+    public LocalSessionFactoryBean getSessionFactory() {
+        if (factoryBean == null) {
+            factoryBean = new LocalSessionFactoryBean();
+            factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
+        }
+        return factoryBean;
+    }
 
-	@Bean
-	@Primary
-	public PlatformTransactionManager getTransactionManager(SessionFactory sessionFactory) {
-		if (transactionManager == null) {
-			transactionManager = new HibernateTransactionManager();
-			transactionManager.setSessionFactory(sessionFactory);
-		}
-		return transactionManager;
-	}
+    @Bean
+    @Primary
+    public PlatformTransactionManager getTransactionManager(SessionFactory sessionFactory) {
+        if (transactionManager == null) {
+            transactionManager = new HibernateTransactionManager();
+            transactionManager.setSessionFactory(sessionFactory);
+        }
+        return transactionManager;
+    }
 
 }

@@ -15,23 +15,23 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 @Service
 public class ResultReportingConfigurationServiceImpl implements ResultReportingConfigurationService {
 
-	@Autowired
-	private SiteInformationService siteInformationService;
-	@Autowired
-	private CronSchedulerService schedulerService;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private CronSchedulerService schedulerService;
 
-	@Override
-	@Transactional
-	public void updateInformationAndSchedulers(List<SiteInformation> informationList,
-			List<CronScheduler> scheduleList) {
-		for (SiteInformation info : informationList) {
-			siteInformationService.update(info);
-		}
+    @Override
+    @Transactional
+    public void updateInformationAndSchedulers(List<SiteInformation> informationList,
+            List<CronScheduler> scheduleList) {
+        for (SiteInformation info : informationList) {
+            siteInformationService.update(info);
+        }
 
-		for (CronScheduler scheduler : scheduleList) {
-			schedulerService.update(scheduler);
-		}
+        for (CronScheduler scheduler : scheduleList) {
+            schedulerService.update(scheduler);
+        }
 
-		ConfigurationProperties.forceReload();
-	}
+        ConfigurationProperties.forceReload();
+    }
 }

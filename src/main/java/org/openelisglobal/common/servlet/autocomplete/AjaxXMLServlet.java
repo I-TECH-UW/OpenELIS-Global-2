@@ -30,25 +30,25 @@ import org.openelisglobal.login.dao.UserModuleService;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
-	@Override
-	public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// check for authentication
-		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-		if (userModuleService.isSessionExpired(request)) {
-			return new AjaxXmlBuilder().toString();
-		}
+    @Override
+    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // check for authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        if (userModuleService.isSessionExpired(request)) {
+            return new AjaxXmlBuilder().toString();
+        }
 
-		String autocompleteProvider = request.getParameter("provider");
-		String autocompleteFieldName = request.getParameter("fieldName");
-		String autocompleteId = request.getParameter("idName");
+        String autocompleteProvider = request.getParameter("provider");
+        String autocompleteFieldName = request.getParameter("fieldName");
+        String autocompleteId = request.getParameter("idName");
 
-		BaseAutocompleteProvider provider = AutocompleteProviderFactory.getInstance()
-				.getAutocompleteProvider(autocompleteProvider);
+        BaseAutocompleteProvider provider = AutocompleteProviderFactory.getInstance()
+                .getAutocompleteProvider(autocompleteProvider);
 
-		provider.setServlet(this);
-		List list = provider.processRequest(request, response);
+        provider.setServlet(this);
+        List list = provider.processRequest(request, response);
 
-		return new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
-	}
+        return new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
+    }
 
 }

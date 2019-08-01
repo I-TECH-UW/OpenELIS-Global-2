@@ -16,32 +16,31 @@
 */
 package org.openelisglobal.result.action.util;
 
-public interface ResultItem{
-	
+public interface ResultItem {
 
-	public String getAccessionNumber();
+    public String getAccessionNumber();
 
-	public void setAccessionNumber(String accessionNumber);
-	
-	public String getSequenceNumber();
-	
-	public void setSequenceNumber(String sequenceNumber);
-	
-	public String getSequenceAccessionNumber();
+    public void setAccessionNumber(String accessionNumber);
 
-	public void setShowSampleDetails(boolean showSampleDetails);
+    public String getSequenceNumber();
 
-	public boolean isShowSampleDetails();
+    public void setSequenceNumber(String sequenceNumber);
 
-	public void setIsGroupSeparator(boolean isGroupSeparator);
+    public String getSequenceAccessionNumber();
 
-	public boolean getIsGroupSeparator();
+    public void setShowSampleDetails(boolean showSampleDetails);
 
-	public void setSampleGroupingNumber(int sampleGroupingNumber);
+    public boolean isShowSampleDetails();
 
-	public int getSampleGroupingNumber();
-	
-	public String getTestSortOrder();
-	
-	public String getTestName();
+    public void setIsGroupSeparator(boolean isGroupSeparator);
+
+    public boolean getIsGroupSeparator();
+
+    public void setSampleGroupingNumber(int sampleGroupingNumber);
+
+    public int getSampleGroupingNumber();
+
+    public String getTestSortOrder();
+
+    public String getTestName();
 }

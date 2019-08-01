@@ -8,16 +8,17 @@ import org.openelisglobal.analysisqaeventaction.dao.AnalysisQaEventActionDAO;
 import org.openelisglobal.analysisqaeventaction.valueholder.AnalysisQaEventAction;
 
 @Service
-public class AnalysisQaEventActionServiceImpl extends BaseObjectServiceImpl<AnalysisQaEventAction, String> implements AnalysisQaEventActionService {
-	@Autowired
-	protected AnalysisQaEventActionDAO baseObjectDAO;
+public class AnalysisQaEventActionServiceImpl extends BaseObjectServiceImpl<AnalysisQaEventAction, String>
+        implements AnalysisQaEventActionService {
+    @Autowired
+    protected AnalysisQaEventActionDAO baseObjectDAO;
 
-	AnalysisQaEventActionServiceImpl() {
-		super(AnalysisQaEventAction.class);
-	}
+    AnalysisQaEventActionServiceImpl() {
+        super(AnalysisQaEventAction.class);
+    }
 
-	@Override
-	protected AnalysisQaEventActionDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected AnalysisQaEventActionDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

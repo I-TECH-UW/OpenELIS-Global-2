@@ -19,35 +19,40 @@ package org.openelisglobal.referral.valueholder;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 
-public class ReferralReason extends BaseObject<String> implements SimpleBaseEntity<String>{
+public class ReferralReason extends BaseObject<String> implements SimpleBaseEntity<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
-	private String name;
-	private String description;
+    private String id;
+    private String name;
+    private String description;
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public String getDefaultLocalizedName(){
-		return name;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getDefaultLocalizedName() {
+        return name;
+    }
 }

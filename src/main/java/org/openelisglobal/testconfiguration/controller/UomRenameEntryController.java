@@ -21,53 +21,53 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 @Controller
 public class UomRenameEntryController extends BaseController {
 
-	@Autowired
-	UnitOfMeasureService unitOfMeasureService;
+    @Autowired
+    UnitOfMeasureService unitOfMeasureService;
 
-	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
-	public ModelAndView showUomRenameEntry(HttpServletRequest request) {
-		UomRenameEntryForm form = new UomRenameEntryForm();
-		form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+    @RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
+    public ModelAndView showUomRenameEntry(HttpServletRequest request) {
+        UomRenameEntryForm form = new UomRenameEntryForm();
+        form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "uomRenameDefinition";
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/UomRenameEntry.do";
-		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "uomRenameDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "uomRenameDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/UomRenameEntry.do";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "uomRenameDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.POST)
-	public ModelAndView updateUomRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") @Valid UomRenameEntryForm form, BindingResult result) {
-		if (result.hasErrors()) {
-			saveErrors(result);
-			form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
-			return findForward(FWD_FAIL_INSERT, form);
-		}
-		String uomId = form.getUomId();
-		String nameEnglish = form.getNameEnglish();
-		String userId = getSysUserId(request);
+    @RequestMapping(value = "/UomRenameEntry", method = RequestMethod.POST)
+    public ModelAndView updateUomRenameEntry(HttpServletRequest request,
+            @ModelAttribute("form") @Valid UomRenameEntryForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+        String uomId = form.getUomId();
+        String nameEnglish = form.getNameEnglish();
+        String userId = getSysUserId(request);
 
-		updateUomNames(uomId, nameEnglish, userId);
+        updateUomNames(uomId, nameEnglish, userId);
 
-		return findForward(FWD_SUCCESS_INSERT, form);
-	}
+        return findForward(FWD_SUCCESS_INSERT, form);
+    }
 
-	private void updateUomNames(String uomId, String nameEnglish, String userId) {
-		UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureById(uomId);
+    private void updateUomNames(String uomId, String nameEnglish, String userId) {
+        UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureById(uomId);
 
-		if (unitOfMeasure != null) {
+        if (unitOfMeasure != null) {
 
-			// not using localization for UOM
+            // not using localization for UOM
 
 //            Localization name = unitOfMeasure.getLocalization();
 //
@@ -75,28 +75,28 @@ public class UomRenameEntryController extends BaseController {
 //            name.setFrench( nameFrench.trim() );
 //            name.setSysUserId( userId );
 
-			unitOfMeasure.setUnitOfMeasureName(nameEnglish.trim());
-			unitOfMeasure.setSysUserId(userId);
+            unitOfMeasure.setUnitOfMeasureName(nameEnglish.trim());
+            unitOfMeasure.setSysUserId(userId);
 
-			try {
-				unitOfMeasureService.update(unitOfMeasure);
-			} catch (HibernateException lre) {
-				lre.printStackTrace();
-			}
+            try {
+                unitOfMeasureService.update(unitOfMeasure);
+            } catch (HibernateException lre) {
+                lre.printStackTrace();
+            }
 
-		}
+        }
 
-		// Refresh Uom names
-		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
-	}
+        // Refresh Uom names
+        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

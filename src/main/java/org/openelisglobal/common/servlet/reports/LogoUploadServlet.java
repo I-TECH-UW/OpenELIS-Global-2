@@ -45,144 +45,144 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public class LogoUploadServlet extends HttpServlet {
 
-	static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
-	private ImageService imageService = SpringContext.getBean(ImageService.class);
-	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
-	private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-	private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
-	private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
-			+ File.separator;
+    private ImageService imageService = SpringContext.getBean(ImageService.class);
+    private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+    private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+    private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
+    private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
+            + File.separator;
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// check for authentication
-		if (userModuleService.isSessionExpired(request)) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-			return;
-		}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // check for authentication
+        if (userModuleService.isSessionExpired(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
 
-		String whichLogo = request.getParameter("logo");
-		boolean removeImage = "true".equals(request.getParameter("removeImage"));
-		// Check that we have a file upload request
-		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        String whichLogo = request.getParameter("logo");
+        boolean removeImage = "true".equals(request.getParameter("removeImage"));
+        // Check that we have a file upload request
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 
-		if (!isMultipart) {
-			return;
-		}
+        if (!isMultipart) {
+            return;
+        }
 
-		String uploadPreviewPath = getServletContext().getRealPath("") + PREVIEW_FILE_PATH
-				+ (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
+        String uploadPreviewPath = getServletContext().getRealPath("") + PREVIEW_FILE_PATH
+                + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
 
-		if (removeImage) {
-			removeImage(whichLogo, uploadPreviewPath);
-		} else {
-			updateImage(request, whichLogo, uploadPreviewPath);
-		}
+        if (removeImage) {
+            removeImage(whichLogo, uploadPreviewPath);
+        } else {
+            updateImage(request, whichLogo, uploadPreviewPath);
+        }
 
-		getServletContext().getRequestDispatcher("/PrintedReportsConfigurationMenu.do").forward(request, response);
-	}
+        getServletContext().getRequestDispatcher("/PrintedReportsConfigurationMenu.do").forward(request, response);
+    }
 
-	private void removeImage(String logoName, String uploadPreviewPath) {
-		File previewFile = new File(uploadPreviewPath);
-		previewFile.delete();
+    private void removeImage(String logoName, String uploadPreviewPath) {
+        File previewFile = new File(uploadPreviewPath);
+        previewFile.delete();
 
-		SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
-		if (logoInformation == null) {
-			return;
-		}
+        if (logoInformation == null) {
+            return;
+        }
 
-		String imageId = logoInformation.getValue();
+        String imageId = logoInformation.getValue();
 
-		if (!GenericValidator.isBlankOrNull(imageId)) {
-			Image image = imageService.get(imageId);
+        if (!GenericValidator.isBlankOrNull(imageId)) {
+            Image image = imageService.get(imageId);
 
-			try {
-				logoUploadService.removeImage(image, logoInformation);
-			} catch (LIMSRuntimeException lre) {
-				LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", lre);
-			}
+            try {
+                logoUploadService.removeImage(image, logoInformation);
+            } catch (LIMSRuntimeException lre) {
+                LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", lre);
+            }
 
-		}
+        }
 
-	}
+    }
 
-	private void updateImage(HttpServletRequest request, String whichLogo, String uploadPreviewPath)
-			throws ServletException {
-		DiskFileItemFactory factory = new DiskFileItemFactory();
+    private void updateImage(HttpServletRequest request, String whichLogo, String uploadPreviewPath)
+            throws ServletException {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
 
-		factory.setSizeThreshold(Image.MAX_MEMORY_SIZE);
+        factory.setSizeThreshold(Image.MAX_MEMORY_SIZE);
 
-		factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+        factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
 
-		ServletFileUpload upload = new ServletFileUpload(factory);
+        ServletFileUpload upload = new ServletFileUpload(factory);
 
-		upload.setSizeMax(Image.MAX_MEMORY_SIZE);
+        upload.setSizeMax(Image.MAX_MEMORY_SIZE);
 
-		try {
-			@SuppressWarnings("unchecked")
-			List<FileItem> items = upload.parseRequest(request);
+        try {
+            @SuppressWarnings("unchecked")
+            List<FileItem> items = upload.parseRequest(request);
 
-			for (FileItem item : items) {
+            for (FileItem item : items) {
 
-				if (validToWrite(item)) {
+                if (validToWrite(item)) {
 
-					File previewFile = new File(uploadPreviewPath);
+                    File previewFile = new File(uploadPreviewPath);
 
-					item.write(previewFile);
+                    item.write(previewFile);
 
-					writeToDatabase(previewFile, whichLogo);
+                    writeToDatabase(previewFile, whichLogo);
 
-					break;
-				}
-			}
+                    break;
+                }
+            }
 
-		} catch (FileUploadException ex) {
-			throw new ServletException(ex);
-		} catch (Exception ex) {
-			throw new ServletException(ex);
-		}
-	}
+        } catch (FileUploadException ex) {
+            throw new ServletException(ex);
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+    }
 
-	private void writeToDatabase(File file, String logoName) {
-		SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
+    private void writeToDatabase(File file, String logoName) {
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
-		if (logoInformation == null) {
-			return;
-		}
+        if (logoInformation == null) {
+            return;
+        }
 
-		String imageId = logoInformation.getValue();
+        String imageId = logoInformation.getValue();
 
-		boolean newImage = GenericValidator.isBlankOrNull(imageId);
+        boolean newImage = GenericValidator.isBlankOrNull(imageId);
 
-		byte[] imageData = new byte[(int) file.length()];
+        byte[] imageData = new byte[(int) file.length()];
 
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			fileInputStream.read(imageData);
-			fileInputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            fileInputStream.read(imageData);
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		Image image = new Image();
-		image.setImage(imageData);
-		image.setDescription(logoName);
+        Image image = new Image();
+        image.setImage(imageData);
+        image.setDescription(logoName);
 
-		try {
-			logoUploadService.saveImage(image, newImage, imageId, logoInformation);
-		} catch (LIMSRuntimeException lre) {
-			LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", lre);
-		}
-	}
+        try {
+            logoUploadService.saveImage(image, newImage, imageId, logoInformation);
+        } catch (LIMSRuntimeException lre) {
+            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", lre);
+        }
+    }
 
-	private boolean validToWrite(FileItem item) {
-		return !item.isFormField() && item.getSize() > 0 && !GenericValidator.isBlankOrNull(item.getName())
-				&& (item.getName().contains("jpg") || item.getName().contains("png") || item.getName().contains("gif"));
-	}
+    private boolean validToWrite(FileItem item) {
+        return !item.isFormField() && item.getSize() > 0 && !GenericValidator.isBlankOrNull(item.getName())
+                && (item.getName().contains("jpg") || item.getName().contains("png") || item.getName().contains("gif"));
+    }
 
 }

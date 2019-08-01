@@ -9,10 +9,10 @@ import org.openelisglobal.userrole.valueholder.UserRolePK;
 
 public interface UserRoleService extends BaseObjectService<UserRole, UserRolePK> {
 
-	List<String> getRoleIdsForUser(String userId);
+    List<String> getRoleIdsForUser(String userId);
 
-	boolean userInRole(String userId, String roleName);
+    boolean userInRole(String userId, String roleName);
 
-	boolean userInRole(String userId, Collection<String> roleNames);
+    boolean userInRole(String userId, Collection<String> roleNames);
 
 }

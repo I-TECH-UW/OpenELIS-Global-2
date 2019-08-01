@@ -33,55 +33,56 @@ import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
 
 public class HivStatusProvider extends BaseQueryProvider {
-	
-	protected ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
 
-	private static final String NOT_FOUND = "Not found";
-	/**
+    protected ObservationHistoryService observationHistoryService = SpringContext
+            .getBean(ObservationHistoryService.class);
+
+    private static final String NOT_FOUND = "Not found";
+    /**
      * 
      */
     private static final String HIV_STATUS_OH_TYPE = "hivStatus";
 
     public HivStatusProvider() {
-		super();
-	}
+        super();
+    }
 
-	public HivStatusProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public HivStatusProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	    String patientId = (String) request.getParameter("patientId");
-	    StringBuilder xml = new StringBuilder();
-		String result = findHivStatus(patientId, xml);
-		ajaxServlet.sendData(xml.toString(), result, request, response);
-	}
+        String patientId = (String) request.getParameter("patientId");
+        StringBuilder xml = new StringBuilder();
+        String result = findHivStatus(patientId, xml);
+        ajaxServlet.sendData(xml.toString(), result, request, response);
+    }
 
-	public String findHivStatus(String patientId, StringBuilder xml) throws LIMSRuntimeException {
-		String retVal = VALID;
+    public String findHivStatus(String patientId, StringBuilder xml) throws LIMSRuntimeException {
+        String retVal = VALID;
 
-		try {
-		    String hivStatus = findHIVStatusValue(patientId);
-		    if( NOT_FOUND.equals(hivStatus)){
-		    	return INVALID;
-		    }
+        try {
+            String hivStatus = findHIVStatusValue(patientId);
+            if (NOT_FOUND.equals(hivStatus)) {
+                return INVALID;
+            }
             XMLUtil.appendKeyValue(HIV_STATUS_OH_TYPE, hivStatus, xml);
-		} catch (Exception e) {
-		    LogEvent.logError("HivStatusProvider","findHivStatus()", e.getMessage());
-			retVal = INVALID;
-		}
-		return retVal;
-	}
+        } catch (Exception e) {
+            LogEvent.logError("HivStatusProvider", "findHivStatus()", e.getMessage());
+            retVal = INVALID;
+        }
+        return retVal;
+    }
 
     private String findHIVStatusValue(String patientId) {
         Patient patient = new Patient();
         patient.setId(patientId);
         String typeId = ObservationHistoryTypeMap.getInstance().getIDForType(HIV_STATUS_OH_TYPE);
         List<ObservationHistory> list = observationHistoryService.getAll(patient, null, typeId);
-        
-        return list.isEmpty() ? NOT_FOUND : list.get(list.size() - 1).getValue(); 
+
+        return list.isEmpty() ? NOT_FOUND : list.get(list.size() - 1).getValue();
     }
 
 }

@@ -18,58 +18,58 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public class RetroCIPatientCollectionReport extends CollectionReport implements IReportParameterSetter {
 
-	private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
-	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+    private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
+    private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
-	@Override
-	public void setRequestParameters(BaseForm form) {
-		try {
-			PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("patient.report.collection.name"));
-			PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void setRequestParameters(BaseForm form) {
+        try {
+            PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("patient.report.collection.name"));
+            PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	protected List<byte[]> generateReports() {
-		List<byte[]> byteList = new ArrayList<>();
+    @Override
+    protected List<byte[]> generateReports() {
+        List<byte[]> byteList = new ArrayList<>();
 
-		Patient patient = getPatient();
+        Patient patient = getPatient();
 
-		if (patient != null) {
-			String formNameId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
-			List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
+        if (patient != null) {
+            String formNameId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
+            List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
-			for (Sample sample : samples) {
-				List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
+            for (Sample sample : samples) {
+                List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
 
-				if (!projects.isEmpty()) {
-					try {
-						PropertyUtils.setProperty(form, "accessionDirect", sample.getAccessionNumber());
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
-					}
+                if (!projects.isEmpty()) {
+                    try {
+                        PropertyUtils.setProperty(form, "accessionDirect", sample.getAccessionNumber());
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
 
-					if ("InitialARV_Id".equals(projects.get(0).getValue())) {
-						byteList.add(createReport("patientARVInitial1"));
-						byteList.add(createReport("patientARVInitial2"));
-					} else if ("FollowUpARV_Id".equals(projects.get(0).getValue())) {
-						byteList.add(createReport("patientARVFollowup1"));
-						byteList.add(createReport("patientARVFollowup2"));
-					}
-				}
-			}
-		}
-		return byteList;
-	}
+                    if ("InitialARV_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientARVInitial1"));
+                        byteList.add(createReport("patientARVInitial2"));
+                    } else if ("FollowUpARV_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientARVFollowup1"));
+                        byteList.add(createReport("patientARVFollowup2"));
+                    }
+                }
+            }
+        }
+        return byteList;
+    }
 
 }

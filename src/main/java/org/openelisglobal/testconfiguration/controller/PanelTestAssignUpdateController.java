@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class PanelTestAssignUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/PanelTestAssignUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showPanelTestAssignUpdate(HttpServletRequest request,
-      @ModelAttribute("form") PanelTestAssignForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new PanelTestAssignForm();
-    }
+    @RequestMapping(value = "/PanelTestAssignUpdate", method = RequestMethod.GET)
+    public ModelAndView showPanelTestAssignUpdate(HttpServletRequest request,
+            @ModelAttribute("form") PanelTestAssignForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new PanelTestAssignForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/PanelTestAssign.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/PanelTestAssign.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

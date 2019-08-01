@@ -6,19 +6,19 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 public interface TypeOfSamplePanelService extends BaseObjectService<TypeOfSamplePanel, String> {
-	void getData(TypeOfSamplePanel typeOfSamplePanel);
+    void getData(TypeOfSamplePanel typeOfSamplePanel);
 
-	List getAllTypeOfSamplePanels();
+    List getAllTypeOfSamplePanels();
 
-	List getPageOfTypeOfSamplePanel(int startingRecNo);
+    List getPageOfTypeOfSamplePanel(int startingRecNo);
 
-	List getNextTypeOfSamplePanelRecord(String id);
+    List getNextTypeOfSamplePanelRecord(String id);
 
-	Integer getTotalTypeOfSamplePanelCount();
+    Integer getTotalTypeOfSamplePanelCount();
 
-	List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId);
+    List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId);
 
-	List getPreviousTypeOfSamplePanelRecord(String id);
+    List getPreviousTypeOfSamplePanelRecord(String id);
 
-	List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
+    List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
 }

@@ -10,26 +10,26 @@ import org.openelisglobal.samplepdf.valueholder.SamplePdf;
 
 @Service
 public class SamplePdfServiceImpl extends BaseObjectServiceImpl<SamplePdf, String> implements SamplePdfService {
-	@Autowired
-	protected SamplePdfDAO baseObjectDAO;
+    @Autowired
+    protected SamplePdfDAO baseObjectDAO;
 
-	SamplePdfServiceImpl() {
-		super(SamplePdf.class);
-	}
+    SamplePdfServiceImpl() {
+        super(SamplePdf.class);
+    }
 
-	@Override
-	protected SamplePdfDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SamplePdfDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	public boolean isAccessionNumberFound(int accessionNumber) {
+    @Override
+    public boolean isAccessionNumberFound(int accessionNumber) {
         return getBaseObjectDAO().isAccessionNumberFound(accessionNumber);
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) {
+    @Override
+    @Transactional(readOnly = true)
+    public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) {
         return getBaseObjectDAO().getSamplePdfByAccessionNumber(samplePdf);
-	}
+    }
 }

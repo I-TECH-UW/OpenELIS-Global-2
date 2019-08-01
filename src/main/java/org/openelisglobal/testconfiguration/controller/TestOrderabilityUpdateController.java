@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class TestOrderabilityUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/TestOrderabilityUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestOrderabilityUpdate(HttpServletRequest request,
-      @ModelAttribute("form") TestOrderabilityForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestOrderabilityForm();
-    }
+    @RequestMapping(value = "/TestOrderabilityUpdate", method = RequestMethod.GET)
+    public ModelAndView showTestOrderabilityUpdate(HttpServletRequest request,
+            @ModelAttribute("form") TestOrderabilityForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new TestOrderabilityForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/TestOrderability.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/TestOrderability.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

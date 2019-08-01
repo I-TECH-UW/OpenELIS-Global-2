@@ -41,22 +41,22 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author Darren L. Spurgeon
  */
 public class CityAutocompleteProvider extends BaseAutocompleteProvider {
-	
-	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-		String city = request.getParameter("city");
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        //bugzilla 1545
-		List list = cityStateZipService.getCities(city);
+        String city = request.getParameter("city");
 
-		return list;
-	}
+        // bugzilla 1545
+        List list = cityStateZipService.getCities(city);
+
+        return list;
+    }
 
 }

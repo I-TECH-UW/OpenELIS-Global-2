@@ -39,173 +39,173 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public abstract class RetroCIPatientReport extends RetroCIReport {
 
-	protected static String ANALYSIS_FINALIZED_STATUS_ID;
+    protected static String ANALYSIS_FINALIZED_STATUS_ID;
 
-	protected static List<Integer> READY_FOR_REPORT_STATUS_IDS;
-	protected Patient reportPatient;
-	protected Sample reportSample;
+    protected static List<Integer> READY_FOR_REPORT_STATUS_IDS;
+    protected Patient reportPatient;
+    protected Sample reportSample;
 
-	private static ObservationHistoryService observationService = SpringContext
-			.getBean(ObservationHistoryService.class);
-	private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-	private SampleService sampleService = SpringContext.getBean(SampleService.class);
+    private static ObservationHistoryService observationService = SpringContext
+            .getBean(ObservationHistoryService.class);
+    private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+    private SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-	private String lowerNumber;
-	private String upperNumber;
-	private List<String> handledOrders;
+    private String lowerNumber;
+    private String upperNumber;
+    private List<String> handledOrders;
 
-	static {
-		READY_FOR_REPORT_STATUS_IDS = new ArrayList<>();
-		READY_FOR_REPORT_STATUS_IDS
-				.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Finished)));
-		READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Started)));
+    static {
+        READY_FOR_REPORT_STATUS_IDS = new ArrayList<>();
+        READY_FOR_REPORT_STATUS_IDS
+                .add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Finished)));
+        READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Started)));
 
-		ANALYSIS_FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
-	}
+        ANALYSIS_FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+    }
 
-	@Override
-	public void initializeReport(BaseForm form) {
-		super.initializeReport();
-		errorFound = false;
+    @Override
+    public void initializeReport(BaseForm form) {
+        super.initializeReport();
+        errorFound = false;
 
-		lowerNumber = form.getString("accessionDirect");
-		upperNumber = form.getString("highAccessionDirect");
+        lowerNumber = form.getString("accessionDirect");
+        upperNumber = form.getString("highAccessionDirect");
 
-		handledOrders = new ArrayList<>();
+        handledOrders = new ArrayList<>();
 
-		createReportParameters();
+        createReportParameters();
 
-		boolean valid = validateAccessionNumbers();
+        boolean valid = validateAccessionNumbers();
 
-		if (valid) {
-			List<Sample> reportSampleList = findReportSamples(lowerNumber, upperNumber);
+        if (valid) {
+            List<Sample> reportSampleList = findReportSamples(lowerNumber, upperNumber);
 
-			if (reportSampleList.isEmpty()) {
-				errorFound = true;
-				ErrorMessages msgs = new ErrorMessages();
-				msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
-				errorMsgs.add(msgs);
-			}
+            if (reportSampleList.isEmpty()) {
+                errorFound = true;
+                ErrorMessages msgs = new ErrorMessages();
+                msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
+                errorMsgs.add(msgs);
+            }
 
-			Collections.sort(reportSampleList, new Comparator<Sample>() {
-				@Override
-				public int compare(Sample o1, Sample o2) {
-					return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-				}
-			});
+            Collections.sort(reportSampleList, new Comparator<Sample>() {
+                @Override
+                public int compare(Sample o1, Sample o2) {
+                    return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                }
+            });
 
-			initializeReportItems();
+            initializeReportItems();
 
-			for (Sample sample : reportSampleList) {
-				handledOrders.add(sample.getId());
-				reportSample = sample;
-				findPatientFromSample();
-				if (allowSample()) {
-					createReportItems();
-				}
-			}
-		}
-	}
+            for (Sample sample : reportSampleList) {
+                handledOrders.add(sample.getId());
+                reportSample = sample;
+                findPatientFromSample();
+                if (allowSample()) {
+                    createReportItems();
+                }
+            }
+        }
+    }
 
-	private boolean validateAccessionNumbers() {
+    private boolean validateAccessionNumbers() {
 
-		if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
-			add1LineErrorMessage("report.error.message.noParameters");
-			return false;
-		}
+        if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
+            add1LineErrorMessage("report.error.message.noParameters");
+            return false;
+        }
 
-		if (GenericValidator.isBlankOrNull(lowerNumber)) {
-			lowerNumber = upperNumber;
-		} else if (GenericValidator.isBlankOrNull(upperNumber)) {
-			upperNumber = lowerNumber;
-		}
+        if (GenericValidator.isBlankOrNull(lowerNumber)) {
+            lowerNumber = upperNumber;
+        } else if (GenericValidator.isBlankOrNull(upperNumber)) {
+            upperNumber = lowerNumber;
+        }
 
-		int lowIndex = findFirstNumber(lowerNumber);
-		int highIndex = findFirstNumber(upperNumber);
+        int lowIndex = findFirstNumber(lowerNumber);
+        int highIndex = findFirstNumber(upperNumber);
 
-		if (lowIndex == lowerNumber.length() || highIndex == upperNumber.length()) {
-			add1LineErrorMessage("report.error.message.noParameters");
-			return false;
-		}
+        if (lowIndex == lowerNumber.length() || highIndex == upperNumber.length()) {
+            add1LineErrorMessage("report.error.message.noParameters");
+            return false;
+        }
 
-		String lowPrefix = (String) lowerNumber.subSequence(0, lowIndex);
-		String highPrefix = (String) upperNumber.subSequence(0, highIndex);
+        String lowPrefix = (String) lowerNumber.subSequence(0, lowIndex);
+        String highPrefix = (String) upperNumber.subSequence(0, highIndex);
 
-		if (!lowPrefix.equals(highPrefix)) {
-			add1LineErrorMessage("report.error.message.samePrefix");
-			return false;
-		}
+        if (!lowPrefix.equals(highPrefix)) {
+            add1LineErrorMessage("report.error.message.samePrefix");
+            return false;
+        }
 
-		double lowBounds = Double.parseDouble(lowerNumber.substring(lowIndex));
-		double highBounds = Double.parseDouble(upperNumber.substring(highIndex));
+        double lowBounds = Double.parseDouble(lowerNumber.substring(lowIndex));
+        double highBounds = Double.parseDouble(upperNumber.substring(highIndex));
 
-		if (highBounds < lowBounds) {
-			String temp = upperNumber;
-			upperNumber = lowerNumber;
-			lowerNumber = temp;
-		}
+        if (highBounds < lowBounds) {
+            String temp = upperNumber;
+            upperNumber = lowerNumber;
+            lowerNumber = temp;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/*
-	 * Until the ARV study has a initial and followup project we have to let each
-	 * study figure out which one the patient is in
-	 */
-	protected boolean allowSample() {
-		return true;
-	}
+    /*
+     * Until the ARV study has a initial and followup project we have to let each
+     * study figure out which one the patient is in
+     */
+    protected boolean allowSample() {
+        return true;
+    }
 
-	private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
-		return sampleService.getSamplesByProjectAndStatusIDAndAccessionRange(getProjIdsList(getProjectId()),
-				READY_FOR_REPORT_STATUS_IDS, lowerNumber, upperNumber);
-	}
+    private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
+        return sampleService.getSamplesByProjectAndStatusIDAndAccessionRange(getProjIdsList(getProjectId()),
+                READY_FOR_REPORT_STATUS_IDS, lowerNumber, upperNumber);
+    }
 
-	protected abstract String getProjectId();
+    protected abstract String getProjectId();
 
-	protected abstract void initializeReportItems();
+    protected abstract void initializeReportItems();
 
-	protected abstract void createReportItems();
+    protected abstract void createReportItems();
 
-	protected void findPatientFromSample() {
-		reportPatient = sampleHumanService.getPatientForSample(reportSample);
-	}
+    protected void findPatientFromSample() {
+        reportPatient = sampleHumanService.getPatientForSample(reportSample);
+    }
 
-	@Override
-	protected void createReportParameters() {
-		super.createReportParameters();
-		reportParameters.put("studyName", getReportNameForReport());
-	}
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("studyName", getReportNameForReport());
+    }
 
-	protected abstract String getReportNameForReport();
+    protected abstract String getReportNameForReport();
 
-	private int findFirstNumber(String number) {
-		for (int i = 0; i < number.length(); i++) {
-			if (Character.isDigit(number.charAt(i))) {
-				return i;
-			}
-		}
-		return number.length();
-	}
+    private int findFirstNumber(String number) {
+        for (int i = 0; i < number.length(); i++) {
+            if (Character.isDigit(number.charAt(i))) {
+                return i;
+            }
+        }
+        return number.length();
+    }
 
-	protected String getObservationValues(String observationTypeId) {
-		List<ObservationHistory> observationList = observationService.getAll(reportPatient, reportSample,
-				observationTypeId);
-		return observationList.size() > 0 ? observationList.get(0).getValue() : "";
-	}
+    protected String getObservationValues(String observationTypeId) {
+        List<ObservationHistory> observationList = observationService.getAll(reportPatient, reportSample,
+                observationTypeId);
+        return observationList.size() > 0 ? observationList.get(0).getValue() : "";
+    }
 
-	@Override
-	public List<String> getReportedOrders() {
-		return handledOrders;
-	}
+    @Override
+    public List<String> getReportedOrders() {
+        return handledOrders;
+    }
 
-	protected List<Integer> getProjIdsList(String projID) {
+    protected List<Integer> getProjIdsList(String projID) {
 
-		String[] fields = projID.split(":");
-		List<Integer> projIDList = new ArrayList<>();
-		for (int i = 0; i < fields.length; i++) {
-			projIDList.add(Integer.parseInt(fields[i]));
-		}
-		return projIDList;
-	}
+        String[] fields = projID.split(":");
+        List<Integer> projIDList = new ArrayList<>();
+        for (int i = 0; i < fields.length; i++) {
+            projIDList.add(Integer.parseInt(fields[i]));
+        }
+        return projIDList;
+    }
 }

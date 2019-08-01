@@ -21,134 +21,137 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 
 /**
- * Entities which represent facts about a patient and a sample that has entered the lab.
- * Often taken from a demographic survey form filled out by the doctor, but sometimes something which is generated in the lab like various statuses of a sample.
- * Originally for C�te d'Ivoire RetroCI Project
+ * Entities which represent facts about a patient and a sample that has entered
+ * the lab. Often taken from a demographic survey form filled out by the doctor,
+ * but sometimes something which is generated in the lab like various statuses
+ * of a sample. Originally for C�te d'Ivoire RetroCI Project
+ * 
  * @author Paul A. Hill
  * @since 2010-04-16
  */
 
-public class ObservationHistory extends BaseObject<String> implements SimpleBaseEntity<String>  {
-	private static final long serialVersionUID = 1L;
+public class ObservationHistory extends BaseObject<String> implements SimpleBaseEntity<String> {
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * A Definition of all the correct types for the valueType field.
-	 */
-	public static enum ValueType {
-		DICTIONARY("D"),	// the value is a FK to Dictionary.id
-		LITERAL("L"),		// the value is simply a literal value
-        KEY("K");           // the value is a key for localization
+    /**
+     * A Definition of all the correct types for the valueType field.
+     */
+    public static enum ValueType {
+        DICTIONARY("D"), // the value is a FK to Dictionary.id
+        LITERAL("L"), // the value is simply a literal value
+        KEY("K"); // the value is a key for localization
 
-		private String code;
+        private String code;
 
-		ValueType( String code ) {
-			this.code = code;
-		}
+        ValueType(String code) {
+            this.code = code;
+        }
 
-		public String getCode() {
-			return code;
-		}
-	}
+        public String getCode() {
+            return code;
+        }
+    }
 
-	// Fields
+    // Fields
 
-	private String id;
-	private String observationHistoryTypeId;
-	private String patientId;
-	private String sampleId;
-	private String value;
-	private String valueType;
-	private String sampleItemId;
+    private String id;
+    private String observationHistoryTypeId;
+    private String patientId;
+    private String sampleId;
+    private String value;
+    private String valueType;
+    private String sampleItemId;
 
-	// Constructors
+    // Constructors
 
-	/** default constructor */
-	public ObservationHistory() {
-	}
+    /** default constructor */
+    public ObservationHistory() {
+    }
 
-	/** minimal constructor */
-	public ObservationHistory(String id, String patientId, String sampleId) {
-		this.id = id;
-		this.patientId = patientId;
-		this.sampleId = sampleId;
-	}
+    /** minimal constructor */
+    public ObservationHistory(String id, String patientId, String sampleId) {
+        this.id = id;
+        this.patientId = patientId;
+        this.sampleId = sampleId;
+    }
 
-	/** full constructor */
-	public ObservationHistory(String id, String observationHistoryTypeId,
-			String patientId, String sampleId, String value, ValueType valueType) {
-		this.id = id;
-		this.observationHistoryTypeId = observationHistoryTypeId;
-		this.patientId = patientId;
-		this.sampleId = sampleId;
-		this.setValue(value);
-		this.setValueType(valueType);
-	}
+    /** full constructor */
+    public ObservationHistory(String id, String observationHistoryTypeId, String patientId, String sampleId,
+            String value, ValueType valueType) {
+        this.id = id;
+        this.observationHistoryTypeId = observationHistoryTypeId;
+        this.patientId = patientId;
+        this.sampleId = sampleId;
+        this.setValue(value);
+        this.setValueType(valueType);
+    }
 
-	// Property accessors
+    // Property accessors
 
-	public String getId() {
-		return this.id;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getObservationHistoryTypeId() {
-		return this.observationHistoryTypeId;
-	}
+    public String getObservationHistoryTypeId() {
+        return this.observationHistoryTypeId;
+    }
 
-	public void setObservationHistoryTypeId(String observationHistoryTypeId) {
-		this.observationHistoryTypeId = observationHistoryTypeId;
-	}
+    public void setObservationHistoryTypeId(String observationHistoryTypeId) {
+        this.observationHistoryTypeId = observationHistoryTypeId;
+    }
 
-	public String getPatientId() {
-		return this.patientId;
-	}
+    public String getPatientId() {
+        return this.patientId;
+    }
 
-	public void setPatientId(String patientId) {
-		this.patientId = patientId;
-	}
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
 
-	public String getSampleId() {
-		return this.sampleId;
-	}
+    public String getSampleId() {
+        return this.sampleId;
+    }
 
-	public void setSampleId(String sampleId) {
-		this.sampleId = sampleId;
-	}
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValueType(String valueType) {
-		this.valueType = valueType;
-	}
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
 
-	public void setValueType(ValueType valueType) {
-		this.valueType = valueType.getCode();
-	}
+    public void setValueType(ValueType valueType) {
+        this.valueType = valueType.getCode();
+    }
 
-	/**
-	 * value type indicates whether the value is a literal ("L") or the value is an index to a fixed value from Dictionary ("D")
-	 * @return "L" or "D"
-	 */
-	public String getValueType() {
-		return valueType;
-	}
+    /**
+     * value type indicates whether the value is a literal ("L") or the value is an
+     * index to a fixed value from Dictionary ("D")
+     * 
+     * @return "L" or "D"
+     */
+    public String getValueType() {
+        return valueType;
+    }
 
-	@Override
-	public String toString() {
-		return "ObservationHistory [ObservationHistoryTypeId="
-				+ observationHistoryTypeId + ", id=" + id + ", patientId="
-				+ patientId + ", sampleId=" + sampleId + ", value=" + value
-				+ ", valueType=" + valueType + "]";
-	}
+    @Override
+    public String toString() {
+        return "ObservationHistory [ObservationHistoryTypeId=" + observationHistoryTypeId + ", id=" + id
+                + ", patientId=" + patientId + ", sampleId=" + sampleId + ", value=" + value + ", valueType="
+                + valueType + "]";
+    }
 
     @Override
     public int hashCode() {
@@ -199,11 +202,11 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
         return true;
     }
 
-	public void setSampleItemId(String sampleItemId) {
-		this.sampleItemId = sampleItemId;
-	}
+    public void setSampleItemId(String sampleItemId) {
+        this.sampleItemId = sampleItemId;
+    }
 
-	public String getSampleItemId() {
-		return sampleItemId;
-	}
+    public String getSampleItemId() {
+        return sampleItemId;
+    }
 }

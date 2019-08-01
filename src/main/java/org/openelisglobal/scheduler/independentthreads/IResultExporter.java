@@ -2,10 +2,10 @@ package org.openelisglobal.scheduler.independentthreads;
 
 public interface IResultExporter {
 
-	void setSleepInMin(long period);
+    void setSleepInMin(long period);
 
-	void start();
+    void start();
 
-	void stopExports();
+    void stopExports();
 
 }

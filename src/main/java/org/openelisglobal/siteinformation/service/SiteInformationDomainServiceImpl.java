@@ -9,22 +9,23 @@ import org.openelisglobal.siteinformation.dao.SiteInformationDomainDAO;
 import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 
 @Service
-public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain, String> implements SiteInformationDomainService {
-	@Autowired
-	protected SiteInformationDomainDAO baseObjectDAO;
+public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain, String>
+        implements SiteInformationDomainService {
+    @Autowired
+    protected SiteInformationDomainDAO baseObjectDAO;
 
-	SiteInformationDomainServiceImpl() {
-		super(SiteInformationDomain.class);
-	}
+    SiteInformationDomainServiceImpl() {
+        super(SiteInformationDomain.class);
+    }
 
-	@Override
-	protected SiteInformationDomainDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SiteInformationDomainDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public SiteInformationDomain getByName(String name) {
-		return getMatch("name", name).orElse(null);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public SiteInformationDomain getByName(String name) {
+        return getMatch("name", name).orElse(null);
+    }
 }

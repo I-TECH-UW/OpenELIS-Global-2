@@ -9,13 +9,13 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 
 public interface ISampleEntry extends IAccessioner {
 
-	void setFieldsFromForm(BaseForm form)
-			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    void setFieldsFromForm(BaseForm form)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
-	void setSysUserId(String sysUserId);
+    void setSysUserId(String sysUserId);
 
-	void setRequest(HttpServletRequest request);
+    void setRequest(HttpServletRequest request);
 
-	boolean canAccession();
+    boolean canAccession();
 
 }

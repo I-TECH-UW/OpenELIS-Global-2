@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.openelisglobal.address.dao.AddressPartDAO;
 import org.openelisglobal.address.valueholder.AddressPart;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional
 public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart, String> implements AddressPartDAO {
 
-	public AddressPartDAOImpl() {
-		super(AddressPart.class);
-	}
+    public AddressPartDAOImpl() {
+        super(AddressPart.class);
+    }
 }

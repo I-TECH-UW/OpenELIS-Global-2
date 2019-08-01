@@ -11,29 +11,30 @@ import org.openelisglobal.referral.dao.ReferralReasonDAO;
 import org.openelisglobal.referral.valueholder.ReferralReason;
 
 @Service
-public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralReason, String> implements ReferralReasonService {
-	@Autowired
-	protected ReferralReasonDAO baseObjectDAO;
+public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralReason, String>
+        implements ReferralReasonService {
+    @Autowired
+    protected ReferralReasonDAO baseObjectDAO;
 
-	ReferralReasonServiceImpl() {
-		super(ReferralReason.class);
-	}
+    ReferralReasonServiceImpl() {
+        super(ReferralReason.class);
+    }
 
-	@Override
-	protected ReferralReasonDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ReferralReasonDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(ReferralReason entity) {
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(ReferralReason entity) {
         getBaseObjectDAO().getData(entity);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ReferralReason> getAllReferralReasons() {
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferralReason> getAllReferralReasons() {
         return getBaseObjectDAO().getAllReferralReasons();
-	}
+    }
 }

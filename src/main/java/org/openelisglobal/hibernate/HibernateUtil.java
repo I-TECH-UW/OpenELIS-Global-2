@@ -39,249 +39,249 @@ import org.openelisglobal.hibernate.resources.interceptor.LIMSTrimDataIntercepto
 @Deprecated
 public class HibernateUtil {
 
-	public static final String HIBERNATE_CFG_FILE_PROPERTY = "openELIS.hibernate.cfg";
-	private static Configuration configuration;
-	private static StandardServiceRegistryBuilder builder;
-	private static SessionFactory sessionFactory;
-	private static final ThreadLocal threadSession = new ThreadLocal();
-	private static final ThreadLocal threadTransaction = new ThreadLocal();
-	private static final ThreadLocal threadInterceptor = new ThreadLocal();
-	private static String CONFIG_FILE_LOCATION = "hibernate/hibernate.cfg.xml";
+    public static final String HIBERNATE_CFG_FILE_PROPERTY = "openELIS.hibernate.cfg";
+    private static Configuration configuration;
+    private static StandardServiceRegistryBuilder builder;
+    private static SessionFactory sessionFactory;
+    private static final ThreadLocal threadSession = new ThreadLocal();
+    private static final ThreadLocal threadTransaction = new ThreadLocal();
+    private static final ThreadLocal threadInterceptor = new ThreadLocal();
+    private static String CONFIG_FILE_LOCATION = "hibernate/hibernate.cfg.xml";
 
-	private static String configFile = CONFIG_FILE_LOCATION;
+    private static String configFile = CONFIG_FILE_LOCATION;
 
-	static {
-		String testCfg = System.getProperty(HIBERNATE_CFG_FILE_PROPERTY);
-		if (null != testCfg) {
-			configFile = testCfg;
-		}
-	}
+    static {
+        String testCfg = System.getProperty(HIBERNATE_CFG_FILE_PROPERTY);
+        if (null != testCfg) {
+            configFile = testCfg;
+        }
+    }
 
-	static {
-		try {
+    static {
+        try {
 
-			configuration = new Configuration();
-			// builder = new
-			// StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-			// bugzilla 1939 (trim changed data before update/insert)
-			configuration.setInterceptor(new LIMSTrimDataInterceptor());
-			sessionFactory = configuration.configure(configFile).buildSessionFactory();
-			// sessionFactory = configuration.buildSessionFactory(builder.build());
-			// We could also let Hibernate bind it to JNDI:
+            configuration = new Configuration();
+            // builder = new
+            // StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
+            // bugzilla 1939 (trim changed data before update/insert)
+            configuration.setInterceptor(new LIMSTrimDataInterceptor());
+            sessionFactory = configuration.configure(configFile).buildSessionFactory();
+            // sessionFactory = configuration.buildSessionFactory(builder.build());
+            // We could also let Hibernate bind it to JNDI:
 
-			// configuration.configure().buildSessionFactory()
-		} catch (Throwable ex) {
-			// We have to catch Throwable, otherwise we will miss
-			// NoClassDefFoundError and other subclasses of Error
-			// ex.printStackTrace();
-			// log.error("Building SessionFactory failed.", ex);
-			// bugzilla 2154
-			LogEvent.logError("HibernateUtil", "static constructor",
-					"Building SessionFactory failed. " + ex.toString());
-			throw new ExceptionInInitializerError(ex);
-		}
-	}
+            // configuration.configure().buildSessionFactory()
+        } catch (Throwable ex) {
+            // We have to catch Throwable, otherwise we will miss
+            // NoClassDefFoundError and other subclasses of Error
+            // ex.printStackTrace();
+            // log.error("Building SessionFactory failed.", ex);
+            // bugzilla 2154
+            LogEvent.logError("HibernateUtil", "static constructor",
+                    "Building SessionFactory failed. " + ex.toString());
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
 
-	/**
-	 * Returns the SessionFactory used for this static class.
-	 *
-	 * @return SessionFactory
-	 */
+    /**
+     * Returns the SessionFactory used for this static class.
+     *
+     * @return SessionFactory
+     */
 
-	public static SessionFactory getSessionFactory() {
-		/*
-		 * Instead of a static variable, use JNDI: SessionFactory sessions = null; try {
-		 * Context ctx = new InitialContext(); String jndiName =
-		 * "java:hibernate/HibernateFactory"; sessions =
-		 * (SessionFactory)ctx.lookup(jndiName); } catch (NamingException ex) { throw
-		 * new InfrastructureException(ex); } return sessions;
-		 */
-		if (sessionFactory == null) {
-			rebuildSessionFactory();
-		}
+    public static SessionFactory getSessionFactory() {
+        /*
+         * Instead of a static variable, use JNDI: SessionFactory sessions = null; try {
+         * Context ctx = new InitialContext(); String jndiName =
+         * "java:hibernate/HibernateFactory"; sessions =
+         * (SessionFactory)ctx.lookup(jndiName); } catch (NamingException ex) { throw
+         * new InfrastructureException(ex); } return sessions;
+         */
+        if (sessionFactory == null) {
+            rebuildSessionFactory();
+        }
 
-		return sessionFactory;
-	}
+        return sessionFactory;
+    }
 
-	/**
-	 * Returns the original Hibernate configuration.
-	 *
-	 * @return Configuration
-	 */
+    /**
+     * Returns the original Hibernate configuration.
+     *
+     * @return Configuration
+     */
 
-	public static Configuration getConfiguration() {
-		return configuration;
-	}
+    public static Configuration getConfiguration() {
+        return configuration;
+    }
 
-	/**
-	 * Rebuild the SessionFactory with the static Configuration.
-	 *
-	 */
-	public static void rebuildSessionFactory() throws LIMSRuntimeException {
-		synchronized (sessionFactory) {
-			try {
-				sessionFactory = getConfiguration().buildSessionFactory();
-				// sessionFactory = configuration.buildSessionFactory(builder.build());
+    /**
+     * Rebuild the SessionFactory with the static Configuration.
+     *
+     */
+    public static void rebuildSessionFactory() throws LIMSRuntimeException {
+        synchronized (sessionFactory) {
+            try {
+                sessionFactory = getConfiguration().buildSessionFactory();
+                // sessionFactory = configuration.buildSessionFactory(builder.build());
 
-			} catch (Exception ex) {
-				// bugzilla 2154
-				LogEvent.logError("HibernateUtil", "rebuildSessionFactory()", ex.toString());
-				throw new LIMSRuntimeException("Error in rebuildSessionFactory()", ex);
-			}
-		}
-	}
+            } catch (Exception ex) {
+                // bugzilla 2154
+                LogEvent.logError("HibernateUtil", "rebuildSessionFactory()", ex.toString());
+                throw new LIMSRuntimeException("Error in rebuildSessionFactory()", ex);
+            }
+        }
+    }
 
-	/**
-	 * Rebuild the SessionFactory with the given Hibernate Configuration.
-	 *
-	 * @param cfg
-	 */
+    /**
+     * Rebuild the SessionFactory with the given Hibernate Configuration.
+     *
+     * @param cfg
+     */
 
-	public static void rebuildSessionFactory(Configuration cfg) throws LIMSRuntimeException {
-		synchronized (sessionFactory) {
-			try {
-				sessionFactory = cfg.buildSessionFactory();
-				configuration = cfg;
-				// sessionFactory = configuration.buildSessionFactory(builder.build());
-			} catch (Exception ex) {
-				// bugzilla 2154
-				LogEvent.logError("HibernateUtil", "rebuildSessionFactory()", ex.toString());
-				throw new LIMSRuntimeException("Error in rebuildSessionFactory()", ex);
-			}
-		}
-	}
+    public static void rebuildSessionFactory(Configuration cfg) throws LIMSRuntimeException {
+        synchronized (sessionFactory) {
+            try {
+                sessionFactory = cfg.buildSessionFactory();
+                configuration = cfg;
+                // sessionFactory = configuration.buildSessionFactory(builder.build());
+            } catch (Exception ex) {
+                // bugzilla 2154
+                LogEvent.logError("HibernateUtil", "rebuildSessionFactory()", ex.toString());
+                throw new LIMSRuntimeException("Error in rebuildSessionFactory()", ex);
+            }
+        }
+    }
 
-	/**
-	 * Retrieves the current Session local to the thread.
-	 * <p/>
-	 *
-	 * If no Session is open, opens a new Session for the running thread.
-	 *
-	 * @return Session
-	 */
-	public static Session getSession() throws LIMSRuntimeException {
-		Session s = (Session) threadSession.get();
-		try {
-			if (s == null) {
-				// bugzilla 2154
-				LogEvent.logDebug("HibernateUtil", "getSession()", "Opening new Session for this thread.");
-				if (getInterceptor() != null) {
-					LogEvent.logDebug("HibernateUtil", "getSession()",
-							"Using interceptor: " + getInterceptor().getClass());
-					s = getSessionFactory().withOptions().interceptor(getInterceptor()).openSession();
+    /**
+     * Retrieves the current Session local to the thread.
+     * <p/>
+     *
+     * If no Session is open, opens a new Session for the running thread.
+     *
+     * @return Session
+     */
+    public static Session getSession() throws LIMSRuntimeException {
+        Session s = (Session) threadSession.get();
+        try {
+            if (s == null) {
+                // bugzilla 2154
+                LogEvent.logDebug("HibernateUtil", "getSession()", "Opening new Session for this thread.");
+                if (getInterceptor() != null) {
+                    LogEvent.logDebug("HibernateUtil", "getSession()",
+                            "Using interceptor: " + getInterceptor().getClass());
+                    s = getSessionFactory().withOptions().interceptor(getInterceptor()).openSession();
 
-				} else {
-					s = getSessionFactory().openSession();
-				}
-				threadSession.set(s);
-			}
-		} catch (HibernateException ex) {
-			// bugzilla 2154
-			LogEvent.logError("HibernateUtil", "getSession()", ex.toString());
-			throw new LIMSRuntimeException("Error in getSession()", ex);
-		}
-		return s;
-	}
+                } else {
+                    s = getSessionFactory().openSession();
+                }
+                threadSession.set(s);
+            }
+        } catch (HibernateException ex) {
+            // bugzilla 2154
+            LogEvent.logError("HibernateUtil", "getSession()", ex.toString());
+            throw new LIMSRuntimeException("Error in getSession()", ex);
+        }
+        return s;
+    }
 
-	/**
-	 * Closes the Session local to the thread.
-	 */
+    /**
+     * Closes the Session local to the thread.
+     */
 
-	public static void closeSession() throws LIMSRuntimeException {
-		try {
-			Session s = (Session) threadSession.get();
-			threadSession.set(null);
-			if (s != null && s.isOpen()) {
-				// bugzilla 2154
-				LogEvent.logDebug("HibernateUtil", "closeSession()", "Closing Session of this thread.");
-				s.close();
-			}
-		} catch (HibernateException ex) {
-			// bugzilla 2154
-			LogEvent.logError("HibernateUtil", "closeSession()", ex.toString());
-			throw new LIMSRuntimeException("Error in closeSession()", ex);
-		}
-	}
+    public static void closeSession() throws LIMSRuntimeException {
+        try {
+            Session s = (Session) threadSession.get();
+            threadSession.set(null);
+            if (s != null && s.isOpen()) {
+                // bugzilla 2154
+                LogEvent.logDebug("HibernateUtil", "closeSession()", "Closing Session of this thread.");
+                s.close();
+            }
+        } catch (HibernateException ex) {
+            // bugzilla 2154
+            LogEvent.logError("HibernateUtil", "closeSession()", ex.toString());
+            throw new LIMSRuntimeException("Error in closeSession()", ex);
+        }
+    }
 
-	/**
-	 * Start a new database transaction.
-	 */
-	/*
-	 * public static void beginTransaction() throws LIMSRuntimeException {
-	 * Transaction tx = (Transaction) threadTransaction.get(); try { if (tx == null)
-	 * { log.debug("Starting new database transaction in this thread."); tx =
-	 * getSession().beginTransaction(); threadTransaction.set(tx); } } catch
-	 * (HibernateException ex) { throw new
-	 * LIMSRuntimeException("Error in beginTransaction()", ex); } }
-	 */
-	/**
-	 * Commit the database transaction.
-	 */
-	/*
-	 * public static void commitTransaction() throws LIMSRuntimeException {
-	 * Transaction tx = (Transaction) threadTransaction.get(); try { if (tx != null
-	 * && !tx.wasCommitted() && !tx.wasRolledBack()) {
-	 * log.debug("Committing database transaction of this thread."); tx.commit(); }
-	 * threadTransaction.set(null); } catch (HibernateException ex) {
-	 * rollbackTransaction(); throw new
-	 * LIMSRuntimeException("Error in commitTransaction()", ex); } }
-	 */
-	/**
-	 * Commit the database transaction.
-	 */
-	/*
-	 * public static void rollbackTransaction() throws LIMSRuntimeException {
-	 * Transaction tx = (Transaction) threadTransaction.get(); try {
-	 * threadTransaction.set(null); if (tx != null && !tx.wasCommitted() &&
-	 * !tx.wasRolledBack()) { log.debug(
-	 * "Tyring to rollback database transaction of this thread."); tx.rollback(); }
-	 * } catch (HibernateException ex) { throw new
-	 * LIMSRuntimeException("Error in rollbackTransaction()", ex); } finally {
-	 * closeSession(); } }
-	 */
-	/**
-	 * Reconnects a Hibernate Session to the current Thread.
-	 *
-	 * @param session The Hibernate Session to be reconnected.
-	 */
+    /**
+     * Start a new database transaction.
+     */
+    /*
+     * public static void beginTransaction() throws LIMSRuntimeException {
+     * Transaction tx = (Transaction) threadTransaction.get(); try { if (tx == null)
+     * { log.debug("Starting new database transaction in this thread."); tx =
+     * getSession().beginTransaction(); threadTransaction.set(tx); } } catch
+     * (HibernateException ex) { throw new
+     * LIMSRuntimeException("Error in beginTransaction()", ex); } }
+     */
+    /**
+     * Commit the database transaction.
+     */
+    /*
+     * public static void commitTransaction() throws LIMSRuntimeException {
+     * Transaction tx = (Transaction) threadTransaction.get(); try { if (tx != null
+     * && !tx.wasCommitted() && !tx.wasRolledBack()) {
+     * log.debug("Committing database transaction of this thread."); tx.commit(); }
+     * threadTransaction.set(null); } catch (HibernateException ex) {
+     * rollbackTransaction(); throw new
+     * LIMSRuntimeException("Error in commitTransaction()", ex); } }
+     */
+    /**
+     * Commit the database transaction.
+     */
+    /*
+     * public static void rollbackTransaction() throws LIMSRuntimeException {
+     * Transaction tx = (Transaction) threadTransaction.get(); try {
+     * threadTransaction.set(null); if (tx != null && !tx.wasCommitted() &&
+     * !tx.wasRolledBack()) { log.debug(
+     * "Tyring to rollback database transaction of this thread."); tx.rollback(); }
+     * } catch (HibernateException ex) { throw new
+     * LIMSRuntimeException("Error in rollbackTransaction()", ex); } finally {
+     * closeSession(); } }
+     */
+    /**
+     * Reconnects a Hibernate Session to the current Thread.
+     *
+     * @param session The Hibernate Session to be reconnected.
+     */
 
-	// public static void reconnect(Session session) throws LIMSRuntimeException {
-	// try {
-	// session.reconnect();
-	// threadSession.set(session);
-	// } catch (HibernateException ex) {
-	// throw new LIMSRuntimeException("Error in reconnect()", ex);
-	// }
-	// }
+    // public static void reconnect(Session session) throws LIMSRuntimeException {
+    // try {
+    // session.reconnect();
+    // threadSession.set(session);
+    // } catch (HibernateException ex) {
+    // throw new LIMSRuntimeException("Error in reconnect()", ex);
+    // }
+    // }
 
-	/**
-	 * Disconnect and return Session from current Thread.
-	 *
-	 * @return Session the disconnected Session
-	 */
-	/*
-	 * public static Session disconnectSession() throws LIMSRuntimeException {
-	 *
-	 * Session session = getSession(); try { threadSession.set(null); if
-	 * (session.isConnected() && session.isOpen()) { session.disconnect(); } } catch
-	 * (HibernateException ex) { throw new
-	 * LIMSRuntimeException("Error in disconnectSession()", ex); } return session; }
-	 */
-	/**
-	 * Register a Hibernate interceptor with the current thread.
-	 * <p>
-	 *
-	 * Every Session opened is opened with this interceptor after registration. Has
-	 * no effect if the current Session of the thread is already open, effective on
-	 * next close()/getSession().
-	 */
-	public static void registerInterceptor(Interceptor interceptor) {
-		threadInterceptor.set(interceptor);
-	}
+    /**
+     * Disconnect and return Session from current Thread.
+     *
+     * @return Session the disconnected Session
+     */
+    /*
+     * public static Session disconnectSession() throws LIMSRuntimeException {
+     *
+     * Session session = getSession(); try { threadSession.set(null); if
+     * (session.isConnected() && session.isOpen()) { session.disconnect(); } } catch
+     * (HibernateException ex) { throw new
+     * LIMSRuntimeException("Error in disconnectSession()", ex); } return session; }
+     */
+    /**
+     * Register a Hibernate interceptor with the current thread.
+     * <p>
+     *
+     * Every Session opened is opened with this interceptor after registration. Has
+     * no effect if the current Session of the thread is already open, effective on
+     * next close()/getSession().
+     */
+    public static void registerInterceptor(Interceptor interceptor) {
+        threadInterceptor.set(interceptor);
+    }
 
-	private static Interceptor getInterceptor() {
-		Interceptor interceptor = (Interceptor) threadInterceptor.get();
-		return interceptor;
-	}
+    private static Interceptor getInterceptor() {
+        Interceptor interceptor = (Interceptor) threadInterceptor.get();
+        return interceptor;
+    }
 
 }

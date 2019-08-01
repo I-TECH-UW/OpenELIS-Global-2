@@ -9,27 +9,27 @@ import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public interface TestReflexService extends BaseObjectService<TestReflex, String> {
-	void getData(TestReflex testReflex);
+    void getData(TestReflex testReflex);
 
-	List getPageOfTestReflexs(int startingRecNo);
+    List getPageOfTestReflexs(int startingRecNo);
 
-	List getTestReflexesByTestResult(TestResult testResult);
+    List getTestReflexesByTestResult(TestResult testResult);
 
-	List getPreviousTestReflexRecord(String id);
+    List getPreviousTestReflexRecord(String id);
 
-	List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
+    List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
 
-	List getNextTestReflexRecord(String id);
+    List getNextTestReflexRecord(String id);
 
-	Integer getTotalTestReflexCount();
+    Integer getTotalTestReflexCount();
 
-	List getAllTestReflexs();
+    List getAllTestReflexs();
 
-	boolean isReflexedTest(Analysis analysis);
+    boolean isReflexedTest(Analysis analysis);
 
-	List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag);
+    List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag);
 
-	List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
+    List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
 
-	List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId);
+    List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId);
 }

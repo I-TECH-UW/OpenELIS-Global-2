@@ -29,31 +29,32 @@ import org.openelisglobal.result.valueholder.Result;
 
 public class ResultReportingUpdate implements IResultUpdate {
 
-	@Override
-	public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException {
-		//no-op
-	}
+    @Override
+    public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException {
+        // no-op
+    }
 
-	@Override
-	public void postTransactionalCommitUpdate(IResultSaveService resultService) {
-		ResultReportingCollator collator = new ResultReportingCollator();
-		List<Result> updatedResults = new ArrayList<Result>();
-		
-		for (ResultSet resultSet : resultService.getNewResults()) {
-			boolean success = collator.addResult(resultSet.result, resultSet.patient, false, false);
-			if( success){
-				updatedResults.add(resultSet.result);
-			}
-		}
-		for (ResultSet resultSet : resultService.getModifiedResults()) {
-			boolean success = collator.addResult(resultSet.result, resultSet.patient, true, false);
-			if( success){
-				updatedResults.add(resultSet.result);
-			}
-		}
+    @Override
+    public void postTransactionalCommitUpdate(IResultSaveService resultService) {
+        ResultReportingCollator collator = new ResultReportingCollator();
+        List<Result> updatedResults = new ArrayList<Result>();
 
-		ResultReportingTransfer transfer = new ResultReportingTransfer();
-		transfer.sendResults(collator.getResultReport(), updatedResults, ConfigurationProperties.getInstance().getPropertyValue(Property.resultReportingURL));
-	}
+        for (ResultSet resultSet : resultService.getNewResults()) {
+            boolean success = collator.addResult(resultSet.result, resultSet.patient, false, false);
+            if (success) {
+                updatedResults.add(resultSet.result);
+            }
+        }
+        for (ResultSet resultSet : resultService.getModifiedResults()) {
+            boolean success = collator.addResult(resultSet.result, resultSet.patient, true, false);
+            if (success) {
+                updatedResults.add(resultSet.result);
+            }
+        }
+
+        ResultReportingTransfer transfer = new ResultReportingTransfer();
+        transfer.sendResults(collator.getResultReport(), updatedResults,
+                ConfigurationProperties.getInstance().getPropertyValue(Property.resultReportingURL));
+    }
 
 }

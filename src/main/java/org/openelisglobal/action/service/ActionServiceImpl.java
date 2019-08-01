@@ -9,15 +9,15 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 
 @Service
 public class ActionServiceImpl extends BaseObjectServiceImpl<Action, String> implements ActionService {
-	@Autowired
-	protected ActionDAO baseObjectDAO;
+    @Autowired
+    protected ActionDAO baseObjectDAO;
 
-	ActionServiceImpl() {
-		super(Action.class);
-	}
+    ActionServiceImpl() {
+        super(Action.class);
+    }
 
-	@Override
-	protected ActionDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ActionDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -19,7 +19,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.inventory.dao.InventoryLocationDAO;
@@ -29,9 +29,9 @@ import org.openelisglobal.inventory.valueholder.InventoryLocation;
 @Transactional
 public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, String> implements InventoryLocationDAO {
 
-	public InventoryLocationDAOImpl() {
-		super(InventoryLocation.class);
-	}
+    public InventoryLocationDAOImpl() {
+        super(InventoryLocation.class);
+    }
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -142,19 +142,19 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //		}
 //	}
 
-	public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
-		InventoryLocation data = null;
-		try {
-			data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("InventoryLocationDAOImpl", "readInventoryLocation()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
-		}
+    public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
+        InventoryLocation data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("InventoryLocationDAOImpl", "readInventoryLocation()", e.toString());
+            throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
+        }
 
-		return data;
-	}
+        return data;
+    }
 
 //	@Override
 //	public InventoryLocation getInventoryLocationById(InventoryLocation inventoryItem) throws LIMSRuntimeException {

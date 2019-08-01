@@ -22,41 +22,41 @@ import org.openelisglobal.audittrail.action.workers.AuditTrailViewWorker;
 @Controller
 public class AuditTrailReportController extends BaseController {
 
-	@RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
-	public ModelAndView showAuditTrailReport(HttpServletRequest request,
-			@ModelAttribute("form") @Valid AuditTrailViewForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		form.setFormMethod(RequestMethod.GET);
+    @RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
+    public ModelAndView showAuditTrailReport(HttpServletRequest request,
+            @ModelAttribute("form") @Valid AuditTrailViewForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        form.setFormMethod(RequestMethod.GET);
 
-		String accessionNumber = form.getString("accessionNumberSearch");
-		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-			AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
-			List<AuditTrailItem> items = worker.getAuditTrail();
-			PropertyUtils.setProperty(form, "log", items);
-			PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
-			PropertyUtils.setProperty(form, "sampleOrderItems", worker.getSampleOrderSnapshot());
-			PropertyUtils.setProperty(form, "patientProperties", worker.getPatientSnapshot());
-		}
+        String accessionNumber = form.getString("accessionNumberSearch");
+        if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+            AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
+            List<AuditTrailItem> items = worker.getAuditTrail();
+            PropertyUtils.setProperty(form, "log", items);
+            PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
+            PropertyUtils.setProperty(form, "sampleOrderItems", worker.getSampleOrderSnapshot());
+            PropertyUtils.setProperty(form, "patientProperties", worker.getPatientSnapshot());
+        }
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "auditTrailViewDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "auditTrailViewDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return "reports.auditTrail";
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return "reports.auditTrail";
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return "reports.auditTrail";
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return "reports.auditTrail";
+    }
 }

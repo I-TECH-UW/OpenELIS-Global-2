@@ -18,48 +18,48 @@ package org.openelisglobal.gender.valueholder;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Gender extends BaseObject<String> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
+    private String id;
 
-	private String description;
+    private String description;
 
-	private String genderType;
-	
-	public Gender() {
-		super();
-	}
+    private String genderType;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public Gender() {
+        super();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getGenderType() {
-		return genderType;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setGenderType(String genderType) {
-		this.genderType = genderType;
-	}
-	
-	@Override
-	public String getDefaultLocalizedName() {
-		return this.description;
-	}
-	
-	public String toString() {
-		return "Gender { Id = " + id + ", description=" + description  + " }";
-	}
+    public String getGenderType() {
+        return genderType;
+    }
+
+    public void setGenderType(String genderType) {
+        this.genderType = genderType;
+    }
+
+    @Override
+    public String getDefaultLocalizedName() {
+        return this.description;
+    }
+
+    public String toString() {
+        return "Gender { Id = " + id + ", description=" + description + " }";
+    }
 }

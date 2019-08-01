@@ -12,29 +12,29 @@ import org.openelisglobal.common.form.MainForm;
 
 @Controller
 public class MasterListsPageController extends BaseController {
-	@RequestMapping(value = "/MasterListsPage", method = { RequestMethod.GET, RequestMethod.POST} )
-	public ModelAndView showMasterListsPage(HttpServletRequest request) {
+    @RequestMapping(value = "/MasterListsPage", method = { RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView showMasterListsPage(HttpServletRequest request) {
 
-		MainForm form = new MainForm();
-		return findForward(FWD_SUCCESS, form);
-	}
+        MainForm form = new MainForm();
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "masterListsPageDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "masterListsPageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

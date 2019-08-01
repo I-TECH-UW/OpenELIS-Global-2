@@ -9,15 +9,15 @@ import org.openelisglobal.program.valueholder.Program;
 
 @Service
 public class ProgramServiceImpl extends BaseObjectServiceImpl<Program, String> implements ProgramService {
-	@Autowired
-	protected ProgramDAO baseObjectDAO;
+    @Autowired
+    protected ProgramDAO baseObjectDAO;
 
-	ProgramServiceImpl() {
-		super(Program.class);
-	}
+    ProgramServiceImpl() {
+        super(Program.class);
+    }
 
-	@Override
-	protected ProgramDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ProgramDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -15,37 +15,34 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class SampleEntryEIDController extends BaseController {
-  @RequestMapping(
-      value = "/SampleEntryEID",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleEntryEID(HttpServletRequest request,
-      @ModelAttribute("form") SampleEntryByProjectForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleEntryByProjectForm();
-    }
+    @RequestMapping(value = "/SampleEntryEID", method = RequestMethod.GET)
+    public ModelAndView showSampleEntryEID(HttpServletRequest request,
+            @ModelAttribute("form") SampleEntryByProjectForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleEntryByProjectForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if ("eid_entry".equals(forward)) {
-      return "sampleEntryEIDDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if ("eid_entry".equals(forward)) {
+            return "sampleEntryEIDDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

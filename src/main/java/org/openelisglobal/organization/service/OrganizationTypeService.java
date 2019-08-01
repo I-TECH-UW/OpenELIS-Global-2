@@ -7,9 +7,9 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 
 public interface OrganizationTypeService extends BaseObjectService<OrganizationType, String> {
-	List<Organization> getOrganizationsByTypeName(String orderByCol, String[] names);
+    List<Organization> getOrganizationsByTypeName(String orderByCol, String[] names);
 
-	List<OrganizationType> getAllOrganizationTypes();
+    List<OrganizationType> getAllOrganizationTypes();
 
-	OrganizationType getOrganizationTypeByName(String name);
+    OrganizationType getOrganizationTypeByName(String name);
 }

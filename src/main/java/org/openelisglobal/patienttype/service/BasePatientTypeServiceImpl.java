@@ -9,16 +9,16 @@ import org.openelisglobal.patienttype.valueholder.BasePatientType;
 
 @Service
 public class BasePatientTypeServiceImpl extends BaseObjectServiceImpl<BasePatientType, String>
-		implements BasePatientTypeService {
-	@Autowired
-	protected BasePatientTypeDAO baseObjectDAO;
+        implements BasePatientTypeService {
+    @Autowired
+    protected BasePatientTypeDAO baseObjectDAO;
 
-	BasePatientTypeServiceImpl() {
-		super(BasePatientType.class);
-	}
+    BasePatientTypeServiceImpl() {
+        super(BasePatientType.class);
+    }
 
-	@Override
-	protected BasePatientTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected BasePatientTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

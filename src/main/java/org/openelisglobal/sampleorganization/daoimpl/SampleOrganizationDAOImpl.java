@@ -24,7 +24,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -41,11 +41,11 @@ import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
 @Component
 @Transactional
 public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, String>
-		implements SampleOrganizationDAO {
+        implements SampleOrganizationDAO {
 
-	public SampleOrganizationDAOImpl() {
-		super(SampleOrganization.class);
-	}
+    public SampleOrganizationDAOImpl() {
+        super(SampleOrganization.class);
+    }
 
 //	@Override
 //	public void deleteData(List sampleOrgss) throws LIMSRuntimeException {
@@ -142,81 +142,81 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
-		try {
-			SampleOrganization data = entityManager.unwrap(Session.class).get(SampleOrganization.class,
-					sampleOrg.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (data != null) {
-				PropertyUtils.copyProperties(sampleOrg, data);
-			} else {
-				sampleOrg.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
+        try {
+            SampleOrganization data = entityManager.unwrap(Session.class).get(SampleOrganization.class,
+                    sampleOrg.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (data != null) {
+                PropertyUtils.copyProperties(sampleOrg, data);
+            } else {
+                sampleOrg.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
+        }
+    }
 
-	public SampleOrganization readSampleOrganization(String idString) {
-		SampleOrganization so = null;
-		try {
-			so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
-		}
+    public SampleOrganization readSampleOrganization(String idString) {
+        SampleOrganization so = null;
+        try {
+            so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
+        }
 
-		return so;
-	}
+        return so;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
 
-		try {
-			String sql = "from SampleOrganization so where samp_id = :param";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
-			List list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			SampleOrganization so = null;
-			if (list.size() > 0) {
-				so = (SampleOrganization) list.get(0);
-				PropertyUtils.copyProperties(sampleOrganization, so);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
-		}
+        try {
+            String sql = "from SampleOrganization so where samp_id = :param";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
+            List list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            SampleOrganization so = null;
+            if (list.size() > 0) {
+                so = (SampleOrganization) list.get(0);
+                PropertyUtils.copyProperties(sampleOrganization, so);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
+        }
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
-		String sql = "From SampleOrganization so where so.sample.id = :sampleId";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
-			List<SampleOrganization> sampleOrg = query.list();
-			// closeSession(); // CSL remove old
-			// There was a bug that allowed the same sample id / organization id to be
-			// entered twice
-			return sampleOrg.isEmpty() ? null : sampleOrg.get(0);
+    @Override
+    @Transactional(readOnly = true)
+    public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
+        String sql = "From SampleOrganization so where so.sample.id = :sampleId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("sampleId", Integer.parseInt(sample.getId()));
+            List<SampleOrganization> sampleOrg = query.list();
+            // closeSession(); // CSL remove old
+            // There was a bug that allowed the same sample id / organization id to be
+            // entered twice
+            return sampleOrg.isEmpty() ? null : sampleOrg.get(0);
 
-		} catch (HibernateException e) {
-			handleException(e, "getDataBySample");
-		}
-		return null;
-	}
+        } catch (HibernateException e) {
+            handleException(e, "getDataBySample");
+        }
+        return null;
+    }
 }

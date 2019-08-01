@@ -3,7 +3,7 @@ package org.openelisglobal.datasubmission.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.datasubmission.dao.DataResourceDAO;
 import org.openelisglobal.datasubmission.valueholder.DataResource;
 
@@ -11,9 +11,9 @@ import org.openelisglobal.datasubmission.valueholder.DataResource;
 @Transactional
 public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> implements DataResourceDAO {
 
-	public DataResourceDAOImpl() {
-		super(DataResource.class);
-	}
+    public DataResourceDAOImpl() {
+        super(DataResource.class);
+    }
 
 //	@Override
 //	public void getData(DataResource resource) throws LIMSRuntimeException {

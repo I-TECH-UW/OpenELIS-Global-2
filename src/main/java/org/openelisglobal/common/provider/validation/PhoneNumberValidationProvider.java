@@ -33,29 +33,30 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
  */
 public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
-	public PhoneNumberValidationProvider() {
-		super();
-	}
+    public PhoneNumberValidationProvider() {
+        super();
+    }
 
-	public PhoneNumberValidationProvider( AjaxServlet ajaxServlet ) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public PhoneNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		String field = request.getParameter("fieldId");
-		String phoneNumber = request.getParameter("value");
+        String field = request.getParameter("fieldId");
+        String phoneNumber = request.getParameter("value");
 
         PhoneNumberService numberService = new PhoneNumberService();
-        boolean valid = numberService.validatePhoneNumber( phoneNumber );
+        boolean valid = numberService.validatePhoneNumber(phoneNumber);
 
-		String returnData = VALID;
-        if( !valid){
-			returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
-		}
+        String returnData = VALID;
+        if (!valid) {
+            returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
+        }
 
-		response.setCharacterEncoding("UTF-8");
-		ajaxServlet.sendData(field, returnData, request, response);
-	}
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(field, returnData, request, response);
+    }
 }

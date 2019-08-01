@@ -34,53 +34,53 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
     private String unitName;
 
     @Override
-    public void setRequestParameters( BaseForm form ){
-        new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                MessageUtil.getMessage( "report.activity.report.base" ) + " " + MessageUtil.getMessage( "report.by.unit" ),
-                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
-        new ReportSpecificationList( DisplayListService.getInstance().getList( DisplayListService.ListType.TEST_SECTION ),
-                                     MessageUtil.getMessage( "workplan.unit.types" ) ).setRequestParameters( form );
+    public void setRequestParameters(BaseForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
+                MessageUtil.getMessage("report.activity.report.base") + " " + MessageUtil.getMessage("report.by.unit"),
+                MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
+        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION),
+                MessageUtil.getMessage("workplan.unit.types")).setRequestParameters(form);
     }
 
     @Override
-    protected String getActivityLabel(){
-        return MessageUtil.getMessage( "report.unit" ) + ": " + unitName;
+    protected String getActivityLabel() {
+        return MessageUtil.getMessage("report.unit") + ": " + unitName;
     }
 
     @Override
-    protected void buildReportContent( ReportSpecificationList unitSelection ){
+    protected void buildReportContent(ReportSpecificationList unitSelection) {
         unitName = unitSelection.getSelectionAsName();
         createReportParameters();
 
-        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInTestSection( dateRange.getLowDate(), dateRange.getHighDate(), unitSelection.getSelection() );
-        ArrayList<ActivityReportBean> rawResults = new ArrayList<ActivityReportBean>( resultList.size() );
-        testsResults = new ArrayList<ActivityReportBean>( );
-
+        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInTestSection(dateRange.getLowDate(),
+                dateRange.getHighDate(), unitSelection.getSelection());
+        ArrayList<ActivityReportBean> rawResults = new ArrayList<ActivityReportBean>(resultList.size());
+        testsResults = new ArrayList<ActivityReportBean>();
 
         String currentAnalysisId = "-1";
-        for( Result result : resultList){
-            if( result.getAnalysis() != null){
-                if( !currentAnalysisId.equals( result.getAnalysis().getId())){
-                    rawResults.add( createActivityReportBean( result, true ) );
+        for (Result result : resultList) {
+            if (result.getAnalysis() != null) {
+                if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
+                    rawResults.add(createActivityReportBean(result, true));
                     currentAnalysisId = result.getAnalysis().getId();
                 }
             }
         }
 
-        Collections.sort( rawResults, new Comparator<ActivityReportBean>(){
+        Collections.sort(rawResults, new Comparator<ActivityReportBean>() {
             @Override
-            public int compare( ActivityReportBean o1, ActivityReportBean o2 ){
-                return o1.getAccessionNumber().compareTo( o2.getAccessionNumber() );
+            public int compare(ActivityReportBean o1, ActivityReportBean o2) {
+                return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
             }
-        } );
+        });
 
         String currentAccessionNumber = "";
-        for( ActivityReportBean item : rawResults){
-            if( !currentAccessionNumber.equals( item.getAccessionNumber() )){
-                testsResults.add( createIdentityActivityBean( item, true ));
+        for (ActivityReportBean item : rawResults) {
+            if (!currentAccessionNumber.equals(item.getAccessionNumber())) {
+                testsResults.add(createIdentityActivityBean(item, true));
                 currentAccessionNumber = item.getAccessionNumber();
             }
-            testsResults.add( item );
+            testsResults.add(item);
         }
 
     }

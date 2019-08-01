@@ -10,21 +10,21 @@ import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 @Service
 //public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {
 public class DatabaseChangeLogServiceImpl implements DatabaseChangeLogService {
-	@Autowired
-	protected DatabaseChangeLogDAO baseObjectDAO;
+    @Autowired
+    protected DatabaseChangeLogDAO baseObjectDAO;
 
 //	public DatabaseChangeLogServiceImpl() {
 //		super(DatabaseChangeLog.class);
 //	}
 
 //	@Override
-	protected DatabaseChangeLogDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    protected DatabaseChangeLogDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public DatabaseChangeLog getLastExecutedChange() {
-		return getBaseObjectDAO().getLastExecutedChange();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public DatabaseChangeLog getLastExecutedChange() {
+        return getBaseObjectDAO().getLastExecutedChange();
+    }
 }

@@ -8,16 +8,17 @@ import org.openelisglobal.projectorganization.dao.ProjectOrganizationDAO;
 import org.openelisglobal.projectorganization.valueholder.ProjectOrganization;
 
 @Service
-public class ProjectOrganizationServiceImpl extends BaseObjectServiceImpl<ProjectOrganization, String> implements ProjectOrganizationService {
-	@Autowired
-	protected ProjectOrganizationDAO baseObjectDAO;
+public class ProjectOrganizationServiceImpl extends BaseObjectServiceImpl<ProjectOrganization, String>
+        implements ProjectOrganizationService {
+    @Autowired
+    protected ProjectOrganizationDAO baseObjectDAO;
 
-	ProjectOrganizationServiceImpl() {
-		super(ProjectOrganization.class);
-	}
+    ProjectOrganizationServiceImpl() {
+        super(ProjectOrganization.class);
+    }
 
-	@Override
-	protected ProjectOrganizationDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ProjectOrganizationDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

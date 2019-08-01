@@ -26,9 +26,9 @@ import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 
 public class Dictionary extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public class ComparatorLocalizedName implements Comparator<Dictionary> {
+    public class ComparatorLocalizedName implements Comparator<Dictionary> {
         public int compare(Dictionary o1, Dictionary o2) {
             return o1.getLocalizedName().compareTo(o2.getDefaultLocalizedName());
         }
@@ -36,105 +36,98 @@ public class Dictionary extends BaseObject<String> {
 
     private String id;
 
-	private String isActive;
+    private String isActive;
 
-	private String dictEntry;
+    private String dictEntry;
 
-    
-	private String selectedDictionaryCategoryId;
+    private String selectedDictionaryCategoryId;
 
-    
-	private ValueHolderInterface dictionaryCategory;
+    private ValueHolderInterface dictionaryCategory;
 
-    
-	private String localAbbreviation;
+    private String localAbbreviation;
 
-	private Integer sortOrder;
-    
+    private Integer sortOrder;
+
     public Integer getSortOrder() {
         return sortOrder;
     }
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
-    }	
+    }
 
-	public String getLocalAbbreviation() {
-		return localAbbreviation;
-	}
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
+    }
 
-	public void setLocalAbbreviation(String localAbbreviation) {
-		this.localAbbreviation = localAbbreviation;
-	}
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
 
-	public Dictionary() {
-		super();
-		this.dictionaryCategory = new ValueHolder();
-	}
+    public Dictionary() {
+        super();
+        this.dictionaryCategory = new ValueHolder();
+    }
 
-	public String getId() {
-		return this.id;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	public String getIsActive() {
-		return this.isActive;
-	}
+    public String getIsActive() {
+        return this.isActive;
+    }
 
-	public DictionaryCategory getDictionaryCategory() {
-		return (DictionaryCategory) this.dictionaryCategory.getValue();
-	}
+    public DictionaryCategory getDictionaryCategory() {
+        return (DictionaryCategory) this.dictionaryCategory.getValue();
+    }
 
-	public void setDictionaryCategory(DictionaryCategory dictionaryCategory) {
-		this.dictionaryCategory.setValue(dictionaryCategory);
-	}
+    public void setDictionaryCategory(DictionaryCategory dictionaryCategory) {
+        this.dictionaryCategory.setValue(dictionaryCategory);
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
+    public String getDictEntry() {
+        return dictEntry;
+    }
 
+    public void setDictEntry(String dictEntry) {
+        this.dictEntry = dictEntry;
+    }
 
-	public String getDictEntry() {
-		return dictEntry;
-	}
+    public String getDictEntryDisplayValue() {
+        String dictEntryDisplayValue;
+        if (!StringUtil.isNullorNill(this.localAbbreviation)) {
 
-	public void setDictEntry(String dictEntry) {
-		this.dictEntry = dictEntry;
-	}
+            dictEntryDisplayValue = localAbbreviation + IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING
+                    + dictEntry;
+        } else {
+            dictEntryDisplayValue = dictEntry;
+        }
+        return dictEntryDisplayValue;
+    }
 
-    
-	public String getDictEntryDisplayValue() {
-		String dictEntryDisplayValue;
-		if (!StringUtil.isNullorNill(this.localAbbreviation)) {
-		    
-			dictEntryDisplayValue = localAbbreviation + IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING + dictEntry;
-		} else {
-			dictEntryDisplayValue = dictEntry;
-		}
-		return dictEntryDisplayValue;
-	}
+    public String getSelectedDictionaryCategoryId() {
+        return selectedDictionaryCategoryId;
+    }
 
-	public String getSelectedDictionaryCategoryId() {
-		return selectedDictionaryCategoryId;
-	}
+    public void setSelectedDictionaryCategoryId(String selectedDictionaryCategoryId) {
+        this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
+    }
 
-	public void setSelectedDictionaryCategoryId(String selectedDictionaryCategoryId) {
-		this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
-	}
-	
+    @Override
+    protected String getDefaultLocalizedName() {
+        return dictEntry;
+    }
 
-	@Override
-	protected String getDefaultLocalizedName() {
-		return dictEntry;
-	}
-
-	@Override
-	public String toString() {
-		return "Dictionary [id=" + id + ", localAbbreviation="
-				+ localAbbreviation + ", nameKey=" + nameKey + "]";
-	}
+    @Override
+    public String toString() {
+        return "Dictionary [id=" + id + ", localAbbreviation=" + localAbbreviation + ", nameKey=" + nameKey + "]";
+    }
 }

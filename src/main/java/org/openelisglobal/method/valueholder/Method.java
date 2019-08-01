@@ -23,110 +23,106 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Method extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String methodName;
+    private String methodName;
 
-	private String description;
+    private String description;
 
-	private String reportingDescription;
+    private String reportingDescription;
 
-	private Date activeBeginDate = null;
+    private Date activeBeginDate = null;
 
-	private String activeBeginDateForDisplay = null;
+    private String activeBeginDateForDisplay = null;
 
-	private Date activeEndDate = null;
+    private Date activeEndDate = null;
 
-	private String activeEndDateForDisplay = null;
+    private String activeEndDateForDisplay = null;
 
-	private String isActive;
+    private String isActive;
 
-	public Method() {
-		super();
-	}
+    public Method() {
+        super();
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
-	}
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
-	public String getMethodName() {
-		return methodName;
-	}
+    public String getMethodName() {
+        return methodName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setReportingDescription(String reportingDescription) {
-		this.reportingDescription = reportingDescription;
-	}
+    public void setReportingDescription(String reportingDescription) {
+        this.reportingDescription = reportingDescription;
+    }
 
-	public String getReportingDescription() {
-		return reportingDescription;
-	}
+    public String getReportingDescription() {
+        return reportingDescription;
+    }
 
-	public void setActiveBeginDate(Date activeBeginDate) {
-		this.activeBeginDate = activeBeginDate;
-		this.activeBeginDateForDisplay = DateUtil.convertSqlDateToStringDate(activeBeginDate);
-	}
+    public void setActiveBeginDate(Date activeBeginDate) {
+        this.activeBeginDate = activeBeginDate;
+        this.activeBeginDateForDisplay = DateUtil.convertSqlDateToStringDate(activeBeginDate);
+    }
 
-	public Date getActiveBeginDate() {
-		return activeBeginDate;
-	}
+    public Date getActiveBeginDate() {
+        return activeBeginDate;
+    }
 
-	public void setActiveEndDate(Date activeEndDate) {
-		this.activeEndDate = activeEndDate;
-		this.activeEndDateForDisplay = DateUtil.convertSqlDateToStringDate(	activeEndDate);
-	}
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
+        this.activeEndDateForDisplay = DateUtil.convertSqlDateToStringDate(activeEndDate);
+    }
 
-	public Date getActiveEndDate() {
-		return activeEndDate;
-	}
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-	public String getIsActive() {
-		return isActive;
-	}
+    public String getIsActive() {
+        return isActive;
+    }
 
-	public void setActiveBeginDateForDisplay(String activeBeginDateForDisplay) {
-		this.activeBeginDateForDisplay = activeBeginDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.activeBeginDate = DateUtil.convertStringDateToSqlDate(
-				this.activeBeginDateForDisplay, locale);
-	}
+    public void setActiveBeginDateForDisplay(String activeBeginDateForDisplay) {
+        this.activeBeginDateForDisplay = activeBeginDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.activeBeginDate = DateUtil.convertStringDateToSqlDate(this.activeBeginDateForDisplay, locale);
+    }
 
-	public String getActiveBeginDateForDisplay() {
-		return activeBeginDateForDisplay;
-	}
+    public String getActiveBeginDateForDisplay() {
+        return activeBeginDateForDisplay;
+    }
 
-	public void setActiveEndDateForDisplay(String activeEndDateForDisplay) {
-		this.activeEndDateForDisplay = activeEndDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.activeEndDate = DateUtil.convertStringDateToSqlDate(
-				activeEndDateForDisplay, locale);
-	}
+    public void setActiveEndDateForDisplay(String activeEndDateForDisplay) {
+        this.activeEndDateForDisplay = activeEndDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.activeEndDate = DateUtil.convertStringDateToSqlDate(activeEndDateForDisplay, locale);
+    }
 
-	public String getActiveEndDateForDisplay() {
-		return activeEndDateForDisplay;
-	}
+    public String getActiveEndDateForDisplay() {
+        return activeEndDateForDisplay;
+    }
 
 }

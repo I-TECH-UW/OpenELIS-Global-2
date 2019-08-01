@@ -16,39 +16,39 @@ import org.openelisglobal.patienttype.form.PatientTypeForm;
 //seemingly unused controller
 @Controller
 public class UpdatePatientTypeController extends BaseController {
-	@RequestMapping(value = "/UpdatePatientType", method = RequestMethod.GET)
-	public ModelAndView showUpdatePatientType(HttpServletRequest request,
-			@ModelAttribute("form") PatientTypeForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientTypeForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/UpdatePatientType", method = RequestMethod.GET)
+    public ModelAndView showUpdatePatientType(HttpServletRequest request,
+            @ModelAttribute("form") PatientTypeForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new PatientTypeForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "/PatientType.do";
-		} else if (FWD_SUCCESS.equals(forward)) {
-			return "/PatientTypeMenu.do";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "patientTypeDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "/PatientType.do";
+        } else if (FWD_SUCCESS.equals(forward)) {
+            return "/PatientTypeMenu.do";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "patientTypeDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

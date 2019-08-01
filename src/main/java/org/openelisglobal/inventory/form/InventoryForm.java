@@ -13,66 +13,66 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 
 public class InventoryForm extends BaseForm {
 
-	public interface ManageInventory {
-	}
+    public interface ManageInventory {
+    }
 
-	@ValidDate(relative = DateRelation.TODAY)
-	private String currentDate = "";
+    @ValidDate(relative = DateRelation.TODAY)
+    private String currentDate = "";
 
-	@NotNull(groups = { ManageInventory.class })
-	@Valid
-	private List<InventoryKitItem> inventoryItems;
+    @NotNull(groups = { ManageInventory.class })
+    @Valid
+    private List<InventoryKitItem> inventoryItems;
 
-	// for display
-	private List<IdValuePair> sources;
+    // for display
+    private List<IdValuePair> sources;
 
-	// for display
-	private List<IdValuePair> kitTypes;
+    // for display
+    private List<IdValuePair> kitTypes;
 
-	// in display
-	private String newKitsXML = "";
+    // in display
+    private String newKitsXML = "";
 
-	public InventoryForm() {
-		setFormName("InventoryForm");
-	}
+    public InventoryForm() {
+        setFormName("InventoryForm");
+    }
 
-	public String getCurrentDate() {
-		return currentDate;
-	}
+    public String getCurrentDate() {
+        return currentDate;
+    }
 
-	public void setCurrentDate(String currentDate) {
-		this.currentDate = currentDate;
-	}
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
+    }
 
-	public List<InventoryKitItem> getInventoryItems() {
-		return inventoryItems;
-	}
+    public List<InventoryKitItem> getInventoryItems() {
+        return inventoryItems;
+    }
 
-	public void setInventoryItems(List<InventoryKitItem> inventoryItems) {
-		this.inventoryItems = inventoryItems;
-	}
+    public void setInventoryItems(List<InventoryKitItem> inventoryItems) {
+        this.inventoryItems = inventoryItems;
+    }
 
-	public List<IdValuePair> getSources() {
-		return sources;
-	}
+    public List<IdValuePair> getSources() {
+        return sources;
+    }
 
-	public void setSources(List<IdValuePair> sources) {
-		this.sources = sources;
-	}
+    public void setSources(List<IdValuePair> sources) {
+        this.sources = sources;
+    }
 
-	public List<IdValuePair> getKitTypes() {
-		return kitTypes;
-	}
+    public List<IdValuePair> getKitTypes() {
+        return kitTypes;
+    }
 
-	public void setKitTypes(List<IdValuePair> kitTypes) {
-		this.kitTypes = kitTypes;
-	}
+    public void setKitTypes(List<IdValuePair> kitTypes) {
+        this.kitTypes = kitTypes;
+    }
 
-	public String getNewKitsXML() {
-		return newKitsXML;
-	}
+    public String getNewKitsXML() {
+        return newKitsXML;
+    }
 
-	public void setNewKitsXML(String newKitsXML) {
-		this.newKitsXML = newKitsXML;
-	}
+    public void setNewKitsXML(String newKitsXML) {
+        this.newKitsXML = newKitsXML;
+    }
 }

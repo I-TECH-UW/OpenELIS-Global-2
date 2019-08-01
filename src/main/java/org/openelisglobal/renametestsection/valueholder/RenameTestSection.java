@@ -25,147 +25,138 @@ import org.openelisglobal.organization.valueholder.Organization;
 
 public class RenameTestSection extends EnumValueItemImpl {
 
-	private static final long serialVersionUID = -1574344492809195601L;
+    private static final long serialVersionUID = -1574344492809195601L;
 
-	private String id;
+    private String id;
 
-	private String isExternal;
+    private String isExternal;
 
-	private Timestamp lastupdated;
+    private Timestamp lastupdated;
 
-	private String testSectionName;
+    private String testSectionName;
 
-	private String description;
+    private String description;
 
-	private ValueHolderInterface organization;
-	
-	private String selectedOrganizationId;
-	
-	private int sortOrderInt;
+    private ValueHolderInterface organization;
 
-	private String selectedParentTestSectionId;
-	
-	private ValueHolderInterface parentTestSection;
+    private String selectedOrganizationId;
+
+    private int sortOrderInt;
+
+    private String selectedParentTestSectionId;
+
+    private ValueHolderInterface parentTestSection;
 
     private ValueHolderInterface localization;
-	
-	private String isActive;
-	
-	
-	public RenameTestSection() {
-		super();
-		this.organization = new ValueHolder();
-		this.parentTestSection = new ValueHolder();
+
+    private String isActive;
+
+    public RenameTestSection() {
+        super();
+        this.organization = new ValueHolder();
+        this.parentTestSection = new ValueHolder();
         this.localization = new ValueHolder();
-	}
+    }
 
-	public String getId() {
-		return this.id;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	public String getIsExternal() {
-		return this.isExternal;
-	}
+    public String getIsExternal() {
+        return this.isExternal;
+    }
 
+    public String getTestSectionName() {
+        return this.testSectionName;
+    }
 
+    public String getDescription() {
+        return this.description;
+    }
 
-	public String getTestSectionName() {
-		return this.testSectionName;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public void setIsExternal(String isExternal) {
+        this.isExternal = isExternal;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setTestSectionName(String testSectionName) {
+        this.testSectionName = testSectionName;
+    }
 
-	public void setIsExternal(String isExternal) {
-		this.isExternal = isExternal;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
+    public Organization getOrganization() {
+        return (Organization) this.organization.getValue();
+    }
 
-	public void setTestSectionName(String testSectionName) {
-		this.testSectionName = testSectionName;
-	}
+    public void setOrganization(Organization organization) {
+        this.organization.setValue(organization);
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setSelectedOrganizationId(String selectedOrganizationId) {
+        this.selectedOrganizationId = selectedOrganizationId;
+    }
 
-	public Organization getOrganization() {
-		return (Organization) this.organization.getValue();
-	}
+    public String getSelectedOrganizationId() {
+        return this.selectedOrganizationId;
+    }
 
+    public void setLastupdated(Timestamp lastupdated) {
+        this.lastupdated = lastupdated;
+    }
 
-	public void setOrganization(Organization organization) {
-		this.organization.setValue(organization);
-	}
+    public Timestamp getLastupdated() {
+        return this.lastupdated;
+    }
 
-	public void setSelectedOrganizationId(String selectedOrganizationId) {
-		this.selectedOrganizationId = selectedOrganizationId;
-	}
+    public RenameTestSection getParentTestSection() {
+        return (RenameTestSection) this.parentTestSection.getValue();
+    }
 
-	public String getSelectedOrganizationId() {
-		return this.selectedOrganizationId;
-	}
-	
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-	
-	public Timestamp getLastupdated() {
-		return this.lastupdated;
-	}
-	
-	public RenameTestSection getParentTestSection() {
-	    return (RenameTestSection) this.parentTestSection.getValue();
-	}
-    
-	public void setParentTestSection(RenameTestSection parentTestSection) {
-		this.parentTestSection.setValue(parentTestSection);
-	}
-	
-	public void setSelectedParentTestSectionId (String selectedParentTestSectionId) {
-		this.selectedParentTestSectionId = selectedParentTestSectionId;
-	}
+    public void setParentTestSection(RenameTestSection parentTestSection) {
+        this.parentTestSection.setValue(parentTestSection);
+    }
 
-	public String getSelectedParentTestSectionId () {
-		return this.selectedParentTestSectionId;
-	}
+    public void setSelectedParentTestSectionId(String selectedParentTestSectionId) {
+        this.selectedParentTestSectionId = selectedParentTestSectionId;
+    }
 
+    public String getSelectedParentTestSectionId() {
+        return this.selectedParentTestSectionId;
+    }
 
 //	@Override
 //	protected String getDefaultLocalizedName() {
 //		return TestSectionServiceImpl.getUserLocalizedTesSectionName(this);
 //	}
 
+    public int getSortOrderInt() {
+        return sortOrderInt;
+    }
 
-	public int getSortOrderInt() {
-		return sortOrderInt;
-	}
+    public void setSortOrderInt(int sortOrderInt) {
+        this.sortOrderInt = sortOrderInt;
+    }
 
-	public void setSortOrderInt(int sortOrderInt) {
-		this.sortOrderInt = sortOrderInt;
-	}
+    public String getIsActive() {
+        return isActive;
+    }
 
-	public String getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
     public Localization getLocalization() {
-        return (Localization)localization.getValue();
+        return (Localization) localization.getValue();
     }
 
     public void setLocalization(Localization localization) {
-        this.localization.setValue( localization );
+        this.localization.setValue(localization);
     }
-
-
 
 }

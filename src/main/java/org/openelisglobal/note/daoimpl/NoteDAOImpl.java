@@ -26,7 +26,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -40,9 +40,9 @@ import org.openelisglobal.note.valueholder.Note;
 @Transactional
 public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
-	public NoteDAOImpl() {
-		super(Note.class);
-	}
+    public NoteDAOImpl() {
+        super(Note.class);
+    }
 
 //	@Override
 //	public void deleteData(List notes) throws LIMSRuntimeException {
@@ -122,19 +122,19 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Note getData(String noteId) throws LIMSRuntimeException {
-		try {
-			Note note = entityManager.unwrap(Session.class).get(Note.class, noteId);
-			// closeSession(); // CSL remove old
-			return note;
-		} catch (Exception e) {
-			handleException(e, "getData");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Note getData(String noteId) throws LIMSRuntimeException {
+        try {
+            Note note = entityManager.unwrap(Session.class).get(Note.class, noteId);
+            // closeSession(); // CSL remove old
+            return note;
+        } catch (Exception e) {
+            handleException(e, "getData");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public List getPageOfNotes(int startingRecNo) throws LIMSRuntimeException {
@@ -189,27 +189,27 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //		return null;// getPreviousRecord(id, "Note", Note.class);
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
-		try {
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
+        try {
 
-			String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("refId", Integer.parseInt(note.getReferenceId()));
+            String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("refId", Integer.parseInt(note.getReferenceId()));
 
-			query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
+            query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
-			List list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			return list;
+            List list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            return list;
 
-		} catch (Exception e) {
-			LogEvent.logError("NoteDAOImpl", "getAllNotesByRefIdRefTable()", e.toString());
-			throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("NoteDAOImpl", "getAllNotesByRefIdRefTable()", e.toString());
+            throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
+        }
+    }
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -295,37 +295,37 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //		return list;
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean duplicateNoteExists(Note note) {
-		try {
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean duplicateNoteExists(Note note) {
+        try {
 
-			List<Note> list;
+            List<Note> list;
 
-			String sql = "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and trim(lower(t.subject)) = :param5 and t.id != :noteId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
-			query.setInteger("referenceId", Integer.parseInt(note.getReferenceId()));
+            String sql = "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and trim(lower(t.subject)) = :param5 and t.id != :noteId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
+            query.setInteger("referenceId", Integer.parseInt(note.getReferenceId()));
 
-			query.setInteger("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
-			query.setParameter("param4", note.getText().toLowerCase().trim());
-			query.setParameter("param5", note.getSubject().toLowerCase().trim());
+            query.setInteger("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
+            query.setParameter("param4", note.getText().toLowerCase().trim());
+            query.setParameter("param5", note.getSubject().toLowerCase().trim());
 
-			int noteId = !StringUtil.isNullorNill(note.getId()) ? Integer.parseInt(note.getId()) : 0;
+            int noteId = !StringUtil.isNullorNill(note.getId()) ? Integer.parseInt(note.getId()) : 0;
 
-			query.setInteger("noteId", noteId);
+            query.setInteger("noteId", noteId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0;
+            return list.size() > 0;
 
-		} catch (Exception e) {
-			LogEvent.logError("NoteDAOImpl", "duplicateNoteExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("NoteDAOImpl", "duplicateNoteExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
+        }
+    }
 
 //	@SuppressWarnings("unchecked")
 //	@Override
@@ -372,51 +372,51 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //		return null;
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
-			List<String> filter) throws LIMSRuntimeException {
-		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType in ( :filter ) order by n.lastupdated asc";
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
+            List<String> filter) throws LIMSRuntimeException {
+        String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType in ( :filter ) order by n.lastupdated asc";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("refId", Integer.parseInt(objectId));
-			query.setInteger("tableId", Integer.parseInt(tableId));
-			query.setParameterList("filter", filter);
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("refId", Integer.parseInt(objectId));
+            query.setInteger("tableId", Integer.parseInt(tableId));
+            query.setParameterList("filter", filter);
 
-			List<Note> noteList = query.list();
+            List<Note> noteList = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return noteList;
-		} catch (HibernateException e) {
-			handleException(e, "getNotesChronologicallyByRefIdAndRefTable");
-		}
-		return null;
-	}
+            return noteList;
+        } catch (HibernateException e) {
+            handleException(e, "getNotesChronologicallyByRefIdAndRefTable");
+        }
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
-			throws LIMSRuntimeException {
-		String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and n.lastupdated between :lowDate and :highDate";
+    @Override
+    @Transactional(readOnly = true)
+    public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
+            throws LIMSRuntimeException {
+        String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and n.lastupdated between :lowDate and :highDate";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("type", noteType);
-			query.setInteger("referenceTableId", Integer.parseInt(referenceTableId));
-			query.setDate("lowDate", lowDate);
-			query.setDate("highDate", highDate);
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("type", noteType);
+            query.setInteger("referenceTableId", Integer.parseInt(referenceTableId));
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
 
-			List<Note> noteList = query.list();
+            List<Note> noteList = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return noteList;
-		} catch (HibernateException e) {
-			handleException(e, "getNotesInDateRangeAndType");
-		}
-		return null;
-	}
+            return noteList;
+        } catch (HibernateException e) {
+            handleException(e, "getNotesInDateRangeAndType");
+        }
+        return null;
+    }
 }

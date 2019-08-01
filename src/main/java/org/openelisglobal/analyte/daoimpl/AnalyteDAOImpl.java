@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.openelisglobal.analyte.dao.AnalyteDAO;
 import org.openelisglobal.analyte.valueholder.Analyte;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -38,14 +38,14 @@ import org.openelisglobal.common.util.StringUtil;
 @Transactional
 public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements AnalyteDAO {
 
-	public AnalyteDAOImpl() {
-		super(Analyte.class);
-	}
+    public AnalyteDAOImpl() {
+        super(Analyte.class);
+    }
 
-	@Override
-	public void delete(Analyte analyte) {
-		System.out.println("selete dao");
-	}
+    @Override
+    public void delete(Analyte analyte) {
+        System.out.println("selete dao");
+    }
 
 //	@Override
 //	public void deleteData(List analytes) throws LIMSRuntimeException {
@@ -226,7 +226,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return list;
 //	}
 
-	// bugzilla 2370
+    // bugzilla 2370
 //	@Override
 //	public List getPagesOfSearchedAnalytes(int startingRecNo, String searchString) throws LIMSRuntimeException {
 //		List list = new Vector();
@@ -261,7 +261,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //
 //		return list;
 //	}
-	// end bugzilla 2370
+    // end bugzilla 2370
 
 //	public Analyte readAnalyte(String idString) {
 //		Analyte analyte = null;
@@ -278,7 +278,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return analyte;
 //	}
 
-	// this is for autocomplete
+    // this is for autocomplete
 //	@Override
 //	public List getAnalytes(String filter) throws LIMSRuntimeException {
 //		List list = new Vector();
@@ -311,52 +311,52 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return getPreviousRecord(id, "Analyte", Analyte.class);
 //	}
 
-	// bugzilla 1367 added ignoreCase
-	@Override
-	@Transactional(readOnly = true)
-	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException {
-		try {
+    // bugzilla 1367 added ignoreCase
+    @Override
+    @Transactional(readOnly = true)
+    public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException {
+        try {
 
-			String sql = null;
-			if (ignoreCase) {
-				sql = "from Analyte a where trim(lower(a.analyteName)) = :param and a.isActive='Y'";
+            String sql = null;
+            if (ignoreCase) {
+                sql = "from Analyte a where trim(lower(a.analyteName)) = :param and a.isActive='Y'";
 
-			} else {
-				sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
-			}
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            } else {
+                sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
+            }
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			if (ignoreCase) {
-				query.setString("param", analyte.getAnalyteName().trim().toLowerCase());
-			} else {
-				query.setString("param", analyte.getAnalyteName());
-			}
+            if (ignoreCase) {
+                query.setString("param", analyte.getAnalyteName().trim().toLowerCase());
+            } else {
+                query.setString("param", analyte.getAnalyteName());
+            }
 
-			List list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            List list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			Analyte ana = null;
-			if (list.size() > 0) {
-				ana = (Analyte) list.get(0);
-			}
+            Analyte ana = null;
+            if (list.size() > 0) {
+                ana = (Analyte) list.get(0);
+            }
 
-			return ana;
+            return ana;
 
-		} catch (Exception e) {
-			// buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl", "getAnalyteByName()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
-		}
-	}
+        } catch (Exception e) {
+            // buzilla 2154
+            LogEvent.logError("AnalyteDAOImpl", "getAnalyteByName()", e.toString());
+            throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
+        }
+    }
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	@Override
 //	public Integer getTotalAnalyteCount() throws LIMSRuntimeException {
 //		return getTotalCount("Analyte", Analyte.class);
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -378,7 +378,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return list;
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -399,49 +399,49 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return list;
 //	}
 
-	// bugzilla 1482
-	@Override
-	public boolean duplicateAnalyteExists(Analyte analyte) {
-		try {
+    // bugzilla 1482
+    @Override
+    public boolean duplicateAnalyteExists(Analyte analyte) {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
 
-			// bugzilla 2432 add check for local abbreviation
-			String sql = "";
-			if (analyte.getLocalAbbreviation() != null) {
-				sql = "from Analyte a where (trim(lower(a.analyteName)) = :name and a.id != :id)"
-						+ " or (trim(lower(a.localAbbreviation)) = :abbreviation and a.id != :id)";
-			} else {
-				sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
-			}
+            // bugzilla 2432 add check for local abbreviation
+            String sql = "";
+            if (analyte.getLocalAbbreviation() != null) {
+                sql = "from Analyte a where (trim(lower(a.analyteName)) = :name and a.id != :id)"
+                        + " or (trim(lower(a.localAbbreviation)) = :abbreviation and a.id != :id)";
+            } else {
+                sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
+            }
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", analyte.getAnalyteName().toLowerCase().trim());
-			// bugzilla 2432
-			if (analyte.getLocalAbbreviation() != null) {
-				query.setString("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
-			}
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", analyte.getAnalyteName().toLowerCase().trim());
+            // bugzilla 2432
+            if (analyte.getLocalAbbreviation() != null) {
+                query.setString("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
+            }
 
-			String analyteId = !StringUtil.isNullorNill(analyte.getId()) ? analyte.getId() : "0";
+            String analyteId = !StringUtil.isNullorNill(analyte.getId()) ? analyte.getId() : "0";
 
-			query.setInteger("id", Integer.parseInt(analyteId));
+            query.setInteger("id", Integer.parseInt(analyteId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0;
-		} catch (Exception e) {
-			// buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl", "duplicateAnalyteExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
-		}
-	}
+            return list.size() > 0;
+        } catch (Exception e) {
+            // buzilla 2154
+            LogEvent.logError("AnalyteDAOImpl", "duplicateAnalyteExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
+        }
+    }
 
-	// bugzilla 2370 get total searched results
+    // bugzilla 2370 get total searched results
 //	@Override
 //	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException {
 //
@@ -483,6 +483,6 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //		return count;
 //
 //	}
-	// end bugzilla 2370
+    // end bugzilla 2370
 
 }

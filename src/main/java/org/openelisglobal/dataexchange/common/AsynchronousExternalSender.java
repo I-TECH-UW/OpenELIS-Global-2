@@ -18,28 +18,29 @@ package org.openelisglobal.dataexchange.common;
 
 public class AsynchronousExternalSender implements Runnable {
 
-	private IExternalSender sender;
-	private ITransmissionResponseHandler responseHandler;
-	private String msg;
-	
-	public AsynchronousExternalSender( IExternalSender sender, ITransmissionResponseHandler responseHandler, String msg){
-		this.sender = sender;
-		this.responseHandler = responseHandler;
-		this.msg = msg;
-	}
-	
-	public void sendMessage(){
-		Thread thread = new Thread(this);
-		thread.start();
-	}
-		
-	@Override
-	public void run() {
-		sender.sendMessage();
+    private IExternalSender sender;
+    private ITransmissionResponseHandler responseHandler;
+    private String msg;
 
-		if( responseHandler != null){
-			responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), msg);
-		}
-	}
+    public AsynchronousExternalSender(IExternalSender sender, ITransmissionResponseHandler responseHandler,
+            String msg) {
+        this.sender = sender;
+        this.responseHandler = responseHandler;
+        this.msg = msg;
+    }
+
+    public void sendMessage() {
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+
+    @Override
+    public void run() {
+        sender.sendMessage();
+
+        if (responseHandler != null) {
+            responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), msg);
+        }
+    }
 
 }

@@ -15,7 +15,6 @@
 */
 package org.openelisglobal.common.exception;
 
-
 /**
  * 
  * Base exception used by the LIMS. Unless special handling can be done with an
@@ -26,7 +25,7 @@ package org.openelisglobal.common.exception;
  */
 //bugzilla 1900
 public class LIMSResultsReportHasNoDataException extends LIMSException {
-	public LIMSResultsReportHasNoDataException(String message) {
-		super(message);
-	}
+    public LIMSResultsReportHasNoDataException(String message) {
+        super(message);
+    }
 }

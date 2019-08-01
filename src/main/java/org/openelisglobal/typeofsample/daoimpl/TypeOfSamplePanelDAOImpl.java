@@ -27,7 +27,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.typeofsample.dao.TypeOfSamplePanelDAO;
@@ -38,9 +38,9 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 @Transactional
 public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, String> implements TypeOfSamplePanelDAO {
 
-	public TypeOfSamplePanelDAOImpl() {
-		super(TypeOfSamplePanel.class);
-	}
+    public TypeOfSamplePanelDAOImpl() {
+        super(TypeOfSamplePanel.class);
+    }
 
 //	@Override
 //	public void deleteData(String[] typeOfSamplesPanelIDs, String currentUserId) throws LIMSRuntimeException {
@@ -82,215 +82,215 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 //		return true;
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
-		try {
-			TypeOfSamplePanel tos = entityManager.unwrap(Session.class).get(TypeOfSamplePanel.class,
-					typeOfSamplePanel.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (tos != null) {
-				PropertyUtils.copyProperties(typeOfSamplePanel, tos);
-			} else {
-				typeOfSamplePanel.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanel getData()", e);
-		}
-	}
+        try {
+            TypeOfSamplePanel tos = entityManager.unwrap(Session.class).get(TypeOfSamplePanel.class,
+                    typeOfSamplePanel.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (tos != null) {
+                PropertyUtils.copyProperties(typeOfSamplePanel, tos);
+            } else {
+                typeOfSamplePanel.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in TypeOfSamplePanel getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
-		List list = new Vector();
-		try {
-			String sql = "from TypeOfSamplePanel";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getAllTypeOfSamples()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanel getAllTypeOfSamplePanels()", e);
-		}
+        List list = new Vector();
+        try {
+            String sql = "from TypeOfSamplePanel";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // query.setMaxResults(10);
+            // query.setFirstResult(3);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getAllTypeOfSamples()", e.toString());
+            throw new LIMSRuntimeException("Error in TypeOfSamplePanel getAllTypeOfSamplePanels()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
-			String sql = "from TypeOfSamplePanel t order by t.typeOfSampleId, t.panelId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getPageOfTypeOfSamplePanels()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanel getPageOfTypeOfSamples()", e);
-		}
+            String sql = "from TypeOfSamplePanel t order by t.typeOfSampleId, t.panelId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getPageOfTypeOfSamplePanels()", e.toString());
+            throw new LIMSRuntimeException("Error in TypeOfSamplePanel getPageOfTypeOfSamples()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public TypeOfSamplePanel readTypeOfSamplePanel(String idString) {
-		TypeOfSamplePanel tos = null;
-		try {
-			tos = entityManager.unwrap(Session.class).get(TypeOfSamplePanel.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "readTypeOfSample()", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanel readTypeOfSample()", e);
-		}
+    public TypeOfSamplePanel readTypeOfSamplePanel(String idString) {
+        TypeOfSamplePanel tos = null;
+        try {
+            tos = entityManager.unwrap(Session.class).get(TypeOfSamplePanel.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TypeOfSamplePanelDAOImpl", "readTypeOfSample()", e.toString());
+            throw new LIMSRuntimeException("Error in TypeOfSamplePanel readTypeOfSample()", e);
+        }
 
-		return tos;
-	}
+        return tos;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "TypeOfSamplePanel", TypeOfSamplePanel.class);
-	}
+        return getNextRecord(id, "TypeOfSamplePanel", TypeOfSamplePanel.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "TypeOfSamplePanel", TypeOfSampleTest.class);
-	}
+        return getPreviousRecord(id, "TypeOfSamplePanel", TypeOfSampleTest.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
-		return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
+        return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of
-			// oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of
-			// record with id = currentId
-			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain, tos.description";
+        List list = new Vector();
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of
+            // oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of
+            // record with id = currentId
+            String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain, tos.description";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+                    .setMaxResults(2).list();
 
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfSampleDAOImpl", "getNextRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
+        List list = new Vector();
 
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of
-			// oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of
-			// record with id = currentId
-			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of
+            // oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of
+            // record with id = currentId
+            String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
+                    .setFirstResult(rrn + 1).setMaxResults(2).list();
 
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfSampleDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
-		List<TypeOfSamplePanel> list;
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
+        List<TypeOfSamplePanel> list;
 
-		String sql = "from TypeOfSamplePanel tp where tp.typeOfSampleId = :sampleId order by tp.panelId";
+        String sql = "from TypeOfSamplePanel tp where tp.typeOfSampleId = :sampleId order by tp.panelId";
 
-		try {
-			if (sampleType.equals("null")) {
-				// so parseInt doesn't throw
-				sampleType = "0";
-			}
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("sampleId", Integer.parseInt(sampleType));
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
-			throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
-		}
+        try {
+            if (sampleType.equals("null")) {
+                // so parseInt doesn't throw
+                sampleType = "0";
+            }
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("sampleId", Integer.parseInt(sampleType));
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
+            throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
-		String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
+        String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("panelId", Integer.parseInt(panelId));
-			List<TypeOfSamplePanel> typeOfSamplePanels = query.list();
-			// closeSession(); // CSL remove old
-			return typeOfSamplePanels;
-		} catch (HibernateException e) {
-			handleException(e, "getTypeOfSamplePanelsForPanel");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("panelId", Integer.parseInt(panelId));
+            List<TypeOfSamplePanel> typeOfSamplePanels = query.list();
+            // closeSession(); // CSL remove old
+            return typeOfSamplePanels;
+        } catch (HibernateException e) {
+            handleException(e, "getTypeOfSamplePanelsForPanel");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

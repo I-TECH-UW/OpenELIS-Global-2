@@ -20,138 +20,138 @@ import java.io.Serializable;
 //VIEW TEST_ANALYTE_TEST_RESULT is mapped to this valueholder
 
 public class TestAnalyteTestResult implements Serializable {
-	
-	private TestAnalyteTestResult id;
-	
-	private String testAnalyteTestResultId;
 
-	private String analyteName;
+    private TestAnalyteTestResult id;
 
-	private String externalId;
+    private String testAnalyteTestResultId;
 
-	private String testId;
+    private String analyteName;
 
-	private String testAnalyteId;
+    private String externalId;
 
-	private String testResultId;
+    private String testId;
 
-	private String resultGroup;
+    private String testAnalyteId;
 
-	private String resultValue;
+    private String testResultId;
 
-	private String resultType;
+    private String resultGroup;
 
-	private String testAnalyteType;
+    private String resultValue;
 
-	private String sortOrder;
+    private String resultType;
 
-	private String isActive;
+    private String testAnalyteType;
 
-	public TestAnalyteTestResult() {
-		super();
-	}
+    private String sortOrder;
 
-	public void setId(TestAnalyteTestResult id) {
-		this.id = id;
-	}
-	
-	public TestAnalyteTestResult getId() {
-		return this.id;
-	}
-	
-	public String getAnalyteName() {
-		return this.analyteName;
-	}
+    private String isActive;
 
-	public String getExternalId() {
-		return this.externalId;
-	}
+    public TestAnalyteTestResult() {
+        super();
+    }
 
-	public String getIsActive() {
-		return this.isActive;
-	}
+    public void setId(TestAnalyteTestResult id) {
+        this.id = id;
+    }
 
-	public String getResultGroup() {
-		return this.resultGroup;
-	}
+    public TestAnalyteTestResult getId() {
+        return this.id;
+    }
 
-	public String getResultType() {
-		return this.resultType;
-	}
+    public String getAnalyteName() {
+        return this.analyteName;
+    }
 
-	public String getResultValue() {
-		return this.resultValue;
-	}
+    public String getExternalId() {
+        return this.externalId;
+    }
 
-	public String getSortOrder() {
-		return this.sortOrder;
-	}
+    public String getIsActive() {
+        return this.isActive;
+    }
 
-	public String getTestAnalyteId() {
-		return this.testAnalyteId;
-	}
+    public String getResultGroup() {
+        return this.resultGroup;
+    }
 
-	public String getTestAnalyteType() {
-		return this.testAnalyteType;
-	}
+    public String getResultType() {
+        return this.resultType;
+    }
 
-	public String getTestId() {
-		return this.testId;
-	}
+    public String getResultValue() {
+        return this.resultValue;
+    }
 
-	public String getTestResultId() {
-		return this.testResultId;
-	}
+    public String getSortOrder() {
+        return this.sortOrder;
+    }
 
-	public void setAnalyteName(String analyteName) {
-		this.analyteName = analyteName;
-	}
+    public String getTestAnalyteId() {
+        return this.testAnalyteId;
+    }
 
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
+    public String getTestAnalyteType() {
+        return this.testAnalyteType;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public String getTestId() {
+        return this.testId;
+    }
 
-	public void setResultGroup(String resultGroup) {
-		this.resultGroup = resultGroup;
-	}
+    public String getTestResultId() {
+        return this.testResultId;
+    }
 
-	public void setResultType(String resultType) {
-		this.resultType = resultType;
-	}
+    public void setAnalyteName(String analyteName) {
+        this.analyteName = analyteName;
+    }
 
-	public void setResultValue(String resultValue) {
-		this.resultValue = resultValue;
-	}
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-	public void setSortOrder(String sortOrder) {
-		this.sortOrder = sortOrder;
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setTestAnalyteId(String testAnalyteId) {
-		this.testAnalyteId = testAnalyteId;
-	}
+    public void setResultGroup(String resultGroup) {
+        this.resultGroup = resultGroup;
+    }
 
-	public void setTestAnalyteType(String testAnalyteType) {
-		this.testAnalyteType = testAnalyteType;
-	}
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
 
-	public void setTestId(String testId) {
-		this.testId = testId;
-	}
+    public void setResultValue(String resultValue) {
+        this.resultValue = resultValue;
+    }
 
-	public void setTestResultId(String testResultId) {
-		this.testResultId = testResultId;
-	}
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-	public String getTestAnalyteTestResultId() {
-		return testAnalyteTestResultId;
-	}
+    public void setTestAnalyteId(String testAnalyteId) {
+        this.testAnalyteId = testAnalyteId;
+    }
 
-	public void setTestAnalyteTestResultId(String testAnalyteTestResultId) {
-		this.testAnalyteTestResultId = testAnalyteTestResultId;
-	}
+    public void setTestAnalyteType(String testAnalyteType) {
+        this.testAnalyteType = testAnalyteType;
+    }
+
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
+
+    public void setTestResultId(String testResultId) {
+        this.testResultId = testResultId;
+    }
+
+    public String getTestAnalyteTestResultId() {
+        return testAnalyteTestResultId;
+    }
+
+    public void setTestAnalyteTestResultId(String testAnalyteTestResultId) {
+        this.testAnalyteTestResultId = testAnalyteTestResultId;
+    }
 }

@@ -31,59 +31,59 @@ import org.openelisglobal.login.dao.UserModuleService;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
-	@Override
-	public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// check for authentication
-		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-		if (userModuleService.isSessionExpired(request)) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-			return new AjaxXmlBuilderForSortableTests().toString();
-		}
+    @Override
+    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // check for authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        if (userModuleService.isSessionExpired(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return new AjaxXmlBuilderForSortableTests().toString();
+        }
 
-		String selectDropDownProvider = request.getParameter("provider");
-		String selectDropDownFieldName = request.getParameter("fieldName");
-		String selectDropDownId = request.getParameter("idName");
+        String selectDropDownProvider = request.getParameter("provider");
+        String selectDropDownFieldName = request.getParameter("fieldName");
+        String selectDropDownId = request.getParameter("idName");
 
-		// bugzilla 1844 adding sorting ability
-		boolean sortable = false;
-		String selectDropDownSortFieldA = null;
-		String selectDropDownSortFieldB = null;
-		String selectDropDownAlternateLabel = null;
-		// this is sortable test target
-		if (request.getParameter("sortFieldA") != null && request.getParameter("sortFieldB") != null
-				&& request.getParameter("alternateLabel") != null) {
-			selectDropDownSortFieldA = request.getParameter("sortFieldA");
-			selectDropDownSortFieldB = request.getParameter("sortFieldB");
-			selectDropDownAlternateLabel = request.getParameter("alternateLabel");
-			sortable = true;
+        // bugzilla 1844 adding sorting ability
+        boolean sortable = false;
+        String selectDropDownSortFieldA = null;
+        String selectDropDownSortFieldB = null;
+        String selectDropDownAlternateLabel = null;
+        // this is sortable test target
+        if (request.getParameter("sortFieldA") != null && request.getParameter("sortFieldB") != null
+                && request.getParameter("alternateLabel") != null) {
+            selectDropDownSortFieldA = request.getParameter("sortFieldA");
+            selectDropDownSortFieldB = request.getParameter("sortFieldB");
+            selectDropDownAlternateLabel = request.getParameter("alternateLabel");
+            sortable = true;
 
-		}
+        }
 
-		BaseSelectDropDownProvider provider = SelectDropDownProviderFactory.getInstance()
-				.getSelectDropDownProvider(selectDropDownProvider);
+        BaseSelectDropDownProvider provider = SelectDropDownProviderFactory.getInstance()
+                .getSelectDropDownProvider(selectDropDownProvider);
 
-		provider.setServlet(this);
-		List list = provider.processRequest(request, response);
+        provider.setServlet(this);
+        List list = provider.processRequest(request, response);
 
-		// bugzilla 1844 adding toggle sort and toggle label values
-		if (sortable) {
-			AjaxXmlBuilderForSortableTests axb = new AjaxXmlBuilderForSortableTests();
-			// add blank option!!
-			axb.addItemAsCData("", "", "", "", "");
-			axb.addItems(list, selectDropDownFieldName, selectDropDownId, selectDropDownSortFieldA,
-					selectDropDownSortFieldB, selectDropDownAlternateLabel);
-			return axb.toString();
+        // bugzilla 1844 adding toggle sort and toggle label values
+        if (sortable) {
+            AjaxXmlBuilderForSortableTests axb = new AjaxXmlBuilderForSortableTests();
+            // add blank option!!
+            axb.addItemAsCData("", "", "", "", "");
+            axb.addItems(list, selectDropDownFieldName, selectDropDownId, selectDropDownSortFieldA,
+                    selectDropDownSortFieldB, selectDropDownAlternateLabel);
+            return axb.toString();
 
-		} else {
-			AjaxXmlBuilder axb = new AjaxXmlBuilder();
-			// add blank option!!
-			axb.addItemAsCData("", "");
-			axb.addItems(list, selectDropDownFieldName, selectDropDownId);
-			return axb.toString();
-		}
+        } else {
+            AjaxXmlBuilder axb = new AjaxXmlBuilder();
+            // add blank option!!
+            axb.addItemAsCData("", "");
+            axb.addItems(list, selectDropDownFieldName, selectDropDownId);
+            return axb.toString();
+        }
 
-	}
+    }
 
 }

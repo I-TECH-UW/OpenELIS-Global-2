@@ -16,36 +16,36 @@ import org.openelisglobal.plugin.PluginLoader;
 
 @Controller
 public class ListPluginsController extends BaseController {
-	@RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
-	public ModelAndView showListPlugins(HttpServletRequest request) {
-		ListPluginForm form = new ListPluginForm();
+    @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
+    public ModelAndView showListPlugins(HttpServletRequest request) {
+        ListPluginForm form = new ListPluginForm();
 
-		List<String> pluginNames = PluginLoader.getCurrentPlugins();
+        List<String> pluginNames = PluginLoader.getCurrentPlugins();
 
-		if (pluginNames.isEmpty()) {
-			pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
-		}
-		form.setPluginList(pluginNames);
+        if (pluginNames.isEmpty()) {
+            pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
+        }
+        form.setPluginList(pluginNames);
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "ListPluginsPageDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "ListPluginsPageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return "plugin.installed.plugins";
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return "plugin.installed.plugins";
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return "plugin.installed.plugins";
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return "plugin.installed.plugins";
+    }
 }

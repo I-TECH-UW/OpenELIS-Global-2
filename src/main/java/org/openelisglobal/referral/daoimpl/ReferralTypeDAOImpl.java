@@ -22,7 +22,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralTypeDAO;
 import org.openelisglobal.referral.valueholder.ReferralType;
@@ -30,29 +30,29 @@ import org.openelisglobal.referral.valueholder.ReferralType;
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> implements ReferralTypeDAO {
 
-	public ReferralTypeDAOImpl() {
-		super(ReferralType.class);
-	}
+    public ReferralTypeDAOImpl() {
+        super(ReferralType.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
-		String sql = "From ReferralType rt where rt.name = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "From ReferralType rt where rt.name = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("name", name);
-			ReferralType referralType = (ReferralType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return referralType;
-		} catch (HibernateException e) {
-			handleException(e, "getReferralTypeByName");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("name", name);
+            ReferralType referralType = (ReferralType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return referralType;
+        } catch (HibernateException e) {
+            handleException(e, "getReferralTypeByName");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

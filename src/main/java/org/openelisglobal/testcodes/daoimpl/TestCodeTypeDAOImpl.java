@@ -22,51 +22,51 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.testcodes.dao.TestCodeTypeDAO;
 import org.openelisglobal.testcodes.valueholder.TestCodeType;
 
 @Component
-@Transactional 
+@Transactional
 public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> implements TestCodeTypeDAO {
 
-	public TestCodeTypeDAOImpl() {
-		super(TestCodeType.class);
-	}
+    public TestCodeTypeDAOImpl() {
+        super(TestCodeType.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
-		String sql = "from TestCodeType et where et.schemaName = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "from TestCodeType et where et.schemaName = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", name);
-			TestCodeType et = (TestCodeType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return et;
-		} catch (HibernateException e) {
-			handleException(e, "getTestCodeTypeByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", name);
+            TestCodeType et = (TestCodeType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return et;
+        } catch (HibernateException e) {
+            handleException(e, "getTestCodeTypeByName");
+        }
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
-		String sql = "from TestCodeType et where et.id = :id";
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
+        String sql = "from TestCodeType et where et.id = :id";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("id", id);
-			TestCodeType et = (TestCodeType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return et;
-		} catch (HibernateException e) {
-			handleException(e, "getTestCodeTypeByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("id", id);
+            TestCodeType et = (TestCodeType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return et;
+        } catch (HibernateException e) {
+            handleException(e, "getTestCodeTypeByName");
+        }
+        return null;
+    }
 
 }

@@ -10,22 +10,22 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueu
 
 @Service
 public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType, String>
-		implements ReportQueueTypeService {
-	@Autowired
-	protected ReportQueueTypeDAO baseObjectDAO;
+        implements ReportQueueTypeService {
+    @Autowired
+    protected ReportQueueTypeDAO baseObjectDAO;
 
-	ReportQueueTypeServiceImpl() {
-		super(ReportQueueType.class);
-	}
+    ReportQueueTypeServiceImpl() {
+        super(ReportQueueType.class);
+    }
 
-	@Override
-	protected ReportQueueTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected ReportQueueTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ReportQueueType getReportQueueTypeByName(String name) {
-		return getBaseObjectDAO().getReportQueueTypeByName(name);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public ReportQueueType getReportQueueTypeByName(String name) {
+        return getBaseObjectDAO().getReportQueueTypeByName(name);
+    }
 }

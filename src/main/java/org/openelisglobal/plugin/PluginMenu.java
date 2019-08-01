@@ -19,21 +19,18 @@ package org.openelisglobal.plugin;
 import org.openelisglobal.menu.valueholder.Menu;
 
 public class PluginMenu extends Menu {
-	
-	private static final long serialVersionUID = -2874772316504828792L;
-	private Menu parentMenu;
-	
-	@Override
-	public Menu getParent() {
-		return parentMenu;
-	}
 
-	@Override
-	public void setParent(Menu parentMenu) {
-		this.parentMenu = parentMenu;
-	}
+    private static final long serialVersionUID = -2874772316504828792L;
+    private Menu parentMenu;
 
-	
-	
-	
+    @Override
+    public Menu getParent() {
+        return parentMenu;
+    }
+
+    @Override
+    public void setParent(Menu parentMenu) {
+        this.parentMenu = parentMenu;
+    }
+
 }

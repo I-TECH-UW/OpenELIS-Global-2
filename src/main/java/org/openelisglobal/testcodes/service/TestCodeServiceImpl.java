@@ -12,16 +12,16 @@ import org.openelisglobal.testcodes.valueholder.TestSchemaPK;
 
 @Service
 public class TestCodeServiceImpl extends BaseObjectServiceImpl<TestCode, TestSchemaPK> implements TestCodeService {
-	@Autowired
-	protected TestCodeDAO baseObjectDAO;
+    @Autowired
+    protected TestCodeDAO baseObjectDAO;
 
-	TestCodeServiceImpl() {
-		super(TestCode.class);
-		defaultSortOrder = new ArrayList<>();
-	}
+    TestCodeServiceImpl() {
+        super(TestCode.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-	@Override
-	protected TestCodeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected TestCodeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

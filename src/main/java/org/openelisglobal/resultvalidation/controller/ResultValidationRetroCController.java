@@ -25,84 +25,84 @@ import org.openelisglobal.resultvalidation.util.ResultsValidationRetroCIUtility;
 @Controller
 public class ResultValidationRetroCController extends BaseResultValidationRetroCIController {
 
-	private ResultsValidationRetroCIUtility resultsValidationUtility;
+    private ResultsValidationRetroCIUtility resultsValidationUtility;
 
-	public ResultValidationRetroCController(ResultsValidationRetroCIUtility resultsValidationUtility) {
-		this.resultsValidationUtility = resultsValidationUtility;
-	}
+    public ResultValidationRetroCController(ResultsValidationRetroCIUtility resultsValidationUtility) {
+        this.resultsValidationUtility = resultsValidationUtility;
+    }
 
-	@RequestMapping(value = "/ResultValidationRetroC", method = RequestMethod.GET)
-	public ModelAndView showResultValidationRetroC(HttpServletRequest request)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		ResultValidationForm form = new ResultValidationForm();
+    @RequestMapping(value = "/ResultValidationRetroC", method = RequestMethod.GET)
+    public ModelAndView showResultValidationRetroC(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        ResultValidationForm form = new ResultValidationForm();
 
-		request.getSession().setAttribute(SAVE_DISABLED, "true");
-		String testSectionName = (request.getParameter("type"));
-		String testName = (request.getParameter("test"));
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
+        String testSectionName = (request.getParameter("type"));
+        String testName = (request.getParameter("test"));
 
-		ResultValidationPaging paging = new ResultValidationPaging();
-		String newPage = request.getParameter("page");
+        ResultValidationPaging paging = new ResultValidationPaging();
+        String newPage = request.getParameter("page");
 
-		if (GenericValidator.isBlankOrNull(newPage)) {
-			PropertyUtils.setProperty(form, "testSectionsByName", new ArrayList<IdValuePair>()); // required on jsp page
-			PropertyUtils.setProperty(form, "displayTestSections", false);
+        if (GenericValidator.isBlankOrNull(newPage)) {
+            PropertyUtils.setProperty(form, "testSectionsByName", new ArrayList<IdValuePair>()); // required on jsp page
+            PropertyUtils.setProperty(form, "displayTestSections", false);
 
-			setRequestType(testSectionName);
+            setRequestType(testSectionName);
 
-			if (!GenericValidator.isBlankOrNull(testSectionName)) {
-				String sectionName = Character.toUpperCase(testSectionName.charAt(0)) + testSectionName.substring(1);
-				sectionName = getDBSectionName(sectionName);
-				List<AnalysisItem> resultList = resultsValidationUtility.getResultValidationList(sectionName, testName,
-						getValidationStatus(testSectionName));
-				paging.setDatabaseResults(request, form, resultList);
-			}
+            if (!GenericValidator.isBlankOrNull(testSectionName)) {
+                String sectionName = Character.toUpperCase(testSectionName.charAt(0)) + testSectionName.substring(1);
+                sectionName = getDBSectionName(sectionName);
+                List<AnalysisItem> resultList = resultsValidationUtility.getResultValidationList(sectionName, testName,
+                        getValidationStatus(testSectionName));
+                paging.setDatabaseResults(request, form, resultList);
+            }
 
-		} else {
-			paging.page(request, form, newPage);
-		}
+        } else {
+            paging.page(request, form, newPage);
+        }
 
-		addFlashMsgsToRequest(request);
-		if (testSectionName.equals("serology")) {
-			return findForward("elisaSuccess", form);
-		} else {
-			return findForward(FWD_SUCCESS, form);
-		}
-	}
+        addFlashMsgsToRequest(request);
+        if (testSectionName.equals("serology")) {
+            return findForward("elisaSuccess", form);
+        } else {
+            return findForward(FWD_SUCCESS, form);
+        }
+    }
 
-	public List<Integer> getValidationStatus(String testSection) {
-		List<Integer> validationStatus = new ArrayList<>();
+    public List<Integer> getValidationStatus(String testSection) {
+        List<Integer> validationStatus = new ArrayList<>();
 
-		if ("serology".equals(testSection)) {
-			validationStatus
-					.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
-			validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
-			// This next status determines if NonConformity analysis can still
-			// be displayed on bio. validation page. We are awaiting feedback on
-			// RetroCI
-			// validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming)));
-		} else {
-			validationStatus
-					.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
-			if (ConfigurationProperties.getInstance()
-					.isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
-				validationStatus.add(
-						Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
-			}
-		}
+        if ("serology".equals(testSection)) {
+            validationStatus
+                    .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+            validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+            // This next status determines if NonConformity analysis can still
+            // be displayed on bio. validation page. We are awaiting feedback on
+            // RetroCI
+            // validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming)));
+        } else {
+            validationStatus
+                    .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+            if (ConfigurationProperties.getInstance()
+                    .isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
+                validationStatus.add(
+                        Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+            }
+        }
 
-		return validationStatus;
-	}
+        return validationStatus;
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "resultValidationDefinition";
-		} else if ("elisaSuccess".equals(forward)) {
-			return "elisaAlgorithmResultValidationDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "homePageDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "resultValidationDefinition";
+        } else if ("elisaSuccess".equals(forward)) {
+            return "elisaAlgorithmResultValidationDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 }

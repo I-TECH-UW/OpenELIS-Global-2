@@ -37,21 +37,21 @@ public interface SampleProjectDAO extends BaseDAO<SampleProject, String> {
 
 //	public void deleteData(List sampleProjs) throws LIMSRuntimeException;
 
-	public void getData(SampleProject sampleProj) throws LIMSRuntimeException;
+    public void getData(SampleProject sampleProj) throws LIMSRuntimeException;
 
 //	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException;
 
-	public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException;
+    public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException;
 
-	public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException;
+    public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException;
 
-	/**
-	 * @param locationId
-	 * @param projectName
-	 * @param lowDate
-	 * @param highDate
-	 * @return
-	 */
-	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
-			Date lowDate, Date highDate);
+    /**
+     * @param locationId
+     * @param projectName
+     * @param lowDate
+     * @param highDate
+     * @return
+     */
+    public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+            Date lowDate, Date highDate);
 }

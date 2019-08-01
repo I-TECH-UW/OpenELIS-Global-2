@@ -9,22 +9,23 @@ import org.openelisglobal.qaevent.dao.QaObservationTypeDAO;
 import org.openelisglobal.qaevent.valueholder.QaObservationType;
 
 @Service
-public class QaObservationTypeServiceImpl extends BaseObjectServiceImpl<QaObservationType, String> implements QaObservationTypeService {
-	@Autowired
-	protected QaObservationTypeDAO baseObjectDAO;
+public class QaObservationTypeServiceImpl extends BaseObjectServiceImpl<QaObservationType, String>
+        implements QaObservationTypeService {
+    @Autowired
+    protected QaObservationTypeDAO baseObjectDAO;
 
-	QaObservationTypeServiceImpl() {
-		super(QaObservationType.class);
-	}
+    QaObservationTypeServiceImpl() {
+        super(QaObservationType.class);
+    }
 
-	@Override
-	protected QaObservationTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected QaObservationTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public QaObservationType getQaObservationTypeByName(String typeName) {
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservationType getQaObservationTypeByName(String typeName) {
         return getBaseObjectDAO().getQaObservationTypeByName(typeName);
-	}
+    }
 }

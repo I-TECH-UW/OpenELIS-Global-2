@@ -29,27 +29,28 @@ import org.openelisglobal.common.util.XMLUtil;
 
 public class ConnectionTestProvider extends BaseQueryProvider {
 
-	/**
-	 * @throws LIMSInvalidConfigurationException
-	 * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ExchangeConfigurationService service = new ExchangeConfigurationService(request.getParameter("connectionId"));
-		String testResult = service.testConnection(request.getParameter("url"));
-		
-		StringBuilder xml = new StringBuilder();
-		createXml( testResult, xml);
-		String result = VALID;
-		
-		ajaxServlet.sendData(xml.toString(), result, request, response);
-	}
+    /**
+     * @throws LIMSInvalidConfigurationException
+     * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        ExchangeConfigurationService service = new ExchangeConfigurationService(request.getParameter("connectionId"));
+        String testResult = service.testConnection(request.getParameter("url"));
 
-	private void createXml(String testResult, StringBuilder xml) {
-		xml.append("<testResult ");
-			XMLUtil.appendKeyValueAttribute("result", testResult, xml);
-			xml.append(" />");
-	}
+        StringBuilder xml = new StringBuilder();
+        createXml(testResult, xml);
+        String result = VALID;
+
+        ajaxServlet.sendData(xml.toString(), result, request, response);
+    }
+
+    private void createXml(String testResult, StringBuilder xml) {
+        xml.append("<testResult ");
+        XMLUtil.appendKeyValueAttribute("result", testResult, xml);
+        xml.append(" />");
+    }
 
 }

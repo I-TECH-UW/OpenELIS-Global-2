@@ -18,7 +18,7 @@ package org.openelisglobal.testconfiguration.beans;
 
 import org.openelisglobal.common.util.validator.GenericValidator;
 
-public class ResultLimitBean{
+public class ResultLimitBean {
     private String gender;
     private String ageRange;
     private String normalRange;

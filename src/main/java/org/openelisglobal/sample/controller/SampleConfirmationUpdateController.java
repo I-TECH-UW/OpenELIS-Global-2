@@ -16,37 +16,37 @@ import org.openelisglobal.sample.form.SampleConfirmationEntryForm;
 @Controller
 public class SampleConfirmationUpdateController extends BaseController {
 
-	@RequestMapping(value = "/SampleConfirmation", method = RequestMethod.POST)
-	public ModelAndView showSampleConfirmationUpdate(HttpServletRequest request,
-			@ModelAttribute("form") SampleConfirmationEntryForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleConfirmationEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+    @RequestMapping(value = "/SampleConfirmation", method = RequestMethod.POST)
+    public ModelAndView showSampleConfirmationUpdate(HttpServletRequest request,
+            @ModelAttribute("form") SampleConfirmationEntryForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleConfirmationEntryForm();
+        }
+        form.setFormAction("");
+        Errors errors = new BaseErrors();
 
-		return findForward(forward, form);
-	}
+        return findForward(forward, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "/SampleConfirmationEntry.do?forward=success";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "/SampleConfirmationEntry.do?forward=fail";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/SampleConfirmationEntry.do?forward=success";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "/SampleConfirmationEntry.do?forward=fail";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

@@ -6,23 +6,23 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 
 public interface ReferenceTablesService extends BaseObjectService<ReferenceTables, String> {
-	void getData(ReferenceTables referenceTables);
+    void getData(ReferenceTables referenceTables);
 
-	List getAllReferenceTablesForHl7Encoding();
+    List getAllReferenceTablesForHl7Encoding();
 
-	List getAllReferenceTables();
+    List getAllReferenceTables();
 
-	ReferenceTables getReferenceTableByName(String tableName);
+    ReferenceTables getReferenceTableByName(String tableName);
 
-	ReferenceTables getReferenceTableByName(ReferenceTables referenceTables);
+    ReferenceTables getReferenceTableByName(ReferenceTables referenceTables);
 
-	Integer getTotalReferenceTableCount();
+    Integer getTotalReferenceTableCount();
 
-	List getPreviousReferenceTablesRecord(String id);
+    List getPreviousReferenceTablesRecord(String id);
 
-	List getPageOfReferenceTables(int startingRecNo);
+    List getPageOfReferenceTables(int startingRecNo);
 
-	List getNextReferenceTablesRecord(String id);
+    List getNextReferenceTablesRecord(String id);
 
-	Integer getTotalReferenceTablesCount();
+    Integer getTotalReferenceTablesCount();
 }

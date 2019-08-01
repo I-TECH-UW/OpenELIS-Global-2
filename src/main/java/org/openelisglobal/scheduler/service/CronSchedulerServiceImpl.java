@@ -10,23 +10,23 @@ import org.openelisglobal.scheduler.valueholder.CronScheduler;
 
 @Service
 public class CronSchedulerServiceImpl extends BaseObjectServiceImpl<CronScheduler, String>
-		implements CronSchedulerService {
-	@Autowired
-	protected CronSchedulerDAO baseObjectDAO;
+        implements CronSchedulerService {
+    @Autowired
+    protected CronSchedulerDAO baseObjectDAO;
 
-	CronSchedulerServiceImpl() {
-		super(CronScheduler.class);
-	}
+    CronSchedulerServiceImpl() {
+        super(CronScheduler.class);
+    }
 
-	@Override
-	protected CronSchedulerDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected CronSchedulerDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public CronScheduler getCronScheduleByJobName(String jobName) {
-		return getMatch("jobName", jobName).orElse(null);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public CronScheduler getCronScheduleByJobName(String jobName) {
+        return getMatch("jobName", jobName).orElse(null);
+    }
 
 }

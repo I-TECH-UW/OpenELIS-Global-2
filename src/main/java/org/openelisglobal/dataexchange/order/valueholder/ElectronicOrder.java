@@ -27,104 +27,103 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 
 public class ElectronicOrder extends BaseObject<String> {
 
-	public enum SortOrder {
-		LAST_UPDATED("lastUpdated", "eorder.lastupdated"), 
-		EXTERNAL_ID("externalId", "eorder.externalid"),
-		STATUS_ID("statusId", "eorder.status");
+    public enum SortOrder {
+        LAST_UPDATED("lastUpdated", "eorder.lastupdated"), EXTERNAL_ID("externalId", "eorder.externalid"),
+        STATUS_ID("statusId", "eorder.status");
 
-		private String value;
-		private String displayKey;
+        private String value;
+        private String displayKey;
 
-		public String getValue() {
-			return value;
-		}
+        public String getValue() {
+            return value;
+        }
 
-		public String getLabel() {
-			return MessageUtil.getMessage(displayKey);
-		}
+        public String getLabel() {
+            return MessageUtil.getMessage(displayKey);
+        }
 
-		SortOrder(String value, String displayKey) {
-			this.value = value;
-			this.displayKey = displayKey;
-		}
+        SortOrder(String value, String displayKey) {
+            this.value = value;
+            this.displayKey = displayKey;
+        }
 
-		public static SortOrder fromString(String value) {
-			for (SortOrder so : SortOrder.values()) {
-				if (so.value.equalsIgnoreCase(value)) {
-					return so;
-				}
-			}
-			return null;
-		}
-	}
+        public static SortOrder fromString(String value) {
+            for (SortOrder so : SortOrder.values()) {
+                if (so.value.equalsIgnoreCase(value)) {
+                    return so;
+                }
+            }
+            return null;
+        }
+    }
 
-	private static final long serialVersionUID = 5573858445160470854L;
+    private static final long serialVersionUID = 5573858445160470854L;
 
-	private String id;
-	private String externalId;
-	private ValueHolder patient;
-	private String statusId;
-	private StatusOfSample status; // not persisted
-	private Timestamp orderTimestamp;
-	private String data;
+    private String id;
+    private String externalId;
+    private ValueHolder patient;
+    private String statusId;
+    private StatusOfSample status; // not persisted
+    private Timestamp orderTimestamp;
+    private String data;
 
-	public ElectronicOrder() {
-		patient = new ValueHolder();
-	}
+    public ElectronicOrder() {
+        patient = new ValueHolder();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getExternalId() {
-		return externalId;
-	}
+    public String getExternalId() {
+        return externalId;
+    }
 
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-	public Patient getPatient() {
-		return (Patient) patient.getValue();
-	}
+    public Patient getPatient() {
+        return (Patient) patient.getValue();
+    }
 
-	public void setPatient(Patient patient) {
-		this.patient.setValue(patient);
-	}
+    public void setPatient(Patient patient) {
+        this.patient.setValue(patient);
+    }
 
-	public String getStatusId() {
-		return statusId;
-	}
+    public String getStatusId() {
+        return statusId;
+    }
 
-	public void setStatusId(String statusId) {
-		this.statusId = statusId;
-	}
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
 
-	public StatusOfSample getStatus() {
-		return status;
-	}
+    public StatusOfSample getStatus() {
+        return status;
+    }
 
-	public void setStatus(StatusOfSample status) {
-		this.status = status;
-	}
+    public void setStatus(StatusOfSample status) {
+        this.status = status;
+    }
 
-	public Timestamp getOrderTimestamp() {
-		return orderTimestamp;
-	}
+    public Timestamp getOrderTimestamp() {
+        return orderTimestamp;
+    }
 
-	public void setOrderTimestamp(Timestamp orderTimestamp) {
-		this.orderTimestamp = orderTimestamp;
-	}
+    public void setOrderTimestamp(Timestamp orderTimestamp) {
+        this.orderTimestamp = orderTimestamp;
+    }
 
-	public String getData() {
-		return data;
-	}
+    public String getData() {
+        return data;
+    }
 
-	public void setData(String data) {
-		this.data = data;
-	}
+    public void setData(String data) {
+        this.data = data;
+    }
 }

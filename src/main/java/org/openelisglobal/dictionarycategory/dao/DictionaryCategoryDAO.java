@@ -53,6 +53,6 @@ public interface DictionaryCategoryDAO extends BaseDAO<DictionaryCategory, Strin
 
 //	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;
 
-	boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+    boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
 }

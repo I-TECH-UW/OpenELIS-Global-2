@@ -9,16 +9,16 @@ import org.openelisglobal.sampledomain.valueholder.SampleDomain;
 
 @Service
 public class SampleDomainServiceImpl extends BaseObjectServiceImpl<SampleDomain, String>
-		implements SampleDomainService {
-	@Autowired
-	protected SampleDomainDAO baseObjectDAO;
+        implements SampleDomainService {
+    @Autowired
+    protected SampleDomainDAO baseObjectDAO;
 
-	SampleDomainServiceImpl() {
-		super(SampleDomain.class);
-	}
+    SampleDomainServiceImpl() {
+        super(SampleDomain.class);
+    }
 
-	@Override
-	protected SampleDomainDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SampleDomainDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

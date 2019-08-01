@@ -16,54 +16,54 @@
  */
 package org.openelisglobal.common.provider.validation;
 
-
 import org.openelisglobal.common.util.ConfigurationProperties;
 
 public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberValidator {
 
-	@Override
-	public int getMaxAccessionLength() {
-		return getSiteEndIndex() + 8;
-	}
+    @Override
+    public int getMaxAccessionLength() {
+        return getSiteEndIndex() + 8;
+    }
 
-	@Override
-	public int getMinAccessionLength() {
-		return getMaxAccessionLength();
-	}
+    @Override
+    public int getMinAccessionLength() {
+        return getMaxAccessionLength();
+    }
 
-	@Override
-	protected int getIncrementStartIndex() {
-		return getSiteEndIndex() + 2;
-	}
+    @Override
+    protected int getIncrementStartIndex() {
+        return getSiteEndIndex() + 2;
+    }
 
-	@Override
-	protected int getSiteEndIndex() {
-		return getPrefix().length();
-	}
+    @Override
+    protected int getSiteEndIndex() {
+        return getPrefix().length();
+    }
 
-	@Override
-	protected int getYearEndIndex() {
-		return getSiteEndIndex() + 2;
-	}
+    @Override
+    protected int getYearEndIndex() {
+        return getSiteEndIndex() + 2;
+    }
 
-	@Override
-	protected int getYearStartIndex() {
-		return getSiteEndIndex();
-	}
+    @Override
+    protected int getYearStartIndex() {
+        return getSiteEndIndex();
+    }
 
-	@Override
-	public int getInvarientLength() {
-		return getSiteEndIndex();
-	}
+    @Override
+    public int getInvarientLength() {
+        return getSiteEndIndex();
+    }
 
-	@Override
-	public int getChangeableLength() {
-		return getMaxAccessionLength() - getInvarientLength();
-	}
+    @Override
+    public int getChangeableLength() {
+        return getMaxAccessionLength() - getInvarientLength();
+    }
 
-	@Override
-	public String getPrefix() {
-		return ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
-	}
+    @Override
+    public String getPrefix() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
+    }
 
 }

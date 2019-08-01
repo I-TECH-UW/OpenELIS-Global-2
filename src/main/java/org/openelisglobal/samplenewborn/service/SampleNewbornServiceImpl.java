@@ -8,16 +8,17 @@ import org.openelisglobal.samplenewborn.dao.SampleNewbornDAO;
 import org.openelisglobal.samplenewborn.valueholder.SampleNewborn;
 
 @Service
-public class SampleNewbornServiceImpl extends BaseObjectServiceImpl<SampleNewborn, String> implements SampleNewbornService {
-	@Autowired
-	protected SampleNewbornDAO baseObjectDAO;
+public class SampleNewbornServiceImpl extends BaseObjectServiceImpl<SampleNewborn, String>
+        implements SampleNewbornService {
+    @Autowired
+    protected SampleNewbornDAO baseObjectDAO;
 
-	SampleNewbornServiceImpl() {
-		super(SampleNewborn.class);
-	}
+    SampleNewbornServiceImpl() {
+        super(SampleNewborn.class);
+    }
 
-	@Override
-	protected SampleNewbornDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SampleNewbornDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

@@ -33,69 +33,69 @@ import org.openelisglobal.project.valueholder.Project;
  * @since Oct 6, 2010
  */
 public enum ProjectForm {
-	ARV_INITIAL("InitialARV_Id", "Antiretroviral Study"),
-	ARV_FOLLOWUP("FollowUpARV_Id", "Antiretroviral Followup Study"), ROUTINE_HIV("RTN_Id", "Routine HIV Testing"),
-	EID("EID_Id", "Early Infant Diagnosis for HIV Study"), VL("VL_Id", "Viral Load Results"),
-	INDETERMINATE("Indeterminate_Id", "Indeterminate Results"),
-	SPECIAL_REQUEST("Special_Request_Id", "Special Request");
+    ARV_INITIAL("InitialARV_Id", "Antiretroviral Study"),
+    ARV_FOLLOWUP("FollowUpARV_Id", "Antiretroviral Followup Study"), ROUTINE_HIV("RTN_Id", "Routine HIV Testing"),
+    EID("EID_Id", "Early Infant Diagnosis for HIV Study"), VL("VL_Id", "Viral Load Results"),
+    INDETERMINATE("Indeterminate_Id", "Indeterminate Results"),
+    SPECIAL_REQUEST("Special_Request_Id", "Special Request");
 
-	private ProjectForm(String projectFormId, String projectName) {
-		this.projectFormId = projectFormId;
-		this.projectName = projectName;
-	}
+    private ProjectForm(String projectFormId, String projectName) {
+        this.projectFormId = projectFormId;
+        this.projectName = projectName;
+    }
 
-	/**
-	 * This is the name of some form as it is known in the UI (actual html ID
-	 * value).
-	 */
-	private String projectFormId;
+    /**
+     * This is the name of some form as it is known in the UI (actual html ID
+     * value).
+     */
+    private String projectFormId;
 
-	/**
-	 * This is the name of the project for which this form is an input. The DB
-	 * entity's project.name.
-	 */
-	private String projectName = null;
+    /**
+     * This is the name of the project for which this form is an input. The DB
+     * entity's project.name.
+     */
+    private String projectName = null;
 
-	public String getProjectFormId() {
-		return projectFormId;
-	}
+    public String getProjectFormId() {
+        return projectFormId;
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	/**
-	 * Find the database entity which corresponds to this ProjectForm
-	 *
-	 * @return
-	 */
-	public Project getProject() {
-		ProjectService projectService = SpringContext.getBean(ProjectService.class);
-		Project p = new Project();
-		p.setProjectName(projectName);
-		p = projectService.getProjectByName(p, false, true);
-		if (null == p) {
-			throw new LIMSRuntimeException(
-					"Undefined Project name = " + projectName + ". Unable to find project for form.");
-		}
-		return p;
-	}
+    /**
+     * Find the database entity which corresponds to this ProjectForm
+     *
+     * @return
+     */
+    public Project getProject() {
+        ProjectService projectService = SpringContext.getBean(ProjectService.class);
+        Project p = new Project();
+        p.setProjectName(projectName);
+        p = projectService.getProjectByName(p, false, true);
+        if (null == p) {
+            throw new LIMSRuntimeException(
+                    "Undefined Project name = " + projectName + ". Unable to find project for form.");
+        }
+        return p;
+    }
 
-	public static ProjectForm findProjectFormByFormId(String projectFormId) {
-		initFormToProjectFormMap();
-		return form2ProjectFormMap.get(projectFormId);
-	}
+    public static ProjectForm findProjectFormByFormId(String projectFormId) {
+        initFormToProjectFormMap();
+        return form2ProjectFormMap.get(projectFormId);
+    }
 
-	private static Map<String, ProjectForm> form2ProjectFormMap = new HashMap<>();
+    private static Map<String, ProjectForm> form2ProjectFormMap = new HashMap<>();
 
-	/**
-	 *
-	 */
-	private static void initFormToProjectFormMap() {
-		if (form2ProjectFormMap.size() == 0) {
-			for (ProjectForm pf : ProjectForm.values()) {
-				form2ProjectFormMap.put(pf.projectFormId, pf);
-			}
-		}
-	}
+    /**
+     *
+     */
+    private static void initFormToProjectFormMap() {
+        if (form2ProjectFormMap.size() == 0) {
+            for (ProjectForm pf : ProjectForm.values()) {
+                form2ProjectFormMap.put(pf.projectFormId, pf);
+            }
+        }
+    }
 }

@@ -15,35 +15,31 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class UomCreateUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/UomCreateUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showUomCreateUpdate(HttpServletRequest request,
-      @ModelAttribute("form") UomCreateForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new UomCreateForm();
-    }
+    @RequestMapping(value = "/UomCreateUpdate", method = RequestMethod.GET)
+    public ModelAndView showUomCreateUpdate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new UomCreateForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/UomCreate.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/UomCreate.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

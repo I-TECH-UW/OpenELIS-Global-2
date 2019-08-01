@@ -8,16 +8,17 @@ import org.openelisglobal.systemmodule.dao.SystemModuleParamDAO;
 import org.openelisglobal.systemmodule.valueholder.SystemModuleParam;
 
 @Service
-public class SystemModuleParamServiceImpl extends BaseObjectServiceImpl<SystemModuleParam, String> implements SystemModuleParamService {
-	@Autowired
-	protected SystemModuleParamDAO baseObjectDAO;
+public class SystemModuleParamServiceImpl extends BaseObjectServiceImpl<SystemModuleParam, String>
+        implements SystemModuleParamService {
+    @Autowired
+    protected SystemModuleParamDAO baseObjectDAO;
 
-	SystemModuleParamServiceImpl() {
-		super(SystemModuleParam.class);
-	}
+    SystemModuleParamServiceImpl() {
+        super(SystemModuleParam.class);
+    }
 
-	@Override
-	protected SystemModuleParamDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SystemModuleParamDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

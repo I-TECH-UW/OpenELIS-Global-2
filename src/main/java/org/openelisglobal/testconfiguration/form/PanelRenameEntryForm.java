@@ -11,54 +11,54 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 
 public class PanelRenameEntryForm extends BaseForm {
-	// for display
-	private List panelList;
+    // for display
+    private List panelList;
 
-	@NotBlank
-	@SafeHtml
-	private String nameEnglish = "";
+    @NotBlank
+    @SafeHtml
+    private String nameEnglish = "";
 
-	@NotBlank
-	@SafeHtml
-	private String nameFrench = "";
+    @NotBlank
+    @SafeHtml
+    private String nameFrench = "";
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String panelId = "";
+    @NotBlank
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String panelId = "";
 
-	public PanelRenameEntryForm() {
-		setFormName("panelRenameEntryForm");
-	}
+    public PanelRenameEntryForm() {
+        setFormName("panelRenameEntryForm");
+    }
 
-	public List getPanelList() {
-		return panelList;
-	}
+    public List getPanelList() {
+        return panelList;
+    }
 
-	public void setPanelList(List panelList) {
-		this.panelList = panelList;
-	}
+    public void setPanelList(List panelList) {
+        this.panelList = panelList;
+    }
 
-	public String getNameEnglish() {
-		return nameEnglish;
-	}
+    public String getNameEnglish() {
+        return nameEnglish;
+    }
 
-	public void setNameEnglish(String nameEnglish) {
-		this.nameEnglish = nameEnglish;
-	}
+    public void setNameEnglish(String nameEnglish) {
+        this.nameEnglish = nameEnglish;
+    }
 
-	public String getNameFrench() {
-		return nameFrench;
-	}
+    public String getNameFrench() {
+        return nameFrench;
+    }
 
-	public void setNameFrench(String nameFrench) {
-		this.nameFrench = nameFrench;
-	}
+    public void setNameFrench(String nameFrench) {
+        this.nameFrench = nameFrench;
+    }
 
-	public String getPanelId() {
-		return panelId;
-	}
+    public String getPanelId() {
+        return panelId;
+    }
 
-	public void setPanelId(String panelId) {
-		this.panelId = panelId;
-	}
+    public void setPanelId(String panelId) {
+        this.panelId = panelId;
+    }
 }

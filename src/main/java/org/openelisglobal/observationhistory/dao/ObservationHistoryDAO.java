@@ -41,37 +41,37 @@ public interface ObservationHistoryDAO extends BaseDAO<ObservationHistory, Strin
 
 //	public void insertOrUpdateData(ObservationHistory observation) throws LIMSRuntimeException;
 
-	public List<ObservationHistory> getAll(Patient patient, Sample sample);
+    public List<ObservationHistory> getAll(Patient patient, Sample sample);
 
-	/**
-	 * Find all observations historys of a particular type
-	 *
-	 * @param patient                  the patient
-	 * @param sample                   the sample
-	 * @param observationHistoryTypeId the TYPE ID of the O.H. entry.
-	 * @return a List
-	 */
-	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId);
+    /**
+     * Find all observations historys of a particular type
+     *
+     * @param patient                  the patient
+     * @param sample                   the sample
+     * @param observationHistoryTypeId the TYPE ID of the O.H. entry.
+     * @return a List
+     */
+    public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId);
 
-	// public void deleteAll(List<ObservationHistory> entities) throws
-	// LIMSRuntimeException;
+    // public void deleteAll(List<ObservationHistory> entities) throws
+    // LIMSRuntimeException;
 
-	public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
-			throws LIMSRuntimeException;
+    public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
+            throws LIMSRuntimeException;
 
-	public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId)
-			throws LIMSRuntimeException;
+    public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId)
+            throws LIMSRuntimeException;
 
-	public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) throws LIMSRuntimeException;
+    public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) throws LIMSRuntimeException;
 
-	public List<ObservationHistory> getObservationHistoriesByPatientIdAndType(String patientId,
-			String observationHistoryTypeId) throws LIMSRuntimeException;
+    public List<ObservationHistory> getObservationHistoriesByPatientIdAndType(String patientId,
+            String observationHistoryTypeId) throws LIMSRuntimeException;
 
-	public ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId, String observationHistoryTypeId)
-			throws LIMSRuntimeException;
+    public ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId, String observationHistoryTypeId)
+            throws LIMSRuntimeException;
 
-	public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException;
+    public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException;
 
-	public List<ObservationHistory> getObservationHistoriesByValueAndType(String value, String typeId, String valueType)
-			throws LIMSRuntimeException;
+    public List<ObservationHistory> getObservationHistoriesByValueAndType(String value, String typeId, String valueType)
+            throws LIMSRuntimeException;
 }

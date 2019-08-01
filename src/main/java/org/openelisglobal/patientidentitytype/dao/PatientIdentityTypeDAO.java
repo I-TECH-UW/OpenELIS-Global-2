@@ -27,9 +27,9 @@ public interface PatientIdentityTypeDAO extends BaseDAO<PatientIdentityType, Str
 
 //	public void insertData(PatientIdentityType patientIdenityType) throws LIMSRuntimeException;
 
-	public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException;
+    public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException;
 
-	public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException;
+    public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException;
 
-	boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) throws LIMSRuntimeException;
+    boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) throws LIMSRuntimeException;
 }

@@ -27,43 +27,48 @@ import org.openelisglobal.reports.action.implementation.reportBeans.RoutineColum
 
 public abstract class CSVRoutineSampleExportReport extends CSVRoutineExportReport {
 
-	protected String lowDateStr;
-	protected String highDateStr;
-	protected List<Object> reportItems;
-	protected int iReportItem = -1;
+    protected String lowDateStr;
+    protected String highDateStr;
+    protected List<Object> reportItems;
+    protected int iReportItem = -1;
 
-	protected RoutineColumnBuilder csvRoutineColumnBuilder;
-	protected DateRange dateRange;
+    protected RoutineColumnBuilder csvRoutineColumnBuilder;
+    protected DateRange dateRange;
 
-	public String getResponseHeaderName(){
-		return "Content-Disposition";
-	}
-	public String getResponseHeaderContent(){
-		return "attachment;filename=" + getReportFileName() + ".csv";
-	}
-	  /**
+    public String getResponseHeaderName() {
+        return "Content-Disposition";
+    }
+
+    public String getResponseHeaderContent() {
+        return "attachment;filename=" + getReportFileName() + ".csv";
+    }
+
+    /**
      * Do everything necessary for to generate a CSV text file.
+     * 
      * @param reportDefinitionName full path to the definition for the report.
-     * @see org.openelisglobal.reports.action.implementation.IReportCreator#runReport(java.lang.String, Response)
+     * @see org.openelisglobal.reports.action.implementation.IReportCreator#runReport(java.lang.String,
+     *      Response)
      */
-     public byte[] runReport() throws Exception {
-        if ( errorFound ) {
+    public byte[] runReport() throws Exception {
+        if (errorFound) {
             return super.runReport();
         }
-   
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream(100000);
         buffer.write(csvRoutineColumnBuilder.getColumnNamesLine().getBytes("windows-1252"));
 
         writeResultsToBuffer(buffer);
         csvRoutineColumnBuilder.closeResultSet();
-   
+
         return buffer.toByteArray();
     }
 
-	protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception, IOException, UnsupportedEncodingException {
-		while (csvRoutineColumnBuilder.next()) {
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
+            throws Exception, IOException, UnsupportedEncodingException {
+        while (csvRoutineColumnBuilder.next()) {
             buffer.write(csvRoutineColumnBuilder.nextLine().getBytes("windows-1252"));
         }
-	}
+    }
 
 }

@@ -25,11 +25,11 @@ import org.openelisglobal.common.form.BaseForm;
 
 public interface IWorkplanReport {
 
-	HashMap<String, Object> getParameters();
+    HashMap<String, Object> getParameters();
 
-	String getFileName();
+    String getFileName();
 
-	List<?> prepareRows(BaseForm dynaForm);
+    List<?> prepareRows(BaseForm dynaForm);
 
-	void setReportPath(String reportPath);
+    void setReportPath(String reportPath);
 }

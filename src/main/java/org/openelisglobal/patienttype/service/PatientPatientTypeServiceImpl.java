@@ -12,39 +12,39 @@ import org.openelisglobal.patienttype.valueholder.PatientType;
 
 @Service
 public class PatientPatientTypeServiceImpl extends BaseObjectServiceImpl<PatientPatientType, String>
-		implements PatientPatientTypeService {
-	@Autowired
-	protected PatientPatientTypeDAO baseObjectDAO;
-	@Autowired
-	private PatientTypeService patientTypeService;
+        implements PatientPatientTypeService {
+    @Autowired
+    protected PatientPatientTypeDAO baseObjectDAO;
+    @Autowired
+    private PatientTypeService patientTypeService;
 
-	PatientPatientTypeServiceImpl() {
-		super(PatientPatientType.class);
-	}
+    PatientPatientTypeServiceImpl() {
+        super(PatientPatientType.class);
+    }
 
-	@Override
-	protected PatientPatientTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected PatientPatientTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public PatientPatientType getPatientPatientTypeForPatient(String id) {
-		return getMatch("patientId", id).orElse(null);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public PatientPatientType getPatientPatientTypeForPatient(String id) {
+        return getMatch("patientId", id).orElse(null);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public PatientType getPatientTypeForPatient(String id) {
-		PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
+    @Override
+    @Transactional(readOnly = true)
+    public PatientType getPatientTypeForPatient(String id) {
+        PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
 
-		if (patientPatientType != null) {
-			PatientType patientType = new PatientType();
-			patientType.setId(patientPatientType.getPatientTypeId());
-			patientTypeService.getData(patientType);
+        if (patientPatientType != null) {
+            PatientType patientType = new PatientType();
+            patientType.setId(patientPatientType.getPatientTypeId());
+            patientTypeService.getData(patientType);
 
-			return patientType;
-		}
-		return null;
-	}
+            return patientType;
+        }
+        return null;
+    }
 }

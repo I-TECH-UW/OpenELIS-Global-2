@@ -15,35 +15,32 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class TestActivationUpdateController extends BaseController {
-  @RequestMapping(
-      value = "/TestActivationUpdate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestActivationUpdate(HttpServletRequest request,
-      @ModelAttribute("form") TestActivationForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestActivationForm();
-    }
+    @RequestMapping(value = "/TestActivationUpdate", method = RequestMethod.GET)
+    public ModelAndView showTestActivationUpdate(HttpServletRequest request,
+            @ModelAttribute("form") TestActivationForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new TestActivationForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/TestActivation.do";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/TestActivation.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

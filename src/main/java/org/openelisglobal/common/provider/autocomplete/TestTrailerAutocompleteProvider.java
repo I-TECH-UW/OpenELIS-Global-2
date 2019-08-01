@@ -42,25 +42,25 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class TestTrailerAutocompleteProvider extends BaseAutocompleteProvider {
 
-	protected TestTrailerService testTrailerService = SpringContext.getBean(TestTrailerService.class);
-	
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected TestTrailerService testTrailerService = SpringContext.getBean(TestTrailerService.class);
 
-		//System.out.println("I am in TestTrailerAutocompleteProvider "
-		//		+ request.getParameter("testTrailerName"));
-		String testTrailerName = request.getParameter("testTrailerName");
-		//System.out.println("TestTrailerAutocompleteProvider testTrailerName "
-		//		+ testTrailerName);
-		List list = testTrailerService.getTestTrailers(testTrailerName);
-		//System.out.println("TestTrailerAutocompleteProvider list "
-		//		+ list.size());
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		return list;
-	}
+        // System.out.println("I am in TestTrailerAutocompleteProvider "
+        // + request.getParameter("testTrailerName"));
+        String testTrailerName = request.getParameter("testTrailerName");
+        // System.out.println("TestTrailerAutocompleteProvider testTrailerName "
+        // + testTrailerName);
+        List list = testTrailerService.getTestTrailers(testTrailerName);
+        // System.out.println("TestTrailerAutocompleteProvider list "
+        // + list.size());
+
+        return list;
+    }
 
 }

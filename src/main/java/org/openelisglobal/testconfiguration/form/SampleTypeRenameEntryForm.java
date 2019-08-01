@@ -11,54 +11,54 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 
 public class SampleTypeRenameEntryForm extends BaseForm {
-	// for display
-	private List sampleTypeList;
+    // for display
+    private List sampleTypeList;
 
-	@NotBlank
-	@SafeHtml
-	private String nameEnglish = "";
+    @NotBlank
+    @SafeHtml
+    private String nameEnglish = "";
 
-	@NotBlank
-	@SafeHtml
-	private String nameFrench = "";
+    @NotBlank
+    @SafeHtml
+    private String nameFrench = "";
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String sampleTypeId = "";
+    @NotBlank
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String sampleTypeId = "";
 
-	public SampleTypeRenameEntryForm() {
-		setFormName("sampleTypeRenameEntryForm");
-	}
+    public SampleTypeRenameEntryForm() {
+        setFormName("sampleTypeRenameEntryForm");
+    }
 
-	public List getSampleTypeList() {
-		return sampleTypeList;
-	}
+    public List getSampleTypeList() {
+        return sampleTypeList;
+    }
 
-	public void setSampleTypeList(List sampleTypeList) {
-		this.sampleTypeList = sampleTypeList;
-	}
+    public void setSampleTypeList(List sampleTypeList) {
+        this.sampleTypeList = sampleTypeList;
+    }
 
-	public String getNameEnglish() {
-		return nameEnglish;
-	}
+    public String getNameEnglish() {
+        return nameEnglish;
+    }
 
-	public void setNameEnglish(String nameEnglish) {
-		this.nameEnglish = nameEnglish;
-	}
+    public void setNameEnglish(String nameEnglish) {
+        this.nameEnglish = nameEnglish;
+    }
 
-	public String getNameFrench() {
-		return nameFrench;
-	}
+    public String getNameFrench() {
+        return nameFrench;
+    }
 
-	public void setNameFrench(String nameFrench) {
-		this.nameFrench = nameFrench;
-	}
+    public void setNameFrench(String nameFrench) {
+        this.nameFrench = nameFrench;
+    }
 
-	public String getSampleTypeId() {
-		return sampleTypeId;
-	}
+    public String getSampleTypeId() {
+        return sampleTypeId;
+    }
 
-	public void setSampleTypeId(String sampleTypeId) {
-		this.sampleTypeId = sampleTypeId;
-	}
+    public void setSampleTypeId(String sampleTypeId) {
+        this.sampleTypeId = sampleTypeId;
+    }
 }

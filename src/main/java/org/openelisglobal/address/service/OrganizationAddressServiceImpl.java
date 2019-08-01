@@ -14,23 +14,23 @@ import org.openelisglobal.address.valueholder.OrganizationAddress;
 
 @Service
 public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<OrganizationAddress, AddressPK>
-		implements OrganizationAddressService {
-	@Autowired
-	protected OrganizationAddressDAO baseObjectDAO;
+        implements OrganizationAddressService {
+    @Autowired
+    protected OrganizationAddressDAO baseObjectDAO;
 
-	OrganizationAddressServiceImpl() {
-		super(OrganizationAddress.class);
-		defaultSortOrder = new ArrayList<>();
-	}
+    OrganizationAddressServiceImpl() {
+        super(OrganizationAddress.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-	@Override
-	protected OrganizationAddressDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected OrganizationAddressDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
-		return baseObjectDAO.getAddressPartsByOrganizationId(organizationId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
+        return baseObjectDAO.getAddressPartsByOrganizationId(organizationId);
+    }
 }

@@ -26,6 +26,6 @@ public interface QaObservationDAO extends BaseDAO<QaObservation, String> {
 
 //	public void updateData(QaObservation qaObservation) throws LIMSRuntimeException;
 
-	public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
-			throws LIMSRuntimeException;
+    public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
+            throws LIMSRuntimeException;
 }

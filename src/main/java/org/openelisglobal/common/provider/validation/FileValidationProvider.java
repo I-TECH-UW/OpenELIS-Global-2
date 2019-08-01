@@ -29,45 +29,46 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
 
 public class FileValidationProvider extends BaseValidationProvider {
-	
-	protected SamplePdfService samplePdfService = SpringContext.getBean(SamplePdfService.class);
-	
-	int indentLevel = -1;
-	public FileValidationProvider() {
-		super();
-	}
 
-	public FileValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    protected SamplePdfService samplePdfService = SpringContext.getBean(SamplePdfService.class);
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		
-		// get id from request
-		String targetId = (String) request.getParameter("id");
-		String formField = (String) request.getParameter("field");
-		String result = validate(targetId);
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+    int indentLevel = -1;
 
-	public String validate(String targetId) throws LIMSRuntimeException {
+    public FileValidationProvider() {
+        super();
+    }
+
+    public FileValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get id from request
+        String targetId = (String) request.getParameter("id");
+        String formField = (String) request.getParameter("field");
+        String result = validate(targetId);
+        ajaxServlet.sendData(formField, result, request, response);
+    }
+
+    public String validate(String targetId) throws LIMSRuntimeException {
         String msg = INVALID;
         boolean isFound = false;
         if (!StringUtil.isNullorNill(targetId)) {
-            try { 
-            	int x = Integer.parseInt(targetId);
-				isFound = samplePdfService.isAccessionNumberFound(x);
-				if ( isFound )
-					msg = VALID;
-            } catch ( NullPointerException npe ) {
-                //bugzilla 2154 
-			    LogEvent.logError("FileValidationProvider","validate()",npe.toString());
+            try {
+                int x = Integer.parseInt(targetId);
+                isFound = samplePdfService.isAccessionNumberFound(x);
+                if (isFound)
+                    msg = VALID;
+            } catch (NullPointerException npe) {
+                // bugzilla 2154
+                LogEvent.logError("FileValidationProvider", "validate()", npe.toString());
                 msg = INVALID;
-            }        
-		} else {
-			msg = VALID;
-		}        
-		return msg;
-	}
+            }
+        } else {
+            msg = VALID;
+        }
+        return msg;
+    }
 }

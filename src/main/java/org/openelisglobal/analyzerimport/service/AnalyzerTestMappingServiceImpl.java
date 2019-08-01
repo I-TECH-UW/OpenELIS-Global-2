@@ -12,18 +12,18 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
 
 @Service
 public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
-		implements AnalyzerTestMappingService {
-	@Autowired
-	protected AnalyzerTestMappingDAO baseObjectDAO;
+        implements AnalyzerTestMappingService {
+    @Autowired
+    protected AnalyzerTestMappingDAO baseObjectDAO;
 
-	AnalyzerTestMappingServiceImpl() {
-		super(AnalyzerTestMapping.class);
-		defaultSortOrder = new ArrayList<>();
-	}
+    AnalyzerTestMappingServiceImpl() {
+        super(AnalyzerTestMapping.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-	@Override
-	protected AnalyzerTestMappingDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected AnalyzerTestMappingDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
 }

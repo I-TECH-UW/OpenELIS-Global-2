@@ -22,34 +22,34 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.qaevent.dao.QaObservationTypeDAO;
 import org.openelisglobal.qaevent.valueholder.QaObservationType;
 
 @Component
-@Transactional 
+@Transactional
 public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, String> implements QaObservationTypeDAO {
 
-	public QaObservationTypeDAOImpl() {
-		super(QaObservationType.class);
-	}
+    public QaObservationTypeDAOImpl() {
+        super(QaObservationType.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException {
-		String sql = "FROM QaObservationType where name = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException {
+        String sql = "FROM QaObservationType where name = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", typeName);
-			QaObservationType type = (QaObservationType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return type;
-		} catch (HibernateException e) {
-			handleException(e, "getQaObservationTypeByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", typeName);
+            QaObservationType type = (QaObservationType) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getQaObservationTypeByName");
+        }
+        return null;
+    }
 
 }

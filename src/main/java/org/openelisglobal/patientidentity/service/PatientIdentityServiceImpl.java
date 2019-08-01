@@ -12,34 +12,34 @@ import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 
 @Service
 public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity, String>
-		implements PatientIdentityService {
-	@Autowired
-	protected PatientIdentityDAO baseObjectDAO;
+        implements PatientIdentityService {
+    @Autowired
+    protected PatientIdentityDAO baseObjectDAO;
 
-	PatientIdentityServiceImpl() {
-		super(PatientIdentity.class);
-	}
+    PatientIdentityServiceImpl() {
+        super(PatientIdentity.class);
+    }
 
-	@Override
-	protected PatientIdentityDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected PatientIdentityDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
-		return baseObjectDAO.getAllMatching("patientId", id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
+        return baseObjectDAO.getAllMatching("patientId", id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId) {
-		return getBaseObjectDAO().getPatitentIdentityForPatientAndType(patientId, identityTypeId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId) {
+        return getBaseObjectDAO().getPatitentIdentityForPatientAndType(patientId, identityTypeId);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType) {
-		return getBaseObjectDAO().getPatientIdentitiesByValueAndType(value, identityType);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType) {
+        return getBaseObjectDAO().getPatientIdentitiesByValueAndType(value, identityType);
+    }
 }

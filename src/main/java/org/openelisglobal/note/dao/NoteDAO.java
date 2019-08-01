@@ -46,24 +46,24 @@ public interface NoteDAO extends BaseDAO<Note, String> {
 
 //	public Integer getTotalNoteCount() throws LIMSRuntimeException;
 
-	public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException;
+    public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException;
 
 //	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws LIMSRuntimeException;
 
-	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
-			List<String> filter) throws LIMSRuntimeException;
+    public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
+            List<String> filter) throws LIMSRuntimeException;
 
 //	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject)
 //			throws LIMSRuntimeException;
 
-	public Note getData(String noteId) throws LIMSRuntimeException;
+    public Note getData(String noteId) throws LIMSRuntimeException;
 
 //	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id)
 //			throws LIMSRuntimeException;
 
-	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
-			throws LIMSRuntimeException;
+    public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
+            throws LIMSRuntimeException;
 
-	boolean duplicateNoteExists(Note note);
+    boolean duplicateNoteExists(Note note);
 
 }

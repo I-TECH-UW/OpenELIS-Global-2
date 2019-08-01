@@ -18,11 +18,11 @@ package org.openelisglobal.dataexchange.order.action;
 
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 
-public interface IOrderPersister{
+public interface IOrderPersister {
 
-	void persist(MessagePatient patient, ElectronicOrder eOrder);
-	
-	String getServiceUserId();
+    void persist(MessagePatient patient, ElectronicOrder eOrder);
 
-	void cancelOrder(String referringOrderNumber);
+    String getServiceUserId();
+
+    void cancelOrder(String referringOrderNumber);
 }

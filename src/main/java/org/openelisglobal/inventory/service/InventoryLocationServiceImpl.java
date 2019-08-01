@@ -9,17 +9,17 @@ import org.openelisglobal.inventory.valueholder.InventoryLocation;
 
 @Service
 public class InventoryLocationServiceImpl extends BaseObjectServiceImpl<InventoryLocation, String>
-		implements InventoryLocationService {
-	@Autowired
-	protected InventoryLocationDAO baseObjectDAO;
+        implements InventoryLocationService {
+    @Autowired
+    protected InventoryLocationDAO baseObjectDAO;
 
-	InventoryLocationServiceImpl() {
-		super(InventoryLocation.class);
-	}
+    InventoryLocationServiceImpl() {
+        super(InventoryLocation.class);
+    }
 
-	@Override
-	protected InventoryLocationDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected InventoryLocationDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
 }

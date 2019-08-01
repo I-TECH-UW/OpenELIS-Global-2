@@ -8,32 +8,32 @@ import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 
 public class UnifiedSystemUserMenuForm extends MenuForm {
-	// for display
-	private List menuList;
+    // for display
+    private List menuList;
 
-	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
 
-	public UnifiedSystemUserMenuForm() {
-		setFormName("unifiedSystemUserMenuForm");
-	}
+    public UnifiedSystemUserMenuForm() {
+        setFormName("unifiedSystemUserMenuForm");
+    }
 
-	@Override
-	public List getMenuList() {
-		return menuList;
-	}
+    @Override
+    public List getMenuList() {
+        return menuList;
+    }
 
-	@Override
-	public void setMenuList(List menuList) {
-		this.menuList = menuList;
-	}
+    @Override
+    public void setMenuList(List menuList) {
+        this.menuList = menuList;
+    }
 
-	@Override
-	public List<String> getSelectedIDs() {
-		return selectedIDs;
-	}
+    @Override
+    public List<String> getSelectedIDs() {
+        return selectedIDs;
+    }
 
-	@Override
-	public void setSelectedIDs(List<String> selectedIDs) {
-		this.selectedIDs = selectedIDs;
-	}
+    @Override
+    public void setSelectedIDs(List<String> selectedIDs) {
+        this.selectedIDs = selectedIDs;
+    }
 }

@@ -37,80 +37,79 @@ import org.openelisglobal.organization.valueholder.Organization;
 @Transactional
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
+    @PersistenceContext
+    EntityManager entityManager;
 
-	@PersistenceContext
-	EntityManager entityManager;
+    @Override
+    public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
-	@Override
-	public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
+        try {
+            String sql = "delete from organization_organization_type where org_id = :id";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("id", Integer.parseInt(id));
+            query.executeUpdate();
+        } catch (Exception e) {
+            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "deleteAllLinksForOrganization()", e.toString());
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
+        }
+    }
 
-		try {
-			String sql = "delete from organization_organization_type where org_id = :id";
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("id", Integer.parseInt(id));
-			query.executeUpdate();
-		} catch (Exception e) {
-			LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "deleteAllLinksForOrganization()", e.toString());
-			throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
-		}
-	}
+    @Override
+    public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
-	@Override
-	public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
+        try {
+            String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id, :type_id);";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("org_id", Integer.parseInt(org.getId()));
+            query.setInteger("type_id", Integer.parseInt(typeId));
+            query.executeUpdate();
 
-		try {
-			String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id, :type_id);";
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("org_id", Integer.parseInt(org.getId()));
-			query.setInteger("type_id", Integer.parseInt(typeId));
-			query.executeUpdate();
+        } catch (Exception e) {
+            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "linkOrganizationAndType()", e.toString());
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
+        }
+    }
 
-		} catch (Exception e) {
-			LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "linkOrganizationAndType()", e.toString());
-			throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
-		}
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
+        List<String> orgIdList = null;
+        String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
-		List<String> orgIdList = null;
-		String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("orgTypeId", Integer.parseInt(typeId));
+            orgIdList = query.list();
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("orgTypeId", Integer.parseInt(typeId));
-			orgIdList = query.list();
+        } catch (Exception e) {
+            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "getOrganizationForType()", e.toString());
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
+        }
+        return orgIdList;
+    }
 
-		} catch (Exception e) {
-			LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "getOrganizationForType()", e.toString());
-			throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
-		}
-		return orgIdList;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
+        List<String> orgIdList = null;
+        String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
-		List<String> orgIdList = null;
-		String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setInteger("orgId", Integer.parseInt(organizationId));
+            orgIdList = query.list();
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
-			query.setInteger("orgId", Integer.parseInt(organizationId));
-			orgIdList = query.list();
+        } catch (Exception e) {
+            handleException(e, "getTypeIdsForOrganizationId");
+        }
+        return orgIdList;
+    }
 
-		} catch (Exception e) {
-			handleException(e, "getTypeIdsForOrganizationId");
-		}
-		return orgIdList;
-	}
+    private void handleException(Exception e, String string) {
+        // TODO Auto-generated method stub
+        e.printStackTrace();
 
-	private void handleException(Exception e, String string) {
-		// TODO Auto-generated method stub
-		e.printStackTrace();
-
-	}
+    }
 }

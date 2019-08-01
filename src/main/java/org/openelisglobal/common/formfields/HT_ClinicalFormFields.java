@@ -23,16 +23,16 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 
 public class HT_ClinicalFormFields implements IFormFieldsForImplementation {
 
-	public HashMap<Field, Boolean> getImplementationAttributes() {
-		HashMap<Field, Boolean> settings = new HashMap<Field, Boolean>();
-		settings.put(Field.InlineOrganizationTypes, Boolean.TRUE);
-		settings.put(Field.DepersonalizedResults, Boolean.TRUE);
-		settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
-		settings.put(Field.OrganizationMultiUnit, Boolean.FALSE);
-		settings.put(Field.OrganizationOrgId, Boolean.FALSE);
-		settings.put(Field.ADDRESS_CITY, Boolean.FALSE);
-		settings.put(Field.ADDRESS_DEPARTMENT, Boolean.TRUE);
-		settings.put(Field.PatientRequired, Boolean.TRUE);
+    public HashMap<Field, Boolean> getImplementationAttributes() {
+        HashMap<Field, Boolean> settings = new HashMap<Field, Boolean>();
+        settings.put(Field.InlineOrganizationTypes, Boolean.TRUE);
+        settings.put(Field.DepersonalizedResults, Boolean.TRUE);
+        settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
+        settings.put(Field.OrganizationMultiUnit, Boolean.FALSE);
+        settings.put(Field.OrganizationOrgId, Boolean.FALSE);
+        settings.put(Field.ADDRESS_CITY, Boolean.FALSE);
+        settings.put(Field.ADDRESS_DEPARTMENT, Boolean.TRUE);
+        settings.put(Field.PatientRequired, Boolean.TRUE);
         settings.put(Field.SampleCondition, Boolean.TRUE);
         settings.put(Field.NON_CONFORMITY_SITE_LIST, Boolean.TRUE);
         settings.put(Field.ValueHozSpaceOnResults, Boolean.TRUE);
@@ -42,6 +42,6 @@ public class HT_ClinicalFormFields implements IFormFieldsForImplementation {
         settings.put(Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, Boolean.TRUE);
         settings.put(Field.SampleEntryRequestingSiteSampleId, Boolean.FALSE);
         return settings;
-	}
+    }
 
 }

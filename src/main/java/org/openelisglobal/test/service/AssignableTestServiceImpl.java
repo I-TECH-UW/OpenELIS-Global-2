@@ -9,16 +9,16 @@ import org.openelisglobal.test.valueholder.AssignableTest;
 
 @Service
 public class AssignableTestServiceImpl extends BaseObjectServiceImpl<AssignableTest, String>
-		implements AssignableTestService {
-	@Autowired
-	protected AssignableTestDAO baseObjectDAO;
+        implements AssignableTestService {
+    @Autowired
+    protected AssignableTestDAO baseObjectDAO;
 
-	public AssignableTestServiceImpl() {
-		super(AssignableTest.class);
-	}
+    public AssignableTestServiceImpl() {
+        super(AssignableTest.class);
+    }
 
-	@Override
-	protected AssignableTestDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected AssignableTestDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

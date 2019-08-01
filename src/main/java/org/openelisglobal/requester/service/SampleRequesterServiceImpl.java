@@ -12,22 +12,22 @@ import org.openelisglobal.requester.valueholder.SampleRequester;
 
 @Service
 public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequester, String>
-		implements SampleRequesterService {
-	@Autowired
-	protected SampleRequesterDAO baseObjectDAO;
+        implements SampleRequesterService {
+    @Autowired
+    protected SampleRequesterDAO baseObjectDAO;
 
-	SampleRequesterServiceImpl() {
-		super(SampleRequester.class);
-	}
+    SampleRequesterServiceImpl() {
+        super(SampleRequester.class);
+    }
 
-	@Override
-	protected SampleRequesterDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SampleRequesterDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<SampleRequester> getRequestersForSampleId(String id) {
-		return baseObjectDAO.getRequestersForSampleId(id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleRequester> getRequestersForSampleId(String id) {
+        return baseObjectDAO.getRequestersForSampleId(id);
+    }
 }

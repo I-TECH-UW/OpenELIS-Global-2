@@ -51,145 +51,145 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 @Scope("prototype")
 public class MalariaResultExporter extends Thread implements IMalariaResultExporter {
 
-	private long sleepTime;
-	private boolean running = true;
+    private long sleepTime;
+    private boolean running = true;
 
-	@Autowired
-	private ReportQueueTypeService reportQueueTypeService;
-	@Autowired
-	private ReferenceTablesService referenceTablesService;
-	@Autowired
-	private DocumentTypeService documentTypeService;
-	@Autowired
-	private DocumentTrackService documentTrackService;
-	@Autowired
-	private ReportExternalExportService reportExternalExportService;
+    @Autowired
+    private ReportQueueTypeService reportQueueTypeService;
+    @Autowired
+    private ReferenceTablesService referenceTablesService;
+    @Autowired
+    private DocumentTypeService documentTypeService;
+    @Autowired
+    private DocumentTrackService documentTrackService;
+    @Autowired
+    private ReportExternalExportService reportExternalExportService;
 
-	private String resultReportTypeId;
+    private String resultReportTypeId;
 
-	@PostConstruct
-	private void initializeGlobalVariables() {
-		resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
-	}
+    @PostConstruct
+    private void initializeGlobalVariables() {
+        resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
+    }
 
-	public void setSleepInMins(long sleepInMin) {
-		sleepTime = sleepInMin * 1000L * 60L;
+    public void setSleepInMins(long sleepInMin) {
+        sleepTime = sleepInMin * 1000L * 60L;
 
-	}
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		while (running) {
-			exportResults();
+        while (running) {
+            exportResults();
 
-			try {
-				sleep(sleepTime);
-			} catch (InterruptedException e) {
-				running = false;
-			}
-		}
+            try {
+                sleep(sleepTime);
+            } catch (InterruptedException e) {
+                running = false;
+            }
+        }
 
-	}
+    }
 
-	public void stopExports() {
-		running = false;
-	}
+    public void stopExports() {
+        running = false;
+    }
 
-	private void exportResults() {
-		if (shouldReportResults()) {
-			List<ReportExternalExport> reportList = reportExternalExportService
-					.getUnsentReportExports(resultReportTypeId);
+    private void exportResults() {
+        if (shouldReportResults()) {
+            List<ReportExternalExport> reportList = reportExternalExportService
+                    .getUnsentReportExports(resultReportTypeId);
 
-			ReportTransmission transmitter = new ReportTransmission();
-			String url = ConfigurationProperties.getInstance().getPropertyValue(Property.malariaCaseReportURL);
-			boolean sendAsychronously = false;
+            ReportTransmission transmitter = new ReportTransmission();
+            String url = ConfigurationProperties.getInstance().getPropertyValue(Property.malariaCaseReportURL);
+            boolean sendAsychronously = false;
 
-			for (ReportExternalExport report : reportList) {
-				IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("malariaSuccessReportHandler");
-				responseHandler.setRowId(report.getId());
-				transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
-			}
-		}
-	}
+            for (ReportExternalExport report : reportList) {
+                IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("malariaSuccessReportHandler");
+                responseHandler.setRowId(report.getId());
+                transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
+            }
+        }
+    }
 
-	private boolean shouldReportResults() {
-		String reportResults = ConfigurationProperties.getInstance()
-				.getPropertyValueLowerCase(Property.malariaCaseReport);
-		return ("true".equals(reportResults) || "enable".equals(reportResults));
-	}
+    private boolean shouldReportResults() {
+        String reportResults = ConfigurationProperties.getInstance()
+                .getPropertyValueLowerCase(Property.malariaCaseReport);
+        return ("true".equals(reportResults) || "enable".equals(reportResults));
+    }
 
-	@Service("malariaSuccessReportHandler")
-	@Scope("prototype")
-	class SuccessReportHandler implements IRowTransmissionResponseHandler {
-		String externalExportRowId;
+    @Service("malariaSuccessReportHandler")
+    @Scope("prototype")
+    class SuccessReportHandler implements IRowTransmissionResponseHandler {
+        String externalExportRowId;
 
-		public SuccessReportHandler(String rowId) {
-			setRowId(rowId);
-		}
+        public SuccessReportHandler(String rowId) {
+            setRowId(rowId);
+        }
 
-		public SuccessReportHandler() {
+        public SuccessReportHandler() {
 
-		}
+        }
 
-		@Override
-		public void setRowId(String rowId) {
-			externalExportRowId = rowId;
-		}
+        @Override
+        public void setRowId(String rowId) {
+            externalExportRowId = rowId;
+        }
 
-		@Override
-		@Transactional
-		public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
+        @Override
+        @Transactional
+        public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
-			if (httpReturnStatus == HttpServletResponse.SC_OK) {
-				ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
-				List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
+            if (httpReturnStatus == HttpServletResponse.SC_OK) {
+                ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
+                List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
 
-				try {
-					for (DocumentTrack document : documents) {
-						documentTrackService.insert(document);
-					}
-					reportExternalExportService.delete(report);
+                try {
+                    for (DocumentTrack document : documents) {
+                        documentTrackService.insert(document);
+                    }
+                    reportExternalExportService.delete(report);
 
-				} catch (LIMSRuntimeException lre) {
-					LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
-					throw lre;
-				}
+                } catch (LIMSRuntimeException lre) {
+                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
+                    throw lre;
+                }
 
-			}
+            }
 
-		}
+        }
 
-		private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
-			List<DocumentTrack> documentList = new ArrayList<>();
-			String resultTableId = getResultTableId();
-			DocumentType type = getResultType();
-			Timestamp now = DateUtil.getNowAsTimestamp();
+        private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
+            List<DocumentTrack> documentList = new ArrayList<>();
+            String resultTableId = getResultTableId();
+            DocumentType type = getResultType();
+            Timestamp now = DateUtil.getNowAsTimestamp();
 
-			if (!GenericValidator.isBlankOrNull(bookkeepingData)) {
-				String[] resultIdList = bookkeepingData.split(",");
+            if (!GenericValidator.isBlankOrNull(bookkeepingData)) {
+                String[] resultIdList = bookkeepingData.split(",");
 
-				for (int i = 0; i < resultIdList.length; i++) {
-					DocumentTrack document = new DocumentTrack();
-					document.setDocumentTypeId(type.getId());
-					document.setRecordId(resultIdList[i]);
-					document.setReportTime(now);
-					document.setTableId(resultTableId);
-					document.setSysUserId("1");
-					documentList.add(document);
-				}
-			}
-			return documentList;
-		}
+                for (int i = 0; i < resultIdList.length; i++) {
+                    DocumentTrack document = new DocumentTrack();
+                    document.setDocumentTypeId(type.getId());
+                    document.setRecordId(resultIdList[i]);
+                    document.setReportTime(now);
+                    document.setTableId(resultTableId);
+                    document.setSysUserId("1");
+                    documentList.add(document);
+                }
+            }
+            return documentList;
+        }
 
-		private DocumentType getResultType() {
-			return documentTypeService.getDocumentTypeByName("malariaCase");
-		}
+        private DocumentType getResultType() {
+            return documentTypeService.getDocumentTypeByName("malariaCase");
+        }
 
-		private String getResultTableId() {
-			return referenceTablesService.getReferenceTableByName("RESULT").getId();
-		}
+        private String getResultTableId() {
+            return referenceTablesService.getReferenceTableByName("RESULT").getId();
+        }
 
-	}
+    }
 
 }

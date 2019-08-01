@@ -21,93 +21,93 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 
 public class Analyte extends EnumValueItemImpl {
 
-	private String id;
+    private String id;
 
-	//defined in EnumValueItemImpl
-	//private String isActive;
+    // defined in EnumValueItemImpl
+    // private String isActive;
 
-	private String externalId;
+    private String externalId;
 
-	private ValueHolderInterface analyte;
+    private ValueHolderInterface analyte;
 
-	private String analyteName;
+    private String analyteName;
 
-	private String selectedAnalyteId;
-	
-    //bugzilla 2432
-	private String localAbbreviation;
+    private String selectedAnalyteId;
 
-	public Analyte() {
-		super();
-		this.analyte = new ValueHolder();
-	}
+    // bugzilla 2432
+    private String localAbbreviation;
 
-	public String getId() {
-		return this.id;
-	}
+    public Analyte() {
+        super();
+        this.analyte = new ValueHolder();
+    }
 
-	public String getIsActive() {
-		return this.isActive;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	public Analyte getAnalyte() {
-		return (Analyte) this.analyte.getValue();
-	}
+    public String getIsActive() {
+        return this.isActive;
+    }
 
-	protected ValueHolderInterface getAnalyteHolder() {
-		return this.analyte;
-	}
+    public Analyte getAnalyte() {
+        return (Analyte) this.analyte.getValue();
+    }
 
-	public String getAnalyteName() {
-		return this.analyteName;
-	}
+    protected ValueHolderInterface getAnalyteHolder() {
+        return this.analyte;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-		//bugzilla 1625
-		this.key = id;
-	}
+    public String getAnalyteName() {
+        return this.analyteName;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setId(String id) {
+        this.id = id;
+        // bugzilla 1625
+        this.key = id;
+    }
 
-	public void setAnalyte(Analyte analyte) {
-		this.analyte.setValue(analyte);
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-	protected void setAnalyteHolder(ValueHolderInterface analyte) {
-		this.analyte = analyte;
-	}
+    public void setAnalyte(Analyte analyte) {
+        this.analyte.setValue(analyte);
+    }
 
-	public void setAnalyteName(String analyteName) {
-		this.analyteName = analyteName;
-		//bugzilla 1625
-		this.name = analyteName;
-	}
+    protected void setAnalyteHolder(ValueHolderInterface analyte) {
+        this.analyte = analyte;
+    }
 
-	public void setSelectedAnalyteId(String selectedAnalyteId) {
-		this.selectedAnalyteId = selectedAnalyteId;
-	}
+    public void setAnalyteName(String analyteName) {
+        this.analyteName = analyteName;
+        // bugzilla 1625
+        this.name = analyteName;
+    }
 
-	public String getSelectedAnalyteId() {
-		return this.selectedAnalyteId;
-	}
+    public void setSelectedAnalyteId(String selectedAnalyteId) {
+        this.selectedAnalyteId = selectedAnalyteId;
+    }
 
-	public String getExternalId() {
-		return externalId;
-	}
+    public String getSelectedAnalyteId() {
+        return this.selectedAnalyteId;
+    }
 
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
+    public String getExternalId() {
+        return externalId;
+    }
 
-	public String getLocalAbbreviation() {
-		return localAbbreviation;
-	}
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-	public void setLocalAbbreviation(String localAbbreviation) {
-		this.localAbbreviation = localAbbreviation;
-	}
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
+    }
+
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
 
 }

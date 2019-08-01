@@ -8,10 +8,10 @@ import org.openelisglobal.address.valueholder.PersonAddress;
 
 public interface PersonAddressService extends BaseObjectService<PersonAddress, AddressPK> {
 
-	@Override
-	AddressPK insert(PersonAddress personAddress);
+    @Override
+    AddressPK insert(PersonAddress personAddress);
 
-	List<PersonAddress> getAddressPartsByPersonId(String personId);
+    List<PersonAddress> getAddressPartsByPersonId(String personId);
 
-	PersonAddress getByPersonIdAndPartId(String personId, String addressPartId);
+    PersonAddress getByPersonIdAndPartId(String personId, String addressPartId);
 }

@@ -24,7 +24,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.requester.dao.SampleRequesterDAO;
@@ -36,9 +36,9 @@ import org.openelisglobal.requester.valueholder.SampleRequester;
 @Transactional
 public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String> implements SampleRequesterDAO {
 
-	public SampleRequesterDAOImpl() {
-		super(SampleRequester.class);
-	}
+    public SampleRequesterDAOImpl() {
+        super(SampleRequester.class);
+    }
 
 //	@Override
 //	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
@@ -94,45 +94,45 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //		}
 //	}
 
-	@Override
-	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
-		entityManager.unwrap(Session.class).delete(sampleRequester);
-		// closeSession(); // CSL remove old
-	}
+    @Override
+    public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
+        entityManager.unwrap(Session.class).delete(sampleRequester);
+        // closeSession(); // CSL remove old
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
-		String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
+        String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setLong("sampleId", Long.parseLong(sampleId));
-			List<SampleRequester> requester = query.list();
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setLong("sampleId", Long.parseLong(sampleId));
+            List<SampleRequester> requester = query.list();
 
-			// closeSession(); // CSL remove old
+            // closeSession(); // CSL remove old
 
-			return requester;
+            return requester;
 
-		} catch (HibernateException e) {
-			handleException(e, "getRequesterForSampleId");
-		}
-		return null;
-	}
+        } catch (HibernateException e) {
+            handleException(e, "getRequesterForSampleId");
+        }
+        return null;
+    }
 
-	public SampleRequester readOld(long sampleId, long requesterTypeId) {
-		String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setLong("sampleId", sampleId);
-			query.setLong("requesterTypeId", requesterTypeId);
-			SampleRequester requester = (SampleRequester) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return requester;
-		} catch (HibernateException e) {
-			LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());
-			throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
-		}
-	}
+    public SampleRequester readOld(long sampleId, long requesterTypeId) {
+        String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setLong("sampleId", sampleId);
+            query.setLong("requesterTypeId", requesterTypeId);
+            SampleRequester requester = (SampleRequester) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return requester;
+        } catch (HibernateException e) {
+            LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());
+            throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
+        }
+    }
 }

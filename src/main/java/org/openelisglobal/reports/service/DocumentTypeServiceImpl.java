@@ -9,22 +9,23 @@ import org.openelisglobal.reports.dao.DocumentTypeDAO;
 import org.openelisglobal.reports.valueholder.DocumentType;
 
 @Service
-public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType, String> implements DocumentTypeService {
-	@Autowired
-	protected DocumentTypeDAO baseObjectDAO;
+public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType, String>
+        implements DocumentTypeService {
+    @Autowired
+    protected DocumentTypeDAO baseObjectDAO;
 
-	DocumentTypeServiceImpl() {
-		super(DocumentType.class);
-	}
+    DocumentTypeServiceImpl() {
+        super(DocumentType.class);
+    }
 
-	@Override
-	protected DocumentTypeDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected DocumentTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public DocumentType getDocumentTypeByName(String name) {
-		return getMatch("name", name).orElse(null);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public DocumentType getDocumentTypeByName(String name) {
+        return getMatch("name", name).orElse(null);
+    }
 }

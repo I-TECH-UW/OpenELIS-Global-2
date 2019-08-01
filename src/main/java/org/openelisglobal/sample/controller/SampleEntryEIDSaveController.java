@@ -15,37 +15,34 @@ import org.openelisglobal.common.validator.BaseErrors;
 
 @Controller
 public class SampleEntryEIDSaveController extends BaseController {
-  @RequestMapping(
-      value = "/SampleEntryEIDSave",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleEntryEIDSave(HttpServletRequest request,
-      @ModelAttribute("form") SampleEntryByProjectForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleEntryByProjectForm();
-    }
+    @RequestMapping(value = "/SampleEntryEIDSave", method = RequestMethod.GET)
+    public ModelAndView showSampleEntryEIDSave(HttpServletRequest request,
+            @ModelAttribute("form") SampleEntryByProjectForm form) {
+        String forward = FWD_SUCCESS;
+        if (form == null) {
+            form = new SampleEntryByProjectForm();
+        }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+        Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
-
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "/SampleEntryEID.do?forward=success";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "sampleEntryEIDDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(forward, form);
     }
-  }
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "/SampleEntryEID.do?forward=success";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "sampleEntryEIDDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

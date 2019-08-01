@@ -25,7 +25,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -38,11 +38,11 @@ import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 @Component
 @Transactional
 public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, String>
-		implements DictionaryCategoryDAO {
+        implements DictionaryCategoryDAO {
 
-	public DictionaryCategoryDAOImpl() {
-		super(DictionaryCategory.class);
-	}
+    public DictionaryCategoryDAOImpl() {
+        super(DictionaryCategory.class);
+    }
 
 //	@Override
 //	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException {
@@ -289,7 +289,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		return list;
 //	}
 
-	// bugzilla 1427
+    // bugzilla 1427
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //		int currentId = (Integer.valueOf(id)).intValue();
@@ -322,55 +322,55 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		return list;
 //	}
 
-	// bugzilla 1386
-	@Override
-	public boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory)
-			throws LIMSRuntimeException {
-		try {
+    // bugzilla 1386
+    @Override
+    public boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory)
+            throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			// only one of each name, description, local abbrev can exist in entire table
-			String sql = "from DictionaryCategory t where "
-					+ "((trim(lower(t.categoryName)) = :param and t.id != :param3) " + "or "
-					+ "(trim(lower(t.description)) = :param2 and t.id != :param3) " + "or "
-					+ "(trim(lower(t.localAbbreviation)) = :param4 and t.id != :param3)) ";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", dictionaryCategory.getCategoryName().toLowerCase().trim());
-			query.setParameter("param2", dictionaryCategory.getDescription().toLowerCase().trim());
-			query.setParameter("param4", dictionaryCategory.getLocalAbbreviation().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            // only one of each name, description, local abbrev can exist in entire table
+            String sql = "from DictionaryCategory t where "
+                    + "((trim(lower(t.categoryName)) = :param and t.id != :param3) " + "or "
+                    + "(trim(lower(t.description)) = :param2 and t.id != :param3) " + "or "
+                    + "(trim(lower(t.localAbbreviation)) = :param4 and t.id != :param3)) ";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", dictionaryCategory.getCategoryName().toLowerCase().trim());
+            query.setParameter("param2", dictionaryCategory.getDescription().toLowerCase().trim());
+            query.setParameter("param4", dictionaryCategory.getLocalAbbreviation().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String dictId = "0";
-			if (!StringUtil.isNullorNill(dictionaryCategory.getId())) {
-				dictId = dictionaryCategory.getId();
-			}
-			query.setParameter("param3", dictId);
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String dictId = "0";
+            if (!StringUtil.isNullorNill(dictionaryCategory.getId())) {
+                dictId = dictionaryCategory.getId();
+            }
+            query.setParameter("param3", dictId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryCategoryDAOImpl", "duplicateDictionaryExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("DictionaryCategoryDAOImpl", "duplicateDictionaryExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
+        }
+    }
 
-	/**
-	 * Read a list of DictionaryCategory which match those field in the entity which
-	 * are filled in.
-	 */
+    /**
+     * Read a list of DictionaryCategory which match those field in the entity which
+     * are filled in.
+     */
 //	@SuppressWarnings("unchecked")
 //	public List<DictionaryCategory> readByExample(DictionaryCategory entity) throws LIMSRuntimeException {
 //		List<DictionaryCategory> results;

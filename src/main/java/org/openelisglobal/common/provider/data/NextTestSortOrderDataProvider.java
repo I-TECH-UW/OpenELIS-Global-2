@@ -29,61 +29,61 @@ import org.openelisglobal.common.servlet.data.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+
 /**
  * 
- * @author diane benz
- * bugzilla 2443
+ * @author diane benz bugzilla 2443
  */
 public class NextTestSortOrderDataProvider extends BaseDataProvider {
-	
-	protected TestService testService = SpringContext.getBean(TestService.class);
-	protected TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
-	public NextTestSortOrderDataProvider() {
-		super();
-	}
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
-	public NextTestSortOrderDataProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public NextTestSortOrderDataProvider() {
+        super();
+    }
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    public NextTestSortOrderDataProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-		String testSectionId = (String) request.getParameter("tsid");
-		String formField = (String) request.getParameter("field");
-		String result = getData(testSectionId);
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	// modified for efficiency bugzilla 1367
-	/**
-	 * getData() - for NextTestSortOrderDataProvider
-	 * 
-	 * @param testSectionId - String
-	 * @return String - data
-	 */
-	public String getData(String testSectionId) throws LIMSRuntimeException {
+        String testSectionId = (String) request.getParameter("tsid");
+        String formField = (String) request.getParameter("field");
+        String result = getData(testSectionId);
+        ajaxServlet.sendData(formField, result, request, response);
+    }
+
+    // modified for efficiency bugzilla 1367
+    /**
+     * getData() - for NextTestSortOrderDataProvider
+     * 
+     * @param testSectionId - String
+     * @return String - data
+     */
+    public String getData(String testSectionId) throws LIMSRuntimeException {
         String result = INVALID;
 
-		if (!StringUtil.isNullorNill(testSectionId)) {
-			Test test = new Test();
-			TestSection testSection = new TestSection();
-			testSection.setId(testSectionId);
-			testSectionService.getData(testSection);
-			
-			if (testSection != null && !StringUtil.isNullorNill(testSection.getId())) {
-				test.setTestSection(testSection);
+        if (!StringUtil.isNullorNill(testSectionId)) {
+            Test test = new Test();
+            TestSection testSection = new TestSection();
+            testSection.setId(testSectionId);
+            testSectionService.getData(testSection);
 
-				Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);
-				if (sortOrder != null) {
-					result =  sortOrder.toString();
-				} else {
-					result = "1";
-				}
-			} 	
-		}
-		return result;
-	}
+            if (testSection != null && !StringUtil.isNullorNill(testSection.getId())) {
+                test.setTestSection(testSection);
+
+                Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);
+                if (sortOrder != null) {
+                    result = sortOrder.toString();
+                } else {
+                    result = "1";
+                }
+            }
+        }
+        return result;
+    }
 
 }

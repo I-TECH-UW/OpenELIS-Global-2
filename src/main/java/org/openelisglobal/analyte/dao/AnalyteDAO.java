@@ -47,18 +47,18 @@ public interface AnalyteDAO extends BaseDAO<Analyte, String> {
 //
 //	public List getPreviousAnalyteRecord(String id) throws LIMSRuntimeException;
 
-	// bugzilla 1367 added boolean param
-	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException;
+    // bugzilla 1367 added boolean param
+    public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException;
 
-	boolean duplicateAnalyteExists(Analyte analyte);
+    boolean duplicateAnalyteExists(Analyte analyte);
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	public Integer getTotalAnalyteCount() throws LIMSRuntimeException;
 
-	// bugzilla 2370
+    // bugzilla 2370
 //	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) throws LIMSRuntimeException;
 
-	// bugzilla 2370
+    // bugzilla 2370
 //	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException;
 
 }

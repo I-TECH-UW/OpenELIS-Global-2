@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
@@ -43,9 +43,9 @@ import org.openelisglobal.systemusermodule.valueholder.SystemUserModule;
 @Qualifier(value = "SystemUserModuleDAO")
 public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, String> implements SystemUserModuleDAO {
 
-	public SystemUserModuleDAOImpl() {
-		super(SystemUserModule.class);
-	}
+    public SystemUserModuleDAOImpl() {
+        super(SystemUserModule.class);
+    }
 
 //	@Override
 //	public void deleteData(List systemUserModules) throws LIMSRuntimeException {
@@ -158,213 +158,213 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
-		try {
-			SystemUserModule sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class,
-					systemUserModule.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (sysUserModule != null) {
-				PropertyUtils.copyProperties(systemUserModule, sysUserModule);
-			} else {
-				systemUserModule.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
+        try {
+            SystemUserModule sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class,
+                    systemUserModule.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (sysUserModule != null) {
+                PropertyUtils.copyProperties(systemUserModule, sysUserModule);
+            } else {
+                systemUserModule.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in SystemUserModule getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllPermissionModules() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from SystemUserModule";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemModules()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemModules()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllPermissionModules() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from SystemUserModule";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemModules()", e.toString());
+            throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemModules()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from SystemUserModule s where s.systemUser.id = :param";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", systemUserId);
-			list = query.list();
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemUserModulesBySystemUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemUserModulesBySystemUserId()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from SystemUserModule s where s.systemUser.id = :param";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", systemUserId);
+            list = query.list();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemUserModulesBySystemUserId()", e.toString());
+            throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemUserModulesBySystemUserId()", e);
+        }
 
-		return list;
+        return list;
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from SystemUserModule s order by s.systemUser.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            String sql = "from SystemUserModule s order by s.systemUser.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getPageOfSystemUserModules()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemUserModule getPageOfSystemUserModules()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getPageOfSystemUserModules()", e.toString());
+            throw new LIMSRuntimeException("Error in SystemUserModule getPageOfSystemUserModules()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public SystemUserModule readSystemUserModule(String idString) {
-		SystemUserModule sysUserModule = null;
-		try {
-			sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "readSystemUserModule()", e.toString());
-			throw new LIMSRuntimeException("Error in Gender readSystemUserModule(idString)", e);
-		}
+    public SystemUserModule readSystemUserModule(String idString) {
+        SystemUserModule sysUserModule = null;
+        try {
+            sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "readSystemUserModule()", e.toString());
+            throw new LIMSRuntimeException("Error in Gender readSystemUserModule(idString)", e);
+        }
 
-		return sysUserModule;
-	}
+        return sysUserModule;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "SystemUserModule", SystemUserModule.class);
-	}
+        return getNextRecord(id, "SystemUserModule", SystemUserModule.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "SystemUserModule", SystemUserModule.class);
-	}
+        return getPreviousRecord(id, "SystemUserModule", SystemUserModule.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
-		return getTotalCount("SystemUserModule", SystemUserModule.class);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
+        return getTotalCount("SystemUserModule", SystemUserModule.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+        List list = new Vector();
+        int rrn = 0;
+        try {
+            String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+                    .setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getNextRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+        List list = new Vector();
+        int rrn = 0;
+        try {
+            String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
+                    .setFirstResult(rrn + 1).setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
-		try {
+    @Override
+    public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", systemUserModule.getSystemUser().getId());
-			query.setParameter("param2", systemUserModule.getSystemModule().getId());
+            String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", systemUserModule.getSystemUser().getId());
+            query.setParameter("param2", systemUserModule.getSystemModule().getId());
 
-			String systemUserModuleId = "0";
-			if (!StringUtil.isNullorNill(systemUserModule.getId())) {
-				systemUserModuleId = systemUserModule.getId();
-			}
-			query.setParameter("param3", systemUserModuleId);
+            String systemUserModuleId = "0";
+            if (!StringUtil.isNullorNill(systemUserModule.getId())) {
+                systemUserModuleId = systemUserModule.getId();
+            }
+            query.setParameter("param3", systemUserModuleId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("systemUserModuleDAOImpl", "duplicateSystemUserModuleExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateSystemUserModuleExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("systemUserModuleDAOImpl", "duplicateSystemUserModuleExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateSystemUserModuleExists()", e);
+        }
+    }
 
 //	@Override
 //	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
@@ -387,10 +387,10 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //		}
 //	}
 
-	@Override
-	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
-		List userModuleList = getAllPermissionModulesByAgentId(userId);
-		return userModuleList.size() > 0;
-	}
+    @Override
+    public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
+        List userModuleList = getAllPermissionModulesByAgentId(userId);
+        return userModuleList.size() > 0;
+    }
 
 }

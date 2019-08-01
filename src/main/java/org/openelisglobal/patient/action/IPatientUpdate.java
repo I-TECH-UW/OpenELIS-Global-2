@@ -28,19 +28,19 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 
 public interface IPatientUpdate {
-	public static enum PatientUpdateStatus {
-		NO_ACTION, UPDATE, ADD
+    public static enum PatientUpdateStatus {
+        NO_ACTION, UPDATE, ADD
 
-	}
+    }
 
-	public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
-	public abstract void setPatientUpdateStatus(PatientManagementInfo patientInfo);
+    public abstract void setPatientUpdateStatus(PatientManagementInfo patientInfo);
 
-	public abstract PatientUpdateStatus getPatientUpdateStatus();
+    public abstract PatientUpdateStatus getPatientUpdateStatus();
 
-	public abstract void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException;
+    public abstract void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException;
 
-	public abstract String getPatientId(SamplePatientEntryForm form);
+    public abstract String getPatientId(SamplePatientEntryForm form);
 }

@@ -14,28 +14,28 @@ import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 
 @Service
 public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModuleUrl, String>
-		implements SystemModuleUrlService {
-	@Autowired
-	protected SystemModuleUrlDAO baseObjectDAO;
+        implements SystemModuleUrlService {
+    @Autowired
+    protected SystemModuleUrlDAO baseObjectDAO;
 
-	SystemModuleUrlServiceImpl() {
-		super(SystemModuleUrl.class);
-	}
+    SystemModuleUrlServiceImpl() {
+        super(SystemModuleUrl.class);
+    }
 
-	@Override
-	protected SystemModuleUrlDAO getBaseObjectDAO() {
-		return baseObjectDAO;
-	}
+    @Override
+    protected SystemModuleUrlDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
-		return baseObjectDAO.getByRequest(request);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
+        return baseObjectDAO.getByRequest(request);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<SystemModuleUrl> getByUrlPath(String urlPath) {
-		return getBaseObjectDAO().getByUrlPath(urlPath);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByUrlPath(String urlPath) {
+        return getBaseObjectDAO().getByUrlPath(urlPath);
+    }
 }

@@ -19,7 +19,7 @@ package org.openelisglobal.localization.daoimpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.localization.dao.LocalizationDAO;
 import org.openelisglobal.localization.valueholder.Localization;
 
@@ -29,9 +29,9 @@ import org.openelisglobal.localization.valueholder.Localization;
 @Transactional
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> implements LocalizationDAO {
 
-	public LocalizationDAOImpl() {
-		super(Localization.class);
-	}
+    public LocalizationDAOImpl() {
+        super(Localization.class);
+    }
 
 //	@Override
 //	public Localization getLocalizationById(String id) throws LIMSRuntimeException {

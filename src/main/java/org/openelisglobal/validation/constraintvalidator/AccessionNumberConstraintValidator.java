@@ -12,28 +12,28 @@ import org.openelisglobal.common.util.validator.GenericValidator;
 
 public class AccessionNumberConstraintValidator implements ConstraintValidator<ValidAccessionNumber, String> {
 
-	ValidAccessionNumber validateAccessionNumberConstraint;
+    ValidAccessionNumber validateAccessionNumberConstraint;
 
-	@Override
-	public void initialize(ValidAccessionNumber constraint) {
-		validateAccessionNumberConstraint = constraint;
-	}
+    @Override
+    public void initialize(ValidAccessionNumber constraint) {
+        validateAccessionNumberConstraint = constraint;
+    }
 
-	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (GenericValidator.isBlankOrNull(value)) {
-			return true;
-		}
-		if (AccessionFormat.ANY.equals(validateAccessionNumberConstraint.format())) {
-			return value.matches("^[a-zA-Z0-9-]*$"); // TODO do tighter validation
-		}
-		AccessionNumberValidatorFactory factory = new AccessionNumberValidatorFactory();
-		try {
-			return ValidationResults.SUCCESS.equals(factory.getValidator(validateAccessionNumberConstraint.format())
-					.validFormat(value, validateAccessionNumberConstraint.dateValidate()));
-		} catch (IllegalArgumentException | LIMSInvalidConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (GenericValidator.isBlankOrNull(value)) {
+            return true;
+        }
+        if (AccessionFormat.ANY.equals(validateAccessionNumberConstraint.format())) {
+            return value.matches("^[a-zA-Z0-9-]*$"); // TODO do tighter validation
+        }
+        AccessionNumberValidatorFactory factory = new AccessionNumberValidatorFactory();
+        try {
+            return ValidationResults.SUCCESS.equals(factory.getValidator(validateAccessionNumberConstraint.format())
+                    .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
+        } catch (IllegalArgumentException | LIMSInvalidConfigurationException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

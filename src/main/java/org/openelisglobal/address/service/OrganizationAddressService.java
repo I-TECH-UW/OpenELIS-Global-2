@@ -8,5 +8,5 @@ import org.openelisglobal.address.valueholder.OrganizationAddress;
 
 public interface OrganizationAddressService extends BaseObjectService<OrganizationAddress, AddressPK> {
 
-	List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId);
+    List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId);
 }

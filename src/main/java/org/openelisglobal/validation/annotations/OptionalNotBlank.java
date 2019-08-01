@@ -18,11 +18,11 @@ import org.openelisglobal.common.formfields.FormFields;
 @Documented
 public @interface OptionalNotBlank {
 
-	String message() default "Cannot be blank";
+    String message() default "Cannot be blank";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	FormFields.Field[] formFields();
+    FormFields.Field[] formFields();
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }
