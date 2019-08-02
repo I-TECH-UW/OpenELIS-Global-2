@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -185,12 +184,12 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      * @param referral
      */
     private void reportReferral(Referral referral) {
-        Analysis analysis = referral.getAnalysis();
+        currentAnalysis = referral.getAnalysis();
         Sample sample = referralService.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
         currentSample = sample;
         findPatientFromSample();
 
-        String note = analysisService.getNotesAsString(analysis, false, true, "<br/>", false);
+        String note = analysisService.getNotesAsString(currentAnalysis, false, true, "<br/>", false);
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
         for (int i = 0; i < referralResults.size(); i++) {
             i = reportReferralResultValue(referralResults, i);
@@ -215,8 +214,8 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
                 data.setReferralRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
                 data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
                         : Integer.parseInt(test.getSortOrder()));
-                data.setSectionSortOrder(analysisService.getTestSection(analysis).getSortOrderInt());
-                data.setTestSection(analysisService.getTestSection(analysis).getLocalizedName());
+                data.setSectionSortOrder(analysisService.getTestSection(currentAnalysis).getSortOrderInt());
+                data.setTestSection(analysisService.getTestSection(currentAnalysis).getLocalizedName());
             }
             Timestamp referralReportDate = referralResult.getReferralReportDate();
             data.setReferralResultReportDate(
