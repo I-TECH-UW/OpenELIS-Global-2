@@ -23,33 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.note.service.NoteServiceImpl;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.provider.service.ProviderService;
-import org.openelisglobal.qaevent.service.QaObservationService;
-import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.sampleproject.service.SampleProjectService;
-import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -62,26 +36,51 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
+import org.openelisglobal.qaevent.service.QaObservationService;
 import org.openelisglobal.qaevent.valueholder.QaObservation;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
+import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.sampleproject.service.SampleProjectService;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
+import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 @Service
 @Scope("prototype")
@@ -246,7 +245,9 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
 
             if (insertSampleItems) {
                 for (SampleItem si : sampleItemsByType.values()) {
-                    sampleItemService.insert(si);
+                    if (si != null) {
+                        sampleItemService.insert(si);
+                    }
                 }
             }
 
