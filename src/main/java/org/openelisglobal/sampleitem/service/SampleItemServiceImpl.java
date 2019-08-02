@@ -3,14 +3,13 @@ package org.openelisglobal.sampleitem.service;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.sampleitem.dao.SampleItemDAO;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, String> implements SampleItemService {
@@ -86,5 +85,12 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
     public void getDataBySample(SampleItem sampleItem) {
         getBaseObjectDAO().getDataBySample(sampleItem);
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getTypeOfSampleId(SampleItem sampleItem) {
+        sampleItem = get(sampleItem.getId());
+        return sampleItem.getTypeOfSampleId();
     }
 }
