@@ -110,6 +110,11 @@ public class ResultValidationController extends BaseResultValidationController {
     public ModelAndView showResultValidation(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ResultValidationForm form = new ResultValidationForm();
+        return getResultValidation(request, form);
+    }
+
+    private ModelAndView getResultValidation(HttpServletRequest request, ResultValidationForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
         String testSectionId = (request.getParameter("testSectionId"));
@@ -167,7 +172,12 @@ public class ResultValidationController extends BaseResultValidationController {
     @RequestMapping(value = "/ResultValidation", method = RequestMethod.POST)
     public ModelAndView showResultValidationSave(HttpServletRequest request,
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm form,
-            BindingResult result, RedirectAttributes redirectAttributes) {
+            BindingResult result, RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if ("true".equals(request.getParameter("pageResults"))) {
+            return getResultValidation(request, form);
+        }
+
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);
