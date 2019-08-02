@@ -728,7 +728,7 @@ public class ResultsLoadUtility {
         testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || StatusService.getInstance()
                 .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
         if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-            testItem.setNonconforming(getQaEventByTestSection(analysis));
+            testItem.setNonconforming(testItem.isNonconforming() || getQaEventByTestSection(analysis));
         }
 
         Result quantifiedResult = analysisService.getQuantifiedResult(analysis);
