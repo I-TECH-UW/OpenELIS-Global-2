@@ -948,7 +948,7 @@ function setField(id, value) {
                <form:select path="testResult[${iter.index}].rejectReasonId"
                     id="rejectReasonId_${iter.index}"
                     disabled='${testResult.readOnly}'>
-                    <form:options items="${form.rejectReasons}" itemValue="value" itemLabel="id"/>
+                    <form:options items="${form.rejectReasons}" itemValue="id" itemLabel="value"/>
             </form:select><br/>
        </td>
     </tr>   

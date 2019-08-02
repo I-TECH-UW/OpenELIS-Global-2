@@ -105,13 +105,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private static final String RESULT_SUBJECT = "Result Note";
     private static String REFERRAL_CONFORMATION_ID;
 
-    private boolean useTechnicianName = ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.resultTechnicianName, "true");
-    private boolean alwaysValidate = ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
-    private boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-    private String statusRuleSet = ConfigurationProperties.getInstance()
-            .getPropertyValueUpperCase(Property.StatusRules);
+    private boolean useTechnicianName;
+    private boolean alwaysValidate;
+    private boolean supportReferrals;
+    private String statusRuleSet;
 
     @PostConstruct
     private void initialize() {
@@ -119,6 +116,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (referralType != null) {
             REFERRAL_CONFORMATION_ID = referralType.getId();
         }
+    }
+
+    private void refreshValues() {
+        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
+                "true");
+        alwaysValidate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS,
+                "true");
+        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
     }
 
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
@@ -129,6 +135,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        refreshValues();
         String requestedPage = request.getParameter("page");
         String testSectionId = request.getParameter("testSectionId");
 
@@ -237,6 +244,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             saveErrors(result);
             findForward(FWD_FAIL_INSERT, form);
         }
+        refreshValues();
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
