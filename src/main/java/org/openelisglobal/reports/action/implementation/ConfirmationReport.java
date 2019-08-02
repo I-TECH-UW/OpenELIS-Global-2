@@ -22,39 +22,39 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.referral.service.ReferringTestResultService;
-import org.openelisglobal.requester.service.RequesterTypeService;
-import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.referral.service.ReferringTestResultService;
 import org.openelisglobal.referral.valueholder.ReferringTestResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ConfirmationData;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.requester.service.RequesterTypeService;
+import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class ConfirmationReport extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 

@@ -7,21 +7,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.dao.LoginDAO;
-import org.openelisglobal.login.valueholder.Login;
-import org.openelisglobal.security.PasswordUtil;
 
 @Service
 public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> implements LoginService {

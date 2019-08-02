@@ -2,12 +2,11 @@ package org.openelisglobal.barcode.daoimpl;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO;
 import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class for inserting, updating, and retrieving

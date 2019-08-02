@@ -2,14 +2,13 @@ package org.openelisglobal.provider.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.dao.ProviderDAO;
 import org.openelisglobal.provider.valueholder.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String> implements ProviderService {

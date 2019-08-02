@@ -2,14 +2,13 @@ package org.openelisglobal.dataexchange.service.order;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String>

@@ -3,13 +3,7 @@ package org.openelisglobal.resultvalidation.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IResultSaveService;
 import org.openelisglobal.common.services.ResultSaveService;
@@ -17,10 +11,15 @@ import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
+import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ResultValidationServiceImpl implements ResultValidationService {

@@ -16,10 +16,10 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.spring.util.SpringContext;
 
 //Note both Clinical and LNSP should extend common subclass
 public class IndicatorCDIHIVLNSP extends IndicatorHIV implements IReportCreator, IReportParameterSetter {

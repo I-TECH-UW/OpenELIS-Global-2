@@ -21,13 +21,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.validation.BaseValidationProvider;
 import org.openelisglobal.common.provider.validation.ValidationProviderFactory;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.security.SecureXmlHttpServletRequest;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxTextServlet extends AjaxServlet {
 

@@ -12,7 +12,6 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.SAMPLE_STATUS;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 

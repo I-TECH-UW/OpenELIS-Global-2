@@ -23,6 +23,10 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
+import org.openelisglobal.dataexchange.order.action.OrderWorker.OrderResult;
+import org.openelisglobal.spring.util.SpringContext;
+
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
@@ -35,9 +39,6 @@ import ca.uhn.hl7v2.model.v251.message.ORL_O22;
 import ca.uhn.hl7v2.model.v251.segment.ERR;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
-import org.openelisglobal.dataexchange.order.action.OrderWorker.OrderResult;
 
 public class OrderServlet extends HohServlet {
 

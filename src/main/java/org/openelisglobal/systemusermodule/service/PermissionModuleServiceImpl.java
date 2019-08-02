@@ -5,13 +5,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.rolemodule.service.RoleModuleService;
+import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.rolemodule.service.RoleModuleService;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 
 @Service
 public class PermissionModuleServiceImpl implements PermissionModuleService<PermissionModule> {

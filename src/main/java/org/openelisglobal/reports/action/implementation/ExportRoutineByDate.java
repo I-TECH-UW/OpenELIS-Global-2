@@ -23,12 +23,11 @@ import java.io.UnsupportedEncodingException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.reports.action.implementation.reportBeans.RoutineColumnBuilder;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)

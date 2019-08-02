@@ -8,6 +8,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSFrozenRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dictionary.form.DictionaryForm;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.validator.DictionaryFormValidator;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,25 +37,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.dictionary.form.DictionaryForm;
-import org.openelisglobal.dictionary.validator.DictionaryFormValidator;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.exception.LIMSFrozenRecordException;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
-import org.openelisglobal.login.valueholder.UserSessionData;
 
 @Controller
 @SessionAttributes("form")

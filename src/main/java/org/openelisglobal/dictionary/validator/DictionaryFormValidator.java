@@ -1,12 +1,11 @@
 package org.openelisglobal.dictionary.validator;
 
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.dictionary.form.DictionaryForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.dictionary.form.DictionaryForm;
-import org.openelisglobal.common.util.SystemConfiguration;
 
 @Component
 public class DictionaryFormValidator implements Validator {

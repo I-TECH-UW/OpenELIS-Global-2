@@ -229,7 +229,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if ("true".equals(request.getParameter("paging"))) {
+        if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
 

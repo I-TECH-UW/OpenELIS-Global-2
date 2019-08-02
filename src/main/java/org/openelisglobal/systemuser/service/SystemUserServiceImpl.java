@@ -2,15 +2,14 @@ package org.openelisglobal.systemuser.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.systemuser.dao.SystemUserDAO;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 @Service
 public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, String> implements SystemUserService {

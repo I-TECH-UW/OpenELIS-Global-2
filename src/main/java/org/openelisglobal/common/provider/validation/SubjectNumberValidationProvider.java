@@ -23,13 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.search.service.SearchResultsService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,

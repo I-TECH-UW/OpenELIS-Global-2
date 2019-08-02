@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.exolab.castor.mapping.GeneralizedFieldHandler;
-
 import org.openelisglobal.common.log.LogEvent;
 
 /**

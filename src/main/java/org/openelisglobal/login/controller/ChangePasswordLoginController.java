@@ -6,6 +6,16 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.login.form.ChangePasswordLoginForm;
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.validator.ChangePasswordLoginFormValidator;
+import org.openelisglobal.login.validator.LoginValidator;
+import org.openelisglobal.login.valueholder.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -16,17 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.constants.Constants;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.login.form.ChangePasswordLoginForm;
-import org.openelisglobal.login.validator.ChangePasswordLoginFormValidator;
-import org.openelisglobal.login.validator.LoginValidator;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.login.valueholder.Login;
 
 @Controller
 public class ChangePasswordLoginController extends BaseController {

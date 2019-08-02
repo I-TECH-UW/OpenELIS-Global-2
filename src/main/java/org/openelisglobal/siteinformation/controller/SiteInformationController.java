@@ -12,6 +12,23 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.PhoneNumberService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.siteinformation.form.SiteInformationForm;
+import org.openelisglobal.siteinformation.service.SiteInformationDomainService;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.validator.SiteInformationFormValidator;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -23,24 +40,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.siteinformation.form.SiteInformationForm;
-import org.openelisglobal.siteinformation.validator.SiteInformationFormValidator;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.siteinformation.service.SiteInformationDomainService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.services.PhoneNumberService;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.localization.valueholder.Localization;
-import org.openelisglobal.siteinformation.valueholder.SiteInformation;
-import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 
 @Controller
 @SessionAttributes("form")

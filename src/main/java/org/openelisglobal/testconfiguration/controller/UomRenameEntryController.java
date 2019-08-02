@@ -4,6 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.testconfiguration.form.UomRenameEntryForm;
+import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
+import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,12 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.testconfiguration.form.UomRenameEntryForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomRenameEntryController extends BaseController {

@@ -1,10 +1,9 @@
 package org.openelisglobal.login.validator;
 
+import org.openelisglobal.login.form.ChangePasswordLoginForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.login.form.ChangePasswordLoginForm;
 
 @Component
 public class ChangePasswordLoginFormValidator implements Validator {

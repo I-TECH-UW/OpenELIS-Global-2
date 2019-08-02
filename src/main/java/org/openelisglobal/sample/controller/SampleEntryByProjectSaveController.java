@@ -2,16 +2,14 @@ package org.openelisglobal.sample.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.sample.form.SampleEntryByProjectForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.sample.form.SampleEntryByProjectForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.sample.controller.BaseSampleEntryController;
 
 @Controller
 public class SampleEntryByProjectSaveController extends BaseSampleEntryController {

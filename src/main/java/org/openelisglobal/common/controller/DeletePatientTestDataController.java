@@ -5,18 +5,17 @@ import java.sql.Timestamp;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
+import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.service.DatabaseCleanService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.history.service.HistoryService;
+import org.openelisglobal.patient.util.PatientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import org.openelisglobal.common.service.DatabaseCleanService;
-import org.openelisglobal.history.service.HistoryService;
-import org.openelisglobal.audittrail.valueholder.History;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.patient.util.PatientUtil;
 
 @Controller
 public class DeletePatientTestDataController extends BaseController {

@@ -25,19 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.resultlimit.service.ResultLimitService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.LabIdentificationService;
 import org.openelisglobal.common.services.StatusService;
@@ -52,12 +39,24 @@ import org.openelisglobal.dataexchange.resultreporting.beans.ResultXmit;
 import org.openelisglobal.dataexchange.resultreporting.beans.TestRangeXmit;
 import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
 import org.openelisglobal.dictionary.util.DictionaryUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.result.action.util.ResultUtil;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 
 public class ResultReportingCollator {

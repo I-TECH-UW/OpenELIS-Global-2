@@ -25,12 +25,11 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
-import org.owasp.encoder.Encode;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.owasp.encoder.Encode;
 
 /**
  * @author diane benz

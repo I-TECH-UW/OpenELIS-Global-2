@@ -21,17 +21,16 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.reports.service.DocumentTrackService;
 import org.openelisglobal.reports.service.DocumentTypeService;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReportTrackingService implements IReportTrackingService {

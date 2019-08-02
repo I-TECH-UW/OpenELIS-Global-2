@@ -17,11 +17,10 @@
 package org.openelisglobal.resultlimits.form;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.spring.util.SpringContext;
 
 //TODO unused
 public class ResultLimitsLink {

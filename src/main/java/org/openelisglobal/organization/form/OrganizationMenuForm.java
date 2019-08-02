@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 

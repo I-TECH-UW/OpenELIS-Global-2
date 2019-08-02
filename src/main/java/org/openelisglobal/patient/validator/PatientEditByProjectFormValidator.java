@@ -1,11 +1,10 @@
 package org.openelisglobal.patient.validator;
 
+import org.openelisglobal.patient.form.PatientEditByProjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.patient.form.PatientEditByProjectForm;
 
 @Component
 public class PatientEditByProjectFormValidator implements Validator {

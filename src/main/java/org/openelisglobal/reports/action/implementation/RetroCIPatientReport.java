@@ -22,20 +22,19 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class RetroCIPatientReport extends RetroCIReport {
 

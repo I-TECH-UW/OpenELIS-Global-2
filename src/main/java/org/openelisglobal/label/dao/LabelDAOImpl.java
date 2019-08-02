@@ -1,10 +1,9 @@
 package org.openelisglobal.label.dao;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.label.valueholder.Label;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

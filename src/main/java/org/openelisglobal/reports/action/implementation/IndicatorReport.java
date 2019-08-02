@@ -19,13 +19,12 @@ package org.openelisglobal.reports.action.implementation;
 import java.sql.Date;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
 
 public abstract class IndicatorReport extends Report {

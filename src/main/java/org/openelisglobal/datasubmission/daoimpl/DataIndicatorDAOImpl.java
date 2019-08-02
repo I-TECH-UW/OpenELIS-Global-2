@@ -1,11 +1,10 @@
 package org.openelisglobal.datasubmission.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.datasubmission.dao.DataIndicatorDAO;
 import org.openelisglobal.datasubmission.valueholder.DataIndicator;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

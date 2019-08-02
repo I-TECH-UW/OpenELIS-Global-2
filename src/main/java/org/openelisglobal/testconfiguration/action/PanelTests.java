@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSamplePanelService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 

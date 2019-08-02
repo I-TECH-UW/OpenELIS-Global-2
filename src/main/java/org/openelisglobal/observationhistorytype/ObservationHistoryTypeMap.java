@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * Provides two way lookup of Observation History types from ID to Type and from

@@ -9,21 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.result.form.AccessionResultsForm;
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -33,9 +19,22 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.result.form.AccessionResultsForm;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.userrole.service.UserRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class AccessionResultsController extends BaseController {

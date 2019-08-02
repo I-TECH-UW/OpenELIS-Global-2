@@ -1,12 +1,11 @@
 package org.openelisglobal.patient.validator;
 
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
-import org.openelisglobal.common.util.validator.GenericValidator;
 
 @Component
 public class PatientEntryByProjectFormValidator implements Validator {

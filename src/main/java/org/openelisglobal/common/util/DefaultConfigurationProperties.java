@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class DefaultConfigurationProperties extends ConfigurationProperties {
 

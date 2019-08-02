@@ -22,12 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.menu.service.MenuService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.PluginMenuService;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.valueholder.Menu;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class MenuUtil {
 

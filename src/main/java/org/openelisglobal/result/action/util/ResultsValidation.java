@@ -8,14 +8,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.formfields.FormFields;
@@ -24,8 +17,14 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 @Service
 public class ResultsValidation {

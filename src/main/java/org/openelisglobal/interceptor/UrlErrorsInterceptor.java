@@ -6,13 +6,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.HandlerInterceptor;
-
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class UrlErrorsInterceptor implements HandlerInterceptor {

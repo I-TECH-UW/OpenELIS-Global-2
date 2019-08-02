@@ -10,6 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemusermodule.service.PermissionModuleService;
+import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
+import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -17,17 +27,6 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.systemusermodule.service.PermissionModuleService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.valueholder.Login;
-import org.openelisglobal.login.valueholder.UserSessionData;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
-import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {

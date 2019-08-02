@@ -22,12 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ajaxtags.helpers.AjaxXmlBuilder;
 import org.ajaxtags.servlets.BaseAjaxServlet;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.selectdropdown.BaseSelectDropDownProvider;
 import org.openelisglobal.common.provider.selectdropdown.SelectDropDownProviderFactory;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 

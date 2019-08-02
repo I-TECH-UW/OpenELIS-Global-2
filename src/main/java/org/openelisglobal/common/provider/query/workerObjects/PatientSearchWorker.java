@@ -22,14 +22,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+import org.openelisglobal.spring.util.SpringContext;
 
 abstract public class PatientSearchWorker {
 

@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.patient.service.PatientTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patienttype.valueholder.PatientType;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientTypeMap {
 

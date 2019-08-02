@@ -4,15 +4,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AnalyzerReaderUtil {
 //	private SampleDAO sampleDAO = new SampleDAOImpl();

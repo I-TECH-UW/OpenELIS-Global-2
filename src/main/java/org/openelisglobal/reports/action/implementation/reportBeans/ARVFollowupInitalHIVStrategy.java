@@ -19,16 +19,15 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ARVFollowupInitalHIVStrategy implements ICSVColumnCustomStrategy {
 

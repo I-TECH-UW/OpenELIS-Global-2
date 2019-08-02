@@ -18,21 +18,20 @@ package org.openelisglobal.common.services;
 
 import java.util.List;
 
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.service.OrganizationTypeService;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.requester.service.RequesterTypeService;
+import org.openelisglobal.requester.service.SampleRequesterService;
+import org.openelisglobal.requester.valueholder.RequesterType;
+import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.organization.service.OrganizationTypeService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.requester.service.RequesterTypeService;
-import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.organization.valueholder.Organization;
-import org.openelisglobal.organization.valueholder.OrganizationType;
-import org.openelisglobal.person.valueholder.Person;
-import org.openelisglobal.requester.valueholder.RequesterType;
-import org.openelisglobal.requester.valueholder.SampleRequester;
 
 /**
  */

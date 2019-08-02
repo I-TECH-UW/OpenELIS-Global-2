@@ -25,14 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndClinicWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
@@ -41,8 +33,15 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientSearchProvider extends BaseQueryProvider {
 

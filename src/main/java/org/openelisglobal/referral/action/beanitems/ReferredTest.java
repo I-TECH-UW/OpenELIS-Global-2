@@ -22,11 +22,10 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.referral.form.ReferredOutTestsForm;
 import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.common.util.IdValuePair;
 
 public class ReferredTest implements IReferralResultTest {
 

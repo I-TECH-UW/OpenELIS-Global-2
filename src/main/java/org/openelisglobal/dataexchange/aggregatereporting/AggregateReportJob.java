@@ -21,19 +21,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
-import org.openelisglobal.scheduler.service.CronSchedulerService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -43,8 +30,20 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 public class AggregateReportJob implements Job {
     private String LAB_INDICATOR_REPORT_ID;

@@ -2,13 +2,12 @@ package org.openelisglobal.patientidentity.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.patientidentity.dao.PatientIdentityDAO;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity, String>

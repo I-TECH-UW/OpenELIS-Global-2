@@ -22,21 +22,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.history.service.HistoryService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.history.service.HistoryService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientHistoryHistoryService extends AbstractHistoryService {
 

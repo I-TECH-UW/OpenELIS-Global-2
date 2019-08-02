@@ -21,11 +21,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 /**

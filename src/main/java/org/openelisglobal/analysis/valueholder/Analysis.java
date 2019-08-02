@@ -23,15 +23,14 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
-import org.openelisglobal.note.service.NoteObject;
-import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.note.service.NoteObject;
+import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;

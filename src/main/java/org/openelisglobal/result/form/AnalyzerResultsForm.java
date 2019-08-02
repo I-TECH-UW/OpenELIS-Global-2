@@ -6,9 +6,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.analyzerresults.action.beanitems.AnalyzerResultItem;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.paging.PagingBean;
 
 public class AnalyzerResultsForm extends BaseForm {

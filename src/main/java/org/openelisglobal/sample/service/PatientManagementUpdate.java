@@ -10,35 +10,34 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.patienttype.service.PatientPatientTypeService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.search.service.SearchResultsService;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+import org.openelisglobal.patienttype.service.PatientPatientTypeService;
 import org.openelisglobal.patienttype.util.PatientTypeMap;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.search.service.SearchResultsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 @Service
 @Scope("prototype")

@@ -16,12 +16,11 @@
 */
 package org.openelisglobal.scheduler.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.scheduler.dao.CronSchedulerDAO;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

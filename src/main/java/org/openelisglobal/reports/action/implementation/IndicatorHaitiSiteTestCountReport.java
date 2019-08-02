@@ -30,17 +30,16 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalImportService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalImportService;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYearReport;
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYearReport.Months;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
         implements IReportCreator, IReportParameterSetter {

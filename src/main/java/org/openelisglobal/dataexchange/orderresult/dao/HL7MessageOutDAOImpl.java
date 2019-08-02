@@ -1,10 +1,9 @@
 package org.openelisglobal.dataexchange.orderresult.dao;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

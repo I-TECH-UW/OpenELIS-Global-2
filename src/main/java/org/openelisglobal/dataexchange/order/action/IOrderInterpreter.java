@@ -18,8 +18,9 @@ package org.openelisglobal.dataexchange.order.action;
 
 import java.util.List;
 
-import ca.uhn.hl7v2.model.Message;
 import org.openelisglobal.test.valueholder.Test;
+
+import ca.uhn.hl7v2.model.Message;
 
 public interface IOrderInterpreter {
 

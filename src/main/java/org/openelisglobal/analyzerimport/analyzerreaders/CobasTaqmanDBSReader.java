@@ -19,17 +19,17 @@ package org.openelisglobal.analyzerimport.analyzerreaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class CobasTaqmanDBSReader extends AnalyzerLineInserter {

@@ -10,18 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.owasp.encoder.Encode;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.sample.form.SampleEntryByProjectForm;
-import org.openelisglobal.sample.controller.BaseSampleEntryController;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService;
@@ -35,9 +23,19 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.saving.ISampleEntry;
 import org.openelisglobal.patient.saving.ISampleEntryAfterPatientEntry;
 import org.openelisglobal.patient.saving.ISampleSecondEntry;
+import org.openelisglobal.sample.form.SampleEntryByProjectForm;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.owasp.encoder.Encode;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SampleEntryByProjectController extends BaseSampleEntryController {

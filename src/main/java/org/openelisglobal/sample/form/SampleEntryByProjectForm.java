@@ -9,21 +9,19 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.validation.annotations.ValidAccessionNumber;
-import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.valueholder.ObservationData;
-import org.openelisglobal.sample.form.ProjectData;
+import org.openelisglobal.validation.annotations.ValidAccessionNumber;
+import org.openelisglobal.validation.annotations.ValidDate;
+import org.openelisglobal.validation.annotations.ValidTime;
 
 public class SampleEntryByProjectForm extends BaseForm {
 

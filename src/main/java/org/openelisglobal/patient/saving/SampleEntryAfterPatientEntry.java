@@ -4,12 +4,11 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.NotR
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")

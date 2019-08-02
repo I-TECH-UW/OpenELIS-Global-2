@@ -22,13 +22,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
-import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.reports.service.DocumentTrackService;
-import org.openelisglobal.reports.service.DocumentTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
@@ -39,10 +32,17 @@ import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
 import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
+import org.openelisglobal.reports.service.DocumentTrackService;
+import org.openelisglobal.reports.service.DocumentTypeService;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ResultReportingTransfer {
 

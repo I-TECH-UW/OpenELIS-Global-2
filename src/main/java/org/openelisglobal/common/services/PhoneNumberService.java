@@ -16,10 +16,9 @@
 
 package org.openelisglobal.common.services;
 
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.springframework.stereotype.Service;
 
 /**
  */

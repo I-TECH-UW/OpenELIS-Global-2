@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.datasubmission.dao.DataIndicatorDAO;
 import org.openelisglobal.datasubmission.valueholder.DataIndicator;
 import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicator, String>

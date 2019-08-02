@@ -8,28 +8,27 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.inventory.action.InventoryUtility;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.result.form.PatientResultsForm;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.result.form.PatientResultsForm;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.StatusService.AnalysisStatus;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.inventory.action.InventoryUtility;
-import org.openelisglobal.inventory.form.InventoryKitItem;
-import org.openelisglobal.patient.action.bean.PatientSearch;
-import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.result.action.util.ResultsLoadUtility;
-import org.openelisglobal.result.action.util.ResultsPaging;
-import org.openelisglobal.test.beanItems.TestResultItem;
 
 @Controller
 public class PatientResultsController extends BaseController {

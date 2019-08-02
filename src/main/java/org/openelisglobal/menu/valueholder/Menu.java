@@ -17,11 +17,10 @@
 package org.openelisglobal.menu.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public class Menu extends BaseObject<String> {
 

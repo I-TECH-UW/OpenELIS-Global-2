@@ -1,13 +1,12 @@
 package org.openelisglobal.dictionarycategory.service;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.dictionarycategory.dao.DictionaryCategoryDAO;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.dictionarycategory.dao.DictionaryCategoryDAO;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 
 @Service
 public class DictionaryCategoryServiceImpl extends BaseObjectServiceImpl<DictionaryCategory, String>

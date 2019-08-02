@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.testtrailer.service.TestTrailerService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.testtrailer.service.TestTrailerService;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This

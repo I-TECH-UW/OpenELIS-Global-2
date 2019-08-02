@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.resources.ResourceLocator;
 

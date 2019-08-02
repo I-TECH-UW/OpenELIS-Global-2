@@ -1,11 +1,10 @@
 package org.openelisglobal.common.service;
 
+import org.openelisglobal.common.dao.DatabaseChangeLogDAO;
+import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.dao.DatabaseChangeLogDAO;
-import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 
 @Service
 //public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {

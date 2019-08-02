@@ -27,10 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * Well defined lists of organizations group by organization types and ordered

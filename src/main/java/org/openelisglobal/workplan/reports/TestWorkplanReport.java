@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.test.beanItems.TestResultItem;
 

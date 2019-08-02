@@ -18,14 +18,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.datasubmission.valueholder.DataIndicator;
 import org.openelisglobal.datasubmission.valueholder.DataResource;
 import org.openelisglobal.datasubmission.valueholder.DataValue;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DataSubmitter {

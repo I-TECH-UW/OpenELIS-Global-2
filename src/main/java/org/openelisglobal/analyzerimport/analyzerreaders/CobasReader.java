@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 
 public class CobasReader extends AnalyzerLineInserter {
 

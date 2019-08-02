@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.spring.util.SpringContext;
 

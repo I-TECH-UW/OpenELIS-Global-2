@@ -4,17 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.localization.service.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 @Component
 public class CommonPageAttributesInterceptor implements HandlerInterceptor {

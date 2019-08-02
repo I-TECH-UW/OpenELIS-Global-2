@@ -17,12 +17,12 @@ package org.openelisglobal.sampleitem.valueholder;
 
 import java.sql.Timestamp;
 
-import org.openelisglobal.note.service.NoteObject;
-import org.openelisglobal.note.service.NoteServiceImpl;
-import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.note.service.NoteObject;
+import org.openelisglobal.note.service.NoteServiceImpl;
+import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sourceofsample.valueholder.SourceOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;

@@ -28,11 +28,10 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.NotR
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.services.StatusService.RecordStatus;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
-import org.openelisglobal.common.services.StatusService.RecordStatus;
 
 @Service
 @Scope("prototype")

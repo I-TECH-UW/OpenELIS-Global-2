@@ -3,10 +3,10 @@ package org.openelisglobal.referral.valueholder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class ReferralSet {

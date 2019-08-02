@@ -7,11 +7,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
-import org.openelisglobal.inventory.form.InventoryForm;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 
 public class InventoryKitItem implements Serializable {
 

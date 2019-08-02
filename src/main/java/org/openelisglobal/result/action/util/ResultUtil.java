@@ -19,15 +19,14 @@ package org.openelisglobal.result.action.util;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.testanalyte.service.TestAnalyteService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 
 //TODO unused
 public class ResultUtil {

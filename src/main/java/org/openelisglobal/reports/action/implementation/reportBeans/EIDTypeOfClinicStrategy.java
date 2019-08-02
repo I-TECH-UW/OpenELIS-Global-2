@@ -19,14 +19,14 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class EIDTypeOfClinicStrategy implements ICSVColumnCustomStrategy {
 

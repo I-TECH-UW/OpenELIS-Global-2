@@ -24,33 +24,33 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
-import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.qaevent.worker.NonConformityUpdateWorker;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.reports.action.implementation.reportBeans.FollowupRequiredData;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements IReportParameterSetter, IReportCreator {
 

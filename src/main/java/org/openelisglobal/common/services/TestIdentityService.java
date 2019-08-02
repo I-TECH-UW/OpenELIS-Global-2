@@ -21,14 +21,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TestIdentityService implements ITestIdentityService {

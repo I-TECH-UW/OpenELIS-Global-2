@@ -21,15 +21,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.history.service.HistoryService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.history.service.HistoryService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
 
 public class AnalysisHistoryService extends AbstractHistoryService {
 

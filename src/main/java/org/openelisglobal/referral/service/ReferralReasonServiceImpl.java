@@ -2,13 +2,12 @@ package org.openelisglobal.referral.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.referral.dao.ReferralReasonDAO;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralReason, String>

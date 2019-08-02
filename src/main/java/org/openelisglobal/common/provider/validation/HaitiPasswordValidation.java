@@ -20,7 +20,6 @@ package org.openelisglobal.common.provider.validation;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.internationalization.MessageUtil;
 
 public class HaitiPasswordValidation implements ILoginPasswordValidation {

@@ -21,11 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.springframework.validation.Errors;
 
 public interface IPatientUpdate {
     public static enum PatientUpdateStatus {

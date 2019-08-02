@@ -24,10 +24,9 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.validator.ValidationHelper;
 
 /**
  * Represents a list for report specification

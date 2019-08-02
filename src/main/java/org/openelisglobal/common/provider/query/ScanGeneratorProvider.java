@@ -25,13 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-
+import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ScanGeneratorProvider extends BaseQueryProvider {
 

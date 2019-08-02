@@ -17,13 +17,13 @@ package org.openelisglobal.test.valueholder;
 
 import java.sql.Timestamp;
 
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestSectionService;
 
 public class TestSection extends EnumValueItemImpl {
 

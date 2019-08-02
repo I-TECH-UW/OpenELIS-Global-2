@@ -1,12 +1,11 @@
 package org.openelisglobal.samplepdf.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.samplepdf.dao.SamplePdfDAO;
 import org.openelisglobal.samplepdf.valueholder.SamplePdf;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SamplePdfServiceImpl extends BaseObjectServiceImpl<SamplePdf, String> implements SamplePdfService {

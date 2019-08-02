@@ -2,8 +2,8 @@ package org.openelisglobal.testconfiguration.service;
 
 import java.util.List;
 
-import org.openelisglobal.testconfiguration.controller.TestAddController.TestSet;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.testconfiguration.controller.TestAddController.TestSet;
 
 public interface TestAddService {
 

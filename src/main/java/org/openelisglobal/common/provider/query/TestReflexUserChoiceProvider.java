@@ -31,23 +31,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.testreflex.service.TestReflexService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
+import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class TestReflexUserChoiceProvider extends BaseQueryProvider {

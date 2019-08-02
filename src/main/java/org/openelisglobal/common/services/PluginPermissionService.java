@@ -16,17 +16,16 @@
 
 package org.openelisglobal.common.services;
 
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.rolemodule.service.RoleModuleService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemmodule.service.SystemModuleService;
+import org.openelisglobal.systemmodule.valueholder.SystemModule;
+import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.rolemodule.service.RoleModuleService;
-import org.openelisglobal.systemmodule.service.SystemModuleService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.role.valueholder.Role;
-import org.openelisglobal.systemmodule.valueholder.SystemModule;
-import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 
 /**
  */

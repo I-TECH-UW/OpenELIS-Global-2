@@ -1,14 +1,13 @@
 package org.openelisglobal.patienttype.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.patient.service.PatientTypeService;
 import org.openelisglobal.patienttype.dao.PatientPatientTypeDAO;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.patienttype.valueholder.PatientType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PatientPatientTypeServiceImpl extends BaseObjectServiceImpl<PatientPatientType, String>

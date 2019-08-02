@@ -6,6 +6,9 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.inventory.form.InventoryForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -14,10 +17,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.openelisglobal.inventory.form.InventoryForm;
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 
 @Component
 public class InventoryFormValidator implements Validator {

@@ -3,7 +3,6 @@ package org.openelisglobal.resultlimits.form;
 import java.util.Collection;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.resultlimits.form.ResultLimitsLink;
 
 public class ResultLimitsForm extends BaseForm {
     private ResultLimitsLink limit;

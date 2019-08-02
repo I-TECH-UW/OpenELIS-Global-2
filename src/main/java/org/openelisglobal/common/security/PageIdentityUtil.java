@@ -20,10 +20,9 @@ package org.openelisglobal.common.security;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public class PageIdentityUtil {
 

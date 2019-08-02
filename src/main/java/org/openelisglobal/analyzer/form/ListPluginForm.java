@@ -3,7 +3,6 @@ package org.openelisglobal.analyzer.form;
 import java.util.List;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.BaseForm;
 
 public class ListPluginForm extends BaseForm {

@@ -3,17 +3,16 @@ package org.openelisglobal.inventory.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.inventory.service.InventoryLocationService;
-import org.openelisglobal.inventory.service.InventoryReceiptService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.inventory.service.InventoryLocationService;
+import org.openelisglobal.inventory.service.InventoryReceiptService;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
 import org.openelisglobal.inventory.valueholder.InventoryLocation;
 import org.openelisglobal.inventory.valueholder.InventoryReceipt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")

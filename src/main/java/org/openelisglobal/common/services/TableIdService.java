@@ -18,19 +18,18 @@ package org.openelisglobal.common.services;
 
 import javax.annotation.PostConstruct;
 
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
+import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+import org.openelisglobal.organization.service.OrganizationTypeService;
+import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
+import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
+import org.openelisglobal.requester.service.RequesterTypeService;
+import org.openelisglobal.requester.valueholder.RequesterType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import org.openelisglobal.address.service.AddressPartService;
-import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
-import org.openelisglobal.organization.service.OrganizationTypeService;
-import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
-import org.openelisglobal.requester.service.RequesterTypeService;
-import org.openelisglobal.address.valueholder.AddressPart;
-import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
-import org.openelisglobal.organization.valueholder.OrganizationType;
-import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
-import org.openelisglobal.requester.valueholder.RequesterType;
 
 /**
  */

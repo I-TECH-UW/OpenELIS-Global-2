@@ -6,20 +6,19 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.systemusersection.service.SystemUserSectionService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemusersection.service.SystemUserSectionService;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 import org.openelisglobal.test.dao.TestSectionDAO;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })

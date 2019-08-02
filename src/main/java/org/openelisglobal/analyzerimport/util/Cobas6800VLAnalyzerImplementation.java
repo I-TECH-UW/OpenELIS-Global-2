@@ -28,20 +28,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.analyzer.service.AnalyzerService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerLineInserter;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderUtil;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter {

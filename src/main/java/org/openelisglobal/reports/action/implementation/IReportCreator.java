@@ -19,8 +19,8 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.form.BaseForm;
 
 public interface IReportCreator {
     String INCOMPLETE_PARAMS = "Incompleate parameters";

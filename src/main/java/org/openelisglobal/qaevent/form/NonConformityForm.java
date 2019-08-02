@@ -8,19 +8,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
-import org.openelisglobal.project.valueholder.Project;
-import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
-import org.openelisglobal.test.valueholder.TestSection;
 
 public class NonConformityForm extends BaseForm {
 

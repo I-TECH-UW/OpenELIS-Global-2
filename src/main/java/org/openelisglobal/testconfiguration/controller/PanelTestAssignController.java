@@ -11,6 +11,20 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.panelitem.service.PanelItemService;
+import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestComparator;
+import org.openelisglobal.testconfiguration.action.PanelTests;
+import org.openelisglobal.testconfiguration.form.PanelTestAssignForm;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,21 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.testconfiguration.form.PanelTestAssignForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.panelitem.service.PanelItemService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.panel.valueholder.Panel;
-import org.openelisglobal.panelitem.valueholder.PanelItem;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.test.valueholder.TestComparator;
-import org.openelisglobal.testconfiguration.action.PanelTests;
 
 @Controller
 public class PanelTestAssignController extends BaseController {

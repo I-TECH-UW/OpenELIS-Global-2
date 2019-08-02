@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.services.ITestIdentityService;
+import org.openelisglobal.common.services.TestIdentityService;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +37,6 @@ import ca.uhn.hl7v2.model.v251.message.OML_O21;
 import ca.uhn.hl7v2.model.v251.segment.OBR;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.model.v251.segment.PID;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.common.services.ITestIdentityService;
-import org.openelisglobal.common.services.TestIdentityService;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.test.valueholder.Test;
 
 @Service
 public class HL7OrderInterpreter implements IOrderInterpreter {

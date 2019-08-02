@@ -2,8 +2,8 @@ package org.openelisglobal.login.service;
 
 import java.util.Optional;
 
-import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.login.valueholder.Login;
 
 public interface LoginService extends BaseObjectService<Login, String> {

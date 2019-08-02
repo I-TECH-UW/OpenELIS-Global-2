@@ -17,7 +17,6 @@
 package org.openelisglobal.address.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class OrganizationAddress extends BaseObject<AddressPK> {

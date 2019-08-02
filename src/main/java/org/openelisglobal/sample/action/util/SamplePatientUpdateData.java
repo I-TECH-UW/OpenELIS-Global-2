@@ -20,14 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -44,9 +36,14 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -55,6 +52,8 @@ import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.validation.Errors;
 
 /**
  */

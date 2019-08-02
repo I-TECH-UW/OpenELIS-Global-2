@@ -23,11 +23,10 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
-import org.openelisglobal.common.util.IdValuePair;
 
 public class PatientClinicalInfo implements Serializable {
 

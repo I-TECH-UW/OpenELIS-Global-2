@@ -6,10 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.test.valueholder.Test;
 
 public class AnalyzerTestNameForm extends BaseForm {

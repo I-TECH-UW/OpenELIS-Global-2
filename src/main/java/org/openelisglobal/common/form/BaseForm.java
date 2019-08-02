@@ -4,9 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
 public class BaseForm {

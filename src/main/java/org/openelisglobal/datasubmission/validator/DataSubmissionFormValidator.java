@@ -2,14 +2,13 @@ package org.openelisglobal.datasubmission.validator;
 
 import java.util.Calendar;
 
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.datasubmission.form.DataSubmissionForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.datasubmission.form.DataSubmissionForm;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 @Component
 public class DataSubmissionFormValidator implements Validator {

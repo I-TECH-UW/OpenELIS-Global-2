@@ -6,7 +6,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -15,6 +14,7 @@ import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.bean.SampleOrderItem;
+import org.openelisglobal.validation.annotations.ValidDate;
 
 public class SamplePatientEntryForm extends BaseForm {
 

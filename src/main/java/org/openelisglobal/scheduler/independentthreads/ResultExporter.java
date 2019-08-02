@@ -24,18 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
-import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.reports.service.DocumentTrackService;
-import org.openelisglobal.reports.service.DocumentTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -46,8 +34,19 @@ import org.openelisglobal.dataexchange.common.IRowTransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.common.ReportTransmission.HTTP_TYPE;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.reports.service.DocumentTrackService;
+import org.openelisglobal.reports.service.DocumentTypeService;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.reports.valueholder.DocumentType;
+import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("prototype")

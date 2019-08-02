@@ -8,6 +8,22 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.controller.BaseMenuController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.systemuser.form.UnifiedSystemUserMenuForm;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,23 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.constants.Constants;
-import org.openelisglobal.common.controller.BaseMenuController;
-import org.openelisglobal.common.form.MenuForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.systemuser.form.UnifiedSystemUserMenuForm;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.valueholder.Login;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
-import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
-import org.openelisglobal.userrole.valueholder.UserRole;
 
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {

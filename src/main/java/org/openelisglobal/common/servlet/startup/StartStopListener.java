@@ -5,13 +5,12 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-
 import org.openelisglobal.plugin.PluginLoader;
 import org.openelisglobal.scheduler.IndependentThreadStarter;
 import org.openelisglobal.scheduler.LateStartScheduler;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 @WebListener
 public final class StartStopListener implements ServletContextListener {

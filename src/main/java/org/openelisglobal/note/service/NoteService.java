@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
-import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.common.util.StringUtil.EncodeContext;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
 
 public interface NoteService extends BaseObjectService<Note, String> {

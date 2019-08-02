@@ -22,8 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
 

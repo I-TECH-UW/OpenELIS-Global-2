@@ -22,24 +22,25 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.reports.action.implementation.reportBeans.SectionPerformanceData;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @SuppressWarnings("unchecked")
 public class IndicatorSectionPerformanceReport extends RetroCIReport implements IReportCreator {

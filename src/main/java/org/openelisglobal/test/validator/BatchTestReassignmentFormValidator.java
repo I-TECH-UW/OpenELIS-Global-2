@@ -3,13 +3,12 @@ package org.openelisglobal.test.validator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
 import org.openelisglobal.common.JSONUtils;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.test.form.BatchTestReassignmentForm;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 @Component
 public class BatchTestReassignmentFormValidator implements Validator {

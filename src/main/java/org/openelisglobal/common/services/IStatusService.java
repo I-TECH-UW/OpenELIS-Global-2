@@ -1,7 +1,5 @@
 package org.openelisglobal.common.services;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -9,6 +7,7 @@ import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface IStatusService {
     public boolean matches(String id, SampleStatus sampleStatus);

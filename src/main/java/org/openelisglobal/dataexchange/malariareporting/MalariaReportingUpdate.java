@@ -22,10 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -39,8 +35,12 @@ import org.openelisglobal.dataexchange.resultreporting.ResultReportingCollator;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultUtil;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class MalariaReportingUpdate implements IResultUpdate {

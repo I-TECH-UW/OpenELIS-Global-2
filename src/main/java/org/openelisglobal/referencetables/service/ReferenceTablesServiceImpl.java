@@ -2,14 +2,13 @@ package org.openelisglobal.referencetables.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.referencetables.dao.ReferenceTablesDAO;
+import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.referencetables.dao.ReferenceTablesDAO;
-import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 
 @Service
 public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables, String>

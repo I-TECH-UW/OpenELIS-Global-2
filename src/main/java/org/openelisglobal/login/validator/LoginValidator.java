@@ -1,12 +1,11 @@
 package org.openelisglobal.login.validator;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.login.valueholder.Login;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.login.valueholder.Login;
 
 @Component
 public class LoginValidator implements Validator {

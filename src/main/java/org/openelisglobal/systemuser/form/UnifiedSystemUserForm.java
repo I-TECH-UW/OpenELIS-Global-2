@@ -7,12 +7,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
-import org.openelisglobal.role.action.bean.DisplayRole;
 
 public class UnifiedSystemUserForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)

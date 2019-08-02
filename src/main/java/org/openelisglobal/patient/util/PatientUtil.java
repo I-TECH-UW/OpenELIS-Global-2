@@ -21,18 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.gender.service.GenderService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.provider.service.ProviderService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.gender.valueholder.Gender;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientUtil {
 

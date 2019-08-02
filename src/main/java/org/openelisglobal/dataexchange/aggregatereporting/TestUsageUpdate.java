@@ -27,11 +27,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IResultSaveService;
@@ -39,8 +34,12 @@ import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
 import org.openelisglobal.result.action.util.ResultSet;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class TestUsageUpdate implements IResultUpdate {
 

@@ -23,12 +23,11 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.result.form.AnalyzerResultsForm;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
 
 public class AnalyzerResultItem implements Serializable {
     static final long serialVersionUID = 1L;

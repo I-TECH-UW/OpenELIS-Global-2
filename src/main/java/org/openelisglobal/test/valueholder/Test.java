@@ -17,7 +17,6 @@ package org.openelisglobal.test.valueholder;
 
 import java.sql.Date;
 
-import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -28,6 +27,7 @@ import org.openelisglobal.label.valueholder.Label;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 

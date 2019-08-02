@@ -17,7 +17,6 @@
 package org.openelisglobal.reports.action.implementation;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.ReportSpecificationParameters.Parameter;
 

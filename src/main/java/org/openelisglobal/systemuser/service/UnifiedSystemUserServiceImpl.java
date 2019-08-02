@@ -2,15 +2,14 @@ package org.openelisglobal.systemuser.service;
 
 import java.util.List;
 
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.login.valueholder.Login;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
-import org.openelisglobal.userrole.valueholder.UserRole;
 
 @Service
 public class UnifiedSystemUserServiceImpl implements UnifiedSystemUserService {

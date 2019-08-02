@@ -1,12 +1,11 @@
 package org.openelisglobal.dataexchange.service.aggregatereporting;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType, String>

@@ -2,16 +2,15 @@ package org.openelisglobal.resultlimits.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.resultlimits.form.ResultLimitsMenuForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.resultlimits.form.ResultLimitsMenuForm;
 
 //seemingly unused controller
 @Controller

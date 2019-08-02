@@ -19,15 +19,15 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.analyte.service.AnalyteService;
+import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
-import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class RetroCIReport extends Report implements IReportCreator {
 

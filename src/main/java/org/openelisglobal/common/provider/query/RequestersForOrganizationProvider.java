@@ -24,12 +24,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.organization.service.OrganizationContactService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.organization.service.OrganizationContactService;
 import org.openelisglobal.organization.valueholder.OrganizationContact;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class RequestersForOrganizationProvider extends BaseQueryProvider {
 

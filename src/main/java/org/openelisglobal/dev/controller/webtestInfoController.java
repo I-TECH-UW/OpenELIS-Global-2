@@ -5,17 +5,16 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.dev.form.WebTestInfoForm;
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.dev.form.WebTestInfoForm;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.login.valueholder.Login;
 
 @Controller
 public class webtestInfoController extends BaseController {

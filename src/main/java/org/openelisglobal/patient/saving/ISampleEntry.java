@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
 
 public interface ISampleEntry extends IAccessioner {
 

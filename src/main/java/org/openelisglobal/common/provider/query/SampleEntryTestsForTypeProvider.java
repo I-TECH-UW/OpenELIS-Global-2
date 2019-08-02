@@ -30,22 +30,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.panelitem.service.PanelItemService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.testdictionary.service.TestDictionaryService;
-import org.openelisglobal.typeofsample.service.TypeOfSamplePanelService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.XMLUtil;
+import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testdictionary.service.TestDictionaryService;
 import org.openelisglobal.testdictionary.valueholder.TestDictionary;
+import org.openelisglobal.typeofsample.service.TypeOfSamplePanelService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {

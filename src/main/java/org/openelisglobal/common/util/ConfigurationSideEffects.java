@@ -17,16 +17,15 @@
 package org.openelisglobal.common.util;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.menu.service.MenuService;
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.menu.util.MenuUtil;
 import org.openelisglobal.menu.valueholder.Menu;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigurationSideEffects {

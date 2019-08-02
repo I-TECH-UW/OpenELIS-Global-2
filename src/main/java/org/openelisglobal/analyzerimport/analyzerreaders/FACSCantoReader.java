@@ -21,7 +21,6 @@ import java.util.Formatter;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;

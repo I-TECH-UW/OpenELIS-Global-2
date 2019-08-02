@@ -20,10 +20,10 @@ package org.openelisglobal.sample.util.CI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * A type-safe enumeration of the known studies in CI, so that code doesn't have

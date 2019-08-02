@@ -22,12 +22,6 @@ import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
 import java.util.Vector;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.history.service.HistoryService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.action.IActionConstants;
@@ -35,7 +29,12 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.LabelValuePair;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.history.service.HistoryService;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

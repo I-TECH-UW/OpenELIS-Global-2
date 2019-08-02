@@ -24,27 +24,27 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class PatientCILNSPClinical_vreduit extends PatientReport implements IReportCreator, IReportParameterSetter {
 

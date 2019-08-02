@@ -24,9 +24,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -38,6 +35,8 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz

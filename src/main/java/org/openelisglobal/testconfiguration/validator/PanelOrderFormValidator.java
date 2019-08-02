@@ -3,14 +3,13 @@ package org.openelisglobal.testconfiguration.validator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.openelisglobal.common.JSONUtils;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.testconfiguration.form.PanelOrderForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.testconfiguration.form.PanelOrderForm;
-import org.openelisglobal.common.JSONUtils;
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.common.log.LogEvent;
 
 @Component
 public class PanelOrderFormValidator implements Validator {

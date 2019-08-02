@@ -7,6 +7,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.controller.BaseMenuController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.organization.form.OrganizationMenuForm;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,18 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.constants.Constants;
-import org.openelisglobal.common.controller.BaseMenuController;
-import org.openelisglobal.common.form.MenuForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.organization.form.OrganizationMenuForm;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.organization.valueholder.Organization;
 
 @Controller
 public class OrganizationMenuController extends BaseMenuController {

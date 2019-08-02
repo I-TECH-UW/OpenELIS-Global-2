@@ -9,29 +9,28 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.Errors;
-
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.gender.service.GenderService;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.gender.service.GenderService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
 
 public abstract class BaseSampleEntryController extends BaseController {
 

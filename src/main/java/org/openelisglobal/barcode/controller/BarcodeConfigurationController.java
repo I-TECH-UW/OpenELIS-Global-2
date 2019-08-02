@@ -6,6 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
+import org.openelisglobal.barcode.service.BarcodeInformationService;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,14 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.barcode.service.BarcodeInformationService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 @Controller
 public class BarcodeConfigurationController extends BaseController {

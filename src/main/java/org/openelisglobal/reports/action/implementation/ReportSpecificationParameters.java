@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.form.BaseForm;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {

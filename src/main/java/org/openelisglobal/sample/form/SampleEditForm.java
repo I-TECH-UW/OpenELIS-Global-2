@@ -7,20 +7,20 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.validation.annotations.ValidAccessionNumber;
-import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.validation.annotations.ValidName;
-import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.sample.bean.SampleEditItem;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
+import org.openelisglobal.validation.annotations.ValidAccessionNumber;
+import org.openelisglobal.validation.annotations.ValidDate;
+import org.openelisglobal.validation.annotations.ValidName;
+import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class SampleEditForm extends BaseForm {
 

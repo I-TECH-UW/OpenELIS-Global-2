@@ -10,6 +10,19 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testconfiguration.form.SampleTypeTestAssignForm;
+import org.openelisglobal.testconfiguration.service.SampleTypeTestAssignService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,20 +30,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.testconfiguration.form.SampleTypeTestAssignForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.testconfiguration.service.SampleTypeTestAssignService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 @Controller
 public class SampleTypeTestAssignController extends BaseController {

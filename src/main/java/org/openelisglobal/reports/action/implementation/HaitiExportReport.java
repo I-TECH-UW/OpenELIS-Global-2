@@ -19,7 +19,6 @@ package org.openelisglobal.reports.action.implementation;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jfree.util.Log;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.HaitiColumnBuilder;

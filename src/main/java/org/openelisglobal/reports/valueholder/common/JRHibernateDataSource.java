@@ -22,11 +22,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.common.log.LogEvent;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
-import org.openelisglobal.common.log.LogEvent;
 
 /**
  * @author benzd1 bugzilla 2264 bugzilla 2325 - implement JRRewindableDataSource

@@ -16,12 +16,11 @@
 */
 package org.openelisglobal.reports.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.reports.dao.DocumentTrackDAO;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

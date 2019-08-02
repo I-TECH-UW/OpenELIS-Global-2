@@ -25,7 +25,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -37,8 +38,6 @@ import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 
 public class SampleOrderItem implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -21,22 +21,21 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.systemusermodule.service.PermissionModuleService;
-import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.security.PageIdentityUtil;
 import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.login.service.LoginService;
 import org.openelisglobal.login.valueholder.Login;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.systemusermodule.service.PermissionModuleService;
+import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 import org.openelisglobal.systemusermodule.valueholder.SystemUserModule;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)

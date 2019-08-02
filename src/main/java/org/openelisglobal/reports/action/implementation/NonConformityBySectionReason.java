@@ -20,16 +20,16 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class NonConformityBySectionReason extends NonConformityBy {
     List<SampleQaEvent> sampleQaEvents = null;

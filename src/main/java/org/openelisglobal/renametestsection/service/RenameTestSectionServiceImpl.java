@@ -2,14 +2,13 @@ package org.openelisglobal.renametestsection.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.renametestsection.dao.RenameTestSectionDAO;
+import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.renametestsection.dao.RenameTestSectionDAO;
-import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 
 @Service
 public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTestSection, String>

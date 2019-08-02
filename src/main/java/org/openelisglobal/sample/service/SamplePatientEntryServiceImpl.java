@@ -4,24 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.address.service.OrganizationAddressService;
-import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.provider.service.ProviderService;
-import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -31,14 +16,28 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SamplePatientEntryServiceImpl implements SamplePatientEntryService {

@@ -18,8 +18,8 @@ package org.openelisglobal.scheduler.valueholder;
 
 import java.sql.Timestamp;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public class CronScheduler extends BaseObject<String> {
 

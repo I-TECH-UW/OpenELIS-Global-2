@@ -5,16 +5,15 @@ import java.util.EnumSet;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.typeoftestresult.dao.TypeOfTestResultDAO;
+import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.typeoftestresult.dao.TypeOfTestResultDAO;
-import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 
 @Service
 @DependsOn({ "springContext" })

@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.reports.action.implementation.reportBeans.IndeterminateReportData;
+import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
+import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.reports.action.implementation.reportBeans.IndeterminateReportData;
-import org.openelisglobal.result.valueholder.Result;
-import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
 
 public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 

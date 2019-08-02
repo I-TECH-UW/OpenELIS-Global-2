@@ -4,11 +4,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
-
 import org.openelisglobal.analyzerimport.action.AnalyzerImportServlet;
 import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
@@ -21,6 +16,10 @@ import org.openelisglobal.dataexchange.aggregatereporting.IndicatorAggregationRe
 import org.openelisglobal.dataexchange.order.action.OrderRawServlet;
 import org.openelisglobal.dataexchange.order.action.OrderServlet;
 import org.openelisglobal.metricservice.action.MetricServicesServlet;
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 

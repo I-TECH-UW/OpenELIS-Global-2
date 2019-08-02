@@ -22,10 +22,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.StringUtil;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * A class for generating reports that have counts of various things, organized

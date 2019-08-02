@@ -26,14 +26,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportTest;
 import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportTestComparator;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * @author benzd1 bugzila 2265 implements IActionConstants

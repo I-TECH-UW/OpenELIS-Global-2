@@ -8,6 +8,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.ExchangeConfigurationService;
+import org.openelisglobal.common.services.ExchangeConfigurationService.ConfigurationDomain;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration;
+import org.openelisglobal.resultreporting.form.ResultReportingConfigurationForm;
+import org.openelisglobal.resultreporting.service.ResultReportingConfigurationService;
+import org.openelisglobal.scheduler.LateStartScheduler;
+import org.openelisglobal.scheduler.service.CronSchedulerService;
+import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,22 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.resultreporting.form.ResultReportingConfigurationForm;
-import org.openelisglobal.resultreporting.service.ResultReportingConfigurationService;
-import org.openelisglobal.scheduler.service.CronSchedulerService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.services.ExchangeConfigurationService;
-import org.openelisglobal.common.services.ExchangeConfigurationService.ConfigurationDomain;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration;
-import org.openelisglobal.scheduler.LateStartScheduler;
-import org.openelisglobal.scheduler.valueholder.CronScheduler;
-import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class ResultReportingConfigurationController extends BaseController {

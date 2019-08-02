@@ -2,13 +2,12 @@ package org.openelisglobal.inventory.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.inventory.dao.InventoryItemDAO;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryItem, String>

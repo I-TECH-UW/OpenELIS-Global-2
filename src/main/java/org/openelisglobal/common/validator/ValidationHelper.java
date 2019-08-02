@@ -2,11 +2,10 @@ package org.openelisglobal.common.validator;
 
 import java.util.regex.Pattern;
 
-import org.springframework.validation.Errors;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.springframework.validation.Errors;
 
 public class ValidationHelper {
 

@@ -20,15 +20,14 @@ import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.method.dao.MethodDAO;
 import org.openelisglobal.method.valueholder.Method;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz

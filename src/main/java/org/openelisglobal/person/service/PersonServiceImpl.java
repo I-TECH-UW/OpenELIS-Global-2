@@ -7,19 +7,18 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.PersonAddress;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.person.dao.PersonDAO;
+import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.address.service.AddressPartService;
-import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.address.valueholder.AddressPart;
-import org.openelisglobal.address.valueholder.PersonAddress;
-import org.openelisglobal.person.dao.PersonDAO;
-import org.openelisglobal.person.valueholder.Person;
 
 @Service
 @DependsOn({ "springContext" })

@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
-
 import org.openelisglobal.audittrail.valueholder.History;
 
 /**

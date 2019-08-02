@@ -21,9 +21,6 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -31,6 +28,8 @@ import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.dao.ProviderDAO;
 import org.openelisglobal.provider.valueholder.Provider;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz

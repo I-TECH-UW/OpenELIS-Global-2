@@ -1,11 +1,10 @@
 package org.openelisglobal.sampletracking.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.sampletracking.dao.SampleTrackingDAO;
 import org.openelisglobal.sampletracking.valueholder.SampleTracking;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SampleTrackingServiceImpl extends BaseObjectServiceImpl<SampleTracking, String>

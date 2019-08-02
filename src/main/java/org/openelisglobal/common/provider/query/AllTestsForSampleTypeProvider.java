@@ -26,12 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 
 public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 

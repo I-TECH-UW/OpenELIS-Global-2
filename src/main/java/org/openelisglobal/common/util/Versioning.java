@@ -20,10 +20,10 @@ package org.openelisglobal.common.util;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.openelisglobal.common.service.DatabaseChangeLogService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.service.DatabaseChangeLogService;
 import org.openelisglobal.common.valueholder.DatabaseChangeLog;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class Versioning {
 

@@ -17,15 +17,14 @@
 package org.openelisglobal.scheduler;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.scheduler.independentthreads.IMalariaResultExporter;
 import org.openelisglobal.scheduler.independentthreads.IResultExporter;
 import org.openelisglobal.scheduler.independentthreads.ITestUsageBacklog;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class IndependentThreadStarter {

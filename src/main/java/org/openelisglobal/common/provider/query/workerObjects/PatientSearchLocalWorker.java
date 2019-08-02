@@ -22,18 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.search.service.SearchResultsService;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.provider.query.PatientSearchResults;
-import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
-import org.openelisglobal.patient.valueholder.Patient;
 
 public class PatientSearchLocalWorker extends PatientSearchWorker {
 

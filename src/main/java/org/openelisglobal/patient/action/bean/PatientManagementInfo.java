@@ -26,28 +26,27 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.validator.constraints.SafeHtml;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
-import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
-import org.openelisglobal.validation.annotations.OptionalNotBlank;
-import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.validation.annotations.ValidName;
-import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.patient.service.PatientTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+import org.openelisglobal.patient.service.PatientTypeService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patienttype.valueholder.PatientType;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.validation.annotations.OptionalNotBlank;
+import org.openelisglobal.validation.annotations.ValidDate;
+import org.openelisglobal.validation.annotations.ValidName;
+import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class PatientManagementInfo implements Serializable {
 

@@ -19,7 +19,6 @@ package org.openelisglobal.qaevent.worker;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.qaevent.form.NonConformityForm;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
 

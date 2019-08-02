@@ -16,12 +16,11 @@
 */
 package org.openelisglobal.address.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.address.dao.AddressPartDAO;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

@@ -19,9 +19,9 @@ package org.openelisglobal.dataexchange.order.valueholder;
 
 import java.sql.Timestamp;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 

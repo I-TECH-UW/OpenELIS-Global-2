@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * This enum defines lists from the dictionary table based on dictionary

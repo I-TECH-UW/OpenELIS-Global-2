@@ -26,10 +26,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * This class represents the configuration properties of the application

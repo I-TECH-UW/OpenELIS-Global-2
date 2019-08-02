@@ -18,7 +18,6 @@
 package org.openelisglobal.userrole.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class UserRole extends BaseObject<UserRolePK> {

@@ -4,9 +4,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
-import org.openelisglobal.datasubmission.form.DataSubmissionForm;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.datasubmission.form.DataSubmissionForm;
 
 public class DataValue extends BaseObject<String> {
     private static final long serialVersionUID = -2843847589920119564L;

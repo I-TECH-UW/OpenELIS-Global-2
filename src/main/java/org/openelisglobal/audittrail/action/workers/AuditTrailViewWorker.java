@@ -23,13 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.services.historyservices.AbstractHistoryService;
@@ -42,13 +36,18 @@ import org.openelisglobal.common.services.historyservices.QaHistoryService;
 import org.openelisglobal.common.services.historyservices.ReportHistoryService;
 import org.openelisglobal.common.services.historyservices.ResultHistoryService;
 import org.openelisglobal.common.services.historyservices.SampleHistoryService;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.action.bean.PatientManagementBridge;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.bean.SampleOrderItem;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AuditTrailViewWorker {
 

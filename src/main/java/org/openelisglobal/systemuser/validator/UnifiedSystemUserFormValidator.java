@@ -1,13 +1,12 @@
 package org.openelisglobal.systemuser.validator;
 
+import org.openelisglobal.common.provider.validation.ILoginPasswordValidation;
+import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
+import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
+import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
-import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
-import org.openelisglobal.common.provider.validation.ILoginPasswordValidation;
-import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 
 @Component
 public class UnifiedSystemUserFormValidator implements Validator {

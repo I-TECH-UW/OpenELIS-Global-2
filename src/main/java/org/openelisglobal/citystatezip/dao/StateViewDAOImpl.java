@@ -1,10 +1,9 @@
 package org.openelisglobal.citystatezip.dao;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.citystatezip.valueholder.StateView;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

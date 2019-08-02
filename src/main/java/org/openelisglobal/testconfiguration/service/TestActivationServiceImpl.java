@@ -2,15 +2,14 @@ package org.openelisglobal.testconfiguration.service;
 
 import java.util.List;
 
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 @Service
 public class TestActivationServiceImpl implements TestActivationService {

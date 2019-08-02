@@ -3,10 +3,10 @@ package org.openelisglobal.validation.constraintvalidator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.validation.annotations.ValidName;
 
 public class NameValidator implements ConstraintValidator<ValidName, String> {
 

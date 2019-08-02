@@ -24,23 +24,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.patienttype.service.PatientPatientTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.util.XMLUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+import org.openelisglobal.patienttype.service.PatientPatientTypeService;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientSearchPopulateProvider extends BaseQueryProvider {
 

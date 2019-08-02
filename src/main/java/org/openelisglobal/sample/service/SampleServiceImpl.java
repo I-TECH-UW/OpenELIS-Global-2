@@ -7,37 +7,36 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.requester.service.RequesterTypeService;
-import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.requester.service.RequesterTypeService;
+import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.RequesterType;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })

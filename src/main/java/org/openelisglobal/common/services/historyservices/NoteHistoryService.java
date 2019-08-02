@@ -21,21 +21,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
-import org.openelisglobal.history.service.HistoryService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.note.service.NoteServiceImpl;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.sample.service.SampleServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.services.QAService;
+import org.openelisglobal.history.service.HistoryService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.service.SampleServiceImpl;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class NoteHistoryService extends AbstractHistoryService {
 

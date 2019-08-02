@@ -8,16 +8,11 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestComparator;
 import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
@@ -25,6 +20,10 @@ import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO.SampleDomain;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })

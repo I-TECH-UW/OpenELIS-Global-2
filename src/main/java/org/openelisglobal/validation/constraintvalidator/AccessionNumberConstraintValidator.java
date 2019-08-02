@@ -3,12 +3,12 @@ package org.openelisglobal.validation.constraintvalidator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class AccessionNumberConstraintValidator implements ConstraintValidator<ValidAccessionNumber, String> {
 

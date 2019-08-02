@@ -19,13 +19,12 @@ package org.openelisglobal.dataexchange.aggregatereporting.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

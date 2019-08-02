@@ -9,6 +9,25 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
+import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.patienttype.service.PatientPatientTypeService;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
+import org.openelisglobal.search.service.SearchResultsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,26 +38,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
-import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
-import org.openelisglobal.address.service.AddressPartService;
-import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.patienttype.service.PatientPatientTypeService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.search.service.SearchResultsService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.provider.query.PatientSearchResults;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
-import org.openelisglobal.patient.action.bean.PatientManagementInfo;
-import org.openelisglobal.patient.action.bean.PatientSearch;
-import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
-import org.openelisglobal.person.valueholder.Person;
 
 @Controller
 public class PatientManagementController extends BaseController {

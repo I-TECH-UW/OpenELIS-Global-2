@@ -15,12 +15,11 @@
  */
 package org.openelisglobal.image.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.image.dao.ImageDAO;
 import org.openelisglobal.image.valueholder.Image;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

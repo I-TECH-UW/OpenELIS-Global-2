@@ -1,7 +1,6 @@
 package org.openelisglobal.barcode.form;
 
 import org.hibernate.validator.constraints.Range;
-
 import org.openelisglobal.common.form.BaseForm;
 
 public class BarcodeConfigurationForm extends BaseForm {

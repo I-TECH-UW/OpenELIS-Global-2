@@ -43,7 +43,6 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
 

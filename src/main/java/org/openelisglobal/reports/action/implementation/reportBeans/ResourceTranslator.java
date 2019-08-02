@@ -21,13 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.gender.service.GenderService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.SimpleBaseEntity;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * RetroCI wants CSV export to list the numeric values that are prefixed on the

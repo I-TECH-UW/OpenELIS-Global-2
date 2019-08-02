@@ -24,13 +24,12 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.organization.dao.OrganizationOrganizationTypeDAO;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 //TODO move to service layer, or other DAOs
 @Component

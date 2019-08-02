@@ -1,7 +1,6 @@
 package org.openelisglobal.result.controller;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.internationalization.MessageUtil;
 

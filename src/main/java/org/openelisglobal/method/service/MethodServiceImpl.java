@@ -2,15 +2,14 @@ package org.openelisglobal.method.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.method.dao.MethodDAO;
+import org.openelisglobal.method.valueholder.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.method.dao.MethodDAO;
-import org.openelisglobal.method.valueholder.Method;
 
 @Service
 public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> implements MethodService {

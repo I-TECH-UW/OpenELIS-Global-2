@@ -31,17 +31,16 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.common.service.servlet.reports.LogoUploadService;
-import org.openelisglobal.image.service.ImageService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.service.servlet.reports.LogoUploadService;
+import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.image.valueholder.Image;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class LogoUploadServlet extends HttpServlet {
 

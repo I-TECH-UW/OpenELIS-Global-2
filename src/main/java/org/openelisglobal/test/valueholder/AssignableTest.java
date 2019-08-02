@@ -18,10 +18,10 @@ package org.openelisglobal.test.valueholder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.test.service.TestServiceImpl;
 
 /**
  * @author benzd1 bug 2293 this object can contain tests and panels (combination

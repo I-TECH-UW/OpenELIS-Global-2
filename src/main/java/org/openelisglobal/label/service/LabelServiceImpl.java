@@ -1,11 +1,10 @@
 package org.openelisglobal.label.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.label.dao.LabelDAO;
 import org.openelisglobal.label.valueholder.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LabelServiceImpl extends BaseObjectServiceImpl<Label, String> implements LabelService {

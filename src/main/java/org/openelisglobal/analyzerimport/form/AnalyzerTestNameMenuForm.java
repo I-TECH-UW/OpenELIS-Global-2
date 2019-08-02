@@ -3,7 +3,6 @@ package org.openelisglobal.analyzerimport.form;
 import java.util.List;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.MenuForm;
 
 public class AnalyzerTestNameMenuForm extends MenuForm {

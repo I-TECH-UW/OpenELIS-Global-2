@@ -14,6 +14,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.beanItems.TestActivationBean;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testconfiguration.form.TestOrderabilityForm;
+import org.openelisglobal.testconfiguration.validator.TestOrderabilityFormValidator;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -21,18 +32,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.testconfiguration.form.TestOrderabilityForm;
-import org.openelisglobal.testconfiguration.validator.TestOrderabilityFormValidator;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.test.beanItems.TestActivationBean;
-import org.openelisglobal.test.valueholder.Test;
 
 @Controller
 public class TestOrderabilityController extends BaseController {

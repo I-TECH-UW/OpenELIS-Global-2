@@ -2,14 +2,13 @@ package org.openelisglobal.panel.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.panel.dao.PanelDAO;
+import org.openelisglobal.panel.valueholder.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.panel.dao.PanelDAO;
-import org.openelisglobal.panel.valueholder.Panel;
 
 @Service
 public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> implements PanelService {

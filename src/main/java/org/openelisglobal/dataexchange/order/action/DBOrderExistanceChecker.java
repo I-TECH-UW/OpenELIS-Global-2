@@ -19,13 +19,12 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DBOrderExistanceChecker implements IOrderExistanceChecker {

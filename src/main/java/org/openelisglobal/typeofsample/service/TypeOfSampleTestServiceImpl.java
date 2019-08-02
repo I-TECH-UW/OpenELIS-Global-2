@@ -2,13 +2,12 @@ package org.openelisglobal.typeofsample.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.typeofsample.dao.TypeOfSampleTestDAO;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest, String>

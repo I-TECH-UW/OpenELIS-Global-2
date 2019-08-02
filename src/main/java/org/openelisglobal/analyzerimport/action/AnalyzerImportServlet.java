@@ -29,13 +29,12 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
+import org.openelisglobal.login.service.LoginService;
 import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class AnalyzerImportServlet extends HttpServlet {

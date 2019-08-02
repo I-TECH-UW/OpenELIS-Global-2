@@ -3,9 +3,9 @@ package org.openelisglobal.validation.constraintvalidator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.openelisglobal.validation.annotations.OptionalNotBlank;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.validation.annotations.OptionalNotBlank;
 
 public class OptionalNotBlankConstraintValidator implements ConstraintValidator<OptionalNotBlank, String> {
 

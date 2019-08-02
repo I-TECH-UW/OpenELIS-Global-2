@@ -19,12 +19,11 @@ package org.openelisglobal.common.services;
 
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
+import org.springframework.stereotype.Service;
 
 @Service
 public class StatusSet {

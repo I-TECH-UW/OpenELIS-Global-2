@@ -26,40 +26,39 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.gender.service.GenderService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.qaevent.service.QaEventService;
-import org.openelisglobal.referral.service.ReferralReasonService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
-import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
+import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
+import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO.SampleDomain;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
 import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
+import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DisplayListService implements LocaleChangeListener {

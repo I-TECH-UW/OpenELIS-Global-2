@@ -26,26 +26,25 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.analyte.service.AnalyteService;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.scriptlet.service.ScriptletService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.testreflex.service.TestReflexService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Service;
 
 @Service
 @DependsOn({ "springContext" })

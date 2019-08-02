@@ -6,6 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
+import org.openelisglobal.dataexchange.resultreporting.beans.ResultXmit;
+import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +22,6 @@ import ca.uhn.hl7v2.model.v251.segment.OBR;
 import ca.uhn.hl7v2.model.v251.segment.OBX;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.model.v251.segment.PID;
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
-import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
-import org.openelisglobal.dataexchange.resultreporting.beans.ResultXmit;
-import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
 
 @Service
 public class OrderResponseWorker {

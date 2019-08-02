@@ -6,6 +6,26 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.patient.action.IPatientUpdate;
+import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
+import org.openelisglobal.sample.bean.SampleOrderItem;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.service.PatientManagementUpdate;
+import org.openelisglobal.sample.service.SamplePatientEntryService;
+import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,27 +36,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
-import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
-import org.openelisglobal.sample.service.PatientManagementUpdate;
-import org.openelisglobal.sample.service.SamplePatientEntryService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.formfields.FormFields;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.services.SampleOrderService;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.patient.action.IPatientUpdate;
-import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
-import org.openelisglobal.patient.action.bean.PatientManagementInfo;
-import org.openelisglobal.patient.action.bean.PatientSearch;
-import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
-import org.openelisglobal.sample.bean.SampleOrderItem;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {

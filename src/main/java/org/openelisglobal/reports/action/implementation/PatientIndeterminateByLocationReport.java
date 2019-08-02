@@ -20,16 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-
-import net.sf.jasperreports.engine.JRDataSource;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.sampleproject.service.SampleProjectService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.reports.action.implementation.reportBeans.IndeterminateReportData;
+import org.openelisglobal.sampleproject.service.SampleProjectService;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
+import org.openelisglobal.spring.util.SpringContext;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class PatientIndeterminateByLocationReport extends PatientIndeterminateReport
         implements IReportParameterSetter, IReportCreator {

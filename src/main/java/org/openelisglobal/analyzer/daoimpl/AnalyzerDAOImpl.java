@@ -15,12 +15,11 @@
 */
 package org.openelisglobal.analyzer.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analyzer.dao.AnalyzerDAO;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

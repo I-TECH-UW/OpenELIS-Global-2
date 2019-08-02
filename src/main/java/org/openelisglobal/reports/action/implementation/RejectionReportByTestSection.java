@@ -21,15 +21,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.note.service.NoteServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.reports.action.implementation.reportBeans.RejectionReportBean;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  */

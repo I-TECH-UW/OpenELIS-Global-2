@@ -21,18 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class RetroCIPatientAssociatedReport extends CollectionReport implements IReportParameterSetter {
 

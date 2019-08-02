@@ -26,13 +26,12 @@ import javax.validation.constraints.Pattern;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.dictionary.ObservationHistoryList;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
 
 /**
  * Value object for transfer of observation history (demographic survey

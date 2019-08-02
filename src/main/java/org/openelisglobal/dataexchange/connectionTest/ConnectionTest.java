@@ -20,10 +20,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.common.ReportTransmission.HTTP_TYPE;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public class ConnectionTest {
 

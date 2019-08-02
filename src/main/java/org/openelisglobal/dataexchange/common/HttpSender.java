@@ -14,9 +14,8 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.internationalization.MessageUtil;
 
 abstract public class HttpSender implements IExternalSender {
 

@@ -1,13 +1,12 @@
 package org.openelisglobal.qaevent.validator;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.qaevent.form.NonConformityForm;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 @Component
 public class NonConformityFormValidator implements Validator {

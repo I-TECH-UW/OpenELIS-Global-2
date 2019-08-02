@@ -4,6 +4,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testconfiguration.form.TestSectionRenameEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,14 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.testconfiguration.form.TestSectionRenameEntryForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.valueholder.Localization;
-import org.openelisglobal.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionRenameEntryController extends BaseController {

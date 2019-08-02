@@ -24,7 +24,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import org.apache.commons.validator.routines.DateValidator;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;

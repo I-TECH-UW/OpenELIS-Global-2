@@ -22,9 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,

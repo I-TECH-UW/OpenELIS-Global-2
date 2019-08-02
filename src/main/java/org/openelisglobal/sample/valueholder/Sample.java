@@ -21,15 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.note.service.NoteObject;
-import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
-import org.openelisglobal.sample.service.SampleServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.note.service.NoteObject;
+import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
+import org.openelisglobal.sample.service.SampleServiceImpl;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class Sample extends EnumValueItemImpl implements NoteObject {

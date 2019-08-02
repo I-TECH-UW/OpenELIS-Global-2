@@ -27,17 +27,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.scheduler.service.CronSchedulerService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -49,11 +39,20 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.common.ReportTransmission.HTTP_TYPE;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 public class MalariaSurveilanceJob implements Job {
     private static final String CRON_MALARIA_SCHEDULER = "sendMalariaSurviellanceReport";

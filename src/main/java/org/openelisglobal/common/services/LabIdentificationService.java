@@ -18,11 +18,10 @@ package org.openelisglobal.common.services;
 
 import java.util.Locale;
 
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LabIdentificationService {

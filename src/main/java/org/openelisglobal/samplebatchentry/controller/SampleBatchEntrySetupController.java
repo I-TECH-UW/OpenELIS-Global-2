@@ -4,21 +4,20 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.sample.controller.BaseSampleEntryController;
-import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.sample.controller.BaseSampleEntryController;
 import org.openelisglobal.sample.form.ProjectData;
+import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class SampleBatchEntrySetupController extends BaseSampleEntryController {

@@ -25,7 +25,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.log.LogEvent;
 
 public class HttpPostSender extends HttpSender {

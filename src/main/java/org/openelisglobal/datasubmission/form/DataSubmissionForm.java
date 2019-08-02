@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.Range;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.datasubmission.valueholder.DataIndicator;

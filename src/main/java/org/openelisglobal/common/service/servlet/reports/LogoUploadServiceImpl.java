@@ -1,13 +1,12 @@
 package org.openelisglobal.common.service.servlet.reports;
 
+import org.openelisglobal.image.service.ImageService;
+import org.openelisglobal.image.valueholder.Image;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.image.service.ImageService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.image.valueholder.Image;
-import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 @Service
 public class LogoUploadServiceImpl implements LogoUploadService {

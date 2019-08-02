@@ -24,17 +24,16 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.result.form.LogbookResultsForm;
-import org.openelisglobal.validation.annotations.ValidAccessionNumber;
-import org.openelisglobal.validation.annotations.ValidDate;
-import org.openelisglobal.workplan.form.WorkplanForm;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.result.action.util.ResultItem;
+import org.openelisglobal.result.form.LogbookResultsForm;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.validation.annotations.ValidAccessionNumber;
+import org.openelisglobal.validation.annotations.ValidDate;
+import org.openelisglobal.workplan.form.WorkplanForm;
 
 public class TestResultItem implements ResultItem, Serializable {
 

@@ -7,6 +7,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.analyzer.service.AnalyzerService;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
+import org.openelisglobal.analyzerimport.form.AnalyzerTestNameForm;
+import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
+import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
+import org.openelisglobal.analyzerimport.validator.AnalyzerTestMappingValidator;
+import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,21 +32,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.analyzerimport.form.AnalyzerTestNameForm;
-import org.openelisglobal.analyzerimport.validator.AnalyzerTestMappingValidator;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.analyzer.service.AnalyzerService;
-import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.analyzer.valueholder.Analyzer;
-import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
-import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.test.valueholder.Test;
 
 @Controller
 @SessionAttributes("form")

@@ -7,6 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+import org.openelisglobal.patient.saving.Accessioner;
+import org.openelisglobal.patient.saving.IPatientEditUpdate;
+import org.openelisglobal.patient.saving.IPatientEntry;
+import org.openelisglobal.patient.saving.IPatientEntryAfterAnalyzer;
+import org.openelisglobal.patient.saving.IPatientEntryAfterSampleEntry;
+import org.openelisglobal.patient.saving.IPatientSecondEntry;
+import org.openelisglobal.patient.saving.RequestType;
+import org.openelisglobal.patient.validator.PatientEntryByProjectFormValidator;
+import org.openelisglobal.spring.util.SpringContext;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,18 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
-import org.openelisglobal.patient.validator.PatientEntryByProjectFormValidator;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.patient.saving.Accessioner;
-import org.openelisglobal.patient.saving.IPatientEditUpdate;
-import org.openelisglobal.patient.saving.IPatientEntry;
-import org.openelisglobal.patient.saving.IPatientEntryAfterAnalyzer;
-import org.openelisglobal.patient.saving.IPatientEntryAfterSampleEntry;
-import org.openelisglobal.patient.saving.IPatientSecondEntry;
-import org.openelisglobal.patient.saving.RequestType;
 
 @Controller
 public class PatientEntryByProjectController extends BasePatientEntryByProject {

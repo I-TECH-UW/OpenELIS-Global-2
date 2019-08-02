@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.BaseForm;
 
 public class SampleTypeCreateForm extends BaseForm {

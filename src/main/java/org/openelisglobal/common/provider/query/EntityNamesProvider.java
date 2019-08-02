@@ -25,17 +25,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
-
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.renametestsection.service.RenameTestSectionService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.renametestsection.service.RenameTestSectionService;
 import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class EntityNamesProvider extends BaseQueryProvider {

@@ -9,6 +9,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.OrganizationAddressService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.OrganizationAddress;
+import org.openelisglobal.citystatezip.service.CityStateZipService;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.organization.form.OrganizationForm;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.service.OrganizationTypeService;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,29 +41,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.organization.form.OrganizationForm;
-import org.openelisglobal.address.service.AddressPartService;
-import org.openelisglobal.address.service.OrganizationAddressService;
-import org.openelisglobal.citystatezip.service.CityStateZipService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.organization.service.OrganizationTypeService;
-import org.openelisglobal.address.valueholder.AddressPart;
-import org.openelisglobal.address.valueholder.OrganizationAddress;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.formfields.FormFields;
-import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.organization.valueholder.Organization;
-import org.openelisglobal.organization.valueholder.OrganizationType;
 
 @Controller
 @SessionAttributes("form")

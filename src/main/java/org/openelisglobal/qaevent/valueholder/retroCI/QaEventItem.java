@@ -27,7 +27,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.qaevent.form.NonConformityForm;
 

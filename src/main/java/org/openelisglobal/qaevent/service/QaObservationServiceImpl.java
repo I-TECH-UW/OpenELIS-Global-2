@@ -1,12 +1,11 @@
 package org.openelisglobal.qaevent.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.qaevent.dao.QaObservationDAO;
 import org.openelisglobal.qaevent.valueholder.QaObservation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservation, String>

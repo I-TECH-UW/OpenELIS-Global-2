@@ -1,11 +1,10 @@
 package org.openelisglobal.siteinformation.validator;
 
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.siteinformation.form.SiteInformationForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.siteinformation.form.SiteInformationForm;
 
 @Component
 public class SiteInformationFormValidator implements Validator {

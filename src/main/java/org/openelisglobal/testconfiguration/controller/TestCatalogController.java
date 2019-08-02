@@ -9,28 +9,27 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestCatalog;
+import org.openelisglobal.testconfiguration.beans.ResultLimitBean;
+import org.openelisglobal.testconfiguration.form.TestCatalogForm;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.testconfiguration.form.TestCatalogForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.resultlimit.service.ResultLimitService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.panel.valueholder.Panel;
-import org.openelisglobal.resultlimits.valueholder.ResultLimit;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.test.valueholder.TestCatalog;
-import org.openelisglobal.testconfiguration.beans.ResultLimitBean;
-import org.openelisglobal.testresult.valueholder.TestResult;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestCatalogController extends BaseController {

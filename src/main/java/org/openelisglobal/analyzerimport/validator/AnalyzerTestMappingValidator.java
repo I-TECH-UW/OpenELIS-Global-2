@@ -2,14 +2,13 @@ package org.openelisglobal.analyzerimport.validator;
 
 import java.util.List;
 
+import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
+import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Component
 public class AnalyzerTestMappingValidator implements Validator {

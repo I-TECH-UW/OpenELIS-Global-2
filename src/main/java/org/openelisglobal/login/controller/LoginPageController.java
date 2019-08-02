@@ -4,15 +4,14 @@ import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.login.form.LoginForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.constants.Constants;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.login.form.LoginForm;
 
 @Controller
 public class LoginPageController extends BaseController {

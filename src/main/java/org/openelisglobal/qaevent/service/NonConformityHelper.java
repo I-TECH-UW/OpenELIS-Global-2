@@ -1,12 +1,11 @@
 package org.openelisglobal.qaevent.service;
 
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class NonConformityHelper {
 

@@ -24,22 +24,21 @@ import static org.openelisglobal.common.provider.validation.IAccessionNumberVali
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.project.service.ProjectService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ProgramAccessionValidator implements IAccessionNumberValidator {
 

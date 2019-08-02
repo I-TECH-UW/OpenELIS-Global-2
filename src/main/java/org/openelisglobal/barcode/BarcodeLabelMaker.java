@@ -7,6 +7,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.openelisglobal.barcode.labeltype.BlankLabel;
+import org.openelisglobal.barcode.labeltype.Label;
+import org.openelisglobal.barcode.labeltype.OrderLabel;
+import org.openelisglobal.barcode.labeltype.SpecimenLabel;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
+
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -22,20 +36,6 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
-
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.barcode.labeltype.BlankLabel;
-import org.openelisglobal.barcode.labeltype.Label;
-import org.openelisglobal.barcode.labeltype.OrderLabel;
-import org.openelisglobal.barcode.labeltype.SpecimenLabel;
-import org.openelisglobal.common.services.StatusService;
-import org.openelisglobal.common.services.StatusService.SampleStatus;
-import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.sample.valueholder.Sample;
-import org.openelisglobal.sampleitem.valueholder.SampleItem;
 
 /**
  * Class for taking lists of Label objects and turning them into a printable

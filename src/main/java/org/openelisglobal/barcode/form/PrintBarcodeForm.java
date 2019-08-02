@@ -1,7 +1,6 @@
 package org.openelisglobal.barcode.form;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.form.BaseForm;
 
 //values used for fetching, tight validation not needed

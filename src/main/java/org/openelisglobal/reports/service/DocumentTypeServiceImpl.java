@@ -1,12 +1,11 @@
 package org.openelisglobal.reports.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.reports.dao.DocumentTypeDAO;
 import org.openelisglobal.reports.valueholder.DocumentType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType, String>

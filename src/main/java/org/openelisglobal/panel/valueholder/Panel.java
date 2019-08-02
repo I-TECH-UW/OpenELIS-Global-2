@@ -15,11 +15,11 @@
 */
 package org.openelisglobal.panel.valueholder;
 
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolder;
+import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class Panel extends EnumValueItemImpl {
 

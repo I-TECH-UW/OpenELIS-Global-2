@@ -20,9 +20,9 @@ package org.openelisglobal.analyzerimport.analyzerreaders;
 import java.util.List;
 
 import org.openelisglobal.analyzerresults.service.AnalyzerResultsService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class AnalyzerLineInserter {
 

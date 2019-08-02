@@ -22,11 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ajaxtags.helpers.AjaxXmlBuilder;
 import org.ajaxtags.servlets.BaseAjaxServlet;
-
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.autocomplete.AutocompleteProviderFactory;
 import org.openelisglobal.common.provider.autocomplete.BaseAutocompleteProvider;
 import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 

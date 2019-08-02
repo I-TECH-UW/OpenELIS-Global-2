@@ -12,6 +12,21 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.action.BatchTestStatusChangeBean;
+import org.openelisglobal.test.form.BatchTestReassignmentForm;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.validator.BatchTestReassignmentFormValidator;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -20,22 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.test.form.BatchTestReassignmentForm;
-import org.openelisglobal.test.validator.BatchTestReassignmentFormValidator;
-import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.StatusService;
-import org.openelisglobal.test.action.BatchTestStatusChangeBean;
-import org.openelisglobal.test.valueholder.Test;
 
 @Controller
 public class BatchTestReassignmentController extends BaseController {

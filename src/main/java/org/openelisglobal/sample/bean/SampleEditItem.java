@@ -4,12 +4,11 @@ import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 
 public class SampleEditItem {
     private String accessionNumber;

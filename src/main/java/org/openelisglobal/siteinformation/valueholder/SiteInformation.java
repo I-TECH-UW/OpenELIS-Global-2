@@ -20,10 +20,9 @@ package org.openelisglobal.siteinformation.valueholder;
 import java.util.Locale;
 
 import org.hibernate.validator.constraints.URL;
-
-import org.openelisglobal.datasubmission.form.DataSubmissionForm;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
+import org.openelisglobal.datasubmission.form.DataSubmissionForm;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 

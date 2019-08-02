@@ -8,7 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;

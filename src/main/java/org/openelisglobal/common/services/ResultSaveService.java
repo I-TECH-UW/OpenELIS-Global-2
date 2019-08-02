@@ -25,25 +25,24 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.referral.service.ReferralResultService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.result.service.ResultSignatureService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.result.action.util.ResultUtil;
+import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.service.ResultSignatureService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.result.valueholder.ResultSignature;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")

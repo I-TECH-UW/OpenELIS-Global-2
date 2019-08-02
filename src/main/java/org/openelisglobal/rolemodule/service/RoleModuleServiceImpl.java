@@ -4,15 +4,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.systemusermodule.dao.RoleModuleDAO;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 import org.openelisglobal.systemusermodule.valueholder.RoleModule;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, String> implements RoleModuleService {

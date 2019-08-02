@@ -18,14 +18,14 @@ package org.openelisglobal.sampleqaevent.valueholder;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import org.openelisglobal.note.service.NoteObject;
-import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.note.service.NoteObject;
+import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;

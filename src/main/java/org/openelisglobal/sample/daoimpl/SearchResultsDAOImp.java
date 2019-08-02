@@ -24,13 +24,12 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SearchResultsDAOImp implements SearchResultsDAO {

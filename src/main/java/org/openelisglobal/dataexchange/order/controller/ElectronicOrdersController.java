@@ -5,6 +5,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
+import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.statusofsample.service.StatusOfSampleService;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,14 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
-import org.openelisglobal.statusofsample.service.StatusOfSampleService;
-import org.openelisglobal.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
-import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 
 @Controller
 public class ElectronicOrdersController extends BaseController {

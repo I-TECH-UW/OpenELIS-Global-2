@@ -19,11 +19,11 @@ import java.sql.Date;
 
 import javax.validation.constraints.NotBlank;
 
-import org.openelisglobal.validation.annotations.ValidName;
-import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.validation.annotations.ValidName;
+import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)

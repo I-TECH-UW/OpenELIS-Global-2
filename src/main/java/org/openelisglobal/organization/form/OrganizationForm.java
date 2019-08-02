@@ -10,14 +10,13 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.URL;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.validator.ValidationHelper;
-import org.openelisglobal.validation.annotations.OptionalNotBlank;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.openelisglobal.validation.annotations.OptionalNotBlank;
 
 public class OrganizationForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)

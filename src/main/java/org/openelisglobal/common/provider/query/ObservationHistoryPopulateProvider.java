@@ -30,15 +30,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.observationhistory.service.ObservationHistoryService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 

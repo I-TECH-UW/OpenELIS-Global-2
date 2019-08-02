@@ -22,7 +22,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.validator.GenericValidator;
-
 import org.openelisglobal.common.log.LogEvent;
 
 public class HttpGetSender extends HttpSender {

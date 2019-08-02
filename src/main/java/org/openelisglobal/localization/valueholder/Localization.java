@@ -25,11 +25,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.context.i18n.LocaleContextHolder;
-
+import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.common.valueholder.BaseObject;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 public class Localization extends BaseObject<String> {
 

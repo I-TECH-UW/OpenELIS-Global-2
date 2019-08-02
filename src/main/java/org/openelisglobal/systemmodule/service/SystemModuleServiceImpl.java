@@ -2,14 +2,13 @@ package org.openelisglobal.systemmodule.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.systemmodule.dao.SystemModuleDAO;
+import org.openelisglobal.systemmodule.valueholder.SystemModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.systemmodule.dao.SystemModuleDAO;
-import org.openelisglobal.systemmodule.valueholder.SystemModule;
 
 @Service
 public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule, String>

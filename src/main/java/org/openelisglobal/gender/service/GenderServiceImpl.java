@@ -1,13 +1,12 @@
 package org.openelisglobal.gender.service;
 
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.gender.dao.GenderDAO;
+import org.openelisglobal.gender.valueholder.Gender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.gender.dao.GenderDAO;
-import org.openelisglobal.gender.valueholder.Gender;
 
 @Service
 public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> implements GenderService {

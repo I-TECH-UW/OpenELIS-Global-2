@@ -17,6 +17,27 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.role.action.bean.DisplayRole;
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.systemuser.validator.UnifiedSystemUserFormValidator;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -26,28 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
-import org.openelisglobal.systemuser.validator.UnifiedSystemUserFormValidator;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.systemuser.service.UserService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.login.valueholder.Login;
-import org.openelisglobal.role.action.bean.DisplayRole;
-import org.openelisglobal.role.valueholder.Role;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
-import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 
 @Controller
 public class UnifiedSystemUserController extends BaseController {

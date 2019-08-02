@@ -9,21 +9,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
-
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.Versioning;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
+import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 
 /**
  * Servlet for pages to send bar code label requests. Returns as pdf unless...

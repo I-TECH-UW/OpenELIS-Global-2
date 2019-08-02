@@ -19,15 +19,14 @@ package org.openelisglobal.result.action.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IResultSaveService;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.springframework.validation.Errors;
 
 /**
  */

@@ -3,9 +3,9 @@ package org.openelisglobal.validation.constraintvalidator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.validation.annotations.ValidTime;
 
 public class TimeConstraintValidator implements ConstraintValidator<ValidTime, String> {
 

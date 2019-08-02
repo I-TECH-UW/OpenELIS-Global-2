@@ -29,15 +29,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
-import org.xml.sax.InputSource;
-
-import ca.uhn.hl7v2.HL7Exception;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker;
 import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
+import org.openelisglobal.spring.util.SpringContext;
+import org.xml.sax.InputSource;
+
+import ca.uhn.hl7v2.HL7Exception;
 
 public class ReportTransmission {
     public enum HTTP_TYPE {

@@ -7,6 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.systemmodule.service.SystemModuleUrlService;
+import org.openelisglobal.systemmodule.valueholder.SystemModuleParam;
+import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -15,15 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.systemmodule.service.SystemModuleUrlService;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.systemmodule.valueholder.SystemModuleParam;
-import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
 @Qualifier(value = "ModuleAuthenticationInterceptor")

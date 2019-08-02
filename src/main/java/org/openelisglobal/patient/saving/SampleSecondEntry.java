@@ -22,12 +22,11 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.Vali
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.common.action.IActionConstants;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)

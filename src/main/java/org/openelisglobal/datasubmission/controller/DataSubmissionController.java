@@ -7,6 +7,22 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.parser.ParseException;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.datasubmission.DataIndicatorFactory;
+import org.openelisglobal.datasubmission.DataSubmitter;
+import org.openelisglobal.datasubmission.form.DataSubmissionForm;
+import org.openelisglobal.datasubmission.service.DataIndicatorService;
+import org.openelisglobal.datasubmission.service.TypeOfDataIndicatorService;
+import org.openelisglobal.datasubmission.validator.DataSubmissionFormValidator;
+import org.openelisglobal.datasubmission.valueholder.DataIndicator;
+import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,23 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.datasubmission.form.DataSubmissionForm;
-import org.openelisglobal.datasubmission.validator.DataSubmissionFormValidator;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.datasubmission.service.DataIndicatorService;
-import org.openelisglobal.datasubmission.service.TypeOfDataIndicatorService;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.datasubmission.DataIndicatorFactory;
-import org.openelisglobal.datasubmission.DataSubmitter;
-import org.openelisglobal.datasubmission.valueholder.DataIndicator;
-import org.openelisglobal.datasubmission.valueholder.TypeOfDataIndicator;
-import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class DataSubmissionController extends BaseController {
