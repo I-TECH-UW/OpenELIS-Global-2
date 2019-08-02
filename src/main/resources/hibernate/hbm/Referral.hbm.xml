@@ -36,7 +36,8 @@
 		<property name="canceled" column="canceled" type="boolean" />
 		<many-to-one name="analysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
-			fetch="select">
+			fetch="select"
+			lazy="false">
 			<column name="analysis_id" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="organization"
