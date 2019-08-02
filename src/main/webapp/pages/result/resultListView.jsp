@@ -760,6 +760,8 @@ function setField(id, value) {
 		<!-- result cell -->
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
+				<form:hidden path="testResult[${iter.index}].lowerNormalRange"/>
+				<form:hidden path="testResult[${iter.index}].upperNormalRange"/>
 			    <form:input path="testResult[${iter.index}].resultValue" 
 			           size="6" 
 			           id="results_${iter.index}"

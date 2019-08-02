@@ -16,33 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.resultvalidation.form.ResultValidationForm;
-import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.reports.service.DocumentTrackService;
-import org.openelisglobal.reports.service.DocumentTypeService;
-import org.openelisglobal.resultvalidation.service.ResultValidationService;
-import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -57,19 +31,44 @@ import org.openelisglobal.common.services.registration.ValidationUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.reports.service.DocumentTrackService;
+import org.openelisglobal.reports.service.DocumentTypeService;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.action.util.ResultValidationPaging;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.resultvalidation.form.ResultValidationForm;
+import org.openelisglobal.resultvalidation.service.ResultValidationService;
+import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
@@ -211,7 +210,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if (testSectionName.equals("serology")) {
             createUpdateElisaList(resultItemList, analysisUpdateList);
         } else {
-            createUpdateList(resultItemList, analysisUpdateList, deletableList, noteUpdateList, deletableList,
+            createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
                     resultSaveService, areListeners);
         }
 
