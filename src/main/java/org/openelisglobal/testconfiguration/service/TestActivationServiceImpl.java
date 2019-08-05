@@ -40,7 +40,8 @@ public class TestActivationServiceImpl implements TestActivationService {
             typeOfSampleService.update(typeOfSample);
         }
 
-        if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
+        if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty() || !deactivateTests.isEmpty()
+                || !activateTests.isEmpty()) {
             SpringContext.getBean(TypeOfSampleService.class).clearCache();
         }
     }
