@@ -36,8 +36,8 @@ public class TestActivationFormValidator implements Validator {
                 ValidationHelper.validateFieldAndCharset(String.valueOf(activateTest.get("sortOrder")),
                         "JsonChangeList", "sort order[" + i + "]", errors, true, 3, "0-9");
 
-                ValidationHelper.validateFieldAndCharset(String.valueOf(activateTest.get("activated")),
-                        "JsonChangeList", "activated[" + i + "]", errors, true, 3, "^$|^true$|^false$");
+                ValidationHelper.validateField(String.valueOf(activateTest.get("activated")), "JsonChangeList",
+                        "activated[" + i + "]", errors, true, 5, "^$|^true$|^false$");
             }
 
             JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
