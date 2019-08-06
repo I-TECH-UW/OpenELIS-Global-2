@@ -63,9 +63,8 @@ public class StatusResultsController extends BaseController {
     }
 
     @RequestMapping(value = "/StatusResults", method = RequestMethod.GET)
-    public ModelAndView showStatusResults(HttpServletRequest request)
+    public ModelAndView showStatusResults(HttpServletRequest request, StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        StatusResultsForm form = new StatusResultsForm();
 
         resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsUtility.setSysUser(getSysUserId(request));
