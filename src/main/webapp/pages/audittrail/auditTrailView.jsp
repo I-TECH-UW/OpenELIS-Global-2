@@ -35,11 +35,8 @@
 
 <script type="text/javascript">
 
-function submit(){
-
-	var form = document.getElementById("mainForm");
-	form.action = "AuditTrailReport.do";
-	form.submit();
+function search(){
+	window.location.href = "AuditTrailReport.do?accessionNumberSearch=" + jQuery('#accessionNumberSearch').val();
 	return false;
 }
 
@@ -58,9 +55,10 @@ function submit(){
 	
 		<%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>: 
 		<form:input path="accessionNumberSearch"
+					id="accessionNumberSearch"
 				   cssClass="input-medium" 
 	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
-		<input class="btn" type="button" onclick="submit();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
+		<input class="btn" type="button" onclick="search();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
 		</div>
 	</div>
 
