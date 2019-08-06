@@ -511,26 +511,41 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 <c:if test="${not empty referralItems.pastNotes}">
     <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
-        <td colspan="5" align="left">
+        <td colspan="3" align="left">
 <!--         	pastNotes are escaped in an html context when they are fetched by the server before -->
 <!--         	safe html tags are added in the controller, so this does not need to be escaped here as well -->
             ${referralItems.pastNotes}
         </td>
+        <td colspan="2" align="left" valign="top">
+        	<span id='noteRow_${iter.index}' style="display: none;">
+        	<spring:message code="note.note"/>:
+        	<form:textarea path="referralItems[${iter.index}].note"
+        			   id='note_${iter.index}'
+                       onchange='markModified("${iter.index}");'
+                       cols="80"
+                       rows="3"/>
+            </span>
+        </td>
         <td colspan='2' class="leftVertical">
     </tr>
 </c:if>
-<tr id='noteRow_${iter.index}'
+<c:if test="${empty referralItems.pastNotes}">
+<tr id='noteRow_${iter.index}' 
+	style="display: none;"
     class='${rowColor}'
-    style="display: none;">
-    <td valign="top" align="right"><spring:message code="note.note"/>:</td>
+    >
+    <td valign="top" align="right">
+        	<spring:message code="note.note"/>:
+    </td>
     <td colspan="6" align="left">
-        <form:textarea path="referralItems[${iter.index}].note"
+    	<form:textarea path="referralItems[${iter.index}].note"
         			   id='note_${iter.index}'
                        onchange='markModified("${iter.index}");'
                        cols="80"
                        rows="3"/>
     </td>
 </tr>
+</c:if>
 </c:forEach>
 </table>
 </c:if>
