@@ -35,13 +35,17 @@
 
 <script>
 function /*void*/ setLanguage( language ){
-	var url = window.location.href;
-	if (url.indexOf('?') > -1){
-		   	url += "&lang=" + language;
-		} else {
-			url += "?lang=" + language;
-		}
-		window.location.href = url;
+	//this weirdness is because we want the language to which we are changing, not the one we are in
+	if( language.includes('en') ){
+	    update = confirm("Changing the language will affect all logged in users ");
+	} else if( language.includes('fr') ){
+		update = confirm( "Modification de la langue affectera tous les utilisateurs enregistrés");
+	}
+	if( update ){
+		var url = new URL(window.location.href);
+		url.searchParams.set('lang', language);
+		window.location.href = url.toString();
+	}
 }
 
 
