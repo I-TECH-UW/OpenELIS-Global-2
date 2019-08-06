@@ -90,6 +90,7 @@
 	useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
 	failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
 	noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
+	pageContext.setAttribute("noteRequired", noteRequired);
 	autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 
 %>
