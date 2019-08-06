@@ -512,7 +512,9 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
         <td colspan="5" align="left">
-            <c:out value="${referralItems.pastNotes}"/>
+<!--         	pastNotes are escaped in an html context when they are fetched by the server before -->
+<!--         	safe html tags are added in the controller, so this does not need to be escaped here as well -->
+            ${referralItems.pastNotes}
         </td>
         <td colspan='2' class="leftVertical">
     </tr>
