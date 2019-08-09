@@ -1,0 +1,34 @@
+#!/bin/bash
+#stop tomcat
+sudo service tomcat stop
+#this will ensure that we don't have stale compiled jsp files
+#sudo  rm -r /usr/share/tomcat6/work/Catalina/localhost/
+#wait
+
+CATALINA_HOME="/usr/share/tomcat"
+webappsDir="webapps"
+
+if [ -z "$1" ]
+then
+	installerName="OpenELIS-global"
+	echo ""
+	echo "installer name not specified, defaulting to ${installerName}"
+	echo ""
+else
+	installerName=$1
+	echo ""
+	echo "installer is ${installerName}"
+	echo ""
+fi
+
+if [ -f ./target/OpenELIS.war ]  
+then
+   echo "installing $installerName"
+   
+   sudo /bin/cp -rf ./target/OpenELIS.war "${CATALINA_HOME}/${webappsDir}/${installerName}.war"
+else
+   echo "missing OpenELIS.war file" 
+fi
+
+#restart tomcat
+sudo service tomcat start

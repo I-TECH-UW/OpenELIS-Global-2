@@ -1,144 +1,46 @@
 #!/bin/bash
-#This shell will build, package and deploy the various demo installations on a test machine
-if [ -z $1 ]
-then
-    echo "Name of branch to build is required"
-    exit 1
-fi
 
-echo Will build from $1
-#cd source/openelisglobal-core
-#git checkout -- app/src/build.properties
-git pull origin
-git checkout $1
-if [ $? != 0 ]
-then
-    echo
-    echo "branch is not local will try to create"
-    echo 
-    
-    git checkout -b $1 origin/$1
+#get location of this script
+bashScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-    if [ $? != 0 ]
+projectDir="${bashScriptDir}/../.."
+buildscriptDir="${projectDir}/buildscripts"
+liquibaseDir="${projectDir}/liquibase"
+
+databaseUpdate () {
+	echo "updating $2"
+	if [ -z $3 ]
 	then
-	echo
-	echo "$1 not found in main repository. Check name"
-	exit 1 
-    fi
-fi
+		java -jar -Dfile.encoding=utf-8 ${liquibaseDir}/lib/liquibase-1.9.5.jar --classpath=${liquibaseDir}/lib/postgresql.jar --defaultsFile=${liquibaseDir}/liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 update
+	else
+		java -jar -Dfile.encoding=utf-8 ${liquibaseDir}/lib/liquibase-1.9.5.jar --classpath=${liquibaseDir}/lib/postgresql.jar --defaultsFile=${liquibaseDir}/liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 --password=$3 update
+	fi
+}
 
-git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
-cd ../..
-sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
+cd ${projectDir}
 
-#build and package application
-#LANG=en_US ant buildpackage
-mvn package
-if [ $? != 0 ]
-then
-    echo
-    echo build failed
-    exit $?
-fi
+#build the war to be used
+source build docker
 
-#stop tomcat
-sudo /etc/init.d/tomcat6 stop
-#this will insure that we don't have stale compiled jsp files
-sudo  rm -r /usr/share/tomcat6/work/Catalina/localhost/
-wait
+#deploy the war to tomcat under different names
+source deploy haitiOpenElis
+source deploy CDIOpenElis
+source deploy LNSP_HaitiOpenElis
+source deploy CI_LNSPOpenElis
+source deploy CDI_RegLabOpenElis
+source deploy KenyaOpenElis
+source deploy CI_IPCIOpenElis
+source deploy CI_OpenElis
+source deploy haitiOpenElis
+source deploy haitiOpenElis
 
-#install haitiOpenElis
-if [ -f ./target/openElis.war ] 
-then
-   echo "installing haitiOpenElis"
+cd ${liquibaseDir}
 
-   if [ -d /usr/share/tomcat6/webapps/haitiOpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/haitiOpenElis
-   fi		
-   
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/haitiOpenElis.war
-
-   echo "installing CDIOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/CDIOpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/CDIOpenElis
-   fi		
-
-   sudo  cp target/openElis.war /usr/share/tomcat6/webapps/CDIOpenElis.war
-
-   echo "installing LNSP_HaitiOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/LNSP_HaitiOpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/LNSP_HaitiOpenElis
-   fi		
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/LNSP_HaitiOpenElis.war
-
-   echo "installing CI_LNSPOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/CI_LNSPOpenElis ]
-   then
-       sudo  rm -r /usr/share/tomcat6/webapps/CI_LNSPOpenElis
-   fi		
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/CI_LNSPOpenElis.war
-
-   echo "installing CDI_RegLabOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/CDI_RegLabOpenElis ]
-   then
-       sudo  rm -r /usr/share/tomcat6/webapps/CDI_RegLabOpenElis
-   fi		
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/CDI_RegLabOpenElis.war
-
-  echo "installing KenyaOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/KenyaOpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/KenyaOpenElis
-   fi
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/KenyaOpenElis.war
-
-#for new instance copy-modify from here to end marker 
-   echo "installing CI_IPCIOpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/CI_IPCIOpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/CI_IPCIOpenElis
-   fi		
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/CI_IPCIOpenElis.war
-#end marker
-#CI_General version
-echo "installing CI_OpenElis"
-
-   if [ -d /usr/share/tomcat6/webapps/CI_OpenElis ]
-   then
-       sudo rm -r /usr/share/tomcat6/webapps/CI_OpenElis
-   fi		
-
-   sudo cp target/openElis.war /usr/share/tomcat6/webapps/CI_OpenElis.war
-
-
-
-
-
-
-else
-   echo "missing openElis.war file" 
-fi
-
-#update database
-LANG=en_US.UTF-8 ant updateDB
-wait
-
-#restart tomcat
-sudo /etc/init.d/tomcat6 start
-
-#build installers while we wait
-ant installers
+#command		context		dbname
+databaseUpdate CDIRetroCI cdielis
+databaseUpdate haiti clinlims
+databaseUpdate haitiLNSP lnsphaiti
+databaseUpdate ciLNSP cilnsp
+databaseUpdate CI_IPCI ci_ipci
+databaseUpdate ci_regional ci_reg_lab
+databaseUpdate Kenya kenya

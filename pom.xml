@@ -9,8 +9,7 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<docker.image.prefix>oe</docker.image.prefix>
 
 		<apachetiles.version>3.0.8</apachetiles.version>
 		<castor.version>1.4.1</castor.version>
@@ -316,11 +315,25 @@
 	</dependencies>
 
 	<build>
-		<finalName>OpenElis</finalName>
+		<finalName>OpenELIS</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
+				<configuration>
+<!-- 				move to release when we compile for java versions >= 9 -->
+<!-- 					<release>8</release> -->
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.9</version>
+				<configuration>
+					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

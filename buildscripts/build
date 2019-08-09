@@ -1,0 +1,53 @@
+#!/bin/bash
+#This shell will build and package the code from the latest changes on the github repo 
+if [ -z $1 ]
+then
+    echo "Name of branch to build is required"
+    exit 1
+fi
+
+echo Will build from $1
+#cd source/openelisglobal-core
+#git checkout -- app/src/build.properties
+git pull origin
+git checkout $1
+if [ $? != 0 ]
+then
+    echo
+    echo "branch is not local will try to create"
+    echo 
+    
+    git checkout -b $1 origin/$1
+
+    if [ $? != 0 ]
+	then
+	echo
+	echo "$1 not found in main repository. Check name"
+	exit 1 
+    fi
+fi
+
+#git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
+#cd ../..
+#sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
+
+#build and package application
+if [ -z $2 ]
+then
+	mvn clean package
+else
+	if [ $2 -ne "docker" ]
+	then
+		echo "second parameter is not recognizable"
+		exit 1
+	else
+		mvn clean package dockerfile:build
+	fi
+fi
+	
+if [ $? != 0 ]
+then
+    echo
+    echo build failed
+    exit $?
+fi
