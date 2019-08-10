@@ -1,46 +1,94 @@
 #!/bin/bash
+PROGNAME=$0
+
+usage() {
+  cat << EOF >&2
+Usage: $PROGNAME [-b <branch>] [-d]
+
+-b <branch>: git branch to build from
+         -d: build docker images on machine
+         -l: run liquibase
+EOF
+  exit 1
+}
+
+branch=master createDockerImage=false runLiquibase=false
+while getopts :b:dl opt; do
+  case $opt in
+    (b) branch=$OPTARG;;
+    (d) createDockerImage=true;;
+    (l) runLiquibase=true;;
+    (*) usage
+  esac
+done
+shift "$((OPTIND - 1))"
 
 #get location of this script
-bashScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  bashScriptDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+bashScriptDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 projectDir="${bashScriptDir}/../.."
 buildscriptDir="${projectDir}/buildscripts"
 liquibaseDir="${projectDir}/liquibase"
 
+projectVersion=(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \
+    -Dexpression=project.version)
+
 databaseUpdate () {
-	echo "updating $2"
+	echo "updating DB $2 with $1 as context"
 	if [ -z $3 ]
 	then
-		java -jar -Dfile.encoding=utf-8 ${liquibaseDir}/lib/liquibase-1.9.5.jar --classpath=${liquibaseDir}/lib/postgresql.jar --defaultsFile=${liquibaseDir}/liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 update
+		java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 update
 	else
-		java -jar -Dfile.encoding=utf-8 ${liquibaseDir}/lib/liquibase-1.9.5.jar --classpath=${liquibaseDir}/lib/postgresql.jar --defaultsFile=${liquibaseDir}/liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 --password=$3 update
+		java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=$1 --url=jdbc:postgresql://localhost:5432/$2 --password=$3 update
 	fi
 }
 
-cd ${projectDir}
+cd ${buildscriptDir}
+if [ $createDockerImage == true ]
+then
+	#build the war, and create the docker image
+	bash build -b ${branch} -d 
+	#kill running docker image if it is currently running
+	if [ "$(docker ps -a | grep OpenELIS)" ]
+	then
+		docker kill OpenELIS
+	else
+		#OpenELIS:latest must match dockerfile plugin repository specified in pom.xml
+		docker run -d -p 8080:8080 --name OpenELIS --network="host" openelisglobal:latest
+	fi
+	docker save -o ${PWD}/OpenELIS_DockerImage_${projectVersion}.tar openelisglobal:latest
+else
+	#build the war to be used
+	bash build -b ${branch}
 
-#build the war to be used
-source build docker
+	#deploy the war to tomcat under different names
+	bash deploy haitiOpenElis
+	bash deploy CDIOpenElis
+	bash deploy LNSP_HaitiOpenElis
+	bash deploy CI_LNSPOpenElis
+	bash deploy CDI_RegLabOpenElis
+	bash deploy KenyaOpenElis
+	bash deploy CI_IPCIOpenElis
+	bash deploy CI_OpenElis
+	bash deploy haitiOpenElis
+	bash deploy haitiOpenElis
+fi
 
-#deploy the war to tomcat under different names
-source deploy haitiOpenElis
-source deploy CDIOpenElis
-source deploy LNSP_HaitiOpenElis
-source deploy CI_LNSPOpenElis
-source deploy CDI_RegLabOpenElis
-source deploy KenyaOpenElis
-source deploy CI_IPCIOpenElis
-source deploy CI_OpenElis
-source deploy haitiOpenElis
-source deploy haitiOpenElis
-
-cd ${liquibaseDir}
-
-#command		context		dbname
-databaseUpdate CDIRetroCI cdielis
-databaseUpdate haiti clinlims
-databaseUpdate haitiLNSP lnsphaiti
-databaseUpdate ciLNSP cilnsp
-databaseUpdate CI_IPCI ci_ipci
-databaseUpdate ci_regional ci_reg_lab
-databaseUpdate Kenya kenya
+if [ @runLiquibase == true ]
+then
+	cd ${liquibaseDir}
+	#command		context		dbname
+	databaseUpdate CDIRetroCI cdielis
+	databaseUpdate haiti clinlims
+	databaseUpdate haitiLNSP lnsphaiti
+	databaseUpdate ciLNSP cilnsp
+	databaseUpdate CI_IPCI ci_ipci
+	databaseUpdate ci_regional ci_reg_lab
+	databaseUpdate Kenya kenya
+fi

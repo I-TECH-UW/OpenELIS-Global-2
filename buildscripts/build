@@ -1,28 +1,47 @@
 #!/bin/bash
-#This shell will build and package the code from the latest changes on the github repo 
-if [ -z $1 ]
-then
-    echo "Name of branch to build is required"
-    exit 1
-fi
+PROGNAME=$0
 
-echo Will build from $1
+usage() {
+  cat << EOF >&2
+Usage: $PROGNAME [-b <branch>] [-d]
+
+-b <branch>: git branch to build from
+         -d: build docker images on machine
+EOF
+  exit 1
+}
+
+branch=master createDockerImage=false
+while getopts :b:d opt; do
+  case $opt in
+    (b) branch=$OPTARG;;
+    (d) createDockerImage=true;;
+    (*) usage
+  esac
+done
+
+#get location of this script
+bashScriptDir="$( cd "$( dirname "${BASH_bash[0]}" )" >/dev/null 2>&1 && pwd )"
+projectDir="${bashScriptDir}/.."
+cd ${projectDir}
+
+echo Will build from $branch
 #cd source/openelisglobal-core
 #git checkout -- app/src/build.properties
 git pull origin
-git checkout $1
+git checkout $branch
 if [ $? != 0 ]
 then
     echo
     echo "branch is not local will try to create"
     echo 
     
-    git checkout -b $1 origin/$1
+    git checkout -b $branch origin/$branch
 
     if [ $? != 0 ]
 	then
 	echo
-	echo "$1 not found in main repository. Check name"
+	echo "$branch not found in main repository. Check name"
 	exit 1 
     fi
 fi
@@ -32,17 +51,11 @@ fi
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
 
 #build and package application
-if [ -z $2 ]
+if [ $createDockerImage == true ]
 then
-	mvn clean package
+	sudo mvn clean package dockerfile:build
 else
-	if [ $2 -ne "docker" ]
-	then
-		echo "second parameter is not recognizable"
-		exit 1
-	else
-		mvn clean package dockerfile:build
-	fi
+	mvn clean package
 fi
 	
 if [ $? != 0 ]
