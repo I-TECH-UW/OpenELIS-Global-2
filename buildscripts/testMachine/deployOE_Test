@@ -1,5 +1,6 @@
 #!/bin/bash
 PROGNAME=$0
+callDirectory=$PWD
 
 usage() {
   cat << EOF >&2
@@ -36,9 +37,6 @@ projectDir="${bashScriptDir}/../.."
 buildscriptDir="${projectDir}/buildscripts"
 liquibaseDir="${projectDir}/liquibase"
 
-projectVersion=(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \
-    -Dexpression=project.version)
-
 databaseUpdate () {
 	echo "updating DB $2 with $1 as context"
 	if [ -z $3 ]
@@ -49,21 +47,34 @@ databaseUpdate () {
 	fi
 }
 
-cd ${buildscriptDir}
 if [ $createDockerImage == true ]
 then
+	cd ${projectDir}
+	#get useful image from the maven project
+	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\
+	    echo 'PROJECT_VERSION=${project.version}'; } \
+	  | mvn help:evaluate --non-recursive )
+	
+	artifactId=$(echo "$output" | grep '^ARTIFACT_ID' | cut -d = -f 2)
+	projectVersion=$(echo "$output" | grep '^PROJECT_VERSION' | cut -d = -f 2)
+
+	cd ${buildscriptDir}
 	#build the war, and create the docker image
 	bash build -b ${branch} -d 
-	#kill running docker image if it is currently running
+	#restart container if it is already running
 	if [ "$(docker ps -a | grep OpenELIS)" ]
 	then
-		docker kill OpenELIS
+		echo "restarting docker image"
+		docker restart OpenELIS
 	else
 		#OpenELIS:latest must match dockerfile plugin repository specified in pom.xml
-		docker run -d -p 8080:8080 --name OpenELIS --network="host" openelisglobal:latest
+		echo "starting docker image"
+		docker run -d -p 8080:8080 --name OpenELIS --network="host" ${artifactId}:latest
 	fi
-	docker save -o ${PWD}/OpenELIS_DockerImage_${projectVersion}.tar openelisglobal:latest
+	echo "saving docker image to ${callDirectory}/OpenELIS_DockerImage_${projectVersion}.tar.gz"
+	docker save ${artifactId}:latest | gzip > ${callDirectory}/OpenELIS_DockerImage_${projectVersion}.tar
 else
+	cd ${buildscriptDir}
 	#build the war to be used
 	bash build -b ${branch}
 
@@ -80,7 +91,7 @@ else
 	bash deploy haitiOpenElis
 fi
 
-if [ @runLiquibase == true ]
+if [ $runLiquibase == true ]
 then
 	cd ${liquibaseDir}
 	#command		context		dbname
