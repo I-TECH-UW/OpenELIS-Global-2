@@ -77,7 +77,9 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     private String pastNotes;
     private String note;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    // can't be used as this is an xml wad, but it should be safe since this field
+    // is meant to be parsed
+    // @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
     private String additionalTestsXMLWad;
 
     private boolean canceled = false;
