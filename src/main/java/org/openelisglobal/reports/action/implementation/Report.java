@@ -39,6 +39,7 @@ import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.spring.util.SpringContext;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperRunManager;
 
 public abstract class Report implements IReportCreator {
@@ -102,6 +103,7 @@ public abstract class Report implements IReportCreator {
         // reportParameters.put("leftHeaderImage", getImage("headerLeftImage"));
         // reportParameters.put("rightHeaderImage", getImage("headerRightImage"));
         reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance().getDefaultLocale());
+        reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }
 
     // @Deprecated
@@ -119,6 +121,7 @@ public abstract class Report implements IReportCreator {
      *             was put in before the correct way was understood. Do not add to
      *             this list. It will eventually be moved to the correct way.
      */
+    // TODO csl see above note
     @Deprecated
     protected Map<String, String> createLocalizationMap() {
         HashMap<String, String> localizationMap = new HashMap<>();
@@ -137,7 +140,8 @@ public abstract class Report implements IReportCreator {
         localizationMap.put("test", MessageUtil.getMessage("report.test"));
         localizationMap.put("result", MessageUtil.getMessage("report.result"));
         localizationMap.put("note", MessageUtil.getMessage("report.note"));
-        localizationMap.put("pageNumberOf", MessageUtil.getMessage("report.pageNumberOf"));
+        // localizationMap.put("pageNumberOf",
+        // MessageUtil.getMessage("report.pageNumberOf"));
         localizationMap.put("collectionDate", MessageUtil.getMessage("report.collectionDate"));
         /* For patient report CDI */
         localizationMap.put("patientCode", MessageUtil.getMessage("report.patientCode"));

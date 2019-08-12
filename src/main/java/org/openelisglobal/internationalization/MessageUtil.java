@@ -8,6 +8,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.MessageSourceResourceBundle;
 
 public class MessageUtil {
 
@@ -114,5 +115,9 @@ public class MessageUtil {
         }
 
         return STRING_KEY_SUFFIX;
+    }
+
+    public static MessageSourceResourceBundle getMessageSourceAsResourceBundle() {
+        return new MessageSourceResourceBundle(instance.messageSource, LocaleContextHolder.getLocale());
     }
 }
