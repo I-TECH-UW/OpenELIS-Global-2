@@ -24,6 +24,8 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 
+import net.sf.jasperreports.engine.JRParameter;
+
 public class ElisaWorkplanReport implements IWorkplanReport {
 
     private final String fileName = "ElisaWorkplan";
@@ -46,6 +48,7 @@ public class ElisaWorkplanReport implements IWorkplanReport {
     @Override
     public HashMap<String, Object> getParameters() {
         parameterMap.put("testSection", testSection);
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
         return parameterMap;
 
     }

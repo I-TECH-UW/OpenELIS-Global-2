@@ -28,6 +28,8 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
+import net.sf.jasperreports.engine.JRParameter;
+
 public class TestWorkplanReport implements IWorkplanReport {
 
     private static int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
@@ -65,6 +67,7 @@ public class TestWorkplanReport implements IWorkplanReport {
         parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));
         parameterMap.put("workPlan", MessageUtil.getMessage("report.workPlan"));
         parameterMap.put("appointmentDate", MessageUtil.getMessage("report.appointmentDate"));
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
 
         return parameterMap;
 
@@ -78,6 +81,7 @@ public class TestWorkplanReport implements IWorkplanReport {
         }
     }
 
+    @Override
     public List<?> prepareRows(BaseForm form) {
 
         @SuppressWarnings("unchecked")

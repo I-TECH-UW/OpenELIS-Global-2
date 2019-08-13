@@ -28,6 +28,8 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
+import net.sf.jasperreports.engine.JRParameter;
+
 public class TestSectionWorkplanReport implements IWorkplanReport {
     private static int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
     private static final String BASE_FILE_NAME = "WorkplanByTestSection";
@@ -77,6 +79,7 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
         parameterMap.put("from", MessageUtil.getMessage("report.from"));
         parameterMap.put("appointment", MessageUtil.getMessage("report.appointment"));
         parameterMap.put("about", MessageUtil.getMessage("report.about"));
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
 
         return parameterMap;
 
