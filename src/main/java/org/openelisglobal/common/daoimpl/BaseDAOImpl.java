@@ -32,7 +32,9 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
@@ -163,6 +165,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     @Transactional(readOnly = true)
     public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, String orderProperty, boolean descending) {
         List<String> orderProperties = new ArrayList<>();
+        orderProperties.add(orderProperty);
 
         return getAllMatchingOrdered(propertyValues, orderProperties, descending);
     }
@@ -176,13 +179,19 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
             Root<T> root = criteriaQuery.from(this.classType);
             criteriaQuery.select(root);
+            List<PropertyValueComparison> whereComparisonOperations = new ArrayList<>();
             for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-                this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-                        DBComparison.EQ);
+                whereComparisonOperations
+                        .add(new PropertyValueComparison(entrySet.getKey(), entrySet.getValue(), DBComparison.EQ));
             }
+            this.addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
+
+            Map<String, Boolean> orderByMap = new HashMap<>();
             for (String orderProperty : orderProperties) {
-                this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+                orderByMap.put(orderProperty, descending);
             }
+            this.addOrder(criteriaBuilder, criteriaQuery, root, orderByMap);
+
             return entityManager.createQuery(criteriaQuery).getResultList();
 
             // Map<String, String> aliases = new HashMap<>();
@@ -241,12 +250,19 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             Root<T> root = criteriaQuery.from(classType);
             criteriaQuery.select(root);
 
+            List<PropertyValueComparison> whereComparisonOperations = new ArrayList<>();
             for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-                addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(), DBComparison.EQ);
+                whereComparisonOperations
+                        .add(new PropertyValueComparison(entrySet.getKey(), entrySet.getValue(), DBComparison.LIKE));
             }
+            addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
+
+            Map<String, Boolean> orderByMap = new HashMap<>();
             for (String orderProperty : orderProperties) {
-                addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+                orderByMap.put(orderProperty, descending);
             }
+            this.addOrder(criteriaBuilder, criteriaQuery, root, orderByMap);
+
             return entityManager.createQuery(criteriaQuery).getResultList();
 
             // Map<String, String> aliases = new HashMap<>();
@@ -356,13 +372,20 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
             Root<T> root = criteriaQuery.from(this.classType);
             criteriaQuery.select(root);
+
+            List<PropertyValueComparison> whereComparisonOperations = new ArrayList<>();
             for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-                this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-                        DBComparison.EQ);
+                whereComparisonOperations
+                        .add(new PropertyValueComparison(entrySet.getKey(), entrySet.getValue(), DBComparison.EQ));
             }
+            addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
+
+            Map<String, Boolean> orderByMap = new HashMap<>();
             for (String orderProperty : orderProperties) {
-                this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+                orderByMap.put(orderProperty, descending);
             }
+            this.addOrder(criteriaBuilder, criteriaQuery, root, orderByMap);
+
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(startingRecNo - 1);
             typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
@@ -427,13 +450,20 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
             Root<T> root = criteriaQuery.from(this.classType);
             criteriaQuery.select(root);
+
+            List<PropertyValueComparison> whereComparisonOperations = new ArrayList<>();
             for (Entry<String, String> entrySet : propertyValues.entrySet()) {
-                this.addWhere(criteriaBuilder, criteriaQuery, root, entrySet.getKey(), entrySet.getValue(),
-                        DBComparison.LIKE);
+                whereComparisonOperations
+                        .add(new PropertyValueComparison(entrySet.getKey(), entrySet.getValue(), DBComparison.LIKE));
             }
+            addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
+
+            Map<String, Boolean> orderByMap = new HashMap<>();
             for (String orderProperty : orderProperties) {
-                this.addOrder(criteriaBuilder, criteriaQuery, root, orderProperty, descending);
+                orderByMap.put(orderProperty, descending);
             }
+            this.addOrder(criteriaBuilder, criteriaQuery, root, orderByMap);
+
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(startingRecNo - 1);
             typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
@@ -596,7 +626,50 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<T> root,
-            String propertyName, Object propertyValue, DBComparison comparison) {
+            List<PropertyValueComparison> whereComparisonOperations) {
+        List<Predicate> wherePredicates = new ArrayList<>();
+        for (PropertyValueComparison comparisonOperation : whereComparisonOperations) {
+            String propertyName = comparisonOperation.getPropertyName();
+            Object propertyValue = comparisonOperation.getPropertyValue();
+            Path pathToProperty = getPathToProperty(root, propertyName);
+            if ((propertyName.endsWith("id") || propertyName.endsWith("Id")) && propertyValue instanceof String
+                    && org.apache.commons.validator.GenericValidator.isInt((String) propertyValue)) {
+                propertyValue = Integer.valueOf((String) propertyValue);
+            }
+            Predicate predicate;
+            switch (comparisonOperation.getComparison()) {
+            case EQ:
+                predicate = criteriaBuilder.equal(pathToProperty, propertyValue);
+                break;
+            case LIKE:
+                predicate = criteriaBuilder.like((Expression<String>) pathToProperty, (String) propertyValue);
+                break;
+            default:
+                throw new UnsupportedOperationException();
+            }
+            wherePredicates.add(predicate);
+        }
+        criteriaQuery.where(wherePredicates.toArray(new Predicate[wherePredicates.size()]));
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void addOrder(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<T> root,
+            Map<String, Boolean> orderByMap) {
+        List<Order> orderByList = new ArrayList<>();
+        for (Entry<String, Boolean> entry : orderByMap.entrySet()) {
+            String propertyName = entry.getKey();
+            Boolean descending = entry.getValue();
+            Path pathToProperty = getPathToProperty(root, propertyName);
+            if (descending) {
+                orderByList.add(criteriaBuilder.desc(pathToProperty));
+            } else {
+                orderByList.add(criteriaBuilder.asc(pathToProperty));
+            }
+        }
+        criteriaQuery.orderBy(orderByList);
+    }
+
+    private Path getPathToProperty(Root<T> root, String propertyName) {
         Path path;
         if (this.needsJoins(propertyName)) {
             // the path leading to the final property
@@ -607,45 +680,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
         } else {
             path = root.get(propertyName);
         }
-        if ((propertyName.endsWith("id") || propertyName.endsWith("Id")) && propertyValue instanceof String
-                && org.apache.commons.validator.GenericValidator.isInt((String) propertyValue)) {
-            propertyValue = Integer.valueOf((String) propertyValue);
-
-        }
-        criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
-
-        switch (comparison)
-
-        {
-        case EQ:
-            criteriaQuery.where(criteriaBuilder.equal(path, propertyValue));
-            break;
-        case LIKE:
-            criteriaQuery.where(criteriaBuilder.like((Expression<String>) path, (String) propertyValue));
-            break;
-        default:
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected void addOrder(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<T> root,
-            String orderProperty, boolean descending) {
-        Path path;
-        if (this.needsJoins(orderProperty)) {
-            // the path leading to the final property
-            String dottedPropertyPath = orderProperty.substring(0, orderProperty.lastIndexOf('.'));
-            Join finalJoin = this.createJoinsOnDot(root, dottedPropertyPath);
-            String finalPropertyName = this.getFinalPropertyName(orderProperty);
-            path = finalJoin.get(finalPropertyName);
-        } else {
-            path = root.get(orderProperty);
-        }
-        if (descending) {
-            criteriaQuery.orderBy(criteriaBuilder.desc(path));
-        } else {
-            criteriaQuery.orderBy(criteriaBuilder.asc(path));
-        }
+        return path;
     }
 
     private boolean needsJoins(String propertyName) {
@@ -740,6 +775,30 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     protected void handleException(Exception e, String method) throws LIMSRuntimeException {
         // LogEvent.logErrorStack(this.getClass().getSimpleName(), method, e);
         throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
+    }
+
+    private class PropertyValueComparison {
+        private final String propertyName;
+        private final Object propertyValue;
+        private final DBComparison comparison;
+
+        private PropertyValueComparison(String propertyName, Object propertyValue, DBComparison comparison) {
+            this.propertyName = propertyName;
+            this.propertyValue = propertyValue;
+            this.comparison = comparison;
+        }
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public Object getPropertyValue() {
+            return propertyValue;
+        }
+
+        public DBComparison getComparison() {
+            return comparison;
+        }
     }
 
     // private static final int RANDOM_ALIAS_LENGTH = 5;
