@@ -57,6 +57,7 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
  * @since Mar 18, 2011
  */
 abstract public class CSVRoutineColumnBuilder {
+
     /**
      *
      */
@@ -170,7 +171,7 @@ abstract public class CSVRoutineColumnBuilder {
      * @author Paul A. Hill (pahill@uw.edu)
      * @since Feb 1, 2011
      */
-    public static enum Strategy {
+    public enum Strategy {
         DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
@@ -199,7 +200,7 @@ abstract public class CSVRoutineColumnBuilder {
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
 //		resultSet = stmt.executeQuery();
-        Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+        Session session = SpringContext.getBean(SessionFactory.class).openSession();
         resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
 
             @Override
@@ -458,7 +459,7 @@ abstract public class CSVRoutineColumnBuilder {
     abstract public void makeSQL();
 
     protected void defineAllObservationHistoryTypes() {
-        allObHistoryTypes = ohtService.getAllOrdered("type_name", false);
+        allObHistoryTypes = ohtService.getAllOrdered("typeName", false);
     }
 
     /**
@@ -489,7 +490,8 @@ abstract public class CSVRoutineColumnBuilder {
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
+//                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT description FROM test where test_name != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
