@@ -553,8 +553,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         try {
             String sql = "from Sample as s where s.receivedTimestamp >= :start AND s.receivedTimestamp < :end";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setCalendarDate("start", start);
-            query.setCalendarDate("end", end);
+            query.setDate("start", start.getTime());
+            query.setDate("end", end.getTime());
             list = query.list();
         } catch (HibernateException he) {
             LogEvent.logError("SampleDAOImpl", "getSamplesReceivedInDateRange()", he.toString());
@@ -574,10 +574,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         try {
             String sql = "from Sample as sample where sample.collectionDate = :date";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setCalendarDate("date", calendar);
+            query.setDate("date", calendar.getTime());
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (HibernateException he) {
             LogEvent.logError("SampleDAOImpl", "getSamplesRecievedOn()", he.toString());
