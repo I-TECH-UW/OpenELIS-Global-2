@@ -738,7 +738,8 @@ public class ResultsLoadUtility {
             testItem.setHasQualifiedResult(true);
         }
 
-        if (NUMERIC_RESULT_TYPE.equals(testResults.get(0).getTestResultType())) {
+        if (NUMERIC_RESULT_TYPE.equals(testResults.get(0).getTestResultType())
+                && !GenericValidator.isBlankOrNull(testResults.get(0).getSignificantDigits())) {
             testItem.setSignificantDigits(Integer.parseInt(testResults.get(0).getSignificantDigits()));
         }
         return testItem;
