@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -35,6 +36,7 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -63,8 +65,13 @@ public class StatusResultsController extends BaseController {
     }
 
     @RequestMapping(value = "/StatusResults", method = RequestMethod.GET)
-    public ModelAndView showStatusResults(HttpServletRequest request, StatusResultsForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public ModelAndView showStatusResults(HttpServletRequest request, @Valid StatusResultsForm form,
+            BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            setSelectionLists(form);
+            return findForward(FWD_FAIL, form);
+        }
 
         resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsUtility.setSysUser(getSysUserId(request));
@@ -309,6 +316,8 @@ public class StatusResultsController extends BaseController {
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
+            return "statusResultDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
             return "statusResultDefinition";
         } else {
             return "PageNotFound";
