@@ -34,121 +34,116 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 
 public class SelectDropDownProviderFactory {
 
-	private static SelectDropDownProviderFactory instance; // Instance of this
+    private static SelectDropDownProviderFactory instance; // Instance of this
 
-	// class
+    // class
 
-	// Properties object that holds validation provider mappings
-	private Properties validationProviderClassMap = null;
+    // Properties object that holds validation provider mappings
+    private Properties validationProviderClassMap = null;
 
-	/**
-	 * Singleton global access for AutocompleteProviderFactory
-	 * 
-	 */
+    /**
+     * Singleton global access for AutocompleteProviderFactory
+     * 
+     */
 
-	public static SelectDropDownProviderFactory getInstance() {
-		if (instance == null) {
-			synchronized (SelectDropDownProviderFactory.class) {
-				if (instance == null) {
-					instance = new SelectDropDownProviderFactory();
-				}
-			}
+    public static SelectDropDownProviderFactory getInstance() {
+        if (instance == null) {
+            synchronized (SelectDropDownProviderFactory.class) {
+                if (instance == null) {
+                    instance = new SelectDropDownProviderFactory();
+                }
+            }
 
-		}
-		return instance;
-	}
+        }
+        return instance;
+    }
 
-	/**
-	 * Create an object for the full class name passed in.
-	 * 
-	 * @param String
-	 *            full class name
-	 * @return Object Created object
-	 */
-	protected Object createObject(String className) throws LIMSRuntimeException {
-		Object object = null;
-		try {
-			Class classDefinition = Class.forName(className);
-			object = classDefinition.newInstance();
-		} catch (Exception e) {
-            //bugzilla 2154
-			LogEvent.logError("SelectDropDownProviderFactory","createObject()",e.toString());  		
-			throw new LIMSRuntimeException("Unable to create an object for "
-					+ className, e, LogEvent.getLog(SelectDropDownProviderFactory.class));
-		}
-		return object;
-	}
+    /**
+     * Create an object for the full class name passed in.
+     * 
+     * @param String full class name
+     * @return Object Created object
+     */
+    protected Object createObject(String className) throws LIMSRuntimeException {
+        Object object = null;
+        try {
+            Class classDefinition = Class.forName(className);
+            object = classDefinition.newInstance();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("SelectDropDownProviderFactory", "createObject()", e.toString());
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
+                    LogEvent.getLog(SelectDropDownProviderFactory.class));
+        }
+        return object;
+    }
 
-	/**
-	 * Search for the AutocompleteProvider implementation class name in the
-	 * Autocomplete.properties file for the given AutocompleteProvider name
-	 * 
-	 * @param String
-	 *            AutocompleteProvider name e.g
-	 *            "OrganizationLocalAbbreviationAutocompleteProvider"
-	 * @return String Full implementation class e.g
-	 *         "org.openelisglobal.common.validation.provider"
-	 */
-	protected String getSelectDropDownProviderClassName(
-			String validationProvidername) throws LIMSRuntimeException {
-		if (validationProviderClassMap == null) { // Need to load the property
-			// object with the class
-			// mappings
-			ResourceLocator rl = ResourceLocator.getInstance();
-			InputStream propertyStream = null;
-			// Now load a java.util.Properties object with the properties
-			validationProviderClassMap = new Properties();
-			try {
-				propertyStream = rl
-						.getNamedResourceAsInputStream(ResourceLocator.AJAX_PROPERTIES);
+    /**
+     * Search for the AutocompleteProvider implementation class name in the
+     * Autocomplete.properties file for the given AutocompleteProvider name
+     * 
+     * @param String AutocompleteProvider name e.g
+     *               "OrganizationLocalAbbreviationAutocompleteProvider"
+     * @return String Full implementation class e.g
+     *         "org.openelisglobal.common.validation.provider"
+     */
+    protected String getSelectDropDownProviderClassName(String validationProvidername) throws LIMSRuntimeException {
+        if (validationProviderClassMap == null) { // Need to load the property
+            // object with the class
+            // mappings
+            ResourceLocator rl = ResourceLocator.getInstance();
+            InputStream propertyStream = null;
+            // Now load a java.util.Properties object with the properties
+            validationProviderClassMap = new Properties();
+            try {
+                propertyStream = rl.getNamedResourceAsInputStream(ResourceLocator.AJAX_PROPERTIES);
 
-				validationProviderClassMap.load(propertyStream);
-			} catch (IOException e) {
-                //bugzilla 2154
-			    LogEvent.logError("SelectDropDownProviderFactory","getSelectDropDownProviderClassName()",e.toString());
-				throw new LIMSRuntimeException(
-						"Unable to load validation provider class mappings.",
-						e, LogEvent.getLog(SelectDropDownProviderFactory.class));
-			} finally {
-				if (null != propertyStream) {
-					try {
-						propertyStream.close();
-						propertyStream = null;
-					} catch (Exception e) {
-                        //bugzilla 2154
-						LogEvent.logError("SelectDropDownProviderFactory","getSelectDropDownProviderClassName()",e.toString());   			    					
-					}
-				}
-			}
-		}
+                validationProviderClassMap.load(propertyStream);
+            } catch (IOException e) {
+                // bugzilla 2154
+                LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
+                        e.toString());
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
+                        LogEvent.getLog(SelectDropDownProviderFactory.class));
+            } finally {
+                if (null != propertyStream) {
+                    try {
+                        propertyStream.close();
+                        propertyStream = null;
+                    } catch (Exception e) {
+                        // bugzilla 2154
+                        LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
+                                e.toString());
+                    }
+                }
+            }
+        }
 
-		String mapping = validationProviderClassMap
-				.getProperty(validationProvidername);
-		if (mapping == null) {
-			LogEvent.logError("SelectDropDownProviderFactory","getSelectDropDownProviderClassName()",validationProvidername);
-			throw new LIMSRuntimeException(
-					"getSelectDropDownProviderClassName - Unable to find mapping for "
-							+ validationProvidername);
-		}
-		return mapping;
-	}
+        String mapping = validationProviderClassMap.getProperty(validationProvidername);
+        if (mapping == null) {
+            LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
+                    validationProvidername);
+            throw new LIMSRuntimeException(
+                    "getSelectDropDownProviderClassName - Unable to find mapping for " + validationProvidername);
+        }
+        return mapping;
+    }
 
-	/**
-	 * Autocomplete Provider creation method
-	 * 
-	 * @param name
-	 * @return Autocomplete Provider object
-	 * 
-	 */
-	public BaseSelectDropDownProvider getSelectDropDownProvider(String name)
-			throws LIMSRuntimeException {
-		BaseSelectDropDownProvider provider = null;
+    /**
+     * Autocomplete Provider creation method
+     * 
+     * @param name
+     * @return Autocomplete Provider object
+     * 
+     */
+    public BaseSelectDropDownProvider getSelectDropDownProvider(String name) throws LIMSRuntimeException {
+        BaseSelectDropDownProvider provider = null;
 
-		String className = getSelectDropDownProviderClassName(name);
+        String className = getSelectDropDownProviderClassName(name);
 
-		provider = (BaseSelectDropDownProvider) createObject(className);
+        provider = (BaseSelectDropDownProvider) createObject(className);
 
-		return provider;
-	}
+        return provider;
+    }
 
 }

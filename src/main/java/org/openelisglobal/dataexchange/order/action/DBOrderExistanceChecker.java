@@ -19,41 +19,40 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
-	@Autowired
-	private ElectronicOrderService eOrderService;
+    @Autowired
+    private ElectronicOrderService eOrderService;
 
-	@Override
-	public CheckResult check(String orderId) {
-		if (GenericValidator.isBlankOrNull(orderId)) {
-			return CheckResult.NOT_FOUND;
-		}
+    @Override
+    public CheckResult check(String orderId) {
+        if (GenericValidator.isBlankOrNull(orderId)) {
+            return CheckResult.NOT_FOUND;
+        }
 
-		List<ElectronicOrder> eOrders = eOrderService.getElectronicOrdersByExternalId(orderId);
-		if (eOrders == null || eOrders.isEmpty()) {
-			return CheckResult.NOT_FOUND;
-		}
+        List<ElectronicOrder> eOrders = eOrderService.getElectronicOrdersByExternalId(orderId);
+        if (eOrders == null || eOrders.isEmpty()) {
+            return CheckResult.NOT_FOUND;
+        }
 
-		ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-		if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
-			return CheckResult.ORDER_FOUND_CANCELED;
-		}
+        ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+        if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
+            return CheckResult.ORDER_FOUND_CANCELED;
+        }
 
-		if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
-			return CheckResult.ORDER_FOUND_QUEUED;
-		}
+        if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
+            return CheckResult.ORDER_FOUND_QUEUED;
+        }
 
-		return CheckResult.ORDER_FOUND_INPROGRESS;
-	}
+        return CheckResult.ORDER_FOUND_INPROGRESS;
+    }
 
 }

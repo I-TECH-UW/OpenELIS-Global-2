@@ -2,12 +2,11 @@ package org.openelisglobal.barcode.daoimpl;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO;
 import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class for inserting, updating, and retrieving
@@ -21,18 +20,18 @@ import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
 @Transactional
 public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoDAO {
 
-	public BarcodeLabelInfoDAOImpl() {
-		super(BarcodeLabelInfo.class);
-	}
+    public BarcodeLabelInfoDAOImpl() {
+        super(BarcodeLabelInfo.class);
+    }
 
-	@SuppressWarnings("rawtypes")
-	List list;
+    @SuppressWarnings("rawtypes")
+    List list;
 
-	/*
-	 * // * (non-Javadoc) // * // * @see // *
-	 * org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#insertData(us.mn. //
-	 * * state.health.lims.barcode.valueholder.BarcodeLabelInfo) //
-	 */
+    /*
+     * // * (non-Javadoc) // * // * @see // *
+     * org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#insertData(us.mn. // *
+     * state.health.lims.barcode.valueholder.BarcodeLabelInfo) //
+     */
 //	@Override
 //	public boolean insertData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
 //		try {
@@ -54,13 +53,12 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //		return true;
 //	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#updateData(us.mn.
-	 * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#updateData(us.mn.
+     * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
+     */
 //	@Override
 //	public void updateData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
 //		BarcodeLabelInfo oldData = readBarcodeLabelInfo(barcodeLabelInfo.getId());
@@ -92,13 +90,12 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //		}
 //	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#getDataByCode(java.
-	 * lang.String)
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO#getDataByCode(java.
+     * lang.String)
+     */
 //	@Override
 //	public BarcodeLabelInfo getDataByCode(String code) throws LIMSRuntimeException {
 //		BarcodeLabelInfo bli = null;
@@ -119,12 +116,12 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //		return bli;
 //	}
 
-	/**
-	 * Get BarcodeLabelInfo by id
-	 *
-	 * @param idString PK of the BarcodeLabelInfo to be retrieved
-	 * @return The persisted BarcodeLabelInfo
-	 */
+    /**
+     * Get BarcodeLabelInfo by id
+     *
+     * @param idString PK of the BarcodeLabelInfo to be retrieved
+     * @return The persisted BarcodeLabelInfo
+     */
 //	public BarcodeLabelInfo readBarcodeLabelInfo(String idString) {
 //		BarcodeLabelInfo recoveredBarcodeLabelInfo;
 //		try {

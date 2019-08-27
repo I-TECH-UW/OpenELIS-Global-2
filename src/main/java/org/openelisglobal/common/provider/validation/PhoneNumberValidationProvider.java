@@ -22,9 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -33,29 +33,30 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
  */
 public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
-	public PhoneNumberValidationProvider() {
-		super();
-	}
+    public PhoneNumberValidationProvider() {
+        super();
+    }
 
-	public PhoneNumberValidationProvider( AjaxServlet ajaxServlet ) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public PhoneNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		String field = request.getParameter("fieldId");
-		String phoneNumber = request.getParameter("value");
+        String field = request.getParameter("fieldId");
+        String phoneNumber = request.getParameter("value");
 
         PhoneNumberService numberService = new PhoneNumberService();
-        boolean valid = numberService.validatePhoneNumber( phoneNumber );
+        boolean valid = numberService.validatePhoneNumber(phoneNumber);
 
-		String returnData = VALID;
-        if( !valid){
-			returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
-		}
+        String returnData = VALID;
+        if (!valid) {
+            returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
+        }
 
-		response.setCharacterEncoding("UTF-8");
-		ajaxServlet.sendData(field, returnData, request, response);
-	}
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(field, returnData, request, response);
+    }
 }

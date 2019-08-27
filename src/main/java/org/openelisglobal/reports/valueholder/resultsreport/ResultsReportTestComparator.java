@@ -24,60 +24,53 @@ import org.openelisglobal.common.util.StringUtil;
  * 
  */
 public class ResultsReportTestComparator implements Comparable {
-   String name;
+    String name;
 
-   
-   // You can put the default sorting capability here
-   public int compareTo(Object obj) {
-	   ResultsReportTest test = (ResultsReportTest)obj;
-       return this.name.compareTo(test.getTestDescription());
-   }
-   
- 
+    // You can put the default sorting capability here
+    public int compareTo(Object obj) {
+        ResultsReportTest test = (ResultsReportTest) obj;
+        return this.name.compareTo(test.getTestDescription());
+    }
 
- 
-   public static final Comparator NAME_COMPARATOR =
-     new Comparator() {
-      public int compare(Object a, Object b) {
-    	  ResultsReportTest test_a = (ResultsReportTest)a;
-    	  ResultsReportTest test_b = (ResultsReportTest)b;
+    public static final Comparator NAME_COMPARATOR = new Comparator() {
+        public int compare(Object a, Object b) {
+            ResultsReportTest test_a = (ResultsReportTest) a;
+            ResultsReportTest test_b = (ResultsReportTest) b;
 
-          //bugzilla 2184: handle null sort value
-    	  String aValue = "";
-    	  if (test_a != null && test_a.getTestDescription() != null) {
-    		  aValue = test_a.getTestDescription();
-    	  } 
-    	  
-    	  String bValue = "";
-    	  if (test_b != null && test_b.getTestDescription() != null) {
-    		  bValue = test_b.getTestDescription();
-    	  } 
-          return (aValue.toLowerCase().compareTo(bValue.toLowerCase()));
+            // bugzilla 2184: handle null sort value
+            String aValue = "";
+            if (test_a != null && test_a.getTestDescription() != null) {
+                aValue = test_a.getTestDescription();
+            }
 
-      }
-   };
-   
-   //bugzilla 1856
-   public static final Comparator SORT_ORDER_COMPARATOR =
-	     new Comparator() {
-	      public int compare(Object a, Object b) {
-	       	  ResultsReportTest test_a = (ResultsReportTest)a;
-	    	  ResultsReportTest test_b = (ResultsReportTest)b;
-	    	  String aValue = test_a.getAnalysis().getTest().getSortOrder();
-	    	  String bValue = test_b.getAnalysis().getTest().getSortOrder();
-	    	  
-	    	  if (StringUtil.isNullorNill(aValue)) {
-	    		  aValue = "0";
-	    	  }
-	    	  
-	    	  if (StringUtil.isNullorNill(bValue)) {
-	    		  bValue = "0";
-	    	  }
-	    	  
-	          return (aValue.compareTo(bValue));
-	 
-	      }
-	   };
-   
+            String bValue = "";
+            if (test_b != null && test_b.getTestDescription() != null) {
+                bValue = test_b.getTestDescription();
+            }
+            return (aValue.toLowerCase().compareTo(bValue.toLowerCase()));
+
+        }
+    };
+
+    // bugzilla 1856
+    public static final Comparator SORT_ORDER_COMPARATOR = new Comparator() {
+        public int compare(Object a, Object b) {
+            ResultsReportTest test_a = (ResultsReportTest) a;
+            ResultsReportTest test_b = (ResultsReportTest) b;
+            String aValue = test_a.getAnalysis().getTest().getSortOrder();
+            String bValue = test_b.getAnalysis().getTest().getSortOrder();
+
+            if (StringUtil.isNullorNill(aValue)) {
+                aValue = "0";
+            }
+
+            if (StringUtil.isNullorNill(bValue)) {
+                bValue = "0";
+            }
+
+            return (aValue.compareTo(bValue));
+
+        }
+    };
 
 }

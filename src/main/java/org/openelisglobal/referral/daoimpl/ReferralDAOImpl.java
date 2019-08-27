@@ -24,13 +24,12 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralDAO;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
  */
@@ -38,9 +37,9 @@ import org.openelisglobal.referral.valueholder.Referral;
 @Transactional
 public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements ReferralDAO {
 
-	public ReferralDAOImpl() {
-		super(Referral.class);
-	}
+    public ReferralDAOImpl() {
+        super(Referral.class);
+    }
 
 //	@Override
 //	public boolean insertData(Referral referral) throws LIMSRuntimeException {
@@ -57,69 +56,69 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 //		return true;
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
-		try {
-			Referral referral = entityManager.unwrap(Session.class).get(Referral.class, referralId);
-			// closeSession(); // CSL remove old
-			return referral;
-		} catch (HibernateException e) {
-			handleException(e, "getReferralById");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Referral getReferralById(String referralId) throws LIMSRuntimeException {
+        try {
+            Referral referral = entityManager.unwrap(Session.class).get(Referral.class, referralId);
+            // closeSession(); // CSL remove old
+            return referral;
+        } catch (HibernateException e) {
+            handleException(e, "getReferralById");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
 
-		if (!GenericValidator.isBlankOrNull(analysisId)) {
-			String sql = "From Referral r where r.analysis.id = :analysisId";
+        if (!GenericValidator.isBlankOrNull(analysisId)) {
+            String sql = "From Referral r where r.analysis.id = :analysisId";
 
-			try {
-				Query query = entityManager.unwrap(Session.class).createQuery(sql);
-				query.setInteger("analysisId", Integer.parseInt(analysisId));
-				List<Referral> referralList = query.list();
-				// closeSession(); // CSL remove old
-				return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
-			} catch (HibernateException e) {
-				handleException(e, "getReferralByAnalysisId");
-			}
-		}
+            try {
+                Query query = entityManager.unwrap(Session.class).createQuery(sql);
+                query.setInteger("analysisId", Integer.parseInt(analysisId));
+                List<Referral> referralList = query.list();
+                // closeSession(); // CSL remove old
+                return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
+            } catch (HibernateException e) {
+                handleException(e, "getReferralByAnalysisId");
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-		String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
+        String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			List<Referral> referrals = query.list();
-			return referrals;
-		} catch (HibernateException e) {
-			handleException(e, "getAllUncanceledOpenReferrals");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Referral> referrals = query.list();
+            return referrals;
+        } catch (HibernateException e) {
+            handleException(e, "getAllUncanceledOpenReferrals");
+        }
+        return null;
+    }
 
-	private Referral readResult(String referralId) {
-		try {
-			Referral referral = entityManager.unwrap(Session.class).get(Referral.class, referralId);
-			// closeSession(); // CSL remove old
-			return referral;
-		} catch (HibernateException e) {
-			handleException(e, "readResult");
-		}
+    private Referral readResult(String referralId) {
+        try {
+            Referral referral = entityManager.unwrap(Session.class).get(Referral.class, referralId);
+            // closeSession(); // CSL remove old
+            return referral;
+        } catch (HibernateException e) {
+            handleException(e, "readResult");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public void updateData(Referral referral) throws LIMSRuntimeException {
@@ -144,51 +143,51 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 //
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
-		if (!GenericValidator.isBlankOrNull(id)) {
-			String sql = "FROM Referral r WHERE r.analysis.sampleItem.sample.id = :sampleId";
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
+        if (!GenericValidator.isBlankOrNull(id)) {
+            String sql = "FROM Referral r WHERE r.analysis.sampleItem.sample.id = :sampleId";
 
-			try {
-				Query query = entityManager.unwrap(Session.class).createQuery(sql);
-				query.setInteger("sampleId", Integer.parseInt(id));
-				List<Referral> referralList = query.list();
-				// closeSession(); // CSL remove old
-				return referralList;
+            try {
+                Query query = entityManager.unwrap(Session.class).createQuery(sql);
+                query.setInteger("sampleId", Integer.parseInt(id));
+                List<Referral> referralList = query.list();
+                // closeSession(); // CSL remove old
+                return referralList;
 
-			} catch (HibernateException e) {
-				handleException(e, "getAllReferralsBySampleId");
-			}
+            } catch (HibernateException e) {
+                handleException(e, "getAllReferralsBySampleId");
+            }
 
-		}
+        }
 
-		return new ArrayList<>();
-	}
+        return new ArrayList<>();
+    }
 
-	/**
-	 * @see org.openelisglobal.referral.dao.ReferralDAO#getAllReferralsByOrganization(java.lang.String,
-	 *      java.sql.Date, java.sql.Date)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
-		String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
+    /**
+     * @see org.openelisglobal.referral.dao.ReferralDAO#getAllReferralsByOrganization(java.lang.String,
+     *      java.sql.Date, java.sql.Date)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
+        String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("organizationId", Integer.parseInt(organizationId));
-			query.setDate("lowDate", lowDate);
-			query.setDate("highDate", highDate);
-			List<Referral> referralList = query.list();
-			// closeSession(); // CSL remove old
-			return referralList;
-		} catch (HibernateException e) {
-			handleException(e, "getAllReferralsByOrganization");
-		}
-		return new ArrayList<>();
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("organizationId", Integer.parseInt(organizationId));
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+            List<Referral> referralList = query.list();
+            // closeSession(); // CSL remove old
+            return referralList;
+        } catch (HibernateException e) {
+            handleException(e, "getAllReferralsByOrganization");
+        }
+        return new ArrayList<>();
+    }
 
 }

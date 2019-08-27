@@ -24,23 +24,22 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.result.dao.ResultSignatureDAO;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.result.valueholder.ResultSignature;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String> implements ResultSignatureDAO {
 
-	public ResultSignatureDAOImpl() {
-		super(ResultSignature.class);
-	}
+    public ResultSignatureDAOImpl() {
+        super(ResultSignature.class);
+    }
 
 //	@Override
 //	public void deleteData(List<ResultSignature> resultSignatures) throws LIMSRuntimeException {
@@ -127,102 +126,103 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
-		try {
-			ResultSignature tmpResultSignature = entityManager.unwrap(Session.class).get(ResultSignature.class,
-					resultSignature.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (tmpResultSignature != null) {
-				PropertyUtils.copyProperties(resultSignature, tmpResultSignature);
-			} else {
-				resultSignature.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
+        try {
+            ResultSignature tmpResultSignature = entityManager.unwrap(Session.class).get(ResultSignature.class,
+                    resultSignature.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (tmpResultSignature != null) {
+                PropertyUtils.copyProperties(resultSignature, tmpResultSignature);
+            } else {
+                resultSignature.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("ResultSignatureDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
-		List<ResultSignature> resultSignatures = null;
-		try {
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
+        List<ResultSignature> resultSignatures = null;
+        try {
 
-			String sql = "from ResultSignature r where r.resultId = :resultId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("resultId", Integer.parseInt(result.getId()));
+            String sql = "from ResultSignature r where r.resultId = :resultId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("resultId", Integer.parseInt(result.getId()));
 
-			resultSignatures = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            resultSignatures = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return resultSignatures;
+            return resultSignatures;
 
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureByResult()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureByResult()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
+        }
+    }
 
-	public ResultSignature readResultSignature(String idString) {
-		ResultSignature data = null;
-		try {
-			data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
-		}
+    public ResultSignature readResultSignature(String idString) {
+        ResultSignature data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
+        }
 
-		return data;
-	}
+        return data;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
-		try {
-			ResultSignature re = entityManager.unwrap(Session.class).get(ResultSignature.class, resultSignature.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			return re;
-		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
-			throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
+        try {
+            ResultSignature re = entityManager.unwrap(Session.class).get(ResultSignature.class,
+                    resultSignature.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            return re;
+        } catch (Exception e) {
+            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
+            throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {
-		if (resultList.isEmpty()) {
-			return new ArrayList<>();
-		}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {
+        if (resultList.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-		List<Integer> resultIds = new ArrayList<>();
-		for (Result result : resultList) {
-			resultIds.add(Integer.parseInt(result.getId()));
-		}
+        List<Integer> resultIds = new ArrayList<>();
+        for (Result result : resultList) {
+            resultIds.add(Integer.parseInt(result.getId()));
+        }
 
-		String sql = "From ResultSignature rs where rs.resultId in (:resultIdList)";
+        String sql = "From ResultSignature rs where rs.resultId in (:resultIdList)";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameterList("resultIdList", resultIds);
-			List<ResultSignature> sigs = query.list();
-			// closeSession(); // CSL remove old
-			return sigs;
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("resultIdList", resultIds);
+            List<ResultSignature> sigs = query.list();
+            // closeSession(); // CSL remove old
+            return sigs;
 
-		} catch (HibernateException e) {
-			handleException(e, "getResultSignaturesByResults");
-		}
-		return null;
-	}
+        } catch (HibernateException e) {
+            handleException(e, "getResultSignaturesByResults");
+        }
+        return null;
+    }
 
 }

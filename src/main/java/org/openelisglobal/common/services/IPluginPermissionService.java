@@ -5,11 +5,11 @@ import org.openelisglobal.systemmodule.valueholder.SystemModule;
 
 public interface IPluginPermissionService {
 
-	public SystemModule getOrCreateSystemModule(String action, String description);
+    public SystemModule getOrCreateSystemModule(String action, String description);
 
-	public SystemModule getOrCreateSystemModule(String action, String type, String description);
+    public SystemModule getOrCreateSystemModule(String action, String type, String description);
 
-	public Role getSystemRole(String name);
+    public Role getSystemRole(String name);
 
-	public boolean bindRoleToModule(Role role, SystemModule module);
+    public boolean bindRoleToModule(Role role, SystemModule module);
 }

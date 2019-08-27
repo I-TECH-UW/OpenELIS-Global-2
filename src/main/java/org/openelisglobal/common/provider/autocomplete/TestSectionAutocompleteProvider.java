@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.usertestsection.service.UserTestSectionService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.usertestsection.service.UserTestSectionService;
 
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
@@ -41,28 +41,28 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author Darren L. Spurgeon
  */
 public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
-	
-	protected UserTestSectionService userTestSectionService = SpringContext.getBean(UserTestSectionService.class);
 
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected UserTestSectionService userTestSectionService = SpringContext.getBean(UserTestSectionService.class);
 
- 		//System.out.println("I am in TestSectionAutocompleteProvider "
-		//		+ request.getParameter("testSectionName"));
-		String testSectionName = request.getParameter("testSectionName");
-		//System.out
-		//		.println("TestSectionAutocompleteProvider testSectionName "
-		//				+ testSectionName);
-		//Get test sections by sys user id
-		//bugzilla 2160
-		List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
-		//System.out.println("TestSectionAutocompleteProvider list "
-		//		+ list.size());
-		return list;
-	}
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // System.out.println("I am in TestSectionAutocompleteProvider "
+        // + request.getParameter("testSectionName"));
+        String testSectionName = request.getParameter("testSectionName");
+        // System.out
+        // .println("TestSectionAutocompleteProvider testSectionName "
+        // + testSectionName);
+        // Get test sections by sys user id
+        // bugzilla 2160
+        List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
+        // System.out.println("TestSectionAutocompleteProvider list "
+        // + list.size());
+        return list;
+    }
 
 }

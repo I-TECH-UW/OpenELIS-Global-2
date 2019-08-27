@@ -24,50 +24,49 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.common.dao.DatabaseChangeLogDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.valueholder.DatabaseChangeLog;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 //public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, String> implements DatabaseChangeLogDAO {
 public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
 
-	//	public DatabaseChangeLogDAOImpl() {
-	//		super(DatabaseChangeLog.class);
-	//	}
+    // public DatabaseChangeLogDAOImpl() {
+    // super(DatabaseChangeLog.class);
+    // }
 
-	@PersistenceContext
-	EntityManager entityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
-		List<DatabaseChangeLog> results;
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
+        List<DatabaseChangeLog> results;
 
-		try {
-			String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
+        try {
+            String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			results = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            results = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (results != null && results.get(0) != null) {
-				return results.get(0);
-			}
+            if (results != null && results.get(0) != null) {
+                return results.get(0);
+            }
 
-		} catch (Exception e) {
-			LogEvent.logError("DatabaseChangeLogDAOImpl", "getLastExecutedChange()", e.toString());
-			throw new LIMSRuntimeException("Error in DatabaseChangeLogDAOImpl getLastExecutedChange()", e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("DatabaseChangeLogDAOImpl", "getLastExecutedChange()", e.toString());
+            throw new LIMSRuntimeException("Error in DatabaseChangeLogDAOImpl getLastExecutedChange()", e);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

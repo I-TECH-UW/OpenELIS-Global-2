@@ -43,242 +43,236 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
 
 public class ExternalPatientSearch implements Runnable {
 
-	private static final String GET_PARAM_PWD = "pwd";
-	private static final String GET_PARAM_NAME = "name";
-	private static final String GET_PARAM_NATIONAL_ID = "nationalId";
-	private static final String GET_PARAM_ST = "ST";
-	private static final String GET_PARAM_SUBJECT = "subjectNumber";
-	private static final String GET_PARAM_LAST = "last";
-	private static final String GET_PARAM_FIRST = "first";
-	private static final String GET_PARAM_GUID = "guid";
+    private static final String GET_PARAM_PWD = "pwd";
+    private static final String GET_PARAM_NAME = "name";
+    private static final String GET_PARAM_NATIONAL_ID = "nationalId";
+    private static final String GET_PARAM_ST = "ST";
+    private static final String GET_PARAM_SUBJECT = "subjectNumber";
+    private static final String GET_PARAM_LAST = "last";
+    private static final String GET_PARAM_FIRST = "first";
+    private static final String GET_PARAM_GUID = "guid";
 
-	public static final String MALFORMED_REPLY = "Malformed reply";
-	public static final String URI_BUILD_FAILURE = "Failed to build URI";
+    public static final String MALFORMED_REPLY = "Malformed reply";
+    public static final String URI_BUILD_FAILURE = "Failed to build URI";
 
-	private boolean finished = false;
+    private boolean finished = false;
 
-	private String firstName;
-	private String lastName;
-	private String STNumber;
-	private String subjectNumber;
-	private String nationalId;
-	private String guid;
-	private String connectionString;
-	private String connectionName;
-	private String connectionPassword;
-	private int timeout = 0;
+    private String firstName;
+    private String lastName;
+    private String STNumber;
+    private String subjectNumber;
+    private String nationalId;
+    private String guid;
+    private String connectionString;
+    private String connectionName;
+    private String connectionPassword;
+    private int timeout = 0;
 
-	protected String resultXML;
-	protected List<PatientDemographicsSearchResults> searchResults;
-	protected List<String> errors;
-	protected int returnStatus = HttpStatus.SC_CREATED;
+    protected String resultXML;
+    protected List<PatientDemographicsSearchResults> searchResults;
+    protected List<String> errors;
+    protected int returnStatus = HttpStatus.SC_CREATED;
 
-	synchronized public void setConnectionCredentials(String connectionString, String name, String password,
-			int timeout_Mil) {
-		if (finished) {
-			throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
-		}
+    synchronized public void setConnectionCredentials(String connectionString, String name, String password,
+            int timeout_Mil) {
+        if (finished) {
+            throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
+        }
 
-		this.connectionString = connectionString;
-		connectionName = name;
-		connectionPassword = password;
-		timeout = timeout_Mil;
-	}
+        this.connectionString = connectionString;
+        connectionName = name;
+        connectionPassword = password;
+        timeout = timeout_Mil;
+    }
 
-	synchronized public void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber, String nationalID, String guid)
-			throws IllegalStateException {
+    synchronized public void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber,
+            String nationalID, String guid) throws IllegalStateException {
 
-		if (finished) {
-			throw new IllegalStateException("Search criteria set after ExternalPatientSearch thread was started");
-		}
+        if (finished) {
+            throw new IllegalStateException("Search criteria set after ExternalPatientSearch thread was started");
+        }
 
-		this.lastName = lastName;
-		this.firstName = firstName;
-		this.STNumber = STNumber;
-		this.subjectNumber = subjectNumber;
-		this.nationalId = nationalID;
-		this.guid = guid;
-	}
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.STNumber = STNumber;
+        this.subjectNumber = subjectNumber;
+        this.nationalId = nationalID;
+        this.guid = guid;
+    }
 
-	synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
+    synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
 
-		if (!finished) {
-			throw new IllegalStateException("Results requested before ExternalPatientSearch thread was finished");
-		}
-		
-		if (searchResults == null) {
-			searchResults = new ArrayList<PatientDemographicsSearchResults>();
+        if (!finished) {
+            throw new IllegalStateException("Results requested before ExternalPatientSearch thread was finished");
+        }
 
-			convertXMLToResults();
-		}
+        if (searchResults == null) {
+            searchResults = new ArrayList<PatientDemographicsSearchResults>();
 
-		return searchResults;
-	}
+            convertXMLToResults();
+        }
 
-	public int getSearchResultStatus() {
-		if (!finished) {
-			throw new IllegalStateException("Result status requested ExternalPatientSearch before search was finished");
-		}
+        return searchResults;
+    }
 
-		return returnStatus;
-	}
+    public int getSearchResultStatus() {
+        if (!finished) {
+            throw new IllegalStateException("Result status requested ExternalPatientSearch before search was finished");
+        }
 
-	public void run() {
-		try {
-			synchronized (this) {
-				if (noSearchTerms()) {
-					return;
-				}
+        return returnStatus;
+    }
 
-				if (connectionCredentialsIncomplete()) {
-					throw new IllegalStateException("Search requested before connection credentials set.");
-				}
-				errors = new ArrayList<String>();
+    public void run() {
+        try {
+            synchronized (this) {
+                if (noSearchTerms()) {
+                    return;
+                }
 
-				doSearch();
-			}
-		} finally {
-			finished = true;
-		}
-	}
+                if (connectionCredentialsIncomplete()) {
+                    throw new IllegalStateException("Search requested before connection credentials set.");
+                }
+                errors = new ArrayList<String>();
 
-	private boolean connectionCredentialsIncomplete() {
-		return GenericValidator.isBlankOrNull(connectionString) || GenericValidator.isBlankOrNull(connectionName)
-				|| GenericValidator.isBlankOrNull(connectionPassword);
-	}
+                doSearch();
+            }
+        } finally {
+            finished = true;
+        }
+    }
 
-	private boolean noSearchTerms() {
-		return GenericValidator.isBlankOrNull(firstName) && GenericValidator.isBlankOrNull(lastName)
-				&& GenericValidator.isBlankOrNull(nationalId) && GenericValidator.isBlankOrNull(STNumber);
-	}
+    private boolean connectionCredentialsIncomplete() {
+        return GenericValidator.isBlankOrNull(connectionString) || GenericValidator.isBlankOrNull(connectionName)
+                || GenericValidator.isBlankOrNull(connectionPassword);
+    }
 
-	// protected for unit testing called from synchronized block
-	protected void doSearch() {
+    private boolean noSearchTerms() {
+        return GenericValidator.isBlankOrNull(firstName) && GenericValidator.isBlankOrNull(lastName)
+                && GenericValidator.isBlankOrNull(nationalId) && GenericValidator.isBlankOrNull(STNumber);
+    }
 
-		HttpClient httpclient = new DefaultHttpClient();
-		setTimeout(httpclient);
+    // protected for unit testing called from synchronized block
+    protected void doSearch() {
 
-		HttpGet httpget = new HttpGet(connectionString);
-		URI getUri = buildConnectionString(httpget.getURI());
-		httpget.setURI(getUri);
+        HttpClient httpclient = new DefaultHttpClient();
+        setTimeout(httpclient);
 
-		try {
-			// Ignore hostname mismatches and allow trust of self-signed certs
-			SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(), SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-			Scheme https = new Scheme("https", 443, sslsf);
-			ClientConnectionManager ccm = httpclient.getConnectionManager();
-			ccm.getSchemeRegistry().register(https);
+        HttpGet httpget = new HttpGet(connectionString);
+        URI getUri = buildConnectionString(httpget.getURI());
+        httpget.setURI(getUri);
 
-			HttpResponse getResponse = httpclient.execute(httpget);
-			returnStatus = getResponse.getStatusLine().getStatusCode();
-			setPossibleErrors();
-			setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
-		} catch (SocketTimeoutException e) {
-			errors.add("Response from patient information server took too long.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-			// System.out.println("Tinny time out" + e);
-		} catch (ConnectException e) {
-			errors.add("Unable to connect to patient information form service. Service may not be running");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-			// System.out.println("you no talks? " + e);
-		} catch (IOException e) {
-			errors.add("IO error trying to read input stream.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-			// System.out.println("all else failed " + e);
-		} catch (KeyManagementException e) {
-			errors.add("Key management error trying to connect to external search service.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-		} catch (UnrecoverableKeyException e) {
-			errors.add("Unrecoverable key error trying to connect to external search service.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-		} catch (NoSuchAlgorithmException e) {
-			errors.add("No such encyrption algorithm error trying to connect to external search service.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-		} catch (KeyStoreException e) {
-			errors.add("Keystore error trying to connect to external search service.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-		} catch (RuntimeException e) {
-			errors.add("Runtime error trying to retrieve patient information.");
-			LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-			httpget.abort();
-			throw e;
-		} finally {
-			httpclient.getConnectionManager().shutdown();
-		}
-	}
-	
-	private void convertXMLToResults() {
-		if (!GenericValidator.isBlankOrNull(resultXML)) {
-			
-			ExternalPatientSearchResultsXMLConverter converter = new ExternalPatientSearchResultsXMLConverter();
-			
-			try {
-				searchResults = converter.convertXMLToSearchResults( resultXML );
-			} catch (DocumentException e) {
-				errors.add(MALFORMED_REPLY);
-			}
-		}
-	}
+        try {
+            // Ignore hostname mismatches and allow trust of self-signed certs
+            SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(),
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme https = new Scheme("https", 443, sslsf);
+            ClientConnectionManager ccm = httpclient.getConnectionManager();
+            ccm.getSchemeRegistry().register(https);
 
-	
-	protected void setResults(String resultsAsXml) {
-		resultXML = resultsAsXml;
-	}
+            HttpResponse getResponse = httpclient.execute(httpget);
+            returnStatus = getResponse.getStatusLine().getStatusCode();
+            setPossibleErrors();
+            setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
+        } catch (SocketTimeoutException e) {
+            errors.add("Response from patient information server took too long.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            // System.out.println("Tinny time out" + e);
+        } catch (ConnectException e) {
+            errors.add("Unable to connect to patient information form service. Service may not be running");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            // System.out.println("you no talks? " + e);
+        } catch (IOException e) {
+            errors.add("IO error trying to read input stream.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            // System.out.println("all else failed " + e);
+        } catch (KeyManagementException e) {
+            errors.add("Key management error trying to connect to external search service.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+        } catch (UnrecoverableKeyException e) {
+            errors.add("Unrecoverable key error trying to connect to external search service.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+        } catch (NoSuchAlgorithmException e) {
+            errors.add("No such encyrption algorithm error trying to connect to external search service.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+        } catch (KeyStoreException e) {
+            errors.add("Keystore error trying to connect to external search service.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+        } catch (RuntimeException e) {
+            errors.add("Runtime error trying to retrieve patient information.");
+            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            httpget.abort();
+            throw e;
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+    }
 
-	private void setPossibleErrors() {
-		switch (returnStatus) {
-		case HttpStatus.SC_UNAUTHORIZED: {
-			errors.add("Access denied to patient information service.");
-			break;
-		}
-		case HttpStatus.SC_INTERNAL_SERVER_ERROR: {
-			errors.add("Internal error on patient information service.");
-			break;
-		}
-		case HttpStatus.SC_OK:{
-			break; //NO-OP
-		}
-		default: {
-			errors.add("Unknown error trying to connect to patient information service. Resturn status was "
-					+ returnStatus);
-		}
-		}
+    private void convertXMLToResults() {
+        if (!GenericValidator.isBlankOrNull(resultXML)) {
 
-	}
+            ExternalPatientSearchResultsXMLConverter converter = new ExternalPatientSearchResultsXMLConverter();
 
-	private void setTimeout(HttpClient httpclient) {
-		// this one causes a timeout if a connection is established but there is 
-		// no response within <timeout> seconds
-		httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+            try {
+                searchResults = converter.convertXMLToSearchResults(resultXML);
+            } catch (DocumentException e) {
+                errors.add(MALFORMED_REPLY);
+            }
+        }
+    }
 
-		// this one causes a timeout if no connection is established within 10 seconds
-		httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
-	}
+    protected void setResults(String resultsAsXml) {
+        resultXML = resultsAsXml;
+    }
 
-	private URI buildConnectionString(URI uriStart) {
+    private void setPossibleErrors() {
+        switch (returnStatus) {
+        case HttpStatus.SC_UNAUTHORIZED: {
+            errors.add("Access denied to patient information service.");
+            break;
+        }
+        case HttpStatus.SC_INTERNAL_SERVER_ERROR: {
+            errors.add("Internal error on patient information service.");
+            break;
+        }
+        case HttpStatus.SC_OK: {
+            break; // NO-OP
+        }
+        default: {
+            errors.add("Unknown error trying to connect to patient information service. Resturn status was "
+                    + returnStatus);
+        }
+        }
 
-		URI uriFinal = null;
-		try {
-			uriFinal = new URIBuilder(uriStart)
-				.addParameter(GET_PARAM_FIRST, firstName)
-				.addParameter(GET_PARAM_LAST, lastName)
-				.addParameter(GET_PARAM_ST, STNumber)
-				.addParameter(GET_PARAM_SUBJECT, subjectNumber)
-				.addParameter(GET_PARAM_NATIONAL_ID, nationalId)
-				.addParameter(GET_PARAM_GUID, guid)
-				.addParameter(GET_PARAM_NAME, connectionName)
-				.addParameter(GET_PARAM_PWD, connectionPassword)
-				.build();
-		} catch (URISyntaxException e) {
-			errors.add(URI_BUILD_FAILURE);
-		}
+    }
 
-		return uriFinal;
-	}
+    private void setTimeout(HttpClient httpclient) {
+        // this one causes a timeout if a connection is established but there is
+        // no response within <timeout> seconds
+        httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+
+        // this one causes a timeout if no connection is established within 10 seconds
+        httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
+    }
+
+    private URI buildConnectionString(URI uriStart) {
+
+        URI uriFinal = null;
+        try {
+            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, firstName)
+                    .addParameter(GET_PARAM_LAST, lastName).addParameter(GET_PARAM_ST, STNumber)
+                    .addParameter(GET_PARAM_SUBJECT, subjectNumber).addParameter(GET_PARAM_NATIONAL_ID, nationalId)
+                    .addParameter(GET_PARAM_GUID, guid).addParameter(GET_PARAM_NAME, connectionName)
+                    .addParameter(GET_PARAM_PWD, connectionPassword).build();
+        } catch (URISyntaxException e) {
+            errors.add(URI_BUILD_FAILURE);
+        }
+
+        return uriFinal;
+    }
 }

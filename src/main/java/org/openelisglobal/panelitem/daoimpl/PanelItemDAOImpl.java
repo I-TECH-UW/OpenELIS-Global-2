@@ -21,16 +21,15 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.panelitem.dao.PanelItemDAO;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz
@@ -39,9 +38,9 @@ import org.openelisglobal.panelitem.valueholder.PanelItem;
 @Transactional
 public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements PanelItemDAO {
 
-	public PanelItemDAOImpl() {
-		super(PanelItem.class);
-	}
+    public PanelItemDAOImpl() {
+        super(PanelItem.class);
+    }
 
 //	@Override
 //	public void deleteData(List panelItems) throws LIMSRuntimeException {
@@ -140,265 +139,265 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(PanelItem panelItem) throws LIMSRuntimeException {
-		try {
-			PanelItem data = entityManager.unwrap(Session.class).get(PanelItem.class, panelItem.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (data != null) {
-				PropertyUtils.copyProperties(panelItem, data);
-			} else {
-				panelItem.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(PanelItem panelItem) throws LIMSRuntimeException {
+        try {
+            PanelItem data = entityManager.unwrap(Session.class).get(PanelItem.class, panelItem.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (data != null) {
+                PropertyUtils.copyProperties(panelItem, data);
+            } else {
+                panelItem.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllPanelItems() throws LIMSRuntimeException {
-		List list;
-		try {
-			String sql = "from PanelItem P order by P.panel.id ";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getAllPanelItems()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem getAllPanelItems()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllPanelItems() throws LIMSRuntimeException {
+        List list;
+        try {
+            String sql = "from PanelItem P order by P.panel.id ";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getAllPanelItems()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem getAllPanelItems()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException {
-		List list;
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException {
+        List list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from PanelItem p order by p.panel.panelName, p.testName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            String sql = "from PanelItem p order by p.panel.panelName, p.testName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getPageOfPanelItems()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem getPageOfPanelItems()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getPageOfPanelItems()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem getPageOfPanelItems()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public PanelItem readPanelItem(String idString) {
-		PanelItem pi;
-		try {
-			pi = entityManager.unwrap(Session.class).get(PanelItem.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
-		}
+    public PanelItem readPanelItem(String idString) {
+        PanelItem pi;
+        try {
+            pi = entityManager.unwrap(Session.class).get(PanelItem.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
+        }
 
-		return pi;
-	}
+        return pi;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPanelItems(String filter) throws LIMSRuntimeException {
-		List list;
-		try {
-			String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", filter + "%");
+    @Override
+    @Transactional(readOnly = true)
+    public List getPanelItems(String filter) throws LIMSRuntimeException {
+        List list;
+        try {
+            String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", filter + "%");
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getPanelItems()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem getPanelItems(String filter)", e);
-		}
-		return list;
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getPanelItems()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem getPanelItems(String filter)", e);
+        }
+        return list;
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException {
-		List list;
-		try {
-			String sql = "from PanelItem p where p.panel.id = :panelId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("panelId", Integer.parseInt(panelId));
+    @Override
+    @Transactional(readOnly = true)
+    public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException {
+        List list;
+        try {
+            String sql = "from PanelItem p where p.panel.id = :panelId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("panelId", Integer.parseInt(panelId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getPanelItemsForPanel()", e.toString());
-			throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getPanelItemsForPanel()", e.toString());
+            throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
+        }
 
-		return list;
+        return list;
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextPanelItemRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextPanelItemRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "PanelItem", PanelItem.class);
+        return getNextRecord(id, "PanelItem", PanelItem.class);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousPanelItemRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousPanelItemRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "PanelItem", PanelItem.class);
-	}
+        return getPreviousRecord(id, "PanelItem", PanelItem.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalPanelItemCount() throws LIMSRuntimeException {
-		return getTotalCount("PanelItem", PanelItem.class);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalPanelItemCount() throws LIMSRuntimeException {
+        return getTotalCount("PanelItem", PanelItem.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = Integer.valueOf(id);
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = Integer.valueOf(id);
+        String tablePrefix = getTablePrefix(table);
 
-		List list;
-		int rrn;
-		try {
-			String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName, pi.testName";
+        List list;
+        int rrn;
+        try {
+            String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName, pi.testName";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+                    .setMaxResults(2).list();
 
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getNextRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = Integer.valueOf(id);
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = Integer.valueOf(id);
+        String tablePrefix = getTablePrefix(table);
 
-		List list;
-		int rrn;
-		try {
-			String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName desc, pi.testName desc";
+        List list;
+        int rrn;
+        try {
+            String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName desc, pi.testName desc";
 
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
+                    .setFirstResult(rrn + 1).setMaxResults(2).list();
 
-		} catch (Exception e) {
+        } catch (Exception e) {
 
-			LogEvent.logError("PanelItemDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+            LogEvent.logError("PanelItemDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
-		try {
-			List list;
+    @Override
+    public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
+        try {
+            List list;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :panelName and trim(lower(t.testName)) = :testName and t.id != :panelItemId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("panelName", panelItem.getPanel().getPanelName().toLowerCase().trim());
-			query.setParameter("testName", panelItem.getTest().getTestName().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :panelName and trim(lower(t.testName)) = :testName and t.id != :panelItemId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("panelName", panelItem.getPanel().getPanelName().toLowerCase().trim());
+            query.setParameter("testName", panelItem.getTest().getTestName().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String panelItemId = "0";
-			if (!StringUtil.isNullorNill(panelItem.getId())) {
-				panelItemId = panelItem.getId();
-			}
-			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String panelItemId = "0";
+            if (!StringUtil.isNullorNill(panelItem.getId())) {
+                panelItemId = panelItem.getId();
+            }
+            query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return !list.isEmpty();
+            return !list.isEmpty();
 
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "duplicatePanelItemExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicatePanelItemExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "duplicatePanelItemExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicatePanelItemExists()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public boolean getDuplicateSortOrderForPanel(PanelItem panelItem) throws LIMSRuntimeException {
-		try {
-			List list;
+    @Override
+    @Transactional(readOnly = true)
+    public boolean getDuplicateSortOrderForPanel(PanelItem panelItem) throws LIMSRuntimeException {
+        try {
+            List list;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder = :sortOrder and t.id != :panelItemId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder = :sortOrder and t.id != :panelItemId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
-			query.setParameter("param", panelItem.getPanelName().toLowerCase().trim());
-			query.setInteger("sortOrder", Integer.parseInt(panelItem.getSortOrder()));
+            query.setParameter("param", panelItem.getPanelName().toLowerCase().trim());
+            query.setInteger("sortOrder", Integer.parseInt(panelItem.getSortOrder()));
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String panelItemId = "0";
-			if (!StringUtil.isNullorNill(panelItem.getId())) {
-				panelItemId = panelItem.getId();
-			}
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String panelItemId = "0";
+            if (!StringUtil.isNullorNill(panelItem.getId())) {
+                panelItemId = panelItem.getId();
+            }
 
-			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
+            query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return !list.isEmpty();
+            return !list.isEmpty();
 
-		} catch (Exception e) {
-			LogEvent.logError("PanelItemDAOImpl", "getDuplicateSortOrderForPanel()", e.toString());
-			throw new LIMSRuntimeException("Error in getDuplicateSortOrderForPanel()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("PanelItemDAOImpl", "getDuplicateSortOrderForPanel()", e.toString());
+            throw new LIMSRuntimeException("Error in getDuplicateSortOrderForPanel()", e);
+        }
+    }
 
 //	@Override
 //	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
@@ -432,42 +431,42 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 //		}
 //	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<PanelItem> getPanelItemByTestId(String testId) throws LIMSRuntimeException {
-		String sql = "From PanelItem pi where pi.test.id = :testId";
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<PanelItem> getPanelItemByTestId(String testId) throws LIMSRuntimeException {
+        String sql = "From PanelItem pi where pi.test.id = :testId";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("testId", Integer.parseInt(testId));
-			List<PanelItem> panelItems = query.list();
-			// closeSession(); // CSL remove old
-			return panelItems;
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("testId", Integer.parseInt(testId));
+            List<PanelItem> panelItems = query.list();
+            // closeSession(); // CSL remove old
+            return panelItems;
 
-		} catch (HibernateException e) {
-			handleException(e, "getPanelItemByTestId");
-		}
+        } catch (HibernateException e) {
+            handleException(e, "getPanelItemByTestId");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
-			throws LIMSRuntimeException {
-		String sql = "From PanelItem pi where pi.panel.id = :panelId and pi.test.id in (:testList)";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("panelId", Integer.parseInt(panelId));
-			query.setParameterList("testList", testList);
-			List<PanelItem> items = query.list();
-			// closeSession(); // CSL remove old
-			return items;
-		} catch (HibernateException e) {
-			handleException(e, "getPanelItemsFromPanelAndItemList");
-		}
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
+            throws LIMSRuntimeException {
+        String sql = "From PanelItem pi where pi.panel.id = :panelId and pi.test.id in (:testList)";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("panelId", Integer.parseInt(panelId));
+            query.setParameterList("testList", testList);
+            List<PanelItem> items = query.list();
+            // closeSession(); // CSL remove old
+            return items;
+        } catch (HibernateException e) {
+            handleException(e, "getPanelItemsFromPanelAndItemList");
+        }
+        return null;
+    }
 }

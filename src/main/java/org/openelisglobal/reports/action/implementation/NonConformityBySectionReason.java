@@ -20,98 +20,98 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class NonConformityBySectionReason extends NonConformityBy {
-	List<SampleQaEvent> sampleQaEvents = null;
+    List<SampleQaEvent> sampleQaEvents = null;
 
-	protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
+    protected SampleQaEventService sampleQaEventService = SpringContext.getBean(SampleQaEventService.class);
 
-	@Override
-	protected String reportFileName() {
-		return "NonConformityByGroupCategory";
-	}
+    @Override
+    protected String reportFileName() {
+        return "NonConformityByGroupCategory";
+    }
 
-	@Override
-	protected void createReportParameters() {
-		super.createReportParameters();
-		reportParameters.put("reportTitle", MessageUtil.getMessage("reports.nonConformity.bySectionReason.title"));
-		reportParameters.put("reportPeriod", dateRange.toString());
-		reportParameters.put("supervisorSignature", ConfigurationProperties.getInstance()
-				.isPropertyValueEqual(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "true"));
-		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
-			reportParameters.put("headerName", "CILNSPHeader.jasper");
-		} else {
-			reportParameters.put("headerName", getHeaderName());
-		}
-	}
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("reportTitle", MessageUtil.getMessage("reports.nonConformity.bySectionReason.title"));
+        reportParameters.put("reportPeriod", dateRange.toString());
+        reportParameters.put("supervisorSignature", ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "true"));
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
+            reportParameters.put("headerName", "CILNSPHeader.jasper");
+        } else {
+            reportParameters.put("headerName", getHeaderName());
+        }
+    }
 
-	protected abstract String getHeaderName();
+    protected abstract String getHeaderName();
 
-	@Override
-	void createReportItems() {
-		sampleQaEvents = sampleQaEventService.getSampleQaEventsByUpdatedDate(dateRange.getLowDate(),
-				DateUtil.addDaysToSQLDate(dateRange.getHighDate(), 1));
-		reportItems = new ArrayList<>();
-		// put them all in a list as reportable counts
-		for (SampleQaEvent event : sampleQaEvents) {
-			CountReportItem item = new CountReportItem();
-			QAService qa = new QAService(event);
-			item.setGroup(qa.getObservationForDisplay(QAObservationType.SECTION));
-			item.setCategory(qa.getQAEvent().getLocalizedName());
-			item.setCategoryCount(0);
-			reportItems.add(item);
-		}
-		makeReportItemsSortable();
-		sortReportItems(); // by group and category
-		cleanupReportItems();
-		totalReportItems();
-	}
+    @Override
+    void createReportItems() {
+        sampleQaEvents = sampleQaEventService.getSampleQaEventsByUpdatedDate(dateRange.getLowDate(),
+                DateUtil.addDaysToSQLDate(dateRange.getHighDate(), 1));
+        reportItems = new ArrayList<>();
+        // put them all in a list as reportable counts
+        for (SampleQaEvent event : sampleQaEvents) {
+            CountReportItem item = new CountReportItem();
+            QAService qa = new QAService(event);
+            item.setGroup(qa.getObservationForDisplay(QAObservationType.SECTION));
+            item.setCategory(qa.getQAEvent().getLocalizedName());
+            item.setCategoryCount(0);
+            reportItems.add(item);
+        }
+        makeReportItemsSortable();
+        sortReportItems(); // by group and category
+        cleanupReportItems();
+        totalReportItems();
+    }
 
-	/**
-	 *
-	 */
-	private void makeReportItemsSortable() {
-		for (CountReportItem item : reportItems) {
-			if (item.getGroup() == null) {
-				item.setGroup("0");
-			}
-		}
-	}
+    /**
+     *
+     */
+    private void makeReportItemsSortable() {
+        for (CountReportItem item : reportItems) {
+            if (item.getGroup() == null) {
+                item.setGroup("0");
+            }
+        }
+    }
 
-	private void cleanupReportItems() {
-		for (CountReportItem item : reportItems) {
-			if (item.getGroup() == "0") {
-				item.setGroup(MessageUtil.getMessage("report.section.not.specified"));
-			}
-		}
-	}
+    private void cleanupReportItems() {
+        for (CountReportItem item : reportItems) {
+            if (item.getGroup() == "0") {
+                item.setGroup(MessageUtil.getMessage("report.section.not.specified"));
+            }
+        }
+    }
 
-	private void totalReportItems() {
-		if (reportItems.size() == 0) {
-			return;
-		}
-		CountReportItem groupItem = reportItems.get(0);
-		CountReportItem categoryItem = groupItem;
-		for (CountReportItem item : reportItems) {
-			if (!categoryItem.getCategory().equals(item.getCategory())) {
-				categoryItem = item;
-			}
-			categoryItem.addCategoryCount(1);
+    private void totalReportItems() {
+        if (reportItems.size() == 0) {
+            return;
+        }
+        CountReportItem groupItem = reportItems.get(0);
+        CountReportItem categoryItem = groupItem;
+        for (CountReportItem item : reportItems) {
+            if (!categoryItem.getCategory().equals(item.getCategory())) {
+                categoryItem = item;
+            }
+            categoryItem.addCategoryCount(1);
 
-			if (StringUtil.compareWithNulls(groupItem.getGroup(), item.getGroup()) != 0) {
-				groupItem = item;
-			}
-			groupItem.addGroupCount(1);
-		}
-	}
+            if (StringUtil.compareWithNulls(groupItem.getGroup(), item.getGroup()) != 0) {
+                groupItem = item;
+            }
+            groupItem.addGroupCount(1);
+        }
+    }
 }

@@ -17,15 +17,15 @@ package org.openelisglobal.reports.action.implementation;
 
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSegmentedExportBean;
 
-public class HaitiLnspEpiExportReport extends HaitiLNSPExportReport{
+public class HaitiLnspEpiExportReport extends HaitiLNSPExportReport {
 
     @Override
-    public byte[] runReport() throws Exception{
+    public byte[] runReport() throws Exception {
         StringBuilder builder = new StringBuilder();
-        builder.append( TestSegmentedExportBean.getHeader());
+        builder.append(TestSegmentedExportBean.getHeader());
         builder.append("\n");
 
-        for(TestSegmentedExportBean testLine : testExportList){
+        for (TestSegmentedExportBean testLine : testExportList) {
             builder.append(testLine.getAsCSVString());
             builder.append("\n");
         }

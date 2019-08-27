@@ -18,49 +18,48 @@ package org.openelisglobal.reports.send.sample.valueholder.influenza;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
- * @author diane benz 
- *  bugzilla 2393
+ * @author diane benz bugzilla 2393
  */
 public class MNPHLXmit extends BaseObject<String> {
-	
-	private String id;
-	
-	private String sendingApplication;
 
-	private String messageTime;
-	
-	private String processingId;
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    private String sendingApplication;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String messageTime;
 
-	public String getMessageTime() {
-		return messageTime;
-	}
+    private String processingId;
 
-	public void setMessageTime(String messageTime) {
-		this.messageTime = messageTime;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getProcessingId() {
-		return processingId;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setProcessingId(String processingId) {
-		this.processingId = processingId;
-	}
+    public String getMessageTime() {
+        return messageTime;
+    }
 
-	public String getSendingApplication() {
-		return sendingApplication;
-	}
+    public void setMessageTime(String messageTime) {
+        this.messageTime = messageTime;
+    }
 
-	public void setSendingApplication(String sendingApplication) {
-		this.sendingApplication = sendingApplication;
-	}
+    public String getProcessingId() {
+        return processingId;
+    }
+
+    public void setProcessingId(String processingId) {
+        this.processingId = processingId;
+    }
+
+    public String getSendingApplication() {
+        return sendingApplication;
+    }
+
+    public void setSendingApplication(String sendingApplication) {
+        this.sendingApplication = sendingApplication;
+    }
 
 }

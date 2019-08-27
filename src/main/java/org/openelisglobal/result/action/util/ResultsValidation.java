@@ -8,14 +8,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.formfields.FormFields;
@@ -24,207 +17,213 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 @Service
 public class ResultsValidation {
 
-	private static final String SPECIAL_CASE = "XXXX";
-	private boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-	private boolean useTechnicianName = ConfigurationProperties.getInstance()
-			.isPropertyValueEqual(Property.resultTechnicianName, "true");
-	private boolean noteRequiredForChangedResults = false;
-	private boolean useRejected = ConfigurationProperties.getInstance()
-			.isPropertyValueEqual(Property.allowResultRejection, "true");
+    private static final String SPECIAL_CASE = "XXXX";
+    private boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+    private boolean useTechnicianName = ConfigurationProperties.getInstance()
+            .isPropertyValueEqual(Property.resultTechnicianName, "true");
+    private boolean noteRequiredForChangedResults = false;
+    private boolean useRejected = ConfigurationProperties.getInstance()
+            .isPropertyValueEqual(Property.allowResultRejection, "true");
 
-	@Autowired
-	private ResultService resultService;
-	@Autowired
-	private AnalysisService analysisService;
+    @Autowired
+    private ResultService resultService;
+    @Autowired
+    private AnalysisService analysisService;
 
-	public Errors validateItem(TestResultItem item) {
-		Errors errors = new BaseErrors();
+    public Errors validateItem(TestResultItem item) {
+        Errors errors = new BaseErrors();
 
-		validateTestDate(item, errors);
+        validateTestDate(item, errors);
 
-		if (!item.isRejected()) {
-			validateResult(item, errors);
-		}
+        if (!item.isRejected()) {
+            validateResult(item, errors);
+        }
 
-		if (noteRequiredForChangedResults && !item.isRejected()) {
-			validateRequiredNote(item, errors);
-		}
+        if (noteRequiredForChangedResults && !item.isRejected()) {
+            validateRequiredNote(item, errors);
+        }
 
-		if (supportReferrals) {
-			validateReferral(item, errors);
-		}
-		if (useTechnicianName) {
-			validateTesterSignature(item, errors);
-		}
-		if (useRejected) {
-			validateRejection(item, errors);
-		}
+        if (supportReferrals) {
+            validateReferral(item, errors);
+        }
+        if (useTechnicianName) {
+            validateTesterSignature(item, errors);
+        }
+        if (useRejected) {
+            validateRejection(item, errors);
+        }
 
-		return errors;
-	}
+        return errors;
+    }
 
-	public Errors validateModifiedItems(List<TestResultItem> modifiedItems) {
-		noteRequiredForChangedResults = "true"
-				.equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
+    public Errors validateModifiedItems(List<TestResultItem> modifiedItems) {
+        noteRequiredForChangedResults = "true"
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
 
-		Errors errors = new BaseErrors();
+        Errors errors = new BaseErrors();
 
-		for (TestResultItem item : modifiedItems) {
+        for (TestResultItem item : modifiedItems) {
 
-			Errors itemErrors = validateItem(item);
+            Errors itemErrors = validateItem(item);
 
-			if (itemErrors.hasErrors()) {
-				StringBuilder augmentedAccession = new StringBuilder(item.getSequenceAccessionNumber());
-				augmentedAccession.append(" : ");
-				augmentedAccession.append(item.getTestName());
-				// ActionError accessionError = new ActionError("errors.followingAccession",
-				// augmentedAccession);
+            if (itemErrors.hasErrors()) {
+                StringBuilder augmentedAccession = new StringBuilder(item.getSequenceAccessionNumber());
+                augmentedAccession.append(" : ");
+                augmentedAccession.append(item.getTestName());
+                // ActionError accessionError = new ActionError("errors.followingAccession",
+                // augmentedAccession);
 
-				errors.reject("errors.followingAccession");
-				errors.addAllErrors(itemErrors);
-			}
-		}
+                errors.reject("errors.followingAccession");
+                errors.addAllErrors(itemErrors);
+            }
+        }
 
-		return errors;
-	}
+        return errors;
+    }
 
-	private void validateTestDate(TestResultItem item, Errors errors) {
+    private void validateTestDate(TestResultItem item, Errors errors) {
 
-		Date date = CustomDateValidator.getInstance().getDate(item.getTestDate());
+        Date date = CustomDateValidator.getInstance().getDate(item.getTestDate());
 
-		if (date == null) {
-			// errors.add(new ActionError("errors.date", new
-			// StringBuilder(item.getTestDate())));
-			errors.reject("errors.date");
-		} else if (!IActionConstants.VALID
-				.equals(CustomDateValidator.getInstance().validateDate(date, DateRelation.PAST))) {
-			errors.reject("error.date.inFuture");
-		}
-	}
+        if (date == null) {
+            // errors.add(new ActionError("errors.date", new
+            // StringBuilder(item.getTestDate())));
+            errors.reject("errors.date");
+        } else if (!IActionConstants.VALID
+                .equals(CustomDateValidator.getInstance().validateDate(date, DateRelation.PAST))) {
+            errors.reject("error.date.inFuture");
+        }
+    }
 
-	private void validateResult(TestResultItem testResultItem, Errors errors) {
-		String resultValue = testResultItem.getShadowResultValue();
-		if (GenericValidator.isBlankOrNull(resultValue) && testResultItem.isRejected()) {
-			return;
-		}
+    private void validateResult(TestResultItem testResultItem, Errors errors) {
+        String resultValue = testResultItem.getShadowResultValue();
+        if (GenericValidator.isBlankOrNull(resultValue) && testResultItem.isRejected()) {
+            return;
+        }
 
-		if (!(ResultUtil.areNotes(testResultItem) || (supportReferrals && ResultUtil.isReferred(testResultItem))
-				|| ResultUtil.areResults(testResultItem) || ResultUtil.isForcedToAcceptance(testResultItem))) {
-			errors.reject("errors.result.required");
-		}
+        if (!(ResultUtil.areNotes(testResultItem) || (supportReferrals && ResultUtil.isReferred(testResultItem))
+                || ResultUtil.areResults(testResultItem) || ResultUtil.isForcedToAcceptance(testResultItem))) {
+            errors.reject("errors.result.required");
+        }
 
-		if (!GenericValidator.isBlankOrNull(resultValue) && "N".equals(testResultItem.getResultType())) {
-			if (resultValue.equals(SPECIAL_CASE)) {
-				return;
-			}
-			try {
-				Double.parseDouble(resultValue);
-			} catch (NumberFormatException e) {
-				// errors.add(new ActionError("errors.number.format", new
-				// StringBuilder("Result")));
-				errors.reject("errors.number.format");
-			}
-		}
+        if (!GenericValidator.isBlankOrNull(resultValue) && "N".equals(testResultItem.getResultType())) {
+            if (resultValue.equals(SPECIAL_CASE)) {
+                return;
+            }
+            try {
+                Double.parseDouble(resultValue);
+            } catch (NumberFormatException e) {
+                // errors.add(new ActionError("errors.number.format", new
+                // StringBuilder("Result")));
+                errors.reject("errors.number.format");
+            }
+        }
 
-		if (testResultItem.isHasQualifiedResult()
-				&& GenericValidator.isBlankOrNull(testResultItem.getQualifiedResultValue())) {
-			// errors.add(new ActionError("errors.missing.result.details", new
-			// StringBuilder("Result")));
-			errors.reject("errors.missing.result.details");
-		}
-	}
+        if (testResultItem.isHasQualifiedResult()
+                && GenericValidator.isBlankOrNull(testResultItem.getQualifiedResultValue())) {
+            // errors.add(new ActionError("errors.missing.result.details", new
+            // StringBuilder("Result")));
+            errors.reject("errors.missing.result.details");
+        }
+    }
 
-	private void validateReferral(TestResultItem item, Errors errors) {
-		if (item.isShadowReferredOut() && "0".equals(item.getReferralReasonId())) {
-			errors.reject("error.referral.noReason");
-		}
-	}
+    private void validateReferral(TestResultItem item, Errors errors) {
+        if (item.isShadowReferredOut() && "0".equals(item.getReferralReasonId())) {
+            errors.reject("error.referral.noReason");
+        }
+    }
 
-	private void validateRequiredNote(TestResultItem item, Errors errors) {
-		if (GenericValidator.isBlankOrNull(item.getNote()) && !GenericValidator.isBlankOrNull(item.getResultId())) {
+    private void validateRequiredNote(TestResultItem item, Errors errors) {
+        if (GenericValidator.isBlankOrNull(item.getNote()) && !GenericValidator.isBlankOrNull(item.getResultId())) {
 
-			if (resultHasChanged(item)) {
-				errors.reject("error.requiredNote.missing");
-			}
+            if (resultHasChanged(item)) {
+                errors.reject("error.requiredNote.missing");
+            }
 
-		}
+        }
 
-	}
+    }
 
-	private boolean resultHasChanged(TestResultItem item) {
+    private boolean resultHasChanged(TestResultItem item) {
 
-		if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())) {
+        if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())) {
 
-			Analysis analysis = analysisService.get(item.getAnalysisId());
-			List<Result> resultList = analysisService.getResults(analysis);
-			ArrayList<String> dictionaryIds = new ArrayList<>(resultList.size());
-			for (Result result : resultList) {
-				dictionaryIds.add(result.getValue());
-			}
-			if (!GenericValidator.isBlankOrNull(item.getMultiSelectResultValues())
-					&& !"{}".equals(item.getMultiSelectResultValues())) {
-				JSONParser parser = new JSONParser();
-				try {
-					int matchCount = 0;
-					JSONObject jsonResult = (JSONObject) parser.parse(item.getMultiSelectResultValues());
-					for (Object key : jsonResult.keySet()) {
-						String[] ids = ((String) jsonResult.get(key)).trim().split(",");
+            Analysis analysis = analysisService.get(item.getAnalysisId());
+            List<Result> resultList = analysisService.getResults(analysis);
+            ArrayList<String> dictionaryIds = new ArrayList<>(resultList.size());
+            for (Result result : resultList) {
+                dictionaryIds.add(result.getValue());
+            }
+            if (!GenericValidator.isBlankOrNull(item.getMultiSelectResultValues())
+                    && !"{}".equals(item.getMultiSelectResultValues())) {
+                JSONParser parser = new JSONParser();
+                try {
+                    int matchCount = 0;
+                    JSONObject jsonResult = (JSONObject) parser.parse(item.getMultiSelectResultValues());
+                    for (Object key : jsonResult.keySet()) {
+                        String[] ids = ((String) jsonResult.get(key)).trim().split(",");
 
-						for (String id : ids) {
-							if (dictionaryIds.contains(id)) {
-								matchCount++;
-							} else {
-								return false;
-							}
-						}
-					}
-					return matchCount != dictionaryIds.size();
-				} catch (ParseException e) {
-					e.printStackTrace();
-					return false;
-				}
-			}
+                        for (String id : ids) {
+                            if (dictionaryIds.contains(id)) {
+                                matchCount++;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                    return matchCount != dictionaryIds.size();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
 
-		} else {
-			Result dbResult = resultService.getResultById(item.getResultId());
-			return !item.getShadowResultValue().equals(dbResult.getValue())
-					&& !GenericValidator.isBlankOrNull(dbResult.getValue());
-		}
+        } else {
+            Result dbResult = resultService.getResultById(item.getResultId());
+            return !item.getShadowResultValue().equals(dbResult.getValue())
+                    && !GenericValidator.isBlankOrNull(dbResult.getValue());
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private void validateTesterSignature(TestResultItem item, Errors errors) {
-		// Conclusions may not need a signature. If the user changed the value
-		// and then changed it back it will be
-		// marked as dirty but the signature may still be blank.
-		if ("0".equals(item.getResultId())) {
-			return;
-		}
+    private void validateTesterSignature(TestResultItem item, Errors errors) {
+        // Conclusions may not need a signature. If the user changed the value
+        // and then changed it back it will be
+        // marked as dirty but the signature may still be blank.
+        if ("0".equals(item.getResultId())) {
+            return;
+        }
 
-		Result result = resultService.getResultById(item.getResultId());
+        Result result = resultService.getResultById(item.getResultId());
 
-		if (result != null && result.getAnalyte() != null
-				&& "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
-			if (result.getValue().equals(item.getShadowResultValue())) {
-				return;
-			}
-		}
+        if (result != null && result.getAnalyte() != null
+                && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
+            if (result.getValue().equals(item.getShadowResultValue())) {
+                return;
+            }
+        }
 
-		if (GenericValidator.isBlankOrNull(item.getTechnician())) {
-			errors.reject("errors.signature.required");
-		}
-	}
+        if (GenericValidator.isBlankOrNull(item.getTechnician())) {
+            errors.reject("errors.signature.required");
+        }
+    }
 
-	private void validateRejection(TestResultItem item, Errors errors) {
-		if (item.isRejected() && "0".equals(item.getRejectReasonId())) {
-			errors.reject("error.reject.noReason");
-		}
-	}
+    private void validateRejection(TestResultItem item, Errors errors) {
+        if (item.isRejected() && "0".equals(item.getRejectReasonId())) {
+            errors.reject("error.reject.noReason");
+        }
+    }
 }

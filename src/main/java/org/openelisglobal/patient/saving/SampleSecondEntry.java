@@ -22,12 +22,11 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.Vali
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.common.action.IActionConstants;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -37,33 +36,33 @@ import org.openelisglobal.common.action.IActionConstants;
 @Scope("prototype")
 public class SampleSecondEntry extends SampleEntry implements ISampleSecondEntry, IActionConstants {
 
-	/**
-	 * @param dynaBean
-	 * @param sysUserId
-	 */
-	public SampleSecondEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
-		this();
-		super.setFieldsFromForm(form);
-		super.setSysUserId(sysUserId);
-		super.setRequest(request);
-	}
+    /**
+     * @param dynaBean
+     * @param sysUserId
+     */
+    public SampleSecondEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-	public SampleSecondEntry() {
-		super();
-		newPatientStatus = null; // no change
-		newSampleStatus = ValidationRegistration;
-	}
+    public SampleSecondEntry() {
+        super();
+        newPatientStatus = null; // no change
+        newSampleStatus = ValidationRegistration;
+    }
 
-	/**
-	 * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
-	 */
-	@Override
-	public boolean canAccession() {
-		return projectFormMapper.isSecondEntry(request) && InitialRegistration == statusSet.getSampleRecordStatus();
-	}
+    /**
+     * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
+     */
+    @Override
+    public boolean canAccession() {
+        return projectFormMapper.isSecondEntry(request) && InitialRegistration == statusSet.getSampleRecordStatus();
+    }
 
-	@Override
-	protected String getActionLabel() {
-		return MessageUtil.getMessage("banner.menu.createSample.Verify");
-	}
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.createSample.Verify");
+    }
 }

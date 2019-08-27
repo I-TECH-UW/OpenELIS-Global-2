@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Controller
-public class EndpointDocController{
+public class EndpointDocController {
 
     private final RequestMappingHandlerMapping handlerMapping;
 
@@ -22,8 +22,7 @@ public class EndpointDocController{
     @RequestMapping(value = "/endpointdoc", method = RequestMethod.GET)
     public void show(Model model) {
 
-        model.addAttribute("handlerMethods",
-                this.handlerMapping.getHandlerMethods());
+        model.addAttribute("handlerMethods", this.handlerMapping.getHandlerMethods());
 
     }
 }

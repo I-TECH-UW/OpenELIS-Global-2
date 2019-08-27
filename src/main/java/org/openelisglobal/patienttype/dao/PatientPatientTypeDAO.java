@@ -12,5 +12,5 @@ public interface PatientPatientTypeDAO extends BaseDAO<PatientPatientType, Strin
 
 //	public PatientType getPatientTypeForPatient(String id);
 
-	public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException;
+    public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException;
 }

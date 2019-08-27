@@ -2,14 +2,14 @@ package org.openelisglobal.barcode.labeltype;
 
 import java.util.ArrayList;
 
-import com.lowagie.text.Font;
-
-import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.barcode.LabelField;
+import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
 import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.spring.util.SpringContext;
+
+import com.lowagie.text.Font;
 
 /**
  * Stores all the values, layout, and acts as a link to the persisted meta data
@@ -21,310 +21,310 @@ import org.openelisglobal.common.log.LogEvent;
  */
 public abstract class Label {
 
-	// for sizing the bar code area
-	static int SMALL_BARCODE = 3; // just over half of the width
-	static int MED_BARCODE = 4; // just over 3/4 the width
-	static int LARGE_BARCODE = 5; // entire width
+    // for sizing the bar code area
+    static int SMALL_BARCODE = 3; // just over half of the width
+    static int MED_BARCODE = 4; // just over 3/4 the width
+    static int LARGE_BARCODE = 5; // entire width
 
-	// default fonts
-	private Font valueFont = new Font(Font.HELVETICA, 9, Font.NORMAL);
-	private Font nameFont = new Font(Font.HELVETICA, 9, Font.BOLD);
+    // default fonts
+    private Font valueFont = new Font(Font.HELVETICA, 9, Font.NORMAL);
+    private Font nameFont = new Font(Font.HELVETICA, 9, Font.BOLD);
 
-	// default dimension (height width are used only as a ratio)
-	// pdfWidth and pdfHeight used for actual pdfScaling
-	protected float height = 1;
-	protected float width = 3;
-	private int margin = 5;
-	public float pdfHeight = 350;
-	public float pdfWidth;
+    // default dimension (height width are used only as a ratio)
+    // pdfWidth and pdfHeight used for actual pdfScaling
+    protected float height = 1;
+    protected float width = 3;
+    private int margin = 5;
+    public float pdfHeight = 350;
+    public float pdfWidth;
 
-	// default bar code size
-	private int barcodeSpace = MED_BARCODE;
+    // default bar code size
+    private int barcodeSpace = MED_BARCODE;
 
-	// default number of copies to print
-	private int numLabels = 1;
+    // default number of copies to print
+    private int numLabels = 1;
 
-	// holders for values in bar code
-	protected ArrayList<LabelField> aboveFields;
-	protected ArrayList<LabelField> belowFields;
-	private String code;
+    // holders for values in bar code
+    protected ArrayList<LabelField> aboveFields;
+    protected ArrayList<LabelField> belowFields;
+    private String code;
 
-	// information stored in/for database
-	public BarcodeLabelInfo labelInfo;
-	private String sysUserId; // for log tracking
-	boolean newInfo; // for deciding if insert or update
+    // information stored in/for database
+    public BarcodeLabelInfo labelInfo;
+    private String sysUserId; // for log tracking
+    boolean newInfo; // for deciding if insert or update
 
-	BarcodeLabelInfoService barcodeLabelService = SpringContext.getBean(BarcodeLabelInfoService.class);
+    BarcodeLabelInfoService barcodeLabelService = SpringContext.getBean(BarcodeLabelInfoService.class);
 
-	/**
-	 * Gets how many rows will be above the bar code
-	 *
-	 * @return The number of rows
-	 */
-	public abstract int getNumTextRowsBefore();
+    /**
+     * Gets how many rows will be above the bar code
+     *
+     * @return The number of rows
+     */
+    public abstract int getNumTextRowsBefore();
 
-	/**
-	 * Gets how many rows will be after the bar code
-	 *
-	 * @return The number of rows
-	 */
-	public abstract int getNumTextRowsAfter();
+    /**
+     * Gets how many rows will be after the bar code
+     *
+     * @return The number of rows
+     */
+    public abstract int getNumTextRowsAfter();
 
-	/**
-	 * Gets the max number of labels that can be printed for the label type
-	 *
-	 * @return The max number of labels
-	 */
-	public abstract int getMaxNumLabels();
+    /**
+     * Gets the max number of labels that can be printed for the label type
+     *
+     * @return The max number of labels
+     */
+    public abstract int getMaxNumLabels();
 
-	/**
-	 * Get the number of columns bar code takes up
-	 *
-	 * @return The number of columns bar code will fill
-	 */
-	public int getScaledBarcodeSpace() {
-		return barcodeSpace * 2;
-	}
+    /**
+     * Get the number of columns bar code takes up
+     *
+     * @return The number of columns bar code will fill
+     */
+    public int getScaledBarcodeSpace() {
+        return barcodeSpace * 2;
+    }
 
-	/**
-	 * Get font for label field values
-	 *
-	 * @return Font for label field values
-	 */
-	public Font getValueFont() {
-		return valueFont;
-	}
+    /**
+     * Get font for label field values
+     *
+     * @return Font for label field values
+     */
+    public Font getValueFont() {
+        return valueFont;
+    }
 
-	/**
-	 * Set font for label field values
-	 *
-	 * @param valueFont Font to use for field values
-	 */
-	public void setValueFont(Font valueFont) {
-		this.valueFont = valueFont;
-	}
+    /**
+     * Set font for label field values
+     *
+     * @param valueFont Font to use for field values
+     */
+    public void setValueFont(Font valueFont) {
+        this.valueFont = valueFont;
+    }
 
-	/**
-	 * Get font for label field names
-	 *
-	 * @return font Font to use for field values
-	 */
-	public Font getNameFont() {
-		return nameFont;
-	}
+    /**
+     * Get font for label field names
+     *
+     * @return font Font to use for field values
+     */
+    public Font getNameFont() {
+        return nameFont;
+    }
 
-	/**
-	 * Set font for label field names
-	 *
-	 * @param nameFont Font to use for name values
-	 */
-	public void setNameFont(Font nameFont) {
-		this.nameFont = nameFont;
-	}
+    /**
+     * Set font for label field names
+     *
+     * @param nameFont Font to use for name values
+     */
+    public void setNameFont(Font nameFont) {
+        this.nameFont = nameFont;
+    }
 
-	public float getHeight() {
-		return height;
-	}
+    public float getHeight() {
+        return height;
+    }
 
-	public void setHeight(float height) {
-		this.height = height;
-	}
+    public void setHeight(float height) {
+        this.height = height;
+    }
 
-	public float getWidth() {
-		return width;
-	}
+    public float getWidth() {
+        return width;
+    }
 
-	public void setWidth(float width) {
-		this.width = width;
-	}
+    public void setWidth(float width) {
+        this.width = width;
+    }
 
-	public int getMargin() {
-		return margin;
-	}
+    public int getMargin() {
+        return margin;
+    }
 
-	public void setMargin(int margin) {
-		this.margin = margin;
-	}
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
 
-	/**
-	 * Get the unscaled bar code space (3-5)
-	 *
-	 * @return The space the bar code uses (half the number of columns)
-	 */
-	public int getBarcodeSpace() {
-		return barcodeSpace;
-	}
+    /**
+     * Get the unscaled bar code space (3-5)
+     *
+     * @return The space the bar code uses (half the number of columns)
+     */
+    public int getBarcodeSpace() {
+        return barcodeSpace;
+    }
 
-	/**
-	 * Set unscaled bar code space (3-5)
-	 *
-	 * @param barcodeSpace The space the bar code uses (half the number of columns)
-	 */
-	public void setBarcodeSpace(int barcodeSpace) {
-		if (SMALL_BARCODE <= barcodeSpace && barcodeSpace <= LARGE_BARCODE) {
-			this.barcodeSpace = barcodeSpace;
-		}
-	}
+    /**
+     * Set unscaled bar code space (3-5)
+     *
+     * @param barcodeSpace The space the bar code uses (half the number of columns)
+     */
+    public void setBarcodeSpace(int barcodeSpace) {
+        if (SMALL_BARCODE <= barcodeSpace && barcodeSpace <= LARGE_BARCODE) {
+            this.barcodeSpace = barcodeSpace;
+        }
+    }
 
-	/**
-	 * Get fields that are above the bar code
-	 *
-	 * @return List of the fields above the bar code
-	 */
-	public Iterable<LabelField> getAboveFields() {
-		return aboveFields;
-	}
+    /**
+     * Get fields that are above the bar code
+     *
+     * @return List of the fields above the bar code
+     */
+    public Iterable<LabelField> getAboveFields() {
+        return aboveFields;
+    }
 
-	/**
-	 * Set fields above the bar code
-	 *
-	 * @param aboveFields List of the fields above the bar code
-	 */
-	public void setAboveFields(ArrayList<LabelField> aboveFields) {
-		this.aboveFields = aboveFields;
-	}
+    /**
+     * Set fields above the bar code
+     *
+     * @param aboveFields List of the fields above the bar code
+     */
+    public void setAboveFields(ArrayList<LabelField> aboveFields) {
+        this.aboveFields = aboveFields;
+    }
 
-	/**
-	 * Get fields that are blow the bar code
-	 *
-	 * @return List of the fields below the bar code
-	 */
-	public Iterable<LabelField> getBelowFields() {
-		return belowFields;
-	}
+    /**
+     * Get fields that are blow the bar code
+     *
+     * @return List of the fields below the bar code
+     */
+    public Iterable<LabelField> getBelowFields() {
+        return belowFields;
+    }
 
-	/**
-	 * Set fields below the bar code
-	 *
-	 * @param belowFields List of the fields below the bar code
-	 */
-	public void setBelowFields(ArrayList<LabelField> belowFields) {
-		this.belowFields = belowFields;
-	}
+    /**
+     * Set fields below the bar code
+     *
+     * @param belowFields List of the fields below the bar code
+     */
+    public void setBelowFields(ArrayList<LabelField> belowFields) {
+        this.belowFields = belowFields;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	/**
-	 * Get number of labels to attempt to print
-	 *
-	 * @return number of labels to attempt to print
-	 */
-	public int getNumLabels() {
-		return numLabels;
-	}
+    /**
+     * Get number of labels to attempt to print
+     *
+     * @return number of labels to attempt to print
+     */
+    public int getNumLabels() {
+        return numLabels;
+    }
 
-	/**
-	 * Set number of labels to attempt to print
-	 *
-	 * @param numLabels to attempt to print
-	 */
-	public void setNumLabels(int numLabels) {
-		if (numLabels > 0) {
-			this.numLabels = numLabels;
-		}
-	}
+    /**
+     * Set number of labels to attempt to print
+     *
+     * @param numLabels to attempt to print
+     */
+    public void setNumLabels(int numLabels) {
+        if (numLabels > 0) {
+            this.numLabels = numLabels;
+        }
+    }
 
-	public String getSysUserId() {
-		return sysUserId;
-	}
+    public String getSysUserId() {
+        return sysUserId;
+    }
 
-	public void setSysUserId(String sysUserId) {
-		this.sysUserId = sysUserId;
-	}
+    public void setSysUserId(String sysUserId) {
+        this.sysUserId = sysUserId;
+    }
 
-	/**
-	 * Get the number of rows a list of fields will take up This is used to shrink
-	 * the bar code vertical space inversely to the number of rows
-	 *
-	 * @param fields List of LabelFields to check how many rows they take up
-	 * @return the number of rows to the fields take up
-	 */
-	protected int getNumRows(Iterable<LabelField> fields) {
-		int numRows = 0;
-		int curColumns = 0;
-		boolean completeRow = true;
-		for (LabelField field : fields) {
-			// add to num row if start on newline
-			if (field.isStartNewline() && !completeRow) {
-				++numRows;
-				curColumns = 0;
-			}
-			curColumns += field.getColspan();
-			if (curColumns > 10) {
-				// throw error
-				// row is completed, add to num row
-			} else if (curColumns == 10) {
-				completeRow = true;
-				curColumns = 0;
-				++numRows;
-			} else {
-				completeRow = false;
-			}
-		}
-		// add to num row if last row was incomplete
-		if (!completeRow) {
-			++numRows;
-		}
+    /**
+     * Get the number of rows a list of fields will take up This is used to shrink
+     * the bar code vertical space inversely to the number of rows
+     *
+     * @param fields List of LabelFields to check how many rows they take up
+     * @return the number of rows to the fields take up
+     */
+    protected int getNumRows(Iterable<LabelField> fields) {
+        int numRows = 0;
+        int curColumns = 0;
+        boolean completeRow = true;
+        for (LabelField field : fields) {
+            // add to num row if start on newline
+            if (field.isStartNewline() && !completeRow) {
+                ++numRows;
+                curColumns = 0;
+            }
+            curColumns += field.getColspan();
+            if (curColumns > 10) {
+                // throw error
+                // row is completed, add to num row
+            } else if (curColumns == 10) {
+                completeRow = true;
+                curColumns = 0;
+                ++numRows;
+            } else {
+                completeRow = false;
+            }
+        }
+        // add to num row if last row was incomplete
+        if (!completeRow) {
+            ++numRows;
+        }
 
-		return numRows;
-	}
+        return numRows;
+    }
 
-	/**
-	 * Check if the bar code is printable at least once (has not reached the maximum
-	 * printed)
-	 *
-	 * @return If the bar code can still be printed
-	 */
-	public boolean checkIfPrintable() {
-		boolean printable = true;
-		if (labelInfo.getNumPrinted() >= getMaxNumLabels()) {
-			printable = false;
-		}
+    /**
+     * Check if the bar code is printable at least once (has not reached the maximum
+     * printed)
+     *
+     * @return If the bar code can still be printed
+     */
+    public boolean checkIfPrintable() {
+        boolean printable = true;
+        if (labelInfo.getNumPrinted() >= getMaxNumLabels()) {
+            printable = false;
+        }
 
-		return printable;
-	}
+        return printable;
+    }
 
-	/**
-	 * Link the meta data stored in the database to the label if it exists
-	 * Otherwise, create new meta data for the label
-	 */
-	public void linkBarcodeLabelInfo() {
-		// ensure transaction block
-		try {
-			labelInfo = barcodeLabelService.getDataByCode(code);
-			newInfo = false;
-			if (labelInfo == null) {
-				newInfo = true;
-				labelInfo = new BarcodeLabelInfo(code);
-			}
-		} catch (LIMSRuntimeException lre) {
-			LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
-		}
-	}
+    /**
+     * Link the meta data stored in the database to the label if it exists
+     * Otherwise, create new meta data for the label
+     */
+    public void linkBarcodeLabelInfo() {
+        // ensure transaction block
+        try {
+            labelInfo = barcodeLabelService.getDataByCode(code);
+            newInfo = false;
+            if (labelInfo == null) {
+                newInfo = true;
+                labelInfo = new BarcodeLabelInfo(code);
+            }
+        } catch (LIMSRuntimeException lre) {
+            LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
+        }
+    }
 
-	/**
-	 * Add 1 to the numPrinted value stored in the database
-	 */
-	public void incrementNumPrinted() {
-		labelInfo.incrementNumPrinted();
-		labelInfo.setSysUserId(sysUserId);
-		// ensure transaction block
-		try {
-			if (newInfo) {
-				barcodeLabelService.insert(labelInfo);
-				newInfo = false;
-			} else {
-				barcodeLabelService.update(labelInfo);
-			}
-		} catch (LIMSRuntimeException lre) {
-			LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
-		}
-	}
+    /**
+     * Add 1 to the numPrinted value stored in the database
+     */
+    public void incrementNumPrinted() {
+        labelInfo.incrementNumPrinted();
+        labelInfo.setSysUserId(sysUserId);
+        // ensure transaction block
+        try {
+            if (newInfo) {
+                barcodeLabelService.insert(labelInfo);
+                newInfo = false;
+            } else {
+                barcodeLabelService.update(labelInfo);
+            }
+        } catch (LIMSRuntimeException lre) {
+            LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
+        }
+    }
 
 }

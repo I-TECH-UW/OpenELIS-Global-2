@@ -24,13 +24,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -40,39 +39,39 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 @Scope("prototype")
 public class PatientSecondEntry extends PatientEntry implements IPatientSecondEntry, IActionConstants {
 
-	/**
-	 * @param form
-	 * @param sysUserId
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws LIMSRuntimeException
-	 */
-	public PatientSecondEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-			throws Exception {
-		this();
-		super.setFieldsFromForm(form);
-		super.setSysUserId(sysUserId);
-		super.setRequest(request);
-	}
+    /**
+     * @param form
+     * @param sysUserId
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws LIMSRuntimeException
+     */
+    public PatientSecondEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+            throws Exception {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-	public PatientSecondEntry() {
-		super();
-		newPatientStatus = ValidationRegistration;
-		newSampleStatus = null;
-	}
+    public PatientSecondEntry() {
+        super();
+        newPatientStatus = ValidationRegistration;
+        newSampleStatus = null;
+    }
 
-	/**
-	 * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
-	 */
-	@Override
-	public boolean canAccession() {
-		return projectFormMapper.isSecondEntry(request) && InitialRegistration == statusSet.getPatientRecordStatus();
-	}
+    /**
+     * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
+     */
+    @Override
+    public boolean canAccession() {
+        return projectFormMapper.isSecondEntry(request) && InitialRegistration == statusSet.getPatientRecordStatus();
+    }
 
-	@Override
-	protected String getActionLabel() {
-		return MessageUtil.getMessage("banner.menu.createPatient.Verify");
-	}
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.createPatient.Verify");
+    }
 
 }

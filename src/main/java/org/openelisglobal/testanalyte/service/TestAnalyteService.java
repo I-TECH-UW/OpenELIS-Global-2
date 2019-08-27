@@ -7,19 +7,19 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 
 public interface TestAnalyteService extends BaseObjectService<TestAnalyte, String> {
-	TestAnalyte getData(TestAnalyte testAnalyte);
+    TestAnalyte getData(TestAnalyte testAnalyte);
 
-	List getAllTestAnalytes();
+    List getAllTestAnalytes();
 
-	List getPageOfTestAnalytes(int startingRecNo);
+    List getPageOfTestAnalytes(int startingRecNo);
 
-	List getNextTestAnalyteRecord(String id);
+    List getNextTestAnalyteRecord(String id);
 
-	List getPreviousTestAnalyteRecord(String id);
+    List getPreviousTestAnalyteRecord(String id);
 
-	TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte);
+    TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte);
 
-	List getAllTestAnalytesPerTest(Test test);
+    List getAllTestAnalytesPerTest(Test test);
 
-	List getTestAnalytes(String filter);
+    List getTestAnalytes(String filter);
 }

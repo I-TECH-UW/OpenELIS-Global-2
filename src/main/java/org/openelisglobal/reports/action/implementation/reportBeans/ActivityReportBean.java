@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 
 /**
  */
-public class ActivityReportBean{
+public class ActivityReportBean {
 
     private String accessionNumber;
     private String receivedDate;
@@ -33,84 +33,83 @@ public class ActivityReportBean{
     private String nonPrintingPatient;
     private Timestamp activityTime;
 
-
-    public String getAccessionNumber(){
+    public String getAccessionNumber() {
         return accessionNumber;
     }
 
-    public void setAccessionNumber( String accessionNumber ){
+    public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
     }
 
-    public String getReceivedDate(){
+    public String getReceivedDate() {
         return receivedDate;
     }
 
-    public void setReceivedDate( String receivedDate ){
+    public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
     }
 
-    public String getCollectionDate(){
+    public String getCollectionDate() {
         return collectionDate;
     }
 
-    public void setCollectionDate( String collectionDate ){
+    public void setCollectionDate(String collectionDate) {
         this.collectionDate = collectionDate;
     }
 
-    public String getResultDate(){
+    public String getResultDate() {
         return resultDate;
     }
 
-    public void setResultDate( String resultDate ){
+    public void setResultDate(String resultDate) {
         this.resultDate = resultDate;
     }
 
-    public String getPatientOrTestName(){
+    public String getPatientOrTestName() {
         return patientOrTestName;
     }
 
-    public void setPatientOrTestName( String patientOrTestName ){
+    public void setPatientOrTestName(String patientOrTestName) {
         this.patientOrTestName = patientOrTestName;
     }
 
-    public String getTechnician(){
+    public String getTechnician() {
         return technician;
     }
 
-    public void setTechnician( String technician ){
+    public void setTechnician(String technician) {
         this.technician = technician;
     }
 
-    public String getResultValue(){
+    public String getResultValue() {
         return resultValue;
     }
 
-    public void setResultValue( String resultValue ){
+    public void setResultValue(String resultValue) {
         this.resultValue = resultValue;
     }
 
-    public String getResultStatus(){
+    public String getResultStatus() {
         return resultStatus;
     }
 
-    public void setResultStatus( String resultStatus ){
+    public void setResultStatus(String resultStatus) {
         this.resultStatus = resultStatus;
     }
 
-    public String getNonPrintingPatient(){
+    public String getNonPrintingPatient() {
         return nonPrintingPatient;
     }
 
-    public void setNonPrintingPatient( String nonPrintingPatient ){
+    public void setNonPrintingPatient(String nonPrintingPatient) {
         this.nonPrintingPatient = nonPrintingPatient;
     }
 
-    public Timestamp getActivityTime(){
+    public Timestamp getActivityTime() {
         return activityTime;
     }
 
-    public void setActivityTime( Timestamp activityTime ){
+    public void setActivityTime(Timestamp activityTime) {
         this.activityTime = activityTime;
     }
 }

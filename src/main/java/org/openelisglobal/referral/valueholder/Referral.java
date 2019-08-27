@@ -26,98 +26,118 @@ import org.openelisglobal.organization.valueholder.Organization;
 
 public class Referral extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
-	private String id;
-	@SuppressWarnings("unused")
-	private String analysisId;
-	@SuppressWarnings("unused")
-	private String organizationId;
-	private String organizationName;
-	private Timestamp requestDate;
-	private Timestamp sendReadyDate;
-	private Timestamp sentDate;
-	private Timestamp resultRecievedDate;
-	private String referralReasonId;
-	private String referralTypeId;
-	private String requesterName;
-	private boolean canceled;
+    private static final long serialVersionUID = 1L;
+    private String id;
+    @SuppressWarnings("unused")
+    private String analysisId;
+    @SuppressWarnings("unused")
+    private String organizationId;
+    private String organizationName;
+    private Timestamp requestDate;
+    private Timestamp sendReadyDate;
+    private Timestamp sentDate;
+    private Timestamp resultRecievedDate;
+    private String referralReasonId;
+    private String referralTypeId;
+    private String requesterName;
+    private boolean canceled;
 
-	private ValueHolderInterface analysis = new ValueHolder();
-	private ValueHolderInterface organization = new ValueHolder();
+    private ValueHolderInterface analysis = new ValueHolder();
+    private ValueHolderInterface organization = new ValueHolder();
 
+    public String getId() {
+        return id;
+    }
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getOrganizationName() {
-		return organizationName;
-	}
-	public void setOrganizationName(String organizationName) {
-		this.organizationName = organizationName;
-	}
-	public Timestamp getSendReadyDate() {
-		return sendReadyDate;
-	}
-	public void setSendReadyDate(Timestamp sendReadyDate) {
-		this.sendReadyDate = sendReadyDate;
-	}
-	public Timestamp getSentDate() {
-		return sentDate;
-	}
-	public void setSentDate(Timestamp sentDate) {
-		this.sentDate = sentDate;
-	}
-	public Timestamp getResultRecievedDate() {
-		return resultRecievedDate;
-	}
-	public void setResultRecievedDate(Timestamp resultRecievedDate) {
-		this.resultRecievedDate = resultRecievedDate;
-	}
-	public String getReferralTypeId() {
-		return referralTypeId;
-	}
-	public void setReferralTypeId(String referralTypeId) {
-		this.referralTypeId = referralTypeId;
-	}
-	public String getRequesterName() {
-		return requesterName;
-	}
-	public void setRequesterName(String requesterName) {
-		this.requesterName = requesterName;
-	}
-	public Analysis getAnalysis() {
-		return (Analysis)analysis.getValue();
-	}
-	public void setAnalysis(Analysis analysis) {
-		this.analysis.setValue(analysis);
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public Organization getOrganization() {
-		return (Organization)organization.getValue();
-	}
-	public void setOrganization(Organization organization) {
-		this.organization.setValue(organization);
-	}
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
-	}
-	public boolean isCanceled() {
-		return canceled;
-	}
-	public void setRequestDate(Timestamp requestDate) {
-		this.requestDate = requestDate;
-	}
-	public Timestamp getRequestDate() {
-		return requestDate;
-	}
-	public void setReferralReasonId(String referralReasonId) {
-		this.referralReasonId = referralReasonId;
-	}
-	public String getReferralReasonId() {
-		return referralReasonId;
-	}
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public Timestamp getSendReadyDate() {
+        return sendReadyDate;
+    }
+
+    public void setSendReadyDate(Timestamp sendReadyDate) {
+        this.sendReadyDate = sendReadyDate;
+    }
+
+    public Timestamp getSentDate() {
+        return sentDate;
+    }
+
+    public void setSentDate(Timestamp sentDate) {
+        this.sentDate = sentDate;
+    }
+
+    public Timestamp getResultRecievedDate() {
+        return resultRecievedDate;
+    }
+
+    public void setResultRecievedDate(Timestamp resultRecievedDate) {
+        this.resultRecievedDate = resultRecievedDate;
+    }
+
+    public String getReferralTypeId() {
+        return referralTypeId;
+    }
+
+    public void setReferralTypeId(String referralTypeId) {
+        this.referralTypeId = referralTypeId;
+    }
+
+    public String getRequesterName() {
+        return requesterName;
+    }
+
+    public void setRequesterName(String requesterName) {
+        this.requesterName = requesterName;
+    }
+
+    public Analysis getAnalysis() {
+        return (Analysis) analysis.getValue();
+    }
+
+    public void setAnalysis(Analysis analysis) {
+        this.analysis.setValue(analysis);
+    }
+
+    public Organization getOrganization() {
+        return (Organization) organization.getValue();
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization.setValue(organization);
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public void setRequestDate(Timestamp requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public Timestamp getRequestDate() {
+        return requestDate;
+    }
+
+    public void setReferralReasonId(String referralReasonId) {
+        this.referralReasonId = referralReasonId;
+    }
+
+    public String getReferralReasonId() {
+        return referralReasonId;
+    }
 }

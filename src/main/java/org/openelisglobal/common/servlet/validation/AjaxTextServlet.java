@@ -21,44 +21,44 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.validation.BaseValidationProvider;
 import org.openelisglobal.common.provider.validation.ValidationProviderFactory;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.security.SecureXmlHttpServletRequest;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxTextServlet extends AjaxServlet {
 
-	@Override
-	public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-		if (!StringUtil.isNullorNill(field) && !StringUtil.isNullorNill(message)) {
-			response.setContentType("text/plain");
-			response.setHeader("Cache-Control", "no-cache");
-			response.getWriter().write(message);
-		} else {
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    @Override
+    public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        if (!StringUtil.isNullorNill(field) && !StringUtil.isNullorNill(message)) {
+            response.setContentType("text/plain");
+            response.setHeader("Cache-Control", "no-cache");
+            response.getWriter().write(message);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		// check for authentication
-		UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-		if (userModuleService.isSessionExpired(request)) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-			return;
-		}
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        // check for authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        if (userModuleService.isSessionExpired(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
 
-		String valProvider = request.getParameter("provider");
-		BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
-		provider.setServlet(this);
-		provider.processRequest(new SecureXmlHttpServletRequest(request), response);
-	}
+        String valProvider = request.getParameter("provider");
+        BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
+        provider.setServlet(this);
+        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+    }
 
 }

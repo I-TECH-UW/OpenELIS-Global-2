@@ -21,192 +21,192 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.sample.service.SampleService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class BaseSiteYearAccessionValidator {
-	
-	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-	protected static final String INCREMENT_STARTING_VALUE = "000001";
-	protected static final int UPPER_INC_RANGE = 999999;
-	protected static final int SITE_START = 0;
-	protected int SITE_END = getSiteEndIndex();
-	protected int YEAR_START = getYearStartIndex();
-	protected int YEAR_END = getYearEndIndex();
-	protected int INCREMENT_START = getIncrementStartIndex();
-	protected int INCREMENT_END = getMaxAccessionLength();
-	protected int LENGTH = getMaxAccessionLength();
-	protected static final boolean NEED_PROGRAM_CODE = false;
-	private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-	public boolean needProgramCode() {
-		return NEED_PROGRAM_CODE;
-	}
+    protected static final String INCREMENT_STARTING_VALUE = "000001";
+    protected static final int UPPER_INC_RANGE = 999999;
+    protected static final int SITE_START = 0;
+    protected int SITE_END = getSiteEndIndex();
+    protected int YEAR_START = getYearStartIndex();
+    protected int YEAR_END = getYearEndIndex();
+    protected int INCREMENT_START = getIncrementStartIndex();
+    protected int INCREMENT_END = getMaxAccessionLength();
+    protected int LENGTH = getMaxAccessionLength();
+    protected static final boolean NEED_PROGRAM_CODE = false;
+    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
-	// input parameter is not used in this case
-	public String createFirstAccessionNumber(String nullPrefix) {
-		return getPrefix() + DateUtil.getTwoDigitYear() + INCREMENT_STARTING_VALUE;
-	}
+    public boolean needProgramCode() {
+        return NEED_PROGRAM_CODE;
+    }
 
-	public String getInvalidMessage(ValidationResults results) {
-		String suggestedAccessionNumber = getNextAvailableAccessionNumber(null);
+    // input parameter is not used in this case
+    public String createFirstAccessionNumber(String nullPrefix) {
+        return getPrefix() + DateUtil.getTwoDigitYear() + INCREMENT_STARTING_VALUE;
+    }
 
-		return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
-				+ suggestedAccessionNumber;
+    public String getInvalidMessage(ValidationResults results) {
+        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null);
 
-	}
+        return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
+                + suggestedAccessionNumber;
 
-	// input parameter is not used in this case
-	public String getNextAvailableAccessionNumber(String nullPrefix) {
+    }
 
-		String nextAccessionNumber;
+    // input parameter is not used in this case
+    public String getNextAvailableAccessionNumber(String nullPrefix) {
 
-		String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(
-				ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
-				getMaxAccessionLength());
+        String nextAccessionNumber;
 
-		if (curLargestAccessionNumber == null) {
-			if (REQUESTED_NUMBERS.isEmpty()) {
-				nextAccessionNumber = createFirstAccessionNumber(null);
-			} else {
-				nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
-			}
-		} else {
-			nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
-		}
+        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(
+                ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
+                getMaxAccessionLength());
 
-		while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
-			nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
-		}
+        if (curLargestAccessionNumber == null) {
+            if (REQUESTED_NUMBERS.isEmpty()) {
+                nextAccessionNumber = createFirstAccessionNumber(null);
+            } else {
+                nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
+            }
+        } else {
+            nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
+        }
 
-		REQUESTED_NUMBERS.add(nextAccessionNumber);
+        while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
+            nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
+        }
 
-		return nextAccessionNumber;
-	}
+        REQUESTED_NUMBERS.add(nextAccessionNumber);
 
-	public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {
-		// if the year differs then start the sequence again. If not then
-		// increment but check for overflow into year
-		int year = new GregorianCalendar().get(Calendar.YEAR) - 2000;
+        return nextAccessionNumber;
+    }
 
-		try {
-			if (year != Integer.parseInt(currentHighAccessionNumber.substring(YEAR_START, YEAR_END))) {
-				return createFirstAccessionNumber(null);
-			}
-		} catch (NumberFormatException nfe) {
-			return createFirstAccessionNumber(null);
-		}
+    public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {
+        // if the year differs then start the sequence again. If not then
+        // increment but check for overflow into year
+        int year = new GregorianCalendar().get(Calendar.YEAR) - 2000;
 
-		int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
-		String incrementAsString;
+        try {
+            if (year != Integer.parseInt(currentHighAccessionNumber.substring(YEAR_START, YEAR_END))) {
+                return createFirstAccessionNumber(null);
+            }
+        } catch (NumberFormatException nfe) {
+            return createFirstAccessionNumber(null);
+        }
 
-		if (increment < UPPER_INC_RANGE) {
-			increment++;
-			incrementAsString = String.format("%06d", increment);
-		} else {
-			throw new IllegalArgumentException("AccessionNumber has no next value");
-		}
+        int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
+        String incrementAsString;
 
-		return currentHighAccessionNumber.substring(SITE_START, YEAR_END) + incrementAsString;
-	}
+        if (increment < UPPER_INC_RANGE) {
+            increment++;
+            incrementAsString = String.format("%06d", increment);
+        } else {
+            throw new IllegalArgumentException("AccessionNumber has no next value");
+        }
 
-	// recordType parameter is not used in this case
-	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
+        return currentHighAccessionNumber.substring(SITE_START, YEAR_END) + incrementAsString;
+    }
 
-		return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
-	}
+    // recordType parameter is not used in this case
+    public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
 
-	public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
-			String projectFormName) {
+        return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
+    }
 
-		ValidationResults results = validFormat(accessionNumber, true);
-		// TODO refactor accessionNumberIsUsed into two methods so the null isn't
-		// needed. (Its only used for program accession number)
-		if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
-			results = ValidationResults.USED_FAIL;
-		}
+    public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
+            String projectFormName) {
 
-		return results;
-	}
+        ValidationResults results = validFormat(accessionNumber, true);
+        // TODO refactor accessionNumberIsUsed into two methods so the null isn't
+        // needed. (Its only used for program accession number)
+        if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
+            results = ValidationResults.USED_FAIL;
+        }
 
-	public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
-		if (accessionNumber.length() != LENGTH) {
-			return ValidationResults.LENGTH_FAIL;
-		}
+        return results;
+    }
 
-		if (!accessionNumber.substring(SITE_START, SITE_END).equals(getPrefix())) {
-			return ValidationResults.SITE_FAIL;
-		}
+    public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
+        if (accessionNumber.length() != LENGTH) {
+            return ValidationResults.LENGTH_FAIL;
+        }
 
-		if (checkDate) {
-			int year = new GregorianCalendar().get(Calendar.YEAR);
-			try {
-				if ((year - 2000) != Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END))) {
-					return ValidationResults.YEAR_FAIL;
-				}
-			} catch (NumberFormatException nfe) {
-				return ValidationResults.YEAR_FAIL;
-			}
-		} else {
-			try { // quick and dirty to make sure they are digits
-				Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END));
-			} catch (NumberFormatException nfe) {
-				return ValidationResults.YEAR_FAIL;
-			}
-		}
+        if (!accessionNumber.substring(SITE_START, SITE_END).equals(getPrefix())) {
+            return ValidationResults.SITE_FAIL;
+        }
 
-		try {
-			Integer.parseInt(accessionNumber.substring(INCREMENT_START));
-		} catch (NumberFormatException e) {
-			return ValidationResults.FORMAT_FAIL;
-		}
+        if (checkDate) {
+            int year = new GregorianCalendar().get(Calendar.YEAR);
+            try {
+                if ((year - 2000) != Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END))) {
+                    return ValidationResults.YEAR_FAIL;
+                }
+            } catch (NumberFormatException nfe) {
+                return ValidationResults.YEAR_FAIL;
+            }
+        } else {
+            try { // quick and dirty to make sure they are digits
+                Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END));
+            } catch (NumberFormatException nfe) {
+                return ValidationResults.YEAR_FAIL;
+            }
+        }
 
-		return ValidationResults.SUCCESS;
-	}
+        try {
+            Integer.parseInt(accessionNumber.substring(INCREMENT_START));
+        } catch (NumberFormatException e) {
+            return ValidationResults.FORMAT_FAIL;
+        }
 
-	public String getInvalidFormatMessage(ValidationResults results) {
-		return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
-				new String[] { getFormatPattern(), getFormatExample() });
-	}
+        return ValidationResults.SUCCESS;
+    }
 
-	private String getFormatPattern() {
-		StringBuilder format = new StringBuilder(getPrefix());
-		format.append(MessageUtil.getMessage("date.two.digit.year"));
-		for (int i = 0; i < getChangeableLength(); i++) {
-			format.append("#");
-		}
-		return format.toString();
-	}
+    public String getInvalidFormatMessage(ValidationResults results) {
+        return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
+                new String[] { getFormatPattern(), getFormatExample() });
+    }
 
-	private String getFormatExample() {
-		StringBuilder format = new StringBuilder(getPrefix());
-		format.append(DateUtil.getTwoDigitYear());
-		for (int i = 0; i < getChangeableLength() - 1; i++) {
-			format.append("0");
-		}
+    private String getFormatPattern() {
+        StringBuilder format = new StringBuilder(getPrefix());
+        format.append(MessageUtil.getMessage("date.two.digit.year"));
+        for (int i = 0; i < getChangeableLength(); i++) {
+            format.append("#");
+        }
+        return format.toString();
+    }
 
-		format.append("1");
+    private String getFormatExample() {
+        StringBuilder format = new StringBuilder(getPrefix());
+        format.append(DateUtil.getTwoDigitYear());
+        for (int i = 0; i < getChangeableLength() - 1; i++) {
+            format.append("0");
+        }
 
-		return format.toString();
-	}
+        format.append("1");
 
-	protected abstract String getPrefix();
+        return format.toString();
+    }
 
-	protected abstract int getIncrementStartIndex();
+    protected abstract String getPrefix();
 
-	protected abstract int getYearEndIndex();
+    protected abstract int getIncrementStartIndex();
 
-	protected abstract int getYearStartIndex();
+    protected abstract int getYearEndIndex();
 
-	protected abstract int getSiteEndIndex();
+    protected abstract int getYearStartIndex();
 
-	protected abstract int getMaxAccessionLength();
+    protected abstract int getSiteEndIndex();
 
-	protected abstract int getChangeableLength();
+    protected abstract int getMaxAccessionLength();
+
+    protected abstract int getChangeableLength();
 }

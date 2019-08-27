@@ -22,60 +22,59 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.citystatezip.service.CityStateZipService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.citystatezip.valueholder.CityStateZip;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
- * @author benzd1
- * bugzilla 1765 changed to validate zipcode only (combination of city/zip is validated elsewhere)
+ * @author benzd1 bugzilla 1765 changed to validate zipcode only (combination of
+ *         city/zip is validated elsewhere)
  */
 public class ZipValidationProvider extends BaseValidationProvider {
-	
-	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public ZipValidationProvider() {
-		super();
-	}
+    protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public ZipValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public ZipValidationProvider() {
+        super();
+    }
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    public ZipValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-		// get id from request
-		String zip = (String) request.getParameter("id");
-		String formField = (String) request.getParameter("field");
-		String result = validate(zip);
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get id from request
+        String zip = (String) request.getParameter("id");
+        String formField = (String) request.getParameter("field");
+        String result = validate(zip);
+        ajaxServlet.sendData(formField, result, request, response);
+    }
 
 //bugzilla 1367 efficiency fix (and bug fix)
-	public String validate(String zip)
-			throws LIMSRuntimeException {
+    public String validate(String zip) throws LIMSRuntimeException {
 
-		StringBuffer s = new StringBuffer();
+        StringBuffer s = new StringBuffer();
 
-		if (!StringUtil.isNullorNill(zip)) {
-		    //bugzilla 1545
-			CityStateZip cityStateZip = new CityStateZip();
-			cityStateZip.setZipCode(zip.trim());
-			cityStateZip = cityStateZipService.getZipCode(cityStateZip);
-			
-			if (cityStateZip == null) {
-				s.append(INVALID);
-			} else {
-				s.append(VALID);
-			}
-		}	else {
-			s.append(VALID);
-		}
-		
-		return s.toString();
-	}
+        if (!StringUtil.isNullorNill(zip)) {
+            // bugzilla 1545
+            CityStateZip cityStateZip = new CityStateZip();
+            cityStateZip.setZipCode(zip.trim());
+            cityStateZip = cityStateZipService.getZipCode(cityStateZip);
+
+            if (cityStateZip == null) {
+                s.append(INVALID);
+            } else {
+                s.append(VALID);
+            }
+        } else {
+            s.append(VALID);
+        }
+
+        return s.toString();
+    }
 
 }

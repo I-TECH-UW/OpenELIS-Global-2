@@ -23,27 +23,27 @@ import org.openelisglobal.common.util.IdValuePair;
 
 /**
  */
-public class PatientSearch{
+public class PatientSearch {
     private boolean loadFromServerWithPatient = false;
     private String selectedPatientActionButtonText;
 
-    public boolean isLoadFromServerWithPatient(){
+    public boolean isLoadFromServerWithPatient() {
         return loadFromServerWithPatient;
     }
 
-    public void setLoadFromServerWithPatient( boolean loadFromServerWithPatient ){
+    public void setLoadFromServerWithPatient(boolean loadFromServerWithPatient) {
         this.loadFromServerWithPatient = loadFromServerWithPatient;
     }
 
     public List<IdValuePair> getSearchCriteria() {
-        return DisplayListService.getInstance().getList( DisplayListService.ListType.PATIENT_SEARCH_CRITERIA );
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.PATIENT_SEARCH_CRITERIA);
     }
 
-    public String getSelectedPatientActionButtonText(){
+    public String getSelectedPatientActionButtonText() {
         return selectedPatientActionButtonText;
     }
 
-    public void setSelectedPatientActionButtonText( String selectedPatientActionButtonText ){
+    public void setSelectedPatientActionButtonText(String selectedPatientActionButtonText) {
         this.selectedPatientActionButtonText = selectedPatientActionButtonText;
     }
 }

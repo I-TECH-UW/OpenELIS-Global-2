@@ -26,86 +26,84 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
 import org.openelisglobal.common.util.DateUtil;
 
 public class ExternalPatientSearchResultsXMLConverter {
 
-	private static final String ELEMENT_MOTHERS_FIRST_NAME = "mothersFirstName";
-	private static final String ATTRIBUTE_YEAR = "year";
-	private static final String ATTRIBUTE_MONTH = "month";
-	private static final String ATTRIBUTE_DAY = "day";
-	private static final String ELEMENT_GUID = "GUID";
-	private static final String ELEMENT_DOB = "DOB";
-	private static final String ELEMENT_STNUMBER = "STNumber";
-	private static final String ELEMENT_NATIONAL_ID = "nationalId";
-	private static final String ELEMENT_GENDER = "gender";
-	private static final String ELEMENT_LAST_NAME = "lastName";
-	private static final String ELEMENT_FIRST_NAME = "firstName";
-	private static final String ELEMENT_PATIENT = "Patient";
-	private static final String ELEMENT_PATIENTS = "Patients";
-	
-	@SuppressWarnings("unchecked")
-	public List<PatientDemographicsSearchResults> convertXMLToSearchResults(String resultXML) throws DocumentException{
-		List<PatientDemographicsSearchResults> searchResults = new ArrayList<PatientDemographicsSearchResults>();
-		
-		Document replyDoc = DocumentHelper.parseText(resultXML);
-		Element root = replyDoc.getRootElement();
+    private static final String ELEMENT_MOTHERS_FIRST_NAME = "mothersFirstName";
+    private static final String ATTRIBUTE_YEAR = "year";
+    private static final String ATTRIBUTE_MONTH = "month";
+    private static final String ATTRIBUTE_DAY = "day";
+    private static final String ELEMENT_GUID = "GUID";
+    private static final String ELEMENT_DOB = "DOB";
+    private static final String ELEMENT_STNUMBER = "STNumber";
+    private static final String ELEMENT_NATIONAL_ID = "nationalId";
+    private static final String ELEMENT_GENDER = "gender";
+    private static final String ELEMENT_LAST_NAME = "lastName";
+    private static final String ELEMENT_FIRST_NAME = "firstName";
+    private static final String ELEMENT_PATIENT = "Patient";
+    private static final String ELEMENT_PATIENTS = "Patients";
 
-		Element patients = root.element(ELEMENT_PATIENTS);
-		List<Element> patientList = patients.elements(ELEMENT_PATIENT);
+    @SuppressWarnings("unchecked")
+    public List<PatientDemographicsSearchResults> convertXMLToSearchResults(String resultXML) throws DocumentException {
+        List<PatientDemographicsSearchResults> searchResults = new ArrayList<PatientDemographicsSearchResults>();
 
-		for (Element patientElement : patientList) {
-			PatientDemographicsSearchResults result = createSearchResult(patientElement);
-			searchResults.add(result);
-		}
-		
-		return searchResults;
-	}
+        Document replyDoc = DocumentHelper.parseText(resultXML);
+        Element root = replyDoc.getRootElement();
 
-	private PatientDemographicsSearchResults createSearchResult(Element patientElement) {
+        Element patients = root.element(ELEMENT_PATIENTS);
+        List<Element> patientList = patients.elements(ELEMENT_PATIENT);
 
-		PatientDemographicsSearchResults result = new PatientDemographicsSearchResults();
+        for (Element patientElement : patientList) {
+            PatientDemographicsSearchResults result = createSearchResult(patientElement);
+            searchResults.add(result);
+        }
 
-		result.setFirstName(getValueFor(patientElement, ELEMENT_FIRST_NAME));
-		result.setLastName(getValueFor(patientElement, ELEMENT_LAST_NAME));
-		result.setGender(getValueFor(patientElement, ELEMENT_GENDER));
-		result.setBirthdate(getDOBFromXML(patientElement));
-		result.setNationalId(getValueFor(patientElement, ELEMENT_NATIONAL_ID));
-		result.setStNumber(getValueFor(patientElement, ELEMENT_STNUMBER));
-		result.setGUID(getValueFor(patientElement, ELEMENT_GUID));
-		result.setMothersName(getValueFor(patientElement, ELEMENT_MOTHERS_FIRST_NAME));
+        return searchResults;
+    }
 
-		return result;
-	}
+    private PatientDemographicsSearchResults createSearchResult(Element patientElement) {
 
-	private String getDOBFromXML(Element patientElement) {
-		Element DOBElement = patientElement.element(ELEMENT_DOB);
+        PatientDemographicsSearchResults result = new PatientDemographicsSearchResults();
 
-		if (DOBElement != null) {
-			String day = DOBElement.attributeValue(ATTRIBUTE_DAY);
-			String month = DOBElement.attributeValue(ATTRIBUTE_MONTH);
-			String year = DOBElement.attributeValue(ATTRIBUTE_YEAR);
+        result.setFirstName(getValueFor(patientElement, ELEMENT_FIRST_NAME));
+        result.setLastName(getValueFor(patientElement, ELEMENT_LAST_NAME));
+        result.setGender(getValueFor(patientElement, ELEMENT_GENDER));
+        result.setBirthdate(getDOBFromXML(patientElement));
+        result.setNationalId(getValueFor(patientElement, ELEMENT_NATIONAL_ID));
+        result.setStNumber(getValueFor(patientElement, ELEMENT_STNUMBER));
+        result.setGUID(getValueFor(patientElement, ELEMENT_GUID));
+        result.setMothersName(getValueFor(patientElement, ELEMENT_MOTHERS_FIRST_NAME));
 
-			if( year != null){
-				Calendar date = new GregorianCalendar();
+        return result;
+    }
 
-				date.set(Calendar.DATE, day == null ? 1 : Integer.parseInt(day));
-				date.set(Calendar.MONTH, month == null ? 0 : Integer.parseInt(month) - 1);
-				date.set(Calendar.YEAR, Integer.parseInt(year));
+    private String getDOBFromXML(Element patientElement) {
+        Element DOBElement = patientElement.element(ELEMENT_DOB);
 
-				return DateUtil.formatDateAsText(date.getTime());
-			}
-		}
+        if (DOBElement != null) {
+            String day = DOBElement.attributeValue(ATTRIBUTE_DAY);
+            String month = DOBElement.attributeValue(ATTRIBUTE_MONTH);
+            String year = DOBElement.attributeValue(ATTRIBUTE_YEAR);
 
-		return null;
-	}
+            if (year != null) {
+                Calendar date = new GregorianCalendar();
 
-	private String getValueFor(Element patientElement, String elementName) {
-		Element namedElement = patientElement.element(elementName);
-		return namedElement == null ? null : namedElement.getTextTrim();
-	}
+                date.set(Calendar.DATE, day == null ? 1 : Integer.parseInt(day));
+                date.set(Calendar.MONTH, month == null ? 0 : Integer.parseInt(month) - 1);
+                date.set(Calendar.YEAR, Integer.parseInt(year));
 
-	
+                return DateUtil.formatDateAsText(date.getTime());
+            }
+        }
+
+        return null;
+    }
+
+    private String getValueFor(Element patientElement, String elementName) {
+        Element namedElement = patientElement.element(elementName);
+        return namedElement == null ? null : namedElement.getTextTrim();
+    }
+
 }

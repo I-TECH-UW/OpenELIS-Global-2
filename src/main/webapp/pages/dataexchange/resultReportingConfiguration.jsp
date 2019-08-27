@@ -91,7 +91,7 @@ function  /*void*/ processTestSuccess(xhr){
 	</td>
 	</tr>
 	<tr>
-	<td colspan="2"><spring:message code="resultreporting.config.url"/></td>  	
+	<td colspan="2"><spring:message htmlEscape="false" code="resultreporting.config.url"/></td>  	
   </tr>
   <tr>
   <td>&nbsp;</td>

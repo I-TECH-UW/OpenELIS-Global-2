@@ -18,8 +18,8 @@ package org.openelisglobal.plugin;
 
 /**
  */
-public abstract class PermissionPlugin implements APlugin{
-    public boolean connect(){
+public abstract class PermissionPlugin implements APlugin {
+    public boolean connect() {
         return insertPermission();
     }
 

@@ -21,22 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analyzerresults.dao.AnalyzerResultsDAO;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String> implements AnalyzerResultsDAO {
 
-	public AnalyzerResultsDAOImpl() {
-		super(AnalyzerResults.class);
-	}
+    public AnalyzerResultsDAOImpl() {
+        super(AnalyzerResults.class);
+    }
 
 //	@Override
 //	@SuppressWarnings("unchecked")
@@ -63,32 +62,32 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
-		try {
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
+        try {
 
-			List<AnalyzerResults> list = new ArrayList<>();
+            List<AnalyzerResults> list = new ArrayList<>();
 
-			String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
-					+ "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("analyzerId", Integer.parseInt(result.getAnalyzerId()));
-			query.setString("assessionNumber", result.getAccessionNumber());
-			query.setString("testName", result.getTestName());
+            String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
+                    + "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("analyzerId", Integer.parseInt(result.getAnalyzerId()));
+            query.setString("assessionNumber", result.getAccessionNumber());
+            query.setString("testName", result.getTestName());
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0 ? list : null;
+            return list.size() > 0 ? list : null;
 
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl", "duplicateAnalyzerResultsExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            LogEvent.logError("AnalyzerResultsDAOImpl", "duplicateAnalyzerResultsExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
+        }
+    }
 
 //	@Override
 //	public void updateData(AnalyzerResults results) throws LIMSRuntimeException {
@@ -112,19 +111,19 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //		}
 //	}
 
-	@Override
-	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
-		AnalyzerResults data = null;
-		try {
-			data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
-		}
-		return data;
-	}
+    @Override
+    public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
+        AnalyzerResults data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
+            throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
+        }
+        return data;
+    }
 
 //	@Override
 //	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {

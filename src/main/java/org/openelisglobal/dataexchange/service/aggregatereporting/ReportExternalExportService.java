@@ -8,23 +8,23 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 
 public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport, String> {
 
-	Timestamp getLastCollectedTimestamp();
+    Timestamp getLastCollectedTimestamp();
 
-	ReportExternalExport getReportByEventDateAndType(ReportExternalExport report);
+    ReportExternalExport getReportByEventDateAndType(ReportExternalExport report);
 
-	List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId);
+    List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId);
 
-	ReportExternalExport getLatestSentReportExport(String reportQueueTypeId);
+    ReportExternalExport getLatestSentReportExport(String reportQueueTypeId);
 
-	ReportExternalExport readReportExternalExport(String idString);
+    ReportExternalExport readReportExternalExport(String idString);
 
-	ReportExternalExport getLatestEventReportExport(String reportQueueTypeId);
+    ReportExternalExport getLatestEventReportExport(String reportQueueTypeId);
 
-	Timestamp getLastSentTimestamp();
+    Timestamp getLastSentTimestamp();
 
-	List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId);
+    List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId);
 
-	List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId);
+    List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId);
 
-	ReportExternalExport loadReport(ReportExternalExport report);
+    ReportExternalExport loadReport(ReportExternalExport report);
 }

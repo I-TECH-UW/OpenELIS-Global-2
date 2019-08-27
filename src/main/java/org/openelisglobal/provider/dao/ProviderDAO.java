@@ -36,23 +36,23 @@ public interface ProviderDAO extends BaseDAO<Provider, String> {
 
 //	public void deleteData(List providers) throws LIMSRuntimeException;
 
-	public List getAllProviders() throws LIMSRuntimeException;
+    public List getAllProviders() throws LIMSRuntimeException;
 
-	public List getPageOfProviders(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfProviders(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Provider provider) throws LIMSRuntimeException;
+    public void getData(Provider provider) throws LIMSRuntimeException;
 
 //	public void updateData(Provider provider) throws LIMSRuntimeException;
 
-	public List getNextProviderRecord(String id) throws LIMSRuntimeException;
+    public List getNextProviderRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousProviderRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousProviderRecord(String id) throws LIMSRuntimeException;
 
-	/*
-	 * The intent of this is to find the provider linked to a person. It assumes
-	 * that each provider is uniquely linked to a person. If more than one provider
-	 * is linked to the same person then the first provider is returned.
-	 */
-	public Provider getProviderByPerson(Person person) throws LIMSRuntimeException;
+    /*
+     * The intent of this is to find the provider linked to a person. It assumes
+     * that each provider is uniquely linked to a person. If more than one provider
+     * is linked to the same person then the first provider is returned.
+     */
+    public Provider getProviderByPerson(Person person) throws LIMSRuntimeException;
 
 }

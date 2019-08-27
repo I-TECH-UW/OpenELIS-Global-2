@@ -35,79 +35,79 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
 //	public void deleteData(List tests) throws LIMSRuntimeException;
 
-	public List<Test> getAllTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+    public List<Test> getAllTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-	public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+    public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-	public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException;
+    public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException;
 
-	public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException;
+    public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException;
 
 //	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-	public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException;
 
 //	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException;
 
-	public void getData(Test test) throws LIMSRuntimeException;
+    public void getData(Test test) throws LIMSRuntimeException;
 
 //	public void updateData(Test test) throws LIMSRuntimeException;
 
-	public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
+    public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-	public List getNextTestRecord(String id) throws LIMSRuntimeException;
+    public List getNextTestRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTestRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTestRecord(String id) throws LIMSRuntimeException;
 
-	public Test getTestByName(Test test) throws LIMSRuntimeException;
+    public Test getTestByName(Test test) throws LIMSRuntimeException;
 
-	public Test getTestByName(String testName) throws LIMSRuntimeException;
+    public Test getTestByName(String testName) throws LIMSRuntimeException;
 
-	public Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException;
+    public Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException;
 
-	public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException;
+    public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException;
 
-	public Test getTestById(Test test) throws LIMSRuntimeException;
+    public Test getTestById(Test test) throws LIMSRuntimeException;
 
-	public Test getActiveTestById(Integer id) throws LIMSRuntimeException;
+    public Test getActiveTestById(Integer id) throws LIMSRuntimeException;
 
-	public List getMethodsByTestSection(String filter) throws LIMSRuntimeException;
+    public List getMethodsByTestSection(String filter) throws LIMSRuntimeException;
 
-	public List getTestsByTestSection(String filter) throws LIMSRuntimeException;
+    public List getTestsByTestSection(String filter) throws LIMSRuntimeException;
 
-	public List getTestsByMethod(String filter) throws LIMSRuntimeException;
+    public List getTestsByMethod(String filter) throws LIMSRuntimeException;
 
-	public List getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException;
+    public List getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException;
 
-	public Integer getTotalTestCount() throws LIMSRuntimeException;
+    public Integer getTotalTestCount() throws LIMSRuntimeException;
 
 //	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException;
 
-	public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException;
+    public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException;
 
 //	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
 //			throws LIMSRuntimeException;
 
 //	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) throws LIMSRuntimeException;
 
-	public Integer getTotalSearchedTestCount(String searchString) throws LIMSRuntimeException;
+    public Integer getTotalSearchedTestCount(String searchString) throws LIMSRuntimeException;
 
 //	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString)
 //			throws LIMSRuntimeException;
 
-	public Integer getNextAvailableSortOrderByTestSection(Test test) throws LIMSRuntimeException;
+    public Integer getNextAvailableSortOrderByTestSection(Test test) throws LIMSRuntimeException;
 
-	public Test getTestById(String testId) throws LIMSRuntimeException;
+    public Test getTestById(String testId) throws LIMSRuntimeException;
 
-	public Test getTestByDescription(String description) throws LIMSRuntimeException;
+    public Test getTestByDescription(String description) throws LIMSRuntimeException;
 
-	public List<Test> getTestsByTestSectionId(String id) throws LIMSRuntimeException;
+    public List<Test> getTestsByTestSectionId(String id) throws LIMSRuntimeException;
 
-	public Test getTestByGUID(String guid) throws LIMSRuntimeException;
+    public Test getTestByGUID(String guid) throws LIMSRuntimeException;
 
-	public List<Test> getTestsByLoincCode(String loincCode);
+    public List<Test> getTestsByLoincCode(String loincCode);
 
-	public List<Test> getActiveTestsByLoinc(String loincCode);
+    public List<Test> getActiveTestsByLoinc(String loincCode);
 
-	boolean duplicateTestExists(Test test) throws LIMSRuntimeException;
+    boolean duplicateTestExists(Test test) throws LIMSRuntimeException;
 }

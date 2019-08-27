@@ -20,39 +20,47 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class ReferralType extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
-	private String name;
-	private String description;
-	private String displayKey;
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getDisplayKey() {
-		return displayKey;
-	}
-	public void setDisplayKey(String displayKey) {
-		this.displayKey = displayKey;
-	}
+    private String id;
+    private String name;
+    private String description;
+    private String displayKey;
 
-	@Override
-	public String getDefaultLocalizedName(){
-		return name;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDisplayKey() {
+        return displayKey;
+    }
+
+    public void setDisplayKey(String displayKey) {
+        this.displayKey = displayKey;
+    }
+
+    @Override
+    public String getDefaultLocalizedName() {
+        return name;
+    }
 }

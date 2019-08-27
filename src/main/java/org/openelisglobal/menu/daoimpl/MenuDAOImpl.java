@@ -16,20 +16,19 @@
 */
 package org.openelisglobal.menu.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.menu.dao.MenuDAO;
 import org.openelisglobal.menu.valueholder.Menu;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 
-	public MenuDAOImpl() {
-		super(Menu.class);
-	}
+    public MenuDAOImpl() {
+        super(Menu.class);
+    }
 
 //	@SuppressWarnings("unchecked")
 //	@Override

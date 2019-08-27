@@ -15,20 +15,19 @@
 */
 package org.openelisglobal.analyzer.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analyzer.dao.AnalyzerDAO;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
 
-	public AnalyzerDAOImpl() {
-		super(Analyzer.class);
-	}
+    public AnalyzerDAOImpl() {
+        super(Analyzer.class);
+    }
 
 //	@Override
 //	public void deleteData(List<Analyzer> analyzers) throws LIMSRuntimeException {

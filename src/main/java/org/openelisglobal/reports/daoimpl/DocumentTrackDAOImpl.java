@@ -16,20 +16,19 @@
 */
 package org.openelisglobal.reports.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.reports.dao.DocumentTrackDAO;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> implements DocumentTrackDAO {
 
-	public DocumentTrackDAOImpl() {
-		super(DocumentTrack.class);
-	}
+    public DocumentTrackDAOImpl() {
+        super(DocumentTrack.class);
+    }
 
 //	@SuppressWarnings("unchecked")
 //	@Override

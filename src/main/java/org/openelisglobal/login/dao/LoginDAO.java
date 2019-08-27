@@ -28,9 +28,9 @@ public interface LoginDAO extends BaseDAO<Login, String> {
 
 //	public void updatePassword(Login login) throws LIMSRuntimeException;
 
-	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException;
+    public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException;
 
-	public int getSystemUserId(Login login) throws LIMSRuntimeException;
+    public int getSystemUserId(Login login) throws LIMSRuntimeException;
 
 //	public Login getUserProfile(String loginName) throws LIMSRuntimeException;
 
@@ -52,10 +52,10 @@ public interface LoginDAO extends BaseDAO<Login, String> {
 
 //	public Integer getTotalLoginUserCount() throws LIMSRuntimeException;
 
-	// bugzilla 2286
+    // bugzilla 2286
 //	public boolean lockAccount(Login login) throws LIMSRuntimeException;
 
 //	public boolean unlockAccount(Login login) throws LIMSRuntimeException;
 
-	boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException;
+    boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException;
 }

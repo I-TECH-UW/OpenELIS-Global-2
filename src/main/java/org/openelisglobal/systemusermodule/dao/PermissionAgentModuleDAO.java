@@ -28,30 +28,30 @@ import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
  */
 public interface PermissionAgentModuleDAO extends BaseDAO<PermissionModule, String> {
 
-	public static final String SUPERVISOR = "Supervisor";
+    public static final String SUPERVISOR = "Supervisor";
 
-	public boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    public boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-	public void deleteData(List permissionModules) throws LIMSRuntimeException;
+    public void deleteData(List permissionModules) throws LIMSRuntimeException;
 
-	public List getAllPermissionModules() throws LIMSRuntimeException;
+    public List getAllPermissionModules() throws LIMSRuntimeException;
 
-	public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    public void getData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-	public void updateData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    public void updateData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException;
+    public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
+    public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
 
-	public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
+    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
 
-	public boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
+    public boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
 
-	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
+    public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
 
 }

@@ -55,12 +55,8 @@ function validateEntrySize( elementValue ){
 
 
 function doShowTests(){
-
 	var form = document.getElementById("mainForm");
-
-	form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
-	form.method = "get";
-	form.submit();
+	window.location.href = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
 }
 
 function /*void*/ handleEnterEvent(  ){

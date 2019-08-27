@@ -8,26 +8,26 @@ import java.io.Serializable;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class AdverseEffect implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@SafeHtml
-	private String type;
-	@SafeHtml
-	private String grade;
+    @SafeHtml
+    private String type;
+    @SafeHtml
+    private String grade;
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getGrade() {
-		return grade;
-	}
+    public String getGrade() {
+        return grade;
+    }
 
-	public void setGrade(String grade) {
-		this.grade = grade;
-	}
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
 }

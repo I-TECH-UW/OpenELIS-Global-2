@@ -6,53 +6,52 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.systemmodule.dao.SystemModuleUrlDAO;
 import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String> implements SystemModuleUrlDAO {
 
-	public SystemModuleUrlDAOImpl() {
-		super(SystemModuleUrl.class);
-	}
+    public SystemModuleUrlDAOImpl() {
+        super(SystemModuleUrl.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
-		String urlPath = request.getRequestURI();
-		urlPath = urlPath.substring(request.getContextPath().length());
-		urlPath = urlPath.substring(0, urlPath.indexOf('.'));
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
+        String urlPath = request.getRequestURI();
+        urlPath = urlPath.substring(request.getContextPath().length());
+        urlPath = urlPath.substring(0, urlPath.indexOf('.'));
 
-		List<SystemModuleUrl> sysModUrls = getByUrlPath(urlPath);
+        List<SystemModuleUrl> sysModUrls = getByUrlPath(urlPath);
 
-		return sysModUrls;
-	}
+        return sysModUrls;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<SystemModuleUrl> getByUrlPath(String urlPath) {
-		List<SystemModuleUrl> list;
-		try {
-			String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("urlPath", urlPath);
-			list = query.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());
-			throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByUrlPath(String urlPath) {
+        List<SystemModuleUrl> list;
+        try {
+            String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("urlPath", urlPath);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());
+            throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+        }
 
-		return list;
+        return list;
 
-	}
+    }
 
 //	@Override
 //	public boolean insertData(SystemModuleUrl systemModuleUrl) throws LIMSRuntimeException {

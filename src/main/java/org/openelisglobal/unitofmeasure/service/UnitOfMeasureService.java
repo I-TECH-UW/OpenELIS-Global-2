@@ -5,10 +5,10 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public interface UnitOfMeasureService extends BaseObjectService<UnitOfMeasure, String> {
 
-	UnitOfMeasure getUnitOfMeasureById(String uomId);
+    UnitOfMeasure getUnitOfMeasureById(String uomId);
 
-	UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure);
+    UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure);
 
-	void refreshNames();
+    void refreshNames();
 
 }

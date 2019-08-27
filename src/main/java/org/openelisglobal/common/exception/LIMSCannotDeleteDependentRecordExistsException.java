@@ -15,7 +15,6 @@
 */
 package org.openelisglobal.common.exception;
 
-
 /**
  * 
  * Base exception used by the LIMS. Unless special handling can be done with an
@@ -26,7 +25,7 @@ package org.openelisglobal.common.exception;
  */
 //bugzilla 1518
 public class LIMSCannotDeleteDependentRecordExistsException extends LIMSException {
-	public LIMSCannotDeleteDependentRecordExistsException(String message) {
-		super(message);
-	}
+    public LIMSCannotDeleteDependentRecordExistsException(String message) {
+        super(message);
+    }
 }

@@ -9,224 +9,224 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestCatalog;
+import org.openelisglobal.testconfiguration.beans.ResultLimitBean;
+import org.openelisglobal.testconfiguration.form.TestCatalogForm;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.openelisglobal.testconfiguration.form.TestCatalogForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.resultlimit.service.ResultLimitService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.panel.valueholder.Panel;
-import org.openelisglobal.resultlimits.valueholder.ResultLimit;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.test.valueholder.TestCatalog;
-import org.openelisglobal.testconfiguration.beans.ResultLimitBean;
-import org.openelisglobal.testresult.valueholder.TestResult;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
-
 @Controller
 public class TestCatalogController extends BaseController {
 
-	@Autowired
-	TestService testService;
-	@Autowired
-	DictionaryService dictionaryService;
-	@Autowired
-	LocalizationService localizationService;
+    @Autowired
+    TestService testService;
+    @Autowired
+    DictionaryService dictionaryService;
+    @Autowired
+    LocalizationService localizationService;
 
-	@RequestMapping(value = "/TestCatalog", method = RequestMethod.GET)
-	public ModelAndView showTestCatalog(HttpServletRequest request) {
-		TestCatalogForm form = new TestCatalogForm();
+    @RequestMapping(value = "/TestCatalog", method = RequestMethod.GET)
+    public ModelAndView showTestCatalog(HttpServletRequest request) {
+        TestCatalogForm form = new TestCatalogForm();
 
-		List<TestCatalog> testCatalogList = createTestList();
-		form.setTestCatalogList(testCatalogList);
+        List<TestCatalog> testCatalogList = createTestList();
+        form.setTestCatalogList(testCatalogList);
 
-		List<String> testSectionList = new ArrayList<>();
-		for (TestCatalog testCatalog : testCatalogList) {
-			if (!testSectionList.contains(testCatalog.getTestUnit())) {
-				testSectionList.add(testCatalog.getTestUnit());
-			}
-		}
-		form.setTestSectionList(testSectionList);
+        List<String> testSectionList = new ArrayList<>();
+        for (TestCatalog testCatalog : testCatalogList) {
+            if (!testSectionList.contains(testCatalog.getTestUnit())) {
+                testSectionList.add(testCatalog.getTestUnit());
+            }
+        }
+        form.setTestSectionList(testSectionList);
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "testCatalogDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "testCatalogDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 
-	private List<TestCatalog> createTestList() {
-		List<TestCatalog> catalogList = new ArrayList<>();
+    private List<TestCatalog> createTestList() {
+        List<TestCatalog> catalogList = new ArrayList<>();
 
-		List<Test> testList = testService.getAllTests(false);
+        List<Test> testList = testService.getAllTests(false);
 
-		for (Test test : testList) {
+        for (Test test : testList) {
 
-			TestCatalog catalog = new TestCatalog();
-			String resultType = testService.getResultType(test);
-			catalog.setId(test.getId());
-			catalog.setLocalization(test.getLocalizedTestName());
-			catalog.setReportLocalization(test.getLocalizedReportingName());
-			if (NumberUtils.isNumber(test.getSortOrder())) {
-				catalog.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
-			}
-			catalog.setTestUnit(testService.getTestSectionName(test));
-			catalog.setPanel(createPanelList(testService, test));
-			catalog.setResultType(resultType);
-			TypeOfSample typeOfSample = testService.getTypeOfSample(test);
-			catalog.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
-			catalog.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
-			catalog.setLoinc(test.getLoinc());
-			catalog.setActive(test.isActive() ? "Active" : "Not active");
-			catalog.setUom(testService.getUOM(test, false));
-			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-				catalog.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
-				catalog.setHasLimitValues(true);
-				catalog.setResultLimits(getResultLimits(test, catalog.getSignificantDigits()));
-			}
-			catalog.setHasDictionaryValues(
-					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(catalog.getResultType()));
-			if (catalog.isHasDictionaryValues()) {
-				catalog.setDictionaryValues(createDictionaryValues(testService, test));
-				catalog.setReferenceValue(createReferenceValueForDictionaryType(test));
-			}
-			catalogList.add(catalog);
-		}
+            TestCatalog catalog = new TestCatalog();
+            String resultType = testService.getResultType(test);
+            catalog.setId(test.getId());
+            catalog.setLocalization(test.getLocalizedTestName());
+            catalog.setReportLocalization(test.getLocalizedReportingName());
+            if (NumberUtils.isNumber(test.getSortOrder())) {
+                catalog.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
+            }
+            catalog.setTestUnit(testService.getTestSectionName(test));
+            catalog.setPanel(createPanelList(testService, test));
+            catalog.setResultType(resultType);
+            TypeOfSample typeOfSample = testService.getTypeOfSample(test);
+            catalog.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
+            catalog.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
+            catalog.setLoinc(test.getLoinc());
+            catalog.setActive(test.isActive() ? "Active" : "Not active");
+            catalog.setUom(testService.getUOM(test, false));
+            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
+                catalog.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
+                catalog.setHasLimitValues(true);
+                catalog.setResultLimits(getResultLimits(test, catalog.getSignificantDigits()));
+            }
+            catalog.setHasDictionaryValues(
+                    TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(catalog.getResultType()));
+            if (catalog.isHasDictionaryValues()) {
+                catalog.setDictionaryValues(createDictionaryValues(testService, test));
+                catalog.setReferenceValue(createReferenceValueForDictionaryType(test));
+            }
+            catalogList.add(catalog);
+        }
 
-		Collections.sort(catalogList, new Comparator<TestCatalog>() {
-			@Override
-			public int compare(TestCatalog o1, TestCatalog o2) {
-				// sort by test section, sample type, panel, sort order
-				int comparison = o1.getTestUnit().compareTo(o2.getTestUnit());
-				if (comparison != 0) {
-					return comparison;
-				}
+        Collections.sort(catalogList, new Comparator<TestCatalog>() {
+            @Override
+            public int compare(TestCatalog o1, TestCatalog o2) {
+                // sort by test section, sample type, panel, sort order
+                int comparison = o1.getTestUnit().compareTo(o2.getTestUnit());
+                if (comparison != 0) {
+                    return comparison;
+                }
 
-				comparison = o1.getSampleType().compareTo(o2.getSampleType());
-				if (comparison != 0) {
-					return comparison;
-				}
+                comparison = o1.getSampleType().compareTo(o2.getSampleType());
+                if (comparison != 0) {
+                    return comparison;
+                }
 
-				comparison = o1.getPanel().compareTo(o2.getPanel());
-				if (comparison != 0) {
-					return comparison;
-				}
+                comparison = o1.getPanel().compareTo(o2.getPanel());
+                if (comparison != 0) {
+                    return comparison;
+                }
 
-				return o1.getTestSortOrder() - o2.getTestSortOrder();
-			}
-		});
+                return o1.getTestSortOrder() - o2.getTestSortOrder();
+            }
+        });
 
-		return catalogList;
-	}
+        return catalogList;
+    }
 
-	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
+    private String createReferenceValueForDictionaryType(Test test) {
+        List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
-		if (resultLimits.isEmpty()) {
-			return "n/a";
-		}
+        if (resultLimits.isEmpty()) {
+            return "n/a";
+        }
 
-		return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
-				null);
+        return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
+                null);
 
-	}
+    }
 
-	private List<String> createDictionaryValues(TestService testService, Test test) {
-		List<String> dictionaryList = new ArrayList<>();
-		List<TestResult> testResultList = testService.getPossibleTestResults(test);
-		for (TestResult testResult : testResultList) {
-			CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryValue(testResult));
-		}
+    private List<String> createDictionaryValues(TestService testService, Test test) {
+        List<String> dictionaryList = new ArrayList<>();
+        List<TestResult> testResultList = testService.getPossibleTestResults(test);
+        for (TestResult testResult : testResultList) {
+            CollectionUtils.addIgnoreNull(dictionaryList, getDictionaryValue(testResult));
+        }
 
-		return dictionaryList;
-	}
+        return dictionaryList;
+    }
 
-	private String getDictionaryValue(TestResult testResult) {
+    private String getDictionaryValue(TestResult testResult) {
 
-		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
-			String displayValue = dictionary.getLocalizedName();
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+            Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
+            String displayValue = dictionary.getLocalizedName();
 
-			if ("unknown".equals(displayValue)) {
-				displayValue = !org.apache.commons.validator.GenericValidator.isBlankOrNull(dictionary.getDictEntry()) ? dictionary.getDictEntry()
-						: dictionary.getLocalAbbreviation();
-			}
+            if ("unknown".equals(displayValue)) {
+                displayValue = !org.apache.commons.validator.GenericValidator.isBlankOrNull(dictionary.getDictEntry())
+                        ? dictionary.getDictEntry()
+                        : dictionary.getLocalAbbreviation();
+            }
 
-			if (testResult.getIsQuantifiable()) {
-				displayValue += " Qualifiable";
-			}
-			return displayValue;
-		}
+            if (testResult.getIsQuantifiable()) {
+                displayValue += " Qualifiable";
+            }
+            return displayValue;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
-		List<ResultLimitBean> limitBeans = new ArrayList<>();
+    private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
+        List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
+        List<ResultLimit> resultLimitList = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
 
-		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
-			@Override
-			public int compare(ResultLimit o1, ResultLimit o2) {
-				return (int) (o1.getMinAge() - o2.getMinAge());
-			}
-		});
+        Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
+            @Override
+            public int compare(ResultLimit o1, ResultLimit o2) {
+                return (int) (o1.getMinAge() - o2.getMinAge());
+            }
+        });
 
-		for (ResultLimit limit : resultLimitList) {
-			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit,
-					significantDigits, "-"));
-			bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
-					significantDigits, "-"));
-			bean.setGender(limit.getGender());
-			bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
-			limitBeans.add(bean);
-		}
-		return limitBeans;
-	}
+        for (ResultLimit limit : resultLimitList) {
+            ResultLimitBean bean = new ResultLimitBean();
+            bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit,
+                    significantDigits, "-"));
+            bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
+                    significantDigits, "-"));
+            bean.setGender(limit.getGender());
+            bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
+            limitBeans.add(bean);
+        }
+        return limitBeans;
+    }
 
-	private String createPanelList(TestService testService, Test test) {
-		StringBuilder builder = new StringBuilder();
+    private String createPanelList(TestService testService, Test test) {
+        StringBuilder builder = new StringBuilder();
 
-		List<Panel> panelList = testService.getPanels(test);
-		for (Panel panel : panelList) {
-			builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
-			builder.append(", ");
-		}
+        List<Panel> panelList = testService.getPanels(test);
+        for (Panel panel : panelList) {
+            builder.append(localizationService.getLocalizedValueById(panel.getLocalization().getId()));
+            builder.append(", ");
+        }
 
-		String panelString = builder.toString();
-		if (panelString.isEmpty()) {
-			panelString = "None";
-		} else {
-			panelString = panelString.substring(0, panelString.length() - 2);
-		}
+        String panelString = builder.toString();
+        if (panelString.isEmpty()) {
+            panelString = "None";
+        } else {
+            panelString = panelString.substring(0, panelString.length() - 2);
+        }
 
-		return panelString;
-	}
+        return panelString;
+    }
 
 }

@@ -35,109 +35,110 @@ import org.openelisglobal.common.util.validator.GenericValidator;
 
 public class AccessionNumberUtil {
 
-	private static IAccessionNumberValidator accessionNumberValidator;
+    private static IAccessionNumberValidator accessionNumberValidator;
 
-	public static IAccessionNumberValidator getAccessionNumberValidator() {
-		if( accessionNumberValidator == null){
-			try {
-				accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-			} catch (LIMSInvalidConfigurationException e) {
-				LogEvent.logFatal("AccessionNumberUtil", "getAccessionNumberValidator", e.toString());
-			}
-		}
+    public static IAccessionNumberValidator getAccessionNumberValidator() {
+        if (accessionNumberValidator == null) {
+            try {
+                accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+            } catch (LIMSInvalidConfigurationException e) {
+                LogEvent.logFatal("AccessionNumberUtil", "getAccessionNumberValidator", e.toString());
+            }
+        }
 
-		return accessionNumberValidator;
-	}
+        return accessionNumberValidator;
+    }
 
-	public static IAccessionNumberValidator getAccessionNumberValidator(String prefix) {
-		if( GenericValidator.isBlankOrNull(prefix)) {
-			return getAccessionNumberValidator();
-		}
-		try {
-			return new AccessionNumberValidatorFactory().getValidator("PROGRAMNUM");
-		} catch (LIMSInvalidConfigurationException e) {
-			LogEvent.logFatal("AccessionNumberUtil", "getAccessionNumberValidator", e.toString());
-		}
+    public static IAccessionNumberValidator getAccessionNumberValidator(String prefix) {
+        if (GenericValidator.isBlankOrNull(prefix)) {
+            return getAccessionNumberValidator();
+        }
+        try {
+            return new AccessionNumberValidatorFactory().getValidator("PROGRAMNUM");
+        } catch (LIMSInvalidConfigurationException e) {
+            LogEvent.logFatal("AccessionNumberUtil", "getAccessionNumberValidator", e.toString());
+        }
 
-		return accessionNumberValidator;
-	}
+        return accessionNumberValidator;
+    }
 
-	public static String getNextAccessionNumber(String optionalPrefix) throws IllegalStateException{
-		return getAccessionNumberValidator(optionalPrefix).getNextAvailableAccessionNumber(optionalPrefix);
-	}
+    public static String getNextAccessionNumber(String optionalPrefix) throws IllegalStateException {
+        return getAccessionNumberValidator(optionalPrefix).getNextAvailableAccessionNumber(optionalPrefix);
+    }
 
-	public static String getInvalidMessage(ValidationResults result){
-		return getAccessionNumberValidator().getInvalidMessage(result);
-	}
+    public static String getInvalidMessage(ValidationResults result) {
+        return getAccessionNumberValidator().getInvalidMessage(result);
+    }
 
-    public static String getInvalidFormatMessage(ValidationResults result){
+    public static String getInvalidFormatMessage(ValidationResults result) {
         return getAccessionNumberValidator().getInvalidFormatMessage(result);
     }
 
-	public static boolean needProgramCode(){
-		return getAccessionNumberValidator().needProgramCode();
-	}
+    public static boolean needProgramCode() {
+        return getAccessionNumberValidator().needProgramCode();
+    }
 
-	public static ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired, String projectFormName){
+    public static ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType,
+            String isRequired, String projectFormName) {
 
-		try {
-			return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired, projectFormName);
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		}
+        try {
+            return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
+                    projectFormName);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
-		return ValidationResults.SAMPLE_NOT_FOUND;
-	}
+        return ValidationResults.SAMPLE_NOT_FOUND;
+    }
 
-	public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {
-	    StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
-    	if ( statusSet.getPatientRecordStatus() == validStatus ) {
+    public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {
+        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        if (statusSet.getPatientRecordStatus() == validStatus) {
             return SAMPLE_FOUND;
         } else {
             return PATIENT_STATUS_FAIL;
         }
     }
 
-
     public static ValidationResults isSampleStatusValid(String accessionNumber, RecordStatus validStatus) {
         StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
         RecordStatus sampleRecordStatus = statusSet.getSampleRecordStatus();
-        if ( sampleRecordStatus == validStatus ) {
+        if (sampleRecordStatus == validStatus) {
             return SAMPLE_FOUND;
         } else {
             return SAMPLE_STATUS_FAIL;
         }
     }
-    
-    public static int getInvarientLength(){
-    	return getAccessionNumberValidator().getInvarientLength();
+
+    public static int getInvarientLength() {
+        return getAccessionNumberValidator().getInvarientLength();
     }
-    
-    public static int getChangeableLength(){
-    	return getAccessionNumberValidator().getChangeableLength();
+
+    public static int getChangeableLength() {
+        return getAccessionNumberValidator().getChangeableLength();
     }
-    
-    public static int getMaxLength(){
-    	return getAccessionNumberValidator().getMaxAccessionLength();
+
+    public static int getMaxLength() {
+        return getAccessionNumberValidator().getMaxAccessionLength();
     }
-    
-    public static ValidationResults correctFormat(String accessionNumber, boolean validateYear){
-    	return getAccessionNumberValidator().validFormat(accessionNumber, validateYear);
+
+    public static ValidationResults correctFormat(String accessionNumber, boolean validateYear) {
+        return getAccessionNumberValidator().validFormat(accessionNumber, validateYear);
     }
-    
-    public static boolean isUsed( String accessionNumber){
-    	return getAccessionNumberValidator().accessionNumberIsUsed(accessionNumber, null);
+
+    public static boolean isUsed(String accessionNumber) {
+        return getAccessionNumberValidator().accessionNumberIsUsed(accessionNumber, null);
     }
-    
-    public static String getAccessionNumberFromSampleItemAccessionNumber( String accessionNumber){
-    	int lastDash = accessionNumber.lastIndexOf('-');
-		return accessionNumber.substring(0, lastDash);
+
+    public static String getAccessionNumberFromSampleItemAccessionNumber(String accessionNumber) {
+        int lastDash = accessionNumber.lastIndexOf('-');
+        return accessionNumber.substring(0, lastDash);
     }
-    
-    public static boolean isProjectAccessionNumber( String accessionNumber) {
-      if (StringUtil.isNullorNill(ProgramAccessionValidator.findStudyFormName(accessionNumber))) {
-        return false;
-      }
-      return true;
+
+    public static boolean isProjectAccessionNumber(String accessionNumber) {
+        if (StringUtil.isNullorNill(ProgramAccessionValidator.findStudyFormName(accessionNumber))) {
+            return false;
+        }
+        return true;
     }
 }

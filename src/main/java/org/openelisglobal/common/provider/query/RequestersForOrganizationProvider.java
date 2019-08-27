@@ -24,79 +24,81 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.organization.service.OrganizationContactService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.organization.service.OrganizationContactService;
 import org.openelisglobal.organization.valueholder.OrganizationContact;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class RequestersForOrganizationProvider extends BaseQueryProvider {
-	
-	protected OrganizationContactService organizationContactService = SpringContext.getBean(OrganizationContactService.class);
 
-	protected AjaxServlet ajaxServlet = null;
+    protected OrganizationContactService organizationContactService = SpringContext
+            .getBean(OrganizationContactService.class);
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected AjaxServlet ajaxServlet = null;
 
-		String orgId = request.getParameter("orgId");
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		StringBuilder xml = new StringBuilder();
+        String orgId = request.getParameter("orgId");
 
-		createXMLOfRequesters(orgId, xml);
+        StringBuilder xml = new StringBuilder();
 
-		ajaxServlet.sendData(xml.toString(), VALID, request, response);
+        createXMLOfRequesters(orgId, xml);
 
-	}
+        ajaxServlet.sendData(xml.toString(), VALID, request, response);
 
-	private void createXMLOfRequesters(String orgId, StringBuilder xml) {
-		List<OrganizationContact> orgContactList = organizationContactService.getListForOrganizationId(orgId);
-		xml.append("<requesters>");
-		for( OrganizationContact orgContact : orgContactList){
-			createXMLOfRequester( orgContact.getPerson(), xml);
-		}
-		xml.append("</requesters>");
-	}
+    }
 
-	private void createXMLOfRequester(Person person, StringBuilder xml) {
-		xml.append("<requester ");
+    private void createXMLOfRequesters(String orgId, StringBuilder xml) {
+        List<OrganizationContact> orgContactList = organizationContactService.getListForOrganizationId(orgId);
+        xml.append("<requesters>");
+        for (OrganizationContact orgContact : orgContactList) {
+            createXMLOfRequester(orgContact.getPerson(), xml);
+        }
+        xml.append("</requesters>");
+    }
 
-		xml.append("id=\"");
-		xml.append( StringUtil.trim(person.getId()));
-		xml.append("\" ");
+    private void createXMLOfRequester(Person person, StringBuilder xml) {
+        xml.append("<requester ");
 
-		xml.append("firstName=\"");
-		xml.append( StringUtil.trim(person.getFirstName()));
-		xml.append("\" ");
+        xml.append("id=\"");
+        xml.append(StringUtil.trim(person.getId()));
+        xml.append("\" ");
 
-		xml.append("lastName=\"");
-		xml.append( StringUtil.trim(person.getLastName()));
-		xml.append("\" ");
+        xml.append("firstName=\"");
+        xml.append(StringUtil.trim(person.getFirstName()));
+        xml.append("\" ");
 
-		xml.append("phone=\"");
-		xml.append( StringUtil.trim(person.getWorkPhone()));
-		xml.append("\" ");
+        xml.append("lastName=\"");
+        xml.append(StringUtil.trim(person.getLastName()));
+        xml.append("\" ");
 
-		xml.append("fax=\"");
-		xml.append( StringUtil.trim(person.getFax()));
-		xml.append("\" ");
+        xml.append("phone=\"");
+        xml.append(StringUtil.trim(person.getWorkPhone()));
+        xml.append("\" ");
 
-		xml.append("email=\"");
-		xml.append( StringUtil.trim(person.getEmail()));
-		xml.append("\" ");
+        xml.append("fax=\"");
+        xml.append(StringUtil.trim(person.getFax()));
+        xml.append("\" ");
 
-		xml.append(" />");
-	}
+        xml.append("email=\"");
+        xml.append(StringUtil.trim(person.getEmail()));
+        xml.append("\" ");
 
-	@Override
-	public void setServlet(AjaxServlet as) {
-		this.ajaxServlet = as;
-	}
+        xml.append(" />");
+    }
 
-	@Override
-	public AjaxServlet getServlet() {
-		return this.ajaxServlet;
-	}
+    @Override
+    public void setServlet(AjaxServlet as) {
+        this.ajaxServlet = as;
+    }
+
+    @Override
+    public AjaxServlet getServlet() {
+        return this.ajaxServlet;
+    }
 
 }

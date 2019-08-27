@@ -25,6 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.MalariaSurveilance.MalariaSurveilanceJob;
+import org.openelisglobal.dataexchange.aggregatereporting.AggregateReportJob;
+import org.openelisglobal.scheduler.service.CronSchedulerService;
+import org.openelisglobal.scheduler.valueholder.CronScheduler;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -35,133 +40,127 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.openelisglobal.scheduler.service.CronSchedulerService;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.dataexchange.MalariaSurveilance.MalariaSurveilanceJob;
-import org.openelisglobal.dataexchange.aggregatereporting.AggregateReportJob;
-import org.openelisglobal.scheduler.valueholder.CronScheduler;
-
 @Component
 public class LateStartScheduler {
 
-	@Autowired
-	CronSchedulerService cronSchedulerService;
+    @Autowired
+    CronSchedulerService cronSchedulerService;
 
-	private static final String NEVER = "never";
+    private static final String NEVER = "never";
 
-	private static Map<String, Class<? extends Job>> scheduleJobMap;
+    private static Map<String, Class<? extends Job>> scheduleJobMap;
 
-	private Scheduler scheduler;
+    private Scheduler scheduler;
 
-	static {
-		scheduleJobMap = new HashMap<>();
-		scheduleJobMap.put("sendSiteIndicators", AggregateReportJob.class);
-		scheduleJobMap.put("sendMalariaSurviellanceReport", MalariaSurveilanceJob.class);
-	}
+    static {
+        scheduleJobMap = new HashMap<>();
+        scheduleJobMap.put("sendSiteIndicators", AggregateReportJob.class);
+        scheduleJobMap.put("sendMalariaSurviellanceReport", MalariaSurveilanceJob.class);
+    }
 
-	public void restartSchedules() {
-		new Restarter().start();
-	}
+    public void restartSchedules() {
+        new Restarter().start();
+    }
 
-	public class Restarter extends Thread {
-		@Override
-		public void run() {
-			try {
-				scheduler = StdSchedulerFactory.getDefaultScheduler();
-				scheduler.shutdown();
-				checkAndStartScheduler();
-			} catch (SchedulerException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public class Restarter extends Thread {
+        @Override
+        public void run() {
+            try {
+                scheduler = StdSchedulerFactory.getDefaultScheduler();
+                scheduler.shutdown();
+                checkAndStartScheduler();
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public void checkAndStartScheduler() {
-		try {
-			scheduler = StdSchedulerFactory.getDefaultScheduler();
+    public void checkAndStartScheduler() {
+        try {
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-			List<CronScheduler> schedulers = cronSchedulerService.getAll();
+            List<CronScheduler> schedulers = cronSchedulerService.getAll();
 
-			for (CronScheduler schedule : schedulers) {
-				addOrRunSchedule(scheduler, schedule);
-			}
+            for (CronScheduler schedule : schedulers) {
+                addOrRunSchedule(scheduler, schedule);
+            }
 
-			scheduler.start();
-		} catch (SchedulerException se) {
-			se.printStackTrace();
-		} catch (ParseException pe) {
-			pe.printStackTrace();
-		}
-	}
+            scheduler.start();
+        } catch (SchedulerException se) {
+            se.printStackTrace();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+    }
 
-	private void addOrRunSchedule(Scheduler scheduler, CronScheduler schedule)
-			throws SchedulerException, ParseException {
-		int currentHour = DateUtil.getCurrentHour();
-		int currentMin = DateUtil.getCurrentMinute();
+    private void addOrRunSchedule(Scheduler scheduler, CronScheduler schedule)
+            throws SchedulerException, ParseException {
+        int currentHour = DateUtil.getCurrentHour();
+        int currentMin = DateUtil.getCurrentMinute();
 
-		if (!schedule.getActive() || NEVER.equals(schedule.getCronStatement())) {
-			return;
-		}
+        if (!schedule.getActive() || NEVER.equals(schedule.getCronStatement())) {
+            return;
+        }
 
-		String jobName = schedule.getJobName();
-		System.out.println("Adding cron job: " + jobName);
+        String jobName = schedule.getJobName();
+        System.out.println("Adding cron job: " + jobName);
 
-		Class<? extends Job> targetJob = scheduleJobMap.get(jobName);
+        Class<? extends Job> targetJob = scheduleJobMap.get(jobName);
 
-		if (targetJob == null) {
-			return;
-		}
+        if (targetJob == null) {
+            return;
+        }
 
-		JobDetail job = newJob(targetJob).withIdentity(jobName + "Job", jobName).build();
+        JobDetail job = newJob(targetJob).withIdentity(jobName + "Job", jobName).build();
 
-		Trigger trigger = newTrigger().withIdentity(jobName + "Trigger", jobName)
-				.withSchedule(cronSchedule(schedule.getCronStatement())).forJob(jobName + "Job", jobName).build();
+        Trigger trigger = newTrigger().withIdentity(jobName + "Trigger", jobName)
+                .withSchedule(cronSchedule(schedule.getCronStatement())).forJob(jobName + "Job", jobName).build();
 
-		scheduler.scheduleJob(job, trigger);
+        scheduler.scheduleJob(job, trigger);
 
-		String[] cronParts = schedule.getCronStatement().split(" ");
+        String[] cronParts = schedule.getCronStatement().split(" ");
 
-		try {
-			int cronHour = Integer.parseInt(cronParts[2]);
+        try {
+            int cronHour = Integer.parseInt(cronParts[2]);
 
-			if (cronHour < currentHour || (cronHour == currentHour && Integer.parseInt(cronParts[1]) < currentMin)) {
-				new ImmediateRunner(scheduler, jobName).start();
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("Malformed cron statement." + schedule.getCronStatement());
-		}
-	}
+            if (cronHour < currentHour || (cronHour == currentHour && Integer.parseInt(cronParts[1]) < currentMin)) {
+                new ImmediateRunner(scheduler, jobName).start();
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Malformed cron statement." + schedule.getCronStatement());
+        }
+    }
 
-	public void shutdown() throws SchedulerException {
-		scheduler.shutdown();
-	}
+    public void shutdown() throws SchedulerException {
+        scheduler.shutdown();
+    }
 
-	class ImmediateRunner extends Thread {
-		private Scheduler scheduler;
-		private String jobName;
+    class ImmediateRunner extends Thread {
+        private Scheduler scheduler;
+        private String jobName;
 
-		public ImmediateRunner(Scheduler scheduler, String jobName) {
-			this.scheduler = scheduler;
-			this.jobName = jobName;
-		}
+        public ImmediateRunner(Scheduler scheduler, String jobName) {
+            this.scheduler = scheduler;
+            this.jobName = jobName;
+        }
 
-		@Override
-		public void run() {
-			try {
-				// so everything doesn't happen at once
-				long delay = 2000L * Math.round(Math.random() * 10);
-				sleep(delay);
-				synchronized (scheduler) {
-					if (!scheduler.isShutdown()) {
-						scheduler.triggerJob(new JobKey(jobName + "Job", jobName));
-					}
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (SchedulerException e) {
-				e.printStackTrace();
-			}
-		}
+        @Override
+        public void run() {
+            try {
+                // so everything doesn't happen at once
+                long delay = 2000L * Math.round(Math.random() * 10);
+                sleep(delay);
+                synchronized (scheduler) {
+                    if (!scheduler.isShutdown()) {
+                        scheduler.triggerJob(new JobKey(jobName + "Job", jobName));
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        }
 
-	}
+    }
 }

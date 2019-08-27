@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.openelisglobal.validation.constraintvalidator.DateConstraintValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.validation.constraintvalidator.DateConstraintValidator;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -18,13 +18,13 @@ import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation
 @Documented
 public @interface ValidDate {
 
-	String message() default "Invalid date format";
+    String message() default "Invalid date format";
 
-	boolean acceptTime() default false;
+    boolean acceptTime() default false;
 
-	DateRelation relative() default DateRelation.ANY;
+    DateRelation relative() default DateRelation.ANY;
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

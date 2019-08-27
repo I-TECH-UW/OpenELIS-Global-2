@@ -787,7 +787,7 @@ function removeLastChar(stringToCut) {
 
 function IsTimeKey(currentChar) {
     var isTimeKey = true;
-    var timeChars = "0123456789:";
+    var timeChars = "0123456789";
     if (timeChars.indexOf(currentChar) == -1)
         isTimeKey = false;
     return isTimeKey;

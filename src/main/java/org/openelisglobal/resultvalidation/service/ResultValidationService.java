@@ -13,8 +13,8 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface ResultValidationService {
 
-	void persistdata(List<Result> deletableList, List<Analysis> analysisUpdateList, ArrayList<Result> resultUpdateList,
-			List<AnalysisItem> resultItemList, ArrayList<Sample> sampleUpdateList, ArrayList<Note> noteUpdateList,
-			IResultSaveService resultSaveService, List<IResultUpdate> updaters, String sysUserId);
+    void persistdata(List<Result> deletableList, List<Analysis> analysisUpdateList, ArrayList<Result> resultUpdateList,
+            List<AnalysisItem> resultItemList, ArrayList<Sample> sampleUpdateList, ArrayList<Note> noteUpdateList,
+            IResultSaveService resultSaveService, List<IResultUpdate> updaters, String sysUserId);
 
 }

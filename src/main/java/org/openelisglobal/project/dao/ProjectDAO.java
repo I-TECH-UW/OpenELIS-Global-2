@@ -35,32 +35,32 @@ public interface ProjectDAO extends BaseDAO<Project, String> {
 
 //	public void deleteData(List projects) throws LIMSRuntimeException;
 
-	public List<Project> getAllProjects() throws LIMSRuntimeException;
+    public List<Project> getAllProjects() throws LIMSRuntimeException;
 
-	public List getPageOfProjects(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfProjects(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Project project) throws LIMSRuntimeException;
+    public void getData(Project project) throws LIMSRuntimeException;
 
 //	public void updateData(Project project) throws LIMSRuntimeException;
 
-	public List getNextProjectRecord(String id) throws LIMSRuntimeException;
+    public List getNextProjectRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousProjectRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousProjectRecord(String id) throws LIMSRuntimeException;
 
-	// bugzilla 1978: added param activeOnly
-	public Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly)
-			throws LIMSRuntimeException;
+    // bugzilla 1978: added param activeOnly
+    public Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly)
+            throws LIMSRuntimeException;
 
-	// bugzilla 1978: added param activeOnly
-	public List getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException;
+    // bugzilla 1978: added param activeOnly
+    public List getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	public Integer getTotalProjectCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    public Integer getTotalProjectCount() throws LIMSRuntimeException;
 
-	// bugzilla 2438
-	public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) throws LIMSRuntimeException;
+    // bugzilla 2438
+    public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) throws LIMSRuntimeException;
 
-	public Project getProjectById(String id) throws LIMSRuntimeException;
+    public Project getProjectById(String id) throws LIMSRuntimeException;
 
-	boolean duplicateProjectExists(Project project) throws LIMSRuntimeException;
+    boolean duplicateProjectExists(Project project) throws LIMSRuntimeException;
 }

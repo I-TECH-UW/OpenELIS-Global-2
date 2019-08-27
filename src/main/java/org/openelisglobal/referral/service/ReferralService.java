@@ -8,13 +8,13 @@ import org.openelisglobal.referral.valueholder.Referral;
 
 public interface ReferralService extends BaseObjectService<Referral, String> {
 
-	Referral getReferralById(String referralId);
+    Referral getReferralById(String referralId);
 
-	Referral getReferralByAnalysisId(String analysisId);
+    Referral getReferralByAnalysisId(String analysisId);
 
-	List<Referral> getAllReferralsBySampleId(String id);
+    List<Referral> getAllReferralsBySampleId(String id);
 
-	List<Referral> getAllUncanceledOpenReferrals();
+    List<Referral> getAllUncanceledOpenReferrals();
 
-	List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
+    List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
 }

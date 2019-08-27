@@ -20,120 +20,121 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * @author benzd1
  * 
- * bugzilla 1844: extending AjaxXmlBuilder for testsection->test select
- * making extended version of AjaxJspTag.Select sortable (toggle between 
- * sorting by 2 different properties, toggling label value between 2 
- * different values according to sort
+ *         bugzilla 1844: extending AjaxXmlBuilder for testsection->test select
+ *         making extended version of AjaxJspTag.Select sortable (toggle between
+ *         sorting by 2 different properties, toggling label value between 2
+ *         different values according to sort
  */
 class SortableTestItem {
 
-  protected String name;
+    protected String name;
 
-  protected String value;
-  
-  protected String sortFieldA;
-  
-  protected String sortFieldB;
-  
-  protected String alternateLabel;
+    protected String value;
 
-  protected boolean asData;
+    protected String sortFieldA;
 
-  /**
-   * Constructor for Item.
-   */
-  public SortableTestItem() {
-    super();
-  }
+    protected String sortFieldB;
 
-  /**
-   * Constructor for Item.
-   *
-   * @param name
-   * @param value
-   */
-  public SortableTestItem(String name, String value, String sortFieldA, String sortFieldB, String alternateLabel, boolean asData) {
-    super();
-    this.name = name;
-    this.value = value;
-    this.sortFieldA = sortFieldA;
-    this.sortFieldB = sortFieldB;
-    this.alternateLabel = alternateLabel;
-    this.asData = asData;
-  }
+    protected String alternateLabel;
 
-  /**
-   * @return Returns the name.
-   */
-  public String getName() {
-    return this.name;
-  }
+    protected boolean asData;
 
-  /**
-   * @param name The name to set.
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
+    /**
+     * Constructor for Item.
+     */
+    public SortableTestItem() {
+        super();
+    }
 
-  /**
-   * @return Returns the value.
-   */
-  public String getValue() {
-    return this.value;
-  }
+    /**
+     * Constructor for Item.
+     *
+     * @param name
+     * @param value
+     */
+    public SortableTestItem(String name, String value, String sortFieldA, String sortFieldB, String alternateLabel,
+            boolean asData) {
+        super();
+        this.name = name;
+        this.value = value;
+        this.sortFieldA = sortFieldA;
+        this.sortFieldB = sortFieldB;
+        this.alternateLabel = alternateLabel;
+        this.asData = asData;
+    }
 
-  /**
-   * @param value The value to set.
-   */
-  public void setValue(String value) {
-    this.value = value;
-  }
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return this.name;
+    }
 
-  /**
-   * @return Returns the asCData.
-   */
-  public boolean isAsCData() {
-    return this.asData;
-  }
+    /**
+     * @param name The name to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  /**
-   * @param asData The asData to set.
-   */
-  public void setAsData(boolean asData) {
-    this.asData = asData;
-  }
+    /**
+     * @return Returns the value.
+     */
+    public String getValue() {
+        return this.value;
+    }
 
-  /**
-   * @see java.lang.Object#toString()
-   */
-  public String toString() {
-    return new ToStringBuilder(this).append("name", name)
-        .append("value", value).append("asData", asData).toString();
-  }
+    /**
+     * @param value The value to set.
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-public String getSortFieldA() {
-	return sortFieldA;
-}
+    /**
+     * @return Returns the asCData.
+     */
+    public boolean isAsCData() {
+        return this.asData;
+    }
 
-public void setSortFieldA(String sortFieldA) {
-	this.sortFieldA = sortFieldA;
-}
+    /**
+     * @param asData The asData to set.
+     */
+    public void setAsData(boolean asData) {
+        this.asData = asData;
+    }
 
-public String getSortFieldB() {
-	return sortFieldB;
-}
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return new ToStringBuilder(this).append("name", name).append("value", value).append("asData", asData)
+                .toString();
+    }
 
-public void setSortFieldB(String sortFieldB) {
-	this.sortFieldB = sortFieldB;
-}
+    public String getSortFieldA() {
+        return sortFieldA;
+    }
 
-public String getAlternateLabel() {
-	return alternateLabel;
-}
+    public void setSortFieldA(String sortFieldA) {
+        this.sortFieldA = sortFieldA;
+    }
 
-public void setAlternateLabel(String alternateLabel) {
-	this.alternateLabel = alternateLabel;
-}
+    public String getSortFieldB() {
+        return sortFieldB;
+    }
+
+    public void setSortFieldB(String sortFieldB) {
+        this.sortFieldB = sortFieldB;
+    }
+
+    public String getAlternateLabel() {
+        return alternateLabel;
+    }
+
+    public void setAlternateLabel(String alternateLabel) {
+        this.alternateLabel = alternateLabel;
+    }
 
 }

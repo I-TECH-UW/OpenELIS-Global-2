@@ -7,5 +7,5 @@ import org.openelisglobal.referral.valueholder.ReferringTestResult;
 
 public interface ReferringTestResultService extends BaseObjectService<ReferringTestResult, String> {
 
-	List<ReferringTestResult> getReferringTestResultsForSampleItem(String id);
+    List<ReferringTestResult> getReferringTestResultsForSampleItem(String id);
 }

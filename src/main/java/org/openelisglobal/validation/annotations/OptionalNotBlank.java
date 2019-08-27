@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.openelisglobal.validation.constraintvalidator.OptionalNotBlankConstraintValidator;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.validation.constraintvalidator.OptionalNotBlankConstraintValidator;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -18,11 +18,11 @@ import org.openelisglobal.common.formfields.FormFields;
 @Documented
 public @interface OptionalNotBlank {
 
-	String message() default "Cannot be blank";
+    String message() default "Cannot be blank";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	FormFields.Field[] formFields();
+    FormFields.Field[] formFields();
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

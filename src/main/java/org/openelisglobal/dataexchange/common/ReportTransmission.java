@@ -29,131 +29,131 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
-import org.xml.sax.InputSource;
-
-import ca.uhn.hl7v2.HL7Exception;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker;
 import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
+import org.openelisglobal.spring.util.SpringContext;
+import org.xml.sax.InputSource;
+
+import ca.uhn.hl7v2.HL7Exception;
 
 public class ReportTransmission {
-	public enum HTTP_TYPE {
-		GET, POST
-	}
+    public enum HTTP_TYPE {
+        GET, POST
+    }
 
-	public void sendHL7Report(ResultReportXmit resultReport, String url, ITransmissionResponseHandler responseHandler) {
-		OrderResponseWorker orWorker = SpringContext.getBean(OrderResponseWorker.class);
-		try {
-			orWorker.createReport(resultReport);
-			sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
-		} catch (HL7Exception e) {
-			LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
-		} catch (IOException e) {
-			LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
-		}
-	}
+    public void sendHL7Report(ResultReportXmit resultReport, String url, ITransmissionResponseHandler responseHandler) {
+        OrderResponseWorker orWorker = SpringContext.getBean(OrderResponseWorker.class);
+        try {
+            orWorker.createReport(resultReport);
+            sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
+        } catch (HL7Exception e) {
+            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+        } catch (IOException e) {
+            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+        }
+    }
 
-	public void sendReport(Object reportObject, String castorPropertyName, String url, boolean sendAsychronously,
-			ITransmissionResponseHandler responseHandler) {
+    public void sendReport(Object reportObject, String castorPropertyName, String url, boolean sendAsychronously,
+            ITransmissionResponseHandler responseHandler) {
 
-		String xmlString = null;
-		String castorMappingName = getCastorMappingName(castorPropertyName);
+        String xmlString = null;
+        String castorMappingName = getCastorMappingName(castorPropertyName);
 
-		InputSource source = getSource(castorMappingName);
+        InputSource source = getSource(castorMappingName);
 
-		Mapping castorMapping = new Mapping();
-		try {
-			castorMapping.loadMapping(source);
+        Mapping castorMapping = new Mapping();
+        try {
+            castorMapping.loadMapping(source);
 
-			Marshaller marshaller = new Marshaller();
-			marshaller.setMapping(castorMapping);
-			Writer writer = new StringWriter();
-			marshaller.setWriter(writer);
-			marshaller.marshal(reportObject);
-			xmlString = writer.toString();
+            Marshaller marshaller = new Marshaller();
+            marshaller.setMapping(castorMapping);
+            Writer writer = new StringWriter();
+            marshaller.setWriter(writer);
+            marshaller.marshal(reportObject);
+            xmlString = writer.toString();
 
-			sendRawReport(xmlString, url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
+            sendRawReport(xmlString, url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
 
-		} catch (UnknownHostException he) {
-			List<String> errors = new ArrayList<>();
-			errors.add(he.toString());
-			responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
-		} catch (Exception e) {
-			LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
-		}
+        } catch (UnknownHostException he) {
+            List<String> errors = new ArrayList<>();
+            errors.add(he.toString());
+            responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
+        } catch (Exception e) {
+            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+        }
 
-	}
+    }
 
-	public void sendRawReport(String contents, String url, boolean sendAsychronously,
-			ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
-		try {
-			IExternalSender sender;
-			// System.out.println(contents );
-			switch (httpType) {
-			case GET:
-				sender = new HttpGetSender();
-				break;
-			case POST:
-				sender = new HttpPostSender();
-				sender.setMessage(contents);
-				break;
-			default:
-				sender = new HttpPostSender();
-				break;
-			}
+    public void sendRawReport(String contents, String url, boolean sendAsychronously,
+            ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
+        try {
+            IExternalSender sender;
+            // System.out.println(contents );
+            switch (httpType) {
+            case GET:
+                sender = new HttpGetSender();
+                break;
+            case POST:
+                sender = new HttpPostSender();
+                sender.setMessage(contents);
+                break;
+            default:
+                sender = new HttpPostSender();
+                break;
+            }
 
-			sender.setURI(url);
+            sender.setURI(url);
 
-			if (sendAsychronously) {
-				AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
-						contents);
-				asynchSender.sendMessage();
-			} else {
-				sender.sendMessage();
-				if (responseHandler != null) {
-					responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), contents);
-				}
-			}
-		} catch (Exception e) {
-			LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
-		}
+            if (sendAsychronously) {
+                AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
+                        contents);
+                asynchSender.sendMessage();
+            } else {
+                sender.sendMessage();
+                if (responseHandler != null) {
+                    responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), contents);
+                }
+            }
+        } catch (Exception e) {
+            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+        }
 
-	}
+    }
 
-	private String getCastorMappingName(String mapping) {
-		InputStream propertyStream = null;
+    private String getCastorMappingName(String mapping) {
+        InputStream propertyStream = null;
 
-		ResourceLocator resourceLocator = ResourceLocator.getInstance();
+        ResourceLocator resourceLocator = ResourceLocator.getInstance();
 
-		Properties transmissionMap = new Properties();
-		try {
-			propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
+        Properties transmissionMap = new Properties();
+        try {
+            propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
 
-			transmissionMap.load(propertyStream);
-		} catch (IOException e) {
-			LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
-			throw new LIMSRuntimeException("Unable to load transmission resource mappings.", e);
-		} finally {
-			if (null != propertyStream) {
-				try {
-					propertyStream.close();
-					propertyStream = null;
-				} catch (Exception e) {
-					LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
-				}
-			}
-		}
+            transmissionMap.load(propertyStream);
+        } catch (IOException e) {
+            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+            throw new LIMSRuntimeException("Unable to load transmission resource mappings.", e);
+        } finally {
+            if (null != propertyStream) {
+                try {
+                    propertyStream.close();
+                    propertyStream = null;
+                } catch (Exception e) {
+                    LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+                }
+            }
+        }
 
-		String castorMappingName = transmissionMap.getProperty(mapping);
-		return castorMappingName;
-	}
+        String castorMappingName = transmissionMap.getProperty(mapping);
+        return castorMappingName;
+    }
 
-	protected InputSource getSource(String castorMappingName) {
-		InputStream mappingXml = Thread.currentThread().getContextClassLoader().getResourceAsStream(castorMappingName);
+    protected InputSource getSource(String castorMappingName) {
+        InputStream mappingXml = Thread.currentThread().getContextClassLoader().getResourceAsStream(castorMappingName);
 
-		return new InputSource(mappingXml);
-	}
+        return new InputSource(mappingXml);
+    }
 }

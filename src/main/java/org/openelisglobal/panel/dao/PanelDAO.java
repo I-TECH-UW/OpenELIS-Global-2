@@ -35,40 +35,40 @@ public interface PanelDAO extends BaseDAO<Panel, String> {
 
 //	public void deleteData(List panels) throws LIMSRuntimeException;
 
-	public List<Panel> getAllActivePanels() throws LIMSRuntimeException;
+    public List<Panel> getAllActivePanels() throws LIMSRuntimeException;
 
-	public List getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Panel panel) throws LIMSRuntimeException;
+    public void getData(Panel panel) throws LIMSRuntimeException;
 
 //	public void updateData(Panel panel) throws LIMSRuntimeException;
 
-	public List getActivePanels(String filter) throws LIMSRuntimeException;
+    public List getActivePanels(String filter) throws LIMSRuntimeException;
 
-	public List<Panel> getAllPanels() throws LIMSRuntimeException;
+    public List<Panel> getAllPanels() throws LIMSRuntimeException;
 
-	public List getNextPanelRecord(String id) throws LIMSRuntimeException;
+    public List getNextPanelRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousPanelRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousPanelRecord(String id) throws LIMSRuntimeException;
 
-	public Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
+    public Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
 
-	public Integer getTotalPanelCount() throws LIMSRuntimeException;
+    public Integer getTotalPanelCount() throws LIMSRuntimeException;
 
-	public String getNameForPanelId(String panelId);
+    public String getNameForPanelId(String panelId);
 
-	public String getDescriptionForPanelId(String id);
+    public String getDescriptionForPanelId(String id);
 
-	public String getIdForPanelName(String name);
+    public String getIdForPanelName(String name);
 
-	public Panel getPanelByName(String panelName) throws LIMSRuntimeException;
+    public Panel getPanelByName(String panelName) throws LIMSRuntimeException;
 
-	public Panel getPanelById(String id) throws LIMSRuntimeException;
+    public Panel getPanelById(String id) throws LIMSRuntimeException;
 
-	public boolean duplicatePanelExists(Panel panel);
+    public boolean duplicatePanelExists(Panel panel);
 
-	public boolean duplicatePanelDescriptionExists(Panel panel);
+    public boolean duplicatePanelDescriptionExists(Panel panel);
 
-	public void clearIDMaps();
+    public void clearIDMaps();
 
 }

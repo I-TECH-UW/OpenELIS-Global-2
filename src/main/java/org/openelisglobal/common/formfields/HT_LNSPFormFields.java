@@ -21,40 +21,39 @@ import java.util.HashMap;
 
 import org.openelisglobal.common.formfields.FormFields.Field;
 
-
 public class HT_LNSPFormFields implements IFormFieldsForImplementation {
 
-	public HashMap<FormFields.Field, Boolean> getImplementationAttributes() {
-		HashMap<FormFields.Field, Boolean> settings = new HashMap<FormFields.Field, Boolean>();
-		settings.put(Field.StNumber, Boolean.FALSE);
-		settings.put(Field.AKA, Boolean.FALSE);
-		settings.put(Field.MothersName, Boolean.FALSE);
-		settings.put(Field.PatientType, Boolean.FALSE);
-		settings.put(Field.InsuranceNumber, Boolean.FALSE);		
-		settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
-		settings.put(Field.InlineOrganizationTypes, Boolean.TRUE);
-		settings.put(Field.Occupation, Boolean.FALSE);
-		settings.put(Field.ADDRESS_DEPARTMENT, Boolean.TRUE);
-		settings.put(Field.MotherInitial, Boolean.TRUE);
-		settings.put(Field.ResultsReferral, Boolean.TRUE);
-		settings.put(Field.ValueHozSpaceOnResults, Boolean.TRUE);
-		settings.put(Field.InitialSampleCondition, Boolean.TRUE);
-		settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
-		settings.put(Field.OrganizationMultiUnit, Boolean.FALSE);
-		settings.put(Field.OrganizationOrgId, Boolean.FALSE);
-		settings.put(Field.RequesterSiteList, Boolean.TRUE);
-		settings.put(Field.ADDRESS_CITY, Boolean.FALSE);
-		settings.put(Field.PatientRequired, Boolean.TRUE);
-		settings.put(Field.SampleCondition, Boolean.FALSE);
-		settings.put(Field.NON_CONFORMITY_SITE_LIST, Boolean.TRUE);
-		settings.put(Field.PatientNameRequired, Boolean.FALSE);
-		settings.put(Field.SampleEntryUseReceptionHour, Boolean.TRUE);
-		settings.put(Field.CollectionDate, Boolean.TRUE);
-		settings.put(Field.CollectionTime, Boolean.TRUE);
-		settings.put(Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, Boolean.TRUE);
-		settings.put(Field.SampleEntryRequestingSiteSampleId, Boolean.FALSE);
-        settings.put(Field.PatientIDRequired_SampleConfirmation, Boolean.FALSE );
-		return settings;
-	}
+    public HashMap<FormFields.Field, Boolean> getImplementationAttributes() {
+        HashMap<FormFields.Field, Boolean> settings = new HashMap<FormFields.Field, Boolean>();
+        settings.put(Field.StNumber, Boolean.FALSE);
+        settings.put(Field.AKA, Boolean.FALSE);
+        settings.put(Field.MothersName, Boolean.FALSE);
+        settings.put(Field.PatientType, Boolean.FALSE);
+        settings.put(Field.InsuranceNumber, Boolean.FALSE);
+        settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
+        settings.put(Field.InlineOrganizationTypes, Boolean.TRUE);
+        settings.put(Field.Occupation, Boolean.FALSE);
+        settings.put(Field.ADDRESS_DEPARTMENT, Boolean.TRUE);
+        settings.put(Field.MotherInitial, Boolean.TRUE);
+        settings.put(Field.ResultsReferral, Boolean.TRUE);
+        settings.put(Field.ValueHozSpaceOnResults, Boolean.TRUE);
+        settings.put(Field.InitialSampleCondition, Boolean.TRUE);
+        settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
+        settings.put(Field.OrganizationMultiUnit, Boolean.FALSE);
+        settings.put(Field.OrganizationOrgId, Boolean.FALSE);
+        settings.put(Field.RequesterSiteList, Boolean.TRUE);
+        settings.put(Field.ADDRESS_CITY, Boolean.FALSE);
+        settings.put(Field.PatientRequired, Boolean.TRUE);
+        settings.put(Field.SampleCondition, Boolean.FALSE);
+        settings.put(Field.NON_CONFORMITY_SITE_LIST, Boolean.TRUE);
+        settings.put(Field.PatientNameRequired, Boolean.FALSE);
+        settings.put(Field.SampleEntryUseReceptionHour, Boolean.TRUE);
+        settings.put(Field.CollectionDate, Boolean.TRUE);
+        settings.put(Field.CollectionTime, Boolean.TRUE);
+        settings.put(Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, Boolean.TRUE);
+        settings.put(Field.SampleEntryRequestingSiteSampleId, Boolean.FALSE);
+        settings.put(Field.PatientIDRequired_SampleConfirmation, Boolean.FALSE);
+        return settings;
+    }
 
 }

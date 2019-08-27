@@ -29,59 +29,58 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.NotR
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
 public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientEntryAfterAnalyzer {
 
-	public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-			throws Exception {
-		this();
-		super.setFieldsFromForm(form);
-		super.setSysUserId(sysUserId);
-		super.setRequest(request);
-	}
+    public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+            throws Exception {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-	public PatientEntryAfterAnalyzer() {
-		super();
-		newPatientStatus = InitialRegistration;
-		newSampleStatus = NotRegistered;
-	}
+    public PatientEntryAfterAnalyzer() {
+        super();
+        newPatientStatus = InitialRegistration;
+        newSampleStatus = NotRegistered;
+    }
 
-	@Override
-	public boolean canAccession() {
-		return (NotRegistered == statusSet.getPatientRecordStatus()
-				&& NotRegistered == statusSet.getSampleRecordStatus());
-	}
+    @Override
+    public boolean canAccession() {
+        return (NotRegistered == statusSet.getPatientRecordStatus()
+                && NotRegistered == statusSet.getSampleRecordStatus());
+    }
 
-	/**
-	 * Find existing sampleHuman, so we can update it with our new patient when we
-	 * fill in all IDs when we persist.
-	 *
-	 * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
-	 */
-	@Override
-	protected void populateSampleHuman() throws Exception {
-		sampleHuman = new SampleHuman();
-		sampleHuman.setSampleId(statusSet.getSampleId());
-		sampleHumanService.getDataBySample(sampleHuman);
-	}
+    /**
+     * Find existing sampleHuman, so we can update it with our new patient when we
+     * fill in all IDs when we persist.
+     *
+     * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
+     */
+    @Override
+    protected void populateSampleHuman() throws Exception {
+        sampleHuman = new SampleHuman();
+        sampleHuman.setSampleId(statusSet.getSampleId());
+        sampleHumanService.getDataBySample(sampleHuman);
+    }
 
-	/**
-	 * Get rid of the links to the UNKNOWN_PATIENT, then insert a new one.
-	 *
-	 * @see org.openelisglobal.patient.saving.Accessioner#persistRecordStatus()
-	 */
-	@Override
-	protected void persistRecordStatus() {
-		StatusService.getInstance().deleteRecordStatus(sample, PatientUtil.getUnknownPatient(), sysUserId);
-		super.persistRecordStatus();
-	}
+    /**
+     * Get rid of the links to the UNKNOWN_PATIENT, then insert a new one.
+     *
+     * @see org.openelisglobal.patient.saving.Accessioner#persistRecordStatus()
+     */
+    @Override
+    protected void persistRecordStatus() {
+        StatusService.getInstance().deleteRecordStatus(sample, PatientUtil.getUnknownPatient(), sysUserId);
+        super.persistRecordStatus();
+    }
 }

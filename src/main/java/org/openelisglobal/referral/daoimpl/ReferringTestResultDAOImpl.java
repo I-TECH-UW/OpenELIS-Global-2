@@ -21,24 +21,23 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferringTestResultDAO;
 import org.openelisglobal.referral.valueholder.ReferringTestResult;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
  */
 @Component
 @Transactional
 public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult, String>
-		implements ReferringTestResultDAO {
+        implements ReferringTestResultDAO {
 
-	public ReferringTestResultDAOImpl() {
-		super(ReferringTestResult.class);
-	}
+    public ReferringTestResultDAOImpl() {
+        super(ReferringTestResult.class);
+    }
 
 //	@Override
 //	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
@@ -55,41 +54,41 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 //		return true;
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
-			throws LIMSRuntimeException {
-		String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
-			List<ReferringTestResult> list = query.list();
-			// closeSession(); // CSL remove old
-			return list;
-		} catch (HibernateException e) {
-			handleException(e, "getReferringTestResultsForSampleItem");
-		}
-		return null;
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
+            throws LIMSRuntimeException {
+        String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
+            List<ReferringTestResult> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getReferringTestResultsForSampleItem");
+        }
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
-		String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setDate("lowDate", lowDate);
-			query.setDate("highDate", highDate);
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
+        String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
 
-			List<ReferringTestResult> list = query.list();
-			// closeSession(); // CSL remove old
-			return list;
-		} catch (HibernateException e) {
-			handleException(e, "getResultsInDateRange");
-		}
+            List<ReferringTestResult> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getResultsInDateRange");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

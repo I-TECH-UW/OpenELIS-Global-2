@@ -25,7 +25,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -37,441 +38,439 @@ import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 
 public class SampleOrderItem implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String newRequesterName;
-
-	// for display
-	private Collection orderTypes;
-
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String orderType;
-
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
-	private String externalOrderNumber;
-
-	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
-	@ValidAccessionNumber(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String labNo;
-
-	@OptionalNotBlank(formFields = { Field.SampleEntryUseRequestDate }, groups = {
-			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
-	@ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String requestDate;
-
-	@NotBlank(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	@ValidDate(relative = DateRelation.PAST, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String receivedDateForDisplay;
-
-	@ValidTime(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String receivedTime;
+    private static final long serialVersionUID = 1L;
+
+    @SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String newRequesterName;
+
+    // for display
+    private Collection orderTypes;
+
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String orderType;
+
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+    private String externalOrderNumber;
+
+    @NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+    @ValidAccessionNumber(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String labNo;
+
+    @OptionalNotBlank(formFields = { Field.SampleEntryUseRequestDate }, groups = {
+            SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+    @ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String requestDate;
+
+    @NotBlank(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    @ValidDate(relative = DateRelation.PAST, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String receivedDateForDisplay;
+
+    @ValidTime(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String receivedTime;
 
-	@ValidDate(relative = DateRelation.FUTURE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String nextVisitDate;
+    @ValidDate(relative = DateRelation.FUTURE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String nextVisitDate;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String requesterSampleID;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String requesterSampleID;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String referringPatientNumber;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String referringPatientNumber;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String referringSiteId;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String referringSiteId;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String referringSiteCode;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String referringSiteCode;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String referringSiteName;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String referringSiteName;
 
-	// for display
-	private Collection referringSiteList;
+    // for display
+    private Collection referringSiteList;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class })
-	private String providerId;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class })
+    private String providerId;
 
-	@ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String providerFirstName;
+    @ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String providerFirstName;
 
-	@ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String providerLastName;
+    @ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String providerLastName;
 
-	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String providerWorkPhone;
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String providerWorkPhone;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String providerFax;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String providerFax;
 
-	@Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String providerEmail;
+    @Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String providerEmail;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String facilityAddressStreet;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String facilityAddressStreet;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String facilityAddressCommune;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String facilityAddressCommune;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String facilityPhone;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String facilityPhone;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String facilityFax;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String facilityFax;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String paymentOptionSelection;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String paymentOptionSelection;
 
-	// for display
-	private Collection paymentOptions;
+    // for display
+    private Collection paymentOptions;
 
-	@NotNull(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private Boolean modified = false;
+    @NotNull(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private Boolean modified = false;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class })
-	private String sampleId;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class })
+    private String sampleId;
 
-	private boolean readOnly = false;
+    private boolean readOnly = false;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String billingReferenceNumber;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String billingReferenceNumber;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String testLocationCode;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String testLocationCode;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
-			SampleEditForm.SampleEdit.class })
-	private String otherLocationCode;
+    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+            SampleEditForm.SampleEdit.class })
+    private String otherLocationCode;
 
-	// for display
-	private Collection testLocationCodeList;
+    // for display
+    private Collection testLocationCodeList;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
-	private String program;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String program;
 
-	// for display
-	private Collection programList;
+    // for display
+    private Collection programList;
 
-	public String getNewRequesterName() {
-		return newRequesterName;
-	}
+    public String getNewRequesterName() {
+        return newRequesterName;
+    }
 
-	public void setNewRequesterName(String newRequesterName) {
-		this.newRequesterName = newRequesterName;
-	}
+    public void setNewRequesterName(String newRequesterName) {
+        this.newRequesterName = newRequesterName;
+    }
 
-	public Collection getOrderTypes() {
-		return orderTypes;
-	}
+    public Collection getOrderTypes() {
+        return orderTypes;
+    }
 
-	public void setOrderTypes(Collection orderTypes) {
-		this.orderTypes = orderTypes;
-	}
+    public void setOrderTypes(Collection orderTypes) {
+        this.orderTypes = orderTypes;
+    }
 
-	public String getOrderType() {
-		return orderType;
-	}
+    public String getOrderType() {
+        return orderType;
+    }
 
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
-	}
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
 
-	public String getExternalOrderNumber() {
-		return externalOrderNumber;
-	}
+    public String getExternalOrderNumber() {
+        return externalOrderNumber;
+    }
 
-	public void setExternalOrderNumber(String externalOrderNumber) {
-		this.externalOrderNumber = externalOrderNumber;
-	}
+    public void setExternalOrderNumber(String externalOrderNumber) {
+        this.externalOrderNumber = externalOrderNumber;
+    }
 
-	public String getLabNo() {
-		return labNo;
-	}
+    public String getLabNo() {
+        return labNo;
+    }
 
-	public void setLabNo(String labNo) {
-		this.labNo = labNo;
-	}
+    public void setLabNo(String labNo) {
+        this.labNo = labNo;
+    }
 
-	public String getRequestDate() {
-		return requestDate;
-	}
+    public String getRequestDate() {
+        return requestDate;
+    }
 
-	public void setRequestDate(String requestDate) {
-		this.requestDate = requestDate;
-	}
+    public void setRequestDate(String requestDate) {
+        this.requestDate = requestDate;
+    }
 
-	public String getReceivedDateForDisplay() {
-		return receivedDateForDisplay;
-	}
+    public String getReceivedDateForDisplay() {
+        return receivedDateForDisplay;
+    }
 
-	public void setReceivedDateForDisplay(String receivedDateForDisplay) {
-		this.receivedDateForDisplay = receivedDateForDisplay;
-	}
+    public void setReceivedDateForDisplay(String receivedDateForDisplay) {
+        this.receivedDateForDisplay = receivedDateForDisplay;
+    }
 
-	public String getReceivedTime() {
-		return receivedTime;
-	}
+    public String getReceivedTime() {
+        return receivedTime;
+    }
 
-	public void setReceivedTime(String receivedTime) {
-		this.receivedTime = receivedTime;
-	}
+    public void setReceivedTime(String receivedTime) {
+        this.receivedTime = receivedTime;
+    }
 
-	public String getNextVisitDate() {
-		return nextVisitDate;
-	}
+    public String getNextVisitDate() {
+        return nextVisitDate;
+    }
 
-	public void setNextVisitDate(String nextVisitDate) {
-		this.nextVisitDate = nextVisitDate;
-	}
+    public void setNextVisitDate(String nextVisitDate) {
+        this.nextVisitDate = nextVisitDate;
+    }
 
-	public String getRequesterSampleID() {
-		return requesterSampleID;
-	}
+    public String getRequesterSampleID() {
+        return requesterSampleID;
+    }
 
-	public void setRequesterSampleID(String requesterSampleID) {
-		this.requesterSampleID = requesterSampleID;
-	}
+    public void setRequesterSampleID(String requesterSampleID) {
+        this.requesterSampleID = requesterSampleID;
+    }
 
-	public String getReferringPatientNumber() {
-		return referringPatientNumber;
-	}
+    public String getReferringPatientNumber() {
+        return referringPatientNumber;
+    }
 
-	public void setReferringPatientNumber(String referringPatientNumber) {
-		this.referringPatientNumber = referringPatientNumber;
-	}
+    public void setReferringPatientNumber(String referringPatientNumber) {
+        this.referringPatientNumber = referringPatientNumber;
+    }
 
-	public String getReferringSiteId() {
-		return referringSiteId;
-	}
+    public String getReferringSiteId() {
+        return referringSiteId;
+    }
 
-	public void setReferringSiteId(String referringSiteId) {
-		this.referringSiteId = referringSiteId;
-	}
+    public void setReferringSiteId(String referringSiteId) {
+        this.referringSiteId = referringSiteId;
+    }
 
-	public String getReferringSiteCode() {
-		return referringSiteCode;
-	}
+    public String getReferringSiteCode() {
+        return referringSiteCode;
+    }
 
-	public void setReferringSiteCode(String referringSiteCode) {
-		this.referringSiteCode = referringSiteCode;
-	}
+    public void setReferringSiteCode(String referringSiteCode) {
+        this.referringSiteCode = referringSiteCode;
+    }
 
-	public String getReferringSiteName() {
-		return referringSiteName;
-	}
+    public String getReferringSiteName() {
+        return referringSiteName;
+    }
 
-	public void setReferringSiteName(String referringSiteName) {
-		this.referringSiteName = referringSiteName;
-	}
+    public void setReferringSiteName(String referringSiteName) {
+        this.referringSiteName = referringSiteName;
+    }
 
-	public Collection getReferringSiteList() {
-		return referringSiteList;
-	}
+    public Collection getReferringSiteList() {
+        return referringSiteList;
+    }
 
-	public void setReferringSiteList(Collection referringSiteList) {
-		this.referringSiteList = referringSiteList;
-	}
+    public void setReferringSiteList(Collection referringSiteList) {
+        this.referringSiteList = referringSiteList;
+    }
 
-	public String getProviderId() {
-		return providerId;
-	}
+    public String getProviderId() {
+        return providerId;
+    }
 
-	public void setProviderId(String providerId) {
-		this.providerId = providerId;
-	}
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
 
-	public String getProviderFirstName() {
-		return providerFirstName;
-	}
+    public String getProviderFirstName() {
+        return providerFirstName;
+    }
 
-	public void setProviderFirstName(String providerFirstName) {
-		this.providerFirstName = providerFirstName;
-	}
+    public void setProviderFirstName(String providerFirstName) {
+        this.providerFirstName = providerFirstName;
+    }
 
-	public String getProviderLastName() {
-		return providerLastName;
-	}
+    public String getProviderLastName() {
+        return providerLastName;
+    }
 
-	public void setProviderLastName(String providerLastName) {
-		this.providerLastName = providerLastName;
-	}
+    public void setProviderLastName(String providerLastName) {
+        this.providerLastName = providerLastName;
+    }
 
-	public String getProviderWorkPhone() {
-		return providerWorkPhone;
-	}
+    public String getProviderWorkPhone() {
+        return providerWorkPhone;
+    }
 
-	public void setProviderWorkPhone(String providerWorkPhone) {
-		this.providerWorkPhone = providerWorkPhone;
-	}
+    public void setProviderWorkPhone(String providerWorkPhone) {
+        this.providerWorkPhone = providerWorkPhone;
+    }
 
-	public String getProviderFax() {
-		return providerFax;
-	}
+    public String getProviderFax() {
+        return providerFax;
+    }
 
-	public void setProviderFax(String providerFax) {
-		this.providerFax = providerFax;
-	}
+    public void setProviderFax(String providerFax) {
+        this.providerFax = providerFax;
+    }
 
-	public String getProviderEmail() {
-		return providerEmail;
-	}
+    public String getProviderEmail() {
+        return providerEmail;
+    }
 
-	public void setProviderEmail(String providerEmail) {
-		this.providerEmail = providerEmail;
-	}
+    public void setProviderEmail(String providerEmail) {
+        this.providerEmail = providerEmail;
+    }
 
-	public String getFacilityAddressStreet() {
-		return facilityAddressStreet;
-	}
+    public String getFacilityAddressStreet() {
+        return facilityAddressStreet;
+    }
 
-	public void setFacilityAddressStreet(String facilityAddressStreet) {
-		this.facilityAddressStreet = facilityAddressStreet;
-	}
+    public void setFacilityAddressStreet(String facilityAddressStreet) {
+        this.facilityAddressStreet = facilityAddressStreet;
+    }
 
-	public String getFacilityAddressCommune() {
-		return facilityAddressCommune;
-	}
+    public String getFacilityAddressCommune() {
+        return facilityAddressCommune;
+    }
 
-	public void setFacilityAddressCommune(String facilityAddressCommune) {
-		this.facilityAddressCommune = facilityAddressCommune;
-	}
+    public void setFacilityAddressCommune(String facilityAddressCommune) {
+        this.facilityAddressCommune = facilityAddressCommune;
+    }
 
-	public String getFacilityPhone() {
-		return facilityPhone;
-	}
+    public String getFacilityPhone() {
+        return facilityPhone;
+    }
 
-	public void setFacilityPhone(String facilityPhone) {
-		this.facilityPhone = facilityPhone;
-	}
+    public void setFacilityPhone(String facilityPhone) {
+        this.facilityPhone = facilityPhone;
+    }
 
-	public String getFacilityFax() {
-		return facilityFax;
-	}
+    public String getFacilityFax() {
+        return facilityFax;
+    }
 
-	public void setFacilityFax(String facilityFax) {
-		this.facilityFax = facilityFax;
-	}
+    public void setFacilityFax(String facilityFax) {
+        this.facilityFax = facilityFax;
+    }
 
-	public String getPaymentOptionSelection() {
-		return paymentOptionSelection;
-	}
+    public String getPaymentOptionSelection() {
+        return paymentOptionSelection;
+    }
 
-	public void setPaymentOptionSelection(String paymentOptionSelection) {
-		this.paymentOptionSelection = paymentOptionSelection;
-	}
+    public void setPaymentOptionSelection(String paymentOptionSelection) {
+        this.paymentOptionSelection = paymentOptionSelection;
+    }
 
-	public Collection getPaymentOptions() {
-		return paymentOptions;
-	}
+    public Collection getPaymentOptions() {
+        return paymentOptions;
+    }
 
-	public void setPaymentOptions(Collection paymentOptions) {
-		this.paymentOptions = paymentOptions;
-	}
+    public void setPaymentOptions(Collection paymentOptions) {
+        this.paymentOptions = paymentOptions;
+    }
 
-	public String getOtherLocationCode() {
-		return otherLocationCode;
-	}
+    public String getOtherLocationCode() {
+        return otherLocationCode;
+    }
 
-	public void setOtherLocationCode(String otherLocationCode) {
-		this.otherLocationCode = otherLocationCode;
-	}
+    public void setOtherLocationCode(String otherLocationCode) {
+        this.otherLocationCode = otherLocationCode;
+    }
 
-	public Boolean getModified() {
-		return modified;
-	}
+    public Boolean getModified() {
+        return modified;
+    }
 
-	public void setModified(Boolean modified) {
-		this.modified = modified;
-	}
+    public void setModified(Boolean modified) {
+        this.modified = modified;
+    }
 
-	public String getSampleId() {
-		return sampleId;
-	}
+    public String getSampleId() {
+        return sampleId;
+    }
 
-	public void setSampleId(String sampleId) {
-		this.sampleId = sampleId;
-	}
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
+    }
 
-	public boolean isReadOnly() {
-		return readOnly;
-	}
+    public boolean isReadOnly() {
+        return readOnly;
+    }
 
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
-	public String getBillingReferenceNumber() {
-		return billingReferenceNumber;
-	}
+    public String getBillingReferenceNumber() {
+        return billingReferenceNumber;
+    }
 
-	public void setBillingReferenceNumber(String billingReferenceNumber) {
-		this.billingReferenceNumber = billingReferenceNumber;
-	}
+    public void setBillingReferenceNumber(String billingReferenceNumber) {
+        this.billingReferenceNumber = billingReferenceNumber;
+    }
 
-	public String getTestLocationCode() {
-		return testLocationCode;
-	}
+    public String getTestLocationCode() {
+        return testLocationCode;
+    }
 
-	public void setTestLocationCode(String testLocationCode) {
-		this.testLocationCode = testLocationCode;
-	}
+    public void setTestLocationCode(String testLocationCode) {
+        this.testLocationCode = testLocationCode;
+    }
 
-	public Collection getTestLocationCodeList() {
-		return testLocationCodeList;
-	}
+    public Collection getTestLocationCodeList() {
+        return testLocationCodeList;
+    }
 
-	public void setTestLocationCodeList(Collection testLocationCodeList) {
-		this.testLocationCodeList = testLocationCodeList;
-	}
+    public void setTestLocationCodeList(Collection testLocationCodeList) {
+        this.testLocationCodeList = testLocationCodeList;
+    }
 
-	public String getProgram() {
-		return program;
-	}
+    public String getProgram() {
+        return program;
+    }
 
-	public void setProgram(String program) {
-		this.program = program;
-	}
+    public void setProgram(String program) {
+        this.program = program;
+    }
 
-	public Collection getProgramList() {
-		return programList;
-	}
+    public Collection getProgramList() {
+        return programList;
+    }
 
-	public void setProgramList(Collection programList) {
-		this.programList = programList;
-	}
+    public void setProgramList(Collection programList) {
+        this.programList = programList;
+    }
 }

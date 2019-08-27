@@ -36,32 +36,32 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 //	public void deleteData(List patients) throws LIMSRuntimeException;
 
-	public List getAllPatients() throws LIMSRuntimeException;
+    public List getAllPatients() throws LIMSRuntimeException;
 
-	public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Patient patient) throws LIMSRuntimeException;
+    public void getData(Patient patient) throws LIMSRuntimeException;
 
 //	public void updateData(Patient patient) throws LIMSRuntimeException;
 
-	public List getNextPatientRecord(String id) throws LIMSRuntimeException;
+    public List getNextPatientRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousPatientRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException;
 
-	public boolean externalIDExists(String patientExternalID);
+    public boolean externalIDExists(String patientExternalID);
 
-	public Patient readPatient(String idString);
+    public Patient readPatient(String idString);
 
-	public Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
+    public Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
 
-	public Patient getPatientByNationalId(String subjectNumber);
+    public Patient getPatientByNationalId(String subjectNumber);
 
-	public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
+    public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
 
-	public Patient getPatientByExternalId(String externalId);
+    public Patient getPatientByExternalId(String externalId);
 
-	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
-			throws LIMSRuntimeException;
+    public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
+            throws LIMSRuntimeException;
 
-	public Patient getData(String patientId) throws LIMSRuntimeException;
+    public Patient getData(String patientId) throws LIMSRuntimeException;
 }

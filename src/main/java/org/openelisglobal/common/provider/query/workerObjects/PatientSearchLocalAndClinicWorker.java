@@ -21,13 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patientidentity.service.PatientIdentityService;
-import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.search.service.SearchResultsService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.externalLinks.ExternalPatientSearch;
@@ -36,183 +29,188 @@ import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
-	
-	protected PatientService patientService = SpringContext.getBean(PatientService.class);
-	protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
-	protected PersonService personService = SpringContext.getBean(PersonService.class);
-	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
-	private final String sysUserId;
+    protected PatientService patientService = SpringContext.getBean(PatientService.class);
+    protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
+    protected PersonService personService = SpringContext.getBean(PersonService.class);
+    protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
-	public PatientSearchLocalAndClinicWorker(String sysUserId) {
-		this.sysUserId = sysUserId;
-	}
+    private final String sysUserId;
 
-	/**
-	 * @see org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker#createSearchResultXML(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.StringBuilder)
-	 */
-	@Override
-	public String createSearchResultXML(String lastName, String firstName,
-			String STNumber, String subjectNumber, String nationalID, String patientID, String guid, StringBuilder xml) {
+    public PatientSearchLocalAndClinicWorker(String sysUserId) {
+        this.sysUserId = sysUserId;
+    }
 
-		// just to make the name shorter
-		ConfigurationProperties config = ConfigurationProperties.getInstance();
+    /**
+     * @see org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker#createSearchResultXML(java.lang.String,
+     *      java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+     *      java.lang.String, java.lang.StringBuilder)
+     */
+    @Override
+    public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
+            String nationalID, String patientID, String guid, StringBuilder xml) {
 
-		String success = IActionConstants.VALID;
+        // just to make the name shorter
+        ConfigurationProperties config = ConfigurationProperties.getInstance();
 
-		if (GenericValidator.isBlankOrNull(lastName)
-				&& GenericValidator.isBlankOrNull(firstName)
-				&& GenericValidator.isBlankOrNull(STNumber)
-				&& GenericValidator.isBlankOrNull(subjectNumber)
-				&& GenericValidator.isBlankOrNull(nationalID)
-				&& GenericValidator.isBlankOrNull(patientID) 
-				&& GenericValidator.isBlankOrNull(guid)) {
+        String success = IActionConstants.VALID;
 
-			xml.append("No search terms were entered");
-			return IActionConstants.INVALID;
-		}
+        if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
+                && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+                && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(patientID)
+                && GenericValidator.isBlankOrNull(guid)) {
 
-		ExternalPatientSearch externalSearch = new ExternalPatientSearch();
-		externalSearch.setSearchCriteria(lastName, firstName, STNumber,	subjectNumber, nationalID, guid);
-		externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
-												config.getPropertyValue(Property.PatientSearchUserName),
-												config.getPropertyValue(Property.PatientSearchPassword),
-												(int) SystemConfiguration.getInstance().getSearchTimeLimit());
+            xml.append("No search terms were entered");
+            return IActionConstants.INVALID;
+        }
 
-		Thread searchThread = new Thread(externalSearch);
-		List<PatientSearchResults> localResults = null;
-		List<PatientDemographicsSearchResults> clinicResults = null;
-		List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<PatientDemographicsSearchResults>();
+        ExternalPatientSearch externalSearch = new ExternalPatientSearch();
+        externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
+        externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
+                config.getPropertyValue(Property.PatientSearchUserName),
+                config.getPropertyValue(Property.PatientSearchPassword),
+                (int) SystemConfiguration.getInstance().getSearchTimeLimit());
 
-		try {
+        Thread searchThread = new Thread(externalSearch);
+        List<PatientSearchResults> localResults = null;
+        List<PatientDemographicsSearchResults> clinicResults = null;
+        List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<PatientDemographicsSearchResults>();
 
-			searchThread.start();
-			localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID, nationalID, patientID, guid);
+        try {
 
-			searchThread.join(SystemConfiguration.getInstance().getSearchTimeLimit() + 500);
+            searchThread.start();
+            localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber,
+                    nationalID, nationalID, patientID, guid);
 
-			if (externalSearch.getSearchResultStatus() == 200) {
-				clinicResults = externalSearch.getSearchResults();
-			} else {
-				// TODO do something with the errors
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException ise) {
+            searchThread.join(SystemConfiguration.getInstance().getSearchTimeLimit() + 500);
 
-		}
+            if (externalSearch.getSearchResultStatus() == 200) {
+                clinicResults = externalSearch.getSearchResults();
+            } else {
+                // TODO do something with the errors
+            }
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalStateException ise) {
 
-		findNewPatients(localResults, clinicResults, newPatientsFromClinic);
-		insertNewPatients(newPatientsFromClinic);
-		localResults.addAll(newPatientsFromClinic);
-		setLocalSourceIndicators(localResults);
+        }
 
-		sortPatients(localResults);
+        findNewPatients(localResults, clinicResults, newPatientsFromClinic);
+        insertNewPatients(newPatientsFromClinic);
+        localResults.addAll(newPatientsFromClinic);
+        setLocalSourceIndicators(localResults);
 
-		if (localResults != null && localResults.size() > 0) {
-			for (PatientSearchResults singleResult : localResults) {
-				appendSearchResultRow(singleResult, xml);
-			}
-		} else {
-			success = IActionConstants.INVALID;
+        sortPatients(localResults);
 
-			xml.append("No results were found for search.  Check spelling or remove some of the fields");
-		}
+        if (localResults != null && localResults.size() > 0) {
+            for (PatientSearchResults singleResult : localResults) {
+                appendSearchResultRow(singleResult, xml);
+            }
+        } else {
+            success = IActionConstants.INVALID;
 
-		return success;
-	}
+            xml.append("No results were found for search.  Check spelling or remove some of the fields");
+        }
 
-	private void insertNewPatients(	List<PatientDemographicsSearchResults> newPatientsFromClinic) {
-		try {
-			for (PatientDemographicsSearchResults results : newPatientsFromClinic) {
-				insertNewPatients(results);
-			}
-		} catch (LIMSRuntimeException lre) {
-			lre.printStackTrace();
-		} 
-	}
+        return success;
+    }
 
-	private void insertNewPatients(PatientDemographicsSearchResults results) {
-		Patient patient = new Patient();
-		Person person = new Person();
+    private void insertNewPatients(List<PatientDemographicsSearchResults> newPatientsFromClinic) {
+        try {
+            for (PatientDemographicsSearchResults results : newPatientsFromClinic) {
+                insertNewPatients(results);
+            }
+        } catch (LIMSRuntimeException lre) {
+            lre.printStackTrace();
+        }
+    }
 
-		patient.setBirthDateForDisplay(results.getBirthdate());
-		patient.setGender(results.getGender());
-		patient.setNationalId(results.getNationalId());
-		patient.setSysUserId(sysUserId);
+    private void insertNewPatients(PatientDemographicsSearchResults results) {
+        Patient patient = new Patient();
+        Person person = new Person();
 
-		person.setLastName(results.getLastName());
-		person.setFirstName(results.getFirstName());
-		person.setSysUserId(sysUserId);
+        patient.setBirthDateForDisplay(results.getBirthdate());
+        patient.setGender(results.getGender());
+        patient.setNationalId(results.getNationalId());
+        patient.setSysUserId(sysUserId);
 
-		personService.insert(person);
-		patient.setPerson(person);
-		patientService.insert(patient);
+        person.setLastName(results.getLastName());
+        person.setFirstName(results.getFirstName());
+        person.setSysUserId(sysUserId);
 
-		persistIdentityType(patientIdentityService, results.getStNumber(), "ST", patient.getId());
-		persistIdentityType(patientIdentityService, results.getSubjectNumber(), "SUBJECT", patient.getId());
-		persistIdentityType(patientIdentityService, results.getMothersName(), "MOTHER", patient.getId());
-		persistIdentityType(patientIdentityService, results.getGUID(), "GUID", patient.getId());
-		persistIdentityType(patientIdentityService, results.getDataSourceId(), "ORG_SITE", patient.getId());
+        personService.insert(person);
+        patient.setPerson(person);
+        patientService.insert(patient);
 
-		results.setPatientID(patient.getId());
-	}
+        persistIdentityType(patientIdentityService, results.getStNumber(), "ST", patient.getId());
+        persistIdentityType(patientIdentityService, results.getSubjectNumber(), "SUBJECT", patient.getId());
+        persistIdentityType(patientIdentityService, results.getMothersName(), "MOTHER", patient.getId());
+        persistIdentityType(patientIdentityService, results.getGUID(), "GUID", patient.getId());
+        persistIdentityType(patientIdentityService, results.getDataSourceId(), "ORG_SITE", patient.getId());
 
-	public void persistIdentityType(PatientIdentityService patientIdentityService,	String paramValue, String type, String patientId)
-			throws LIMSRuntimeException {
+        results.setPatientID(patient.getId());
+    }
 
-		if (!GenericValidator.isBlankOrNull(paramValue)) {
+    public void persistIdentityType(PatientIdentityService patientIdentityService, String paramValue, String type,
+            String patientId) throws LIMSRuntimeException {
 
-			String typeID = PatientIdentityTypeMap.getInstance().getIDForType(
-					type);
+        if (!GenericValidator.isBlankOrNull(paramValue)) {
 
-			PatientIdentity patientIdentity = new PatientIdentity();
-			patientIdentity.setPatientId(patientId);
-			patientIdentity.setIdentityTypeId(typeID);
-			patientIdentity.setSysUserId(sysUserId);
-			patientIdentity.setIdentityData(paramValue);
-			patientIdentity.setLastupdatedFields();
-			patientIdentityService.insert(patientIdentity);
-		}
-	}
+            String typeID = PatientIdentityTypeMap.getInstance().getIDForType(type);
 
-	/*
-	 * This will check to see if the clinic results are in OpenELIS. If they are
-	 * not then they will be
-	 */
-	private void findNewPatients(List<PatientSearchResults> results,
-			List<PatientDemographicsSearchResults> clinicResults,
-			List<PatientDemographicsSearchResults> newPatientsFromClinic) {
+            PatientIdentity patientIdentity = new PatientIdentity();
+            patientIdentity.setPatientId(patientId);
+            patientIdentity.setIdentityTypeId(typeID);
+            patientIdentity.setSysUserId(sysUserId);
+            patientIdentity.setIdentityData(paramValue);
+            patientIdentity.setLastupdatedFields();
+            patientIdentityService.insert(patientIdentity);
+        }
+    }
 
-		if (clinicResults != null) {
-			List<String> currentGuids = new ArrayList<String>();
+    /*
+     * This will check to see if the clinic results are in OpenELIS. If they are not
+     * then they will be
+     */
+    private void findNewPatients(List<PatientSearchResults> results,
+            List<PatientDemographicsSearchResults> clinicResults,
+            List<PatientDemographicsSearchResults> newPatientsFromClinic) {
 
-			for (PatientSearchResults result : results) {
-				if (!GenericValidator.isBlankOrNull(result.getGUID())) {
-					currentGuids.add(result.getGUID());
-				}
-			}
+        if (clinicResults != null) {
+            List<String> currentGuids = new ArrayList<String>();
 
-			for (PatientDemographicsSearchResults clinicResult : clinicResults) {
-				if (!currentGuids.contains(clinicResult.getGUID())) {
-					newPatientsFromClinic.add(clinicResult);
-				}
-			}
-		}
-	}
+            for (PatientSearchResults result : results) {
+                if (!GenericValidator.isBlankOrNull(result.getGUID())) {
+                    currentGuids.add(result.getGUID());
+                }
+            }
 
-	private void setLocalSourceIndicators(List<PatientSearchResults> results) {
-		for (PatientSearchResults result : results) {
-			String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
-																				 : "patient.imported.source";
-			result.setDataSourceName(MessageUtil.getMessage(messageKey));
-		}
-	}
+            for (PatientDemographicsSearchResults clinicResult : clinicResults) {
+                if (!currentGuids.contains(clinicResult.getGUID())) {
+                    newPatientsFromClinic.add(clinicResult);
+                }
+            }
+        }
+    }
+
+    private void setLocalSourceIndicators(List<PatientSearchResults> results) {
+        for (PatientSearchResults result : results) {
+            String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
+                    : "patient.imported.source";
+            result.setDataSourceName(MessageUtil.getMessage(messageKey));
+        }
+    }
 }

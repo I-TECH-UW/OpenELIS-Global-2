@@ -24,29 +24,28 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 
-public class StatusRules{
-	
-	
-	public boolean hasFailedValidation(String analysisStatusId) {
-		return analysisStatusId.equals(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected));
-	}
+public class StatusRules {
 
-	public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {
-		resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.BiologistRejected);
-		resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NotStarted);
-		resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NonConforming_depricated);
-		resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Entered);
-		resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Started);
-		resultsLoadUtility.addIncludedSampleStatus(OrderStatus.NonConforming_depricated);
-	}
+    public boolean hasFailedValidation(String analysisStatusId) {
+        return analysisStatusId.equals(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected));
+    }
 
-	public String getStartingAnalysisStatus() {
-		return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
-	}
+    public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.BiologistRejected);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NotStarted);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NonConforming_depricated);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Entered);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Started);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.NonConforming_depricated);
+    }
 
-	public static boolean useRecordStatusForValidation(){
-		String statusRules = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-		return statusRules.equals(	IActionConstants.STATUS_RULES_RETROCI);
+    public String getStartingAnalysisStatus() {
+        return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+    }
 
-	}
+    public static boolean useRecordStatusForValidation() {
+        String statusRules = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        return statusRules.equals(IActionConstants.STATUS_RULES_RETROCI);
+
+    }
 }

@@ -1,19 +1,18 @@
 package org.openelisglobal.datasubmission.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.datasubmission.dao.DataIndicatorDAO;
 import org.openelisglobal.datasubmission.valueholder.DataIndicator;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> implements DataIndicatorDAO {
 
-	public DataIndicatorDAOImpl() {
-		super(DataIndicator.class);
-	}
+    public DataIndicatorDAOImpl() {
+        super(DataIndicator.class);
+    }
 
 //	@Override
 //	public void getData(DataIndicator indicator) throws LIMSRuntimeException {

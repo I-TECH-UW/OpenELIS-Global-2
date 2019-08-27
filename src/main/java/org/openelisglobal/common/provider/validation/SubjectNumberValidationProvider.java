@@ -23,53 +23,56 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.search.service.SearchResultsService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
  * via AJAX.
  */
-public class SubjectNumberValidationProvider extends BaseValidationProvider{
-	
-	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
+public class SubjectNumberValidationProvider extends BaseValidationProvider {
 
-    public SubjectNumberValidationProvider(){
+    protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
+
+    public SubjectNumberValidationProvider() {
         super();
     }
 
-    public SubjectNumberValidationProvider( AjaxServlet ajaxServlet ){
+    public SubjectNumberValidationProvider(AjaxServlet ajaxServlet) {
         this.ajaxServlet = ajaxServlet;
     }
 
     @Override
-    public void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         String queryResponse = "valid";
-        String fieldId = request.getParameter( "fieldId" );
-        String number = request.getParameter( "subjectNumber" );
-        String numberType = request.getParameter( "numberType" );
-        String STNumber = numberType.equals( "STnumber" ) ? number : null;
-        String subjectNumber = numberType.equals( "subjectNumber" ) ? number : null;
-        String nationalId = numberType.equals( "nationalId" ) ? number : null;
+        String fieldId = request.getParameter("fieldId");
+        String number = request.getParameter("subjectNumber");
+        String numberType = request.getParameter("numberType");
+        String STNumber = numberType.equals("STnumber") ? number : null;
+        String subjectNumber = numberType.equals("subjectNumber") ? number : null;
+        String nationalId = numberType.equals("nationalId") ? number : null;
 
+        // We just care about duplicates but blank values do not count as duplicates
+        if (!(GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+                && GenericValidator.isBlankOrNull(nationalId))) {
+            List<PatientSearchResults> results = searchResultsService.getSearchResults(null, null, STNumber,
+                    subjectNumber, nationalId, null, null, null);
 
-        //We just care about duplicates but blank values do not count as duplicates
-        if( !( GenericValidator.isBlankOrNull( STNumber ) && GenericValidator.isBlankOrNull( subjectNumber ) && GenericValidator.isBlankOrNull( nationalId ) ) ){
-            List<PatientSearchResults> results = searchResultsService.getSearchResults( null, null, STNumber, subjectNumber, nationalId, null, null, null );
-
-
-            boolean allowDuplicates = ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true" );
-            if( !results.isEmpty() ){
-                queryResponse = ( allowDuplicates ? "warning#" + MessageUtil.getMessage("alert.warning") : "fail#" + MessageUtil.getMessage("alert.error") ) + ": " + MessageUtil.getMessage( "error.duplicate.subjectNumber.warning");
+            boolean allowDuplicates = ConfigurationProperties.getInstance()
+                    .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true");
+            if (!results.isEmpty()) {
+                queryResponse = (allowDuplicates ? "warning#" + MessageUtil.getMessage("alert.warning")
+                        : "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
             }
         }
-        response.setCharacterEncoding( "UTF-8" );
-        ajaxServlet.sendData( fieldId, queryResponse, request, response );
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(fieldId, queryResponse, request, response);
     }
 }

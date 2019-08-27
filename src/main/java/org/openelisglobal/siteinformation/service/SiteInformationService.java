@@ -6,23 +6,23 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public interface SiteInformationService extends BaseObjectService<SiteInformation, String> {
-	void getData(SiteInformation siteInformation);
+    void getData(SiteInformation siteInformation);
 
-	SiteInformation getSiteInformationByName(String siteName);
+    SiteInformation getSiteInformationByName(String siteName);
 
-	List<SiteInformation> getAllSiteInformation();
+    List<SiteInformation> getAllSiteInformation();
 
-	int getCountForDomainName(String domainName);
+    int getCountForDomainName(String domainName);
 
-	SiteInformation getSiteInformationById(String urlId);
+    SiteInformation getSiteInformationById(String urlId);
 
-	List<SiteInformation> getNextSiteInformationRecord(String id);
+    List<SiteInformation> getNextSiteInformationRecord(String id);
 
-	List<SiteInformation> getSiteInformationByDomainName(String domainName);
+    List<SiteInformation> getSiteInformationByDomainName(String domainName);
 
-	List<SiteInformation> getPreviousSiteInformationRecord(String id);
+    List<SiteInformation> getPreviousSiteInformationRecord(String id);
 
-	List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
+    List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
 
-	void persistData(SiteInformation siteInformation, boolean newSiteInformation);
+    void persistData(SiteInformation siteInformation, boolean newSiteInformation);
 }

@@ -19,13 +19,12 @@ package org.openelisglobal.requester.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.requester.dao.RequesterTypeDAO;
 import org.openelisglobal.requester.valueholder.RequesterType;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
  */
@@ -33,25 +32,25 @@ import org.openelisglobal.requester.valueholder.RequesterType;
 @Transactional
 public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> implements RequesterTypeDAO {
 
-	public RequesterTypeDAOImpl() {
-		super(RequesterType.class);
-	}
+    public RequesterTypeDAOImpl() {
+        super(RequesterType.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
-		String sql = "from RequesterType rt where rt.requesterType = :typeName";
+    @Override
+    @Transactional(readOnly = true)
+    public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
+        String sql = "from RequesterType rt where rt.requesterType = :typeName";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("typeName", typeName);
-			RequesterType type = (RequesterType) query.uniqueResult();
-			return type;
-		} catch (HibernateException e) {
-			handleException(e, "getRequesterTypeByName");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("typeName", typeName);
+            RequesterType type = (RequesterType) query.uniqueResult();
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getRequesterTypeByName");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

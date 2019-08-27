@@ -6,170 +6,170 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
-import org.openelisglobal.test.service.TestServiceImpl;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.EIDReportData;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestServiceImpl;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class PatientEIDReport extends RetroCIPatientReport {
 
-	protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
-	protected static final long THREE_YEARS = YEAR * 3L;
-	protected static final long WEEK = YEAR / 52L;
-	protected static final long MONTH = YEAR / 12L;
+    protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
+    protected static final long THREE_YEARS = YEAR * 3L;
+    protected static final long WEEK = YEAR / 52L;
+    protected static final long MONTH = YEAR / 12L;
 
-	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-	private ResultService resultService = SpringContext.getBean(ResultService.class);
-	private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
+    private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    private ResultService resultService = SpringContext.getBean(ResultService.class);
+    private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
 
-	protected List<EIDReportData> reportItems;
-	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
+    protected List<EIDReportData> reportItems;
+    private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
-	@Override
-	protected void initializeReportItems() {
-		reportItems = new ArrayList<>();
-	}
+    @Override
+    protected void initializeReportItems() {
+        reportItems = new ArrayList<>();
+    }
 
-	@Override
-	protected String getReportNameForReport() {
-		return MessageUtil.getMessage("reports.label.patient.EID");
-	}
+    @Override
+    protected String getReportNameForReport() {
+        return MessageUtil.getMessage("reports.label.patient.EID");
+    }
 
-	@Override
-	public JRDataSource getReportDataSource() throws IllegalStateException {
-		if (!initialized) {
-			throw new IllegalStateException("initializeReport not called first");
-		}
+    @Override
+    public JRDataSource getReportDataSource() throws IllegalStateException {
+        if (!initialized) {
+            throw new IllegalStateException("initializeReport not called first");
+        }
 
-		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
-	}
+        return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
+    }
 
-	@Override
-	protected void createReportItems() {
-		EIDReportData data = new EIDReportData();
+    @Override
+    protected void createReportItems() {
+        EIDReportData data = new EIDReportData();
 
-		setPatientInfo(data);
-		setTestInfo(data);
-		reportItems.add(data);
+        setPatientInfo(data);
+        setTestInfo(data);
+        reportItems.add(data);
 
-	}
+    }
 
-	protected void setTestInfo(EIDReportData data) {
-		boolean atLeastOneAnalysisNotValidated = false;
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
-		Timestamp lastReport = SpringContext.getBean(IReportTrackingService.class)
-				.getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
-		Boolean mayBeDuplicate = lastReport != null;
+    protected void setTestInfo(EIDReportData data) {
+        boolean atLeastOneAnalysisNotValidated = false;
+        List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
+        Timestamp lastReport = SpringContext.getBean(IReportTrackingService.class)
+                .getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
+        Boolean mayBeDuplicate = lastReport != null;
 
-		Date maxCompleationDate = null;
-		long maxCompleationTime = 0L;
-		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
+        Date maxCompleationDate = null;
+        long maxCompleationTime = 0L;
+        String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
-		for (Analysis analysis : analysisList) {
+        for (Analysis analysis : analysisList) {
 
-			if (analysis.getCompletedDate() != null) {
-				if (analysis.getCompletedDate().getTime() > maxCompleationTime) {
-					maxCompleationDate = analysis.getCompletedDate();
-					maxCompleationTime = maxCompleationDate.getTime();
-				}
+            if (analysis.getCompletedDate() != null) {
+                if (analysis.getCompletedDate().getTime() > maxCompleationTime) {
+                    maxCompleationDate = analysis.getCompletedDate();
+                    maxCompleationTime = maxCompleationDate.getTime();
+                }
 
-			}
+            }
 
-			String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
+            String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 
-			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+            List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
-			boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
-			if (!valid) {
-				atLeastOneAnalysisNotValidated = true;
-			}
+            boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
+            if (!valid) {
+                atLeastOneAnalysisNotValidated = true;
+            }
 
-			if (testName.equals("DNA PCR")) {
-				if (valid) {
-					String resultValue = "";
-					if (resultList.size() > 0) {
-						resultValue = resultList.get(resultList.size() - 1).getValue();
-					}
-					Dictionary dictionary = new Dictionary();
-					dictionary.setId(resultValue);
-					dictionaryService.getData(dictionary);
-					data.setHiv_status(dictionary.getDictEntry());
-				} else {
-					data.setHiv_status(invalidValue);
-				}
-			}
-			if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-					&& lastReport.before(analysis.getLastupdated())) {
-				mayBeDuplicate = false;
-			}
-		}
-		if (maxCompleationDate != null) {
-			data.setCompleationdate(DateUtil.convertSqlDateToStringDate(maxCompleationDate));
-		}
+            if (testName.equals("DNA PCR")) {
+                if (valid) {
+                    String resultValue = "";
+                    if (resultList.size() > 0) {
+                        resultValue = resultList.get(resultList.size() - 1).getValue();
+                    }
+                    Dictionary dictionary = new Dictionary();
+                    dictionary.setId(resultValue);
+                    dictionaryService.getData(dictionary);
+                    data.setHiv_status(dictionary.getDictEntry());
+                } else {
+                    data.setHiv_status(invalidValue);
+                }
+            }
+            if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                    && lastReport.before(analysis.getLastupdated())) {
+                mayBeDuplicate = false;
+            }
+        }
+        if (maxCompleationDate != null) {
+            data.setCompleationdate(DateUtil.convertSqlDateToStringDate(maxCompleationDate));
+        }
 
-		String observation = getObservationValues(OBSERVATION_WHICH_PCR_ID);
+        String observation = getObservationValues(OBSERVATION_WHICH_PCR_ID);
 
-		if (!GenericValidator.isBlankOrNull(observation)) {
-			Dictionary dictionary = new Dictionary();
-			dictionary.setId(observation);
-			dictionaryService.getData(dictionary);
-			data.setPcr_type(dictionary.getDictEntry());
-		}
-		data.setDuplicateReport(mayBeDuplicate);
-		data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
-				: MessageUtil.getMessage("report.status.complete"));
-	}
+        if (!GenericValidator.isBlankOrNull(observation)) {
+            Dictionary dictionary = new Dictionary();
+            dictionary.setId(observation);
+            dictionaryService.getData(dictionary);
+            data.setPcr_type(dictionary.getDictEntry());
+        }
+        data.setDuplicateReport(mayBeDuplicate);
+        data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
+                : MessageUtil.getMessage("report.status.complete"));
+    }
 
-	protected void setPatientInfo(EIDReportData data) {
+    protected void setPatientInfo(EIDReportData data) {
 
-		data.setSubjectno(reportPatient.getNationalId());
-		data.setSitesubjectno(reportPatient.getExternalId());
-		data.setBirth_date(reportPatient.getBirthDateForDisplay());
-		data.setGender(reportPatient.getGender());
-		data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
-		SampleOrganization sampleOrg = new SampleOrganization();
-		sampleOrg.setSample(reportSample);
-		orgService.getDataBySample(sampleOrg);
-		data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
-		data.setDoctor(getObservationValues(OBSERVATION_REQUESTOR_ID));
-		data.setAccession_number(reportSample.getAccessionNumber());
-		data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
+        data.setSubjectno(reportPatient.getNationalId());
+        data.setSitesubjectno(reportPatient.getExternalId());
+        data.setBirth_date(reportPatient.getBirthDateForDisplay());
+        data.setGender(reportPatient.getGender());
+        data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
+        SampleOrganization sampleOrg = new SampleOrganization();
+        sampleOrg.setSample(reportSample);
+        orgService.getDataBySample(sampleOrg);
+        data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
+        data.setDoctor(getObservationValues(OBSERVATION_REQUESTOR_ID));
+        data.setAccession_number(reportSample.getAccessionNumber());
+        data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
 
-		Timestamp collectionDate = reportSample.getCollectionDate();
+        Timestamp collectionDate = reportSample.getCollectionDate();
 
-		if (collectionDate != null) {
-			long collectionTime = collectionDate.getTime() - reportPatient.getBirthDate().getTime();
+        if (collectionDate != null) {
+            long collectionTime = collectionDate.getTime() - reportPatient.getBirthDate().getTime();
 
-			if (collectionTime < THREE_YEARS) {
-				data.setAgeWeek(String.valueOf((int) Math.floor(collectionTime / WEEK)));
-			} else {
-				data.setAgeMonth(String.valueOf((int) Math.floor(collectionTime / MONTH)));
-			}
+            if (collectionTime < THREE_YEARS) {
+                data.setAgeWeek(String.valueOf((int) Math.floor(collectionTime / WEEK)));
+            } else {
+                data.setAgeMonth(String.valueOf((int) Math.floor(collectionTime / MONTH)));
+            }
 
-		}
-		data.getSampleQaEventItems(reportSample);
-	}
+        }
+        data.getSampleQaEventItems(reportSample);
+    }
 
-	@Override
-	protected String getProjectId() {
-		return EID_STUDY_ID;
-	}
+    @Override
+    protected String getProjectId() {
+        return EID_STUDY_ID;
+    }
 
 }

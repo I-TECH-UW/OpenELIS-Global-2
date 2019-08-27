@@ -17,60 +17,59 @@ package org.openelisglobal.reports.send.sample.valueholder;
 
 import java.util.ArrayList;
 
-public class SampleXmit extends
-		org.openelisglobal.sample.valueholder.Sample {
+public class SampleXmit extends org.openelisglobal.sample.valueholder.Sample {
 
-	private PatientXmit patient;
+    private PatientXmit patient;
 
-	private String externalId;
+    private String externalId;
 
-	private ProviderXmit provider;
+    private ProviderXmit provider;
 
-	private FacilityXmit facility;
-	
-	private ArrayList tests;
+    private FacilityXmit facility;
 
-	public SampleXmit() {
-	}
+    private ArrayList tests;
 
-	public PatientXmit getPatient() {
-		return patient;
-	}
+    public SampleXmit() {
+    }
 
-	public ArrayList getTests() {
-		return tests;
-	}
+    public PatientXmit getPatient() {
+        return patient;
+    }
 
-	public void setTests(ArrayList tests) {
-		this.tests = tests;
-	}
+    public ArrayList getTests() {
+        return tests;
+    }
 
-	public void setPatient(PatientXmit patient) {
-		this.patient = patient;
-	}
+    public void setTests(ArrayList tests) {
+        this.tests = tests;
+    }
 
-	public ProviderXmit getProvider() {
-		return provider;
-	}
+    public void setPatient(PatientXmit patient) {
+        this.patient = patient;
+    }
 
-	public void setProvider(ProviderXmit provider) {
-		this.provider = provider;
-	}
+    public ProviderXmit getProvider() {
+        return provider;
+    }
 
-	public String getExternalId() {
-		return externalId;
-	}
+    public void setProvider(ProviderXmit provider) {
+        this.provider = provider;
+    }
 
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
+    public String getExternalId() {
+        return externalId;
+    }
 
-	public FacilityXmit getFacility() {
-		return facility;
-	}
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-	public void setFacility(FacilityXmit facility) {
-		this.facility = facility;
-	}
+    public FacilityXmit getFacility() {
+        return facility;
+    }
+
+    public void setFacility(FacilityXmit facility) {
+        this.facility = facility;
+    }
 
 }

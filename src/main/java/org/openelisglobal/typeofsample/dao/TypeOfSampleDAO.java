@@ -32,49 +32,49 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
  */
 public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
-	public enum SampleDomain {
-		HUMAN, ANIMAL, ENVIRONMENTAL
-	}
+    public enum SampleDomain {
+        HUMAN, ANIMAL, ENVIRONMENTAL
+    }
 
-	public String getNameForTypeOfSampleId(String id);
+    public String getNameForTypeOfSampleId(String id);
 
 //	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
 //	public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
 
-	public List getAllTypeOfSamples() throws LIMSRuntimeException;
+    public List getAllTypeOfSamples() throws LIMSRuntimeException;
 
-	public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
+    public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
 
-	public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
 //	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
-	public List getTypes(String filter, String domain) throws LIMSRuntimeException;
+    public List getTypes(String filter, String domain) throws LIMSRuntimeException;
 
-	public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
+    public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
 
-	public List getNextTypeOfSampleRecord(String id) throws LIMSRuntimeException;
+    public List getNextTypeOfSampleRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
+    public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
 
-	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
-			throws LIMSRuntimeException;
+    public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
+            throws LIMSRuntimeException;
 
-	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
+    public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
 
-	public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
+    public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
 
-	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
-			throws LIMSRuntimeException;
+    public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
+            throws LIMSRuntimeException;
 
-	public TypeOfSample getSampleTypeFromTest(Test test);
+    public TypeOfSample getSampleTypeFromTest(Test test);
 
-	void clearMap();
+    void clearMap();
 
-	boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 }

@@ -14,11 +14,11 @@ public interface PatientIdentityDAO extends BaseDAO<PatientIdentity, String> {
 
 //	public void delete(String patientIdentityId, String activeUserId) throws LIMSRuntimeException;
 
-	public List<PatientIdentity> getPatientIdentitiesForPatient(String id) throws LIMSRuntimeException;
+    public List<PatientIdentity> getPatientIdentitiesForPatient(String id) throws LIMSRuntimeException;
 
-	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
-			throws LIMSRuntimeException;
+    public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
+            throws LIMSRuntimeException;
 
-	public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId)
-			throws LIMSRuntimeException;
+    public PatientIdentity getPatitentIdentityForPatientAndType(String patientId, String identityTypeId)
+            throws LIMSRuntimeException;
 }

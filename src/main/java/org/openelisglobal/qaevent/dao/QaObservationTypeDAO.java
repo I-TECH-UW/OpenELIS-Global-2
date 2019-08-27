@@ -22,5 +22,5 @@ import org.openelisglobal.qaevent.valueholder.QaObservationType;
 
 public interface QaObservationTypeDAO extends BaseDAO<QaObservationType, String> {
 
-	public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException;
+    public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException;
 }

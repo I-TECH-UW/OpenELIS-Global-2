@@ -28,11 +28,13 @@ var newSearchInfo = false;
 
 function doShowTests(){
     newSearchInfo = false;
-	var form = document.getElementById("mainForm");
-
-	form.action = "StatusResults.do"; 
-	form.method ="get";
-	form.submit();
+//     make get request of the search fields only
+	window.location.href = "StatusResults.do" 
+			+ "?collectionDate=" + encodeURIComponent($("collectionDate").value ) 
+			+ "&recievedDate=" + encodeURIComponent($("recievedDate").value )
+			+ "&selectedTest=" + encodeURIComponent($("selectedTest").value ) 
+			+ "&selectedAnalysisStatus=" + encodeURIComponent($("selectedAnalysisStatus").value )
+			+ "&selectedSampleStatus=" + encodeURIComponent($("selectedSampleStatus").value );
 }
 
 function /*boolean*/ handleEnterEvent(){

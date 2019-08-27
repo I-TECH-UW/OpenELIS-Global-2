@@ -38,30 +38,26 @@ import org.openelisglobal.spring.util.SpringContext;
  *   <item value="Item3">Third Item</item>
  * </list>]]></code>
  * 
- * @author Darren L. Spurgeon
- * bugzilla 2062 modifications
+ * @author Darren L. Spurgeon bugzilla 2062 modifications
  */
 public class DictionaryAutocompleteProvider extends BaseAutocompleteProvider {
-	
-	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-			
-		String dictionaryEntry = request.getParameter("dictionaryEntry");
-		String dictionaryCategory = request.getParameter("dictionaryCategory");
-		
-		
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String dictionaryEntry = request.getParameter("dictionaryEntry");
+        String dictionaryCategory = request.getParameter("dictionaryCategory");
+
 //		DictionaryDAO dictDAO = new DictionaryDAOImpl();
-		List list = dictionaryService.getDictionaryEntrysByCategoryAbbreviation(dictionaryEntry, dictionaryCategory);
-		
-		
-		return list;
-	}
+        List list = dictionaryService.getDictionaryEntrysByCategoryAbbreviation(dictionaryEntry, dictionaryCategory);
+
+        return list;
+    }
 
 }

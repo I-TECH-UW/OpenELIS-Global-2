@@ -19,26 +19,25 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.valueholder.Result;
 
+public class ClinicalPatientData {
 
-public class ClinicalPatientData{
-
-	private String patientName = "";
-	private String nationalId;
-	private String gender;
-	private String dob;
-	private String age;
-	private String stNumber;
-	private String subjectNumber;
-	private String contactInfo;
-	private String siteInfo;
-	private String testName;
-	private String testRefRange;
-	private String result;
-	private String note;
+    private String patientName = "";
+    private String nationalId;
+    private String gender;
+    private String dob;
+    private String age;
+    private String stNumber;
+    private String subjectNumber;
+    private String contactInfo;
+    private String siteInfo;
+    private String testName;
+    private String testRefRange;
+    private String result;
+    private String note;
     private String conclusion;
-	private String finishDate;
-	private String accessionNumber;
-	private String receivedDate;
+    private String finishDate;
+    private String accessionNumber;
+    private String receivedDate;
     private String testDate;
     private String referralSentDate;
     private String referralTestName;
@@ -48,12 +47,12 @@ public class ClinicalPatientData{
     private String referralRefRange;
     private String referralNote;
     private String firstName = "";
-    private String lastName = "" ;
+    private String lastName = "";
     private String testSection;
     private String dept;
     private String commune;
     private String healthDistrict = "";
-    private String healthRegion = ""; 
+    private String healthRegion = "";
     private int sectionSortOrder = 0;
     private int testSortOrder = 0;
     private boolean hasRangeAndUOM = false;
@@ -76,14 +75,14 @@ public class ClinicalPatientData{
     private String sampleType;
     private String sampleId;
     private String sampleSortOrder;
-	private String analysisStatus;
+    private String analysisStatus;
 
+    public ClinicalPatientData() {
+    }
 
-
-    public ClinicalPatientData(){}
-    public ClinicalPatientData( ClinicalPatientData data){
+    public ClinicalPatientData(ClinicalPatientData data) {
         patientName = data.getPatientName();
-        nationalId  = data.getNationalId();
+        nationalId = data.getNationalId();
         gender = data.getGender();
         dob = data.getDob();
         age = data.getAge();
@@ -147,123 +146,122 @@ public class ClinicalPatientData{
         this.referralRefRange = referralRefRange;
     }
 
+    public String getTestRefRange() {
+        return testRefRange;
+    }
 
-	public String getTestRefRange() {
-		return testRefRange;
-	}
+    public void setTestRefRange(String testRefRange) {
+        this.testRefRange = testRefRange;
+    }
 
-	public void setTestRefRange(String testRefRange) {
-		this.testRefRange = testRefRange;
-	}
+    public String getResult() {
+        return result;
+    }
 
-	public String getResult() {
-		return result;
-	}
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-	public void setResult(String result) {
-		this.result = result;
-	}
+    public String getFinishDate() {
+        return finishDate;
+    }
 
-	public String getFinishDate() {
-		return finishDate;
-	}
+    public void setFinishDate(String finishDate) {
+        this.finishDate = finishDate;
+    }
 
-	public void setFinishDate(String finishDate) {
-		this.finishDate = finishDate;
-	}
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
 
-	public String getAccessionNumber() {
-		return accessionNumber;
-	}
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
-	public void setAccessionNumber(String accessionNumber) {
-		this.accessionNumber = accessionNumber;
-	}
+    public String getPatientName() {
+        return patientName;
+    }
 
-	public String getPatientName() {
-		return patientName;
-	}
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
 
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
-	}
+    public String getNationalId() {
+        return nationalId;
+    }
 
-	public String getNationalId() {
-		return nationalId;
-	}
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
+    }
 
-	public void setNationalId(String nationalId) {
-		this.nationalId = nationalId;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public String getGender() {
-		return gender;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public String getDob() {
+        return dob;
+    }
 
-	public String getDob() {
-		return dob;
-	}
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
 
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
+    public String getStNumber() {
+        return stNumber;
+    }
 
-	public String getStNumber() {
-		return stNumber;
-	}
+    public void setStNumber(String stNumber) {
+        this.stNumber = stNumber;
+    }
 
-	public void setStNumber(String stNumber) {
-		this.stNumber = stNumber;
-	}
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-	public void setTestName(String testName) {
-		this.testName = testName;
-	}
+    public String getTestName() {
+        return testName;
+    }
 
-	public String getTestName() {
-		return testName;
-	}
+    public void setReceivedDate(String recievedDate) {
+        this.receivedDate = recievedDate;
+    }
 
-	public void setReceivedDate(String recievedDate) {
-		this.receivedDate = recievedDate;
-	}
+    // in case of typo
+    public String getRecievedDate() {
+        return getReceivedDate();
+    }
 
-	// in case of typo
-	public String getRecievedDate() {
-	    return getReceivedDate();
-	}
+    public String getReceivedDate() {
+        return receivedDate;
+    }
 
-	public String getReceivedDate() {
-		return receivedDate;
-	}
+    public void setConclusion(String conclusioned) {
+        conclusion = conclusioned;
+    }
 
-	public void setConclusion(String conclusioned) {
-		conclusion = conclusioned;
-	}
+    public String getConclusion() {
+        return conclusion;
+    }
 
-	public String getConclusion() {
-		return conclusion;
-	}
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
+    }
 
-	public void setContactInfo(String contactInfo) {
-		this.contactInfo = contactInfo;
-	}
+    public String getContactInfo() {
+        return contactInfo;
+    }
 
-	public String getContactInfo() {
-		return contactInfo;
-	}
+    public void setSiteInfo(String siteInfo) {
+        this.siteInfo = siteInfo;
+    }
 
-	public void setSiteInfo(String siteInfo) {
-		this.siteInfo = siteInfo;
-	}
-
-	public String getSiteInfo() {
-		return siteInfo;
-	}
+    public String getSiteInfo() {
+        return siteInfo;
+    }
 
     public void setTestDate(String testDate) {
         this.testDate = testDate;
@@ -313,14 +311,14 @@ public class ClinicalPatientData{
         return referralReason;
     }
 
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
 
-	public String getUom() {
-		return uom;
-	}
-	
+    public String getUom() {
+        return uom;
+    }
+
     public String getNote() {
         return note;
     }
@@ -328,7 +326,7 @@ public class ClinicalPatientData{
     public void setNote(String note) {
         this.note = note;
     }
-    
+
     public String getReferralNote() {
         return referralNote;
     }
@@ -337,252 +335,251 @@ public class ClinicalPatientData{
         this.referralNote = referralNote;
     }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getTestSection() {
-		return testSection;
-	}
+    public String getTestSection() {
+        return testSection;
+    }
 
-	public void setTestSection(String testSection) {
-		this.testSection = testSection;
-	}
+    public void setTestSection(String testSection) {
+        this.testSection = testSection;
+    }
 
-	public boolean isHasRangeAndUOM() {
-		return hasRangeAndUOM;
-	}
+    public boolean isHasRangeAndUOM() {
+        return hasRangeAndUOM;
+    }
 
-	public void setHasRangeAndUOM(boolean hasRangeAndUOM) {
-		this.hasRangeAndUOM = hasRangeAndUOM;
-	}
+    public void setHasRangeAndUOM(boolean hasRangeAndUOM) {
+        this.hasRangeAndUOM = hasRangeAndUOM;
+    }
 
     public String getSampleSortOrder() {
-		return sampleSortOrder;
-	}
+        return sampleSortOrder;
+    }
 
     public void setSampleSortOrder(String sampleSortOrder) {
-		this.sampleSortOrder = sampleSortOrder;
-	}
+        this.sampleSortOrder = sampleSortOrder;
+    }
 
-	public String getDept() {
-		return dept;
-	}
+    public String getDept() {
+        return dept;
+    }
 
-	public void setDept(String dept) {
-		this.dept = dept;
-	}
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
 
-	public String getCommune() {
-		return commune;
-	}
+    public String getCommune() {
+        return commune;
+    }
 
-	public void setCommune(String commune) {
-		this.commune = commune;
-	}
+    public void setCommune(String commune) {
+        this.commune = commune;
+    }
 
+    public int getTestSortOrder() {
+        return testSortOrder;
+    }
 
-	public int getTestSortOrder() {
-		return testSortOrder;
-	}
+    public void setTestSortOrder(int testSortOrder) {
+        this.testSortOrder = testSortOrder;
+    }
 
-	public void setTestSortOrder(int testSortOrder) {
-		this.testSortOrder = testSortOrder;
-	}
+    public int getSectionSortOrder() {
+        return sectionSortOrder;
+    }
 
-	public int getSectionSortOrder() {
-		return sectionSortOrder;
-	}
+    public void setSectionSortOrder(int sectionSortOrder) {
+        this.sectionSortOrder = sectionSortOrder;
+    }
 
-	public void setSectionSortOrder(int sectionSortOrder) {
-		this.sectionSortOrder = sectionSortOrder;
-	}
+    public String getSubjectNumber() {
+        return subjectNumber;
+    }
 
-	public String getSubjectNumber() {
-		return subjectNumber;
-	}
+    public void setSubjectNumber(String subjectNumber) {
+        this.subjectNumber = subjectNumber;
+    }
 
-	public void setSubjectNumber(String subjectNumber) {
-		this.subjectNumber = subjectNumber;
-	}
+    public String getHealthDistrict() {
+        return healthDistrict;
+    }
 
-	public String getHealthDistrict() {
-		return healthDistrict;
-	}
+    public void setHealthDistrict(String healthDistrict) {
+        this.healthDistrict = healthDistrict;
+    }
 
-	public void setHealthDistrict(String healthDistrict) {
-		this.healthDistrict = healthDistrict;
-	}
+    public String getHealthRegion() {
+        return healthRegion;
+    }
 
-	public String getHealthRegion() {
-		return healthRegion;
-	}
+    public void setHealthRegion(String healthRegion) {
+        this.healthRegion = healthRegion;
+    }
 
-	public void setHealthRegion(String healthRegion) {
-		this.healthRegion = healthRegion;
-	}
+    public String getLabOrderType() {
+        return labOrderType;
+    }
 
-	public String getLabOrderType() {
-		return labOrderType;
-	}
+    public void setLabOrderType(String labOrderType) {
+        this.labOrderType = labOrderType;
+    }
 
-	public void setLabOrderType(String labOrderType) {
-		this.labOrderType = labOrderType;
-	}
+    public String getAge() {
+        return age;
+    }
 
-	public String getAge() {
-		return age;
-	}
+    public void setAge(String age) {
+        this.age = age;
+    }
 
-	public void setAge(String age) {
-		this.age = age;
-	}
+    public String getCompleteFlag() {
+        return completeFlag;
+    }
 
-	public String getCompleteFlag() {
-		return completeFlag;
-	}
+    public void setCompleteFlag(String completeFlag) {
+        this.completeFlag = completeFlag;
+    }
 
-	public void setCompleteFlag(String completeFlag) {
-		this.completeFlag = completeFlag;
-	}
+    public String getAlerts() {
+        return alerts;
+    }
 
-	public String getAlerts() {
-		return alerts;
-	}
+    public void setAlerts(String alerts) {
+        this.alerts = alerts;
+    }
 
-	public void setAlerts(String alerts) {
-		this.alerts = alerts;
-	}
+    public String getPanelName() {
+        return panelName;
+    }
 
-	public String getPanelName() {
-		return panelName;
-	}
+    public void setPanelName(String panelName) {
+        this.panelName = panelName;
+    }
 
-	public void setPanelName(String panelName) {
-		this.panelName = panelName;
-	}
+    public Boolean getSeparator() {
+        return separator;
+    }
 
-	public Boolean getSeparator() {
-		return separator;
-	}
+    public void setSeparator(Boolean separator) {
+        this.separator = separator;
+    }
 
-	public void setSeparator(Boolean separator) {
-		this.separator = separator;
-	}
+    public Panel getPanel() {
+        return panel;
+    }
 
-	public Panel getPanel() {
-		return panel;
-	}
+    public void setPanel(Panel panel) {
+        this.panel = panel;
+    }
 
-	public void setPanel(Panel panel) {
-		this.panel = panel;
-	}
+    public String getOrderFinishDate() {
+        return orderFinishDate;
+    }
 
-	public String getOrderFinishDate() {
-		return orderFinishDate;
-	}
+    public void setOrderFinishDate(String orderFinishDate) {
+        this.orderFinishDate = orderFinishDate;
+    }
 
-	public void setOrderFinishDate(String orderFinishDate) {
-		this.orderFinishDate = orderFinishDate;
-	}
+    public String getOrderDate() {
+        return orderDate;
+    }
 
-	public String getOrderDate() {
-		return orderDate;
-	}
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
+    }
 
-	public void setOrderDate(String orderDate) {
-		this.orderDate = orderDate;
-	}
+    public String getPatientSiteNumber() {
+        return patientSiteNumber;
+    }
 
-	public String getPatientSiteNumber() {
-		return patientSiteNumber;
-	}
+    public void setPatientSiteNumber(String patientSiteNumber) {
+        this.patientSiteNumber = patientSiteNumber;
+    }
 
-	public void setPatientSiteNumber(String patientSiteNumber) {
-		this.patientSiteNumber = patientSiteNumber;
-	}
+    public Boolean getAbnormalResult() {
+        return abnormalResult;
+    }
 
-	public Boolean getAbnormalResult(){
-		return abnormalResult;
-	}
+    public void setAbnormalResult(Boolean abnormalResult) {
+        this.abnormalResult = abnormalResult;
+    }
 
-	public void setAbnormalResult(Boolean abnormalResult){
-		this.abnormalResult = abnormalResult;
-	}
+    public String getCollectionDateTime() {
+        return collectionDateTime;
+    }
 
-	public String getCollectionDateTime(){
-		return collectionDateTime;
-	}
+    public void setCollectionDateTime(String collectionDateTime) {
+        this.collectionDateTime = collectionDateTime;
+    }
 
-	public void setCollectionDateTime(String collectionDateTime){
-		this.collectionDateTime = collectionDateTime;
-	}
-
-    public boolean isCorrectedResult(){
+    public boolean isCorrectedResult() {
         return correctedResult;
     }
 
-    public void setCorrectedResult( boolean correctedResult ){
+    public void setCorrectedResult(boolean correctedResult) {
         this.correctedResult = correctedResult;
     }
 
-    public Result getParentResult(){
+    public Result getParentResult() {
         return parentResult;
     }
 
-    public void setParentResult( Result parentResult ){
+    public void setParentResult(Result parentResult) {
         this.parentResult = parentResult;
     }
 
-    public boolean getParentMarker(){
+    public boolean getParentMarker() {
         return parentMarker;
     }
 
-    public void setParentMarker( boolean isParentMarker ){
+    public void setParentMarker(boolean isParentMarker) {
         this.parentMarker = isParentMarker;
     }
 
-    public String getBillingNumber(){
+    public String getBillingNumber() {
         return billingNumber;
     }
 
-    public void setBillingNumber( String billingNumber ){
+    public void setBillingNumber(String billingNumber) {
         this.billingNumber = billingNumber;
     }
 
-    public String getSampleType(){
+    public String getSampleType() {
         return sampleType;
     }
 
-    public void setSampleType( String sampleType ){
+    public void setSampleType(String sampleType) {
         this.sampleType = sampleType;
     }
 
-    public String getSampleId(){
+    public String getSampleId() {
         return sampleId;
     }
 
-    public void setSampleId( String sampleId ){
+    public void setSampleId(String sampleId) {
         this.sampleId = sampleId;
     }
 
-    public String getAnalysisStatus(){
+    public String getAnalysisStatus() {
         return analysisStatus;
     }
 
-    public void setAnalysisStatus( String analysisStatus ){
+    public void setAnalysisStatus(String analysisStatus) {
         this.analysisStatus = analysisStatus;
     }
 }

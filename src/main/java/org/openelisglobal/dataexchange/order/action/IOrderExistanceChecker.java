@@ -16,13 +16,10 @@
  */
 package org.openelisglobal.dataexchange.order.action;
 
-public interface IOrderExistanceChecker{
-	public enum CheckResult{
-		NOT_FOUND,
-		ORDER_FOUND_QUEUED,
-		ORDER_FOUND_CANCELED,
-		ORDER_FOUND_INPROGRESS
-	}
+public interface IOrderExistanceChecker {
+    public enum CheckResult {
+        NOT_FOUND, ORDER_FOUND_QUEUED, ORDER_FOUND_CANCELED, ORDER_FOUND_INPROGRESS
+    }
 
-	CheckResult check(String orderId);
+    CheckResult check(String orderId);
 }

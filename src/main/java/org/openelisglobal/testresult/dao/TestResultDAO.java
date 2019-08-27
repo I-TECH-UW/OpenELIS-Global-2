@@ -37,29 +37,29 @@ public interface TestResultDAO extends BaseDAO<TestResult, String> {
 
 //	public void deleteData(List testResults) throws LIMSRuntimeException;
 
-	public List getAllTestResults() throws LIMSRuntimeException;
+    public List getAllTestResults() throws LIMSRuntimeException;
 
-	public List getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(TestResult testResult) throws LIMSRuntimeException;
+    public void getData(TestResult testResult) throws LIMSRuntimeException;
 
 //	public void updateData(TestResult testResult) throws LIMSRuntimeException;
 
-	public List getNextTestResultRecord(String id) throws LIMSRuntimeException;
+    public List getNextTestResultRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTestResultRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTestResultRecord(String id) throws LIMSRuntimeException;
 
-	public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
+    public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
 
-	public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-	public List getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
+    public List getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
 
-	/*
-	 * Finds a TestResult by a test id and dictionary result id
-	 */
-	public TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException;
+    /*
+     * Finds a TestResult by a test id and dictionary result id
+     */
+    public TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException;
 
-	public List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
+    public List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
 
 }

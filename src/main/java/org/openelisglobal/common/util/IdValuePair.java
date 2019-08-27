@@ -11,42 +11,41 @@ import java.util.List;
  * N.B. This is very light weight, if you want to stick it in a hash and want to use something
  * other than identity of equals then over-ride equals and hash.
  */
-public class IdValuePair implements Serializable{
+public class IdValuePair implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String id;
-	private String value;
-	
-	public IdValuePair( String id, String value){
-		this.setId(id);
-		this.setValue(value);
-	}
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private String value;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public IdValuePair(String id, String value) {
+        this.setId(id);
+        this.setValue(value);
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public static void sortByValue( List<IdValuePair> list){
-		if( !list.isEmpty()) {
-			Collections.sort(list, new Comparator<IdValuePair>() {
-				@Override
-				public int compare(IdValuePair o1, IdValuePair o2) {
-					return o1.getValue().compareTo(o2.getValue());
-				}
-			});
-		}
-	}
+    public String getValue() {
+        return value;
+    }
+
+    public static void sortByValue(List<IdValuePair> list) {
+        if (!list.isEmpty()) {
+            Collections.sort(list, new Comparator<IdValuePair>() {
+                @Override
+                public int compare(IdValuePair o1, IdValuePair o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
+    }
 }
-

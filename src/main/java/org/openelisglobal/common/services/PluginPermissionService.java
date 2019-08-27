@@ -16,17 +16,16 @@
 
 package org.openelisglobal.common.services;
 
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.rolemodule.service.RoleModuleService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemmodule.service.SystemModuleService;
+import org.openelisglobal.systemmodule.valueholder.SystemModule;
+import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.rolemodule.service.RoleModuleService;
-import org.openelisglobal.systemmodule.service.SystemModuleService;
-import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.role.valueholder.Role;
-import org.openelisglobal.systemmodule.valueholder.SystemModule;
-import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 
 /**
  */
@@ -34,77 +33,77 @@ import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 @DependsOn({ "springContext" })
 public class PluginPermissionService implements IPluginPermissionService {
 
-	private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
-	private RoleService roleService = SpringContext.getBean(RoleService.class);
-	private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
+    private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
+    private RoleService roleService = SpringContext.getBean(RoleService.class);
+    private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
 
-	public static IPluginPermissionService getInstance() {
-		return SpringContext.getBean(IPluginPermissionService.class);
-	}
+    public static IPluginPermissionService getInstance() {
+        return SpringContext.getBean(IPluginPermissionService.class);
+    }
 
-	@Override
-	public SystemModule getOrCreateSystemModule(String action, String description) {
-		return getOrCreateSystemModuleByName(action, description);
-	}
+    @Override
+    public SystemModule getOrCreateSystemModule(String action, String description) {
+        return getOrCreateSystemModuleByName(action, description);
+    }
 
-	@Override
-	public SystemModule getOrCreateSystemModule(String action, String type, String description) {
-		return getOrCreateSystemModuleByName(action + ":" + type, description);
-	}
+    @Override
+    public SystemModule getOrCreateSystemModule(String action, String type, String description) {
+        return getOrCreateSystemModuleByName(action + ":" + type, description);
+    }
 
-	private SystemModule getOrCreateSystemModuleByName(String name, String description) {
-		SystemModule module = moduleService.getSystemModuleByName(name);
+    private SystemModule getOrCreateSystemModuleByName(String name, String description) {
+        SystemModule module = moduleService.getSystemModuleByName(name);
 
-		if (module == null || module.getId() == null) {
-			module = new SystemModule();
-			module.setSystemModuleName(name);
-			module.setDescription(description);
-			module.setHasAddFlag("Y");
-			module.setHasDeleteFlag("Y");
-			module.setHasSelectFlag("Y");
-			module.setHasUpdateFlag("Y");
-			module.setSysUserId("1");
-		}
-		return module;
-	}
+        if (module == null || module.getId() == null) {
+            module = new SystemModule();
+            module.setSystemModuleName(name);
+            module.setDescription(description);
+            module.setHasAddFlag("Y");
+            module.setHasDeleteFlag("Y");
+            module.setHasSelectFlag("Y");
+            module.setHasUpdateFlag("Y");
+            module.setSysUserId("1");
+        }
+        return module;
+    }
 
-	@Override
-	public Role getSystemRole(String name) {
-		return roleService.getRoleByName(name);
-	}
+    @Override
+    public Role getSystemRole(String name) {
+        return roleService.getRoleByName(name);
+    }
 
-	@Override
-	@Transactional
-	public boolean bindRoleToModule(Role role, SystemModule module) {
-		if (role == null || module == null) {
-			return false;
-		}
+    @Override
+    @Transactional
+    public boolean bindRoleToModule(Role role, SystemModule module) {
+        if (role == null || module == null) {
+            return false;
+        }
 
-		if (role.getId() == null) {
-			role.setActive(true);
-			roleService.insert(role);
-		} else if (!role.isActive()) {
-			role.setActive(true);
-			roleService.update(role);
-		}
+        if (role.getId() == null) {
+            role.setActive(true);
+            roleService.insert(role);
+        } else if (!role.isActive()) {
+            role.setActive(true);
+            roleService.update(role);
+        }
 
-		if (module.getId() == null) {
-			moduleService.insert(module);
-		}
+        if (module.getId() == null) {
+            moduleService.insert(module);
+        }
 
-		RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
+        RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
 
-		if (roleModule.getId() == null) {
-			roleModule.setRole(role);
-			roleModule.setSystemModule(module);
-			roleModule.setSysUserId("1");
-			roleModule.setHasAdd("Y");
-			roleModule.setHasDelete("Y");
-			roleModule.setHasSelect("Y");
-			roleModule.setHasUpdate("Y");
-			roleModuleService.insert(roleModule);
-		}
+        if (roleModule.getId() == null) {
+            roleModule.setRole(role);
+            roleModule.setSystemModule(module);
+            roleModule.setSysUserId("1");
+            roleModule.setHasAdd("Y");
+            roleModule.setHasDelete("Y");
+            roleModule.setHasSelect("Y");
+            roleModule.setHasUpdate("Y");
+            roleModuleService.insert(roleModule);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

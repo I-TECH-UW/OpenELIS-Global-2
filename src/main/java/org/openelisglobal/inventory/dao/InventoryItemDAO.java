@@ -27,9 +27,9 @@ public interface InventoryItemDAO extends BaseDAO<InventoryItem, String> {
 
 //	public void deleteData(List<InventoryItem> results) throws LIMSRuntimeException;
 
-	public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException;
+    public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException;
 
-	public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException;
+    public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException;
 
 //	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException;
 

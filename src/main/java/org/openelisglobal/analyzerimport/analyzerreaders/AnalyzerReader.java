@@ -21,7 +21,9 @@ import java.io.InputStreamReader;
 
 public abstract class AnalyzerReader {
 
-	public abstract boolean readStream(InputStreamReader reader);
-	public abstract boolean insertAnalyzerData(String systemUserId );
-	public abstract String getError();
+    public abstract boolean readStream(InputStreamReader reader);
+
+    public abstract boolean insertAnalyzerData(String systemUserId);
+
+    public abstract String getError();
 }

@@ -21,16 +21,15 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.scriptlet.dao.ScriptletDAO;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz
@@ -39,9 +38,9 @@ import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 @Transactional
 public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements ScriptletDAO {
 
-	public ScriptletDAOImpl() {
-		super(Scriptlet.class);
-	}
+    public ScriptletDAOImpl() {
+        super(Scriptlet.class);
+    }
 
 //	@Override
 //	public void deleteData(List scriptlets) throws LIMSRuntimeException {
@@ -151,248 +150,248 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
-		try {
-			Scriptlet sc = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptlet.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (sc != null) {
-				PropertyUtils.copyProperties(scriptlet, sc);
-			} else {
-				scriptlet.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
+        try {
+            Scriptlet sc = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptlet.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (sc != null) {
+                PropertyUtils.copyProperties(scriptlet, sc);
+            } else {
+                scriptlet.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllScriptlets() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Scriptlet";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet getAllScriptlets()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllScriptlets() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from Scriptlet";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // query.setMaxResults(10);
+            // query.setFirstResult(3);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet getAllScriptlets()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			// bugzilla 1399
-			String sql = "from Scriptlet s order by s.scriptletName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            // bugzilla 1399
+            String sql = "from Scriptlet s order by s.scriptletName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet getPageOfScriptlets()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet getPageOfScriptlets()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public Scriptlet readScriptlet(String idString) {
-		Scriptlet scriptlet = null;
-		try {
-			scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet readScriptlet()", e);
-		}
+    public Scriptlet readScriptlet(String idString) {
+        Scriptlet scriptlet = null;
+        try {
+            scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet readScriptlet()", e);
+        }
 
-		return scriptlet;
-	}
+        return scriptlet;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextScriptletRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextScriptletRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "Scriptlet", Scriptlet.class);
+        return getNextRecord(id, "Scriptlet", Scriptlet.class);
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "Scriptlet", Scriptlet.class);
-	}
+        return getPreviousRecord(id, "Scriptlet", Scriptlet.class);
+    }
 
-	// this is for autocomplete
-	@Override
-	@Transactional(readOnly = true)
-	public List getScriptlets(String filter) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Scriptlet s where upper(s.scriptletName) like upper(:param) order by upper(s.scriptletName)";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", filter + "%");
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List getScriptlets(String filter) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from Scriptlet s where upper(s.scriptletName) like upper(:param) order by upper(s.scriptletName)";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", filter + "%");
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet getScriptlets(String filter)", e);
-		}
-		return list;
-	}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet getScriptlets(String filter)", e);
+        }
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException {
-		try {
-			String sql = "from Scriptlet s where s.scriptletName = :param";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", scriptlet.getScriptletName());
+    @Override
+    @Transactional(readOnly = true)
+    public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException {
+        try {
+            String sql = "from Scriptlet s where s.scriptletName = :param";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", scriptlet.getScriptletName());
 
-			List list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			Scriptlet s = null;
-			if (list.size() > 0) {
-				s = (Scriptlet) list.get(0);
-			}
+            List list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            Scriptlet s = null;
+            if (list.size() > 0) {
+                s = (Scriptlet) list.get(0);
+            }
 
-			return s;
+            return s;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getScriptletByName()", e.toString());
-			throw new LIMSRuntimeException("Error in Scriptlet getScriptletByName()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getScriptletByName()", e.toString());
+            throw new LIMSRuntimeException("Error in Scriptlet getScriptletByName()", e);
+        }
+    }
 
-	// bugzilla 1411
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalScriptletCount() throws LIMSRuntimeException {
-		return getTotalCount("Scriptlet", Scriptlet.class);
-	}
+    // bugzilla 1411
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalScriptletCount() throws LIMSRuntimeException {
+        return getTotalCount("Scriptlet", Scriptlet.class);
+    }
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
-		List list = new Vector();
-		try {
-			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.scriptletName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(1);
-			query.setMaxResults(2);
+        List list = new Vector();
+        try {
+            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.scriptletName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(1);
+            query.setMaxResults(2);
 
-			list = query.list();
+            list = query.list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getNextRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
-		List list = new Vector();
-		try {
-			String sql = "from " + table + " t order by t.scriptletName desc where name <= " + enquote(id);
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(1);
-			query.setMaxResults(2);
+        List list = new Vector();
+        try {
+            String sql = "from " + table + " t order by t.scriptletName desc where name <= " + enquote(id);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(1);
+            query.setMaxResults(2);
 
-			list = query.list();
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+            list = query.list();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	public boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
-		try {
+    @Override
+    public boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from Scriptlet t where trim(lower(t.scriptletName)) = :param and t.id != :param2";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", scriptlet.getScriptletName().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Scriptlet t where trim(lower(t.scriptletName)) = :param and t.id != :param2";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", scriptlet.getScriptletName().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String scriptletId = "0";
-			if (!StringUtil.isNullorNill(scriptlet.getId())) {
-				scriptletId = scriptlet.getId();
-			}
-			query.setParameter("param2", scriptletId);
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String scriptletId = "0";
+            if (!StringUtil.isNullorNill(scriptlet.getId())) {
+                scriptletId = scriptlet.getId();
+            }
+            query.setParameter("param2", scriptletId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ScriptletDAOImpl", "duplicateScriptletExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateScriptletExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ScriptletDAOImpl", "duplicateScriptletExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateScriptletExists()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
-		try {
-			Scriptlet scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptletId);
-			// closeSession(); // CSL remove old
-			return scriptlet;
-		} catch (Exception e) {
-			handleException(e, "getScriptletById");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
+        try {
+            Scriptlet scriptlet = entityManager.unwrap(Session.class).get(Scriptlet.class, scriptletId);
+            // closeSession(); // CSL remove old
+            return scriptlet;
+        } catch (Exception e) {
+            handleException(e, "getScriptletById");
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -24,7 +24,7 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 
 public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
-	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException;
+    public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException;
 
 //	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException;
 
@@ -32,6 +32,6 @@ public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
 //	public List<ElectronicOrder> getAllElectronicOrders();
 
-	List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
+    List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
 
 }

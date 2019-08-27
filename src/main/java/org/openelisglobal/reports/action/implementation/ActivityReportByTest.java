@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ActivityReportBean;
+import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 
 /**
@@ -32,45 +32,45 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
     private String testName = "";
 
     @Override
-    protected boolean isReportByTest(){
+    protected boolean isReportByTest() {
         return true;
     }
 
     @Override
-    public void setRequestParameters( BaseForm form ){
-        new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                MessageUtil.getMessage( "report.activity.report.base" ) + " " + MessageUtil.getMessage( "report.by.test" ),
-                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
-        new ReportSpecificationList( DisplayListService.getInstance().getList( DisplayListService.ListType.ALL_TESTS ),
-                                     MessageUtil.getMessage( "workplan.test.types" ) ).setRequestParameters( form );
+    public void setRequestParameters(BaseForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
+                MessageUtil.getMessage("report.activity.report.base") + " " + MessageUtil.getMessage("report.by.test"),
+                MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
+        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS),
+                MessageUtil.getMessage("workplan.test.types")).setRequestParameters(form);
     }
 
     @Override
-    protected void buildReportContent( ReportSpecificationList testSelection ){
+    protected void buildReportContent(ReportSpecificationList testSelection) {
 
         testName = testSelection.getSelectionAsName();
         createReportParameters();
-        
+
         // do not print the separator bar between name/Id and tests
-        reportParameters.put( "underlineResults", false );
-        
-        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodWithTest( dateRange.getLowDate(), dateRange.getHighDate(), testSelection.getSelection() );
-        testsResults = new ArrayList<ActivityReportBean>( resultList.size() );
+        reportParameters.put("underlineResults", false);
+
+        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodWithTest(dateRange.getLowDate(),
+                dateRange.getHighDate(), testSelection.getSelection());
+        testsResults = new ArrayList<ActivityReportBean>(resultList.size());
 
         String currentAnalysisId = "-1";
-        for( Result result : resultList){
-            if( result.getAnalysis() != null){
-                if( !currentAnalysisId.equals( result.getAnalysis().getId())){
-                    testsResults.add( createActivityReportBean( result, false ) );
+        for (Result result : resultList) {
+            if (result.getAnalysis() != null) {
+                if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
+                    testsResults.add(createActivityReportBean(result, false));
                     currentAnalysisId = result.getAnalysis().getId();
                 }
             }
         }
     }
 
-
     @Override
-    protected String getActivityLabel(){
+    protected String getActivityLabel() {
         return "Test: " + testName;
     }
 }

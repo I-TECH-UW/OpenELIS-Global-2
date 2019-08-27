@@ -21,15 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.login.dao.LoginDAO;
 import org.openelisglobal.login.valueholder.Login;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
@@ -38,9 +37,9 @@ import org.openelisglobal.login.valueholder.Login;
 @Transactional
 public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO {
 
-	public LoginDAOImpl() {
-		super(Login.class);
-	}
+    public LoginDAOImpl() {
+        super(Login.class);
+    }
 
 //	@Override
 //	public void deleteData(List logins) throws LIMSRuntimeException {
@@ -112,7 +111,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		return true;
 //	}
 
-	// Update login data, keep old password unless flag set
+    // Update login data, keep old password unless flag set
 //	@Override
 //	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException {
 //		try {
@@ -311,42 +310,42 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		return list;
 //	}
 
-	@Override
-	public boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
-		try {
+    @Override
+    public boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			String sql = "from Login l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
+            String sql = "from Login l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
 
-			String loginId = "0";
-			if (!StringUtil.isNullorNill(login.getId())) {
-				loginId = login.getId();
-			}
+            String loginId = "0";
+            if (!StringUtil.isNullorNill(login.getId())) {
+                loginId = login.getId();
+            }
 
-			query.setInteger("loginId", Integer.parseInt(loginId));
+            query.setInteger("loginId", Integer.parseInt(loginId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0;
+            return list.size() > 0;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "duplicateLoginNameExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("LoginDAOImpl", "duplicateLoginNameExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
+        }
+    }
 
-	/**
-	 * Validate the user name, password
-	 *
-	 * @param login the login object
-	 * @return login object value
-	 */
+    /**
+     * Validate the user name, password
+     *
+     * @param login the login object
+     * @return login object value
+     */
 //	@Override
 //	public Login getValidateLogin(Login login) throws LIMSRuntimeException {
 //
@@ -399,12 +398,12 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		return loginData;
 //	}
 
-	/**
-	 * Get the user login information base on login name
-	 *
-	 * @param loginName the user login name
-	 * @return login object
-	 */
+    /**
+     * Get the user login information base on login name
+     *
+     * @param loginName the user login name
+     * @return login object
+     */
 //	@Override
 //	public Login getUserProfile(String loginName) throws LIMSRuntimeException {
 //
@@ -435,68 +434,68 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		return login;
 //	}
 
-	/**
-	 * Get the password expiration day
-	 *
-	 * @param login the login object
-	 * @return type integer the password expiration day
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
-		int retVal = 0;
-		try {
-			Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
-					.setString("loginName", login.getLoginName()).uniqueResult();
-			if (obj != null) {
-				retVal = Integer.parseInt(obj.toString());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getPasswordExpiredDayNo()", e.toString());
-			throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
-		}
+    /**
+     * Get the password expiration day
+     *
+     * @param login the login object
+     * @return type integer the password expiration day
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
+        int retVal = 0;
+        try {
+            Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
+                    .setString("loginName", login.getLoginName()).uniqueResult();
+            if (obj != null) {
+                retVal = Integer.parseInt(obj.toString());
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("LoginDAOImpl", "getPasswordExpiredDayNo()", e.toString());
+            throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
+        }
 
-		return retVal;
+        return retVal;
 
-	}
+    }
 
-	/**
-	 * Get the system user id
-	 *
-	 * @param login the login object
-	 * @return type integer the system user id
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public int getSystemUserId(Login login) throws LIMSRuntimeException {
-		int retVal = 0;
-		try {
-			Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getSystemUserId")
-					.setString("loginName", login.getLoginName()).uniqueResult();
+    /**
+     * Get the system user id
+     *
+     * @param login the login object
+     * @return type integer the system user id
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int getSystemUserId(Login login) throws LIMSRuntimeException {
+        int retVal = 0;
+        try {
+            Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getSystemUserId")
+                    .setString("loginName", login.getLoginName()).uniqueResult();
 
-			if (obj != null) {
-				retVal = Integer.parseInt(obj.toString());
-			}
+            if (obj != null) {
+                retVal = Integer.parseInt(obj.toString());
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getSystemUserId()", e.toString());
-			throw new LIMSRuntimeException("Error in getSystemUserId()", e);
-		} finally {
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("LoginDAOImpl", "getSystemUserId()", e.toString());
+            throw new LIMSRuntimeException("Error in getSystemUserId()", e);
+        } finally {
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        }
 
-		return retVal;
-	}
+        return retVal;
+    }
 
-	/**
-	 * Update the user passsword
-	 *
-	 * @param login the login object
-	 * @return true if success, false otherwise
-	 */
+    /**
+     * Update the user passsword
+     *
+     * @param login the login object
+     * @return true if success, false otherwise
+     */
 //	@Override
 //	public void updatePassword(Login login) throws LIMSRuntimeException {
 //
@@ -524,12 +523,12 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		}
 //	}
 
-	/**
-	 * bugzilla 2286 Lock the user account after number of failed attempt
-	 *
-	 * @param login the login object
-	 * @return true if success, false otherwise
-	 */
+    /**
+     * bugzilla 2286 Lock the user account after number of failed attempt
+     *
+     * @param login the login object
+     * @return true if success, false otherwise
+     */
 //	@Override
 //	public boolean lockAccount(Login login) throws LIMSRuntimeException {
 //		boolean isSuccess = false;
@@ -548,12 +547,12 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		return isSuccess;
 //	}
 
-	/**
-	 * bugzilla 2286 unlock the user account after number of minutes
-	 *
-	 * @param login the login object
-	 * @return true if success, false otherwise
-	 */
+    /**
+     * bugzilla 2286 unlock the user account after number of minutes
+     *
+     * @param login the login object
+     * @return true if success, false otherwise
+     */
 //	@Override
 //	public boolean unlockAccount(Login login) throws LIMSRuntimeException {
 //		boolean isSuccess = false;

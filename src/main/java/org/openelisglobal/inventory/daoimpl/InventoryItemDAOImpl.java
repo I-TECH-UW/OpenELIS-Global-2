@@ -18,41 +18,40 @@ package org.openelisglobal.inventory.daoimpl;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.inventory.dao.InventoryItemDAO;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> implements InventoryItemDAO {
 
-	public InventoryItemDAOImpl() {
-		super(InventoryItem.class);
-	}
+    public InventoryItemDAOImpl() {
+        super(InventoryItem.class);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
-		List<InventoryItem> inventoryItems;
-		try {
-			String sql = "from InventoryItem";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			inventoryItems = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "getAllInventoryItems()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
+        List<InventoryItem> inventoryItems;
+        try {
+            String sql = "from InventoryItem";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            inventoryItems = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("InventoryItemDAOImpl", "getAllInventoryItems()", e.toString());
+            throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
+        }
 
-		return inventoryItems;
-	}
+        return inventoryItems;
+    }
 
 //	@Override
 //	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
@@ -145,20 +144,20 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 //		}
 //	}
 
-	@Override
-	public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
-		InventoryItem data = null;
-		try {
-			data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "readInventoryItem()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
-		}
+    @Override
+    public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
+        InventoryItem data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("InventoryItemDAOImpl", "readInventoryItem()", e.toString());
+            throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
+        }
 
-		return data;
-	}
+        return data;
+    }
 
 //	@Override
 //	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {

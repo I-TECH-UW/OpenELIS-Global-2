@@ -5,47 +5,47 @@ import java.util.Collection;
 import org.openelisglobal.common.form.BaseForm;
 
 public class UserRoleForm extends BaseForm {
-	private String userNameId = "";
+    private String userNameId = "";
 
-	private Collection users;
+    private Collection users;
 
-	private Collection roles;
+    private Collection roles;
 
-	private String[] selectedRoles;
+    private String[] selectedRoles;
 
-	public UserRoleForm() {
-		setFormName("userRoleForm");
-	}
+    public UserRoleForm() {
+        setFormName("userRoleForm");
+    }
 
-	public String getUserNameId() {
-		return userNameId;
-	}
+    public String getUserNameId() {
+        return userNameId;
+    }
 
-	public void setUserNameId(String userNameId) {
-		this.userNameId = userNameId;
-	}
+    public void setUserNameId(String userNameId) {
+        this.userNameId = userNameId;
+    }
 
-	public Collection getUsers() {
-		return users;
-	}
+    public Collection getUsers() {
+        return users;
+    }
 
-	public void setUsers(Collection users) {
-		this.users = users;
-	}
+    public void setUsers(Collection users) {
+        this.users = users;
+    }
 
-	public Collection getRoles() {
-		return roles;
-	}
+    public Collection getRoles() {
+        return roles;
+    }
 
-	public void setRoles(Collection roles) {
-		this.roles = roles;
-	}
+    public void setRoles(Collection roles) {
+        this.roles = roles;
+    }
 
-	public String[] getSelectedRoles() {
-		return selectedRoles;
-	}
+    public String[] getSelectedRoles() {
+        return selectedRoles;
+    }
 
-	public void setSelectedRoles(String[] selectedRoles) {
-		this.selectedRoles = selectedRoles;
-	}
+    public void setSelectedRoles(String[] selectedRoles) {
+        this.selectedRoles = selectedRoles;
+    }
 }

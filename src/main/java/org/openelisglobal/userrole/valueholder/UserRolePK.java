@@ -24,26 +24,28 @@ import java.io.Serializable;
  */
 public class UserRolePK implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
+    private String systemUserId;
+    private String roleId;
 
-	private String systemUserId;
-	private String roleId;
-	
-	public String getSystemUserId() {
-		return systemUserId;
-	}
-	public void setSystemUserId(String systemUserId) {
-		this.systemUserId = systemUserId;
-	}
-	public String getRoleId() {
-		return roleId;
-	}
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
-	}
-	
-	public String toString(){
-		return systemUserId + roleId;
-	}
+    public String getSystemUserId() {
+        return systemUserId;
+    }
+
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String toString() {
+        return systemUserId + roleId;
+    }
 }

@@ -23,98 +23,98 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 public class TypeOfSample extends BaseObject<String> {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	private String id;
-	private String description;
-	private String domain;
-	private String localAbbreviation;
-	private boolean isActive;
-	private int sortOrder;
-	private ValueHolder localization = new ValueHolder();
+    private String id;
+    private String description;
+    private String domain;
+    private String localAbbreviation;
+    private boolean isActive;
+    private int sortOrder;
+    private ValueHolder localization = new ValueHolder();
 
-	public String getLocalAbbreviation() {
-		return localAbbreviation;
-	}
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
+    }
 
-	public void setLocalAbbreviation(String localAbbreviation) {
-		this.localAbbreviation = localAbbreviation;
-	}
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
 
-	public TypeOfSample() {
-		super();
-	}
+    public TypeOfSample() {
+        super();
+    }
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	public String getDomain() {
-		return domain;
-	}
+    public String getDomain() {
+        return domain;
+    }
 
-	@Override
-	protected String getDefaultLocalizedName() {
-		String msg = "";
-		try {
-			msg = getLocalization().getLocalizedValue();
-			return msg;
-		} catch (Exception ex) {
-			// throw away
-			return "TypeOfSample:getDefaultLocalizedName:84:";
-		}
-	}
+    @Override
+    protected String getDefaultLocalizedName() {
+        String msg = "";
+        try {
+            msg = getLocalization().getLocalizedValue();
+            return msg;
+        } catch (Exception ex) {
+            // throw away
+            return "TypeOfSample:getDefaultLocalizedName:84:";
+        }
+    }
 
-	public boolean isActive() {
-		return isActive;
-	}
+    public boolean isActive() {
+        return isActive;
+    }
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public boolean getIsActive() {
-		return isActive;
-	}
+    public boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public int getSortOrder() {
-		return sortOrder;
-	}
+    public int getSortOrder() {
+        return sortOrder;
+    }
 
-	public void setSortOrder(int sortOrder) {
-		this.sortOrder = sortOrder;
-	}
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-	public Localization getLocalization() {
-		return (Localization) localization.getValue();
-	}
+    public Localization getLocalization() {
+        return (Localization) localization.getValue();
+    }
 
-	public void setLocalization(Localization localization) {
-		this.localization.setValue(localization);
-	}
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 }

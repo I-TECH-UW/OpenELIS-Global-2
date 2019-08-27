@@ -27,52 +27,51 @@ import javax.servlet.http.HttpServletResponse;
 import org.openelisglobal.common.log.LogEvent;
 
 public class OrderRawServlet extends HttpServlet {
-	
-	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-		response.setStatus(HttpServletResponse.SC_OK);
-	}
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
 //		LogEvent.logFatal("IndicatorAggregationReportingServlet", "size", String.valueOf(request.getContentLength()));
-		String info = "\ncharacterEncoding: " + request.getCharacterEncoding() + 
-				"\ncontentLength: " + request.getContentLength() +
-				"\ncontentType: " + request.getContentType() + "\n\n";
-				
-		String sentIndicators = getDocument( request.getInputStream(), request.getContentLength());
-		
-		//System.out.println(info);
-		//System.out.println(sentIndicators);
-		
-		LogEvent.logFatal("OrderRawServletServlet", "raw", info + sentIndicators);
+        String info = "\ncharacterEncoding: " + request.getCharacterEncoding() + "\ncontentLength: "
+                + request.getContentLength() + "\ncontentType: " + request.getContentType() + "\n\n";
 
-		response.setStatus(HttpServletResponse.SC_OK);
-	}
+        String sentIndicators = getDocument(request.getInputStream(), request.getContentLength());
 
-	private String getDocument(ServletInputStream inputStream, int contentLength) {
-		int charCount = 0;
-		byte[] byteBuffer = new byte[contentLength];
+        // System.out.println(info);
+        // System.out.println(sentIndicators);
 
-		while( true){
-			try {
-				int readLength = inputStream.readLine(byteBuffer, charCount, 1024);
-				
-				if( readLength == -1){
-					return new String(byteBuffer);
-				}else{
-					charCount += readLength;
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			} 
-		}
-	}
+        LogEvent.logFatal("OrderRawServletServlet", "raw", info + sentIndicators);
 
-	private static final long serialVersionUID = 1L;
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private String getDocument(ServletInputStream inputStream, int contentLength) {
+        int charCount = 0;
+        byte[] byteBuffer = new byte[contentLength];
+
+        while (true) {
+            try {
+                int readLength = inputStream.readLine(byteBuffer, charCount, 1024);
+
+                if (readLength == -1) {
+                    return new String(byteBuffer);
+                } else {
+                    charCount += readLength;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    private static final long serialVersionUID = 1L;
 
 }

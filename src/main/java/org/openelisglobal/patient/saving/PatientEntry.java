@@ -28,81 +28,80 @@ import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
 @Primary
 public class PatientEntry extends Accessioner implements IPatientEntry {
 
-	protected HttpServletRequest request;
+    protected HttpServletRequest request;
 
-	public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		this();
-		setFieldsFromForm(form);
-		setRequest(request);
-		setSysUserId(sysUserId);
-	}
+    public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        this();
+        setFieldsFromForm(form);
+        setRequest(request);
+        setSysUserId(sysUserId);
+    }
 
-	public PatientEntry() {
-		super();
-		newPatientStatus = RecordStatus.InitialRegistration;
-		newSampleStatus = RecordStatus.NotRegistered;
-	}
+    public PatientEntry() {
+        super();
+        newPatientStatus = RecordStatus.InitialRegistration;
+        newSampleStatus = RecordStatus.NotRegistered;
+    }
 
-	@Override
-	public void setRequest(HttpServletRequest request) {
-		this.request = request;
-	}
+    @Override
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
 
-	@Override
-	public void setFieldsFromForm(PatientEntryByProjectForm form)
-			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		setAccessionNumber((String) form.get("labNo"));
-		setPatientSiteSubjectNo((String) form.get("siteSubjectNumber"));
-		setPatientIdentifier((String) form.get("subjectNumber"));
-		setProjectFormMapperFromForm(form);
-	}
+    @Override
+    public void setFieldsFromForm(PatientEntryByProjectForm form)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        setAccessionNumber((String) form.get("labNo"));
+        setPatientSiteSubjectNo((String) form.get("siteSubjectNumber"));
+        setPatientIdentifier((String) form.get("subjectNumber"));
+        setProjectFormMapperFromForm(form);
+    }
 
-	public void setProjectFormMapperFromForm(PatientEntryByProjectForm form)
-			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		projectFormMapper = getProjectFormMapper(form);
-		projectFormMapper.setPatientForm(true);
-		projectForm = projectFormMapper.getProjectForm();
-		findStatusSet();
+    public void setProjectFormMapperFromForm(PatientEntryByProjectForm form)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        projectFormMapper = getProjectFormMapper(form);
+        projectFormMapper.setPatientForm(true);
+        projectForm = projectFormMapper.getProjectForm();
+        findStatusSet();
 
-	}
+    }
 
-	@Override
-	public boolean canAccession() {
-		return (statusSet.getPatientRecordStatus() == null && statusSet.getSampleRecordStatus() == null);
-	}
+    @Override
+    public boolean canAccession() {
+        return (statusSet.getPatientRecordStatus() == null && statusSet.getSampleRecordStatus() == null);
+    }
 
-	@Override
-	protected void populateSampleData() throws Exception {
-		Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
-				sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),
-				projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
-		Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
-				sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
-				projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
+    @Override
+    protected void populateSampleData() throws Exception {
+        Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+                sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),
+                projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
+        Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+                sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
+                projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
 
-		populateSample(receivedDate, collectionDate);
-		populateSampleProject();
-		populateSampleOrganization(projectFormMapper.getOrganizationId());
-	}
+        populateSample(receivedDate, collectionDate);
+        populateSampleProject();
+        populateSampleOrganization(projectFormMapper.getOrganizationId());
+    }
 
-	@Override
-	protected String getActionLabel() {
-		return MessageUtil.getMessage("banner.menu.createPatient.Initial");
-	}
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.createPatient.Initial");
+    }
 }

@@ -19,21 +19,20 @@ package org.openelisglobal.qaevent.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.qaevent.dao.QaObservationDAO;
 import org.openelisglobal.qaevent.valueholder.QaObservation;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> implements QaObservationDAO {
 
-	public QaObservationDAOImpl() {
-		super(QaObservation.class);
-	}
+    public QaObservationDAOImpl() {
+        super(QaObservation.class);
+    }
 
 //	@Override
 //	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException {
@@ -74,36 +73,36 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
-			throws LIMSRuntimeException {
-		String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
+            throws LIMSRuntimeException {
+        String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("observationName", typeName);
-			query.setString("observedType", observedType);
-			query.setInteger("observedId", Integer.parseInt(observedId));
-			QaObservation observation = (QaObservation) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return observation;
-		} catch (HibernateException e) {
-			handleException(e, "getQaObservationByTypeAndObserved");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("observationName", typeName);
+            query.setString("observedType", observedType);
+            query.setInteger("observedId", Integer.parseInt(observedId));
+            QaObservation observation = (QaObservation) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return observation;
+        } catch (HibernateException e) {
+            handleException(e, "getQaObservationByTypeAndObserved");
+        }
+        return null;
+    }
 
-	public QaObservation readQaObservation(String idString) {
-		QaObservation qaObservation = null;
-		try {
-			qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
-			// closeSession(); // CSL remove old
-		} catch (Exception e) {
-			handleException(e, "readQaObservation");
-		}
+    public QaObservation readQaObservation(String idString) {
+        QaObservation qaObservation = null;
+        try {
+            qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
+            // closeSession(); // CSL remove old
+        } catch (Exception e) {
+            handleException(e, "readQaObservation");
+        }
 
-		return qaObservation;
-	}
+        return qaObservation;
+    }
 
 }

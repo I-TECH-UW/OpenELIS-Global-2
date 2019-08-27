@@ -25,23 +25,22 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.role.dao.RoleDAO;
 import org.openelisglobal.role.valueholder.Role;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
-	public RoleDAOImpl() {
-		super(Role.class);
-	}
+    public RoleDAOImpl() {
+        super(Role.class);
+    }
 
 //	@Override
 //	public void deleteData(List<Role> roles) throws LIMSRuntimeException {
@@ -127,168 +126,168 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(Role role) throws LIMSRuntimeException {
-		try {
-			Role tmpRole = entityManager.unwrap(Session.class).get(Role.class, role.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (tmpRole != null) {
-				PropertyUtils.copyProperties(role, tmpRole);
-			} else {
-				role.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Role getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Role role) throws LIMSRuntimeException {
+        try {
+            Role tmpRole = entityManager.unwrap(Session.class).get(Role.class, role.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (tmpRole != null) {
+                PropertyUtils.copyProperties(role, tmpRole);
+            } else {
+                role.setId(null);
+            }
+        } catch (Exception e) {
+            LogEvent.logError("RolesDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in Role getData()", e);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Role> getAllRoles() throws LIMSRuntimeException {
-		List<Role> list = null;
-		try {
-			String sql = "from Role";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "getAllRoles");
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Role> getAllRoles() throws LIMSRuntimeException {
+        List<Role> list = null;
+        try {
+            String sql = "from Role";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // closeSession(); // CSL remove old
+        } catch (HibernateException e) {
+            handleException(e, "getAllRoles");
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
-		List<Role> list = null;
-		try {
-			String sql = "from Role r where r.active = true";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// closeSession(); // CSL remove old
-		} catch (HibernateException e) {
-			handleException(e, "getAllActiveRoles");
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
+        List<Role> list = null;
+        try {
+            String sql = "from Role r where r.active = true";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // closeSession(); // CSL remove old
+        } catch (HibernateException e) {
+            handleException(e, "getAllActiveRoles");
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
-		List<Role> list = null;
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
+        List<Role> list = null;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from Role r order by r.id";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
+            String sql = "from Role r order by r.id";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
-			throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
+            throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public Role readRole(String idString) {
-		Role recoveredRole = null;
-		try {
-			recoveredRole = entityManager.unwrap(Session.class).get(Role.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
-			throw new LIMSRuntimeException("Error in Role readRole()", e);
-		}
+    public Role readRole(String idString) {
+        Role recoveredRole = null;
+        try {
+            recoveredRole = entityManager.unwrap(Session.class).get(Role.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
+            throw new LIMSRuntimeException("Error in Role readRole()", e);
+        }
 
-		return recoveredRole;
-	}
+        return recoveredRole;
+    }
 
-	@Override
-	@SuppressWarnings("rawtypes")
-	@Transactional(readOnly = true)
-	public List getNextRoleRecord(String id) throws LIMSRuntimeException {
-		return getNextRecord(id, "Role", Role.class);
-	}
+    @Override
+    @SuppressWarnings("rawtypes")
+    @Transactional(readOnly = true)
+    public List getNextRoleRecord(String id) throws LIMSRuntimeException {
+        return getNextRecord(id, "Role", Role.class);
+    }
 
-	@Override
-	@SuppressWarnings("rawtypes")
-	@Transactional(readOnly = true)
-	public List getPreviousRoleRecord(String id) throws LIMSRuntimeException {
-		return getPreviousRecord(id, "Role", Role.class);
-	}
+    @Override
+    @SuppressWarnings("rawtypes")
+    @Transactional(readOnly = true)
+    public List getPreviousRoleRecord(String id) throws LIMSRuntimeException {
+        return getPreviousRecord(id, "Role", Role.class);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
-		if (GenericValidator.isBlankOrNull(role.getId())) {
-			return new ArrayList<>();
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
+        if (GenericValidator.isBlankOrNull(role.getId())) {
+            return new ArrayList<>();
+        }
 
-		List<Role> list = null;
-		try {
-			String sql = "from Role where grouping_parent = :parent";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("parent", Integer.parseInt(role.getId()));
+        List<Role> list = null;
+        try {
+            String sql = "from Role where grouping_parent = :parent";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("parent", Integer.parseInt(role.getId()));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
-			throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
+            throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Role getRoleByName(String name) throws LIMSRuntimeException {
-		String sql = "from Role r where trim(r.name) = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public Role getRoleByName(String name) throws LIMSRuntimeException {
+        String sql = "from Role r where trim(r.name) = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", name);
-			Role role = (Role) query.setMaxResults(1).uniqueResult();
-			// closeSession(); // CSL remove old
-			return role;
-		} catch (HibernateException e) {
-			handleException(e, "getRoleByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", name);
+            Role role = (Role) query.setMaxResults(1).uniqueResult();
+            // closeSession(); // CSL remove old
+            return role;
+        } catch (HibernateException e) {
+            handleException(e, "getRoleByName");
+        }
+        return null;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Role getRoleById(String roleId) throws LIMSRuntimeException {
-		String sql = "from Role r where r.id = :id";
+    @Override
+    @Transactional(readOnly = true)
+    public Role getRoleById(String roleId) throws LIMSRuntimeException {
+        String sql = "from Role r where r.id = :id";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("id", Integer.parseInt(roleId));
-			Role role = (Role) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return role;
-		} catch (HibernateException e) {
-			handleException(e, "getRoleById");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("id", Integer.parseInt(roleId));
+            Role role = (Role) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return role;
+        } catch (HibernateException e) {
+            handleException(e, "getRoleById");
+        }
+        return null;
+    }
 
 }

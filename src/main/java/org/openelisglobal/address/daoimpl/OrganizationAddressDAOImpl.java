@@ -21,41 +21,40 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.address.dao.OrganizationAddressDAO;
 import org.openelisglobal.address.valueholder.AddressPK;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress, AddressPK>
-		implements OrganizationAddressDAO {
+        implements OrganizationAddressDAO {
 
-	public OrganizationAddressDAOImpl() {
-		super(OrganizationAddress.class);
-	}
+    public OrganizationAddressDAOImpl() {
+        super(OrganizationAddress.class);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
-			throws LIMSRuntimeException {
-		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
+            throws LIMSRuntimeException {
+        String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("organizationId", Integer.parseInt(organizationId));
-			List<OrganizationAddress> addressPartList = query.list();
-			return addressPartList;
-		} catch (HibernateException e) {
-			handleException(e, "getAddressPartsByOrganizationId");
-		}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("organizationId", Integer.parseInt(organizationId));
+            List<OrganizationAddress> addressPartList = query.list();
+            return addressPartList;
+        } catch (HibernateException e) {
+            handleException(e, "getAddressPartsByOrganizationId");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 //	@Override
 //	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {

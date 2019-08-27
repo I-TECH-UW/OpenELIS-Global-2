@@ -18,105 +18,105 @@ package org.openelisglobal.reports.send.sample.valueholder;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class UHLXmit extends BaseObject<String> {
-	
-	private String id;
-	
-	private String applicationName;
 
-	private String mdhId;
+    private String id;
+
+    private String applicationName;
+
+    private String mdhId;
 
     private ProviderXmit provider;
-	
-	private TestingFacilityXmit facility;
-	
-	private String messageTime;
-	
-	private String processingId;
-	
-	private String transportMethod;
-	
-	private String transportDestination;
-	
-	private String transportDestinationPort;
 
-	public String getTransportDestination() {
-		return transportDestination;
-	}
+    private TestingFacilityXmit facility;
 
-	public void setTransportDestination(String transportDestination) {
-		this.transportDestination = transportDestination;
-	}
+    private String messageTime;
 
-	public String getTransportDestinationPort() {
-		return transportDestinationPort;
-	}
+    private String processingId;
 
-	public void setTransportDestinationPort(String transportDestinationPort) {
-		this.transportDestinationPort = transportDestinationPort;
-	}
+    private String transportMethod;
 
-	public String getMessageTime() {
-		return messageTime;
-	}
+    private String transportDestination;
 
-	public void setMessageTime(String messageTime) {
-		this.messageTime = messageTime;
-	}
+    private String transportDestinationPort;
 
-	public String getProcessingId() {
-		return processingId;
-	}
+    public String getTransportDestination() {
+        return transportDestination;
+    }
 
-	public void setProcessingId(String processingId) {
-		this.processingId = processingId;
-	}
+    public void setTransportDestination(String transportDestination) {
+        this.transportDestination = transportDestination;
+    }
 
-	public String getTransportMethod() {
-		return transportMethod;
-	}
+    public String getTransportDestinationPort() {
+        return transportDestinationPort;
+    }
 
-	public void setTransportMethod(String transportMethod) {
-		this.transportMethod = transportMethod;
-	}
+    public void setTransportDestinationPort(String transportDestinationPort) {
+        this.transportDestinationPort = transportDestinationPort;
+    }
 
-	public TestingFacilityXmit getFacility() {
-		return facility;
-	}
+    public String getMessageTime() {
+        return messageTime;
+    }
 
-	public void setFacility(TestingFacilityXmit facility) {
-		this.facility = facility;
-	}
+    public void setMessageTime(String messageTime) {
+        this.messageTime = messageTime;
+    }
 
-	public String getApplicationName() {
-		return applicationName;
-	}
+    public String getProcessingId() {
+        return processingId;
+    }
 
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
+    public void setProcessingId(String processingId) {
+        this.processingId = processingId;
+    }
 
-	public String getMdhId() {
-		return mdhId;
-	}
+    public String getTransportMethod() {
+        return transportMethod;
+    }
 
-	public void setMdhId(String mdhId) {
-		this.mdhId = mdhId;
-	}
+    public void setTransportMethod(String transportMethod) {
+        this.transportMethod = transportMethod;
+    }
 
-	public ProviderXmit getProvider() {
-		return provider;
-	}
+    public TestingFacilityXmit getFacility() {
+        return facility;
+    }
 
-	public void setProvider(ProviderXmit provider) {
-		this.provider = provider;
-	}
+    public void setFacility(TestingFacilityXmit facility) {
+        this.facility = facility;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getMdhId() {
+        return mdhId;
+    }
+
+    public void setMdhId(String mdhId) {
+        this.mdhId = mdhId;
+    }
+
+    public ProviderXmit getProvider() {
+        return provider;
+    }
+
+    public void setProvider(ProviderXmit provider) {
+        this.provider = provider;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
 }

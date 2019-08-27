@@ -27,19 +27,19 @@ public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel, String>
 
 //	public void deleteData(String[] typeOfSamplePanelIds, String currentUserId) throws LIMSRuntimeException;
 
-	public List getAllTypeOfSamplePanels() throws LIMSRuntimeException;
+    public List getAllTypeOfSamplePanels() throws LIMSRuntimeException;
 
-	public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException;
+    public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
+    public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
 
-	public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
+    public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
+    public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException;
+    public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException;
 
-	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
+    public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
 
-	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException;
+    public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException;
 }

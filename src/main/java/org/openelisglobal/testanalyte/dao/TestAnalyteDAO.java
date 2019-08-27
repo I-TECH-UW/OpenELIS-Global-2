@@ -36,70 +36,70 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
 
 //	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-	/**
-	 * @param testAnalytes
-	 * @throws LIMSRuntimeException
-	 */
+    /**
+     * @param testAnalytes
+     * @throws LIMSRuntimeException
+     */
 //	public void deleteData(List testAnalytes) throws LIMSRuntimeException;
 
-	/**
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getAllTestAnalytes() throws LIMSRuntimeException;
+    /**
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getAllTestAnalytes() throws LIMSRuntimeException;
 
-	/**
-	 * @param startingRecNo
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
+    /**
+     * @param startingRecNo
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
 
-	/**
-	 * @param testAnalyte
-	 * @throws LIMSRuntimeException
-	 */
-	public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    /**
+     * @param testAnalyte
+     * @throws LIMSRuntimeException
+     */
+    public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-	/**
-	 * @param testAnalyte
-	 * @throws LIMSRuntimeException
-	 */
+    /**
+     * @param testAnalyte
+     * @throws LIMSRuntimeException
+     */
 //	public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-	/**
-	 * @param filter
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getTestAnalytes(String filter) throws LIMSRuntimeException;
+    /**
+     * @param filter
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getTestAnalytes(String filter) throws LIMSRuntimeException;
 
-	/**
-	 * @param id
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException;
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException;
 
-	/**
-	 * @param id
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException;
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException;
 
-	/**
-	 * @param testAnalyte
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    /**
+     * @param testAnalyte
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-	/**
-	 * @param test
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
+    /**
+     * @param test
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
 
 }

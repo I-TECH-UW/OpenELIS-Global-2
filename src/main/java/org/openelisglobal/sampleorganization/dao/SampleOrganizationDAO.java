@@ -33,11 +33,11 @@ public interface SampleOrganizationDAO extends BaseDAO<SampleOrganization, Strin
 
 //	public void deleteData(List sampleOrgs) throws LIMSRuntimeException;
 
-	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
 //	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-	public void getDataBySample(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    public void getDataBySample(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-	public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException;
+    public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException;
 }

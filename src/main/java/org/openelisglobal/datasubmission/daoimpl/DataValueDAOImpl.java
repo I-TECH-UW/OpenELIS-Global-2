@@ -1,19 +1,18 @@
 package org.openelisglobal.datasubmission.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.datasubmission.dao.DataValueDAO;
 import org.openelisglobal.datasubmission.valueholder.DataValue;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements DataValueDAO {
 
-	public DataValueDAOImpl() {
-		super(DataValue.class);
-	}
+    public DataValueDAOImpl() {
+        super(DataValue.class);
+    }
 
 //	@Override
 //	public void getData(DataValue dataValue) throws LIMSRuntimeException {

@@ -92,6 +92,7 @@ public class FollowupRequiredData {
     public void setStatus(String status) {
         this.status = status;
     }
+
     public void setSiteSubjectNumber(String siteSubjectNumber) {
         this.siteSubjectNumber = siteSubjectNumber;
     }
@@ -99,31 +100,31 @@ public class FollowupRequiredData {
     public String getSiteSubjectNumber() {
         return siteSubjectNumber;
     }
-    
+
     public String getNonConformityNotes() {
-		return nonConformityNotes;
-	}
+        return nonConformityNotes;
+    }
 
-	public void setNonConformityNotes(String nonConformityNotes) {
-		this.nonConformityNotes = nonConformityNotes;
-	}
+    public void setNonConformityNotes(String nonConformityNotes) {
+        this.nonConformityNotes = nonConformityNotes;
+    }
 
-	public String getUnderInvestigationNotes() {
-		return underInvestigationNotes;
-	}
+    public String getUnderInvestigationNotes() {
+        return underInvestigationNotes;
+    }
 
-	public void setUnderInvestigationNotes(String underInvestigationNotes) {
-		this.underInvestigationNotes = underInvestigationNotes;
-	}
+    public void setUnderInvestigationNotes(String underInvestigationNotes) {
+        this.underInvestigationNotes = underInvestigationNotes;
+    }
 
-	public static class OrderByOrgName implements Comparator<FollowupRequiredData> {
+    public static class OrderByOrgName implements Comparator<FollowupRequiredData> {
         /**
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
         @Override
         public int compare(FollowupRequiredData o1, FollowupRequiredData o2) {
             int orgCompare = StringUtil.compareWithNulls(o1.getOrgname(), o2.getOrgname());
-            if( orgCompare != 0){
+            if (orgCompare != 0) {
                 return orgCompare;
             }
             return StringUtil.compareWithNulls(o1.getLabNo(), o2.getLabNo());

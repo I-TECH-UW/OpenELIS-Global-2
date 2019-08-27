@@ -16,10 +16,9 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-
 public class PatientIndeterminateVersion1Report extends PatientIndeterminateReport implements IReportCreator {
-	@Override
-	protected String reportFileName(){
-		return "Patient_Indeterminate_Version1";
-	}
+    @Override
+    protected String reportFileName() {
+        return "Patient_Indeterminate_Version1";
+    }
 }

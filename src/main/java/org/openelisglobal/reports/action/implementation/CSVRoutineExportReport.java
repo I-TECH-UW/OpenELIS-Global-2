@@ -40,7 +40,10 @@ public abstract class CSVRoutineExportReport extends Report implements JRDataSou
     }
 
     /**
-     * Either we generate a PDF with an error message or we generate data for a CSV file, but if your expecting to get JasperReport data from this class, it won't work.
+     * Either we generate a PDF with an error message or we generate data for a CSV
+     * file, but if your expecting to get JasperReport data from this class, it
+     * won't work.
+     * 
      * @see org.openelisglobal.reports.action.implementation.IReportCreator#getReportDataSource()
      */
     @Override
@@ -48,7 +51,7 @@ public abstract class CSVRoutineExportReport extends Report implements JRDataSou
         if (!initialized) {
             throw new IllegalStateException("initializeReport not called first");
         }
-        if ( errorFound ) {
+        if (errorFound) {
             return new JRBeanCollectionDataSource(errorMsgs);
         } else {
             throw new UnsupportedOperationException();
@@ -57,6 +60,7 @@ public abstract class CSVRoutineExportReport extends Report implements JRDataSou
 
     /**
      * This Report can not be sent to JasperReports
+     * 
      * @see net.sf.jasperreports.engine.JRDataSource#getFieldValue(net.sf.jasperreports.engine.JRField)
      */
     @Override
@@ -66,6 +70,7 @@ public abstract class CSVRoutineExportReport extends Report implements JRDataSou
 
     /**
      * This Report can not be sent to JasperReports
+     * 
      * @see net.sf.jasperreports.engine.JRDataSource#next()
      */
     @Override

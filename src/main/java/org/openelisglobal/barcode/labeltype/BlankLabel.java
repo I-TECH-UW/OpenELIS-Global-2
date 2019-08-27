@@ -2,8 +2,8 @@ package org.openelisglobal.barcode.labeltype;
 
 import java.util.ArrayList;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.barcode.LabelField;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * Stores Formatting for a Blank Order label
@@ -13,44 +13,44 @@ import org.openelisglobal.barcode.LabelField;
  */
 public class BlankLabel extends Label {
 
-  public BlankLabel(String code) {
-    aboveFields = new ArrayList<LabelField>();
-    LabelField field;
-    
-    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
-    field.setDisplayFieldName(true);
-    field.setUnderline(true);
-    aboveFields.add(field);
-    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
-    field.setDisplayFieldName(true);
-    field.setUnderline(true);
-    aboveFields.add(field);
-    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 5);
-    field.setDisplayFieldName(true);
-    field.setUnderline(true);
-    aboveFields.add(field);
-    field = new LabelField(MessageUtil.getMessage("barcode.label.info.site"), "", 5);
-    field.setDisplayFieldName(true);
-    field.setUnderline(true);
-    aboveFields.add(field);
+    public BlankLabel(String code) {
+        aboveFields = new ArrayList<LabelField>();
+        LabelField field;
 
-    setCode(code);
-  }
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 5);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.site"), "", 5);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
 
-  @Override
-  public int getNumTextRowsBefore() {
-    Iterable<LabelField> fields = getAboveFields();
-    return getNumRows(fields);
-  }
+        setCode(code);
+    }
 
-  @Override
-  public int getNumTextRowsAfter() {
-    return 0;
-  }
+    @Override
+    public int getNumTextRowsBefore() {
+        Iterable<LabelField> fields = getAboveFields();
+        return getNumRows(fields);
+    }
 
-  @Override
-  public int getMaxNumLabels() {
-    return 10;
-  }
+    @Override
+    public int getNumTextRowsAfter() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxNumLabels() {
+        return 10;
+    }
 
 }

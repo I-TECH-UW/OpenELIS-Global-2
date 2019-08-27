@@ -1022,19 +1022,19 @@ td {
     <div id="guide" style="display: none">
         <span class="requiredlabel">*</span> <spring:message code="label.required.field" /><br/><br/>
         <span class="step1">
-            <spring:message code="configuration.test.add.guide.test" />
+            <spring:message htmlEscape="false" code="configuration.test.add.guide.test" />
         </span>
         <span class="step2" id="step2Guide" style="display: none">
-           <spring:message code="configuration.test.add.guide.sample.type" />
+           <spring:message htmlEscape="false"  code="configuration.test.add.guide.sample.type" />
         </span>
         <span class="dictionarySelect" style="display: none" >
-           <spring:message code="configuration.test.add.guide.select.list" />
+           <spring:message htmlEscape="false"  code="configuration.test.add.guide.select.list" />
         </span>
         <span class="resultLimits" style="display: none;">
-            <spring:message code="configuration.test.add.guide.result.limits" />
+            <spring:message htmlEscape="false"  code="configuration.test.add.guide.result.limits" />
         </span>
         <span class="confirmShow" style="display: none">
-            <spring:message code="configuration.test.add.guide.verify" />
+            <spring:message htmlEscape="false"  code="configuration.test.add.guide.verify" />
         </span>
         <br/>
         <hr/>

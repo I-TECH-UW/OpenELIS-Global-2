@@ -41,25 +41,25 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author Darren L. Spurgeon
  */
 public class MethodAutocompleteProvider extends BaseAutocompleteProvider {
-	
-	protected MethodService methodService = SpringContext.getBean(MethodService.class);
 
-	/**
-	 * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public List processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    protected MethodService methodService = SpringContext.getBean(MethodService.class);
 
- 		//System.out.println("I am in MethodAutocompleteProvider "
-		//		+ request.getParameter("methodName"));
-		String methodName = request.getParameter("methodName");
-		//System.out
-				//.println("MethodAutocompleteProvider methodName " + methodName);
-		List list = methodService.getMethods(methodName);
-		//System.out.println("MethodAutocompleteProvider list " + list.size());
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		return list;
-	}
+        // System.out.println("I am in MethodAutocompleteProvider "
+        // + request.getParameter("methodName"));
+        String methodName = request.getParameter("methodName");
+        // System.out
+        // .println("MethodAutocompleteProvider methodName " + methodName);
+        List list = methodService.getMethods(methodName);
+        // System.out.println("MethodAutocompleteProvider list " + list.size());
+
+        return list;
+    }
 
 }

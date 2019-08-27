@@ -17,89 +17,88 @@ package org.openelisglobal.reports.send.sample.valueholder;
 
 import org.openelisglobal.common.util.StringUtil;
 
-public class PatientXmit extends
-		org.openelisglobal.patient.valueholder.Patient {
+public class PatientXmit extends org.openelisglobal.patient.valueholder.Patient {
 
-	private String lastName;
+    private String lastName;
 
-	private String firstName;
+    private String firstName;
 
-	private String streetAddress;
+    private String streetAddress;
 
-	private String city;
+    private String city;
 
-	private String state;
+    private String state;
 
-	private String zipCode;
-	
-	private String homePhone;
-	
-	public PatientXmit() {
-	}
+    private String zipCode;
 
-	public String getHomePhone() {
-		return homePhone;
-	}
+    private String homePhone;
 
-	public void setHomePhone(String homePhone) {
-		this.homePhone = homePhone;
-	}
+    public PatientXmit() {
+    }
 
-	public String getCity() {
-		if (!StringUtil.isNullorNill(city)) {
-			city.trim();
-		}
-		return city;
-	}
+    public String getHomePhone() {
+        return homePhone;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setHomePhone(String homePhone) {
+        this.homePhone = homePhone;
+    }
 
-	public String getState() {
-		if (!StringUtil.isNullorNill(state)) {
-			state.trim();
-		}
-		return state;
-	}
+    public String getCity() {
+        if (!StringUtil.isNullorNill(city)) {
+            city.trim();
+        }
+        return city;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getStreetAddress() {
-		return streetAddress;
-	}
+    public String getState() {
+        if (!StringUtil.isNullorNill(state)) {
+            state.trim();
+        }
+        return state;
+    }
 
-	public void setStreetAddress(String streetAddress) {
-		this.streetAddress = streetAddress;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public String getZipCode() {
-		if (!StringUtil.isNullorNill(zipCode)) {
-			zipCode.trim();
-		}
-		return zipCode;
-	}
+    public String getStreetAddress() {
+        return streetAddress;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getZipCode() {
+        if (!StringUtil.isNullorNill(zipCode)) {
+            zipCode.trim();
+        }
+        return zipCode;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
 }

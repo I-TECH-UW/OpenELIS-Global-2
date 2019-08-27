@@ -24,18 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
-import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
-import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.reports.service.DocumentTrackService;
-import org.openelisglobal.reports.service.DocumentTypeService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -46,155 +34,166 @@ import org.openelisglobal.dataexchange.common.IRowTransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.common.ReportTransmission.HTTP_TYPE;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
+import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.reports.service.DocumentTrackService;
+import org.openelisglobal.reports.service.DocumentTypeService;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.reports.valueholder.DocumentType;
+import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("prototype")
 public class ResultExporter extends Thread implements IResultExporter {
 
-	private long sleepTime;
-	private boolean running = true;
-	@Autowired
-	private ReportQueueTypeService reportQueueTypeService;
-	@Autowired
-	private ReferenceTablesService referenceTablesService;
-	@Autowired
-	private DocumentTypeService documentTypeService;
-	@Autowired
-	private DocumentTrackService trackService;
-	@Autowired
-	private HL7MessageOutService hl7MessageService;
-	@Autowired
-	private ReportExternalExportService reportExternalExportService;
+    private long sleepTime;
+    private boolean running = true;
+    @Autowired
+    private ReportQueueTypeService reportQueueTypeService;
+    @Autowired
+    private ReferenceTablesService referenceTablesService;
+    @Autowired
+    private DocumentTypeService documentTypeService;
+    @Autowired
+    private DocumentTrackService trackService;
+    @Autowired
+    private HL7MessageOutService hl7MessageService;
+    @Autowired
+    private ReportExternalExportService reportExternalExportService;
 
-	private String resultReportTypeId;
+    private String resultReportTypeId;
 
-	@PostConstruct
-	public void setupGlobalVariables() {
-		resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
-	}
+    @PostConstruct
+    public void setupGlobalVariables() {
+        resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
+    }
 
-	public void setSleepInMin(long sleepInMin) {
-		sleepTime = sleepInMin * 1000L * 60L;
-	}
+    public void setSleepInMin(long sleepInMin) {
+        sleepTime = sleepInMin * 1000L * 60L;
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		while (running) {
-			exportResults();
+        while (running) {
+            exportResults();
 
-			try {
-				sleep(sleepTime);
-			} catch (InterruptedException e) {
-				running = false;
-			}
-		}
+            try {
+                sleep(sleepTime);
+            } catch (InterruptedException e) {
+                running = false;
+            }
+        }
 
-	}
+    }
 
-	public void stopExports() {
-		running = false;
-	}
+    public void stopExports() {
+        running = false;
+    }
 
-	private void exportResults() {
-		if (shouldReportResults()) {
-			List<ReportExternalExport> reportList = reportExternalExportService
-					.getUnsentReportExports(resultReportTypeId);
+    private void exportResults() {
+        if (shouldReportResults()) {
+            List<ReportExternalExport> reportList = reportExternalExportService
+                    .getUnsentReportExports(resultReportTypeId);
 
-			ReportTransmission transmitter = new ReportTransmission();
-			String url = ConfigurationProperties.getInstance().getPropertyValue(Property.resultReportingURL);
-			boolean sendAsychronously = false;
+            ReportTransmission transmitter = new ReportTransmission();
+            String url = ConfigurationProperties.getInstance().getPropertyValue(Property.resultReportingURL);
+            boolean sendAsychronously = false;
 
-			for (ReportExternalExport report : reportList) {
-				IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("successReportHandler");
-				responseHandler.setRowId(report.getId());
-				transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
-			}
-		}
-	}
+            for (ReportExternalExport report : reportList) {
+                IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("successReportHandler");
+                responseHandler.setRowId(report.getId());
+                transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
+            }
+        }
+    }
 
-	private boolean shouldReportResults() {
-		String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.reportResults);
-		return ("true".equals(reportResults) || "enable".equals(reportResults));
-	}
+    private boolean shouldReportResults() {
+        String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.reportResults);
+        return ("true".equals(reportResults) || "enable".equals(reportResults));
+    }
 
-	@Service("successReportHandler")
-	@Scope("prototype")
-	class SuccessReportHandler implements IRowTransmissionResponseHandler {
-		String externalExportRowId;
+    @Service("successReportHandler")
+    @Scope("prototype")
+    class SuccessReportHandler implements IRowTransmissionResponseHandler {
+        String externalExportRowId;
 
-		public SuccessReportHandler(String rowId) {
-			setRowId(rowId);
-		}
+        public SuccessReportHandler(String rowId) {
+            setRowId(rowId);
+        }
 
-		public SuccessReportHandler() {
+        public SuccessReportHandler() {
 
-		}
+        }
 
-		@Override
-		public void setRowId(String rowId) {
-			externalExportRowId = rowId;
-		}
+        @Override
+        public void setRowId(String rowId) {
+            externalExportRowId = rowId;
+        }
 
-		@Override
-		@Transactional
-		public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
+        @Override
+        @Transactional
+        public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
-			if (httpReturnStatus == HttpServletResponse.SC_OK) {
-				ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
-				List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
+            if (httpReturnStatus == HttpServletResponse.SC_OK) {
+                ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
+                List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
 
-				try {
-					HL7MessageOut hl7Message = hl7MessageService.getByData(msg);
-					if (hl7Message != null) {
-						hl7Message.setStatus(HL7MessageOut.SUCCESS);
-						hl7MessageService.update(hl7Message);
-					}
-					for (DocumentTrack document : documents) {
-						trackService.insert(document);
-					}
-					reportExternalExportService.delete(report);
+                try {
+                    HL7MessageOut hl7Message = hl7MessageService.getByData(msg);
+                    if (hl7Message != null) {
+                        hl7Message.setStatus(HL7MessageOut.SUCCESS);
+                        hl7MessageService.update(hl7Message);
+                    }
+                    for (DocumentTrack document : documents) {
+                        trackService.insert(document);
+                    }
+                    reportExternalExportService.delete(report);
 
-				} catch (LIMSRuntimeException lre) {
-					LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
-					throw lre;
-				}
+                } catch (LIMSRuntimeException lre) {
+                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
+                    throw lre;
+                }
 
-			}
+            }
 
-		}
+        }
 
-		private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
-			List<DocumentTrack> documentList = new ArrayList<>();
-			String resultTableId = getResultTableId();
-			DocumentType type = getResultType();
-			Timestamp now = DateUtil.getNowAsTimestamp();
+        private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
+            List<DocumentTrack> documentList = new ArrayList<>();
+            String resultTableId = getResultTableId();
+            DocumentType type = getResultType();
+            Timestamp now = DateUtil.getNowAsTimestamp();
 
-			if (!GenericValidator.isBlankOrNull(bookkeepingData) && !"null".equals(bookkeepingData)) {
-				String[] resultIdList = bookkeepingData.split(",");
+            if (!GenericValidator.isBlankOrNull(bookkeepingData) && !"null".equals(bookkeepingData)) {
+                String[] resultIdList = bookkeepingData.split(",");
 
-				for (int i = 0; i < resultIdList.length; i++) {
-					DocumentTrack document = new DocumentTrack();
-					document.setDocumentTypeId(type.getId());
-					document.setRecordId(resultIdList[i]);
-					document.setReportTime(now);
-					document.setTableId(resultTableId);
-					document.setSysUserId("1");
-					documentList.add(document);
-				}
-			}
-			return documentList;
-		}
+                for (int i = 0; i < resultIdList.length; i++) {
+                    DocumentTrack document = new DocumentTrack();
+                    document.setDocumentTypeId(type.getId());
+                    document.setRecordId(resultIdList[i]);
+                    document.setReportTime(now);
+                    document.setTableId(resultTableId);
+                    document.setSysUserId("1");
+                    documentList.add(document);
+                }
+            }
+            return documentList;
+        }
 
-		private DocumentType getResultType() {
-			return documentTypeService.getDocumentTypeByName("resultExport");
-		}
+        private DocumentType getResultType() {
+            return documentTypeService.getDocumentTypeByName("resultExport");
+        }
 
-		private String getResultTableId() {
-			return referenceTablesService.getReferenceTableByName("RESULT").getId();
-		}
+        private String getResultTableId() {
+            return referenceTablesService.getReferenceTableByName("RESULT").getId();
+        }
 
-	}
+    }
 }

@@ -20,19 +20,18 @@ package org.openelisglobal.testreflex.action.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.result.service.ResultService;
-import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /*
  * The purpose of this class is to resolve whether a new test should be created for
@@ -43,70 +42,70 @@ import org.openelisglobal.testreflex.valueholder.TestReflex;
 @Scope("prototype")
 public class TestReflexResolver {
 
-	@Autowired
-	private TestReflexService testReflexService;
-	@Autowired
-	private AnalysisService analysisService;
-	@Autowired
-	private ResultService resultService;
+    @Autowired
+    private TestReflexService testReflexService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private ResultService resultService;
 
-	private Analysis lastValidAnalysis = null;
+    private Analysis lastValidAnalysis = null;
 
-	public Analysis getLastValidAnalysis() {
-		return lastValidAnalysis;
-	}
+    public Analysis getLastValidAnalysis() {
+        return lastValidAnalysis;
+    }
 
-	/*
-	 * Gets the test reflex associated with this test. Depends on the analyte, test
-	 * result and test. This could return zero or more reflexes. More than one
-	 * reflexes will be returned when there is more than one reflex for a test,
-	 * analyte and result combo
-	 */
-	public List<TestReflex> getTestReflexesForResult(Result result) {
-		String testResultId = null;
-		String testId = null;
-		String analyteId = result.getAnalyte() == null ? null : result.getAnalyte().getId();
+    /*
+     * Gets the test reflex associated with this test. Depends on the analyte, test
+     * result and test. This could return zero or more reflexes. More than one
+     * reflexes will be returned when there is more than one reflex for a test,
+     * analyte and result combo
+     */
+    public List<TestReflex> getTestReflexesForResult(Result result) {
+        String testResultId = null;
+        String testId = null;
+        String analyteId = result.getAnalyte() == null ? null : result.getAnalyte().getId();
 
-		if (result.getTestResult() != null) {
-			testResultId = result.getTestResult().getId();
-			testId = result.getTestResult().getTest() == null ? null : result.getTestResult().getTest().getId();
-		}
+        if (result.getTestResult() != null) {
+            testResultId = result.getTestResult().getId();
+            testId = result.getTestResult().getTest() == null ? null : result.getTestResult().getTest().getId();
+        }
 
-		List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
-				testId);
-		return reflexes != null ? reflexes : new ArrayList<>();
-	}
+        List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
+                testId);
+        return reflexes != null ? reflexes : new ArrayList<>();
+    }
 
-	public ReflexAction getReflexAction() {
-		return ReflexActionFactory.getReflexAction();
-	}
+    public ReflexAction getReflexAction() {
+        return ReflexActionFactory.getReflexAction();
+    }
 
-	public boolean isSatisfied(TestReflex reflex, Sample sample) {
+    public boolean isSatisfied(TestReflex reflex, Sample sample) {
 
-		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
+        List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
-		for (Analysis analysis : analysisList) {
-			if (!StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)
-					.equals(analysis.getStatusId())) {
-				List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+        for (Analysis analysis : analysisList) {
+            if (!StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)
+                    .equals(analysis.getStatusId())) {
+                List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
-				for (Result result : resultList) {
-					if (result.getTestResult() != null
-							&& reflex.getTestResultId().equals(result.getTestResult().getId())
-							&& result.getAnalyte() != null
-							&& reflex.getTestAnalyte().getAnalyte().getId().equals(result.getAnalyte().getId())
-							&& reflex.getTestId().equals(analysis.getTest().getId())) {
+                for (Result result : resultList) {
+                    if (result.getTestResult() != null
+                            && reflex.getTestResultId().equals(result.getTestResult().getId())
+                            && result.getAnalyte() != null
+                            && reflex.getTestAnalyte().getAnalyte().getId().equals(result.getAnalyte().getId())
+                            && reflex.getTestId().equals(analysis.getTest().getId())) {
 
-						lastValidAnalysis = analysis;
-						return true;
-					}
+                        lastValidAnalysis = analysis;
+                        return true;
+                    }
 
-				}
-			}
-		}
+                }
+            }
+        }
 
-		lastValidAnalysis = null;
-		return false;
-	}
+        lastValidAnalysis = null;
+        return false;
+    }
 
 }

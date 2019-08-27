@@ -23,16 +23,15 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.referencetables.dao.ReferenceTablesDAO;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Yi Chen
@@ -41,9 +40,9 @@ import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 @Transactional
 public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String> implements ReferenceTablesDAO {
 
-	public ReferenceTablesDAOImpl() {
-		super(ReferenceTables.class);
-	}
+    public ReferenceTablesDAOImpl() {
+        super(ReferenceTables.class);
+    }
 
 //	@Override
 //	public void deleteData(List referenceTableses) throws LIMSRuntimeException {
@@ -194,277 +193,277 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //		}
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
-		try {
-			ReferenceTables reftbl = entityManager.unwrap(Session.class).get(ReferenceTables.class,
-					referenceTables.getId());
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			if (reftbl != null) {
-				PropertyUtils.copyProperties(referenceTables, reftbl);
-			} else {
-				referenceTables.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables getData()", e);
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
+        try {
+            ReferenceTables reftbl = entityManager.unwrap(Session.class).get(ReferenceTables.class,
+                    referenceTables.getId());
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (reftbl != null) {
+                PropertyUtils.copyProperties(referenceTables, reftbl);
+            } else {
+                referenceTables.setId(null);
+            }
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "getData()", e.toString());
+            throw new LIMSRuntimeException("Error in Referencetables getData()", e);
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllReferenceTables() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from ReferenceTables";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "getAllReferenceTables()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables getAllReferenceTables()", e);
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllReferenceTables() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from ReferenceTables";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // query.setMaxResults(10);
+            // query.setFirstResult(3);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "getAllReferenceTables()", e.toString());
+            throw new LIMSRuntimeException("Error in Referencetables getAllReferenceTables()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+    @Override
+    @Transactional(readOnly = true)
+    public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-			String sql = "from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-			// query.setCacheMode(org.hibernate.CacheMode.REFRESH);
+            String sql = "from ReferenceTables r order by r.tableName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+            // query.setCacheMode(org.hibernate.CacheMode.REFRESH);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "getPageOfReferenceTables()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables getPageOfReferenceTables()", e);
-		}
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "getPageOfReferenceTables()", e.toString());
+            throw new LIMSRuntimeException("Error in Referencetables getPageOfReferenceTables()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public ReferenceTables readReferenceTables(String idString) {
-		ReferenceTables referenceTables = null;
-		try {
-			referenceTables = entityManager.unwrap(Session.class).get(ReferenceTables.class, idString);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "readReferenceTables()", e.toString());
-			throw new LIMSRuntimeException("Error in Referencetables readReferenceTables(idString)", e);
-		}
+    public ReferenceTables readReferenceTables(String idString) {
+        ReferenceTables referenceTables = null;
+        try {
+            referenceTables = entityManager.unwrap(Session.class).get(ReferenceTables.class, idString);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "readReferenceTables()", e.toString());
+            throw new LIMSRuntimeException("Error in Referencetables readReferenceTables(idString)", e);
+        }
 
-		return referenceTables;
+        return referenceTables;
 
-	}
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextReferenceTablesRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextReferenceTablesRecord(String id) throws LIMSRuntimeException {
 
-		return getNextRecord(id, "ReferenceTables", ReferenceTables.class);
-	}
+        return getNextRecord(id, "ReferenceTables", ReferenceTables.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousReferenceTablesRecord(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousReferenceTablesRecord(String id) throws LIMSRuntimeException {
 
-		return getPreviousRecord(id, "ReferenceTables", ReferenceTables.class);
-	}
+        return getPreviousRecord(id, "ReferenceTables", ReferenceTables.class);
+    }
 
-	// bugzilla 1411
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException {
-		return getTotalCount("ReferenceTables", ReferenceTables.class);
-	}
+    // bugzilla 1411
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException {
+        return getTotalCount("ReferenceTables", ReferenceTables.class);
+    }
 
 //	bugzilla 1427
-	@Override
-	@Transactional(readOnly = true)
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    @Override
+    @Transactional(readOnly = true)
+    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		// bugzilla 1908
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of record with
-			// id = currentId
-			String sql = "select r.id from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+        List list = new Vector();
+        // bugzilla 1908
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of record with
+            // id = currentId
+            String sql = "select r.id from ReferenceTables r order by r.tableName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+                    .setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	// bugzilla 1427
-	@Override
-	@Transactional(readOnly = true)
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
+    // bugzilla 1427
+    @Override
+    @Transactional(readOnly = true)
+    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+        int currentId = (Integer.valueOf(id)).intValue();
+        String tablePrefix = getTablePrefix(table);
 
-		List list = new Vector();
-		// bugzilla 1908
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of record with
-			// id = currentId
-			String sql = "select r.id from ReferenceTables r order by r.tableName";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
+        List list = new Vector();
+        // bugzilla 1908
+        int rrn = 0;
+        try {
+            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+            // instead get the list in this sortorder and determine the index of record with
+            // id = currentId
+            String sql = "select r.id from ReferenceTables r order by r.tableName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            rrn = list.indexOf(String.valueOf(currentId));
 
-			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn - 1)
-					.setMaxResults(2).list();
+            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
+                    .setFirstResult(rrn - 1).setMaxResults(2).list();
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "getPreviousRecord()", e.toString());
+            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	// bugzilla 1482
-	@Override
-	public boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew)
-			throws LIMSRuntimeException {
-		try {
+    // bugzilla 1482
+    @Override
+    public boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew)
+            throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
-			String sql;
+            List list = new ArrayList();
+            String sql;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			if (isNew) {
-				sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param";
-			} else {
-				sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
-			}
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            if (isNew) {
+                sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param";
+            } else {
+                sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
+            }
 
-			// System.out.println("Yi in duplicateReferencetables sql is " + sql);
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			// System.out.println("duplicateReferencetables sql is " + sql);
+            // System.out.println("Yi in duplicateReferencetables sql is " + sql);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // System.out.println("duplicateReferencetables sql is " + sql);
 
-			query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
+            query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String referenceTablesId = "0";
-			if (!StringUtil.isNullorNill(referenceTables.getId())) {
-				referenceTablesId = referenceTables.getId();
-			}
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String referenceTablesId = "0";
+            if (!StringUtil.isNullorNill(referenceTables.getId())) {
+                referenceTablesId = referenceTables.getId();
+            }
 
-			if (!isNew) {
-				query.setParameter("param2", referenceTablesId);
-			}
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            if (!isNew) {
+                query.setParameter("param2", referenceTablesId);
+            }
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("ReferenceTablesDAOImpl", "duplicateReferenceTablesExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateReferenceTablesExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("ReferenceTablesDAOImpl", "duplicateReferenceTablesExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateReferenceTablesExists()", e);
+        }
+    }
 
-	// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
-	@Override
-	@Transactional(readOnly = true)
-	public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			// query.setMaxResults(10);
-			// query.setFirstResult(3);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// buzilla 2154
-			LogEvent.logError("ReferenceTableDAOImpl", "getAllReferenceTablesForHl7Encoding()", e.toString());
-			throw new LIMSRuntimeException("Error in ReferenceTables getAllReferenceTablesForHl7Encoding()", e);
-		}
+    // bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            // query.setMaxResults(10);
+            // query.setFirstResult(3);
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // buzilla 2154
+            LogEvent.logError("ReferenceTableDAOImpl", "getAllReferenceTablesForHl7Encoding()", e.toString());
+            throw new LIMSRuntimeException("Error in ReferenceTables getAllReferenceTablesForHl7Encoding()", e);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) throws LIMSRuntimeException {
-		return getReferenceTableByName(referenceTables.getTableName());
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) throws LIMSRuntimeException {
+        return getReferenceTableByName(referenceTables.getTableName());
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Integer getTotalReferenceTableCount() throws LIMSRuntimeException {
-		return getTotalCount("ReferenceTables", ReferenceTables.class);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalReferenceTableCount() throws LIMSRuntimeException {
+        return getTotalCount("ReferenceTables", ReferenceTables.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public ReferenceTables getReferenceTableByName(String tableName) {
-		try {
-			String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("tableName", tableName.toLowerCase().trim());
+    @Override
+    @Transactional(readOnly = true)
+    public ReferenceTables getReferenceTableByName(String tableName) {
+        try {
+            String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("tableName", tableName.toLowerCase().trim());
 
-			ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
+            ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
 
-			return table;
+            return table;
 
-		} catch (HibernateException e) {
-			handleException(e, "getReferenceTableByName");
-		}
+        } catch (HibernateException e) {
+            handleException(e, "getReferenceTableByName");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

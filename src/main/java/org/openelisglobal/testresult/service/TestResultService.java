@@ -8,23 +8,23 @@ import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public interface TestResultService extends BaseObjectService<TestResult, String> {
-	void getData(TestResult testResult);
+    void getData(TestResult testResult);
 
-	List getNextTestResultRecord(String id);
+    List getNextTestResultRecord(String id);
 
-	TestResult getTestResultById(TestResult testResult);
+    TestResult getTestResultById(TestResult testResult);
 
-	List getAllActiveTestResultsPerTest(Test test);
+    List getAllActiveTestResultsPerTest(Test test);
 
-	List<TestResult> getActiveTestResultsByTest(String testId);
+    List<TestResult> getActiveTestResultsByTest(String testId);
 
-	List getPageOfTestResults(int startingRecNo);
+    List getPageOfTestResults(int startingRecNo);
 
-	List getPreviousTestResultRecord(String id);
+    List getPreviousTestResultRecord(String id);
 
-	List getAllTestResults();
+    List getAllTestResults();
 
-	TestResult getTestResultsByTestAndDictonaryResult(String testId, String result);
+    TestResult getTestResultsByTestAndDictonaryResult(String testId, String result);
 
-	List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte);
+    List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte);
 }

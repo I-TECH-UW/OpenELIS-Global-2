@@ -25,25 +25,27 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.dataexchange.resultreporting.ResultReportingUpdate;
 
 public class ValidationUpdateRegister {
-	static public List<IResultUpdate> getRegisteredUpdaters(){
-		List<IResultUpdate> updaters = new ArrayList<IResultUpdate>();
-		
-		//kluge at this point, should be discoverable
-		if( shouldReport(Property.reportResults)){
-			updaters.add( new ResultReportingUpdate());
-		}
-		
-		/***** BIG WARNING FLASHING LIGHT *********
-		 * If another listener is added then the method addResultSets() needs to be modified in ResultValidationSaveAction
-		 * 
-		 * There is code that only looks at patient reports when deciding what is a new value and what is an old value
-		 */
-		return updaters;
-	}
-	
-	static private boolean shouldReport(Property property) {
-		String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(property);
-		return ( "true".equals(reportResults) || "enable".equals(reportResults) );
-	}
+    static public List<IResultUpdate> getRegisteredUpdaters() {
+        List<IResultUpdate> updaters = new ArrayList<IResultUpdate>();
+
+        // kluge at this point, should be discoverable
+        if (shouldReport(Property.reportResults)) {
+            updaters.add(new ResultReportingUpdate());
+        }
+
+        /*****
+         * BIG WARNING FLASHING LIGHT ********* If another listener is added then the
+         * method addResultSets() needs to be modified in ResultValidationSaveAction
+         * 
+         * There is code that only looks at patient reports when deciding what is a new
+         * value and what is an old value
+         */
+        return updaters;
+    }
+
+    static private boolean shouldReport(Property property) {
+        String reportResults = ConfigurationProperties.getInstance().getPropertyValueLowerCase(property);
+        return ("true".equals(reportResults) || "enable".equals(reportResults));
+    }
 
 }

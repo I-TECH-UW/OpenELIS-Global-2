@@ -27,138 +27,135 @@ import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 /**
- * @author benzd1
- * bugzilla 2510
+ * @author benzd1 bugzilla 2510
  */
 public class SampleQaEventAction extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String sampleQaEventId;
+    private String sampleQaEventId;
 
-	private ValueHolderInterface sampleQaEvent;
+    private ValueHolderInterface sampleQaEvent;
 
-	private String actionId;
+    private String actionId;
 
-	private ValueHolderInterface action;
+    private ValueHolderInterface action;
 
-	private Date createdDate;
+    private Date createdDate;
 
-	private String createdDateForDisplay;
-	
-	//bugzilla 2481
-	private SystemUser systemUser;
-	    
-	private String systemUserId;
+    private String createdDateForDisplay;
 
-	public SampleQaEventAction() {
-		super();
-		this.action = new ValueHolder();
-		this.sampleQaEvent = new ValueHolder();
-	}
+    // bugzilla 2481
+    private SystemUser systemUser;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String systemUserId;
 
-	public String getId() {
-		return id;
-	}
+    public SampleQaEventAction() {
+        super();
+        this.action = new ValueHolder();
+        this.sampleQaEvent = new ValueHolder();
+    }
 
-	// Action
-	public Action getAction() {
-		return (Action) this.action.getValue();
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setAction(ValueHolderInterface action) {
-		this.action = action;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setAction(Action action) {
-		this.action.setValue(action);
-	}
+    // Action
+    public Action getAction() {
+        return (Action) this.action.getValue();
+    }
 
-	protected ValueHolderInterface getActionHolder() {
-		return this.action;
-	}
+    public void setAction(ValueHolderInterface action) {
+        this.action = action;
+    }
 
-	protected void setActionHolder(ValueHolderInterface action) {
-		this.action = action;
-	}
+    public void setAction(Action action) {
+        this.action.setValue(action);
+    }
 
-	// SAMPLE_QA_EVENT
-	public SampleQaEvent getSampleQaEvent() {
-		return (SampleQaEvent) this.sampleQaEvent.getValue();
-	}
+    protected ValueHolderInterface getActionHolder() {
+        return this.action;
+    }
 
-	public void setSampleQaEvent(ValueHolderInterface sampleQaEvent) {
-		this.sampleQaEvent = sampleQaEvent;
-	}
+    protected void setActionHolder(ValueHolderInterface action) {
+        this.action = action;
+    }
 
-	public void setSampleQaEvent(SampleQaEvent sampleQaEvent) {
-		this.sampleQaEvent.setValue(sampleQaEvent);
-	}
+    // SAMPLE_QA_EVENT
+    public SampleQaEvent getSampleQaEvent() {
+        return (SampleQaEvent) this.sampleQaEvent.getValue();
+    }
 
-	protected ValueHolderInterface getSampleQaEventHolder() {
-		return this.sampleQaEvent;
-	}
+    public void setSampleQaEvent(ValueHolderInterface sampleQaEvent) {
+        this.sampleQaEvent = sampleQaEvent;
+    }
 
-	protected void setSampleQaEventHolder(ValueHolderInterface sampleQaEvent) {
-		this.sampleQaEvent = sampleQaEvent;
-	}
+    public void setSampleQaEvent(SampleQaEvent sampleQaEvent) {
+        this.sampleQaEvent.setValue(sampleQaEvent);
+    }
 
-	public String getActionId() {
-		return actionId;
-	}
+    protected ValueHolderInterface getSampleQaEventHolder() {
+        return this.sampleQaEvent;
+    }
 
-	public void setActionId(String actionId) {
-		this.actionId = actionId;
-	}
+    protected void setSampleQaEventHolder(ValueHolderInterface sampleQaEvent) {
+        this.sampleQaEvent = sampleQaEvent;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public String getActionId() {
+        return actionId;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-		this.createdDateForDisplay = DateUtil.convertSqlDateToStringDate(createdDate);
-	}
+    public void setActionId(String actionId) {
+        this.actionId = actionId;
+    }
 
-	public String getCreatedDateForDisplay() {
-		return this.createdDateForDisplay;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDateForDisplay(String createdDateForDisplay) {
-		this.createdDateForDisplay = createdDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.createdDate = DateUtil.convertStringDateToSqlDate(
-				createdDateForDisplay, locale);
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+        this.createdDateForDisplay = DateUtil.convertSqlDateToStringDate(createdDate);
+    }
 
-	public String getSampleQaEventId() {
-		return sampleQaEventId;
-	}
+    public String getCreatedDateForDisplay() {
+        return this.createdDateForDisplay;
+    }
 
-	public void setSampleQaEventId(String sampleQaEventId) {
-		this.sampleQaEventId = sampleQaEventId;
-	}
+    public void setCreatedDateForDisplay(String createdDateForDisplay) {
+        this.createdDateForDisplay = createdDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.createdDate = DateUtil.convertStringDateToSqlDate(createdDateForDisplay, locale);
+    }
 
-	public void setSystemUser(SystemUser systemUser) {
-		this.systemUser = systemUser;
-	}
-	
-	public SystemUser getSystemUser() {
-		return this.systemUser;
-	}
-	
-	public String getSystemUserId() {
-		return systemUserId;
-	}
-	
-	public void setSystemUserId(String systemUserId) {
-		this.systemUserId = systemUserId;
-	}
+    public String getSampleQaEventId() {
+        return sampleQaEventId;
+    }
+
+    public void setSampleQaEventId(String sampleQaEventId) {
+        this.sampleQaEventId = sampleQaEventId;
+    }
+
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser = systemUser;
+    }
+
+    public SystemUser getSystemUser() {
+        return this.systemUser;
+    }
+
+    public String getSystemUserId() {
+        return systemUserId;
+    }
+
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
 }

@@ -54,15 +54,15 @@ import org.hibernate.type.AbstractType;
  */
 public class LIMSRawDataUserType extends AbstractType {
 
-	// bugzilla 1908 modified this method. This seems to work for postgres (bytea)
-	// AND oracle (Blob)
-	public void set(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
-			throws HibernateException, SQLException {
+    // bugzilla 1908 modified this method. This seems to work for postgres (bytea)
+    // AND oracle (Blob)
+    public void set(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
 
-		if (value == null) {
-			// 1908 changed from Types.Blob to Types.BINARY for postgres
-			st.setNull(index, Types.BINARY);
-		}
+        if (value == null) {
+            // 1908 changed from Types.Blob to Types.BINARY for postgres
+            st.setNull(index, Types.BINARY);
+        }
 //		else {
 //
 //			if (value instanceof SerializableBlob) {
@@ -75,150 +75,150 @@ public class LIMSRawDataUserType extends AbstractType {
 //
 //		}
 
-	}
+    }
 
-	// bugzilla 1908 modified this method. This seems to work for postgres (bytea)
-	// AND oracle (Blob)
-	public Object get(ResultSet rs, String name, SharedSessionContractImplementor session)
-			throws HibernateException, SQLException {
+    // bugzilla 1908 modified this method. This seems to work for postgres (bytea)
+    // AND oracle (Blob)
+    public Object get(ResultSet rs, String name, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
 
 //		SerializableBlob serializableBlob = null;
-		InputStream is = rs.getBinaryStream(name);
+        InputStream is = rs.getBinaryStream(name);
 //		BlobImpl blob = null;
 
-		// bugzilla 2569 need to check if blob in history.changes is null when getting
-		// data
-		if (is != null) {
-			// blob = new BlobImpl(is, is.available());
-			if (true) {
-			}
-		}
+        // bugzilla 2569 need to check if blob in history.changes is null when getting
+        // data
+        if (is != null) {
+            // blob = new BlobImpl(is, is.available());
+            if (true) {
+            }
+        }
 
 //		return rs.wasNull() ? null : serializableBlob;
-		return null;
+        return null;
 
-	}
+    }
 
-	@Override
-	public Class getReturnedClass() {
-		return Blob.class;
-	}
+    @Override
+    public Class getReturnedClass() {
+        return Blob.class;
+    }
 
-	public boolean isEqual(Object x, Object y, EntityMode entityMode) {
-		return x == y;
-	}
+    public boolean isEqual(Object x, Object y, EntityMode entityMode) {
+        return x == y;
+    }
 
-	public int getHashCode(Object x, EntityMode entityMode) {
-		return System.identityHashCode(x);
-	}
+    public int getHashCode(Object x, EntityMode entityMode) {
+        return System.identityHashCode(x);
+    }
 
-	public int compare(Object x, Object y, EntityMode entityMode) {
-		return 0; // lobs cannot be compared
-	}
+    public int compare(Object x, Object y, EntityMode entityMode) {
+        return 0; // lobs cannot be compared
+    }
 
-	@Override
-	public String getName() {
-		return "blob";
-	}
+    @Override
+    public String getName() {
+        return "blob";
+    }
 
-	@Override
-	public Serializable disassemble(Object value, SharedSessionContractImplementor session, Object owner)
-			throws HibernateException {
-		throw new UnsupportedOperationException("Blobs are not cacheable");
-	}
+    @Override
+    public Serializable disassemble(Object value, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException {
+        throw new UnsupportedOperationException("Blobs are not cacheable");
+    }
 
-	public Object deepCopy(Object value, EntityMode entityMode, SessionFactoryImplementor factory) {
-		return value;
-	}
+    public Object deepCopy(Object value, EntityMode entityMode, SessionFactoryImplementor factory) {
+        return value;
+    }
 
-	public Object fromXMLNode(Node xml, Mapping factory) {
-		throw new UnsupportedOperationException("todo");
-	}
+    public Object fromXMLNode(Node xml, Mapping factory) {
+        throw new UnsupportedOperationException("todo");
+    }
 
-	@Override
-	public int getColumnSpan(Mapping mapping) {
-		return 1;
-	}
+    @Override
+    public int getColumnSpan(Mapping mapping) {
+        return 1;
+    }
 
-	@Override
-	public boolean isMutable() {
-		return false;
-	}
+    @Override
+    public boolean isMutable() {
+        return false;
+    }
 
-	@Override
-	public Object nullSafeGet(ResultSet rs, String name, SharedSessionContractImplementor session, Object owner)
-			throws HibernateException, SQLException {
-		return get(rs, name, session);
-	}
+    @Override
+    public Object nullSafeGet(ResultSet rs, String name, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
+        return get(rs, name, session);
+    }
 
-	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
-			throws HibernateException, SQLException {
-		return get(rs, names[0], session);
-	}
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
+        return get(rs, names[0], session);
+    }
 
-	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, boolean[] settable,
-			SharedSessionContractImplementor session) throws HibernateException, SQLException {
-		if (settable[0]) {
-			set(st, value, index, session);
-		}
-	}
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, boolean[] settable,
+            SharedSessionContractImplementor session) throws HibernateException, SQLException {
+        if (settable[0]) {
+            set(st, value, index, session);
+        }
+    }
 
-	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
-			throws HibernateException, SQLException {
-		set(st, value, index, session);
-	}
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
+        set(st, value, index, session);
+    }
 
-	@Override
-	public Object replace(Object original, Object target, SharedSessionContractImplementor session, Object owner,
-			Map copyCache) throws HibernateException {
-		// Blobs are ignored by merge()
-		return target;
-	}
+    @Override
+    public Object replace(Object original, Object target, SharedSessionContractImplementor session, Object owner,
+            Map copyCache) throws HibernateException {
+        // Blobs are ignored by merge()
+        return target;
+    }
 
-	@Override
-	public int[] sqlTypes(Mapping mapping) throws MappingException {
-		return new int[] { Types.BLOB };
-	}
+    @Override
+    public int[] sqlTypes(Mapping mapping) throws MappingException {
+        return new int[] { Types.BLOB };
+    }
 
-	public void setToXMLNode(Node node, Object value, SessionFactoryImplementor factory) {
-		throw new UnsupportedOperationException("todo");
-	}
+    public void setToXMLNode(Node node, Object value, SessionFactoryImplementor factory) {
+        throw new UnsupportedOperationException("todo");
+    }
 
-	@Override
-	public String toLoggableString(Object value, SessionFactoryImplementor factory) throws HibernateException {
-		return value == null ? "null" : value.toString();
-	}
+    @Override
+    public String toLoggableString(Object value, SessionFactoryImplementor factory) throws HibernateException {
+        return value == null ? "null" : value.toString();
+    }
 
-	@Override
-	public boolean[] toColumnNullness(Object value, Mapping mapping) {
+    @Override
+    public boolean[] toColumnNullness(Object value, Mapping mapping) {
 //		return value==null ? ArrayHelper.FALSE : ArrayHelper.TRUE;
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public boolean isDirty(Object old, Object current, boolean[] checkable, SharedSessionContractImplementor session)
-			throws HibernateException {
-		return checkable[0] && isDirty(old, current, session);
-	}
+    @Override
+    public boolean isDirty(Object old, Object current, boolean[] checkable, SharedSessionContractImplementor session)
+            throws HibernateException {
+        return checkable[0] && isDirty(old, current, session);
+    }
 
-	@Override
-	public Size[] dictatedSizes(Mapping mapping) throws MappingException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Size[] dictatedSizes(Mapping mapping) throws MappingException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Size[] defaultSizes(Mapping mapping) throws MappingException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Size[] defaultSizes(Mapping mapping) throws MappingException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
-		return value;
-	}
+    @Override
+    public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
+        return value;
+    }
 
 }

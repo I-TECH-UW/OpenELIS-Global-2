@@ -22,180 +22,180 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Person extends BaseObject<String> {
 
-	private String id;
+    private String id;
 
-	private String lastName;
+    private String lastName;
 
-	private String firstName;
+    private String firstName;
 
-	private String middleName;
+    private String middleName;
 
-	private String multipleUnit;
+    private String multipleUnit;
 
-	private String streetAddress;
+    private String streetAddress;
 
-	private String city;
+    private String city;
 
-	private String state;
+    private String state;
 
-	private String zipCode;
+    private String zipCode;
 
-	private String country;
+    private String country;
 
-	private String workPhone;
+    private String workPhone;
 
-	private String homePhone;
+    private String homePhone;
 
-	private String cellPhone;
+    private String cellPhone;
 
-	private String primaryPhone;
+    private String primaryPhone;
 
-	private String fax;
+    private String fax;
 
-	private String email;
+    private String email;
 
-	private Set patients = new HashSet(0);
+    private Set patients = new HashSet(0);
 
-	public Person() {
-		super();
+    public Person() {
+        super();
 
-	}
+    }
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	public String getCellPhone() {
-		return cellPhone;
-	}
+    public String getCellPhone() {
+        return cellPhone;
+    }
 
-	public void setCellPhone(String cellPhone) {
-		this.cellPhone = cellPhone;
-	}
+    public void setCellPhone(String cellPhone) {
+        this.cellPhone = cellPhone;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getFax() {
-		return fax;
-	}
+    public String getFax() {
+        return fax;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getHomePhone() {
-		return homePhone;
-	}
+    public String getHomePhone() {
+        return homePhone;
+    }
 
-	public void setHomePhone(String homePhone) {
-		this.homePhone = homePhone;
-	}
+    public void setHomePhone(String homePhone) {
+        this.homePhone = homePhone;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getMiddleName() {
-		return middleName;
-	}
+    public String getMiddleName() {
+        return middleName;
+    }
 
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
 
-	public String getMultipleUnit() {
-		return multipleUnit;
-	}
+    public String getMultipleUnit() {
+        return multipleUnit;
+    }
 
-	public void setMultipleUnit(String multipleUnit) {
-		this.multipleUnit = multipleUnit;
-	}
+    public void setMultipleUnit(String multipleUnit) {
+        this.multipleUnit = multipleUnit;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public String getStreetAddress() {
-		return streetAddress;
-	}
+    public String getStreetAddress() {
+        return streetAddress;
+    }
 
-	public void setStreetAddress(String streetAddress) {
-		this.streetAddress = streetAddress;
-	}
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
 
-	public String getWorkPhone() {
-		return workPhone;
-	}
+    public String getWorkPhone() {
+        return workPhone;
+    }
 
-	public void setWorkPhone(String workPhone) {
-		this.workPhone = workPhone;
-	}
+    public void setWorkPhone(String workPhone) {
+        this.workPhone = workPhone;
+    }
 
-	public String getZipCode() {
-		return zipCode;
-	}
+    public String getZipCode() {
+        return zipCode;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public Set getPatients() {
-		return this.patients;
-	}
+    public Set getPatients() {
+        return this.patients;
+    }
 
-	public void setPatients(Set patients) {
-		this.patients = patients;
-	}
+    public void setPatients(Set patients) {
+        this.patients = patients;
+    }
 
-	public String getPrimaryPhone() {
-		return primaryPhone;
-	}
+    public String getPrimaryPhone() {
+        return primaryPhone;
+    }
 
-	public void setPrimaryPhone(String primaryPhone) {
-		this.primaryPhone = primaryPhone;
-	}
+    public void setPrimaryPhone(String primaryPhone) {
+        this.primaryPhone = primaryPhone;
+    }
 }

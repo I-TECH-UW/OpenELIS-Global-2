@@ -17,45 +17,44 @@ package org.openelisglobal.testmanagement.valueholder;
 
 import org.openelisglobal.common.action.IActionConstants;
 
-
 /**
- * @author benzd1
- * bugzilla 2053
+ * @author benzd1 bugzilla 2053
  */
 public class TestManagementRoutingSwitch implements IActionConstants {
 
-	private boolean resultsEntrySwitch = false;
-	private boolean qaEntrySwitch = false;
-	//bugzilla 2504
-	private boolean qaEntryLineListingSwitch = false;
-	
-	public void TestManagementRoutingSwitch() {
-		resultsEntrySwitch = false;
-		qaEntrySwitch = false;
-		qaEntryLineListingSwitch = false;
+    private boolean resultsEntrySwitch = false;
+    private boolean qaEntrySwitch = false;
+    // bugzilla 2504
+    private boolean qaEntryLineListingSwitch = false;
+
+    public void TestManagementRoutingSwitch() {
+        resultsEntrySwitch = false;
+        qaEntrySwitch = false;
+        qaEntryLineListingSwitch = false;
     }
 
-	public boolean isResultsEntrySwitch() {
-		return resultsEntrySwitch;
-	}
-	public void setResultsEntrySwitch(boolean resultsEntrySwitch) {
-		this.resultsEntrySwitch = resultsEntrySwitch;
-	}
+    public boolean isResultsEntrySwitch() {
+        return resultsEntrySwitch;
+    }
 
-	public boolean isQaEntryEntrySwitch() {
-		return qaEntrySwitch;
-	}
-	public void setQaEntryEntrySwitch(boolean qaEntrySwitch) {
-		this.qaEntrySwitch = qaEntrySwitch;
-	}
-	
-	public boolean isQaEntryEntryLineListingSwitch() {
-		return qaEntryLineListingSwitch;
-	}
-	public void setQaEntryEntryLineListingSwitch(boolean qaEntryLineListingSwitch) {
-		this.qaEntryLineListingSwitch = qaEntryLineListingSwitch;
-	}
+    public void setResultsEntrySwitch(boolean resultsEntrySwitch) {
+        this.resultsEntrySwitch = resultsEntrySwitch;
+    }
 
+    public boolean isQaEntryEntrySwitch() {
+        return qaEntrySwitch;
+    }
 
+    public void setQaEntryEntrySwitch(boolean qaEntrySwitch) {
+        this.qaEntrySwitch = qaEntrySwitch;
+    }
+
+    public boolean isQaEntryEntryLineListingSwitch() {
+        return qaEntryLineListingSwitch;
+    }
+
+    public void setQaEntryEntryLineListingSwitch(boolean qaEntryLineListingSwitch) {
+        this.qaEntryLineListingSwitch = qaEntryLineListingSwitch;
+    }
 
 }

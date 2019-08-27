@@ -22,69 +22,65 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.citystatezip.service.CityStateZipService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.citystatezip.valueholder.CityStateZip;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
- * @author benzd1
- * bugzilla 1765 validates combinations of city/state/zip
+ * @author benzd1 bugzilla 1765 validates combinations of city/state/zip
  */
 public class CityStateZipComboValidationProvider extends BaseValidationProvider {
-	
-	protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public CityStateZipComboValidationProvider() {
-		super();
-	}
+    protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-	public CityStateZipComboValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public CityStateZipComboValidationProvider() {
+        super();
+    }
 
-	public void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    public CityStateZipComboValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-		// get id from request
-		String formField = (String) request.getParameter("field");
-		String city = (String) request.getParameter("city");
-    	String zip = request.getParameter("zipCode");
-		String state = request.getParameter("state");
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		if (StringUtil.isNullorNill(city)) {
-			city = "";
-		}
-		if (StringUtil.isNullorNill(state)) {
-			state = "";
-		}
-		if (StringUtil.isNullorNill(zip)) {
-			zip = "";
-		}
-		String result = validate(city, state, zip);
-		ajaxServlet.sendData(formField, result, request, response);
-	}
+        // get id from request
+        String formField = (String) request.getParameter("field");
+        String city = (String) request.getParameter("city");
+        String zip = request.getParameter("zipCode");
+        String state = request.getParameter("state");
 
+        if (StringUtil.isNullorNill(city)) {
+            city = "";
+        }
+        if (StringUtil.isNullorNill(state)) {
+            state = "";
+        }
+        if (StringUtil.isNullorNill(zip)) {
+            zip = "";
+        }
+        String result = validate(city, state, zip);
+        ajaxServlet.sendData(formField, result, request, response);
+    }
 
-	public String validate(String city, String state, String zipCode )
-			throws LIMSRuntimeException {
+    public String validate(String city, String state, String zipCode) throws LIMSRuntimeException {
 
-		StringBuffer s = new StringBuffer();
+        StringBuffer s = new StringBuffer();
 
-		    //bugzilla 1545
-			CityStateZip cityStateZip = new CityStateZip();
-			cityStateZip.setCity(city.trim());
-			cityStateZip.setZipCode(zipCode);
-			cityStateZip.setState(state);
-			if (cityStateZipService.isCityStateZipComboValid(cityStateZip)) {
-				s.append(VALID);
-			} else {
-				s.append(INVALID);
-			}
+        // bugzilla 1545
+        CityStateZip cityStateZip = new CityStateZip();
+        cityStateZip.setCity(city.trim());
+        cityStateZip.setZipCode(zipCode);
+        cityStateZip.setState(state);
+        if (cityStateZipService.isCityStateZipComboValid(cityStateZip)) {
+            s.append(VALID);
+        } else {
+            s.append(INVALID);
+        }
 
-
-		return s.toString();
-	}
+        return s.toString();
+    }
 
 }

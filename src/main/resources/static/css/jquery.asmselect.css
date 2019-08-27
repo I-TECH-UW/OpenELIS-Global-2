@@ -1,6 +1,6 @@
 .asmContainer {
 	/* container that surrounds entire asmSelect widget */
-		background-color: transparent;
+	background-color: transparent;
 }
 
 .asmSelect {
@@ -47,8 +47,9 @@
 
 a.asmListItemRemove {
 	color: #000000;
-	text-decoration:underline;
+	text-decoration: underline;
 }
+
 .asmListItemLabel {
 	/* this is a span that surrounds the text in the item, except for the remove link */
 	padding: 5px;

@@ -450,8 +450,13 @@ function /*void*/ handleAgeChange( age )
 	if( pt_checkValidAge( age ) )
 	{
 		pt_updateDOB( age );
-		setValidIndicaterOnField( true, $("dateOfBirthID").name);
-		pt_setFieldValid( $("dateOfBirthID").name );
+		if (age.value > 1) {
+			setValidIndicaterOnField( true, $("dateOfBirthID").name);
+			pt_setFieldValid( $("dateOfBirthID").name );
+		} else {
+			setValidIndicaterOnField( false, $("dateOfBirthID").name);
+			pt_setFieldInvalid( $("dateOfBirthID").name );
+		}
 	}
 
 	pt_setSave();
@@ -1189,7 +1194,7 @@ function  processSubjectNumberSuccess(xhr){
 					  id="dateOfBirthID" /> --%>
             <form:input path="patientProperties.birthDateForDisplay" 
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
-                      onblur="checkValidAgeDate( this ); updatePatientEditStatus();"
+                      onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
                       id="dateOfBirthID" 
                       cssClass="text"
 					  size="20"

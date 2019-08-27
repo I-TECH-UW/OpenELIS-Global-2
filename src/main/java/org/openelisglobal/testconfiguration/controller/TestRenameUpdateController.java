@@ -33,16 +33,16 @@ public class TestRenameUpdateController extends BaseController {
 //		return findForward(forward, form);
 //	}
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "testRenameDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "redirect:/TestManagementConfigMenu.do";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "testRenameDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "redirect:/TestManagementConfigMenu.do";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
 //	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 //			String reportNameFrench, String userId) {
@@ -78,13 +78,13 @@ public class TestRenameUpdateController extends BaseController {
 //		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 //	}
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

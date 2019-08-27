@@ -21,39 +21,38 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.organization.dao.OrganizationContactDAO;
 import org.openelisglobal.organization.valueholder.OrganizationContact;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact, String>
-		implements OrganizationContactDAO {
+        implements OrganizationContactDAO {
 
-	public OrganizationContactDAOImpl() {
-		super(OrganizationContact.class);
-	}
+    public OrganizationContactDAOImpl() {
+        super(OrganizationContact.class);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
-		String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("orgId", Integer.parseInt(orgId));
-			List<OrganizationContact> contactList = query.list();
-			// closeSession(); // CSL remove old
-			return contactList;
-		} catch (HibernateException e) {
-			handleException(e, "getListForOrganizationId");
-		}
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
+        String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("orgId", Integer.parseInt(orgId));
+            List<OrganizationContact> contactList = query.list();
+            // closeSession(); // CSL remove old
+            return contactList;
+        } catch (HibernateException e) {
+            handleException(e, "getListForOrganizationId");
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

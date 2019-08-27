@@ -16,20 +16,19 @@
 */
 package org.openelisglobal.reports.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.reports.dao.DocumentTypeDAO;
 import org.openelisglobal.reports.valueholder.DocumentType;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> implements DocumentTypeDAO {
 
-	public DocumentTypeDAOImpl() {
-		super(DocumentType.class);
-	}
+    public DocumentTypeDAOImpl() {
+        super(DocumentType.class);
+    }
 
 //	@Override
 //	public DocumentType getDocumentTypeByName(String name) throws LIMSRuntimeException {

@@ -17,67 +17,62 @@
 package org.openelisglobal.dataexchange.resultreporting.beans;
 
 public class ResultXmit {
-	
-	private String loinc;
-	public String getLoinc() {
-		return loinc;
-	}
 
-	public void setLoinc(String loinc) {
-		this.loinc = loinc;
-	}
+    private String loinc;
 
+    public String getLoinc() {
+        return loinc;
+    }
 
-	/*
-	 * should be one of "new","update" or "deleted"
-	 */
-	private String updateStatus = "new";
-	
-	/**
-	 * The type of result. this may be "CE"(coded), TX(Text, alpha-numeric)
-	 */
-	private String typeResult;
+    public void setLoinc(String loinc) {
+        this.loinc = loinc;
+    }
 
-	/**
-	 * A pair representing the result as text and as code. Even if it's a coded result, it's text is
-	 * used so that when the code isn't known in receiving system, the text may
-	 * be used as reference
-	 */
-	private CodedValueXmit result;
-	/**
-	 * @return the typeResult
-	 */
-	public String getTypeResult() {
-		return typeResult;
-	}
+    /*
+     * should be one of "new","update" or "deleted"
+     */
+    private String updateStatus = "new";
 
-	/**
-	 * @param typeResult
-	 *            the typeResult to set
-	 */
-	public void setTypeResult(String typeResult) {
-		this.typeResult = typeResult;
-	}
+    /**
+     * The type of result. this may be "CE"(coded), TX(Text, alpha-numeric)
+     */
+    private String typeResult;
 
-	public void setResult(CodedValueXmit result) {
-		this.result = result;
-	}
+    /**
+     * A pair representing the result as text and as code. Even if it's a coded
+     * result, it's text is used so that when the code isn't known in receiving
+     * system, the text may be used as reference
+     */
+    private CodedValueXmit result;
 
-	public CodedValueXmit getResult() {
-		return result;
-	}
+    /**
+     * @return the typeResult
+     */
+    public String getTypeResult() {
+        return typeResult;
+    }
 
+    /**
+     * @param typeResult the typeResult to set
+     */
+    public void setTypeResult(String typeResult) {
+        this.typeResult = typeResult;
+    }
 
+    public void setResult(CodedValueXmit result) {
+        this.result = result;
+    }
 
-	public void setUpdateStatus(String updateStatus) {
-		this.updateStatus = updateStatus;
-	}
+    public CodedValueXmit getResult() {
+        return result;
+    }
 
+    public void setUpdateStatus(String updateStatus) {
+        this.updateStatus = updateStatus;
+    }
 
-
-	public String getUpdateStatus() {
-		return updateStatus;
-	}
-
+    public String getUpdateStatus() {
+        return updateStatus;
+    }
 
 }

@@ -25,7 +25,7 @@ package org.openelisglobal.common.exception;
  */
 //bugzilla 1417
 public class LIMSFrozenRecordException extends LIMSRuntimeException {
-	public LIMSFrozenRecordException(String message) {
-		super(message);
-	}
+    public LIMSFrozenRecordException(String message) {
+        super(message);
+    }
 }

@@ -23,9 +23,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -34,77 +34,78 @@ import org.openelisglobal.common.util.DateUtil;
  */
 public class NonConformityRecordNumberValidationProvider extends BaseValidationProvider {
 
-	public NonConformityRecordNumberValidationProvider() {
-		super();
-	}
+    public NonConformityRecordNumberValidationProvider() {
+        super();
+    }
 
-	public NonConformityRecordNumberValidationProvider(AjaxServlet ajaxServlet) {
-		this.ajaxServlet = ajaxServlet;
-	}
+    public NonConformityRecordNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		String field = request.getParameter("fieldId");
-		String recordNumber = request.getParameter("value");
+        String field = request.getParameter("fieldId");
+        String recordNumber = request.getParameter("value");
 
-		RecordValidation validator = new RecordValidation(recordNumber);
-		RecordValidation.Validation result = validator.validate();
+        RecordValidation validator = new RecordValidation(recordNumber);
+        RecordValidation.Validation result = validator.validate();
 
-		String returnData = VALID;
-		switch (result) {
-		case RECORD_FOUND:
-			returnData = "Record found";
-			break;
-		case RECORD_NOT_FOUND:
-			returnData = "Record not Found";
-			break;
-		default:
-			returnData = validator.getInvalidMessage();
-		}
+        String returnData = VALID;
+        switch (result) {
+        case RECORD_FOUND:
+            returnData = "Record found";
+            break;
+        case RECORD_NOT_FOUND:
+            returnData = "Record not Found";
+            break;
+        default:
+            returnData = validator.getInvalidMessage();
+        }
 
-		response.setCharacterEncoding("UTF-8");
-		ajaxServlet.sendData(field, returnData, request, response);
-	}
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(field, returnData, request, response);
+    }
 
-	public static String getDocumentNumberFormat() {
-		return  "ddd/LNSP-" + DateUtil.getTwoDigitYear();
-	}
-	
-	static class RecordValidation {
-		String recordNumber;
-		String format;
-		String displayFormat;
+    public static String getDocumentNumberFormat() {
+        return "ddd/LNSP-" + DateUtil.getTwoDigitYear();
+    }
 
-		enum Validation {
-			FORMAT_ERROR, RECORD_FOUND, RECORD_NOT_FOUND
-		};
+    static class RecordValidation {
+        String recordNumber;
+        String format;
+        String displayFormat;
 
-		public RecordValidation(String recordNumber) {
-			this.recordNumber = recordNumber;
-		}
+        enum Validation {
+            FORMAT_ERROR, RECORD_FOUND, RECORD_NOT_FOUND
+        };
 
-		Validation validate() {
-			if (validFormat()) {
-				return Validation.RECORD_NOT_FOUND;
-			}
+        public RecordValidation(String recordNumber) {
+            this.recordNumber = recordNumber;
+        }
 
-			return Validation.FORMAT_ERROR;
-		}
+        Validation validate() {
+            if (validFormat()) {
+                return Validation.RECORD_NOT_FOUND;
+            }
 
-		private boolean validFormat() {
-			createFormatPattern();
-			Pattern p = Pattern.compile(format);
-			return p.matcher(recordNumber).matches();
-		}
+            return Validation.FORMAT_ERROR;
+        }
 
-		private void createFormatPattern() {
-			format = "\\d{3}/LNSP-" + DateUtil.getTwoDigitYear();
-		}
+        private boolean validFormat() {
+            createFormatPattern();
+            Pattern p = Pattern.compile(format);
+            return p.matcher(recordNumber).matches();
+        }
 
-		String getInvalidMessage() {
-			return MessageUtil.getMessage("nonConformity.document.number.format.error", getDocumentNumberFormat());
-		}
+        private void createFormatPattern() {
+            format = "\\d{3}/LNSP-" + DateUtil.getTwoDigitYear();
+        }
 
-	}
+        String getInvalidMessage() {
+            return MessageUtil.getMessage("nonConformity.document.number.format.error", getDocumentNumberFormat());
+        }
+
+    }
 }

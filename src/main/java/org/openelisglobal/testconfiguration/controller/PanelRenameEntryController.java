@@ -3,6 +3,14 @@ package org.openelisglobal.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.testconfiguration.form.PanelRenameEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,89 +19,80 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.openelisglobal.testconfiguration.form.PanelRenameEntryForm;
-import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.valueholder.Localization;
-import org.openelisglobal.panel.valueholder.Panel;
-
 @Controller
 public class PanelRenameEntryController extends BaseController {
 
-	@Autowired
-	PanelService panelService;
-	@Autowired
-	LocalizationService localizationService;
+    @Autowired
+    PanelService panelService;
+    @Autowired
+    LocalizationService localizationService;
 
-	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
-	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
-		PanelRenameEntryForm form = new PanelRenameEntryForm();
-		form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+    @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
+    public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
+        PanelRenameEntryForm form = new PanelRenameEntryForm();
+        form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "panelRenameDefinition";
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/PanelRenameEntry.do";
-		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "panelRenameDefinition";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "panelRenameDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/PanelRenameEntry.do";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "panelRenameDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
-	public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") @Valid PanelRenameEntryForm form, BindingResult result) {
-		if (result.hasErrors()) {
-			saveErrors(result);
-			form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-			return findForward(FWD_FAIL_INSERT, form);
-		}
+    @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
+    public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
+            @ModelAttribute("form") @Valid PanelRenameEntryForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+            return findForward(FWD_FAIL_INSERT, form);
+        }
 
-		String panelId = form.getPanelId();
-		String nameEnglish = form.getNameEnglish();
-		String nameFrench = form.getNameFrench();
-		String userId = getSysUserId(request);
+        String panelId = form.getPanelId();
+        String nameEnglish = form.getNameEnglish();
+        String nameFrench = form.getNameFrench();
+        String userId = getSysUserId(request);
 
-		updatePanelNames(panelId, nameEnglish, nameFrench, userId);
+        updatePanelNames(panelId, nameEnglish, nameFrench, userId);
 
-		return findForward(FWD_SUCCESS_INSERT, form);
-	}
+        return findForward(FWD_SUCCESS_INSERT, form);
+    }
 
-	private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
-		Panel panel = panelService.getPanelById(panelId);
+    private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
+        Panel panel = panelService.getPanelById(panelId);
 
-		if (panel != null) {
+        if (panel != null) {
 
-			Localization name = panel.getLocalization();
-			name.setEnglish(nameEnglish.trim());
-			name.setFrench(nameFrench.trim());
-			name.setSysUserId(userId);
+            Localization name = panel.getLocalization();
+            name.setEnglish(nameEnglish.trim());
+            name.setFrench(nameFrench.trim());
+            name.setSysUserId(userId);
 
-			try {
-				localizationService.update(name);
-			} catch (LIMSRuntimeException e) {
-				e.printStackTrace();
-			}
-		}
-		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
-	}
+            try {
+                localizationService.update(name);
+            } catch (LIMSRuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return null;
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

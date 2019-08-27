@@ -19,38 +19,37 @@ package org.openelisglobal.testcodes.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.testcodes.dao.OrgHL7SchemaDAO;
 import org.openelisglobal.testcodes.valueholder.OrganizationHL7Schema;
 import org.openelisglobal.testcodes.valueholder.OrganizationSchemaPK;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, OrganizationSchemaPK>
-		implements OrgHL7SchemaDAO {
+        implements OrgHL7SchemaDAO {
 
-	public OrgHL7SchemaDAOImpl() {
-		super(OrganizationHL7Schema.class);
-	}
+    public OrgHL7SchemaDAOImpl() {
+        super(OrganizationHL7Schema.class);
+    }
 
-	@Override
-	public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId) throws LIMSRuntimeException {
-		String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
+    @Override
+    public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId) throws LIMSRuntimeException {
+        String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("id", orgId);
-			OrganizationHL7Schema hs = (OrganizationHL7Schema) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return hs;
-		} catch (HibernateException e) {
-			handleException(e, "getOrganizationHL7SchemaByOrgId");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("id", orgId);
+            OrganizationHL7Schema hs = (OrganizationHL7Schema) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return hs;
+        } catch (HibernateException e) {
+            handleException(e, "getOrganizationHL7SchemaByOrgId");
+        }
+        return null;
+    }
 
 }

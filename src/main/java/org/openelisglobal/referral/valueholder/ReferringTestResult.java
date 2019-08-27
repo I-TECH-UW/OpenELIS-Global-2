@@ -19,8 +19,8 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class ReferringTestResult extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
-	private String id;
+    private static final long serialVersionUID = 1L;
+    private String id;
     private String sampleItemId;
     private String testName;
     private String resultValue;

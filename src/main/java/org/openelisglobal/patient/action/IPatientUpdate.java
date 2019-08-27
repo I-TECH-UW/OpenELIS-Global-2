@@ -21,26 +21,25 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.validation.Errors;
-
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.springframework.validation.Errors;
 
 public interface IPatientUpdate {
-	public static enum PatientUpdateStatus {
-		NO_ACTION, UPDATE, ADD
+    public static enum PatientUpdateStatus {
+        NO_ACTION, UPDATE, ADD
 
-	}
+    }
 
-	public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
-	public abstract void setPatientUpdateStatus(PatientManagementInfo patientInfo);
+    public abstract void setPatientUpdateStatus(PatientManagementInfo patientInfo);
 
-	public abstract PatientUpdateStatus getPatientUpdateStatus();
+    public abstract PatientUpdateStatus getPatientUpdateStatus();
 
-	public abstract void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException;
+    public abstract void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException;
 
-	public abstract String getPatientId(SamplePatientEntryForm form);
+    public abstract String getPatientId(SamplePatientEntryForm form);
 }

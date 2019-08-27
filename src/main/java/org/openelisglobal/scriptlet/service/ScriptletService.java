@@ -6,21 +6,21 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 
 public interface ScriptletService extends BaseObjectService<Scriptlet, String> {
-	void getData(Scriptlet scriptlet);
+    void getData(Scriptlet scriptlet);
 
-	List getPreviousScriptletRecord(String id);
+    List getPreviousScriptletRecord(String id);
 
-	Integer getTotalScriptletCount();
+    Integer getTotalScriptletCount();
 
-	List getPageOfScriptlets(int startingRecNo);
+    List getPageOfScriptlets(int startingRecNo);
 
-	Scriptlet getScriptletByName(Scriptlet scriptlet);
+    Scriptlet getScriptletByName(Scriptlet scriptlet);
 
-	List getNextScriptletRecord(String id);
+    List getNextScriptletRecord(String id);
 
-	Scriptlet getScriptletById(String scriptletId);
+    Scriptlet getScriptletById(String scriptletId);
 
-	List getScriptlets(String filter);
+    List getScriptlets(String filter);
 
-	List getAllScriptlets();
+    List getAllScriptlets();
 }

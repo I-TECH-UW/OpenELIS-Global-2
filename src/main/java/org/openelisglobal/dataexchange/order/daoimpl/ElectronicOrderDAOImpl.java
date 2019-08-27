@@ -23,39 +23,38 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String> implements ElectronicOrderDAO {
 
-	public ElectronicOrderDAOImpl() {
-		super(ElectronicOrder.class);
-	}
+    public ElectronicOrderDAOImpl() {
+        super(ElectronicOrder.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
-		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
+    @Override
+    @Transactional(readOnly = true)
+    public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
+        String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("externalid", id);
-			@SuppressWarnings("unchecked")
-			List<ElectronicOrder> eOrders = query.list();
-			// closeSession(); // CSL remove old
-			return eOrders;
-		} catch (HibernateException e) {
-			handleException(e, "getElectronicOrderByExternalId");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("externalid", id);
+            @SuppressWarnings("unchecked")
+            List<ElectronicOrder> eOrders = query.list();
+            // closeSession(); // CSL remove old
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getElectronicOrderByExternalId");
+        }
+        return null;
+    }
 
 //	@SuppressWarnings("unchecked")
 //	@Override
@@ -139,27 +138,27 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //
 //	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = true)
-	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
-		List<ElectronicOrder> list = new Vector<>();
-		try {
-			if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
-				list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
-						.addOrder(Order.desc("lastupdated")).list();
-			} else {
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional(readOnly = true)
+    public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
+        List<ElectronicOrder> list = new Vector<>();
+        try {
+            if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
+                list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
+                        .addOrder(Order.desc("lastupdated")).list();
+            } else {
 
-				list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
-						.addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
-			}
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			handleException(e, "getAllElectronicOrdersOrderedBy");
-		}
+                list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
+                        .addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
+            }
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            handleException(e, "getAllElectronicOrdersOrderedBy");
+        }
 
-		return list;
-	}
+        return list;
+    }
 
 }

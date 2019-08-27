@@ -3,20 +3,24 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.openelisglobal.program.valueholder.Program" table="PROGRAM" optimistic-lock="version" dynamic-update="true">
-        <id name="id" type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
-            <column name="ID" precision="10" scale="0" />
-            <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
-            	<param name="sequence_name">program_seq</param>
-            </generator>
-        </id>
-        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+	<class name="org.openelisglobal.program.valueholder.Program"
+		table="PROGRAM" optimistic-lock="version" dynamic-update="true">
+		<id name="id"
+			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
+			<column name="ID" precision="10" scale="0" />
+			<generator
+				class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
+				<param name="sequence_name">program_seq</param>
+			</generator>
+		</id>
+		<version name="lastupdated" column="LASTUPDATED"
+			type="timestamp" access="field" />
 
-        <property name="code" type="java.lang.String">
-            <column name="CODE" length="10" not-null="true" />
-        </property>
-        <property name="programName" type="java.lang.String">
-            <column name="NAME" length="50" not-null="true" />
-        </property>
-    </class>
+		<property name="code" type="java.lang.String">
+			<column name="CODE" length="10" not-null="true" />
+		</property>
+		<property name="programName" type="java.lang.String">
+			<column name="NAME" length="50" not-null="true" />
+		</property>
+	</class>
 </hibernate-mapping>

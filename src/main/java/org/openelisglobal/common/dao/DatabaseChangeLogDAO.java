@@ -22,5 +22,5 @@ import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 
 //public interface DatabaseChangeLogDAO extends BaseDAO<DatabaseChangeLog, String> {
 public interface DatabaseChangeLogDAO {
-	public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException;
+    public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException;
 }

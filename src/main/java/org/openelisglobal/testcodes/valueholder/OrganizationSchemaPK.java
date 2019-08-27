@@ -20,25 +20,28 @@ import java.io.Serializable;
 
 public class OrganizationSchemaPK implements Serializable {
 
-	private static final long serialVersionUID = 3067673553215167728L;
+    private static final long serialVersionUID = 3067673553215167728L;
 
-	private String organizationId;
-	private String encodingTypeId;
+    private String organizationId;
+    private String encodingTypeId;
 
-	public String getOrganizationId() {
-		return organizationId;
-	}
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
-	public String getEncodingTypeId() {
-		return encodingTypeId;
-	}
-	public void setEncodingTypeId(String encodingTypeId) {
-		this.encodingTypeId = encodingTypeId;
-	}
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-	public String toString(){
-		return organizationId + encodingTypeId;
-	}
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public String getEncodingTypeId() {
+        return encodingTypeId;
+    }
+
+    public void setEncodingTypeId(String encodingTypeId) {
+        this.encodingTypeId = encodingTypeId;
+    }
+
+    public String toString() {
+        return organizationId + encodingTypeId;
+    }
 }

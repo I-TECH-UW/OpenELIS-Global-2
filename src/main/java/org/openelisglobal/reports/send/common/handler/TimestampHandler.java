@@ -14,20 +14,18 @@
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.reports.send.common.handler;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.exolab.castor.mapping.GeneralizedFieldHandler;
-
 import org.openelisglobal.common.log.LogEvent;
 
 /**
  * The FieldHandler for the Date class
  *
  */
-public class TimestampHandler
-    extends GeneralizedFieldHandler
-{
+public class TimestampHandler extends GeneralizedFieldHandler {
 
     private static final String FORMAT = "yyyy-MM-dd";
 
@@ -39,57 +37,50 @@ public class TimestampHandler
     }
 
     /**
-     * This method is used to convert the value when the
-     * getValue method is called. The getValue method will
-     * obtain the actual field value from given 'parent' object.
-     * This convert method is then invoked with the field's
-     * value. The value returned from this method will be
-     * the actual value returned by getValue method.
+     * This method is used to convert the value when the getValue method is called.
+     * The getValue method will obtain the actual field value from given 'parent'
+     * object. This convert method is then invoked with the field's value. The value
+     * returned from this method will be the actual value returned by getValue
+     * method.
      *
-     * @param value the object value to convert after
-     *  performing a get operation
+     * @param value the object value to convert after performing a get operation
      * @return the converted value.
      */
     public Object convertUponGet(Object value) {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         SimpleDateFormat formatter = new SimpleDateFormat(FORMAT);
-        java.util.Date date = (java.util.Date)value;
+        java.util.Date date = (java.util.Date) value;
         return formatter.format(date);
     }
 
-
     /**
-     * This method is used to convert the value when the
-     * setValue method is called. The setValue method will
-     * call this method to obtain the converted value.
-     * The converted value will then be used as the value to
-     * set for the field.
+     * This method is used to convert the value when the setValue method is called.
+     * The setValue method will call this method to obtain the converted value. The
+     * converted value will then be used as the value to set for the field.
      *
-     * @param value the object value to convert before
-     *  performing a set operation
+     * @param value the object value to convert before performing a set operation
      * @return the converted value.
      */
     public Object convertUponSet(Object value) {
         SimpleDateFormat formatter = new SimpleDateFormat(FORMAT);
         java.util.Date date = null;
         try {
-            //date = formatter.parse((String)value);
-            date = new java.sql.Date(formatter.parse((String)value).getTime());
+            // date = formatter.parse((String)value);
+            date = new java.sql.Date(formatter.parse((String) value).getTime());
 
-        }
-        catch(ParseException px) {
-            //bugzilla 2154
-			LogEvent.logError("TimestampHandler","convertUponSet()",px.toString());
+        } catch (ParseException px) {
+            // bugzilla 2154
+            LogEvent.logError("TimestampHandler", "convertUponSet()", px.toString());
             throw new IllegalArgumentException(px.getMessage());
         }
         return date;
-     }
+    }
 
     /**
-     * Returns the class type for the field that this
-     * GeneralizedFieldHandler converts to and from. This
-     * should be the type that is used in the
-     * object model.
+     * Returns the class type for the field that this GeneralizedFieldHandler
+     * converts to and from. This should be the type that is used in the object
+     * model.
      *
      * @return the class type of of the field
      */
@@ -98,19 +89,16 @@ public class TimestampHandler
     }
 
     /**
-     * Creates a new instance of the object described by
-     * this field.
+     * Creates a new instance of the object described by this field.
      *
      * @param parent The object for which the field is created
      * @return A new instance of the field's value
-     * @throws IllegalStateException This field is a simple
-     *  type and cannot be instantiated
+     * @throws IllegalStateException This field is a simple type and cannot be
+     *                               instantiated
      */
-    public Object newInstance( Object parent )
-        throws IllegalStateException
-    {
-        //-- Since it's marked as a string...just return null,
-        //-- it's not needed.
+    public Object newInstance(Object parent) throws IllegalStateException {
+        // -- Since it's marked as a string...just return null,
+        // -- it's not needed.
         return null;
     }
 

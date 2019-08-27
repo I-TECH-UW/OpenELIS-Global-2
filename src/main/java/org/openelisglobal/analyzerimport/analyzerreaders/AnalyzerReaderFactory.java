@@ -17,17 +17,15 @@
  */
 package org.openelisglobal.analyzerimport.analyzerreaders;
 
-
 public class AnalyzerReaderFactory {
 
-	/*
-	 * A little history.
-	 * We have changed from a factory pattern to a strategy pattern but this is
-	 * being left as a factory because we are assuming that at some point we
-	 * are going to be reading more than flat files
-	 */
-	public static AnalyzerReader getReaderFor(String name) {
+    /*
+     * A little history. We have changed from a factory pattern to a strategy
+     * pattern but this is being left as a factory because we are assuming that at
+     * some point we are going to be reading more than flat files
+     */
+    public static AnalyzerReader getReaderFor(String name) {
 
-		return new AnalyzerLineReader();
-	}
+        return new AnalyzerLineReader();
+    }
 }

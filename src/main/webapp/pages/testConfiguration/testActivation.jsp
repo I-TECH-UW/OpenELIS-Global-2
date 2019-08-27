@@ -540,6 +540,7 @@ td {
     <c:forEach var="activeBean" varStatus="iter" items="${form.activeTestList}">
         <div>
             <span class="activeSampleType"><c:out value="${activeBean.sampleType.value}"/>
+                <form:hidden path="activeTestList[${iter.index}].sampleType.id"/>
             </span>
             <div class="indent">
                 <% 
@@ -610,6 +611,7 @@ td {
         <c:forEach var="inactiveBean" varStatus="iter" items="${form.inactiveTestList}">
             <div>
             <span class="inactiveSampleType"><c:out value="${inactiveBean.sampleType.value}"/>
+                <form:hidden path="inactiveTestList[${iter.index}].sampleType.id"/>
             </span>
             <div class="indent">
                 <% 

@@ -17,22 +17,21 @@
  */
 package org.openelisglobal.analyzerimport.daoimpl;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.openelisglobal.analyzerimport.dao.AnalyzerTestMappingDAO;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
-		implements AnalyzerTestMappingDAO {
+        implements AnalyzerTestMappingDAO {
 
-	public AnalyzerTestMappingDAOImpl() {
-		super(AnalyzerTestMapping.class);
-	}
+    public AnalyzerTestMappingDAOImpl() {
+        super(AnalyzerTestMapping.class);
+    }
 
 //	@Override
 //	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId)

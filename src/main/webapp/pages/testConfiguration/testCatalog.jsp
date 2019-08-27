@@ -106,7 +106,7 @@
 <h1><spring:message code="configuration.test.catalog" /></h1>
 <input type="checkbox" onchange="guideSelection(this)"><spring:message code="configuration.test.catalog.guide.show" /><br/><br/>
 
-<div id="guide" style="display: none"><spring:message code="configuration.test.catalog.guide" /><hr/>
+<div id="guide" style="display: none"><spring:message  htmlEscape="false" code="configuration.test.catalog.guide" /><hr/>
 </div>
 
 <h4><spring:message code="configuration.test.catalog.sections" /></h4>

@@ -20,15 +20,14 @@ import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.method.dao.MethodDAO;
 import org.openelisglobal.method.valueholder.Method;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz
@@ -37,9 +36,9 @@ import org.openelisglobal.method.valueholder.Method;
 @Transactional
 public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements MethodDAO {
 
-	public MethodDAOImpl() {
-		super(Method.class);
-	}
+    public MethodDAOImpl() {
+        super(Method.class);
+    }
 
 //	@Override
 //	public void deleteData(List methods) throws LIMSRuntimeException {
@@ -254,27 +253,27 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		return getPreviousRecord(id, "Method", Method.class);
 //	}
 
-	// this is for autocomplete
-	@Override
-	@Transactional(readOnly = true)
-	public List getMethods(String filter) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", filter + "%");
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List getMethods(String filter) throws LIMSRuntimeException {
+        List list = new Vector();
+        try {
+            String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", filter + "%");
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
-			throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
-		}
-		return list;
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
+            throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
+        }
+        return list;
 
-	}
+    }
 
 //	@Override
 //	public Method getMethodByName(Method method) throws LIMSRuntimeException {
@@ -300,13 +299,13 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		}
 //	}
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	@Override
 //	public Integer getTotalMethodCount() throws LIMSRuntimeException {
 //		return getTotalCount("Method", Method.class);
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -328,7 +327,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		return list;
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -349,41 +348,41 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		return list;
 //	}
 
-	// bugzilla 1482
-	@Override
-	public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
-		try {
+    // bugzilla 1482
+    @Override
+    public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
+        try {
 
-			List list = new ArrayList();
+            List list = new ArrayList();
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", method.getMethodName().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", method.getMethodName().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated yet
-			String methodId = "0";
-			if (!StringUtil.isNullorNill(method.getId())) {
-				methodId = method.getId();
-			}
-			query.setParameter("param2", methodId);
+            // initialize with 0 (for new records where no id has been generated yet
+            String methodId = "0";
+            if (!StringUtil.isNullorNill(method.getId())) {
+                methodId = method.getId();
+            }
+            query.setParameter("param2", methodId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("MethodDAOImpl", "duplicateMethodExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("MethodDAOImpl", "duplicateMethodExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
+        }
+    }
 
 }

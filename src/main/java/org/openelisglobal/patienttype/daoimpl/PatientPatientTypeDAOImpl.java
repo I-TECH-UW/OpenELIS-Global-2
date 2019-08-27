@@ -22,23 +22,22 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.patienttype.dao.PatientPatientTypeDAO;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, String>
-		implements PatientPatientTypeDAO {
+        implements PatientPatientTypeDAO {
 
-	public PatientPatientTypeDAOImpl() {
-		super(PatientPatientType.class);
-	}
+    public PatientPatientTypeDAOImpl() {
+        super(PatientPatientType.class);
+    }
 
 //	@Override
 //	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
@@ -89,20 +88,20 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //		}
 //	}
 
-	@Transactional(readOnly = true)
-	public PatientPatientType getCurrentPatientPatientType(String id) {
-		PatientPatientType current = null;
-		try {
-			current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
-			throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
-		}
+    @Transactional(readOnly = true)
+    public PatientPatientType getCurrentPatientPatientType(String id) {
+        PatientPatientType current = null;
+        try {
+            current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+        } catch (Exception e) {
+            LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
+            throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
+        }
 
-		return current;
-	}
+        return current;
+    }
 
 //	@Override
 //	public PatientType getPatientTypeForPatient(String id) {
@@ -120,34 +119,34 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //		return null;
 //	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException {
-		List<PatientPatientType> patientTypes;
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException {
+        List<PatientPatientType> patientTypes;
 
-		try {
-			String sql = "from PatientPatientType pi where pi.patientId = :patientId";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setInteger("patientId", new Integer(patientId));
+        try {
+            String sql = "from PatientPatientType pi where pi.patientId = :patientId";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("patientId", new Integer(patientId));
 
-			patientTypes = query.list();
+            patientTypes = query.list();
 
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-		} catch (HibernateException he) {
-			LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());
-			throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", he);
-		}
+        } catch (HibernateException he) {
+            LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());
+            throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", he);
+        }
 
-		if (patientTypes.size() > 0) {
-			PatientPatientType patientPatientType = patientTypes.get(0);
+        if (patientTypes.size() > 0) {
+            PatientPatientType patientPatientType = patientTypes.get(0);
 
-			return patientPatientType;
-		}
+            return patientPatientType;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

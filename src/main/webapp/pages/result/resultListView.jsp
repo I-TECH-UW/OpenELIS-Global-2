@@ -90,6 +90,7 @@
 	useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
 	failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
 	noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
+	pageContext.setAttribute("noteRequired", noteRequired);
 	autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 
 %>
@@ -760,6 +761,8 @@ function setField(id, value) {
 		<!-- result cell -->
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
+				<form:hidden path="testResult[${iter.index}].lowerNormalRange"/>
+				<form:hidden path="testResult[${iter.index}].upperNormalRange"/>
 			    <form:input path="testResult[${iter.index}].resultValue" 
 			           size="6" 
 			           id="results_${iter.index}"
@@ -946,7 +949,7 @@ function setField(id, value) {
                <form:select path="testResult[${iter.index}].rejectReasonId"
                     id="rejectReasonId_${iter.index}"
                     disabled='${testResult.readOnly}'>
-                    <form:options items="${form.rejectReasons}" itemValue="value" itemLabel="id"/>
+                    <form:options items="${form.rejectReasons}" itemValue="id" itemLabel="value"/>
             </form:select><br/>
        </td>
     </tr>   

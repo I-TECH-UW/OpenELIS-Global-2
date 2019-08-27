@@ -28,35 +28,34 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.NotR
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.services.StatusService.RecordStatus;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import org.openelisglobal.patient.form.PatientEntryByProjectForm;
-import org.openelisglobal.common.services.StatusService.RecordStatus;
 
 @Service
 @Scope("prototype")
 public class PatientEntryAfterSampleEntry extends PatientEntry implements IPatientEntryAfterSampleEntry {
 
-	public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-			throws Exception {
-		this();
-		super.setFieldsFromForm(form);
-		super.setSysUserId(sysUserId);
-		super.setRequest(request);
-	}
+    public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+            throws Exception {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-	public PatientEntryAfterSampleEntry() {
-		newPatientStatus = RecordStatus.InitialRegistration;
-		newSampleStatus = null; // leave it be
-	}
+    public PatientEntryAfterSampleEntry() {
+        newPatientStatus = RecordStatus.InitialRegistration;
+        newSampleStatus = null; // leave it be
+    }
 
-	/**
-	 * An existing not registered patient with the sample already somewhere else
-	 */
-	@Override
-	public boolean canAccession() {
-		return (NotRegistered == statusSet.getPatientRecordStatus()
-				&& NotRegistered != statusSet.getSampleRecordStatus());
-	}
+    /**
+     * An existing not registered patient with the sample already somewhere else
+     */
+    @Override
+    public boolean canAccession() {
+        return (NotRegistered == statusSet.getPatientRecordStatus()
+                && NotRegistered != statusSet.getSampleRecordStatus());
+    }
 }

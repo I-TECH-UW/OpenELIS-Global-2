@@ -6,32 +6,32 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 
 public interface DictionaryService extends BaseObjectService<Dictionary, String> {
-	void getData(Dictionary dictionary);
+    void getData(Dictionary dictionary);
 
-	Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
+    Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
 
-	Dictionary getDictionaryById(String dictionaryId);
+    Dictionary getDictionaryById(String dictionaryId);
 
-	boolean duplicateDictionaryExists(Dictionary dictionary);
+    boolean duplicateDictionaryExists(Dictionary dictionary);
 
-	boolean isDictionaryFrozen(Dictionary dictionary);
+    boolean isDictionaryFrozen(Dictionary dictionary);
 
-	List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);
+    List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);
 
-	List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
-			boolean orderByDictEntry);
+    List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
+            boolean orderByDictEntry);
 
-	List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String dictionaryCategory);
+    List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String dictionaryCategory);
 
-	Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription);
+    Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription);
 
-	List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
+    List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
 
-	Dictionary getDataForId(String dictId);
+    Dictionary getDataForId(String dictId);
 
-	void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);
+    void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);
 
-	int getCountSearchedDictionaries(String searchString);
+    int getCountSearchedDictionaries(String searchString);
 
-	List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString);
+    List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString);
 }

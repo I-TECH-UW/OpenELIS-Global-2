@@ -31,257 +31,252 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class Project extends BaseObject<String> {
 
-	
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
+    private String id;
 
-	private String projectName;
+    private String projectName;
 
-	private String description;
+    private String description;
 
-	private String stickerReqFlag;
+    private String stickerReqFlag;
 
-	private String rptResultsFlag;
+    private String rptResultsFlag;
 
-	private String printOnMailerFlag;
+    private String printOnMailerFlag;
 
-	private Date startedDate = null;
+    private Date startedDate = null;
 
-	private String startedDateForDisplay = null;
+    private String startedDateForDisplay = null;
 
-	private Date completedDate = null;
+    private Date completedDate = null;
 
-	private String completedDateForDisplay = null;
+    private String completedDateForDisplay = null;
 
-	private String isActive;
+    private String isActive;
 
-	private String referenceTo;
+    private String referenceTo;
 
-	private String programCode;
+    private String programCode;
 
-	private String sysUserId;
+    private String sysUserId;
 
-	private String opOpId;
+    private String opOpId;
 
-	private ValueHolderInterface systemUser;
+    private ValueHolderInterface systemUser;
 
-	private ValueHolderInterface scriptlet;
+    private ValueHolderInterface scriptlet;
 
-	private String scriptletName;
-	//AIS - bugzilla 1851
-	private String concatProjNameDesc;
-	
-    //bugzilla 2438
-	private String localAbbreviation;
-	
-	/**
-	 * All organization defined as associated with this project.
-	 */
-	private Set<Organization> organizations;
+    private String scriptletName;
+    // AIS - bugzilla 1851
+    private String concatProjNameDesc;
 
-	public String getConcatProjNameDesc() {	
-			if (null == this.description){
-				return this.projectName;				
-			}else{
-				return this.projectName + "+" +this.description;			
-			}			
-		}
-		
-	public void setConcatProjNameDesc(String concatProjNameDesc) {
-			this.concatProjNameDesc = concatProjNameDesc;
-		}	
+    // bugzilla 2438
+    private String localAbbreviation;
 
-	public Project() {
-		super();
-		this.systemUser = new ValueHolder();
-		this.scriptlet = new ValueHolder();
-	}
+    /**
+     * All organization defined as associated with this project.
+     */
+    private Set<Organization> organizations;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getConcatProjNameDesc() {
+        if (null == this.description) {
+            return this.projectName;
+        } else {
+            return this.projectName + "+" + this.description;
+        }
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setConcatProjNameDesc(String concatProjNameDesc) {
+        this.concatProjNameDesc = concatProjNameDesc;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public Project() {
+        super();
+        this.systemUser = new ValueHolder();
+        this.scriptlet = new ValueHolder();
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public void setStickerReqFlag(String stickerReqFlag) {
-		this.stickerReqFlag = stickerReqFlag;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public String getStickerReqFlag() {
-		return stickerReqFlag;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setRptResultsFlag(String rptResultsFlag) {
-		this.rptResultsFlag = rptResultsFlag;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getRptResultsFlag() {
-		return rptResultsFlag;
-	}
+    public void setStickerReqFlag(String stickerReqFlag) {
+        this.stickerReqFlag = stickerReqFlag;
+    }
 
-	public void setPrintOnMailerFlag(String printOnMailerFlag) {
-		this.printOnMailerFlag = printOnMailerFlag;
-	}
+    public String getStickerReqFlag() {
+        return stickerReqFlag;
+    }
 
-	public String getPrintOnMailerFlag() {
-		return printOnMailerFlag;
-	}
+    public void setRptResultsFlag(String rptResultsFlag) {
+        this.rptResultsFlag = rptResultsFlag;
+    }
 
-	public void setStartedDate(Date startedDate) {
-		this.startedDate = startedDate;
-		this.startedDateForDisplay = DateUtil.convertSqlDateToStringDate(startedDate);
-	}
+    public String getRptResultsFlag() {
+        return rptResultsFlag;
+    }
 
-	public Date getStartedDate() {
-		return startedDate;
-	}
+    public void setPrintOnMailerFlag(String printOnMailerFlag) {
+        this.printOnMailerFlag = printOnMailerFlag;
+    }
 
-	public void setCompletedDate(Date completedDate) {
-		this.completedDate = completedDate;
-		this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(	completedDate);
-	}
+    public String getPrintOnMailerFlag() {
+        return printOnMailerFlag;
+    }
 
-	public Date getCompletedDate() {
-		return completedDate;
-	}
+    public void setStartedDate(Date startedDate) {
+        this.startedDate = startedDate;
+        this.startedDateForDisplay = DateUtil.convertSqlDateToStringDate(startedDate);
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public Date getStartedDate() {
+        return startedDate;
+    }
 
-	public String getIsActive() {
-		return isActive;
-	}
+    public void setCompletedDate(Date completedDate) {
+        this.completedDate = completedDate;
+        this.completedDateForDisplay = DateUtil.convertSqlDateToStringDate(completedDate);
+    }
 
-	public void setReferenceTo(String referenceTo) {
-		this.referenceTo = referenceTo;
-	}
+    public Date getCompletedDate() {
+        return completedDate;
+    }
 
-	public String getReferenceTo() {
-		return referenceTo;
-	}
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setProgramCode(String programCode) {
-		this.programCode = programCode;
-	}
+    public String getIsActive() {
+        return isActive;
+    }
 
-	public String getProgramCode() {
-		return programCode;
-	}
+    public void setReferenceTo(String referenceTo) {
+        this.referenceTo = referenceTo;
+    }
 
-	public void setSysUserId(String sysUserId) {
-		this.sysUserId = sysUserId;
-	}
+    public String getReferenceTo() {
+        return referenceTo;
+    }
 
-	public String getSysUserId() {
-		return sysUserId;
-	}
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
 
-	public SystemUser getSystemUser() {
-		return (SystemUser) this.systemUser.getValue();
-	}
+    public String getProgramCode() {
+        return programCode;
+    }
 
-	protected ValueHolderInterface getSystemUserHolder() {
-		return this.systemUser;
-	}
+    public void setSysUserId(String sysUserId) {
+        this.sysUserId = sysUserId;
+    }
 
-	public void setSystemUser(SystemUser systemUser) {
-		this.systemUser.setValue(systemUser);
-	}
+    public String getSysUserId() {
+        return sysUserId;
+    }
 
-	protected void setSystemUserHolder(ValueHolderInterface systemUser) {
-		this.systemUser = systemUser;
-	}
+    public SystemUser getSystemUser() {
+        return (SystemUser) this.systemUser.getValue();
+    }
 
-	public void setOpOpId(String opOpId) {
-		this.opOpId = opOpId;
-	}
+    protected ValueHolderInterface getSystemUserHolder() {
+        return this.systemUser;
+    }
 
-	public String getOpOpId() {
-		return opOpId;
-	}
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser.setValue(systemUser);
+    }
 
-	public void setStartedDateForDisplay(String startedDateForDisplay) {
-		this.startedDateForDisplay = startedDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.startedDate = DateUtil.convertStringDateToSqlDate(
-				this.startedDateForDisplay, locale);
-	}
+    protected void setSystemUserHolder(ValueHolderInterface systemUser) {
+        this.systemUser = systemUser;
+    }
 
-	public String getStartedDateForDisplay() {
-		return startedDateForDisplay;
-	}
+    public void setOpOpId(String opOpId) {
+        this.opOpId = opOpId;
+    }
 
-	public void setCompletedDateForDisplay(String completedDateForDisplay) {
-		this.completedDateForDisplay = completedDateForDisplay;
-		// also update the java.sql.Date
-		String locale = SystemConfiguration.getInstance().getDefaultLocale()
-				.toString();
-		this.completedDate = DateUtil.convertStringDateToSqlDate(
-				completedDateForDisplay, locale);
-	}
+    public String getOpOpId() {
+        return opOpId;
+    }
 
-	public String getCompletedDateForDisplay() {
-		return completedDateForDisplay;
-	}
+    public void setStartedDateForDisplay(String startedDateForDisplay) {
+        this.startedDateForDisplay = startedDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.startedDate = DateUtil.convertStringDateToSqlDate(this.startedDateForDisplay, locale);
+    }
 
-	public Scriptlet getScriptlet() {
-		return (Scriptlet) this.scriptlet.getValue();
-	}
+    public String getStartedDateForDisplay() {
+        return startedDateForDisplay;
+    }
 
-	protected ValueHolderInterface getScriptletHolder() {
-		return this.scriptlet;
-	}
+    public void setCompletedDateForDisplay(String completedDateForDisplay) {
+        this.completedDateForDisplay = completedDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.completedDate = DateUtil.convertStringDateToSqlDate(completedDateForDisplay, locale);
+    }
 
-	public void setScriptlet(Scriptlet scriptlet) {
-		this.scriptlet.setValue(scriptlet);
-	}
+    public String getCompletedDateForDisplay() {
+        return completedDateForDisplay;
+    }
 
-	protected void setScriptletHolder(ValueHolderInterface scriptlet) {
-		this.scriptlet = scriptlet;
-	}
+    public Scriptlet getScriptlet() {
+        return (Scriptlet) this.scriptlet.getValue();
+    }
 
-	public String getScriptletName() {
-		return scriptletName;
-	}
+    protected ValueHolderInterface getScriptletHolder() {
+        return this.scriptlet;
+    }
 
-	public void setScriptletName(String scriptletName) {
-		this.scriptletName = scriptletName;
-	}
+    public void setScriptlet(Scriptlet scriptlet) {
+        this.scriptlet.setValue(scriptlet);
+    }
 
-	public String getLocalAbbreviation() {
-		return localAbbreviation;
-	}
+    protected void setScriptletHolder(ValueHolderInterface scriptlet) {
+        this.scriptlet = scriptlet;
+    }
 
-	public void setLocalAbbreviation(String localAbbreviation) {
-		this.localAbbreviation = localAbbreviation;
-	}
+    public String getScriptletName() {
+        return scriptletName;
+    }
 
-	@Override
-	protected String getDefaultLocalizedName() {
-		return projectName;
-	}
+    public void setScriptletName(String scriptletName) {
+        this.scriptletName = scriptletName;
+    }
+
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
+    }
+
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
+
+    @Override
+    protected String getDefaultLocalizedName() {
+        return projectName;
+    }
 
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
@@ -289,5 +284,5 @@ public class Project extends BaseObject<String> {
 
     public Set<Organization> getOrganizations() {
         return organizations;
-    }    
+    }
 }

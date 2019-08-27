@@ -19,38 +19,37 @@ package org.openelisglobal.siteinformation.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.siteinformation.dao.SiteInformationDomainDAO;
 import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain, String>
-		implements SiteInformationDomainDAO {
+        implements SiteInformationDomainDAO {
 
-	public SiteInformationDomainDAOImpl() {
-		super(SiteInformationDomain.class);
-	}
+    public SiteInformationDomainDAOImpl() {
+        super(SiteInformationDomain.class);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public SiteInformationDomain getByName(String name) throws LIMSRuntimeException {
-		String sql = "from SiteInformationDomain sid where sid.name = :name";
+    @Override
+    @Transactional(readOnly = true)
+    public SiteInformationDomain getByName(String name) throws LIMSRuntimeException {
+        String sql = "from SiteInformationDomain sid where sid.name = :name";
 
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("name", name);
-			SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return domain;
-		} catch (HibernateException e) {
-			handleException(e, "getByName");
-		}
-		return null;
-	}
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", name);
+            SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return domain;
+        } catch (HibernateException e) {
+            handleException(e, "getByName");
+        }
+        return null;
+    }
 
 }

@@ -17,134 +17,132 @@
 package org.openelisglobal.menu.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.internationalization.MessageUtil;
 
 public class Menu extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
+    private String id;
 
-	private ValueHolderInterface parent = new ValueHolder();
+    private ValueHolderInterface parent = new ValueHolder();
 
-	private int presentationOrder;
-	
-	private String elementId;
-	
-	private String actionURL;
-	
-	private String clickAction;
-	
-	private String displayKey;
-	
-	private String toolTipKey;
+    private int presentationOrder;
 
-	private boolean openInNewWindow;
+    private String elementId;
 
-	private boolean isActive;
-	
-	public String getId() {
-		return id;
-	}
+    private String actionURL;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String clickAction;
 
-	
-	public int getPresentationOrder() {
-		return presentationOrder;
-	}
+    private String displayKey;
 
-	public void setPresentationOrder(int presentationOrder) {
-		this.presentationOrder = presentationOrder;
-	}
+    private String toolTipKey;
 
-	public String getElementId() {
-		return elementId;
-	}
+    private boolean openInNewWindow;
 
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
-	}
+    private boolean isActive;
 
-	public String getActionURL() {
-		return actionURL;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setActionURL(String actionURL) {
-		this.actionURL = actionURL;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getClickAction() {
-		return clickAction;
-	}
+    public int getPresentationOrder() {
+        return presentationOrder;
+    }
 
-	public void setClickAction(String clickAction) {
-		this.clickAction = clickAction;
-	}
+    public void setPresentationOrder(int presentationOrder) {
+        this.presentationOrder = presentationOrder;
+    }
 
-	public String getDisplayKey() {
-		return displayKey;
-	}
+    public String getElementId() {
+        return elementId;
+    }
 
-	public void setDisplayKey(String displayKey) {
-		this.displayKey = displayKey;
-	}
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+    }
 
-	public String getToolTipKey() {
-		return toolTipKey;
-	}
+    public String getActionURL() {
+        return actionURL;
+    }
 
-	public void setToolTipKey(String toolTipKey) {
-		this.toolTipKey = toolTipKey;
-	}
+    public void setActionURL(String actionURL) {
+        this.actionURL = actionURL;
+    }
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	
-	public void setParent( Menu parent){
-		this.parent.setValue(parent);
-	}
-	
-	public Menu getParent(){
-		return (Menu)this.parent.getValue();
-	}
-	
-	public String getLocalizedTitle(){
-		if( GenericValidator.isBlankOrNull(getDisplayKey())){
-			return null;
-		}else{
-			return MessageUtil.getContextualMessage(getDisplayKey());
-		}
-	}
-	
-	public String getLocalizedTooltip(){
-		if( GenericValidator.isBlankOrNull(getToolTipKey())){
-			return null;
-		}else{
-			return MessageUtil.getContextualMessage(getToolTipKey());
-		}
-	}
+    public String getClickAction() {
+        return clickAction;
+    }
 
-	public void setOpenInNewWindow(boolean openInNewWindow) {
-		this.openInNewWindow = openInNewWindow;
-	}
+    public void setClickAction(String clickAction) {
+        this.clickAction = clickAction;
+    }
 
-	public boolean isOpenInNewWindow() {
-		return openInNewWindow;
-	}
+    public String getDisplayKey() {
+        return displayKey;
+    }
 
-	public boolean getIsActive() {
-		return isActive;
-	}
+    public void setDisplayKey(String displayKey) {
+        this.displayKey = displayKey;
+    }
 
-	public void setIsActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public String getToolTipKey() {
+        return toolTipKey;
+    }
+
+    public void setToolTipKey(String toolTipKey) {
+        this.toolTipKey = toolTipKey;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public void setParent(Menu parent) {
+        this.parent.setValue(parent);
+    }
+
+    public Menu getParent() {
+        return (Menu) this.parent.getValue();
+    }
+
+    public String getLocalizedTitle() {
+        if (GenericValidator.isBlankOrNull(getDisplayKey())) {
+            return null;
+        } else {
+            return MessageUtil.getContextualMessage(getDisplayKey());
+        }
+    }
+
+    public String getLocalizedTooltip() {
+        if (GenericValidator.isBlankOrNull(getToolTipKey())) {
+            return null;
+        } else {
+            return MessageUtil.getContextualMessage(getToolTipKey());
+        }
+    }
+
+    public void setOpenInNewWindow(boolean openInNewWindow) {
+        this.openInNewWindow = openInNewWindow;
+    }
+
+    public boolean isOpenInNewWindow() {
+        return openInNewWindow;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

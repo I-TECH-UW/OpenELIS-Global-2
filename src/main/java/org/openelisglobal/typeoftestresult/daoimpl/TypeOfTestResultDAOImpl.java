@@ -18,15 +18,14 @@ package org.openelisglobal.typeoftestresult.daoimpl;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.typeoftestresult.dao.TypeOfTestResultDAO;
 import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz
@@ -35,9 +34,9 @@ import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 @Transactional
 public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, String> implements TypeOfTestResultDAO {
 
-	public TypeOfTestResultDAOImpl() {
-		super(TypeOfTestResult.class);
-	}
+    public TypeOfTestResultDAOImpl() {
+        super(TypeOfTestResult.class);
+    }
 
 //	@Override
 //	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException {
@@ -236,13 +235,13 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		return getPreviousRecord(id, "TypeOfTestResult", TypeOfTestResult.class);
 //	}
 
-	// bugzilla 1411
+    // bugzilla 1411
 //	@Override
 //	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException {
 //		return getTotalCount("TypeOfTestResult", TypeOfTestResult.class);
 //	}
 
-	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
+    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
@@ -285,67 +284,67 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 //		return list;
 //	}
 
-	// bugzilla 1482
-	@Override
-	public boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
-		try {
+    // bugzilla 1482
+    @Override
+    public boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+        try {
 
-			List list;
+            List list;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from TypeOfTestResult t where (trim(lower(t.description)) = :param and t.id != :param2) or (trim(lower(t.testResultType)) = :param3 and t.id != :param2)";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", typeOfTestResult.getDescription().toLowerCase().trim());
-			query.setParameter("param3", typeOfTestResult.getTestResultType().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from TypeOfTestResult t where (trim(lower(t.description)) = :param and t.id != :param2) or (trim(lower(t.testResultType)) = :param3 and t.id != :param2)";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", typeOfTestResult.getDescription().toLowerCase().trim());
+            query.setParameter("param3", typeOfTestResult.getTestResultType().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String typeOfTestResultId = "0";
-			if (!StringUtil.isNullorNill(typeOfTestResult.getId())) {
-				typeOfTestResultId = typeOfTestResult.getId();
-			}
-			query.setParameter("param2", typeOfTestResultId);
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String typeOfTestResultId = "0";
+            if (!StringUtil.isNullorNill(typeOfTestResult.getId())) {
+                typeOfTestResultId = typeOfTestResult.getId();
+            }
+            query.setParameter("param2", typeOfTestResultId);
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0;
+            return list.size() > 0;
 
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("TypeOfTestResultDAOImpl", "duplicateTypeOfTestResultExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateTypeOfTestResultExists()", e);
-		}
-	}
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError("TypeOfTestResultDAOImpl", "duplicateTypeOfTestResultExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateTypeOfTestResultExists()", e);
+        }
+    }
 
-	// bugzilla 1866 to get HL7 value
-	@Override
-	@Transactional(readOnly = true)
-	public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
-		TypeOfTestResult totr = null;
-		try {
-			String sql = "from TypeOfTestResult totr where upper(totr.testResultType) = :param";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("param", typeOfTestResult.getTestResultType().trim().toUpperCase());
+    // bugzilla 1866 to get HL7 value
+    @Override
+    @Transactional(readOnly = true)
+    public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
+        TypeOfTestResult totr = null;
+        try {
+            String sql = "from TypeOfTestResult totr where upper(totr.testResultType) = :param";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("param", typeOfTestResult.getTestResultType().trim().toUpperCase());
 
-			List list = query.list();
+            List list = query.list();
 
-			if (list != null && list.size() > 0) {
-				totr = (TypeOfTestResult) list.get(0);
-			}
+            if (list != null && list.size() > 0) {
+                totr = (TypeOfTestResult) list.get(0);
+            }
 
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-		} catch (Exception e) {
-			LogEvent.logError("TypeOfTestResultDAOImpl", "getTypeOfTestResultByType()", e.toString());
-			throw new LIMSRuntimeException("Error in getTypeOfTestResultByType()", e);
-		}
+        } catch (Exception e) {
+            LogEvent.logError("TypeOfTestResultDAOImpl", "getTypeOfTestResultByType()", e.toString());
+            throw new LIMSRuntimeException("Error in getTypeOfTestResultByType()", e);
+        }
 
-		return totr;
-	}
+        return totr;
+    }
 
 //	@Override
 //	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException {

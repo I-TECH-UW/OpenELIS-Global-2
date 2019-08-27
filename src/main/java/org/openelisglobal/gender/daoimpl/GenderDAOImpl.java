@@ -20,15 +20,14 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import  org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.gender.dao.GenderDAO;
 import org.openelisglobal.gender.valueholder.Gender;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author diane benz
@@ -37,9 +36,9 @@ import org.openelisglobal.gender.valueholder.Gender;
 @Transactional
 public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements GenderDAO {
 
-	public GenderDAOImpl() {
-		super(Gender.class);
-	}
+    public GenderDAOImpl() {
+        super(Gender.class);
+    }
 
 //	@Override
 //	public void deleteData(List genders) throws LIMSRuntimeException {
@@ -226,21 +225,21 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //		return getNextRecord(id, "Gender", Gender.class);
 //	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Gender getGenderByType(String type) throws LIMSRuntimeException {
-		String sql = "From Gender g where g.genderType = :type";
-		try {
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setString("type", type);
-			Gender gender = (Gender) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return gender;
-		} catch (HibernateException e) {
-			handleException(e, "getGenderByType");
-		}
-		return null;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Gender getGenderByType(String type) throws LIMSRuntimeException {
+        String sql = "From Gender g where g.genderType = :type";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("type", type);
+            Gender gender = (Gender) query.uniqueResult();
+            // closeSession(); // CSL remove old
+            return gender;
+        } catch (HibernateException e) {
+            handleException(e, "getGenderByType");
+        }
+        return null;
+    }
 
 //	@Override
 //	public List getPreviousGenderRecord(String id) throws LIMSRuntimeException {
@@ -307,37 +306,37 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //		return list;
 //	}
 
-	// bugzilla 1482
-	@Override
-	public boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException {
-		try {
+    // bugzilla 1482
+    @Override
+    public boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException {
+        try {
 
-			List list;
+            List list;
 
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			String sql = "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
-			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
 
-			// initialize with 0 (for new records where no id has been generated
-			// yet
-			String genderId = "0";
-			if (!StringUtil.isNullorNill(gender.getId())) {
-				genderId = gender.getId();
-			}
-			query.setInteger("genderId", Integer.parseInt(genderId));
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String genderId = "0";
+            if (!StringUtil.isNullorNill(gender.getId())) {
+                genderId = gender.getId();
+            }
+            query.setInteger("genderId", Integer.parseInt(genderId));
 
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+            list = query.list();
+            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-			return list.size() > 0;
+            return list.size() > 0;
 
-		} catch (Exception e) {
+        } catch (Exception e) {
 
-			LogEvent.logError("GenderDAOImpl", "duplicateGenderExists()", e.toString());
-			throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);
-		}
-	}
+            LogEvent.logError("GenderDAOImpl", "duplicateGenderExists()", e.toString());
+            throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);
+        }
+    }
 }

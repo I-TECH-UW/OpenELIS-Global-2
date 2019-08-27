@@ -19,54 +19,54 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.localization.valueholder.Localization;
 
-
 public class UnitOfMeasure extends EnumValueItemImpl {
 
-	private String id;
+    private String id;
 
-	private String unitOfMeasureName;
+    private String unitOfMeasureName;
 
-	private String description;
-	
-	private ValueHolderInterface localization;
+    private String description;
 
-	public UnitOfMeasure() {
-		super();
-	}
+    private ValueHolderInterface localization;
 
-	public void setId(String id) {
-		this.id = id;
-		this.key = id;
-	}
+    public UnitOfMeasure() {
+        super();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+        this.key = id;
+    }
 
-	public void setUnitOfMeasureName(String unitOfMeasureName) {
-		this.unitOfMeasureName = unitOfMeasureName;
-		this.name = unitOfMeasureName;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getUnitOfMeasureName() {
-		//System.out.println("unitOfMeasureName, id = " + this.unitOfMeasureName + " " + this.id);
-		return unitOfMeasureName;
-	}
+    public void setUnitOfMeasureName(String unitOfMeasureName) {
+        this.unitOfMeasureName = unitOfMeasureName;
+        this.name = unitOfMeasureName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getUnitOfMeasureName() {
+        // System.out.println("unitOfMeasureName, id = " + this.unitOfMeasureName + " "
+        // + this.id);
+        return unitOfMeasureName;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	protected String getDefaultLocalizedName(){
-		return getUnitOfMeasureName();
-	}
-	
-	public Localization getLocalization() {
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    protected String getDefaultLocalizedName() {
+        return getUnitOfMeasureName();
+    }
+
+    public Localization getLocalization() {
 //		return (Localization)localization.getValue();
 //		
 //		UOM has been designed to support localization, 
@@ -74,17 +74,17 @@ public class UnitOfMeasure extends EnumValueItemImpl {
 //		add columns to database table and Hibernation interface
 //		then call localization.getValue above
 //		
-		
-		Localization _localization = new Localization();
-		_localization.setId(this.getId());
-		_localization.setDescription(this.getDescription());
-		_localization.setEnglish(this.getDefaultLocalizedName());
-		_localization.setFrench("French");
-		
-		return (Localization)_localization;
-	}
-	
-	public void setLocalization(Localization localization) {
-	    this.localization.setValue( localization );
-	}
+
+        Localization _localization = new Localization();
+        _localization.setId(this.getId());
+        _localization.setDescription(this.getDescription());
+        _localization.setEnglish(this.getDefaultLocalizedName());
+        _localization.setFrench("French");
+
+        return (Localization) _localization;
+    }
+
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 }

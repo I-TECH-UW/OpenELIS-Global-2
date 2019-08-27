@@ -34,111 +34,111 @@ import org.openelisglobal.testresult.valueholder.TestResult;
  */
 public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
 
-	/**
-	 * @param testReflex
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
+    /**
+     * @param testReflex
+     * @return
+     * @throws LIMSRuntimeException
+     */
 //	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException;
 
-	/**
-	 * @param testReflexs
-	 * @throws LIMSRuntimeException
-	 */
+    /**
+     * @param testReflexs
+     * @throws LIMSRuntimeException
+     */
 //	public void deleteData(List testReflexs) throws LIMSRuntimeException;
 
-	/**
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getAllTestReflexs() throws LIMSRuntimeException;
+    /**
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getAllTestReflexs() throws LIMSRuntimeException;
 
-	/**
-	 * @param startingRecNo
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException;
+    /**
+     * @param startingRecNo
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException;
 
-	/**
-	 * @param testReflex
-	 * @throws LIMSRuntimeException
-	 */
-	public void getData(TestReflex testReflex) throws LIMSRuntimeException;
+    /**
+     * @param testReflex
+     * @throws LIMSRuntimeException
+     */
+    public void getData(TestReflex testReflex) throws LIMSRuntimeException;
 
-	/**
-	 * @param testReflex
-	 * @throws LIMSRuntimeException
-	 */
+    /**
+     * @param testReflex
+     * @throws LIMSRuntimeException
+     */
 //	public void updateData(TestReflex testReflex) throws LIMSRuntimeException;
 
-	/**
-	 * @param id
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getNextTestReflexRecord(String id) throws LIMSRuntimeException;
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getNextTestReflexRecord(String id) throws LIMSRuntimeException;
 
-	/**
-	 * @param id
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException;
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException;
 
-	/**
-	 * @param testReflex
-	 * @param testResult
-	 * @throws LIMSRuntimeException
-	 */
-	public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException;
+    /**
+     * @param testReflex
+     * @param testResult
+     * @throws LIMSRuntimeException
+     */
+    public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException;
 
-	/**
-	 * @param testReflex
-	 * @param testResult
-	 * @param testAnalyte
-	 * @throws LIMSRuntimeException
-	 */
-	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
-			throws LIMSRuntimeException;
+    /**
+     * @param testReflex
+     * @param testResult
+     * @param testAnalyte
+     * @throws LIMSRuntimeException
+     */
+    public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
+            throws LIMSRuntimeException;
 
-	// bugzilla 1411
-	/**
-	 * @return
-	 * @throws LIMSRuntimeException
-	 */
-	public Integer getTotalTestReflexCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    /**
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public Integer getTotalTestReflexCount() throws LIMSRuntimeException;
 
-	/**
-	 * bugzilla 1798
-	 *
-	 * @param analysis
-	 * @throws LIMSRuntimeException
-	 */
-	public boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException;
+    /**
+     * bugzilla 1798
+     *
+     * @param analysis
+     * @throws LIMSRuntimeException
+     */
+    public boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException;
 
-	/**
-	 * Gets the ReflexTest for the analysis if there is one, otherwise returns null.
-	 *
-	 * @param analysis
-	 * @throws LIMSRuntimeException
-	 */
-	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
-			throws LIMSRuntimeException;
+    /**
+     * Gets the ReflexTest for the analysis if there is one, otherwise returns null.
+     *
+     * @param analysis
+     * @throws LIMSRuntimeException
+     */
+    public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
+            throws LIMSRuntimeException;
 
-	/*
-	 * Gets all test reflexs which may be triggered by this test and have this flag.
-	 * Intended use was to get testReflexs which the user decides what the action
-	 * is.
-	 *
-	 * @param testId The testId for which we want the reflexes
-	 *
-	 * @param flag The value of the flag field. May be null
-	 */
-	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;
+    /*
+     * Gets all test reflexs which may be triggered by this test and have this flag.
+     * Intended use was to get testReflexs which the user decides what the action
+     * is.
+     *
+     * @param testId The testId for which we want the reflexes
+     *
+     * @param flag The value of the flag field. May be null
+     */
+    public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;
 
-	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
-			throws LIMSRuntimeException;
+    public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
+            throws LIMSRuntimeException;
 
-	boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException;
+    boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException;
 }

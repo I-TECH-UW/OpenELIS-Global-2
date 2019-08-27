@@ -6,6 +6,6 @@ import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
 
 public interface BarcodeInformationService {
 
-	void updateBarcodeInfoFromForm(@Valid BarcodeConfigurationForm form, String sysUserId);
+    void updateBarcodeInfoFromForm(@Valid BarcodeConfigurationForm form, String sysUserId);
 
 }

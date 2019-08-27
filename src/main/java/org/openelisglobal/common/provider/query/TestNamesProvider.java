@@ -25,95 +25,95 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
-
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class TestNamesProvider extends BaseQueryProvider {
 
-	protected AjaxServlet ajaxServlet = null;
+    protected AjaxServlet ajaxServlet = null;
 
-	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		String testId = request.getParameter("testId");
+        String testId = request.getParameter("testId");
 
-		String jResult;
-		JSONObject jsonResult = new JSONObject();
-		String jString;
+        String jResult;
+        JSONObject jsonResult = new JSONObject();
+        String jString;
 
-		if (GenericValidator.isBlankOrNull(testId)) {
-			jResult = INVALID;
-			jString = "Internal error, please contact Admin and file bug report";
-		} else {
-			jResult = createJsonTestNames(testId, jsonResult);
-			StringWriter out = new StringWriter();
-			try {
-				jsonResult.writeJSONString(out);
-				jString = out.toString();
-			} catch (IOException e) {
-				e.printStackTrace();
-				jResult = INVALID;
-				jString = "Internal error, please contact Admin and file bug report";
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-				jResult = INVALID;
-				jString = "Internal error, please contact Admin and file bug report";
-			}
-		}
-		ajaxServlet.sendData(jString, jResult, request, response);
+        if (GenericValidator.isBlankOrNull(testId)) {
+            jResult = INVALID;
+            jString = "Internal error, please contact Admin and file bug report";
+        } else {
+            jResult = createJsonTestNames(testId, jsonResult);
+            StringWriter out = new StringWriter();
+            try {
+                jsonResult.writeJSONString(out);
+                jString = out.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+                jResult = INVALID;
+                jString = "Internal error, please contact Admin and file bug report";
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                jResult = INVALID;
+                jString = "Internal error, please contact Admin and file bug report";
+            }
+        }
+        ajaxServlet.sendData(jString, jResult, request, response);
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	private String createJsonTestNames(String testId, JSONObject jsonResult) throws IllegalStateException {
+    @SuppressWarnings("unchecked")
+    private String createJsonTestNames(String testId, JSONObject jsonResult) throws IllegalStateException {
 
-		if (GenericValidator.isBlankOrNull(testId)) {
-			throw new IllegalStateException("TestNamesProvider testId was blank.  It must have a value");
-		}
+        if (GenericValidator.isBlankOrNull(testId)) {
+            throw new IllegalStateException("TestNamesProvider testId was blank.  It must have a value");
+        }
 
-		Test test = SpringContext.getBean(TestService.class).get(testId);
-		if (test != null) {
-			Localization nameLocalization = test.getLocalizedTestName();
-			Localization reportNameLocalization = test.getLocalizedReportingName();
+        Test test = SpringContext.getBean(TestService.class).get(testId);
+        if (test != null) {
+            Localization nameLocalization = test.getLocalizedTestName();
+            Localization reportNameLocalization = test.getLocalizedReportingName();
 
-			JSONObject nameObject = new JSONObject();
-			addAllLocalizations(nameObject, nameLocalization);
-			//			nameObject.put("english", nameLocalization.getEnglish());
-			//			nameObject.put("french", nameLocalization.getFrench());
-			jsonResult.put("name", nameObject);
+            JSONObject nameObject = new JSONObject();
+            addAllLocalizations(nameObject, nameLocalization);
+            // nameObject.put("english", nameLocalization.getEnglish());
+            // nameObject.put("french", nameLocalization.getFrench());
+            jsonResult.put("name", nameObject);
 
-			JSONObject reportingNameObject = new JSONObject();
-			addAllLocalizations(reportingNameObject, reportNameLocalization);
-			//			reportingNameObject.put("english", reportNameLocalization.getEnglish());
-			//			reportingNameObject.put("french", reportNameLocalization.getFrench());
-			jsonResult.put("reportingName", reportingNameObject);
+            JSONObject reportingNameObject = new JSONObject();
+            addAllLocalizations(reportingNameObject, reportNameLocalization);
+            // reportingNameObject.put("english", reportNameLocalization.getEnglish());
+            // reportingNameObject.put("french", reportNameLocalization.getFrench());
+            jsonResult.put("reportingName", reportingNameObject);
 
-			return VALID;
-		}
+            return VALID;
+        }
 
-		return INVALID;
-	}
+        return INVALID;
+    }
 
-	@SuppressWarnings("unchecked")
-	private void addAllLocalizations(JSONObject jsonObject, Localization localization) {
-		for (Locale locale :  localization.getLocalesWithValue()) {
-			jsonObject.put(locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(), localization.getLocalizedValue(locale));
-		}
-	}
+    @SuppressWarnings("unchecked")
+    private void addAllLocalizations(JSONObject jsonObject, Localization localization) {
+        for (Locale locale : localization.getLocalesWithValue()) {
+            jsonObject.put(locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(),
+                    localization.getLocalizedValue(locale));
+        }
+    }
 
-	@Override
-	public void setServlet(AjaxServlet as) {
-		ajaxServlet = as;
-	}
+    @Override
+    public void setServlet(AjaxServlet as) {
+        ajaxServlet = as;
+    }
 
-	@Override
-	public AjaxServlet getServlet() {
-		return ajaxServlet;
-	}
+    @Override
+    public AjaxServlet getServlet() {
+        return ajaxServlet;
+    }
 
 }

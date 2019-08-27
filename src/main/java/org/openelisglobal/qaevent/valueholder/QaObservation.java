@@ -22,77 +22,77 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 
 public class QaObservation extends BaseObject<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    public enum ObservedType{
-        SAMPLE("SAMPLE"),
-        ANALYSIS("ANALYSIS");
+    public enum ObservedType {
+        SAMPLE("SAMPLE"), ANALYSIS("ANALYSIS");
         String dbName;
 
-        private ObservedType(String type){
+        private ObservedType(String type) {
             dbName = type;
         }
 
-        public String getDBName(){return dbName;}
+        public String getDBName() {
+            return dbName;
+        }
     }
 
-	private String id;
-	private String observedId;
-	private String observedType;
-	private ValueHolder observationType;
-	private String valueType;
-	private String value;
-	
-	public QaObservation(){
-		observationType = new ValueHolder();
-	}
+    private String id;
+    private String observedId;
+    private String observedType;
+    private ValueHolder observationType;
+    private String valueType;
+    private String value;
 
-	public String getId() {
-		return id;
-	}
+    public QaObservation() {
+        observationType = new ValueHolder();
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getObservedId() {
-		return observedId;
-	}
+    public String getObservedId() {
+        return observedId;
+    }
 
-	public void setObservedId(String observedId) {
-		this.observedId = observedId;
-	}
+    public void setObservedId(String observedId) {
+        this.observedId = observedId;
+    }
 
-	public String getObservedType() {
-		return observedType;
-	}
+    public String getObservedType() {
+        return observedType;
+    }
 
-	public void setObservedType(String observedType) {
-		this.observedType = observedType;
-	}
+    public void setObservedType(String observedType) {
+        this.observedType = observedType;
+    }
 
-	public QaObservationType getObservationType() {
-		return (QaObservationType)observationType.getValue();
-	}
+    public QaObservationType getObservationType() {
+        return (QaObservationType) observationType.getValue();
+    }
 
-	public void setObservationType(QaObservationType type) {
-		observationType.setValue(type);
-	}
+    public void setObservationType(QaObservationType type) {
+        observationType.setValue(type);
+    }
 
-	public String getValueType() {
-		return valueType;
-	}
+    public String getValueType() {
+        return valueType;
+    }
 
-	public void setValueType(String valueType) {
-		this.valueType = valueType;
-	}
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

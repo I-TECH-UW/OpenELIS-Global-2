@@ -21,73 +21,72 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.test.valueholder.Test;
 
 public class EIDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-	private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
-	private final String projectName = "Early Infant Diagnosis for HIV Study";
+    private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
+    private final String projectName = "Early Infant Diagnosis for HIV Study";
 
-	public EIDFormMapper(String projectFormId, BaseForm form) {
-		super(projectFormId, form);
-	}
+    public EIDFormMapper(String projectFormId, BaseForm form) {
+        super(projectFormId, form);
+    }
 
-	public List<Test> getTests() {
-		List<Test> testList = new ArrayList<>();
+    public List<Test> getTests() {
+        List<Test> testList = new ArrayList<>();
 
-		if (projectData.getDnaPCR()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("DNA PCR", true));
-		}
+        if (projectData.getDnaPCR()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("DNA PCR", true));
+        }
 
-		return testList;
-	}
+        return testList;
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	@Override
-	public String getProjectCode() {
-		return projectCode;
-	}
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-	@Override
-	public String getOrganizationId() {
-		return projectData.getEIDsiteCode();
-	}
+    @Override
+    public String getOrganizationId() {
+        return projectData.getEIDsiteCode();
+    }
 
-	@Override
-	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-		List<Test> testList;
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+        List<Test> testList;
 
-		// Check for DBS Tests
-		if (projectData.getDnaPCR()) {
-			if (projectData.getDbsTaken()) {
-				testList = getTests();
-				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
-			}
-		}
+        // Check for DBS Tests
+        if (projectData.getDnaPCR()) {
+            if (projectData.getDbsTaken()) {
+                testList = getTests();
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
+            }
+        }
 
-		// Check for Dry Tube Tests
-		if (projectData.getDnaPCR()) {
-			if (projectData.getDryTubeTaken()) {
-				testList = getTests();
-				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
-			}
-		}
+        // Check for Dry Tube Tests
+        if (projectData.getDnaPCR()) {
+            if (projectData.getDryTubeTaken()) {
+                testList = getTests();
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+            }
+        }
 
-		return sItemTests;
-	}
+        return sItemTests;
+    }
 
-	/**
-	 * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-	 */
-	@Override
-	public String getSampleCenterCode() {
-		return projectData.getEIDsiteCode();
-	}
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return projectData.getEIDsiteCode();
+    }
 }

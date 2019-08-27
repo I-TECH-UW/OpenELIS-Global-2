@@ -14,61 +14,60 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-
 package org.openelisglobal.testdictionary.valueholder;
 
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 
-public class TestDictionary extends EnumValueItemImpl{
+public class TestDictionary extends EnumValueItemImpl {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String id;
-    private ValueHolder dictionaryCategory = new ValueHolder(  );
+    private String id;
+    private ValueHolder dictionaryCategory = new ValueHolder();
     private String testId;
     private String context;
     private String qualifiableDictionaryId;
 
-    public String getQualifiableDictionaryId(){
+    public String getQualifiableDictionaryId() {
         return qualifiableDictionaryId;
     }
 
-    public void setQualifiableDictionaryId( String qualifiableDictionaryId ){
+    public void setQualifiableDictionaryId(String qualifiableDictionaryId) {
         this.qualifiableDictionaryId = qualifiableDictionaryId;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
-    public void setId( String id ){
+    public void setId(String id) {
         this.id = id;
     }
 
-    @SuppressWarnings( "JpaAttributeTypeInspection" )
-    public DictionaryCategory getDictionaryCategory(){
-        return (DictionaryCategory)dictionaryCategory.getValue();
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    public DictionaryCategory getDictionaryCategory() {
+        return (DictionaryCategory) dictionaryCategory.getValue();
     }
 
-    public void setDictionaryCategory( DictionaryCategory dictionaryCategory ){
-        this.dictionaryCategory.setValue( dictionaryCategory );
+    public void setDictionaryCategory(DictionaryCategory dictionaryCategory) {
+        this.dictionaryCategory.setValue(dictionaryCategory);
     }
 
-    public String getTestId(){
+    public String getTestId() {
         return testId;
     }
 
-    public void setTestId( String testId ){
+    public void setTestId(String testId) {
         this.testId = testId;
     }
 
-    public String getContext(){
+    public String getContext() {
         return context;
     }
 
-    public void setContext( String context ){
+    public void setContext(String context) {
         this.context = context;
     }
 }
