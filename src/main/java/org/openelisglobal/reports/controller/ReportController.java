@@ -110,7 +110,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (Exception e) {
-                LogEvent.logErrorStack("CommonReportPrintAction", "performAction", e);
+                LogEvent.logErrorStack(this.getClass().getSimpleName(), "performAction", e);
                 e.printStackTrace();
             }
         }
