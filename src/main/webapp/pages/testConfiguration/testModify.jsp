@@ -113,21 +113,10 @@
 %>
 
 	<script type="text/javascript">
-    if (!jQuery) {
-        var jQuery = jQuery.noConflict();
-    }
-    
-    function makeDirty(){
-        function formWarning(){
-            return "<spring:message code="banner.menu.dataLossWarning"/>";
-        }
-        window.onbeforeunload = formWarning;
-    }
 
-    function submitAction(target) {
-        var form = document.getElementById("mainForm");
-        form.action = target;
-        form.submit();
+	
+    function makeDirty(){
+        window.onbeforeunload = "<spring:message code="banner.menu.dataLossWarning"/>";
     }
 
     function setForEditing(testId, name) {
@@ -1392,22 +1381,23 @@
         var sampleTypes = jQuery("#sampleTypeSelection").val();
         var i, jsonSampleType, index, test;
 
-
-        for (i = 0; i < sampleTypes.length; i++) {
-            jsonSampleType = {};
-            jsonSampleType.typeId = sampleTypes[i];
-            jsonSampleType.tests = [];
-            index = 0;
-            jQuery("#" + sampleTypes[i] + " li").each(function () {
-            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + jQuery(this).val());
-            	//if (jsonObj.testId != jQuery(this).val()){
-            	if (true){
-                	test = {};
-                	test.id = jQuery(this).val();
-                	jsonSampleType.tests[index++] = test;
-            	}
-            });
-            jsonObj.sampleTypes[i] = jsonSampleType;
+		if (sampleTypes != null) {
+	        for (i = 0; i < sampleTypes.length; i++) {
+	            jsonSampleType = {};
+	            jsonSampleType.typeId = sampleTypes[i];
+	            jsonSampleType.tests = [];
+	            index = 0;
+	            jQuery("#" + sampleTypes[i] + " li").each(function () {
+	            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + jQuery(this).val());
+	            	//if (jsonObj.testId != jQuery(this).val()){
+	            	if (true){
+	                	test = {};
+	                	test.id = jQuery(this).val();
+	                	jsonSampleType.tests[index++] = test;
+	            	}
+	            });
+	            jsonObj.sampleTypes[i] = jsonSampleType;
+	        }
         }
     }
     
@@ -1512,8 +1502,10 @@
             jsonObj.dictionary[index] = dictionary;
         });
     }
+    
     function submitAction(target) {
         var form = document.getElementById("mainForm");
+        console.log(jQuery("jsonWad").val()); 
         form.action = target;
         form.submit();
     }
@@ -1893,8 +1885,8 @@ td {
 					onchange="checkReadyForNextStep()" /></td>
 
 				<td width="25%" style="vertical-align: top; padding: 4px"
-					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> <select
-					id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
+					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> 
+					<select id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
 					 <%
 							for (IdValuePair pair : panelList) {
 					 %>
@@ -1906,8 +1898,8 @@ td {
 					   
 				</select><br />
 				<br />
-				<br /> <spring:message code="label.unitofmeasure" /><br /> <select
-					id="uomSelection">
+				<br /> <spring:message code="label.unitofmeasure" /><br /> 
+				<select id="uomSelection">
 						<option value='0'></option>
 						<%
 							for (IdValuePair pair : uomList) {
@@ -2287,6 +2279,7 @@ td {
 	<div class="confirmShow"
 		style="margin-left: auto; margin-right: auto; width: 40%; display: none">
 		<input type="button"
+			id="acceptButton"
 			value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
 			onclick="submitAction('TestModifyEntry.do');" /> <input
 			type="button"

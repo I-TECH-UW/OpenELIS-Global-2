@@ -25,16 +25,18 @@ public class PanelOrderFormValidator implements Validator {
 
         try {
             JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
+            if (!JSONUtils.isEmpty(changeList)) {
 
-            JSONArray panels = JSONUtils.getAsArray(changeList.get("panels"));
-            for (int i = 0; i < panels.size(); ++i) {
-                JSONObject panel = JSONUtils.getAsObject(panels.get(i));
+                JSONArray panels = JSONUtils.getAsArray(changeList.get("panels"));
+                for (int i = 0; i < panels.size(); ++i) {
+                    JSONObject panel = JSONUtils.getAsObject(panels.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(panel.get("id")), "JsonChangeList",
-                        "panels[" + i + "] id", errors, true);
+                    ValidationHelper.validateIdField(String.valueOf(panel.get("id")), "JsonChangeList",
+                            "panels[" + i + "] id", errors, true);
 
-                ValidationHelper.validateFieldAndCharset(String.valueOf(panel.get("sortOrder")), "JsonChangeList",
-                        "panels[" + i + "] sort order", errors, true, 3, "0-9");
+                    ValidationHelper.validateFieldAndCharset(String.valueOf(panel.get("sortOrder")), "JsonChangeList",
+                            "panels[" + i + "] sort order", errors, true, 3, "0-9");
+                }
             }
         } catch (ParseException | ClassCastException e) {
             LogEvent.logError("PanelOrderFormValidator", "validate()", e.toString());
