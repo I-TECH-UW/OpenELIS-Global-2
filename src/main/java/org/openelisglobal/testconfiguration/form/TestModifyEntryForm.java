@@ -2,6 +2,7 @@ package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
@@ -30,7 +31,8 @@ public class TestModifyEntryForm extends BaseForm {
     @Pattern(regexp = "^[0-9-]*$")
     private String loinc;
 
-    // in validator
+    // additional in validator
+    @NotBlank
     private String jsonWad = "";
 
     // for display

@@ -2,6 +2,8 @@ package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.test.beanItems.TestActivationBean;
 
@@ -12,7 +14,8 @@ public class TestActivationForm extends BaseForm {
     // for display
     private List<TestActivationBean> inactiveTestList;
 
-    // in validator
+    // additional in validator
+    @NotBlank
     private String jsonChangeList = "";
 
     public TestActivationForm() {

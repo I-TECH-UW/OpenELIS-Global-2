@@ -113,21 +113,20 @@
 %>
 
 	<script type="text/javascript">
-    if (!jQuery) {
-        var jQuery = jQuery.noConflict();
-    }
-    
-    function makeDirty(){
-        function formWarning(){
-            return "<spring:message code="banner.menu.dataLossWarning"/>";
-        }
-        window.onbeforeunload = formWarning;
-    }
 
-    function submitAction(target) {
-        var form = document.getElementById("mainForm");
-        form.action = target;
-        form.submit();
+	jQuery('body').on('change', 'input', function() {
+		makeDirty();
+	});
+
+	jQuery('body').on('change', 'select', function() {
+		makeDirty();
+	});
+
+	var valueChanged = false;
+	
+    function makeDirty(){
+        window.onbeforeunload = "<spring:message code="banner.menu.dataLossWarning"/>";
+        valueChanged = true;
     }
 
     function setForEditing(testId, name) {
@@ -1046,6 +1045,12 @@
             jQuery(".selectShow").hide();
             createJSON();
         }
+
+        if (valueChanged) {
+        	jQuery("#acceptButton").prop('disabled', false);
+        } else {
+        	jQuery("#acceptButton").prop('disabled', true);
+        }
     }
     
     jQuery(".dictionarySelect").hide();
@@ -1392,22 +1397,23 @@
         var sampleTypes = jQuery("#sampleTypeSelection").val();
         var i, jsonSampleType, index, test;
 
-
-        for (i = 0; i < sampleTypes.length; i++) {
-            jsonSampleType = {};
-            jsonSampleType.typeId = sampleTypes[i];
-            jsonSampleType.tests = [];
-            index = 0;
-            jQuery("#" + sampleTypes[i] + " li").each(function () {
-            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + jQuery(this).val());
-            	//if (jsonObj.testId != jQuery(this).val()){
-            	if (true){
-                	test = {};
-                	test.id = jQuery(this).val();
-                	jsonSampleType.tests[index++] = test;
-            	}
-            });
-            jsonObj.sampleTypes[i] = jsonSampleType;
+		if (sampleTypes != null) {
+	        for (i = 0; i < sampleTypes.length; i++) {
+	            jsonSampleType = {};
+	            jsonSampleType.typeId = sampleTypes[i];
+	            jsonSampleType.tests = [];
+	            index = 0;
+	            jQuery("#" + sampleTypes[i] + " li").each(function () {
+	            	//console.log("addJsonSortingOrder: " + jsonObj.testId + ":" + jQuery(this).val());
+	            	//if (jsonObj.testId != jQuery(this).val()){
+	            	if (true){
+	                	test = {};
+	                	test.id = jQuery(this).val();
+	                	jsonSampleType.tests[index++] = test;
+	            	}
+	            });
+	            jsonObj.sampleTypes[i] = jsonSampleType;
+	        }
         }
     }
     
@@ -1512,6 +1518,7 @@
             jsonObj.dictionary[index] = dictionary;
         });
     }
+    
     function submitAction(target) {
         var form = document.getElementById("mainForm");
         form.action = target;
@@ -2287,6 +2294,7 @@ td {
 	<div class="confirmShow"
 		style="margin-left: auto; margin-right: auto; width: 40%; display: none">
 		<input type="button"
+			id="acceptButton"
 			value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
 			onclick="submitAction('TestModifyEntry.do');" /> <input
 			type="button"

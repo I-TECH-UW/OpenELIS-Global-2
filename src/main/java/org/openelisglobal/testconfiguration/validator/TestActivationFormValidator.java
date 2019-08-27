@@ -25,27 +25,29 @@ public class TestActivationFormValidator implements Validator {
 
         try {
             JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
+            if (!JSONUtils.isEmpty(changeList)) {
 
-            JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
-            for (int i = 0; i < activateTests.size(); ++i) {
-                JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
+                JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
+                for (int i = 0; i < activateTests.size(); ++i) {
+                    JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList", "id", errors,
-                        true);
+                    ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList", "id",
+                            errors, true);
 
-                ValidationHelper.validateFieldAndCharset(String.valueOf(activateTest.get("sortOrder")),
-                        "JsonChangeList", "sort order[" + i + "]", errors, true, 3, "0-9");
+                    ValidationHelper.validateFieldAndCharset(String.valueOf(activateTest.get("sortOrder")),
+                            "JsonChangeList", "sort order[" + i + "]", errors, true, 3, "0-9");
 
-                ValidationHelper.validateField(String.valueOf(activateTest.get("activated")), "JsonChangeList",
-                        "activated[" + i + "]", errors, true, 5, "^$|^true$|^false$");
-            }
+                    ValidationHelper.validateField(String.valueOf(activateTest.get("activated")), "JsonChangeList",
+                            "activated[" + i + "]", errors, true, 5, "^$|^true$|^false$");
+                }
 
-            JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
-            for (int i = 0; i < deactivateTests.size(); ++i) {
-                JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
+                JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
+                for (int i = 0; i < deactivateTests.size(); ++i) {
+                    JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
-                        "id[" + i + "]", errors, true);
+                    ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
+                            "id[" + i + "]", errors, true);
+                }
             }
         } catch (ParseException e) {
             LogEvent.logError("TestActivationFormValidator", "validate()", e.toString());
