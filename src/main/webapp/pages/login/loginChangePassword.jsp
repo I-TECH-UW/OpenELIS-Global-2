@@ -71,6 +71,3 @@
 </table>       
 
 
-<%-- <app:javascript formName="loginChangePasswordForm"/> --%>
-
-

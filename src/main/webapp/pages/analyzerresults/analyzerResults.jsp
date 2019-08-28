@@ -49,7 +49,7 @@ pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 var pageSearch; //assigned in post load function
 
 var pagingSearch = new Object();
-<c:forEach items="${pagingSearch}" var="paging">
+<c:forEach items="${pagingSearch}" var="paging" >
 pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 

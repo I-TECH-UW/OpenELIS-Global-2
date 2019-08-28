@@ -25,10 +25,10 @@
 	</error-page>
 
 	<jsp-config>
-		<taglib>
-			<taglib-uri>/tags/labdev-view</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location>
-		</taglib>
+<!-- 		<taglib> -->
+<!-- 			<taglib-uri>/tags/labdev-view</taglib-uri> -->
+<!-- 			<taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location> -->
+<!-- 		</taglib> -->
 
 		<taglib>
 			<taglib-uri>/tags/ajaxtags</taglib-uri>

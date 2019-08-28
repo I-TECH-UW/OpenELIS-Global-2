@@ -31,7 +31,7 @@ function validateForm(form) {
 			<spring:message code="patienttype.id" />:
 		</td>
 		<td>
-		<app:text name="${form.formName}" property="id" readonly="readonly" />
+		<form:input path="id" readonly="readonly" />
 		</td>
 	</tr>
 	<tr>

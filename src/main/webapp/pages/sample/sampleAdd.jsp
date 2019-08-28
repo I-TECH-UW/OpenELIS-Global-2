@@ -818,7 +818,6 @@ function sampleTypeQualifierChanged(element){
 				<c:forEach items="${form.sampleTypes}"  var="sampleType" >
 					<option value="${sampleType.id}"> ${sampleType.value}</option>
 				</c:forEach>
-					<%-- <app:optionsCollection name="${form}" property="sampleTypes" label="value" value="id" /> --%>
 				</select>
                  
 			</td>
