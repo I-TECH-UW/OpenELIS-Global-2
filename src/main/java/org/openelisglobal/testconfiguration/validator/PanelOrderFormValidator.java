@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.JSONUtils;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.testconfiguration.form.PanelOrderForm;
 import org.springframework.stereotype.Component;
@@ -31,11 +32,11 @@ public class PanelOrderFormValidator implements Validator {
                 for (int i = 0; i < panels.size(); ++i) {
                     JSONObject panel = JSONUtils.getAsObject(panels.get(i));
 
-                    ValidationHelper.validateIdField(String.valueOf(panel.get("id")), "JsonChangeList",
+                    ValidationHelper.validateIdField(StringUtil.nullSafeToString(panel.get("id")), "JsonChangeList",
                             "panels[" + i + "] id", errors, true);
 
-                    ValidationHelper.validateFieldAndCharset(String.valueOf(panel.get("sortOrder")), "JsonChangeList",
-                            "panels[" + i + "] sort order", errors, true, 3, "0-9");
+                    ValidationHelper.validateFieldAndCharset(StringUtil.nullSafeToString(panel.get("sortOrder")),
+                            "JsonChangeList", "panels[" + i + "] sort order", errors, true, 3, "0-9");
                 }
             }
         } catch (ParseException | ClassCastException e) {

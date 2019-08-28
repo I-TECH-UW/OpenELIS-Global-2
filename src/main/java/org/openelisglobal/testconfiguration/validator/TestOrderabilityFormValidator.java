@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.JSONUtils;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.testconfiguration.form.TestOrderabilityForm;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,8 @@ public class TestOrderabilityFormValidator implements Validator {
                 for (int i = 0; i < activateTests.size(); ++i) {
                     JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
 
-                    ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList",
-                            "activateTests[" + i + "] id", errors, true);
+                    ValidationHelper.validateIdField(StringUtil.nullSafeToString(activateTest.get("id")),
+                            "JsonChangeList", "activateTests[" + i + "] id", errors, true);
                 }
 
                 JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
