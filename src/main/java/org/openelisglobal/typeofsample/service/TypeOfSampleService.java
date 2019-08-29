@@ -3,6 +3,7 @@ package org.openelisglobal.typeofsample.service;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -53,4 +54,6 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, Str
     String getTypeOfSampleIdForLocalAbbreviation(String name);
 
     List<TypeOfSample> getTypeOfSampleForPanelId(String id);
+
+    Localization getLocalizationForSampleType(String id);
 }

@@ -11,7 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -54,7 +54,7 @@
 
     function setForEditing(sampleTypeId, name) {
         jQuery("#editDiv").show();
-        jQuery("#SampleTypeName").text(name);
+        jQuery("#sampleTypeName").text(name);
         jQuery(".error").each(function (index, value) {
             value.value = "";
             jQuery(value).removeClass("error");

@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 	value='<%=(String) request
@@ -31,7 +31,7 @@ function validateForm(form) {
 			<spring:message code="patienttype.id" />:
 		</td>
 		<td>
-		<app:text name="${form.formName}" property="id" readonly="readonly" />
+		<form:input path="id" readonly="readonly" />
 		</td>
 	</tr>
 	<tr>

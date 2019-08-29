@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.JSONUtils;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.testconfiguration.form.SampleTypeOrderForm;
 import org.springframework.stereotype.Component;
@@ -25,16 +26,18 @@ public class SampleTypeOrderFormValidator implements Validator {
 
         try {
             JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
+            if (!JSONUtils.isEmpty(changeList)) {
 
-            JSONArray sampleTypes = JSONUtils.getAsArray(changeList.get("sampleTypes"));
-            for (int i = 0; i < sampleTypes.size(); ++i) {
-                JSONObject sampleType = JSONUtils.getAsObject(sampleTypes.get(i));
+                JSONArray sampleTypes = JSONUtils.getAsArray(changeList.get("sampleTypes"));
+                for (int i = 0; i < sampleTypes.size(); ++i) {
+                    JSONObject sampleType = JSONUtils.getAsObject(sampleTypes.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(sampleType.get("id")), "JsonChangeList",
-                        "id[" + i + "]", errors, true);
+                    ValidationHelper.validateIdField(StringUtil.nullSafeToString(sampleType.get("id")),
+                            "JsonChangeList", "id[" + i + "]", errors, true);
 
-                ValidationHelper.validateFieldAndCharset(String.valueOf(sampleType.get("sortOrder")), "JsonChangeList",
-                        "sort order[" + i + "]", errors, true, 3, "0-9");
+                    ValidationHelper.validateFieldAndCharset(StringUtil.nullSafeToString(sampleType.get("sortOrder")),
+                            "JsonChangeList", "sort order[" + i + "]", errors, true, 3, "0-9");
+                }
             }
         } catch (ParseException e) {
             LogEvent.logError("SampleTypeOrderFormValidator", "validate()", e.toString());

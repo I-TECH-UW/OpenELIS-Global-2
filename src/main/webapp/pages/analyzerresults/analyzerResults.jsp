@@ -13,7 +13,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
@@ -49,7 +49,7 @@ pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 var pageSearch; //assigned in post load function
 
 var pagingSearch = new Object();
-<c:forEach items="${pagingSearch}" var="paging">
+<c:forEach items="${pagingSearch}" var="paging" >
 pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 

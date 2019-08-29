@@ -11,7 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -203,11 +203,10 @@
             <td></td>
             <th colspan="2" style="text-align: center"><spring:message code="uom.uomName"/></th>
         </tr>
-        <tr>
-            <td></td>
-            <td style="text-align: center"><spring:message code="label.english"/></td>
-        </tr>
-    
+<!--         <tr> -->
+<!--             <td></td> -->
+<%--             <td style="text-align: center"><spring:message code="label.english"/></td> --%>
+<!--         </tr> -->
      	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>

@@ -2,6 +2,7 @@ package org.openelisglobal.common.validator;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -66,7 +67,7 @@ public class ValidationHelper {
 
     public static void validateFieldCharSet(String value, String name, String displayName, Errors errors,
             String charSet) {
-        if (value != null) {
+        if (!GenericValidator.isBlankOrNull(value)) {
             if (!Pattern.matches("^[" + charSet + "]*$", value)) {
                 String charsetForDisplay = charSet.replaceAll("\\\\(?!\\\\)", "");
                 errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName, charsetForDisplay },

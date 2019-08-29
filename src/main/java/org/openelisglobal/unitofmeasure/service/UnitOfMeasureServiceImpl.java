@@ -10,6 +10,7 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.unitofmeasure.dao.UnitOfMeasureDAO;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,12 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
                     "Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
         }
         return super.update(unitOfMeasure);
+    }
+
+    @Override
+    public Localization getLocalizationForUnitOfMeasure(String id) {
+        UnitOfMeasure unitOfMeasure = getUnitOfMeasureById(id);
+        return unitOfMeasure != null ? unitOfMeasure.getLocalization() : null;
     }
 
 }

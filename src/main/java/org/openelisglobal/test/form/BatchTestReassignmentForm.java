@@ -2,6 +2,8 @@ package org.openelisglobal.test.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 
@@ -21,7 +23,8 @@ public class BatchTestReassignmentForm extends BaseForm {
     // for display
     private List statusChangedList;
 
-    // in validator
+    // additional in validator
+    @NotBlank
     private String jsonWad = "";
 
     public BatchTestReassignmentForm() {

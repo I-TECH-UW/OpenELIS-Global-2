@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
  
@@ -26,7 +26,7 @@ if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
 
 <script>
 function validateForm(form) {
-	return !$("sampleId").value.blank() && !$("panelId").value.blank();
+	return !$("sampleId").value.blank() && !$("testId").value.blank();
 }
 
 
@@ -52,14 +52,14 @@ function validateForm(form) {
 		 </tr>
  		<tr>
 						<td class="label">
-							<spring:message code="typeofsample.panel.panel"/>:<span class="requiredlabel">*</span>
+							<spring:message code="typeofsample.test.test"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-					   	<html:select name="${form.formName}" property="panel" id="panelId" >
+					   	<html:select name="${form.formName}" property="test" id="testId" >
 					   	  <app:optionsCollection 
 										name="${form.formName}" 
-							    		property="panels" 
-										label="panelName" 
+							    		property="tests" 
+										label="testName" 
 										value="id"  
 							   			allowEdits="true"
 							/>

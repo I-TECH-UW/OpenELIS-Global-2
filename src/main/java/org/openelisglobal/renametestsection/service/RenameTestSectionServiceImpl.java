@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.renametestsection.dao.RenameTestSectionDAO;
 import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     }
 
     @Override
+    @Transactional
     public String insert(RenameTestSection renameTestSection) {
         if (duplicateTestSectionExists(renameTestSection)) {
             throw new LIMSDuplicateRecordException(
@@ -90,6 +92,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     }
 
     @Override
+    @Transactional
     public RenameTestSection save(RenameTestSection renameTestSection) {
         if (duplicateTestSectionExists(renameTestSection)) {
             throw new LIMSDuplicateRecordException(
@@ -99,6 +102,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     }
 
     @Override
+    @Transactional
     public RenameTestSection update(RenameTestSection renameTestSection) {
         if (duplicateTestSectionExists(renameTestSection)) {
             throw new LIMSDuplicateRecordException(
@@ -109,5 +113,12 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     private boolean duplicateTestSectionExists(RenameTestSection renameTestSection) {
         return baseObjectDAO.duplicateTestSectionExists(renameTestSection);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Localization getLocalizationForRenameTestSection(String id) {
+        RenameTestSection renameTestSection = getTestSectionById(id);
+        return renameTestSection != null ? renameTestSection.getLocalization() : null;
     }
 }

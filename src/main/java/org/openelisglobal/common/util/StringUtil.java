@@ -718,4 +718,8 @@ public class StringUtil {
             return message;
         }
     }
+
+    public static String nullSafeToString(Object obj) {
+        return obj == null ? "" : obj.toString();
+    }
 }
