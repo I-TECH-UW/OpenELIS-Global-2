@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.dao.PanelDAO;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,5 +151,11 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
     public void delete(Panel panel) {
         super.delete(panel);
         baseObjectDAO.clearIDMaps();
+    }
+
+    @Override
+    public Localization getLocalizationForPanel(String id) {
+        Panel panel = getPanelById(id);
+        return panel != null ? panel.getLocalization() : null;
     }
 }

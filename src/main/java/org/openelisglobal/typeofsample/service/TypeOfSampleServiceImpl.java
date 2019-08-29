@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.test.service.TestService;
@@ -331,12 +332,14 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     }
 
     @Override
+    @Transactional
     public void delete(TypeOfSample typeOfSample) {
         super.delete(typeOfSample);
         getBaseObjectDAO().clearMap();
     }
 
     @Override
+    @Transactional
     public String insert(TypeOfSample typeOfSample) {
         if (duplicateTypeOfSampleExists(typeOfSample)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
@@ -346,6 +349,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     }
 
     @Override
+    @Transactional
     public TypeOfSample save(TypeOfSample typeOfSample) {
         if (duplicateTypeOfSampleExists(typeOfSample)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
@@ -355,6 +359,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     }
 
     @Override
+    @Transactional
     public TypeOfSample update(TypeOfSample typeOfSample) {
         if (duplicateTypeOfSampleExists(typeOfSample)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
@@ -365,5 +370,12 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     private boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) {
         return baseObjectDAO.duplicateTypeOfSampleExists(typeOfSample);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Localization getLocalizationForSampleType(String id) {
+        TypeOfSample typeOfSample = getTypeOfSampleById(id);
+        return typeOfSample != null ? typeOfSample.getLocalization() : null;
     }
 }

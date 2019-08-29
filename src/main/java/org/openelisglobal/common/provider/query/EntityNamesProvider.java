@@ -28,14 +28,10 @@ import org.json.simple.JSONObject;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.renametestsection.service.RenameTestSectionService;
-import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
-import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class EntityNamesProvider extends BaseQueryProvider {
 
@@ -114,6 +110,7 @@ public class EntityNamesProvider extends BaseQueryProvider {
         return INVALID;
     }
 
+    @SuppressWarnings("unchecked")
     private void addAllLocalizations(JSONObject jsonObject, Localization localization) {
         for (Locale locale : localization.getLocalesWithValue()) {
             jsonObject.put(locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(),
@@ -122,23 +119,19 @@ public class EntityNamesProvider extends BaseQueryProvider {
     }
 
     private Localization getLocalizationForPanel(String id) {
-        Panel panel = panelService.getPanelById(id);
-        return panel != null ? panel.getLocalization() : null;
+        return panelService.getLocalizationForPanel(id);
     }
 
     private Localization getLocalizationForSampleType(String id) {
-        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(id);
-        return typeOfSample != null ? typeOfSample.getLocalization() : null;
+        return typeOfSampleService.getLocalizationForSampleType(id);
     }
 
     private Localization getLocalizationForRenameTestSection(String id) {
-        RenameTestSection renameTestSection = renameTestSectionService.getTestSectionById(id);
-        return renameTestSection != null ? renameTestSection.getLocalization() : null;
+        return renameTestSectionService.getLocalizationForRenameTestSection(id);
     }
 
     private Localization getLocalizationForUnitOfMeasure(String id) {
-        UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureById(id);
-        return unitOfMeasure != null ? unitOfMeasure.getLocalization() : null;
+        return unitOfMeasureService.getLocalizationForUnitOfMeasure(id);
     }
 
     @Override

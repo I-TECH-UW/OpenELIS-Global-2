@@ -54,7 +54,7 @@
 
     function setForEditing(sampleTypeId, name) {
         jQuery("#editDiv").show();
-        jQuery("#SampleTypeName").text(name);
+        jQuery("#sampleTypeName").text(name);
         jQuery(".error").each(function (index, value) {
             value.value = "";
             jQuery(value).removeClass("error");
