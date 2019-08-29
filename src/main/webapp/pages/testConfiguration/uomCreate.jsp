@@ -185,7 +185,7 @@ td {
     	<col style="width:40%">
     	<thead>
         <tr><th style="text-align: center"><spring:message code="uom.new"/></th></tr>
-        <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr>
+<%--         <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr> --%>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="uomEnglishName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>

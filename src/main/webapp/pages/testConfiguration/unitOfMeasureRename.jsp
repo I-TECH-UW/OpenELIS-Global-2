@@ -203,11 +203,10 @@
             <td></td>
             <th colspan="2" style="text-align: center"><spring:message code="uom.uomName"/></th>
         </tr>
-        <tr>
-            <td></td>
-            <td style="text-align: center"><spring:message code="label.english"/></td>
-        </tr>
-    
+<!--         <tr> -->
+<!--             <td></td> -->
+<%--             <td style="text-align: center"><spring:message code="label.english"/></td> --%>
+<!--         </tr> -->
      	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>
