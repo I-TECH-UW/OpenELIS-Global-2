@@ -27,7 +27,7 @@
 		</many-to-one>
 		<many-to-one name="sampleItem"
 			class="org.openelisglobal.sampleitem.valueholder.SampleItem"
-			fetch="select">
+			fetch="select" lazy="false">
 			<column name="sampleitem_id" precision="10" scale="0" />
 		</many-to-one>
 		<property name="completedDate" type="java.sql.Date">
