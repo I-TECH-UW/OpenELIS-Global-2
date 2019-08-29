@@ -11,7 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -185,7 +185,7 @@ td {
     	<col style="width:40%">
     	<thead>
         <tr><th style="text-align: center"><spring:message code="uom.new"/></th></tr>
-        <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr>
+<%--         <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr> --%>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="uomEnglishName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>

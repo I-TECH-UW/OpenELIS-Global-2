@@ -3,9 +3,7 @@
 	import="org.openelisglobal.common.util.StringUtil"
 %>
 
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <form>
 <script type="text/javascript">
@@ -26,10 +24,10 @@ function /*void*/ deleteData(){
 
 
 <div width="100%" align="center">
-<h1><spring:message code="database.clean.warning" /><br/>
+<h1><spring:message htmlEscape="false" code="database.clean.warning" /><br/>
 <font color="red"><spring:message code="database.clean.warning.final"/></font></h1>
-<input id="clean" type="button" value='<%= StringUtil.getMessageForKey("database.clean") %>' style="width:300px;height:50px" onclick="deleteData();"/>
-<input id="cancel" type="button" value='<%= StringUtil.getMessageForKey("label.button.cancel") %>' style="width:300px;height:50px" onclick="cancel();" />
+<input id="clean" type="button" value='<spring:message code="database.clean"/>' style="width:300px;height:50px" onclick="deleteData();"/>
+<input id="cancel" type="button" value='<spring:message code="label.button.cancel"/>' style="width:300px;height:50px" onclick="cancel();" />
 
 </div>
 </form>

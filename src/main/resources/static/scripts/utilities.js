@@ -1,16 +1,16 @@
 /*
  * Set the valid/invalid indicator on a field.  The field should have the form of below, the linkage being foo and fooMessage
  *
- * <app:text name="<%=formName%>"  property="..."  styleClass="text"  ....
-             styleId="foo" />
+ * <form:input path="..."  cssClass="text"  ....
+             id="foo" />
    <div id="fooMessage" class="blank" />
  * Then it should be called with
  *
  *     setValidIndicatorOnField(true, field.id);
  *
  * Alternatively:
- * <app:text name="<%=formName%>"  property="foo"  styleClass="text"  ....
- *           styleId="..." />
+ * <form:input path="foo"  cssClass="text"  ....
+ *           id="..." />
  * <div id="fooMessage" class="blank" />
  * Should be called with.
  *     setValidIndicatorOnField(true, field.id);

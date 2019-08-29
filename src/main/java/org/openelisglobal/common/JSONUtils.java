@@ -1,5 +1,6 @@
 package org.openelisglobal.common;
 
+import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,6 +27,9 @@ public class JSONUtils {
         } else if (obj.getClass().equals(JSONObject.class)) {
             return (JSONObject) obj;
         } else if (obj.getClass().equals(String.class)) {
+            if (GenericValidator.isBlankOrNull((String) obj)) {
+                obj = "{}";
+            }
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse((String) obj);
         } else {
@@ -37,7 +41,7 @@ public class JSONUtils {
 
     /**
      * String safe method for extracting a JSONArray. Supports String and JSONArray
-     * 
+     *
      * @param obj
      * @return
      * @throws ParseException
@@ -56,4 +60,9 @@ public class JSONUtils {
             throw new ClassCastException();
         }
     }
+
+    public static boolean isEmpty(JSONObject obj) {
+        return obj.isEmpty();
+    }
+
 }

@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.JSONUtils;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.testconfiguration.form.TestOrderabilityForm;
 import org.springframework.stereotype.Component;
@@ -25,21 +26,23 @@ public class TestOrderabilityFormValidator implements Validator {
 
         try {
             JSONObject changeList = JSONUtils.getAsObject(form.getJsonChangeList());
+            if (!JSONUtils.isEmpty(changeList)) {
 
-            JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
-            for (int i = 0; i < activateTests.size(); ++i) {
-                JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
+                JSONArray activateTests = JSONUtils.getAsArray(changeList.get("activateTest"));
+                for (int i = 0; i < activateTests.size(); ++i) {
+                    JSONObject activateTest = JSONUtils.getAsObject(activateTests.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(activateTest.get("id")), "JsonChangeList",
-                        "activateTests[" + i + "] id", errors, true);
-            }
+                    ValidationHelper.validateIdField(StringUtil.nullSafeToString(activateTest.get("id")),
+                            "JsonChangeList", "activateTests[" + i + "] id", errors, true);
+                }
 
-            JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
-            for (int i = 0; i < deactivateTests.size(); ++i) {
-                JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
+                JSONArray deactivateTests = JSONUtils.getAsArray(changeList.get("deactivateTest"));
+                for (int i = 0; i < deactivateTests.size(); ++i) {
+                    JSONObject deactivateTest = JSONUtils.getAsObject(deactivateTests.get(i));
 
-                ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
-                        "deactivateTests[" + i + "] id", errors, true);
+                    ValidationHelper.validateIdField(String.valueOf(deactivateTest.get("id")), "JsonChangeList",
+                            "deactivateTests[" + i + "] id", errors, true);
+                }
             }
         } catch (ParseException e) {
             LogEvent.logError("TestOrderabilityFormValidator", "validate()", e.toString());
