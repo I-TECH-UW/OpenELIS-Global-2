@@ -34,11 +34,11 @@ public class TestModifyEntryFormValidator implements Validator {
                 ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("testNameFrench")), "JsonWad",
                         "testNameFrench", errors, true, 255);
 
-                ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("testReportNameEnglish")), "JsonWad",
-                        "testReportNameEnglish", errors, true, 255);
+                ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("testReportNameEnglish")),
+                        "JsonWad", "testReportNameEnglish", errors, true, 255);
 
-                ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("testReportNameFrench")), "JsonWad",
-                        "testReportNameFrench", errors, true, 255);
+                ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("testReportNameFrench")),
+                        "JsonWad", "testReportNameFrench", errors, true, 255);
 
                 ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("testSection")), "JsonWad",
                         "testSection", errors, true);
@@ -50,20 +50,20 @@ public class TestModifyEntryFormValidator implements Validator {
                             "panels[" + i + "] id", errors, false);
                 }
 
-                ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("uom")), "JsonWad", "uom", errors,
-                        false);
+                ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("uom")), "JsonWad", "uom",
+                        errors, false);
 
-                ValidationHelper.validateFieldAndCharset(StringUtil.nullSafeToString(newTest.get("loinc")), "JsonWad", "loinc",
-                        errors, false, 240, " 0-9-");
+                ValidationHelper.validateFieldAndCharset(StringUtil.nullSafeToString(newTest.get("loinc")), "JsonWad",
+                        "loinc", errors, false, 240, " 0-9-");
 
                 ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("resultType")), "JsonWad",
                         "resultType", errors, true);
 
-                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("orderable")), "JsonWad", "orderable",
-                        errors);
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("orderable")), "JsonWad",
+                        "orderable", errors);
 
-                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("active")), "JsonWad", "active",
-                        errors);
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("active")), "JsonWad",
+                        "active", errors);
 
                 JSONArray sampleTypes = JSONUtils.getAsArray(newTest.get("sampleTypes"));
                 for (int i = 0; i < sampleTypes.size(); ++i) {
@@ -85,38 +85,41 @@ public class TestModifyEntryFormValidator implements Validator {
                     for (int i = 0; i < dictionaries.size(); ++i) {
                         JSONObject dictionary = JSONUtils.getAsObject(dictionaries.get(i));
 
-                        ValidationHelper.validateIdField(StringUtil.nullSafeToString(dictionary.get("value")), "JsonWad",
-                                "dictionary[" + i + "] value", errors, true);
+                        ValidationHelper.validateIdField(StringUtil.nullSafeToString(dictionary.get("value")),
+                                "JsonWad", "dictionary[" + i + "] value", errors, true);
 
-                        ValidationHelper.validateYNField(StringUtil.nullSafeToString(dictionary.get("qualified")), "JsonWad",
-                                "dictionary[" + i + "] qualified", errors);
+                        ValidationHelper.validateYNField(StringUtil.nullSafeToString(dictionary.get("qualified")),
+                                "JsonWad", "dictionary[" + i + "] qualified", errors);
                     }
                 }
 
                 if (newTest.containsKey("lowValid")) {
-                    ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("lowValid")), "JsonWad", "lowValid",
-                            errors, false, 255, ValidationHelper.FLOAT_REGEX);
+                    ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("lowValid")), "JsonWad",
+                            "lowValid", errors, false, 255, ValidationHelper.FLOAT_REGEX);
 
                     ValidationHelper.validateField(StringUtil.nullSafeToString(newTest.get("highValid")), "JsonWad",
                             "highValid", errors, false, 255, ValidationHelper.FLOAT_REGEX);
 
-                    ValidationHelper.validateFieldAndCharset(StringUtil.nullSafeToString(newTest.get("significantDigits")),
-                            "JsonWad", "Significant digits", errors, false, 2, "0-9");
+                    ValidationHelper.validateFieldAndCharset(
+                            StringUtil.nullSafeToString(newTest.get("significantDigits")), "JsonWad",
+                            "Significant digits", errors, false, 2, "0-9");
 
                     JSONArray resultLimits = JSONUtils.getAsArray(newTest.get("resultLimits"));
                     for (int i = 0; i < resultLimits.size(); ++i) {
                         JSONObject resultLimit = JSONUtils.getAsObject(resultLimits.get(i));
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highAgeRange")), "JsonWad",
-                                "result limit [" + i + "] highAgeRange", errors, false, 255, "^Infinity$|^\\d*$");
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highAgeRange")),
+                                "JsonWad", "result limit [" + i + "] highAgeRange", errors, false, 255,
+                                "^Infinity$|^\\d*$");
 
                         ValidationHelper.validateTFField((Boolean) resultLimit.get("gender"), "JsonWad",
                                 "result limit [" + i + "] gender", errors, true);
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowNormal")), "JsonWad",
-                                "result limit [" + i + "] lowNormal", errors, false, 255, ValidationHelper.FLOAT_REGEX);
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowNormal")),
+                                "JsonWad", "result limit [" + i + "] lowNormal", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highNormal")), "JsonWad",
-                                "result limit [" + i + "] highNormal", errors, false, 255,
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highNormal")),
+                                "JsonWad", "result limit [" + i + "] highNormal", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
 
                         ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("reportingRange")),
@@ -124,16 +127,19 @@ public class TestModifyEntryFormValidator implements Validator {
                                 ValidationHelper.FLOAT_REGEX);
 
                         if ((Boolean) resultLimit.get("gender")) {
-                            ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowNormalFemale")),
-                                    "JsonWad", "result limit [" + i + "] lowNormalFemale", errors, false, 255,
+                            ValidationHelper.validateField(
+                                    StringUtil.nullSafeToString(resultLimit.get("lowNormalFemale")), "JsonWad",
+                                    "result limit [" + i + "] lowNormalFemale", errors, false, 255,
                                     ValidationHelper.FLOAT_REGEX);
 
-                            ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highNormalFemale")),
-                                    "JsonWad", "result limit [" + i + "] highNormalFemale", errors, false, 255,
+                            ValidationHelper.validateField(
+                                    StringUtil.nullSafeToString(resultLimit.get("highNormalFemale")), "JsonWad",
+                                    "result limit [" + i + "] highNormalFemale", errors, false, 255,
                                     ValidationHelper.FLOAT_REGEX);
 
-                            ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("reportingRangeFemale")),
-                                    "JsonWad", "result limit [" + i + "] reportingRangeFemale", errors, false, 255,
+                            ValidationHelper.validateField(
+                                    StringUtil.nullSafeToString(resultLimit.get("reportingRangeFemale")), "JsonWad",
+                                    "result limit [" + i + "] reportingRangeFemale", errors, false, 255,
                                     ValidationHelper.FLOAT_REGEX);
                         }
 

@@ -1035,6 +1035,12 @@
             jQuery(".selectShow").hide();
             createJSON();
         }
+
+        if (valueChanged) {
+        	jQuery("#acceptButton").prop('disabled', false);
+        } else {
+        	jQuery("#acceptButton").prop('disabled', true);
+        }
     }
     
     jQuery(".dictionarySelect").hide();
