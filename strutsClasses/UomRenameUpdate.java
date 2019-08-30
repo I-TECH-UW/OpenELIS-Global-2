@@ -13,7 +13,7 @@
  *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,13 +24,13 @@ import org.apache.struts.action.ActionMapping;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
-import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.unitofmeasure.dao.UnitOfMeasureDAO;
+import org.openelisglobal.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
+import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class UomRenameUpdate extends BaseAction{
 

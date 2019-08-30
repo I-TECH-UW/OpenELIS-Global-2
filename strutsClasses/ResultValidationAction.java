@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.resultvalidation.action;
+package org.openelisglobal.resultvalidation.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,19 +28,19 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.resultvalidation.action.util.ResultValidationPaging;
-import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
-import us.mn.state.health.lims.resultvalidation.util.ResultsValidationUtility;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
-import us.mn.state.health.lims.test.valueholder.TestSection;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.resultvalidation.action.util.ResultValidationPaging;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
+import org.openelisglobal.test.dao.TestSectionDAO;
+import org.openelisglobal.test.daoimpl.TestSectionDAOImpl;
+import org.openelisglobal.test.valueholder.TestSection;
 
 public class ResultValidationAction extends BaseResultValidationAction {
 

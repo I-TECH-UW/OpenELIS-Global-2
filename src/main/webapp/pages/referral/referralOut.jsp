@@ -1,19 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.DateUtil,
-                 spring.mine.internationalization.MessageUtil,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.util.DateUtil,
+                 org.openelisglobal.internationalization.MessageUtil,
                  java.util.List,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.referral.action.beanitems.ReferralItem,
-                 us.mn.state.health.lims.common.util.IdValuePair,
-                 us.mn.state.health.lims.referral.action.beanitems.ReferredTest" %>
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.referral.action.beanitems.ReferralItem,
+                 org.openelisglobal.common.util.IdValuePair,
+                 org.openelisglobal.referral.action.beanitems.ReferredTest" %>
 
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -511,24 +511,41 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 <c:if test="${not empty referralItems.pastNotes}">
     <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
-        <td colspan="5" align="left">
-            <c:out value="${referralItems.pastNotes}"/>
+        <td colspan="3" align="left">
+<!--         	pastNotes are escaped in an html context when they are fetched by the server before -->
+<!--         	safe html tags are added in the controller, so this does not need to be escaped here as well -->
+            ${referralItems.pastNotes}
+        </td>
+        <td colspan="2" align="left" valign="top">
+        	<span id='noteRow_${iter.index}' style="display: none;">
+        	<spring:message code="note.note"/>:
+        	<form:textarea path="referralItems[${iter.index}].note"
+        			   id='note_${iter.index}'
+                       onchange='markModified("${iter.index}");'
+                       cols="80"
+                       rows="3"/>
+            </span>
         </td>
         <td colspan='2' class="leftVertical">
     </tr>
 </c:if>
-<tr id='noteRow_${iter.index}'
+<c:if test="${empty referralItems.pastNotes}">
+<tr id='noteRow_${iter.index}' 
+	style="display: none;"
     class='${rowColor}'
-    style="display: none;">
-    <td valign="top" align="right"><spring:message code="note.note"/>:</td>
+    >
+    <td valign="top" align="right">
+        	<spring:message code="note.note"/>:
+    </td>
     <td colspan="6" align="left">
-        <form:textarea path="referralItems[${iter.index}].note"
+    	<form:textarea path="referralItems[${iter.index}].note"
         			   id='note_${iter.index}'
                        onchange='markModified("${iter.index}");'
                        cols="80"
                        rows="3"/>
     </td>
 </tr>
+</c:if>
 </c:forEach>
 </table>
 </c:if>

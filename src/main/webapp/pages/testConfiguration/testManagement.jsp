@@ -1,12 +1,12 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="spring.mine.internationalization.MessageUtil"
+         import="org.openelisglobal.internationalization.MessageUtil"
         %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--

@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			spring.mine.internationalization.MessageUtil,
-			us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration,
-			us.mn.state.health.lims.common.util.Versioning"%>
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.internationalization.MessageUtil,
+			org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration,
+			org.openelisglobal.common.util.Versioning"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
  
@@ -91,7 +91,7 @@ function  /*void*/ processTestSuccess(xhr){
 	</td>
 	</tr>
 	<tr>
-	<td colspan="2"><spring:message code="resultreporting.config.url"/></td>  	
+	<td colspan="2"><spring:message htmlEscape="false" code="resultreporting.config.url"/></td>  	
   </tr>
   <tr>
   <td>&nbsp;</td>

@@ -15,7 +15,7 @@
  *  
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.userrole.action;
+package org.openelisglobal.userrole.action;
 
 import java.util.Collection;
 
@@ -28,12 +28,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
-import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.role.dao.RoleDAO;
+import org.openelisglobal.role.daoimpl.RoleDAOImpl;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
 
 public class UserRoleAction extends BaseAction {
 

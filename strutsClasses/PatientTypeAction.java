@@ -5,7 +5,7 @@
  * @author TienDH
  * @date Aug 20, 2007
  */
-package us.mn.state.health.lims.patienttype.action;
+package org.openelisglobal.patienttype.action;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientTypeDAOImpl;
-import us.mn.state.health.lims.patienttype.valueholder.PatientType;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.patienttype.dao.PatientTypeDAO;
+import org.openelisglobal.patienttype.daoimpl.PatientTypeDAOImpl;
+import org.openelisglobal.patienttype.valueholder.PatientType;
 
 /**
  * @author tiendh

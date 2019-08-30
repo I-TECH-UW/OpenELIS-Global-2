@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +33,17 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleServiceImpl;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 
 public class TestActivationUpdate extends BaseAction {

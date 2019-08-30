@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.renametestsection.action;
+package org.openelisglobal.renametestsection.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.renametestsection.dao.RenameTestSectionDAO;
-import us.mn.state.health.lims.renametestsection.daoimpl.RenameTestSectionDAOImpl;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.renametestsection.dao.RenameTestSectionDAO;
+import org.openelisglobal.renametestsection.daoimpl.RenameTestSectionDAOImpl;
 
 /**
  * @author diane benz

@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.referral.action;
+package org.openelisglobal.referral.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,34 +33,34 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.services.TestService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.referral.action.beanitems.IReferralResultTest;
-import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
-import us.mn.state.health.lims.referral.action.beanitems.ReferredTest;
-import us.mn.state.health.lims.referral.dao.ReferralDAO;
-import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferralDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralResultDAOImpl;
-import us.mn.state.health.lims.referral.valueholder.Referral;
-import us.mn.state.health.lims.referral.valueholder.ReferralResult;
-import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
-import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.services.AnalysisService;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.ResultService;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleServiceImpl;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.referral.action.beanitems.IReferralResultTest;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.referral.action.beanitems.ReferredTest;
+import org.openelisglobal.referral.dao.ReferralDAO;
+import org.openelisglobal.referral.dao.ReferralResultDAO;
+import org.openelisglobal.referral.daoimpl.ReferralDAOImpl;
+import org.openelisglobal.referral.daoimpl.ReferralResultDAOImpl;
+import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralResult;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.dao.TestResultDAO;
+import org.openelisglobal.testresult.daoimpl.TestResultDAOImpl;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public class ReferredOutAction extends BaseAction {
 

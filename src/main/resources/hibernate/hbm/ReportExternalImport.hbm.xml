@@ -3,12 +3,13 @@
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class dynamic-update="true"
-		name="us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport"
+		name="org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalImport"
 		table="report_external_import">
 		<id name="id"
-			type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			<column name="ID" precision="10" scale="0" />
-			<generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+			<generator
+				class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
 				<param name="sequence_name">report_external_import_seq</param>
 			</generator>
 		</id>
@@ -16,13 +17,13 @@
 			name="lastupdated" type="timestamp" />
 		<property column="event_date" generated="never" lazy="false"
 			name="eventDate" type="timestamp" />
-		<property column="sending_site" generated="never" lazy="false"
-			name="sendingSite" type="string" />	
-		<property column="recieved_date" generated="never" lazy="false"
-			name="recievedDate" type="timestamp" />
-		<property column="type" generated="never" lazy="false" name="reportType"
-			type="string" />
-		<property column="data" generated="never" lazy="false" name="data"
-			type="string" />
+		<property column="sending_site" generated="never"
+			lazy="false" name="sendingSite" type="string" />
+		<property column="recieved_date" generated="never"
+			lazy="false" name="recievedDate" type="timestamp" />
+		<property column="type" generated="never" lazy="false"
+			name="reportType" type="string" />
+		<property column="data" generated="never" lazy="false"
+			name="data" type="string" />
 	</class>
 </hibernate-mapping>

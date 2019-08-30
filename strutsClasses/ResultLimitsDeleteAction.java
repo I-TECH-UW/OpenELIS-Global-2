@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.resultlimits.action;
+package org.openelisglobal.resultlimits.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +13,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
+import org.openelisglobal.resultlimits.daoimpl.ResultLimitDAOImpl;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 
 /**
  * Project : LIS<br>

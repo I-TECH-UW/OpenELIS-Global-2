@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.util.validator;
+package org.openelisglobal.common.util.validator;
 
 import java.text.SimpleDateFormat;
 import java.util.Stack;

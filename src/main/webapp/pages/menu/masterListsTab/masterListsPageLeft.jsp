@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.util.SystemConfiguration,
-			us.mn.state.health.lims.common.util.ConfigurationProperties,
-			us.mn.state.health.lims.common.formfields.AdminFormFields,
-			us.mn.state.health.lims.common.formfields.AdminFormFields.Field,
-			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation"%>
+	import="org.openelisglobal.common.util.SystemConfiguration,
+			org.openelisglobal.common.util.ConfigurationProperties,
+			org.openelisglobal.common.formfields.AdminFormFields,
+			org.openelisglobal.common.formfields.AdminFormFields.Field,
+			org.openelisglobal.siteinformation.valueholder.SiteInformation"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
@@ -23,19 +23,19 @@
 	<%-- similar code will need to be added in the left panel and in tabs.js for any menu tab that has the submenu on the left hand side--%>
 
 	<ul id="masterListsSubMenu.do" class="leftnavigation">
-		 <%-- <%
+		  <%
 			if ("true"
 					.equals(ConfigurationProperties
 							.getInstance()
 							.getPropertyValueLowerCase(
 									ConfigurationProperties.Property.TrainingInstallation))) {
 		%>
-		<li><a href=<c:url value="/DatabaseCleaningRequest"/> >
+		<li><a href=<c:url value="/DatabaseCleaningRequest.do"/> >
 				<spring:message code="database.clean" />
 			</a></li>
 		<%
 			}
-		%> --%>
+		%> 
 		<%
 			if (adminFields.useField(Field.AnalyzerTestNameMenu)) {
 		%>

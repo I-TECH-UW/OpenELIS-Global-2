@@ -1,24 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-		import="us.mn.state.health.lims.common.formfields.FormFields,
-				us.mn.state.health.lims.common.formfields.FormFields.Field,
-				us.mn.state.health.lims.common.action.IActionConstants,
-	            us.mn.state.health.lims.common.util.SystemConfiguration,
-	            us.mn.state.health.lims.common.util.ConfigurationProperties,
-	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-	            us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-	            us.mn.state.health.lims.common.util.Versioning,
-	            spring.mine.internationalization.MessageUtil,
-	            us.mn.state.health.lims.sample.bean.SampleOrderItem,
-	            us.mn.state.health.lims.sample.util.AccessionNumberUtil,
+		import="org.openelisglobal.common.formfields.FormFields,
+				org.openelisglobal.common.formfields.FormFields.Field,
+				org.openelisglobal.common.action.IActionConstants,
+	            org.openelisglobal.common.util.SystemConfiguration,
+	            org.openelisglobal.common.util.ConfigurationProperties,
+	            org.openelisglobal.common.util.ConfigurationProperties.Property,
+	            org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+	            org.openelisglobal.common.util.Versioning,
+	            org.openelisglobal.internationalization.MessageUtil,
+	            org.openelisglobal.sample.bean.SampleOrderItem,
+	            org.openelisglobal.sample.util.AccessionNumberUtil,
 	            org.owasp.encoder.Encode,
-	        	java.util.HashSet,us.mn.state.health.lims.login.dao.UserModuleService,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl"%>
+	        	java.util.HashSet,org.openelisglobal.login.dao.UserModuleService,org.openelisglobal.login.daoimpl.UserModuleServiceImpl"%>
 
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
@@ -120,8 +120,8 @@ projectChecker = null;
  * A list of answers that equate to yes in certain lists when comparing (cross check or 2nd entry for a match).
  */
 yesesInDiseases = [
-     <%= us.mn.state.health.lims.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId() %>,
-	 <%= us.mn.state.health.lims.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId() %>
+     <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId() %>,
+	 <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId() %>
 	 ];
 
 function /*void*/ makeDirty(){

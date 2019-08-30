@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.typeofsample.action;
+package org.openelisglobal.typeofsample.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +22,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.typeofsample.dao.TypeOfSamplePanelDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 /**
  * @author diane benz

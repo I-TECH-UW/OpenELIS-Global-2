@@ -2,16 +2,16 @@
 	contentType="text/html; charset=utf-8"
 	import="java.util.Iterator,
 		javax.servlet.jsp.JspException,
-		us.mn.state.health.lims.common.action.IActionConstants,
-		us.mn.state.health.lims.common.util.resources.ResourceLocator,
-		us.mn.state.health.lims.common.util.SystemConfiguration,
+		org.openelisglobal.common.action.IActionConstants,
+		org.openelisglobal.common.util.resources.ResourceLocator,
+		org.openelisglobal.common.util.SystemConfiguration,
 		org.owasp.encoder.Encode,
-		spring.mine.common.constants.Constants" %>
+		org.openelisglobal.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
 

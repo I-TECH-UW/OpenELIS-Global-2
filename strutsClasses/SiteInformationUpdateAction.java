@@ -15,7 +15,7 @@
  *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.siteinformation.action;
+package org.openelisglobal.siteinformation.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,21 +30,21 @@ import org.apache.struts.action.ActionMessages;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import spring.service.localization.LocalizationServiceImpl;
-import us.mn.state.health.lims.common.services.PhoneNumberService;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationSideEffects;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDomainDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.localization.service.LocalizationServiceImpl;
+import org.openelisglobal.common.services.PhoneNumberService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationSideEffects;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.localization.daoimpl.LocalizationDAOImpl;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDomainDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 
 public class SiteInformationUpdateAction extends BaseAction {
 	private static final SiteInformationDomain SITE_IDENTITY_DOMAIN;

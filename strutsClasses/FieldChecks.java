@@ -14,7 +14,7 @@
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 
-package us.mn.state.health.lims.common.util.validator;
+package org.openelisglobal.common.util.validator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,8 +25,8 @@ import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.util.ValidatorUtils;
 import org.apache.struts.action.ActionMessages;
 
-import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.log.LogEvent;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.common.log.LogEvent;
 
 /**
  * <p>

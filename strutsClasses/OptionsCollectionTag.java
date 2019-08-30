@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -25,8 +25,8 @@ import org.apache.struts.taglib.TagUtils;
 import org.apache.struts.taglib.html.Constants;
 import org.apache.struts.taglib.html.SelectTag;
 
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 
 /**
  * @author diane benz

@@ -1,9 +1,9 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.login.valueholder.UserSessionData,
-			spring.mine.internationalization.MessageUtil"%>
+	import="org.openelisglobal.common.util.ConfigurationProperties.Property,
+			org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.login.valueholder.UserSessionData,
+			org.openelisglobal.internationalization.MessageUtil"%>
 
 <%!
       String path = "";

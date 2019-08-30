@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.samplebatchentry.action;
+package org.openelisglobal.samplebatchentry.action;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -11,14 +11,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.jfree.util.Log;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.ObservationHistoryList;
-import us.mn.state.health.lims.organization.util.OrganizationTypeList;
-import us.mn.state.health.lims.patient.valueholder.ObservationData;
-import us.mn.state.health.lims.sample.action.BaseSampleEntryAction;
-import us.mn.state.health.lims.sample.form.ProjectData;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dictionary.ObservationHistoryList;
+import org.openelisglobal.organization.util.OrganizationTypeList;
+import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.sample.action.BaseSampleEntryAction;
+import org.openelisglobal.sample.form.ProjectData;
 
 public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 

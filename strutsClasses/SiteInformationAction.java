@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.siteinformation.action;
+package org.openelisglobal.siteinformation.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -31,17 +31,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import spring.service.localization.LocalizationServiceImpl;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
-import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.localization.service.LocalizationServiceImpl;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.sample.daoimpl.SampleDAOImpl;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
+import org.openelisglobal.siteinformation.daoimpl.SiteInformationDAOImpl;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public class SiteInformationAction extends BaseAction {
 

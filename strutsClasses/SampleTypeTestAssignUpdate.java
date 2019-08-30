@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,15 +26,15 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleServiceImpl;
+import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 
 public class SampleTypeTestAssignUpdate extends BaseAction {

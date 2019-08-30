@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.common.util;
+package org.openelisglobal.common.util;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +25,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.sample.valueholder.Sample;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.daoimpl.LoginDAOImpl;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.patient.daoimpl.PatientDAOImpl;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.sample.valueholder.Sample;
 
 public class WebTestInfoAction extends BaseAction {
 

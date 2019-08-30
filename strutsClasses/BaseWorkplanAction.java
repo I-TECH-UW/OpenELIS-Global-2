@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.workplan.action;
+package org.openelisglobal.workplan.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +28,24 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.IPatientService;
+import org.openelisglobal.common.services.ObservationHistoryService;
+import org.openelisglobal.common.services.ObservationHistoryService.ObservationType;
+import org.openelisglobal.common.services.PatientService;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
 
 public class BaseWorkplanAction extends BaseAction {
 

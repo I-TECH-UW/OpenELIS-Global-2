@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.servlet;
+package org.openelisglobal.common.servlet;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -29,10 +29,10 @@ import org.apache.struts.config.ActionConfig;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.config.ModuleConfig;
 
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
 
 public class LimsActionServlet extends ActionServlet {
 

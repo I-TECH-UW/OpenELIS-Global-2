@@ -14,7 +14,7 @@
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package us.mn.state.health.lims.common.util;
+package org.openelisglobal.common.util;
 
 import java.sql.Timestamp;
 
@@ -26,12 +26,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.hibernate.HibernateException;
 
-import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.patient.util.PatientUtil;
+import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.patient.util.PatientUtil;
 
 public class DeletePatientTestDataAction extends BaseAction {
 

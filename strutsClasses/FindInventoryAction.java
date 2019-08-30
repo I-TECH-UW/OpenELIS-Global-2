@@ -14,7 +14,7 @@
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package us.mn.state.health.lims.inventory.action;
+package org.openelisglobal.inventory.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +28,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.valueholder.Organization;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.organization.dao.OrganizationDAO;
+import org.openelisglobal.organization.daoimpl.OrganizationDAOImpl;
+import org.openelisglobal.organization.valueholder.Organization;
 
 
 

@@ -15,7 +15,7 @@
 * 
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.systemuser.action;
+package org.openelisglobal.systemuser.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,16 +27,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
-import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.daoimpl.LoginDAOImpl;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 
 /**
  * @author diane benz

@@ -6,6 +6,8 @@
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="1">select count(*) from clinlims.menu where element_id = 'menu_reports_export_specific';
     		</sqlCheck>
+      <sqlCheck expectedResult="0">select count(*) from clinlims.menu where element_id = 'menu_reports_export_valid';
+    		</sqlCheck>
     </preConditions>
     <comment>Insert in clinlims new CSV Export menu reports elements</comment>
     <sql>

@@ -1,18 +1,18 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="spring.mine.internationalization.MessageUtil,
+         import="org.openelisglobal.internationalization.MessageUtil,
          		java.util.List,
-         		us.mn.state.health.lims.common.action.IActionConstants,
-         		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.common.util.SystemConfiguration,
-         		spring.service.typeoftestresult.TypeOfTestResultServiceImpl" %>
+         		org.openelisglobal.common.action.IActionConstants,
+         		org.openelisglobal.common.util.IdValuePair,
+         		org.openelisglobal.common.util.Versioning,
+         		org.openelisglobal.common.util.SystemConfiguration,
+         		org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--
@@ -1022,19 +1022,19 @@ td {
     <div id="guide" style="display: none">
         <span class="requiredlabel">*</span> <spring:message code="label.required.field" /><br/><br/>
         <span class="step1">
-            <spring:message code="configuration.test.add.guide.test" />
+            <spring:message htmlEscape="false" code="configuration.test.add.guide.test" />
         </span>
         <span class="step2" id="step2Guide" style="display: none">
-           <spring:message code="configuration.test.add.guide.sample.type" />
+           <spring:message htmlEscape="false"  code="configuration.test.add.guide.sample.type" />
         </span>
         <span class="dictionarySelect" style="display: none" >
-           <spring:message code="configuration.test.add.guide.select.list" />
+           <spring:message htmlEscape="false"  code="configuration.test.add.guide.select.list" />
         </span>
         <span class="resultLimits" style="display: none;">
-            <spring:message code="configuration.test.add.guide.result.limits" />
+            <spring:message htmlEscape="false"  code="configuration.test.add.guide.result.limits" />
         </span>
         <span class="confirmShow" style="display: none">
-            <spring:message code="configuration.test.add.guide.verify" />
+            <spring:message htmlEscape="false"  code="configuration.test.add.guide.verify" />
         </span>
         <br/>
         <hr/>

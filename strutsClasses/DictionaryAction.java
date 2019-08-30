@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.dictionary.action;
+package org.openelisglobal.dictionary.action;
 
 import java.util.List;
 
@@ -26,12 +26,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.dictionarycategory.dao.DictionaryCategoryDAO;
-import us.mn.state.health.lims.dictionarycategory.daoimpl.DictionaryCategoryDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.dao.DictionaryCategoryDAO;
+import org.openelisglobal.dictionarycategory.daoimpl.DictionaryCategoryDAOImpl;
 
 /**
  * @author diane benz

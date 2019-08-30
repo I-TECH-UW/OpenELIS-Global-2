@@ -14,7 +14,7 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
 
-package us.mn.state.health.lims.test.action;
+package org.openelisglobal.test.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +33,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.test.valueholder.Test;
+import org.openelisglobal.analysis.dao.AnalysisDAO;
+import org.openelisglobal.analysis.daoimpl.AnalysisDAOImpl;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.AnalysisService;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.test.valueholder.Test;
 
 
 public class BatchTestReassignmentUpdateAction extends BaseAction {

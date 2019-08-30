@@ -1,21 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.formfields.FormFields.Field,
-                 us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-                 us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-                 us.mn.state.health.lims.common.services.PhoneNumberService,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties,
-                 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-                 spring.mine.internationalization.MessageUtil,
-                 us.mn.state.health.lims.common.util.IdValuePair,
-                 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.common.util.DateUtil,
-                 us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.formfields.FormFields" %>
+         import="org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+                 org.openelisglobal.common.services.PhoneNumberService,
+                 org.openelisglobal.common.util.ConfigurationProperties,
+                 org.openelisglobal.common.util.ConfigurationProperties.Property,
+                 org.openelisglobal.internationalization.MessageUtil,
+                 org.openelisglobal.common.util.IdValuePair,
+                 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.common.util.DateUtil,
+                 org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.formfields.FormFields" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
@@ -184,6 +184,7 @@
 
 <form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterId" />
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
+<form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
 <div id=orderDisplay <%= acceptExternalOrders? "style='display:none'" : ""  %> >
 <table style="width:100%">
@@ -496,11 +497,7 @@
     <td>
         <form:select path="sampleOrderItems.paymentOptionSelection" onchange="setOrderModified();" >
             <option value=''></option>
-            <c:forEach var="optionValue" items="${form.sampleOrderItems.paymentOptions}">
-                <option value='${optionValue.id}'<%--  <%=optionValue.getId().equals(sampleOrderItem.getPaymentOptionSelection() ) ? "selected='selected'" : ""%> --%>>
-                    ${optionValue.value}
-                </option>
-            </c:forEach>
+            <form:options items="${form.sampleOrderItems.paymentOptions}" itemLabel="value" itemValue="id"/>
         </form:select>
     </td>
 </tr>
@@ -528,11 +525,7 @@
                      onchange="setOrderModified(); testLocationCodeChanged( this )"
                      id="testLocationCodeId">
             <option value=''></option>
-            <c:forEach var="optionValue" items="${form.sampleOrderItems.testLocationCodeList}">                           
-                <option value='${optionValue.id}' <%-- <%=optionValue.getId().equals(sampleOrderItem.getTestLocationCode() ) ? "selected='selected'" : ""%> --%> >
-                    ${optionValue.value}
-                </option>
-            </c:forEach>
+            <form:options items="${form.sampleOrderItems.testLocationCodeList}" itemLabel="value" itemValue="id"/>
         </form:select>
         &nbsp;
         <form:input

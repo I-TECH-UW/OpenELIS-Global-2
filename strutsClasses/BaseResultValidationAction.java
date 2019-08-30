@@ -16,12 +16,12 @@
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 *                 I-TECH, University of Washington, Seattle WA.
 */
-package us.mn.state.health.lims.resultvalidation.action;
+package org.openelisglobal.resultvalidation.action;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.StringUtil;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.StringUtil;
 
 
 public abstract class BaseResultValidationAction extends BaseAction {

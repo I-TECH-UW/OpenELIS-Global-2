@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
 <%@ page import="java.util.List,
-                us.mn.state.health.lims.common.action.IActionConstants,
-				us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-			    us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-                us.mn.state.health.lims.common.util.Versioning,
-				spring.mine.internationalization.MessageUtil,
+                org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+			    org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+                org.openelisglobal.common.util.Versioning,
+				org.openelisglobal.internationalization.MessageUtil,
 				org.owasp.encoder.Encode" %>
 
 
@@ -13,7 +13,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
@@ -49,7 +49,7 @@ pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 var pageSearch; //assigned in post load function
 
 var pagingSearch = new Object();
-<c:forEach items="${pagingSearch}" var="paging">
+<c:forEach items="${pagingSearch}" var="paging" >
 pagingSearch['${paging.id}'] = '${paging.value}';
 </c:forEach>
 

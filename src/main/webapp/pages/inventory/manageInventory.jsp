@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				us.mn.state.health.lims.inventory.form.InventoryKitItem,
-				us.mn.state.health.lims.common.util.DateUtil,
-				us.mn.state.health.lims.common.util.IdValuePair,
-				spring.mine.internationalization.MessageUtil,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.inventory.form.InventoryKitItem,
+				org.openelisglobal.common.util.DateUtil,
+				org.openelisglobal.common.util.IdValuePair,
+				org.openelisglobal.internationalization.MessageUtil,
 				java.util.List" %>
 
 
@@ -11,7 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 

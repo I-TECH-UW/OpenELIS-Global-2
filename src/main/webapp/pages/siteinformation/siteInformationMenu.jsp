@@ -1,15 +1,15 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.localization.valueholder.Localization,
-			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.localization.valueholder.Localization,
+			org.openelisglobal.siteinformation.valueholder.SiteInformation,
 			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
  
@@ -39,9 +39,9 @@
    	  	 	<td class="textcontent">
 	   	  	 <spring:message code="${site.descriptionKey}"/>
 	   	    </td>
+	   	    <td class='textcontent'>
 	   	    <c:choose>
 	   	    <c:when test="${site.valueType == 'logoUpload'}">
-	   		<td class="textcontent">
 	   			<c:choose>
 	   			<c:when test="${site.name == 'headerLeftImage'}">
                 <img src="./images/leftLabLogo.jpg?ver=<%= Math.random() %>"  
@@ -53,16 +53,16 @@
 	   		         width="42"  />
                 </c:otherwise>
                 </c:choose>
-	   		         
-	   		</td>
 	   		</c:when><c:when test="${site.tag == 'localization'}">
-	   			<td class='textcontent'> <c:out value="${site.englishValue}"/>/<c:out value="${site.frenchValue}"/> </td>
+	   			<c:forEach items="${site.localization.localesAndValuesOfLocalesWithValues}" var="localizationValue">
+	   				<c:out value="${localizationValue}"/>
+	   				<br>
+	   			</c:forEach>
             </c:when><c:otherwise>
-	   		<td class="textcontent">
 	   	  		<c:out value="${site.value}"/>
-	   		</td>
 	   		</c:otherwise>
 	   		</c:choose>
+	   		</td>
      	</tr>
 	</c:forEach>
 	</form:form>

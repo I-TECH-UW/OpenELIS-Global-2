@@ -13,7 +13,7 @@
  *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  */
-package us.mn.state.health.lims.resultlimits.action;
+package org.openelisglobal.resultlimits.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,21 +25,21 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
-import us.mn.state.health.lims.resultlimits.form.ResultLimitsLink;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
-import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
+import org.openelisglobal.resultlimits.daoimpl.ResultLimitDAOImpl;
+import org.openelisglobal.resultlimits.form.ResultLimitsLink;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.test.dao.TestDAO;
+import org.openelisglobal.test.daoimpl.TestDAOImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.unitofmeasure.dao.UnitOfMeasureDAO;
+import org.openelisglobal.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
+import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class ResultLimitsUpdateAction extends BaseAction {
 

@@ -1,30 +1,30 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="java.util.List,
-			us.mn.state.health.lims.common.action.IActionConstants,
+			org.openelisglobal.common.action.IActionConstants,
 			java.util.ArrayList,
 			java.text.DecimalFormat,
 			org.apache.commons.validator.GenericValidator,
-			us.mn.state.health.lims.inventory.form.InventoryKitItem,
-			us.mn.state.health.lims.test.beanItems.TestResultItem,
-			us.mn.state.health.lims.common.util.IdValuePair,
-			us.mn.state.health.lims.common.formfields.FormFields,
-			us.mn.state.health.lims.common.formfields.FormFields.Field,
-			us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
-			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-			us.mn.state.health.lims.common.util.ConfigurationProperties,
-			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			spring.mine.internationalization.MessageUtil,
-		    us.mn.state.health.lims.common.util.Versioning,
-		    us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException,
-		    us.mn.state.health.lims.common.util.DateUtil,
+			org.openelisglobal.inventory.form.InventoryKitItem,
+			org.openelisglobal.test.beanItems.TestResultItem,
+			org.openelisglobal.common.util.IdValuePair,
+			org.openelisglobal.common.formfields.FormFields,
+			org.openelisglobal.common.formfields.FormFields.Field,
+			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			org.openelisglobal.common.util.ConfigurationProperties,
+			org.openelisglobal.common.util.ConfigurationProperties.Property,
+			org.openelisglobal.internationalization.MessageUtil,
+		    org.openelisglobal.common.util.Versioning,
+		    org.openelisglobal.common.exception.LIMSInvalidConfigurationException,
+		    org.openelisglobal.common.util.DateUtil,
 		    org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
@@ -90,6 +90,7 @@
 	useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
 	failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
 	noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
+	pageContext.setAttribute("noteRequired", noteRequired);
 	autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 
 %>
@@ -760,6 +761,8 @@ function setField(id, value) {
 		<!-- result cell -->
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
+				<form:hidden path="testResult[${iter.index}].lowerNormalRange"/>
+				<form:hidden path="testResult[${iter.index}].upperNormalRange"/>
 			    <form:input path="testResult[${iter.index}].resultValue" 
 			           size="6" 
 			           id="results_${iter.index}"
@@ -946,7 +949,7 @@ function setField(id, value) {
                <form:select path="testResult[${iter.index}].rejectReasonId"
                     id="rejectReasonId_${iter.index}"
                     disabled='${testResult.readOnly}'>
-                    <form:options items="${form.rejectReasons}" itemValue="value" itemLabel="id"/>
+                    <form:options items="${form.rejectReasons}" itemValue="id" itemLabel="value"/>
             </form:select><br/>
        </td>
     </tr>   

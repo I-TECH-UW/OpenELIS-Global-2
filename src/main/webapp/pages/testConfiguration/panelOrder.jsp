@@ -1,20 +1,20 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
-		         us.mn.state.health.lims.common.util.IdValuePair,
-		         spring.mine.internationalization.MessageUtil,
-		         us.mn.state.health.lims.common.util.Versioning,
+         import="org.openelisglobal.common.action.IActionConstants,
+		         org.openelisglobal.common.util.IdValuePair,
+		         org.openelisglobal.internationalization.MessageUtil,
+		         org.openelisglobal.common.util.Versioning,
 		         java.util.List,
-		         us.mn.state.health.lims.panel.valueholder.Panel,
-		         us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample,
-		         us.mn.state.health.lims.testconfiguration.action.SampleTypePanel" %>
+		         org.openelisglobal.panel.valueholder.Panel,
+		         org.openelisglobal.typeofsample.valueholder.TypeOfSample,
+		         org.openelisglobal.testconfiguration.action.SampleTypePanel" %>
 
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License

@@ -13,7 +13,7 @@
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.provider.reports;
+package org.openelisglobal.common.provider.reports;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,58 +43,58 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.util.JRLoader;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.exception.LIMSResultsReportHasNoDataException;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
-import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
-import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
-import us.mn.state.health.lims.provider.valueholder.Provider;
-import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportAnalyteResult;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportAnalyteResultComparator;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportLabProject;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportSample;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportSampleComparator;
-import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportTest;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
-import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
-import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
-import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
-import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
-import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.analysis.dao.AnalysisDAO;
+import org.openelisglobal.analysis.daoimpl.AnalysisDAOImpl;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSResultsReportHasNoDataException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.TestService;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.dao.PatientDAO;
+import org.openelisglobal.patient.daoimpl.PatientDAOImpl;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.dao.PersonDAO;
+import org.openelisglobal.person.daoimpl.PersonDAOImpl;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.dao.ProviderDAO;
+import org.openelisglobal.provider.daoimpl.ProviderDAOImpl;
+import org.openelisglobal.provider.valueholder.Provider;
+import org.openelisglobal.reports.valueholder.common.JRHibernateDataSource;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportAnalyteResult;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportAnalyteResultComparator;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportLabProject;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportSample;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportSampleComparator;
+import org.openelisglobal.reports.valueholder.resultsreport.ResultsReportTest;
+import org.openelisglobal.result.dao.ResultDAO;
+import org.openelisglobal.result.daoimpl.ResultDAOImpl;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.daoimpl.SampleDAOImpl;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.dao.SampleHumanDAO;
+import org.openelisglobal.samplehuman.daoimpl.SampleHumanDAOImpl;
+import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.openelisglobal.sampleitem.dao.SampleItemDAO;
+import org.openelisglobal.sampleitem.daoimpl.SampleItemDAOImpl;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.sampleorganization.dao.SampleOrganizationDAO;
+import org.openelisglobal.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
+import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.sampleproject.valueholder.SampleProject;
+import org.openelisglobal.sourceofsample.valueholder.SourceOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 /**
  * @author benzd1 bugzilla 2264 bugzilla 1856 move pending tests to top section
@@ -123,7 +123,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see us.mn.state.health.lims.common.provider.reports.BaseReportsProvider#
+	 * @see org.openelisglobal.common.provider.reports.BaseReportsProvider#
 	 * processRequest(java.util.Map, javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */

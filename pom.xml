@@ -270,6 +270,7 @@
 					<artifactId>bcprov-jdk15on</artifactId>
 				</exclusion>
 			</exclusions>
+
 		</dependency>
 		<dependency>
 			<groupId>org.mindrot</groupId>

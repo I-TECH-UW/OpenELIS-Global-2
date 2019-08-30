@@ -16,7 +16,7 @@
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  * Contributor(s): ITECH, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.common.action;
+package org.openelisglobal.common.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +36,18 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.provider.validation.AccessionNumberValidationProvider;
-import us.mn.state.health.lims.common.security.PageIdentityUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
-import us.mn.state.health.lims.common.util.validator.ActionError;
-import us.mn.state.health.lims.common.valueholder.BaseTestComparator;
-import us.mn.state.health.lims.login.dao.userModuleService;
-import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidationProvider;
+import org.openelisglobal.common.security.PageIdentityUtil;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.resources.ResourceLocator;
+import org.openelisglobal.common.util.validator.ActionError;
+import org.openelisglobal.common.valueholder.BaseTestComparator;
+import org.openelisglobal.login.dao.userModuleService;
+import org.openelisglobal.login.daoimpl.userModuleServiceImpl;
+import org.openelisglobal.login.valueholder.UserSessionData;
 
 public abstract class BaseAction extends Action implements IActionConstants {
 	private static final boolean USE_PARAMETERS = true;

@@ -14,7 +14,7 @@
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 
-package us.mn.state.health.lims.taglib;
+package org.openelisglobal.taglib;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,9 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
 
 /**
  * @author diane benz

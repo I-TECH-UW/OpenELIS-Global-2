@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.systemuser.action;
+package org.openelisglobal.systemuser.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -36,23 +36,23 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.userModuleService;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
-import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.role.action.bean.DisplayRole;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
-import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
-import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.login.dao.LoginDAO;
+import org.openelisglobal.login.dao.userModuleService;
+import org.openelisglobal.login.daoimpl.LoginDAOImpl;
+import org.openelisglobal.login.daoimpl.userModuleServiceImpl;
+import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.role.action.bean.DisplayRole;
+import org.openelisglobal.role.dao.RoleDAO;
+import org.openelisglobal.role.daoimpl.RoleDAOImpl;
+import org.openelisglobal.role.valueholder.Role;
+import org.openelisglobal.systemuser.dao.SystemUserDAO;
+import org.openelisglobal.systemuser.daoimpl.SystemUserDAOImpl;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.daoimpl.UserRoleDAOImpl;
 
 @SuppressWarnings("unchecked")
 public class UnifiedSystemUserAction extends BaseAction {

@@ -14,7 +14,7 @@
 
 	<tag>
 		<name>text</name>
-		<tagclass>us.mn.state.health.lims.taglib.TextTag</tagclass>
+		<tagclass>org.openelisglobal.taglib.TextTag</tagclass>
 		<attribute>
 			<name>accesskey</name>
 			<required>false</required>
@@ -175,7 +175,7 @@
 	
 	<tag>
 		<name>link</name>
-		<tagclass>us.mn.state.health.lims.taglib.LinkTag</tagclass>
+		<tagclass>org.openelisglobal.taglib.LinkTag</tagclass>
 		<attribute>
 			<name>accesskey</name>
 			<required>false</required>
@@ -349,7 +349,7 @@
 	</tag>
  	<tag>
 		<name>optionsCollection</name>
-		<tagclass>us.mn.state.health.lims.taglib.OptionsCollectionTag</tagclass>
+		<tagclass>org.openelisglobal.taglib.OptionsCollectionTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
 			<name>filter</name>
@@ -424,7 +424,7 @@
 	</tag>
 	<tag>
 <name>button</name>
-<tagclass>us.mn.state.health.lims.taglib.ButtonTag</tagclass>
+<tagclass>org.openelisglobal.taglib.ButtonTag</tagclass>
 <attribute>
 <name>accesskey</name>
 <required>false</required>
@@ -569,7 +569,7 @@
 
 <tag>
 <name>write</name>
-<tagclass>us.mn.state.health.lims.taglib.WriteTag</tagclass>
+<tagclass>org.openelisglobal.taglib.WriteTag</tagclass>
 <bodycontent>empty</bodycontent>
 <attribute>
 <name>bundle</name>
@@ -625,7 +625,7 @@
 
 <tag>
 <name>javascript</name>
-<tagclass>us.mn.state.health.lims.taglib.JavascriptValidatorTag</tagclass>
+<tagclass>org.openelisglobal.taglib.JavascriptValidatorTag</tagclass>
 <bodycontent>empty</bodycontent>
 <attribute>
 <name>cdata</name>
@@ -682,7 +682,7 @@
 
 <tag>
 <name>select</name>
-<tagclass>us.mn.state.health.lims.taglib.SelectTag</tagclass>
+<tagclass>org.openelisglobal.taglib.SelectTag</tagclass>
 <bodycontent>JSP</bodycontent>
 <attribute>
 <name>alt</name>
@@ -858,7 +858,7 @@
 
 <tag>
 <name>textarea</name>
-<tagclass>us.mn.state.health.lims.taglib.TextareaTag</tagclass>
+<tagclass>org.openelisglobal.taglib.TextareaTag</tagclass>
 <attribute>
 <name>accesskey</name>
 <required>false</required>
@@ -1044,7 +1044,7 @@
 <!--bugzilla 1844-->
 <tag>
 <name>sortableOption</name>
-<tagclass>us.mn.state.health.lims.taglib.SortableOptionTag</tagclass>
+<tagclass>org.openelisglobal.taglib.SortableOptionTag</tagclass>
 <attribute>
 <name>bundle</name>
 <required>false</required>
@@ -1110,7 +1110,7 @@
 <!--bugzilla 1844-->
 <tag>
 <name>sortableOptionsCollection</name>
-<tagclass>us.mn.state.health.lims.taglib.SortableOptionsCollectionTag</tagclass>
+<tagclass>org.openelisglobal.taglib.SortableOptionsCollectionTag</tagclass>
 <bodycontent>empty</bodycontent>
      <attribute>
          <name>filter</name>
@@ -1208,7 +1208,7 @@
 <!--bugzilla 2569-->
 <tag>
 <name>writeHtmlFragment</name>
-<tagclass>us.mn.state.health.lims.taglib.WriteHtmlFragmentTag</tagclass>
+<tagclass>org.openelisglobal.taglib.WriteHtmlFragmentTag</tagclass>
 <bodycontent>empty</bodycontent>
 <attribute>
 <name>bundle</name>
@@ -1264,7 +1264,7 @@
 
 <tag>
 <name>option</name>
-<tagclass>us.mn.state.health.lims.taglib.OptionTag</tagclass>
+<tagclass>org.openelisglobal.taglib.OptionTag</tagclass>
 <attribute>
 <name>bundle</name>
 <required>false</required>

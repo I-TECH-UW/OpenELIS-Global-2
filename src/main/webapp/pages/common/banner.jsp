@@ -3,18 +3,18 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
-<%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				 us.mn.state.health.lims.common.util.ConfigurationProperties,
-				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-				 spring.mine.internationalization.MessageUtil,
-				 us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.login.valueholder.UserSessionData,
-				 us.mn.state.health.lims.menu.util.MenuUtil,
-				 spring.mine.common.form.BaseForm,
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+				 org.openelisglobal.common.util.ConfigurationProperties,
+				 org.openelisglobal.common.util.ConfigurationProperties.Property,
+				 org.openelisglobal.internationalization.MessageUtil,
+				 org.openelisglobal.common.util.Versioning,
+                 org.openelisglobal.login.valueholder.UserSessionData,
+				 org.openelisglobal.menu.util.MenuUtil,
+				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
 
 <%!String path = "";
@@ -35,13 +35,17 @@
 
 <script>
 function /*void*/ setLanguage( language ){
-	var url = window.location.href;
-	if (url.indexOf('?') > -1){
-		   	url += "&lang=" + language;
-		} else {
-			url += "?lang=" + language;
-		}
-		window.location.href = url;
+	//this weirdness is because we want the language to which we are changing, not the one we are in
+	if( language.includes('en') ){
+	    update = confirm("Changing the language will affect all logged in users ");
+	} else if( language.includes('fr') ){
+		update = confirm( "Modification de la langue affectera tous les utilisateurs enregistrés");
+	}
+	if( update ){
+		var url = new URL(window.location.href);
+		url.searchParams.set('lang', language);
+		window.location.href = url.toString();
+	}
 }
 
 

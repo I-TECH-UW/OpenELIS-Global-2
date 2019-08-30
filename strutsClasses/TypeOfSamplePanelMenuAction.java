@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.typeofsample.action;
+package org.openelisglobal.typeofsample.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +24,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
-import us.mn.state.health.lims.typeofsample.formbean.TypeOfSampleLink;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.panel.dao.PanelDAO;
+import org.openelisglobal.panel.daoimpl.PanelDAOImpl;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
+import org.openelisglobal.typeofsample.dao.TypeOfSamplePanelDAO;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSampleDAOImpl;
+import org.openelisglobal.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
+import org.openelisglobal.typeofsample.formbean.TypeOfSampleLink;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 
 public class TypeOfSamplePanelMenuAction extends BaseMenuAction {

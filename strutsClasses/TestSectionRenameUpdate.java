@@ -13,7 +13,7 @@
  *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  */
-package us.mn.state.health.lims.testconfiguration.action;
+package org.openelisglobal.testconfiguration.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,15 +24,15 @@ import org.apache.struts.action.ActionMapping;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.action.BaseActionForm;
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
-import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
-import us.mn.state.health.lims.test.valueholder.TestSection;
+import org.openelisglobal.common.action.BaseAction;
+import org.openelisglobal.common.action.BaseActionForm;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.hibernate.HibernateUtil;
+import org.openelisglobal.localization.daoimpl.LocalizationDAOImpl;
+import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.test.dao.TestSectionDAO;
+import org.openelisglobal.test.daoimpl.TestSectionDAOImpl;
+import org.openelisglobal.test.valueholder.TestSection;
 
 public class TestSectionRenameUpdate extends BaseAction{
 

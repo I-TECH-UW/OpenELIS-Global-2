@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package us.mn.state.health.lims.common.provider.reports;
+package org.openelisglobal.common.provider.reports;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,10 +41,10 @@ import org.apache.struts.action.ActionMessages;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
-import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.ActionError;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.validator.ActionError;
 
 /**
  * @author benzd1
@@ -53,7 +53,7 @@ import us.mn.state.health.lims.common.util.validator.ActionError;
 public class MycologyWorksheetProvider extends BaseReportsProvider {
 
 	/* (non-Javadoc)
-	 * @see us.mn.state.health.lims.common.provider.reports.BaseReportsProvider#processRequest(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.openelisglobal.common.provider.reports.BaseReportsProvider#processRequest(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      * bugzilla 2274: added boolean successful
 	 */
 	public boolean processRequest(Map parameters, HttpServletRequest request,

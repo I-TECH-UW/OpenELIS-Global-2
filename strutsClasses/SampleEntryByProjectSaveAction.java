@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.sample.action;
+package org.openelisglobal.sample.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,15 +25,15 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
-import us.mn.state.health.lims.patient.saving.Accessioner;
-import us.mn.state.health.lims.patient.saving.SampleEntry;
-import us.mn.state.health.lims.patient.saving.SampleEntryAfterPatientEntry;
-import us.mn.state.health.lims.patient.saving.SampleSecondEntry;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.patient.saving.Accessioner;
+import org.openelisglobal.patient.saving.SampleEntry;
+import org.openelisglobal.patient.saving.SampleEntryAfterPatientEntry;
+import org.openelisglobal.patient.saving.SampleSecondEntry;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 
 public class SampleEntryByProjectSaveAction extends BaseSampleEntryAction {

@@ -1,11 +1,11 @@
-<%@ page import="us.mn.state.health.lims.common.util.ConfigurationProperties,
-				us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-				us.mn.state.health.lims.common.util.Versioning" %>
+<%@ page import="org.openelisglobal.common.util.ConfigurationProperties,
+				org.openelisglobal.common.util.ConfigurationProperties.Property,
+				org.openelisglobal.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>

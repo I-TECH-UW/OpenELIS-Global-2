@@ -15,7 +15,7 @@
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
-package us.mn.state.health.lims.result.action;
+package org.openelisglobal.result.action;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,22 +32,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 
-import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.inventory.action.InventoryUtility;
-import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
-import us.mn.state.health.lims.result.action.util.ResultsPaging;
-import us.mn.state.health.lims.statusofsample.util.StatusRules;
-import us.mn.state.health.lims.test.beanItems.TestResultItem;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
-import us.mn.state.health.lims.test.valueholder.TestSection;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.inventory.action.InventoryUtility;
+import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.statusofsample.util.StatusRules;
+import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.dao.TestSectionDAO;
+import org.openelisglobal.test.daoimpl.TestSectionDAOImpl;
+import org.openelisglobal.test.valueholder.TestSection;
 
 public class ResultsLogbookEntryAction extends ResultsLogbookBaseAction {
 

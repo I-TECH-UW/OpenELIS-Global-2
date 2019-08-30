@@ -1,4 +1,4 @@
-package us.mn.state.health.lims.externalconnections.action;
+package org.openelisglobal.externalconnections.action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import us.mn.state.health.lims.common.action.BaseMenuAction;
-import us.mn.state.health.lims.common.formfields.AdminFormFields;
-import us.mn.state.health.lims.common.formfields.AdminFormFields.Field;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.display.URLForDisplay;
+import org.openelisglobal.common.action.BaseMenuAction;
+import org.openelisglobal.common.formfields.AdminFormFields;
+import org.openelisglobal.common.formfields.AdminFormFields.Field;
+import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.display.URLForDisplay;
 
 public class ExternalConnectionsAction extends BaseMenuAction {
 

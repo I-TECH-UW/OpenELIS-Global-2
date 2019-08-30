@@ -1,15 +1,15 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.formfields.FormFields,
-			us.mn.state.health.lims.common.formfields.FormFields.Field,
-			spring.mine.internationalization.MessageUtil" %>
+	import="org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.common.formfields.FormFields,
+			org.openelisglobal.common.formfields.FormFields.Field,
+			org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
@@ -110,17 +110,9 @@ function validateForm(form) {
 	   			<span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 
 	   			<input id="selectedOrgId" name="selectedOrgId" type="hidden" size="30" />
-						 <%--html:select name="${form.formName}" property="selectedOrgId">
-							   	   <app:optionsCollection
-										name="${form.formName}"
-							    		property="parentOrgs"
-										label="organizationName"
-										value="id"
-							        	filterProperty="isActive"
-							        	filterValue="N"
-							 			allowEdits="true"
-							/>
-                         </html:select--%>
+<%-- 	   			<form:select path="selectedOrgId"> --%>
+<%-- 	   				<form:options items="${form.activeParentOrgs}" itemLabel="organizationName" itemValue="id"/> --%>
+<%-- 	   			</form:select> --%>
 							<%--html:text id="organizationName" cssClass="form-autocomplete" size="30" name="${form.formName}" property="organizationName" /> &nbsp;&nbsp;&nbsp;&nbsp;Org ID: <input id="selectedOrgId" name="selectedOrgId" type="text" size="30" /--%>
 
 			</td>
