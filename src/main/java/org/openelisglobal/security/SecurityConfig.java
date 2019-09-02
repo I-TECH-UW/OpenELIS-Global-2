@@ -3,6 +3,7 @@ package org.openelisglobal.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,9 +18,8 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Autowired
     UserDetailsService userDetailsService;
@@ -30,8 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/images/**", "/documentation/**", "/scripts/**",
             "/jsp/**" };
-    public static final String[] SERVLET_PAGES = { "/importAnalyzer/**", "/images/**", "/documentation/**",
-            "/scripts/**", "/jsp/**" };
+    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer/**" };
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
             + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
@@ -43,44 +42,64 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        CharacterEncodingFilter filter = new CharacterEncodingFilter();
-        filter.setEncoding("UTF-8");
-        filter.setForceEncoding(true);
-        http.addFilterBefore(filter, CsrfFilter.class);
+    @Configuration
+    @Order(1)
+    public static class httpBasicServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
 
-        http.authorizeRequests()
-                // allow all users to access these pages no matter authentication status
-                .antMatchers(OPEN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
-                // ensure all other requests are authenticated
-                .anyRequest().authenticated().and()
-                // setup login redirection and logic
-                .formLogin().loginPage("/LoginPage.do").permitAll().loginProcessingUrl("/ValidateLogin.do")
-                .usernameParameter("loginName").passwordParameter("password")
-                .failureHandler(customAuthenticationFailureHandler())
-                .successHandler(customAuthenticationSuccessHandler()).and()
-                // setup logout
-                .logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do").invalidateHttpSession(true).and()
-                .sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().migrateSession().and().csrf()
-                .ignoringAntMatchers(SERVLET_PAGES).and()
-                // add security headers
-                .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+            http.requestMatchers().antMatchers(HTTP_BASIC_SERVLET_PAGES).and().authorizeRequests().anyRequest()
+                    .authenticated().and().httpBasic().and().csrf().disable();
+        }
+
+    }
+
+    @Configuration
+    public static class defaultSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+
+            http.authorizeRequests()
+                    // allow all users to access these pages no matter authentication status
+                    .antMatchers(OPEN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
+                    // ensure all other requests are authenticated
+                    .anyRequest().authenticated().and()
+                    // setup login redirection and logic
+                    .formLogin().loginPage("/LoginPage.do").permitAll().loginProcessingUrl("/ValidateLogin.do")
+                    .usernameParameter("loginName").passwordParameter("password")
+                    .failureHandler(customAuthenticationFailureHandler())
+                    .successHandler(customAuthenticationSuccessHandler()).and()
+                    // setup logout
+                    .logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do").invalidateHttpSession(true)
+                    .and().sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().migrateSession()
+                    .and().csrf().and()
+                    // add security headers
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+        }
+
+        @Bean
+        public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+            return new CustomAuthenticationFailureHandler();
+        }
+
+        @Bean
+        public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+            return new CustomAuthenticationSuccessHandler();
+        }
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
-        return new CustomAuthenticationFailureHandler();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
     }
 
     @Bean
