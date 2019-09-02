@@ -112,7 +112,7 @@ public abstract class BaseController implements IActionConstants {
      */
     protected String getMessageForKey(String messageKey) throws Exception {
         String message = MessageUtil.getContextualMessage(messageKey);
-        return message == null ? getActualMessage(messageKey) : message;
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
     }
 
     /**
@@ -126,7 +126,8 @@ public abstract class BaseController implements IActionConstants {
         if (null == messageKey) {
             return null;
         }
-        return MessageUtil.getMessage(messageKey);
+        String message = MessageUtil.getMessage(messageKey);
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
         // return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
         // messageKey);
     }
@@ -135,7 +136,8 @@ public abstract class BaseController implements IActionConstants {
         if (null == messageKey) {
             return null;
         }
-        return MessageUtil.getMessage(messageKey);
+        String message = MessageUtil.getMessage(messageKey);
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
         // return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
         // messageKey, arg0);
     }
