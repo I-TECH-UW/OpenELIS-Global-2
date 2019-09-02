@@ -27,4 +27,5 @@ public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLa
     public BarcodeLabelInfo getDataByCode(String code) {
         return getMatch("code", code).orElse(null);
     }
+
 }

@@ -11,6 +11,7 @@ import org.openelisglobal.barcode.labeltype.BlankLabel;
 import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
+import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
@@ -57,6 +58,8 @@ public class BarcodeLabelMaker {
 
     // for audit trail when incrementing num printed
     private String sysUserId;
+
+    private BarcodeLabelInfoService barcodeLabelService = SpringContext.getBean(BarcodeLabelInfoService.class);
 
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
     static {
@@ -196,6 +199,7 @@ public class BarcodeLabelMaker {
                         label.incrementNumPrinted();
                     }
                 }
+                barcodeLabelService.save(label.getLabelInfo());
             }
             document.close();
             writer.close();
