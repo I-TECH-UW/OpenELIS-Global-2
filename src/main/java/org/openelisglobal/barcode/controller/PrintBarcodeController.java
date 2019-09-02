@@ -24,7 +24,6 @@ import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.service.PatientService;
@@ -88,13 +87,13 @@ public class PrintBarcodeController extends BaseController {
         Map<String, Object> displayObjects = new HashMap<>();
         addPatientSearch(displayObjects);
 
-        if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             return findForward(FWD_SUCCESS, displayObjects, form);
         }
 
         String accessionNumber = form.getAccessionNumber();
         Sample sample = getSample(accessionNumber);
-        if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
+        if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())) {
             List<SampleItem> sampleItemList = getSampleItems(sample);
             setPatientInfo(displayObjects, sample);
             List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
@@ -180,9 +179,8 @@ public class PrintBarcodeController extends BaseController {
     private void addCurrentTestsToList(SampleItem sampleItem, List<SampleEditItem> currentTestList,
             String accessionNumber, boolean allowedToCancelAll) {
 
-        TypeOfSample typeOfSample = new TypeOfSample();
-        typeOfSample.setId(sampleItem.getTypeOfSampleId());
-        typeOfSampleService.get(typeOfSample.getDescription());
+        TypeOfSample typeOfSample = typeOfSampleService.get(sampleItem.getTypeOfSampleId());
+
         List<Analysis> analysisList = analysisService.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
                 excludedAnalysisStatusList);
         List<SampleEditItem> analysisSampleItemList = new ArrayList<>();
@@ -243,8 +241,8 @@ public class PrintBarcodeController extends BaseController {
 
         @Override
         public int compare(SampleEditItem o1, SampleEditItem o2) {
-            if (GenericValidator.isBlankOrNull(o1.getSortOrder())
-                    || GenericValidator.isBlankOrNull(o2.getSortOrder())) {
+            if (org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder())
+                    || org.apache.commons.validator.GenericValidator.isBlankOrNull(o2.getSortOrder())) {
                 return o1.getTestName().compareTo(o2.getTestName());
             }
 
