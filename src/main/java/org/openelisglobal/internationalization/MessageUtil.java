@@ -120,4 +120,8 @@ public class MessageUtil {
     public static MessageSourceResourceBundle getMessageSourceAsResourceBundle() {
         return new MessageSourceResourceBundle(instance.messageSource, LocaleContextHolder.getLocale());
     }
+
+    public static boolean messageNotFound(String message, String key) {
+        return key.equals(message);
+    }
 }
