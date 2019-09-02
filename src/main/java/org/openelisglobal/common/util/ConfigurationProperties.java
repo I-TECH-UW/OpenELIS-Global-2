@@ -47,105 +47,98 @@ public abstract class ConfigurationProperties {
 
     // These should all be upper case. As you touch them change them
     public enum Property {
-        AmbiguousDateValue, // Are ambiguous dates allowed for DOB. i.e. patient knows age but not actuall
-                            // DOB
-        AmbiguousDateHolder, // What character should be used as a placeholder when displaying the date. i.e.
-                             // if 'X' then XX/XX/2000
-        ReferingLabParentOrg, // Should the parent organization of a lab be entered. i.e. The hospital in
-                              // which the lab is run
-        FormFieldSet, // internal only
-        PasswordRequirments, // Indicator for what the password complexity requirements are. Should be
-                             // standardized
-        StringContext, // Determines which equivalent string should be used. i.e. label for accession
-                       // number can be 'lab number' or 'accession number'
-        StatusRules, // Only used to separate RetroCI rules from others. May be obsolete
-        SiteCode, // Code referring to site
-        SiteName, // Name for site
-        AccessionFormat, // Format of accession number can be one of SITEYEARNUM, YEARNUM OR PROGRAMNUM
-                         // see AccessionNumberValidatorFactory
-        ReflexAction, // In combination with flags in reflex table determines actual action, should be
-                      // standardize
-        TrainingInstallation, // Flag to indicate if this is a training instance
-        UseExternalPatientInfo, // If true patient information will be searched for externally
-        PatientSearchURL, // URL of where external patient information will be searched
-        PatientSearchUserName, // User name for accesses to external patient search
-        PatientSearchPassword, // User password for accesses to external patient search
-        labDirectorName, // The name of the lab director
-        languageSwitch, // If true a user can switch between English and French (changes it for
-                        // everybody)
-        reportResults, // If true results will be reported electronically
-        resultReportingURL, // URL for electronic result reporting
-        malariaSurveillanceReport, // If true malaria surveillance will be reported electronically
-        malariaSurveillanceReportURL, // URL for malaria surveillance reporting
-        malariaCaseReport, // If true send malaria case reports
-        malariaCaseReportURL, // URL for malaria case reports
-        releaseNumber, // The release number
-        buildNumber, // Repository identifier
-        configurationName, // Identifies the configuration i.e. HaitiLNSP or CI IPCI
-        testUsageReportingURL, // URL for test summary reporting
-        testUsageReporting, // If true send test summary report electronically
-        roleRequiredForModifyResults, // If true a separate role is needed to modify results
-        notesRequiredForModifyResults, // If true a note is required when a result is modified
-        resultTechnicianName, // If true the technicians name is needed for results
-        allowResultRejection, // If true then a technician has the ability to reject an individual test and
-                              // select a reason for rejection
-        restrictFreeTextRefSiteEntry, // If true then a user cannot enter new referring sites during sample entry and
-                                      // must choose from list provided
-        autoFillTechNameBox, // If true a box will be provided to auto-fill technicians name for all results
-                             // on page
-        autoFillTechNameUser, // If true the technicians name will be auto-filled with the name of the logged
-                              // in user
-        AUTOFILL_COLLECTION_DATE, // If true the collection date will be auto-filled with current date
-        failedValidationMarker, // If true results that failed validation will have icon next to them
-        resultsResendTime, // How much time between trying to resend results that failed to reach their
-                           // destination
-        TRACK_PATIENT_PAYMENT, // If true then patient payment status can be entered
-        ALERT_FOR_INVALID_RESULTS, // If true then technician will get an alert for results outside of the valid
-                                   // range
-        DEFAULT_LANG_LOCALE, // Default language locale
-        DEFAULT_DATE_LOCALE, // Date local
-        CONDENSE_NFS_PANEL, // Flag used for RetroCI to condense NFS panel tests
-        PATIENT_DATA_ON_RESULTS_BY_ROLE, // If true patient data will show on results page only if user has correct
-                                         // permissions
-        USE_PAGE_NUMBERS_ON_REPORTS, // If true page numbers will be used on reports
-        QA_SORT_EVENT_LIST, // If true QA events will be sorted by name
-        ALWAYS_VALIDATE_RESULTS, // If true all results will be validated, otherwise just those outside of valid
-                                 // range and those flagged
-        ADDITIONAL_SITE_INFO, // Extra site info for report header
-        SUBJECT_ON_WORKPLAN, // If true the subject will be on the workplan
-        NEXT_VISIT_DATE_ON_WORKPLAN, // If true the next visit date will be on workplan
-        RESULTS_ON_WORKPLAN, // If true a space will be left for results on the workplan
-        ACCEPT_EXTERNAL_ORDERS, // If true EMR's can make electronic orders to lab
-        SIGNATURES_ON_NONCONFORMITY_REPORTS, // If true a space should be left for signatures on non-conformity reports
-        NONCONFORMITY_RECEPTION_AS_UNIT, // If true then reception will be an option for where a non-conformity was
-                                         // identified
-        NONCONFORMITY_SAMPLE_COLLECTION_AS_UNIT, // If true then sample collection will be an option for where a
-                                                 // non-conformity was identified
-        ACCESSION_NUMBER_PREFIX, // If SITEYEARNUM is the format then this is the prefix
-        NOTE_EXTERNAL_ONLY_FOR_VALIDATION, // If true then only validation notes will be on patient report
-        PHONE_FORMAT, // Format of phone number
-        VALIDATE_PHONE_FORMAT, // If true then entered phone numbers will be validated against format
-        ALLOW_DUPLICATE_SUBJECT_NUMBERS, // If true then duplicate subject numbers are allowed
-        VALIDATE_REJECTED_TESTS, // If true then if the technician rejects a test the next step is validation
-        TEST_NAME_AUGMENTED, // If true then in some places the test name will be suffixed with the sample
-                             // type
-        USE_BILLING_REFERENCE_NUMBER, // If true then the user can enter billing codes for latter reporting
-        BILLING_REFERENCE_NUMBER_LABEL, // The label being used for the billing reference number
-        ORDER_PROGRAM, // Should program be part of an order
-        BANNER_TEXT, // Text on Banner
-        CLOCK_24, // True for 24 hour clock, false for 12 hour clock
-        PATIENT_NATIONALITY, // True if patient nationality should be collected with patient information
-        PATIENT_ID_REQUIRED, // True if patient id is required for new patient
-        PATIENT_SUBJECT_NUMBER_REQUIRED, // True if patient subject number is required for new patient
-        QA_SAMPLE_ID_REQUIRED, // True if sample id required from referring lab
-        MAX_ORDER_PRINTED, // Max number of order labels that can be printed
-        MAX_SPECIMEN_PRINTED, // Max number of specimen labels that can be printed
-        MAX_ALIQUOT_PRINTED, // Max number of aliquots that can be printed
-        ORDER_BARCODE_HEIGHT, // Height of the order barcode
-        ORDER_BARCODE_WIDTH, // Width of the order barcode
-        SPECIMEN_BARCODE_HEIGHT, // Height of the specimen barcode
-        SPECIMEN_BARCODE_WIDTH, // Width of the specimen barcode
-        SPECIMEN_FIELD_DATE, SPECIMEN_FIELD_SEX, SPECIMEN_FIELD_TESTS
+        AmbiguousDateValue("date.ambiguous.date.value"),            //Are ambiguous dates allowed for DOB.  i.e. patient knows age but not actuall DOB
+        AmbiguousDateHolder("date.ambiguous.date.holder"),        //What character should be used as a placeholder when displaying the date.  i.e. if 'X' then XX/XX/2000
+        ReferingLabParentOrg("organization.reference.lab.parent"),       //Should the parent organization of a lab be entered.  i.e. The hospital in which the lab is run
+        FormFieldSet("setFieldForm"),               //internal only
+        PasswordRequirments("passwordRequirements"),        //Indicator for what the password complexity requirements are.  Should be standardized
+        StringContext("stringContext"),              //Determines which equivalent string should be used.  i.e. label for accession number can be 'lab number' or 'accession number'
+        StatusRules("statusRules"),                //Only used to separate RetroCI rules from others.  May be obsolete
+        SiteCode("siteNumber"),                   //Code referring to site
+        SiteName("SiteName"),                   //Name for site
+        AccessionFormat("acessionFormat"),            //Format of accession number can be one of SITEYEARNUM, YEARNUM OR PROGRAMNUM see AccessionNumberValidatorFactory
+        ReflexAction("reflexAction"),               //In combination with flags in reflex table determines actual action, should be standardize
+        TrainingInstallation("TrainingInstallation"),       //Flag to indicate if this is a training instance
+        UseExternalPatientInfo("useExternalPatientSource"),     //If true patient information will be searched for externally
+        PatientSearchURL("patientSearchURL"),           //URL of where external patient information will be searched
+        PatientSearchUserName("patientSearchLogOnUser"),      //User name for accesses to external patient search
+        PatientSearchPassword("PatientSearchPassword"),      //User password for accesses to external patient search
+        labDirectorName("lab director"),            //The name of the lab director
+        languageSwitch("allowLanguageChange"),             //If true a user can switch between English and French (changes it for everybody)
+        reportResults("resultReporting"),              //If true results will be reported electronically
+        resultReportingURL("resultReportingURL"),         //URL for electronic result reporting
+        malariaSurveillanceReport("malariaSurReport"),  //If true malaria surveillance will be reported electronically
+        malariaSurveillanceReportURL("malariaSurURL"),//URL for malaria surveillance reporting
+        malariaCaseReport("malariaCaseReport"),          //If true send malaria case reports
+        malariaCaseReportURL("malariaCaseURL"),       //URL for malaria case reports
+        releaseNumber("releaseNumber"),              //The release number
+        buildNumber("buildNumber"),                //Repository identifier
+        configurationName("configuration name"),          //Identifies the configuration i.e. HaitiLNSP or CI IPCI
+        testUsageReportingURL("testUsageAggregationUrl"),      //URL for test summary reporting
+        testUsageReporting("testUsageReporting"),         //If true send test summary report electronically
+        roleRequiredForModifyResults("modify results role"),//If true a separate role is needed to modify results
+        notesRequiredForModifyResults("modify results note required"),//If true a note is required when a result is modified
+        resultTechnicianName("ResultTechnicianName"),        //If true the technicians name is needed for results
+        allowResultRejection("allowResultRejection"),        //If true then a technician has the ability to reject an individual test and select a reason for rejection
+        restrictFreeTextRefSiteEntry("restrictFreeTextRefSiteEntry"), //If true then a user cannot enter new referring sites during sample entry and must choose from list provided
+        autoFillTechNameBox("autoFillTechNameBox"),         //If true a box will be provided to auto-fill technicians name for all results on page
+        autoFillTechNameUser("autoFillTechNameUser"),        //If true the technicians name will be auto-filled with the name of the logged in user
+        AUTOFILL_COLLECTION_DATE("auto-fill collection date/time"),    //If true the collection date will be auto-filled with current date
+        failedValidationMarker("showValidationFailureIcon"),      //If true results that failed validation will have icon next to them
+        resultsResendTime("results.send.retry.time"),           //How much time between trying to resend results that failed to reach their destination
+        TRACK_PATIENT_PAYMENT("trackPayment"),       //If true then patient payment status can be entered
+        ALERT_FOR_INVALID_RESULTS("alertWhenInvalidResult"),   //If true then technician will get an alert for results outside of the valid range
+        DEFAULT_LANG_LOCALE("default language locale"),         //Default language locale
+        DEFAULT_DATE_LOCALE("default date locale"),         //Date local
+        CONDENSE_NFS_PANEL("condenseNFS"),          //Flag used for RetroCI to condense NFS panel tests
+        PATIENT_DATA_ON_RESULTS_BY_ROLE("roleForPatientOnResults"),//If true patient data will show on results page only if user has correct permissions
+        USE_PAGE_NUMBERS_ON_REPORTS("reportPageNumbers"), //If true page numbers will be used on reports
+        QA_SORT_EVENT_LIST("sortQaEvents"),          //If true QA events will be sorted by name
+        ALWAYS_VALIDATE_RESULTS("validate all results"),     //If true all results will be validated, otherwise just those outside of valid range and those flagged
+        ADDITIONAL_SITE_INFO("additional site info"),        //Extra site info for report header
+        SUBJECT_ON_WORKPLAN("subject on workplan"),         //If true the subject will be on the workplan
+        NEXT_VISIT_DATE_ON_WORKPLAN("next visit on workplan"), //If true the next visit date will be on workplan
+        RESULTS_ON_WORKPLAN("results on workplan"),         //If true a space will be left for results on the workplan
+        ACCEPT_EXTERNAL_ORDERS("external orders"),      //If true EMR's can make electronic orders to lab
+        SIGNATURES_ON_NONCONFORMITY_REPORTS("non-conformity signature"),   //If true a space should be left for signatures on non-conformity reports
+        NONCONFORMITY_RECEPTION_AS_UNIT("Reception as unit"), //If true then reception will be an option for where a non-conformity was identified
+        NONCONFORMITY_SAMPLE_COLLECTION_AS_UNIT("Collection as unit"), //If true then sample collection will be an option for where a non-conformity was identified
+        ACCESSION_NUMBER_PREFIX("Accession number prefix"),     //If SITEYEARNUM is the format then this is the prefix
+        NOTE_EXTERNAL_ONLY_FOR_VALIDATION("validationOnlyNotesAreExternal"), //If true then only validation notes will be on patient report
+        PHONE_FORMAT("phone format"),                //Format of phone number
+        VALIDATE_PHONE_FORMAT("validate phone format"),       //If true then entered phone numbers will be validated against format
+        ALLOW_DUPLICATE_SUBJECT_NUMBERS("Allow duplicate subject number"), //If true then duplicate subject numbers are allowed
+        VALIDATE_REJECTED_TESTS("validateTechnicalRejection"), //If true then if the technician rejects a test the next step is validation
+        TEST_NAME_AUGMENTED("augmentTestNameWithType"),   //If true then in some places the test name will be suffixed with the sample type
+        USE_BILLING_REFERENCE_NUMBER("billingRefNumber"),       //If true then the user can enter billing codes for latter reporting
+        BILLING_REFERENCE_NUMBER_LABEL("billingRefNumberLocalization"),   //The label being used for the billing reference number
+        ORDER_PROGRAM("Program"),   //Should program be part of an order
+        BANNER_TEXT("bannerHeading"), //Text on Banner
+        CLOCK_24("24 hour clock"),    //True for 24 hour clock, false for 12 hour clock
+        PATIENT_NATIONALITY("supportPatientNationality"), //True if patient nationality should be collected with patient information
+        PATIENT_ID_REQUIRED("Patient ID required"), //True if patient id is required for new patient
+        PATIENT_SUBJECT_NUMBER_REQUIRED("Subject number required"), //True if patient subject number is required for new patient
+        QA_SAMPLE_ID_REQUIRED("sample id required"),  //True if sample id required from referring lab
+        MAX_ORDER_PRINTED("numOrderLabels"),    //Max number of order labels that can be printed
+        MAX_SPECIMEN_PRINTED("numSpecimenLabels"),  //Max number of specimen labels that can be printed
+        MAX_ALIQUOT_PRINTED("numAliquotLabels"),    //Max number of aliquots that can be printed
+        ORDER_BARCODE_HEIGHT("heightOrderLabels"),  //Height of the order barcode
+        ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
+        SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode
+        SPECIMEN_BARCODE_WIDTH("widthSpecimenLabels"),  //Width of the specimen barcode
+        SPECIMEN_FIELD_DATE("collectionDateCheck"),
+        SPECIMEN_FIELD_SEX("patientSexCheck"),
+        SPECIMEN_FIELD_TESTS("testsCheck");
+        
+        private String name;
+        
+        private Property(String name) {
+            this.name = name;
+        }
+        
+        public String getName() {
+            return name;
+        }
     }
 
     public static ConfigurationProperties getInstance() {

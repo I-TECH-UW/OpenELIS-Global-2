@@ -17,6 +17,7 @@
 package org.openelisglobal.common.util;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.util.MenuUtil;
 import org.openelisglobal.menu.valueholder.Menu;
@@ -37,7 +38,12 @@ public class ConfigurationSideEffects {
     private MenuService menuService;
 
     public void siteInformationChanged(SiteInformation siteInformation) {
-        if ("modify results role".equals(siteInformation.getName())) {
+        if (Property.DEFAULT_LANG_LOCALE.getName().equals(siteInformation.getName())) {
+            // this is done in SiteInformationController.java as we need to have the user
+            // request to change the locale
+        }
+
+        if (Property.roleRequiredForModifyResults.getName().equals(siteInformation.getName())) {
             Role modifierRole = roleService.getRoleByName("Results modifier");
 
             if (modifierRole != null && modifierRole.getId() != null) {
@@ -48,7 +54,7 @@ public class ConfigurationSideEffects {
 
         }
 
-        if ("siteNumber".equals(siteInformation.getName())) {
+        if (Property.SiteCode.getName().equals(siteInformation.getName())) {
             SiteInformation accessionFormat = siteInformationService.getSiteInformationByName("acessionFormat");
             if ("SiteYearNum".equals(accessionFormat.getValue())) {
                 SiteInformation accessionPrefix = siteInformationService

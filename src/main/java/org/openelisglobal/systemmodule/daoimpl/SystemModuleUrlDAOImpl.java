@@ -27,7 +27,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
     public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
         String urlPath = request.getRequestURI();
         urlPath = urlPath.substring(request.getContextPath().length());
-        urlPath = urlPath.substring(0, urlPath.indexOf('.'));
+        urlPath = urlPath.indexOf('.') < 0 ? urlPath : urlPath.substring(0, urlPath.indexOf('.'));
 
         List<SystemModuleUrl> sysModUrls = getByUrlPath(urlPath);
 
