@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -16,6 +17,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -57,6 +60,8 @@ public class SiteInformationController extends BaseController {
     private DictionaryService dictionaryService;
     @Autowired
     private SampleService sampleService;
+    @Autowired
+    private LocaleResolver localeResolver;
 
     @ModelAttribute("form")
     public SiteInformationForm form(HttpServletRequest request) {
@@ -215,7 +220,7 @@ public class SiteInformationController extends BaseController {
     @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/SiteInformation" }, method = RequestMethod.POST)
-    public ModelAndView showUpdateSiteInformation(HttpServletRequest request,
+    public ModelAndView showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("form") @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes) {
         formValidator.validate(form, result);
@@ -239,7 +244,7 @@ public class SiteInformationController extends BaseController {
             String localizationId = form.getString("value");
             forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
         } else {
-            forward = validateAndUpdateSiteInformation(request, form, isNew);
+            forward = validateAndUpdateSiteInformation(request, response, form, isNew);
         }
         // makes the changes take effect immediately
         ConfigurationProperties.forceReload();
@@ -273,8 +278,8 @@ public class SiteInformationController extends BaseController {
         return forward;
     }
 
-    public String validateAndUpdateSiteInformation(HttpServletRequest request, SiteInformationForm form,
-            boolean newSiteInformation) {
+    public String validateAndUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
+            SiteInformationForm form, boolean newSiteInformation) {
 
         String name = form.getString("paramName");
         String value = form.getString("value");
@@ -309,6 +314,9 @@ public class SiteInformationController extends BaseController {
         }
         try {
             siteInformationService.persistData(siteInformation, newSiteInformation);
+            if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
+                localeResolver.setLocale(request, response, Locale.forLanguageTag(siteInformation.getValue()));
+            }
         } catch (LIMSRuntimeException lre) {
             String errorMsg;
             if (lre.getException() instanceof StaleObjectStateException) {
