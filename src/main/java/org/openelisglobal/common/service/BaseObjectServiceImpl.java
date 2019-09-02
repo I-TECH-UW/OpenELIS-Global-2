@@ -262,7 +262,10 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
             auditTrailDAO.saveHistory(null, baseObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
                     getBaseObjectDAO().getTableName());
         }
-        getBaseObjectDAO().delete(baseObject);
+        // this is so we can make sure entity is managed before it is deleted as calling
+        // delete on an unmanaged object will mean it is not removed from the database
+        getBaseObjectDAO().delete(getBaseObjectDAO().get(baseObject.getId())
+                .orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName())));
     }
 
     @Override

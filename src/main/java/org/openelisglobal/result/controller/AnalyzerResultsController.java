@@ -26,6 +26,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingBean.Paging;
 import org.openelisglobal.common.services.PluginMenuService;
 import org.openelisglobal.common.services.QAService;
@@ -204,10 +205,11 @@ public class AnalyzerResultsController extends BaseController {
                             groupHeader = resultItem;
                             setNonConformityStateForResultItem(resultItem);
                             if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                                resultItem.setNonconforming(
-                                        getQaEventByTestSection(analysisService.get(resultItem.getAnalysisId())));
+                                if (resultItem.getAnalysisId() != null) {
+                                    resultItem.setNonconforming(getQaEventByTestSection(
+                                            analysisService.getAnalysisById(resultItem.getAnalysisId())));
+                                }
                             }
-
                         }
                         resultItem.setSampleGroupingNumber(sampleGroupingNumber);
 
@@ -692,6 +694,7 @@ public class AnalyzerResultsController extends BaseController {
                     getSysUserId(request));
 
         } catch (LIMSRuntimeException lre) {
+            LogEvent.logError(this.getClass().getSimpleName(), "showAnalyzerResultsSave", lre.getMessage());
             String errorMsg = "errors.UpdateException";
             result.reject(errorMsg);
             saveErrors(result);
