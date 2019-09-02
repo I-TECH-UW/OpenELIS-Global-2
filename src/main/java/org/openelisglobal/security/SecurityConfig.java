@@ -30,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/images/**", "/documentation/**", "/scripts/**",
             "/jsp/**" };
+    public static final String[] SERVLET_PAGES = { "/importAnalyzer/**", "/images/**", "/documentation/**",
+            "/scripts/**", "/jsp/**" };
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
             + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
@@ -61,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // setup logout
                 .logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do").invalidateHttpSession(true).and()
                 .sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().migrateSession().and().csrf()
-                .and().exceptionHandling().accessDeniedPage("/Access_denied").and()
+                .ignoringAntMatchers(SERVLET_PAGES).and()
                 // add security headers
                 .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
     }
