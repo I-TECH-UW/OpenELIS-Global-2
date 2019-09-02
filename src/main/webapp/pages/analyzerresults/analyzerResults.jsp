@@ -224,8 +224,9 @@ function /*void*/ markUpdated(){
 		<c:set var="itemReadOnly" value="${resultList.readOnly}"/>
 		<c:if test="${showAccessionNumber}">
 			<c:set var="currentAccessionNumber" value="${resultList.accessionNumber}"/>
-			<c:set var="groupReadOnly" value="${resultList.groupReadOnly}"/>
+			<c:set var="groupReadOnly" value="${resultList.groupIsReadOnly}"/>
 		</c:if>
+		<form:hidden path="resultList[${iter.index}].id" />
 		<form:hidden path="resultList[${iter.index}].sampleGroupingNumber" />
 		<form:hidden path="resultList[${iter.index}].readOnly" />
 		<form:hidden path="resultList[${iter.index}].testResultType"/>
@@ -234,7 +235,7 @@ function /*void*/ markUpdated(){
 		<tr <c:if test="${resultList.isHighlighted}"> class="yellowHighlight"> </c:if> >
 			<td  align="center">
 			<c:if test="${showAccessionNumber && not groupReadOnly}">
-				<form:checkbox path="resultList${iter.index}.isAccepted"
+				<form:checkbox path="resultList[${iter.index}].isAccepted"
 							   id='accepted_${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -242,7 +243,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td  align="center">
 			<c:if test="${showAccessionNumber && not groupReadOnly}">
-				<form:checkbox path="resultList${iter.index}.isRejected"
+				<form:checkbox path="resultList[${iter.index}].isRejected"
 							   id='rejected_"${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -250,7 +251,7 @@ function /*void*/ markUpdated(){
 			</td>
 				<td align="center">
 			 <c:if test="${showAccessionNumber}">
-				<form:checkbox path="resultList${iter.index}.isDeleted"
+				<form:checkbox path="resultList[${iter.index}].isDeleted"
 							   id='deleted_${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -258,7 +259,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td class='${resultList.accessionNumber}'>
 				<c:if test="${showAccessionNumber}">
-						<form:input path="resultList${iter.index}.accessionNumber" readonly="true" style="border-style:hidden" />
+						<c:out value="${resultList.accessionNumber}" />
 						<c:if test="${resultList.nonconforming}">
 							<img src="./images/nonconforming.gif" />
 						</c:if>
@@ -269,7 +270,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td>
 			    <c:if test="${groupReadOnly || itemReadOnly}">
-				<form:input path="resultList${iter.index}.result"
+				<form:input path="resultList[${iter.index}].result"
 						   readonly="true"
 						   size="20"
 						   style="text-align:right;border-style:hidden;background-color:transparent" />
@@ -320,7 +321,7 @@ function /*void*/ markUpdated(){
 						 	     id='showHideButton_${iter.index}'
 						    />
 						 </c:if>
-				<form:hidden path="hideShowFlag"  id='hideShow_${iter.index}' value="hidden" />
+				<input type="hidden" id='hideShow_${iter.index}' value="hidden" />
             </c:if>
 
 		</td>

@@ -96,7 +96,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                 }
 
                 if (previousResults == null || duplicateByAccessionAndTestOnly) {
-
+                    result.setSysUserId(sysUserId);
                     String id = insert(result);
                     result.setId(id);
 
@@ -121,14 +121,17 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
     @Transactional
     public void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
             List<SampleGrouping> sampleGroupList, String sysUserId) {
-        removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults);
+        removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults, sysUserId);
 
         insertResults(sampleGroupList, sysUserId);
 
     }
 
-    private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
-        deleteAll(deletableAnalyzerResults);
+    private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
+            String sysUserId) {
+        for (AnalyzerResults currentAnalyzerResult : deletableAnalyzerResults) {
+            delete(currentAnalyzerResult.getId(), sysUserId);
+        }
     }
 
     private boolean insertResults(List<SampleGrouping> sampleGroupList, String sysUserId) {

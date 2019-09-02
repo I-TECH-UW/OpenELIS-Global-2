@@ -19,9 +19,11 @@ package org.openelisglobal.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.InstantiationException;
 import org.openelisglobal.common.exception.LIMSException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 
 public class PluginLoader {
@@ -72,7 +75,15 @@ public class PluginLoader {
 
     public void load() {
         ClassLoader classLoader = getClass().getClassLoader();
-        File pluginDir = new File(classLoader.getResource(PLUGIN_ANALYZER).getFile());
+        String pluginsDirPath;
+        try {
+            pluginsDirPath = URLDecoder.decode(classLoader.getResource(PLUGIN_ANALYZER).getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new LIMSRuntimeException(e);
+        }
+        File pluginDir = new File(pluginsDirPath);
+
         loadDirectory(pluginDir);
     }
 

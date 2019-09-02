@@ -88,7 +88,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
             sysModsByUrl = filterParamMatches(request, sysModsByUrl);
         }
         if (sysModsByUrl.isEmpty() && REQUIRE_MODULE) {
-            LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
+            LogEvent.logWarn("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
                     "This page has no modules assigned to it");
             return false;
         }

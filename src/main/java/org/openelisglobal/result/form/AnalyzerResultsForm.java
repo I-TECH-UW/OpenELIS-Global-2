@@ -30,8 +30,6 @@ public class AnalyzerResultsForm extends BaseForm {
     @NotNull
     private Boolean displayMissingTestMsg = false;
 
-    private boolean hideShowFlag = false;
-
     public AnalyzerResultsForm() {
         setFormName("AnalyzerResultsForm");
     }
@@ -74,14 +72,6 @@ public class AnalyzerResultsForm extends BaseForm {
 
     public void setDisplayMissingTestMsg(Boolean displayMissingTestMsg) {
         this.displayMissingTestMsg = displayMissingTestMsg;
-    }
-
-    public boolean isHideShowFlag() {
-        return hideShowFlag;
-    }
-
-    public void setHideShowFlag(boolean hideShowFlag) {
-        this.hideShowFlag = hideShowFlag;
     }
 
 }
