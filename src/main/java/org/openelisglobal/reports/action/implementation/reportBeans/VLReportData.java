@@ -57,6 +57,7 @@ public class VLReportData {
     private String clinic;
     private String status;
     private String vih;
+    private String sampleTypeName;
     private Boolean duplicateReport = Boolean.FALSE;
 
     private List<SampleQaEvent> sampleQAEventList;
@@ -244,6 +245,15 @@ public class VLReportData {
         this.vih = vih;
     }
 
+    public String getsampleTypeName() {
+        return sampleTypeName;
+    }
+
+    public void setsampleTypeName(String sampleTypeName) {
+        this.sampleTypeName = sampleTypeName;
+    }
+    
+    
     public Boolean getDuplicateReport() {
         return duplicateReport;
     }
