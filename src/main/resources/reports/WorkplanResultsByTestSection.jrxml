@@ -23,7 +23,6 @@
 	<parameter name="nameOfPatient" class="java.lang.String"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<parameter name="nameOfTest" class="java.lang.String"/>
 	<parameter name="accessionPrefix" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="prefixLength" class="java.lang.Integer" isForPrompting="false">
 		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
@@ -140,11 +139,6 @@
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.testName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="175" y="7" width="234" height="32" uuid="ed6c1f97-39e1-41ad-8731-23c531bdc986"/>
-				<textElement verticalAlignment="Top" markup="styled"/>
-				<textFieldExpression><![CDATA[$P{nameOfTest}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="96" y="22" width="80" height="16" uuid="d113ff93-0caf-4a80-b7a9-c603fb038a39">
