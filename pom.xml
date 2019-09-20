@@ -322,9 +322,9 @@
 				<version>3.8.0</version>
 				<configuration>
 					<!-- move to release when we compile for java versions >= 9 -->
-					<!-- <release>8</release> -->
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>8</release>
+<!-- 					<source>1.8</source> -->
+<!-- 					<target>1.8</target> -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -333,6 +333,7 @@
 				<version>1.4.9</version>
 				<configuration>
 					<repository>${project.artifactId}</repository>
+					<tag>${project.version}</tag>
 				</configuration>
 			</plugin>
 			<plugin>

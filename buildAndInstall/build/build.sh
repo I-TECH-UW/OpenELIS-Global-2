@@ -11,24 +11,18 @@ EOF
   exit 1
 }
 
-branch=master createDockerImage=false
-while getopts :b:d opt; do
+branch=master dockerBuild=false
+while getopts :b:dm opt; do
   case $opt in
     (b) branch=$OPTARG;;
-    (d) createDockerImage=true;;
+    (d) dockerBuild=true;;
     (*) usage
   esac
 done
 
-#get location of this script
-bashScriptDir="$( cd "$( dirname "${BASH_bash[0]}" )" >/dev/null 2>&1 && pwd )"
-projectDir="${bashScriptDir}/.."
-cd ${projectDir}
-
 echo Will build from $branch
 #cd source/openelisglobal-core
 #git checkout -- app/src/build.properties
-git pull origin
 git checkout $branch
 if [ $? != 0 ]
 then
@@ -45,15 +39,17 @@ then
 	exit 1 
     fi
 fi
+git pull origin $branch
 
 #git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
 #cd ../..
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
 
 #build and package application
-if [ $createDockerImage == true ]
+if [ $dockerBuild == true ]
 then
-	sudo mvn clean package dockerfile:build
+	#build the war, and create the docker image
+	mvn clean package dockerfile:build
 else
 	mvn clean package
 fi

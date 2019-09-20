@@ -1,10 +1,12 @@
-<Context path="openElisGlobal-core">
+<?xml version='1.0' encoding='utf-8'?>
+<Context logEffectiveWebXml="true">
     <Resource auth="Container" 
         driverClassName="org.postgresql.Driver" 
         maxTotal="20" maxIdle="10" maxWaitMillis="-1"
         name="jdbc/LimsDS" 
-        password="clinlims" 
         type="javax.sql.DataSource" 
-        url="jdbc:postgresql://localhost:5432/clinlims" 
-        username="clinlims"/>
+        url="${OE_DB_URL}" 
+        username="${OE_DB_USERNAME}"
+        password="${OE_DB_USER_PASSWORD}" />
+        
 </Context>

@@ -35,9 +35,9 @@
 			<taglib-location>/WEB-INF/taglib/ajaxtags.tld</taglib-location>
 		</taglib>
 		<jsp-property-group>
-        <url-pattern>*.jsp</url-pattern>
-        <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
 	</jsp-config>
 
 	<!--bugzilla 1908 added resource-ref for Vietnam tomcat/linux -->
@@ -60,6 +60,26 @@
 		</web-resource-collection>
 		<auth-constraint />
 	</security-constraint>
+	<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOnly</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOrHTTP</web-resource-name>
+            <url-pattern>*.ico</url-pattern>
+            <url-pattern>/img/*</url-pattern>
+            <url-pattern>/css/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
 	<context-param>
 		<param-name>defaultHtmlEscape</param-name>
