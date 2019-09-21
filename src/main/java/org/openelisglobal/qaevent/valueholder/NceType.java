@@ -12,6 +12,7 @@ public class NceType extends BaseObject<String> {
     private String id;
     private String name;
     private String displayKey;
+    private Integer categoryId;
     private String active;
     private Timestamp lastupdated;
 
@@ -53,6 +54,16 @@ public class NceType extends BaseObject<String> {
 
     public void setActive(String active) {
         this.active = active;
+    }
+
+    @Basic
+    @Column(name = "active")
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Basic

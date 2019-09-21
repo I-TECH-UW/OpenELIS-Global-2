@@ -39,6 +39,17 @@
 <script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
+<script>
+    var nceTypes= [];
+    <c:forEach items="${form.nceTypes}" var="nceType">
+    var nceType = {};
+    nceType['name'] = '${nceType.name}';
+    nceType['id'] = '${nceType.id}';
+    nceType['categoryId'] = '${nceType.categoryId}';
+    nceTypes.push(nceType);
+    </c:forEach>
+</script>
+
 <div align="center">
     <h2><spring:message code="nonconforming.page.view.title" /></h2>
 
@@ -60,6 +71,7 @@
 </div>
 <c:if test="${not empty form.labOrderNumber}">
 <h2><spring:message code="nonconforming.page.followUp.title" /></h2>
+<form:hidden path="id" />
 <form:hidden path="currentUserId" />
 <form:hidden path="status" />
 <form:hidden path="reporterName" />
@@ -98,7 +110,7 @@
 
         <td><spring:message code="nonconforming.page.followUp.laboratoryComponent" /></td>
         <td>
-            <form:select path="laboratoryComponent" >
+            <form:select path="laboratoryComponent" onchange="checkIfValid()" >
                 <form:option value="">Select one</form:option>
                 <form:options items="${form.labComponentList}" itemLabel="value" itemValue="id" />
             </form:select>
@@ -115,14 +127,13 @@
         <td>
             <strong><spring:message code="nonconforming.page.followUp.nceType" /></strong>
             <spring:message code="nonconforming.page.followUp.nceCategory" />
-            <form:select path="nceCategory" id="nceCategory">
+            <form:select path="nceCategory" id="nceCategory" onchange="resetNceType()">
                 <option value="">Select one</option>
                 <form:options items="${form.nceCategories}" itemLabel="name" itemValue="id" />
             </form:select>
             <spring:message code="nonconforming.page.followUp.nceType" />
-            <form:select path="nceType" id="nceType">
+            <form:select path="nceType" id="nceType" onchange="checkIfValid()">
                 <option value="">Select one</option>
-                <form:options items="${form.nceTypes}" itemLabel="name" itemValue="id" />
             </form:select>
         </td>
     </tr>
@@ -134,7 +145,7 @@
         <td>
             <label><strong><spring:message code="nonconforming.page.followUp.severity" /></strong></label>
             <spring:message code="nonconforming.page.followUp.howSevere" />
-            <form:select path="consequences" >
+            <form:select path="consequences" onchange="checkIfValid()">
                 <form:options items="${form.severityConsequencesList}" itemLabel="value" itemValue="id" />
             </form:select>
         </td>
@@ -161,7 +172,7 @@
     <tr>
         <td>
             <spring:message code="nonconforming.page.followUp.correctiveActionDescription" />
-            <p><form:textarea path="correctiveAction"></form:textarea></p>
+            <p><form:textarea path="correctiveAction" onchange="checkIfValid()"></form:textarea></p>
         </td>
     </tr>
     <tr>
@@ -177,12 +188,11 @@
         </td>
     </tr>
 </table>
-<div class="center-caption"><button onclick="savePage()">Submit</button></div>
+<div class="center-caption"><button id="saveButtonId" onclick="savePage()">Submit</button></div>
 </c:if>
 <script type="text/javascript">
-    function setSave() {
-        var saveButton = $("saveButtonId");
-        saveButton.disabled = false;
+    function setSave(disabled) {
+        document.getElementById("saveButtonId").disabled = disabled;
     }
 
     function enableSearch() {
@@ -263,5 +273,38 @@
             '</tr><tr>';
         return row;
     }
+
+    function checkIfValid() {
+        var correctiveAction = jQuery('input[name="correctiveAction"]').val();
+        var consequences = jQuery('input[name="consequences"]').val();
+        var nceType = jQuery('input[name="nceType"]').val();
+        var nceCategory = jQuery('input[name="nceCategory"]').val();
+        var laboratoryComponent = jQuery('input[name="laboratoryComponent"]').val();
+        setSave(true);
+        if (correctiveAction != '' && consequences !== '' && nceType !== '' && nceCategory !== '' && laboratoryComponent != '') {
+            setSave(false);
+        }
+    }
+    
+    function resetNceType() {
+        var nceCategory = jQuery('select[name="nceCategory"]').val();
+        var el = document.getElementById("nceType");
+        var j = el.options.length - 1;
+        while (j > 0) {
+            el.remove(j);
+            j--;
+        }
+
+        for (var i = 0; i < nceTypes.length; i++) {
+            var nce = nceTypes[i];
+            if (nce.categoryId == nceCategory) {
+                el.append(new Option(nce.name, nce.id));
+            }
+        }
+    }
+
+    jQuery(document).ready( function() {
+        setSave(true);
+    });
 
 </script>

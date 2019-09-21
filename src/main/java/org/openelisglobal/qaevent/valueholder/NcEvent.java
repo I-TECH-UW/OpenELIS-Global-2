@@ -36,6 +36,7 @@ public class NcEvent extends BaseObject<String> {
     private Integer nceCategoryId;
     private String severityId;
     private Integer nceTypeId;
+    private String status;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -342,5 +343,15 @@ public class NcEvent extends BaseObject<String> {
 
     public void setNceTypeId(Integer nceTypeId) {
         this.nceTypeId = nceTypeId;
+    }
+
+    @Basic
+    @Column(name = "status", nullable = true)
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -159,11 +159,8 @@
         <mapping resource="hibernate/hbm/NceSpecimen.hbm.xml"/>
         <mapping resource="hibernate/hbm/NceType.hbm.xml"/>
 		<mapping resource="hibernate/hbm/NceSpecimen.hbm.xml"/>
-		<mapping class="org.openelisglobal.qaevent.valueholder.NceSpecimen"/>
-        <mapping class="org.openelisglobal.qaevent.valueholder.LabComponent"/>
         <mapping resource="hibernate/hbm/LabComponent.hbm.xml"/>
-        <mapping class="org.openelisglobal.qaevent.valueholder.NcEvent"/>
-        <mapping resource="org/openelisglobal/qaevent/valueholder/NcEvent.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NcEvent.hbm.xml"/>
 
     </session-factory>
 

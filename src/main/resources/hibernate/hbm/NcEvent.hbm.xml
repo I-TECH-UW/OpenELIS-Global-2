@@ -38,5 +38,8 @@
         <property name="effective" column="effective"/>
         <property name="signature" column="signature"/>
         <property name="dateCompleted" column="date_completed"/>
+        <property name="status" column="status"/>
+        <property name="nceTypeId" column="nce_type_id"/>
+        <property name="nceCategoryId" column="nce_category_id"/>
     </class>
 </hibernate-mapping>

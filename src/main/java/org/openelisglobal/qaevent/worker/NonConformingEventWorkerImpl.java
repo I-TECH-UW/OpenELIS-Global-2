@@ -47,7 +47,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             Date dateOfEvent = getDate(form.getDateOfEvent(), "yyyy-MM-dd");
             Date reportDate = getDate(form.getReportDate(), "dd/MM/yyyy");
 
-            // ncEvent.setStatus("Pending");
+            ncEvent.setStatus("Pending");
             ncEvent.setReportDate(reportDate);
             ncEvent.setDateOfEvent(dateOfEvent);
             ncEvent.setName(form.getName());
@@ -68,15 +68,17 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
     public boolean updateFollowUp(NonConformingEventForm form) {
         NcEvent ncEvent = ncEventService.get(form.getId());
         if (ncEvent != null) {
+            ncEvent.setStatus("CAPA");
             ncEvent.setLaboratoryComponent(form.getLaboratoryComponent());
-            ncEvent.setNceCategoryId(Integer.parseInt(form.getNceCategory()));
-            ncEvent.setNceTypeId(Integer.parseInt(form.getNceType()));
+            ncEvent.setNceCategoryId(Integer.valueOf(form.getNceCategory()));
+            ncEvent.setNceTypeId(Integer.valueOf(form.getNceType()));
             ncEvent.setConsequenceId(form.getConsequences());
             ncEvent.setRecurrenceId(form.getRecurrence());
             ncEvent.setSeverityScore(form.getSeverityScore());
             ncEvent.setCorrectiveAction(form.getCorrectiveAction());
             ncEvent.setControlAction(form.getControlAction());
             ncEvent.setComments(form.getComments());
+            ncEvent.setSysUserId(form.getCurrentUserId());
             ncEventService.update(ncEvent);
             return true;
         }
