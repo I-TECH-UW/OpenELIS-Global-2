@@ -1293,3 +1293,11 @@ view-non-conforming-section-1 > td {
 	width: 60%;
 	float: left;
 }
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+}

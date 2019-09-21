@@ -1,8 +1,10 @@
 package org.openelisglobal.qaevent.worker;
 
+import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface NonConformingEventWorker {
@@ -12,4 +14,8 @@ public interface NonConformingEventWorker {
     boolean update(NonConformingEventForm form);
 
     boolean updateFollowUp(NonConformingEventForm form);
+
+    void initFormForFollowUp(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+
+    void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 }

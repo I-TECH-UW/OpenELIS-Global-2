@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NonConformingEventSearchProvider extends BaseQueryProvider {
 
@@ -25,17 +27,21 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
 
         String labNumber = request.getParameter("labNumber");
         String nceNumber = request.getParameter("nceNumber");
+        String status = request.getParameter("status");
 
         String result = VALID;
         StringBuilder xml = new StringBuilder();
 
 
+        Map<String, Object> searchParameters = new HashMap<>();
+        searchParameters.put("status", status);
         List<NcEvent> searchResults = new ArrayList<>();
         if (!"".equalsIgnoreCase(labNumber)) {
-            searchResults = ncEventService.getAllMatching("labNumber", labNumber);
+            searchParameters.put("labNumber", labNumber);
         } else if (!"".equalsIgnoreCase(nceNumber)) {
-            searchResults = ncEventService.getAllMatching("nceNumber", nceNumber);
+            searchParameters.put("nceNumber", nceNumber);
         }
+        searchResults = ncEventService.getAllMatching(searchParameters);
 
 
         if (searchResults.size() == 0) {
@@ -43,9 +49,7 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
            xml.append("No results found for search criteria.");
         } else {
             formatResults(searchResults, xml);
-            xml.append("<nce><date>12/02/2019</date><ncenumber>45</ncenumber><unit>Haematology</unit></nce>");
         }
-
         ajaxServlet.sendData(xml.toString(), result, request, response);
     }
 
@@ -53,7 +57,8 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
         // TODO: Fix unit.
         for (NcEvent nce: results) {
             xml.append("<nce><date>").append(nce.getDateOfEvent()).append("</date><ncenumber>");
-            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>Haematology").append("</unit></nce>");
+            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>Haematology").append("</unit>");
+            xml.append("<color>").append(nce.getColorCode()).append("</color></nce>");
         }
     }
 

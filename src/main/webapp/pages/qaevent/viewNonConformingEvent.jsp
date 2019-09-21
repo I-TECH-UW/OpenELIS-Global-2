@@ -128,9 +128,9 @@
         </td>
         <td>
             <strong><spring:message code="nonconforming.page.followUp.nceType" /></strong>
-            <table>
+            <table class="full-table">
                 <tr>
-                    <td><spring:message code="nonconforming.page.followUp.nceCategory" /></td>
+                    <td class="half-table"><spring:message code="nonconforming.page.followUp.nceCategory" /></td>
                     <td>
                         <p>
                             <form:select path="nceCategory" id="nceCategory" onchange="resetNceType()">
@@ -140,12 +140,17 @@
                         </p>
                     </td>
                 </tr>
+                <tr>
+                    <td class="half-table"><spring:message code="nonconforming.page.followUp.nceType" /></td>
+                    <td>
+                        <p>
+                            <form:select path="nceType" id="nceType" onchange="checkIfValid()">
+                                <option value="">Select one</option>
+                            </form:select>
+                        </p>
+                    </td>
+                </tr>
             </table>
-
-            <p><spring:message code="nonconforming.page.followUp.nceType" />
-            <form:select path="nceType" id="nceType" onchange="checkIfValid()">
-                <option value="">Select one</option>
-            </form:select></p>
         </td>
     </tr>
     <tr>
@@ -155,12 +160,18 @@
         </td>
         <td>
             <label><strong><spring:message code="nonconforming.page.followUp.severity" /></strong></label>
-            <p>
-                <spring:message code="nonconforming.page.followUp.howSevere" />
-                <form:select path="consequences" onchange="calculateSeverityScore()">
-                    <form:options items="${form.severityConsequencesList}" itemLabel="value" itemValue="id" />
-                </form:select>
-            </p>
+            <table class="full-table">
+                <tr>
+                    <td class="half-table"><spring:message code="nonconforming.page.followUp.howSevere" /></td>
+                    <td>
+                        <p>
+                            <form:select path="consequences" onchange="calculateSeverityScore()">
+                                <form:options items="${form.severityConsequencesList}" itemLabel="value" itemValue="id" />
+                            </form:select>
+                        </p>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
     <tr>
@@ -169,16 +180,32 @@
             <p><form:hidden path="proposedAction" /><c:out value="${form.proposedAction}" /></p>
         </td>
         <td>
+            <table class="full-table">
+                <tr>
+                    <td class="half-table"><spring:message code="nonconforming.page.followUp.likelyRecurrence" /></td>
+                    <td>
+                        <p>
+                            <form:select path="recurrence" onchange="calculateSeverityScore()">
+                                <form:options items="${form.severityRecurranceList}" itemLabel="value" itemValue="id" />
+                            </form:select>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p><spring:message code="nonconforming.page.followUp.lowSeverity" /></p>
+                        <p><spring:message code="nonconforming.page.followUp.highSeverity" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="half-table"><spring:message code="nonconforming.page.followUp.severityScore" /> </td>
+                    <td>
+                        <strong><span id="severityScoreLabel"><c:out value="${form.severityScore}" /></span></strong>
+                    </td>
+                </tr>
+            </table>
 
-            <p>
-                <spring:message code="nonconforming.page.followUp.likelyRecurrence" />
-                <form:select path="recurrence" onchange="calculateSeverityScore()">
-                    <form:options items="${form.severityRecurranceList}" itemLabel="value" itemValue="id" />
-                </form:select>
-            </p>
-            <p><spring:message code="nonconforming.page.followUp.lowSeverity" /></p>
-            <p><spring:message code="nonconforming.page.followUp.highSeverity" /></p>
-            <p><spring:message code="nonconforming.page.followUp.severityScore" /> <strong><span id="severityScoreLabel"><c:out value="${form.severityScore}" /></span></strong></p>
+
         </td>
     </tr>
 </table>
@@ -255,7 +282,7 @@
             {//options
                 method: 'get', //http method
                 parameters: "provider=NonConformingEventSearchProvider&nceNumber=" + nceNumber +
-                    "&labNumber=" + labNumber +
+                    "&labNumber=" + labNumber + "&status=Pending" +
                     "&suppressExternalSearch=" + suppressExternalSearch,
                 onSuccess:  success,
                 onFailure:  failure
@@ -295,7 +322,7 @@
         var consequences = jQuery('input[name="consequences"]').val();
         var nceType = jQuery('input[name="nceType"]').val();
         var nceCategory = jQuery('input[name="nceCategory"]').val();
-        var laboratoryComponent = jQuery('input[name="laboratoryComponent"]').val();
+        var laboratoryComponent = 'd'; //jQuery('input[name="laboratoryComponent"]').val();
         setSave(true);
         if (correctiveAction != '' && consequences !== '' && nceType !== '' && nceCategory !== '' && laboratoryComponent != '') {
             setSave(false);

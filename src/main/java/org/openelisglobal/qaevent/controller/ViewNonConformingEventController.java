@@ -62,15 +62,7 @@ public class ViewNonConformingEventController extends BaseController {
         String nceNumber = request.getParameter("nceNumber");
 
         if (!GenericValidator.isBlankOrNull(nceNumber)) {
-           initForm(nceNumber, form);
-            form.setNceCategories(nceCategoryService.getAllNceCategories());
-            form.setNceTypes(nceTypeService.getAllNceTypes());
-            PropertyUtils.setProperty(form, "labComponentList",
-                 DisplayListService.getInstance().getList(DisplayListService.ListType.LAB_COMPONENT));
-            PropertyUtils.setProperty(form, "severityConsequencesList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
-            PropertyUtils.setProperty(form, "severityRecurranceList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+            nonConformingEventWorker.initFormForFollowUp(nceNumber, form);
         }
 
         addFlashMsgsToRequest(request);
@@ -92,37 +84,6 @@ public class ViewNonConformingEventController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-    }
-
-    private void initForm(String nceNumber, NonConformingEventForm form) throws LIMSInvalidConfigurationException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
-        form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
-        form.setNceNumber(System.currentTimeMillis() + "");
-        NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
-        if (event != null) {
-            form.setReportDate(DateUtil.formatDateAsText(event.getReportDate()));
-            form.setDateOfEvent(DateUtil.formatDateAsText(event.getDateOfEvent()));
-            form.setName(event.getName());
-            form.setReporterName(event.getNameOfReporter());
-            form.setPrescriberName(event.getPrescriberName());
-            form.setSite(event.getSite());
-            form.setDescription(event.getDescription());
-            form.setSuspectedCauses(event.getSuspectedCauses());
-            form.setProposedAction(event.getProposedAction());
-            form.setNceNumber(event.getNceNumber());
-            form.setId(event.getId());
-            form.setLabOrderNumber(event.getLabOrderNumber());
-
-            List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
-
-            List<SampleItem> sampleItems = new ArrayList<>();
-            for (NceSpecimen specimen: specimenList) {
-                SampleItem si = sampleItemService.getData(specimen.getSampleItemId() + "");
-                sampleItems.add(si);
-            }
-            form.setSpecimens(sampleItems);
-        }
     }
 
     @Override

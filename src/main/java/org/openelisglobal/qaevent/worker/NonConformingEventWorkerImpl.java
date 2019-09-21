@@ -1,16 +1,28 @@
 package org.openelisglobal.qaevent.worker;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NCEventService;
+import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.service.NceSpecimenService;
+import org.openelisglobal.qaevent.service.NceTypeService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.valueholder.NceSpecimen;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,6 +32,14 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
     private NCEventService ncEventService;
     @Autowired
     private NceSpecimenService nceSpecimenService;
+    @Autowired
+    private SystemUserService systemUserService;
+    @Autowired
+    private SampleItemService sampleItemService;
+    @Autowired
+    private NceCategoryService nceCategoryService;
+    @Autowired
+    private NceTypeService nceTypeService;
 
     @Override
     public NcEvent create(String labOrderId, List<String> specimens, String sysUserId, String nceNumber) {
@@ -97,5 +117,60 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             return new Date(format.parse(value).getTime());
         } catch (ParseException pe) {}
         return null;
+    }
+
+    public void initFormForFollowUp(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException{
+        form.setNceCategories(nceCategoryService.getAllNceCategories());
+        form.setNceTypes(nceTypeService.getAllNceTypes());
+        PropertyUtils.setProperty(form, "labComponentList",
+                DisplayListService.getInstance().getList(DisplayListService.ListType.LAB_COMPONENT));
+        PropertyUtils.setProperty(form, "severityConsequencesList",
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
+        PropertyUtils.setProperty(form, "severityRecurranceList",
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+        SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
+        form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
+        form.setNceNumber(System.currentTimeMillis() + "");
+        NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
+        if (event != null) {
+            form.setReportDate(DateUtil.formatDateAsText(event.getReportDate()));
+            form.setDateOfEvent(DateUtil.formatDateAsText(event.getDateOfEvent()));
+            form.setName(event.getName());
+            form.setReporterName(event.getNameOfReporter());
+            form.setPrescriberName(event.getPrescriberName());
+            form.setSite(event.getSite());
+            form.setDescription(event.getDescription());
+            form.setSuspectedCauses(event.getSuspectedCauses());
+            form.setProposedAction(event.getProposedAction());
+            form.setNceNumber(event.getNceNumber());
+            form.setId(event.getId());
+            form.setLabOrderNumber(event.getLabOrderNumber());
+
+            List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
+
+            List<SampleItem> sampleItems = new ArrayList<>();
+            for (NceSpecimen specimen: specimenList) {
+                SampleItem si = sampleItemService.getData(specimen.getSampleItemId() + "");
+                sampleItems.add(si);
+            }
+            form.setSpecimens(sampleItems);
+        }
+    }
+
+    public void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        this.initFormForFollowUp(nceNumber, form);
+        NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
+        if (event != null) {
+            form.setLaboratoryComponent(event.getLaboratoryComponent());
+            form.setNceCategory(event.getNceCategoryId() + "");
+            form.setNceType(event.getNceTypeId() + "");
+            form.setConsequences(event.getConsequenceId());
+            form.setRecurrence(event.getRecurrenceId());
+            form.setSeverityScore(event.getSeverityScore());
+            form.setColorCode(event.getColorCode());
+            form.setCorrectiveAction(event.getCorrectiveAction());
+            form.setControlAction(event.getControlAction());
+            form.setComments(event.getComments());
+        }
     }
 }
