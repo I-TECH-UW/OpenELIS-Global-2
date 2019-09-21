@@ -76,6 +76,8 @@
 <form:hidden path="status" />
 <form:hidden path="reporterName" />
 <form:hidden path="site" />
+<form:hidden path="severityScore" />
+<form:hidden path="colorCode" />
 
 <table class="full-table">
     <tr class="view-non-conforming-section-1">
@@ -126,15 +128,24 @@
         </td>
         <td>
             <strong><spring:message code="nonconforming.page.followUp.nceType" /></strong>
-            <spring:message code="nonconforming.page.followUp.nceCategory" />
-            <form:select path="nceCategory" id="nceCategory" onchange="resetNceType()">
-                <option value="">Select one</option>
-                <form:options items="${form.nceCategories}" itemLabel="name" itemValue="id" />
-            </form:select>
-            <spring:message code="nonconforming.page.followUp.nceType" />
+            <table>
+                <tr>
+                    <td><spring:message code="nonconforming.page.followUp.nceCategory" /></td>
+                    <td>
+                        <p>
+                            <form:select path="nceCategory" id="nceCategory" onchange="resetNceType()">
+                                <option value="">Select one</option>
+                                <form:options items="${form.nceCategories}" itemLabel="name" itemValue="id" />
+                            </form:select>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+
+            <p><spring:message code="nonconforming.page.followUp.nceType" />
             <form:select path="nceType" id="nceType" onchange="checkIfValid()">
                 <option value="">Select one</option>
-            </form:select>
+            </form:select></p>
         </td>
     </tr>
     <tr>
@@ -144,10 +155,12 @@
         </td>
         <td>
             <label><strong><spring:message code="nonconforming.page.followUp.severity" /></strong></label>
-            <spring:message code="nonconforming.page.followUp.howSevere" />
-            <form:select path="consequences" onchange="checkIfValid()">
-                <form:options items="${form.severityConsequencesList}" itemLabel="value" itemValue="id" />
-            </form:select>
+            <p>
+                <spring:message code="nonconforming.page.followUp.howSevere" />
+                <form:select path="consequences" onchange="calculateSeverityScore()">
+                    <form:options items="${form.severityConsequencesList}" itemLabel="value" itemValue="id" />
+                </form:select>
+            </p>
         </td>
     </tr>
     <tr>
@@ -156,13 +169,16 @@
             <p><form:hidden path="proposedAction" /><c:out value="${form.proposedAction}" /></p>
         </td>
         <td>
-            <spring:message code="nonconforming.page.followUp.likelyRecurrence" />
-            <form:select path="recurrence" >
-                <form:options items="${form.severityRecurranceList}" itemLabel="value" itemValue="id" />
-            </form:select>
+
+            <p>
+                <spring:message code="nonconforming.page.followUp.likelyRecurrence" />
+                <form:select path="recurrence" onchange="calculateSeverityScore()">
+                    <form:options items="${form.severityRecurranceList}" itemLabel="value" itemValue="id" />
+                </form:select>
+            </p>
             <p><spring:message code="nonconforming.page.followUp.lowSeverity" /></p>
             <p><spring:message code="nonconforming.page.followUp.highSeverity" /></p>
-            <p><spring:message code="nonconforming.page.followUp.severityScore" /><c:out value="${form.severityScore}" /></p>
+            <p><spring:message code="nonconforming.page.followUp.severityScore" /> <strong><span id="severityScoreLabel"><c:out value="${form.severityScore}" /></span></strong></p>
         </td>
     </tr>
 </table>
@@ -301,6 +317,24 @@
                 el.append(new Option(nce.name, nce.id));
             }
         }
+    }
+
+    function calculateSeverityScore() {
+        var consequences = jQuery('select[name="consequences"]').val();
+        var recurrence = jQuery('select[name="recurrence"]').val();
+        if (consequences != '' && recurrence != '') {
+            var score = Number(consequences) * Number(recurrence);
+            document.getElementById("severityScoreLabel").innerHTML = score;
+            document.getElementById("severityScore").value = score;
+            if (score >= 1 && score <= 3) {
+                document.getElementById("colorCode").value = 'Green';
+            } else if (score >= 4 && score <= 6) {
+                document.getElementById("colorCode").value = 'Yellow';
+            } else if (score >= 7 && score <= 9) {
+                document.getElementById("colorCode").value = 'Red';
+            }
+        }
+        checkIfValid();
     }
 
     jQuery(document).ready( function() {

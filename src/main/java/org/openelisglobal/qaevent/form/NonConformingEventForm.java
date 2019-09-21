@@ -59,6 +59,8 @@ public class NonConformingEventForm extends BaseForm {
 
     private String severityScore;
 
+    private String colorCode;
+
     private String correctiveAction;
 
     private String controlAction;
@@ -271,6 +273,14 @@ public class NonConformingEventForm extends BaseForm {
 
     public void setSeverityScore(String severityScore) {
         this.severityScore = severityScore;
+    }
+
+    public String getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
     }
 
     public String getCorrectiveAction() {

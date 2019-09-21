@@ -75,6 +75,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             ncEvent.setConsequenceId(form.getConsequences());
             ncEvent.setRecurrenceId(form.getRecurrence());
             ncEvent.setSeverityScore(form.getSeverityScore());
+            ncEvent.setColorCode(form.getColorCode());
             ncEvent.setCorrectiveAction(form.getCorrectiveAction());
             ncEvent.setControlAction(form.getControlAction());
             ncEvent.setComments(form.getComments());
