@@ -102,7 +102,13 @@
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.page.followUp.severity" /></td>
-            <td><c:out value="${form.consequences}" /></td>
+            <td>
+                <c:forEach items="${form.severityConsequencesList}" var="severity">
+                    <c:if test="${severity.id == form.consequences}" >
+                        <c:out value="${severity.value}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
 
         <tr>
@@ -132,11 +138,23 @@
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.page.followUp.nceCategory" /></td>
-            <td><c:out value="${form.nceCategory }" /></td>
+            <td>
+                <c:forEach items="${form.nceCategories}" var="nceCategory">
+                    <c:if test="${nceCategory.id == form.nceCategory}" >
+                        <c:out value="${nceCategory.name}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.page.followUp.nceType" /></td>
-            <td><c:out value="${form.nceType}" /></td>
+            <td>
+                <c:forEach items="${form.nceTypes}" var="nceType">
+                    <c:if test="${nceType.id == form.nceType}" >
+                        <c:out value="${nceType.name}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
     </table>
 
