@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.OrganizationAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
@@ -117,6 +118,11 @@ public class OrganizationController extends BaseController {
         String start = request.getParameter("startingRecNo");
         String direction = request.getParameter("direction");
 
+        // validate start
+        if (!StringUtils.isNumericSpace(start)) {
+            start = "";
+        }
+
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
         request.setAttribute(NEXT_DISABLED, "true");
@@ -130,13 +136,12 @@ public class OrganizationController extends BaseController {
         if (FWD_NEXT.equals(direction)) {
             organization = organizationService.getNext(id);
             String newId = organization.getId();
-            String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
-            return new ModelAndView(url);
+
+            return new ModelAndView("redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start);
         } else if (FWD_PREVIOUS.equals(direction)) {
             organization = organizationService.getPrevious(id);
             String newId = organization.getId();
-            String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
-            return new ModelAndView(url);
+            return new ModelAndView("redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start);
         }
 
         boolean isNew = (id == null) || "0".equals(id);
