@@ -41,7 +41,7 @@ public class CorrectiveActionController extends BaseController {
 
 
     @RequestMapping(value = "/NCECorrectiveAction", method = RequestMethod.GET)
-    public ModelAndView showReportNonConformingEvent(HttpServletRequest request) throws LIMSInvalidConfigurationException,
+    public ModelAndView showNCECorrectiveAction(HttpServletRequest request) throws LIMSInvalidConfigurationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         NonConformingEventForm form = new NonConformingEventForm();
         form.setCurrentUserId(getSysUserId(request));
@@ -57,13 +57,27 @@ public class CorrectiveActionController extends BaseController {
     }
 
     @RequestMapping(value = "/NCECorrectiveAction", method = RequestMethod.POST)
-    public ModelAndView showReportNonConformingEventUpdate(HttpServletRequest request,
+    public ModelAndView showNCECorrectiveAction(HttpServletRequest request,
                                                            @ModelAttribute("form") NonConformingEventForm form,
                                                            BindingResult result, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
         boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
 
+        if (updated) {
+            return findForward(FWD_SUCCESS_INSERT, form);
+        } else {
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+
+    }
+
+    @RequestMapping(value = "/ResolveNonConformingEvent", method = RequestMethod.POST)
+    public ModelAndView resolveNonConformingEvent(HttpServletRequest request,
+                                                           @ModelAttribute("form") NonConformingEventForm form,
+                                                           BindingResult result, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        boolean updated = nonConformingEventWorker.resolveNCEvent(form);
         if (updated) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {

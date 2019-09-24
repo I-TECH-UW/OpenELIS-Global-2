@@ -302,12 +302,7 @@
         document.getElementById("searchButtonId").disabled = document.getElementById("searchValue").value === "";
     }
 
-    /**
-     *  Saves the form.
-     */
-    function savePage(e) {
-        var form = document.getElementById("mainForm");
-        window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+    function setActionLog() {
         var actionLog = [];
         var rowCount = document.getElementById('action-log-table').rows.length;
         for (var i = 1; i < rowCount; i++) {
@@ -331,10 +326,18 @@
             xml += '</actionLog>';
             actionLog.push(xml);
         }
-        document.getElementById("actionLogStr").value = "<actionLogs>" + actionLog.join("") + "</actionLogs>"; // JSON.stringify(actionLog).substring(1, l -1 );
+        document.getElementById("actionLogStr").value = "<actionLogs>" + actionLog.join("") + "</actionLogs>";
+    }
+    /**
+     *  Saves the form.
+     */
+    function savePage(e) {
+        var form = document.getElementById("mainForm");
+        window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+        setActionLog();
         console.log(document.getElementById("actionLogStr").value);
-        // form.action = "NCECorrectiveAction.do";
-        // form.submit();
+        form.action = "NCECorrectiveAction.do";
+        form.submit();
     }
 
     function checkNCE(e) {
@@ -354,7 +357,8 @@
     function completeNCE() {
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        form.action = "NCECorrectiveAction.do";
+        setActionLog();
+        form.action = "ResolveNonConformingEvent.do";
         form.submit();
     }
     /**

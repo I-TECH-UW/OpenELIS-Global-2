@@ -261,24 +261,26 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         return null;
     }
 
+    private void setActionLogs(NonConformingEventForm form, NcEvent ncEvent) {
+        if (form.getActionLogStr() != null) {
+            List<NceActionLog> actionLogs = initNceActionLog(form.getActionLogStr());
+            if (actionLogs != null) {
+                for (NceActionLog actionLog: actionLogs) {
+                    actionLog.setNcEventId(Integer.parseInt(ncEvent.getId()));
+                    actionLog.setSysUserId(form.getCurrentUserId());
+                    nceActionLogService.save(actionLog);
+                }
+            }
+        }
+
+    }
+
     @Override
     public boolean updateCorrectiveAction(NonConformingEventForm form) {
         NcEvent ncEvent = ncEventService.get(form.getId());
         if (ncEvent != null) {
             ncEvent.setDiscussionDate(form.getDiscussionDate());
-            List<NceActionLog> nceActionLogs = form.getActionLog();
-
-            if (form.getActionLogStr() != null) {
-                List<NceActionLog> actionLogs = initNceActionLog(form.getActionLogStr());
-                if (actionLogs != null) {
-                    for (NceActionLog actionLog: actionLogs) {
-                        actionLog.setNcEventId(Integer.parseInt(ncEvent.getId()));
-                        actionLog.setSysUserId(form.getCurrentUserId());
-                        nceActionLogService.save(actionLog);
-                    }
-                }
-            }
-
+            setActionLogs(form, ncEvent);
             ncEvent.setSysUserId(form.getCurrentUserId());
             ncEventService.update(ncEvent);
             return true;
@@ -291,6 +293,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
     public boolean resolveNCEvent(NonConformingEventForm form) {
         NcEvent ncEvent = ncEventService.get(form.getId());
         if (ncEvent != null) {
+            ncEvent.setDiscussionDate(form.getDiscussionDate());
+            setActionLogs(form, ncEvent);
             ncEvent.setStatus("Completed");
             ncEvent.setEffective(form.getEffective());
             SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
