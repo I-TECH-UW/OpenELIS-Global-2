@@ -5,10 +5,12 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.qaevent.dao.NceActionLogDAO;
 import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class NceActionLogServiceImpl extends BaseObjectServiceImpl<NceActionLog, String> implements NceActionLogService {
 
     @Autowired

@@ -3,6 +3,7 @@ package org.openelisglobal.qaevent.form;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.openelisglobal.qaevent.valueholder.NceCategory;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 
@@ -69,9 +70,13 @@ public class NonConformingEventForm extends BaseForm {
 
     private String discussionDate;
 
-    private List actionLog;
+    private List<NceActionLog> actionLog;
+
+    private String actionLogStr;
 
     private String effective;
+
+    private String dateCompleted;
 
     private List<IdValuePair> reportingUnits;
 
@@ -80,8 +85,12 @@ public class NonConformingEventForm extends BaseForm {
     private List<IdValuePair> nceTypes;
 
     private List<IdValuePair> labComponentList;
+
     private List<IdValuePair> severityConsequencesList;
-    private List<IdValuePair> severityRecurranceList;
+
+    private List<IdValuePair> severityRecurrenceList;
+
+    private List<IdValuePair> actionTypeList;
 
     public String getId() {
         return id;
@@ -315,12 +324,36 @@ public class NonConformingEventForm extends BaseForm {
         this.discussionDate = discussionDate;
     }
 
+    public List getActionLog() {
+        return actionLog;
+    }
+
+    public void setActionLog(List actionLog) {
+        this.actionLog = actionLog;
+    }
+
+    public String getActionLogStr() {
+        return actionLogStr;
+    }
+
+    public void setActionLogStr(String actionLogStr) {
+        this.actionLogStr = actionLogStr;
+    }
+
     public String getEffective() {
         return effective;
     }
 
     public void setEffective(String effective) {
         this.effective = effective;
+    }
+
+    public String getDateCompleted() {
+        return dateCompleted;
+    }
+
+    public void setDateCompleted(String dateCompleted) {
+        this.dateCompleted = dateCompleted;
     }
 
     public List<IdValuePair> getReportingUnits() {
@@ -363,11 +396,19 @@ public class NonConformingEventForm extends BaseForm {
         this.severityConsequencesList = severityConsequencesList;
     }
 
-    public List<IdValuePair> getSeverityRecurranceList() {
-        return severityRecurranceList;
+    public List<IdValuePair> getSeverityRecurrenceList() {
+        return severityRecurrenceList;
     }
 
-    public void setSeverityRecurranceList(List<IdValuePair> severityRecurranceList) {
-        this.severityRecurranceList = severityRecurranceList;
+    public void setSeverityRecurrenceList(List<IdValuePair> severityRecurrenceList) {
+        this.severityRecurrenceList = severityRecurrenceList;
+    }
+
+    public List<IdValuePair> getActionTypeList() {
+        return actionTypeList;
+    }
+
+    public void setActionTypeList(List<IdValuePair> actionTypeList) {
+        this.actionTypeList = actionTypeList;
     }
 }

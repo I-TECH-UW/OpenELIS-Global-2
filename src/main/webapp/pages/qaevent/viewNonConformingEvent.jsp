@@ -186,7 +186,7 @@
                     <td>
                         <p>
                             <form:select path="recurrence" onchange="calculateSeverityScore()">
-                                <form:options items="${form.severityRecurranceList}" itemLabel="value" itemValue="id" />
+                                <form:options items="${form.severityRecurrenceList}" itemLabel="value" itemValue="id" />
                             </form:select>
                         </p>
                     </td>

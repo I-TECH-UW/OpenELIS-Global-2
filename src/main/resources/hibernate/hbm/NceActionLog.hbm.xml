@@ -14,10 +14,11 @@
                 <param name="sequence_name">nce_action_log_id_seq</param>
             </generator>
         </id>
-        <property name="description" column="description"/>
+        <property name="correctiveAction" column="corrective_action"/>
         <property name="actionType" column="action_type"/>
         <property name="personResponsible" column="person_responsible"/>
         <property name="dateCompleted" column="date_completed"/>
-        <property name="turnAoundTime" column="turn_aound_time"/>
+        <property name="turnAroundTime" column="turn_around_time"/>
+        <property name="ncEventId" column="nc_event_id"/>
     </class>
 </hibernate-mapping>

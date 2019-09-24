@@ -18,4 +18,8 @@ public interface NonConformingEventWorker {
     void initFormForFollowUp(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
     void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+
+    boolean updateCorrectiveAction(NonConformingEventForm form);
+
+    boolean resolveNCEvent(NonConformingEventForm form);
 }

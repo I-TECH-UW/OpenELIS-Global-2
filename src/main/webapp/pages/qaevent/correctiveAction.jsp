@@ -25,6 +25,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
@@ -44,7 +45,7 @@
 <script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-
+<script></script>
 <div align="center">
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
 
@@ -64,8 +65,30 @@
     </table>
 
 </div>
-<c:if test="${not empty form.labOrderNumber}">
+<c:if test="${not empty form.id}">
+    <script>
+        var actionTypes= [];
+        <c:forEach items="${form.actionTypeList}" var="actionType">
+        var at = {};
+        at['value'] = '${actionType.value}';
+        at['id'] = '${actionType.id}';
+        actionTypes.push(at);
+        </c:forEach>
+
+        var actionLogs = [];
+        <c:forEach items="${form.actionLog}" var="actionLog">
+            var al = {};
+            al['id'] = '${actionLog.id}';
+            al['correctiveAction'] = '${actionLog.correctiveAction}';
+            al['actionType'] = '${actionLog.actionType}';
+            al['personResponsible'] = '${actionLog.personResponsible}';
+            al['dateCompleted'] = '${actionLog.dateCompleted}';
+            al['turnAroundTime'] = '${actionLog.turnAroundTime}';
+            actionLogs.push(al);
+        </c:forEach>
+    </script>
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
+    <form:hidden path="id" />
     <form:hidden path="currentUserId" />
     <form:hidden path="status" />
     <form:hidden path="reportDate" />
@@ -90,6 +113,8 @@
     <form:hidden path="correctiveAction" />
     <form:hidden path="controlAction" />
     <form:hidden path="comments" />
+    <form:hidden path="discussionDate" />
+    <form:hidden path="actionLogStr" />
 
     <table class="corrective-action-section-1">
         <tr>
@@ -183,29 +208,63 @@
         <caption><spring:message code="nonconforming.page.correctiveAction.log" /></caption>
         <tr>
             <td class="column-right-text"><spring:message code="nonconforming.page.correctiveAction.discussionDate" /></td>
-            <td><c:out value="${form.discussionDate}" /></td>
+            <td id="discussionDatesView"><c:out value="${form.discussionDate}" /></td>
         </tr>
         <tr>
             <td></td>
             <td>
-                <input type="date" max="<%= today%>"/>
+                <input type="date" max="<%= today%>" id="new-discussion-date"/>
             </td>
         </tr>
         <tr>
             <td></td>
             <td>
-                <button id="addNewDate">Add new date</button>
+                <button id="addNewDate" >Add new date</button>
             </td>
         </tr>
     </table>
-    <table class="full-table">
+    <table class="full-table" id="action-log-table">
         <tr>
             <th>Corrective action</th>
-            <th>Action type</th>
+            <th><spring:message code="nonconforming.page.correctiveAction.actionType" /></th>
             <th>Person responsible</th>
             <th>Date Completed</th>
             <th>Turnaround time</th>
         </tr>
+        <c:forEach items="${form.actionLog}" var="actionLog" varStatus="loop">
+            <tr><input type="hidden" name="action-log-id-${loop.index}" value="${actionLog.id}" />
+                <td><textarea name="correctiveAction-log-${loop.index}" onchange="checkIfValid()"><c:out value="${actionLog.correctiveAction}"/></textarea></td>
+                <td class="action-type">
+                    <c:forEach items="${form.actionTypeList}" var="actionType">
+                        <input  type="checkbox" value="${actionType.id}" name="action-type-${loop.index}" checked="${actionLog.actionType.indexOf(actionType.id) != -1}" onchange="checkIfValid()"/>${actionType.value}<br />
+                    </c:forEach>
+                </td>
+                <td><input type="text" name="responsiblePerson-${loop.index}" onchange="checkIfValid()" value="<c:out value="${actionLog.personResponsible}"/>"/></td>
+                <td>
+                    <input type="date" name="dateActionCompleted-${loop.index}" id="dateActionCompleted-${loop.index}" max="<%= today%>" value="<c:out value="${actionLog.dateCompleted}"/>"/>
+                </td>
+                <td>
+                    <input type="hidden" name="turnAroundTime-${loop.index}" id="turnAroundTime-${loop.index}" />
+                    <span id="turnAroundTimeSpan-${loop.index}"><c:out value="${actionLog.turnAroundTime}"/></span>
+                </td>
+            </tr>
+        </c:forEach>
+            <tr index="${fn:length(form.actionLog)}">
+                <td><textarea name="correctiveAction-log-${fn:length(form.actionLog)}" onchange="checkIfValid()"></textarea></td>
+                <td class="action-type">
+                    <c:forEach items="${form.actionTypeList}" var="actionType">
+                        <input  type="checkbox" value="${actionType.id}" onchange="checkIfValid()" name="action-type-${fn:length(form.actionLog)}"/>${actionType.value}<br />
+                    </c:forEach>
+                </td>
+                <td><input type="text" name="responsiblePerson-${fn:length(form.actionLog)}" onchange="checkIfValid()"/></td>
+                <td>
+                    <input type="date" name="dateActionCompleted-${fn:length(form.actionLog)}"  id="dateActionCompleted-${fn:length(form.actionLog)}" max="<%= today%>" />
+                </td>
+                <td>
+                    <input type="hidden" name="turnAroundTime-${fn:length(form.actionLog)}" id="turnAroundTime-${fn:length(form.actionLog)}" />
+                    <span id="turnAroundTimeSpan-${fn:length(form.actionLog)}"></span>
+                </td>
+            </tr>
     </table>
     <div class="center-caption"><button id="saveButtonId" onclick="savePage()">Submit</button></div>
     <table class="full-table">
@@ -214,18 +273,24 @@
             <td></td>
         </tr>
         <tr>
-            <td>
+            <td colspan="2">
                 <spring:message code="nonconforming.page.correctiveAction.nceResolutionLabel" />
-                <form:radiobutton name="effective" path="effective" value="Yes"/> Yes
-                <form:radiobutton name="effective" path="effective" value="No"/> No
+                <form:radiobutton name="effective" path="effective" value="Yes" onclick="checkNCE"/> Yes
+                <form:radiobutton name="effective" path="effective" value="No" onclick="checkNCE"/> No
             </td>
         </tr>
         <tr>
             <td><spring:message code="nonconforming.page.correctiveAction.signature" /></td>
-            <td><spring:message code="nonconforming.page.correctiveAction.dateCompleted" /></td>
+            <td>
+                <spring:message code="nonconforming.page.correctiveAction.dateCompleted" />
+                <form:input path="dateCompleted" id="dateCompleted" type="date" max="<%= today %>" />
+            </td>
         </tr>
+        <tr id="followUpAlert" style="display: none"><td colspan="2"><spring:message code="nonconforming.page.correctiveAction.followUpAlert" /></td></tr>
     </table>
-    <div class="center-caption"><button id="submitResolved" onclick="savePage()">Submit</button></div>
+    <div class="center-caption"><button id="submitResolved" onclick="completeNCE()">
+        <spring:message code="nonconforming.page.correctiveAction.submit" />
+    </button></div>
 </c:if>
 
 <script type="text/javascript">
@@ -240,13 +305,58 @@
     /**
      *  Saves the form.
      */
-    function savePage() {
+    function savePage(e) {
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        form.action = "ViewNonConformingEvent.do";
-        form.submit();
+        var actionLog = [];
+        var rowCount = document.getElementById('action-log-table').rows.length;
+        for (var i = 1; i < rowCount; i++) {
+            var id = jQuery('input[name="action-log-id-' + (i - 1) + '"]').val();
+            var correctiveAction = jQuery('textarea[name="correctiveAction-log-' + (i -1) + '"]').val();
+            var turnAroundTime = jQuery('input[name="turnAroundTime-' + (i -1) + '"]').val();
+            var dateCompleted = jQuery('input[name="dateActionCompleted-'  + (i -1) +  '"]').val();
+            var responsiblePerson = jQuery('input[name="responsiblePerson-'  + (i -1) +  '"]').val();
+            var at = jQuery('input[name="action-type-'  + (i -1) +  '"]:checked');
+            var actionType = [];
+            for (var j = 0; j < at.length; j++) {
+                actionType.push(at[j].value)
+            }
+            var xml = "<actionLog><correctiveAction>" + correctiveAction + "</correctiveAction>" +
+                "<turnAroundTime>" + turnAroundTime + "</turnAroundTime><dateCompleted>" + dateCompleted +
+                "</dateCompleted><personResponsible>" + responsiblePerson + "</personResponsible>" +
+                "<actionType>" + actionType.join(",") + "</actionType>";
+            if (id && id != '') {
+                xml += '<id>' + id + '</id>';
+            }
+            xml += '</actionLog>';
+            actionLog.push(xml);
+        }
+        document.getElementById("actionLogStr").value = "<actionLogs>" + actionLog.join("") + "</actionLogs>"; // JSON.stringify(actionLog).substring(1, l -1 );
+        console.log(document.getElementById("actionLogStr").value);
+        // form.action = "NCECorrectiveAction.do";
+        // form.submit();
     }
 
+    function checkNCE(e) {
+        var disabled = true;
+        if (e.target.checked && e.target.value === 'Yes') {
+            disabled = false;
+        }
+        document.getElementById("dateCompleted").disabled = disabled;
+        document.getElementById("submitResolved").disabled = disabled;
+        if (disabled) {
+            document.getElementById("followUpAlert").style.display = '';
+        } else {
+            document.getElementById("followUpAlert").style.display = 'none';
+        }
+    }
+
+    function completeNCE() {
+        var form = document.getElementById("mainForm");
+        window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+        form.action = "NCECorrectiveAction.do";
+        form.submit();
+    }
     /**
      *  Enable/Disable search button based on input
      */
@@ -315,59 +425,85 @@
     }
 
     function checkIfValid() {
-        var correctiveAction = jQuery('input[name="correctiveAction"]').val();
-        var consequences = jQuery('input[name="consequences"]').val();
-        var nceType = jQuery('input[name="nceType"]').val();
-        var nceCategory = jQuery('input[name="nceCategory"]').val();
-        var laboratoryComponent = 'd'; //jQuery('input[name="laboratoryComponent"]').val();
+
+        var valid = true;
+        var rowCount = document.getElementById('action-log-table').rows.length;
+        for (var i = 1; i < rowCount; i++) {
+            var id = jQuery('input[name="action-log-id-' + (i - 1) + '"]').val();
+            var correctiveAction = jQuery('textarea[name="correctiveAction-log-' + (i -1) + '"]').val();
+            var turnAroundTime = jQuery('input[name="turnAroundTime-' + (i -1) + '"]').val();
+            var dateCompleted = jQuery('input[name="dateActionCompleted-'  + (i -1) +  '"]').val();
+            var responsiblePerson = jQuery('input[name="responsiblePerson-'  + (i -1) +  '"]').val();
+            var at = jQuery('input[name="action-type-'  + (i -1) +  '"]:checked');
+            var actionType = [];
+            for (var j = 0; j < at.length; j++) {
+                actionType.push(at[j].value)
+            }
+            actionType = actionType.join(",");
+            if (correctiveAction == '' || discussionDate == '' || turnAroundTime == '' || dateCompleted == '' || responsiblePerson == '' || actionType == '') {
+                valid = false;
+            }
+        }
+        if (valid) {
+            var discussiondate = document.getElementById("discussionDate").value;
+            if (discussiondate == '') {
+                valid = false;
+            }
+        }
         setSave(true);
-        if (correctiveAction != '' && consequences !== '' && nceType !== '' && nceCategory !== '' && laboratoryComponent != '') {
+        if (valid) {
             setSave(false);
         }
     }
 
-    function resetNceType() {
-        var nceCategory = jQuery('select[name="nceCategory"]').val();
-        var el = document.getElementById("nceType");
-        var j = el.options.length - 1;
-        while (j > 0) {
-            el.remove(j);
-            j--;
-        }
 
-        for (var i = 0; i < nceTypes.length; i++) {
-            var nce = nceTypes[i];
-            if (nce.categoryId == nceCategory) {
-                el.append(new Option(nce.name, nce.id));
-            }
-        }
-    }
-
-    function calculateSeverityScore() {
-        var consequences = jQuery('select[name="consequences"]').val();
-        var recurrence = jQuery('select[name="recurrence"]').val();
-        if (consequences != '' && recurrence != '') {
-            var score = Number(consequences) * Number(recurrence);
-            document.getElementById("severityScoreLabel").innerHTML = score;
-            document.getElementById("severityScore").value = score;
-            if (score >= 1 && score <= 3) {
-                document.getElementById("colorCode").value = 'Green';
-            } else if (score >= 4 && score <= 6) {
-                document.getElementById("colorCode").value = 'Yellow';
-            } else if (score >= 7 && score <= 9) {
-                document.getElementById("colorCode").value = 'Red';
-            }
-        }
-        checkIfValid();
-    }
 
     function addNewDate(e) {
         e.preventDefault();
+        var date = document.getElementById("new-discussion-date").value;
+        var discussionDate = document.getElementById("discussionDate").value;
+        if (date !== '') {
+            var dates = [];
+            if (discussionDate != '') {
+                dates = discussionDate.split(',');
+            }
+            dates.push(date);
+            document.getElementById("discussionDate").value = dates.join(',');
+            document.getElementById("discussionDatesView").innerHTML = dates.join(',');
+            checkIfValid();
+        }
+    }
+
+    function calculateTurnAroundTime(e) {
+        var days = '';
+        if (e.target.value !== "") {
+            var reportDate = document.getElementById("reportDate").value.split('/');
+            var date = new Date(reportDate[2] + '-' + reportDate[1] + '-' + reportDate[0]);
+            var completeDate = new Date(e.target.value);
+            days = (completeDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+        }
+        var index = e.target.name.substring(20);
+        document.getElementById("turnAroundTime-" + index).value = days;
+        document.getElementById("turnAroundTimeSpan-" + index).innerHTML = days + ' days';
+        checkIfValid();
     }
 
     jQuery(document).ready( function() {
         setSave(true);
         document.getElementById("addNewDate").addEventListener("click", addNewDate);
+        // document.getElementById("dateCompleted").addEventListener("input", calculateTurnAroundTime);
+        document.getElementById("submitResolved").disabled = true;
+        jQuery('input[name*="dateActionCompleted-"]').on('change', calculateTurnAroundTime)
+        var effectiveRadios = document.getElementsByName("effective");
+        for (var i = 0; i < effectiveRadios.length; i++) {
+            effectiveRadios[i].addEventListener("input", checkNCE);
+        }
+        if (actionTypes) {
+            for (var i = 0; i < actionTypes.length; i++) {
+               // jQuery('.action-type').append('<input type="checkbox" value="' + actionTypes[i].id + '" name="actionType" />' + actionTypes[i].value + '<br/>');
+            }
+
+        }
     });
 
 </script>

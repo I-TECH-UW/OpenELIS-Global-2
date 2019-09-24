@@ -11,11 +11,12 @@ import java.util.Objects;
 public class NceActionLog extends BaseObject<String> {
 
     private String id;
-    private String description;
+    private String correctiveAction;
     private String actionType;
-    private Integer personResponsible;
+    private String personResponsible;
     private Date dateCompleted;
-    private Integer turnAoundTime;
+    private Integer turnAroundTime;
+    private Integer ncEventId;
 
     public String getId() {
         return id;
@@ -26,13 +27,13 @@ public class NceActionLog extends BaseObject<String> {
     }
 
     @Basic
-    @Column(name = "description")
-    public String getDescription() {
-        return description;
+    @Column(name = "corrective_action")
+    public String getCorrectiveAction() {
+        return correctiveAction;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCorrectiveAction(String correctiveAction) {
+        this.correctiveAction = correctiveAction;
     }
 
     @Basic
@@ -47,11 +48,11 @@ public class NceActionLog extends BaseObject<String> {
 
     @Basic
     @Column(name = "person_responsible")
-    public Integer getPersonResponsible() {
+    public String getPersonResponsible() {
         return personResponsible;
     }
 
-    public void setPersonResponsible(Integer personResponsible) {
+    public void setPersonResponsible(String personResponsible) {
         this.personResponsible = personResponsible;
     }
 
@@ -67,12 +68,22 @@ public class NceActionLog extends BaseObject<String> {
 
     @Basic
     @Column(name = "turn_aound_time")
-    public Integer getTurnAoundTime() {
-        return turnAoundTime;
+    public Integer getTurnAroundTime() {
+        return turnAroundTime;
     }
 
-    public void setTurnAoundTime(Integer turnAoundTime) {
-        this.turnAoundTime = turnAoundTime;
+    public void setTurnAroundTime(Integer turnAoundTime) {
+        this.turnAroundTime = turnAoundTime;
+    }
+
+    @Basic
+    @Column(name = "nc_event_id")
+    public Integer getNcEventId() {
+        return ncEventId;
+    }
+
+    public void setNcEventId(Integer ncEventId) {
+        this.ncEventId = ncEventId;
     }
 
     @Override
@@ -81,15 +92,16 @@ public class NceActionLog extends BaseObject<String> {
         if (o == null || getClass() != o.getClass()) return false;
         NceActionLog that = (NceActionLog) o;
         return id == that.id &&
-                Objects.equals(description, that.description) &&
+                Objects.equals(correctiveAction, that.correctiveAction) &&
                 Objects.equals(actionType, that.actionType) &&
                 Objects.equals(personResponsible, that.personResponsible) &&
                 Objects.equals(dateCompleted, that.dateCompleted) &&
-                Objects.equals(turnAoundTime, that.turnAoundTime);
+                Objects.equals(turnAroundTime, that.turnAroundTime) &&
+                Objects.equals(ncEventId, that.ncEventId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, actionType, personResponsible, dateCompleted, turnAoundTime);
+        return Objects.hash(id, correctiveAction, actionType, personResponsible, dateCompleted, turnAroundTime, ncEventId);
     }
 }
