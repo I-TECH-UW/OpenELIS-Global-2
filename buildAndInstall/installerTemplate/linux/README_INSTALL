@@ -5,10 +5,10 @@ It should be copied to the local file system.
 
 The install script, setup_OpenELIS.py will install global OpenELIS.
 
-The version being installed will depend on the war file included with the installer.
+The version being installed will depend on the dockerImage included with the installer.
 
-It is assumed that python, tomcat5.5 and postgresql 8.3 or later have already been installed on the target machine.  
-Python is needed to run the script and tomcat and postgresql are required for the application.
+It is assumed that python, and postgresql 8.3 or later have already been installed on the target machine.  
+Python is needed to run the script and postgresql are required for the application.
 The script will check for the correct versions before it continues.
 
 THE SCRIPT MUST BE RUN WITH ROOT PERMISSIONS.    

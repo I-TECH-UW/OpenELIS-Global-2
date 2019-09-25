@@ -490,8 +490,7 @@ abstract public class CSVRoutineColumnBuilder {
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-//                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
-                + "\n ', 'SELECT description FROM test where test_name != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
