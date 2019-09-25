@@ -150,22 +150,22 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
     @Override
     protected String getPageSubtitleKey() {
         RequestType requestType = getRequestType(request);
-        String key = null;
+        String pageKey = null;
         switch (requestType) {
         case INITIAL: {
-            key = "banner.menu.createPatient.Initial";
+            pageKey = "banner.menu.createPatient.Initial";
             break;
         }
         case VERIFY: {
-            key = "banner.menu.createPatient.Verify";
+            pageKey = "banner.menu.createPatient.Verify";
             break;
         }
 
         default: {
-            key = "banner.menu.createPatient.Initial";
+            pageKey = "banner.menu.createPatient.Initial";
         }
         }
 
-        return key;
+        return pageKey;
     }
 }

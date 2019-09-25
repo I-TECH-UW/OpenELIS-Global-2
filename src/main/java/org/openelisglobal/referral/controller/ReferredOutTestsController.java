@@ -101,6 +101,15 @@ public class ReferredOutTestsController extends BaseController {
         ReferredOutTestsForm form = new ReferredOutTestsForm();
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
+        setupPageForDisplay(form);
+
+        addFlashMsgsToRequest(request);
+        return findForward(FWD_SUCCESS, form);
+    }
+
+    private void setupPageForDisplay(ReferredOutTestsForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
         List<ReferralItem> referralItems = getReferralItems();
         PropertyUtils.setProperty(form, "referralItems", referralItems);
         PropertyUtils.setProperty(form, "referralReasons",
@@ -109,9 +118,6 @@ public class ReferredOutTestsController extends BaseController {
                 .getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
 
         fillInDictionaryValuesForReferralItems(referralItems);
-
-        addFlashMsgsToRequest(request);
-        return findForward(FWD_SUCCESS, form);
     }
 
     private void fillInDictionaryValuesForReferralItems(List<ReferralItem> referralItems) {
@@ -418,7 +424,8 @@ public class ReferredOutTestsController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
-            findForward(FWD_FAIL_INSERT, form);
+            setupPageForDisplay(form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
 
         List<ReferralSet> referralSetList = new ArrayList<>();
@@ -436,6 +443,7 @@ public class ReferredOutTestsController extends BaseController {
 
         if (result.hasErrors()) {
             saveErrors(result);
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
@@ -443,6 +451,7 @@ public class ReferredOutTestsController extends BaseController {
             createReferralSets(referralSetList, removableReferralResults, modifiedItems, canceledItems, parentSamples);
         } catch (LIMSRuntimeException e) {
             saveErrors(result);
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
@@ -461,6 +470,7 @@ public class ReferredOutTestsController extends BaseController {
             result.reject(errorMsg);
             saveErrors(result);
             request.setAttribute(ALLOW_EDITS_KEY, "false");
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 

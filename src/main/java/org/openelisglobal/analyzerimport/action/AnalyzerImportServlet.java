@@ -43,9 +43,8 @@ public class AnalyzerImportServlet extends HttpServlet {
     protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
     private static final long serialVersionUID = 1L;
-    private static final String USER = "user";
-    private static final String PASSWORD = "password";
-    private String systemUserId;
+    private static final String USER_FIELD_NAME = "user";
+    private static final String PASSWORD_FIELD_NAME = "password";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -70,9 +69,9 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 if (item.isFormField()) {
 
-                    if (PASSWORD.equals(item.getFieldName())) {
+                    if (PASSWORD_FIELD_NAME.equals(item.getFieldName())) {
                         password = streamToString(stream);
-                    } else if (USER.equals(item.getFieldName())) {
+                    } else if (USER_FIELD_NAME.equals(item.getFieldName())) {
                         user = streamToString(stream);
                     }
 
@@ -114,7 +113,7 @@ public class AnalyzerImportServlet extends HttpServlet {
         }
 
         if (fileRead) {
-            boolean successful = reader.insertAnalyzerData(systemUserId);
+            boolean successful = reader.insertAnalyzerData(getSysUserId(user, password));
 
             if (successful) {
                 response.getWriter().print("success");
@@ -133,24 +132,33 @@ public class AnalyzerImportServlet extends HttpServlet {
 
     }
 
-    private boolean userValid(String user, String password) {
+    private String getSysUserId(String user, String password) {
         Login login = new Login();
         login.setLoginName(user);
         login.setPassword(password);
 
-//		LoginDAO loginDAO = new LoginDAOImpl();
+        login = loginService.getValidatedLogin(user, password).orElse(null);
+
+        if (login != null) {
+            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
+            return systemUser.getId();
+        }
+
+        return "";
+    }
+
+    private boolean userValid(String user, String password) {
+        Login login = new Login();
+        login.setLoginName(user);
+        login.setPassword(password);
 
         login = loginService.getValidatedLogin(user, password).orElse(null);
 
         if (login == null) {
             return false;
         } else {
-//			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
-            systemUserId = systemUser.getId();
+            return true;
         }
-
-        return true;
     }
 
     private String streamToString(InputStream stream) throws IOException {

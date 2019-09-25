@@ -3,7 +3,6 @@ package org.openelisglobal.result.form;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -63,7 +62,6 @@ public class LogbookResultsForm extends BaseForm {
     // for display
     private List<IdValuePair> testSectionsByName;
 
-    @NotBlank(groups = { LogbookResults.class })
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
 

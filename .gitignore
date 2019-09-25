@@ -15,3 +15,6 @@ liqubase.properties
 
 # Maven Files #
 *target/
+
+#Developer specific docker-compose
+docker-compose.yml
