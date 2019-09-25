@@ -65,9 +65,6 @@ public class ReportNonConformingEventController extends BaseController {
         String labNumber = request.getParameter("labNo");
         String specimenId = request.getParameter("specimenId");
         if (!GenericValidator.isBlankOrNull(labNumber)) {
-            // PropertyUtils.setProperty(form, "testSections",
-               //     DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
-
             initForm(labNumber, specimenId, form);
         }
         addFlashMsgsToRequest(request);
@@ -116,18 +113,14 @@ public class ReportNonConformingEventController extends BaseController {
             form.setSpecimens(sampleItems);
         }
 
-
+        PropertyUtils.setProperty(form, "testSections",
+                     DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         requesterService.setSampleId(sample.getId());
         form.setSite(requesterService.getReferringSiteName());
         form.setPrescriberName(requesterService.getRequesterLastFirstName());
 
         form.setNceCategories(nceCategoryService.getAllNceCategories());
-
-        List<SampleRequester> sampleRequesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
-        for (SampleRequester sampleRequester : sampleRequesters) {
-
-        }
 
         Date today = Calendar.getInstance().getTime();
         PropertyUtils.setProperty(form, "reportDate", DateUtil.formatDateAsText(today));

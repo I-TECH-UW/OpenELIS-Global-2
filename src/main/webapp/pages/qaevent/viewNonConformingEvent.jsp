@@ -298,6 +298,14 @@
         if (message.firstChild.nodeValue == "valid") {
             jQuery("#searchResults").html("<tr><th>Date</th><th>NCE Number</th><th>Lab Section/Unit</th></tr>");
             var resultNodes = formField.getElementsByTagName("nce");
+            if (resultNodes.length == 1) {
+                var node = resultNodes[0];
+                var nceNumberEl = node.getElementsByTagName('ncenumber').item(0);
+                var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
+                if (nceNumber != '#') {
+                    window.location = 'ViewNonConformingEvent.do?nceNumber=' + nceNumber;
+                }
+            }
             for (var i = 0; i < resultNodes.length; i++) {
                 document.getElementById("searchResults").insertAdjacentHTML('beforeend', addNCERow(resultNodes[i]));
             }

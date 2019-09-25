@@ -6,6 +6,9 @@ import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
@@ -20,6 +23,7 @@ import java.util.Map;
 public class NonConformingEventSearchProvider extends BaseQueryProvider {
 
     private NCEventService ncEventService = SpringContext.getBean(NCEventService.class);;
+    private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);;
 
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -43,7 +47,6 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
         }
         searchResults = ncEventService.getAllMatching(searchParameters);
 
-
         if (searchResults.size() == 0) {
            result = INVALID;
            xml.append("No results found for search criteria.");
@@ -54,10 +57,14 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
     }
 
     public void formatResults(List<NcEvent> results, StringBuilder xml) {
-        // TODO: Fix unit.
         for (NcEvent nce: results) {
+            String reportingUnit = "";
+            if (nce.getReportingUnitId() != null) {
+                TestSection testSection = testSectionService.getTestSectionById(nce.getReportingUnitId());
+                reportingUnit = testSection.getTestSectionName();
+            }
             xml.append("<nce><date>").append(nce.getDateOfEvent()).append("</date><ncenumber>");
-            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>Haematology").append("</unit>");
+            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>").append(reportingUnit).append("</unit>");
             xml.append("<color>").append(nce.getColorCode()).append("</color></nce>");
         }
     }
