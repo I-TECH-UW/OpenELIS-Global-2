@@ -102,10 +102,6 @@
                    onclick="submitAction('PanelManagement.do');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.panel.manage.explain")%></li>
-        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.selectList.add") %>"
-                   onclick="submitAction('ResultSelectListAdd.do');"
-                   class="textButton"/><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.explain")%></li>
     </ul>
 
 
