@@ -2,6 +2,7 @@ package org.openelisglobal.renametestsection.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -119,6 +120,8 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     @Transactional(readOnly = true)
     public Localization getLocalizationForRenameTestSection(String id) {
         RenameTestSection renameTestSection = getTestSectionById(id);
-        return renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Localization localization = renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }
