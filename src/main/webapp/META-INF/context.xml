@@ -5,6 +5,6 @@
         name="jdbc/LimsDS" 
         password="clinlims" 
         type="javax.sql.DataSource" 
-        url="jdbc:postgresql://localhost:5433/ci_general_9.6" 
+        url="jdbc:postgresql://localhost:5432/ci_general_9.6"
         username="clinlims"/>
 </Context>

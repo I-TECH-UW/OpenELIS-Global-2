@@ -110,4 +110,6 @@ public interface TestDAO extends BaseDAO<Test, String> {
     public List<Test> getActiveTestsByLoinc(String loincCode);
 
     boolean duplicateTestExists(Test test) throws LIMSRuntimeException;
+
+    List<Test> getAllTestsByDictionaryResult();
 }

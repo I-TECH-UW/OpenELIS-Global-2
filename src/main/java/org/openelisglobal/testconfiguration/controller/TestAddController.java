@@ -393,14 +393,14 @@ public class TestAddController extends BaseController {
     }
 
     private List<List<IdValuePair>> createGroupedDictionaryList() {
-        List<TestResult> testResults = getSortedTestResults();
+        List<TestResult> testResults = testResultService.getAllSortedTestResults(); // getSortedTestResults();
 
         HashSet<String> dictionaryIdGroups = getDictionaryIdGroups(testResults);
 
         return getGroupedDictionaryPairs(dictionaryIdGroups);
     }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     private List<TestResult> getSortedTestResults() {
         List<TestResult> testResults = testResultService.getAllTestResults();
 
@@ -418,7 +418,7 @@ public class TestAddController extends BaseController {
             }
         });
         return testResults;
-    }
+    }*/
 
     private HashSet<String> getDictionaryIdGroups(List<TestResult> testResults) {
         HashSet<String> dictionaryIdGroups = new HashSet<>();

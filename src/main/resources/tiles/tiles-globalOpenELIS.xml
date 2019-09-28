@@ -837,6 +837,12 @@
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
 	</definition>
 
+	<definition name="resultSelectListDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="body"
+					   value="/pages/testConfiguration/resultSelectListAdd.jsp" />
+	</definition>
+
 </tiles-definitions>
 
 
