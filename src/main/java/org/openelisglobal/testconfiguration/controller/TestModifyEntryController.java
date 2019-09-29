@@ -13,6 +13,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -368,8 +369,9 @@ public class TestModifyEntryController extends BaseController {
                     return result;
                 }
 
-                return org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
-                        : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                return (GenericValidator.isBlankOrNull(o1.getSortOrder())
+                        || GenericValidator.isBlankOrNull(o2.getSortOrder())) ? 0
+                                : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
             }
         });
         return testResults;
