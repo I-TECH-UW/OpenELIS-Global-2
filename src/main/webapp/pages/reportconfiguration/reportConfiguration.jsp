@@ -83,7 +83,13 @@
     <c:forEach items="${form.reportList}" var="report">
         <tr>
             <td><c:out value="${report.name}" /></td>
-            <td category="${report.category}" class="category"></td>
+            <td category="${report.category}" class="category">
+                <c:forEach items="${form.reportCategoryList}" var="category">
+                    <c:if test="${report.category == category.id}" >
+                        <c:out value="${category.name}" />
+                    </c:if>
+                </c:forEach>
+            </td>
             <td>
                 <c:if test="${report.isVisible == 'true'}">
                     Yes
@@ -239,9 +245,5 @@
 
     jQuery(document).ready(function() {
         jQuery('#edit-report-div').hide();
-        var categoryTd = jQuery('.category');
-        for (var i = 0; i < categoryTd.length; i++) {
-            jQuery(categoryTd[i]).html(reportCategory[jQuery(categoryTd[i]).attr("category")]);
-        }
     })
 </script>
