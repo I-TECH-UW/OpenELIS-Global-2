@@ -72,7 +72,7 @@ public class DisplayListService implements LocaleChangeListener {
         TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS, PANELS_ACTIVE, PANELS_INACTIVE,
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
-        UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS
+        UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, REPORT_TYPE, REPORT_CATEGORY
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -149,6 +149,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.UNIT_OF_MEASURE_ACTIVE, createUOMList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE_INACTIVE, createUOMList());
         typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
+        typeToListMap.put(ListType.REPORT_TYPE, createReportTypeList());
+        typeToListMap.put(ListType.REPORT_CATEGORY, createReportCategoryList());
 
         SystemConfiguration.getInstance().addLocalChangeListener(this);
     }
@@ -213,6 +215,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
         typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
+        typeToListMap.put(ListType.REPORT_TYPE, createReportTypeList());
+        typeToListMap.put(ListType.REPORT_CATEGORY, createReportCategoryList());
     }
 
     public List<IdValuePair> getList(ListType listType) {
@@ -669,6 +673,30 @@ public class DisplayListService implements LocaleChangeListener {
                 .add(new IdValuePair("5", "5. " + MessageUtil.getContextualMessage("quick.entry.accession.number")));
 
         return searchCriteria;
+    }
+
+    private List<IdValuePair> createReportTypeList() {
+        List<IdValuePair> reportTypes = new ArrayList<>();
+        // N.B. If the order is to be changed just change the order but keep the
+        // id:value pairing the same
+        reportTypes.add(new IdValuePair("1", MessageUtil.getMessage("label.select.report.routine")));
+        reportTypes.add(new IdValuePair("2", MessageUtil.getMessage("label.select.report.study")));
+
+        return reportTypes;
+    }
+
+    private List<IdValuePair> createReportCategoryList() {
+        List<IdValuePair> reportTypes = new ArrayList<>();
+        // N.B. If the order is to be changed just change the order but keep the
+        // id:value pairing the same
+        reportTypes.add(new IdValuePair("1", MessageUtil.getMessage("label.select.report.category.patientStatus")));
+        reportTypes.add(new IdValuePair("2", MessageUtil.getMessage("label.select.report.category.aggregate")));
+        reportTypes.add(new IdValuePair("3", MessageUtil.getMessage("label.select.report.category.management")));
+        reportTypes.add(new IdValuePair("4", MessageUtil.getMessage("label.select.report.category.indicator")));
+        reportTypes.add(new IdValuePair("5", MessageUtil.getMessage("label.select.report.category.nonConformity")));
+        reportTypes.add(new IdValuePair("6", MessageUtil.getMessage("label.select.report.category.exportByDate")));
+
+        return reportTypes;
     }
 
 }

@@ -837,6 +837,14 @@
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
 	</definition>
 
+	<definition name="ReportManagementDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="body"
+					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
 </tiles-definitions>
 
 
