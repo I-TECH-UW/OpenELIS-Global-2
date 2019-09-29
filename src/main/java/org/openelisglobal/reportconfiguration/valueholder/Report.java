@@ -12,7 +12,6 @@ import java.util.Objects;
 public class Report extends BaseObject<String> {
     private String id;
     private String name;
-    private String type;
     private String category;
     private Integer sortOrder;
     private Boolean isVisible;
@@ -37,16 +36,6 @@ public class Report extends BaseObject<String> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Basic
-    @Column(name = "type", nullable = true, length = 200)
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     @Basic
@@ -105,7 +94,6 @@ public class Report extends BaseObject<String> {
         if (o == null || getClass() != o.getClass()) return false;
         Report report = (Report) o;
         return id == report.id &&
-                Objects.equals(type, report.type) &&
                 Objects.equals(category, report.category) &&
                 Objects.equals(sortOrder, report.sortOrder) &&
                 Objects.equals(isVisible, report.isVisible) &&
@@ -115,6 +103,6 @@ public class Report extends BaseObject<String> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, category, sortOrder, isVisible, menuElementId, displayKey);
+        return Objects.hash(id, category, sortOrder, isVisible, menuElementId, displayKey);
     }
 }

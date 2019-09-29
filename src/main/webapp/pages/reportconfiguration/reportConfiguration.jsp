@@ -52,34 +52,49 @@
 <link rel="stylesheet" media="screen" type="text/css"
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
-<p>Report configuration</p>
+<h2><spring:message code="reports.configuration.title" /></h2>
 
 <script>
     var reports= [];
     <c:forEach items="${form.reportList}" var="report">
-    var report = {};
-    report['id'] = '${report.id}';
-    report['name'] = '${report.name}';
-    report['type'] = '${report.id}';
-    report['category'] = '${report.category}';
-    report['menuElementId'] = '${report.menuElementId}';
-    report['isVisible'] = '${report.isVisible}';
-    report['sortOrder'] = '${report.sortOrder}';
-    reports.push(report);
+        var report = {};
+        report['id'] = '${report.id}';
+        report['name'] = '${report.name}';
+        report['category'] = '${report.category}';
+        report['menuElementId'] = '${report.menuElementId}';
+        report['isVisible'] = '${report.isVisible}';
+        report['sortOrder'] = '${report.sortOrder}';
+        reports.push(report);
+    </c:forEach>
+
+    var reportCategory = {};
+    <c:forEach items="${form.reportCategoryList}" var="category">
+        // var category = {};
+
+        reportCategory['${category.id}'] = '${category.name}';
+        // report['name'] = '${category.name}';
+        // reportCategory.push(category);
     </c:forEach>
 </script>
 <table id="report-table">
     <tr>
-        <th>Name</th><th>Type</th><th>Category</th><th>Visible</th><th></th>
+        <th>Name</th><th>Category</th><th>Visible</th><th></th>
     </tr>
     <c:forEach items="${form.reportList}" var="report">
         <tr>
             <td><c:out value="${report.name}" /></td>
-            <td><c:out value="${report.type}" /></td>
-            <td><c:out value="${report.category}" /></td>
-            <td><c:out value="${report.isVisible}" /></td>
+            <td category="${report.category}" class="category"></td>
             <td>
-                <button onclick="editReport('<c:out value="${report.id}" />', '<c:out value="${report.type}" />', '<c:out value="${report.category}" />')">
+                <c:if test="${report.isVisible == 'true'}">
+                    Yes
+                </c:if>
+                <c:if test="${report.isVisible != 'true'}">
+                    No
+                </c:if>
+
+            </td>
+            <td>
+                <button onclick="editReport('<c:out value="${report.id}" />', '<c:out value="${report.category}" />')">
                     Edit
                 </button>
             </td>
@@ -100,18 +115,12 @@
         <label>Name</label>
         <input name="currentReport.name" type="text" class="form-control"/>
     </div>
+
     <div class="form-div">
         <label>Type</label>
-        <form:select path="currentReport.type" cssClass="form-control" onchange="onTypeCategoryChange()">
+        <form:select path="currentReport.category" cssClass="form-control" onchange="onCategoryChange()">
             <form:option value="">Select one</form:option>
-            <form:options items="${form.types}" itemLabel="value" itemValue="id" />
-        </form:select>
-    </div>
-    <div class="form-div">
-        <label>Type</label>
-        <form:select path="currentReport.category" cssClass="form-control" onchange="onTypeCategoryChange()">
-            <form:option value="">Select one</form:option>
-            <form:options items="${form.categories}" itemLabel="value" itemValue="id"/>
+            <form:options items="${form.reportCategoryList}" itemLabel="name" itemValue="id"/>
         </form:select>
     </div>
     <div class="form-div">
@@ -142,20 +151,57 @@
         return false;
     }
 
-    function onTypeCategoryChange() {
-        console.log('changed');
+    function onCategoryChange() {
+        /*var type = jQuery('select[name="currentReport.type"]').val();
+
+        if (type == '') {
+            jQuery('select[name="currentReport.category"]').val('');
+            jQuery('#report-ordering-panel').html('');
+            jQuery('#report-ordering-panel').sortable();
+            return;
+        }*/
+        var category = jQuery('select[name="currentReport.category"]').val();
+        var id = jQuery('input[name="currentReport.id"]').val();
+        var found = false;
+        var visibleReports = getVisibleReport(category);
+        var html = [];
+        for (var i = 0; i < visibleReports.length; i++) {
+            var rep = visibleReports[i];
+            if (rep.id == id) {
+                found = true;
+            }
+            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == id ? 'current-report' : '') + '" report-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+        }
+        if (!found) {
+            var rep;
+            for (var i = 0; i < reports.length; i++) {
+                var report = reports[i];
+                if (report.id == id) {
+                    rep = report;
+                }
+            }
+            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order current-report"  report-id="' + id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+        }
+        jQuery('#report-ordering-panel').html(html.join(''));
+        jQuery('#report-ordering-panel').sortable();
     }
 
-    function editReport(reportId, type, category) {
-        jQuery('#edit-report-div').show();
-        jQuery('#report-table').hide();
+    function getVisibleReport(category) {
         var visibleReports = [];
         for (var i = 0; i < reports.length; i++) {
             var report = reports[i];
-            if (report.type == type && report.category == category) {
+            if (report.category == category) {
                 visibleReports.push(report);
             }
         }
+        return visibleReports;
+    }
+
+    function editReport(reportId, category) {
+        jQuery('#edit-report-div').show();
+        jQuery('#report-table').hide();
+        var visibleReports = getVisibleReport(category);
+
         var html = [];
         var currentReport;
         for (var i = 0; i < visibleReports.length; i++) {
@@ -168,7 +214,6 @@
         if (currentReport) {
             jQuery('input[name="currentReport.name"]').val(currentReport.name);
             jQuery('input[name="currentReport.id"]').val(currentReport.id);
-            jQuery('select[name="currentReport.type"]').val(currentReport.type);
             jQuery('select[name="currentReport.category"]').val(currentReport.category);
             jQuery('input[name="currentReport.isVisible"]').prop('checked', currentReport.isVisible == 'true');
         }
@@ -194,5 +239,9 @@
 
     jQuery(document).ready(function() {
         jQuery('#edit-report-div').hide();
+        var categoryTd = jQuery('.category');
+        for (var i = 0; i < categoryTd.length; i++) {
+            jQuery(categoryTd[i]).html(reportCategory[jQuery(categoryTd[i]).attr("category")]);
+        }
     })
 </script>

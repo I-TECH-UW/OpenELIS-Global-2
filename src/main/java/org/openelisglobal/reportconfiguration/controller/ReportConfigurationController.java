@@ -2,8 +2,10 @@ package org.openelisglobal.reportconfiguration.controller;
 
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reportconfiguration.form.ReportConfigurationForm;
 import org.openelisglobal.reportconfiguration.service.ReportService;
+import org.openelisglobal.reportconfiguration.valueholder.ReportCategory;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ReportConfigurationController extends BaseController {
@@ -29,11 +33,11 @@ public class ReportConfigurationController extends BaseController {
     public ModelAndView showReports(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ReportConfigurationForm form = new ReportConfigurationForm();
-        form.setCategories(DisplayListService.getInstance().getList(DisplayListService.ListType.REPORT_CATEGORY));
-        form.setTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.REPORT_TYPE));
+        form.setReportCategoryList(createReportCategoryList());
         form.setReportList(reportService.getAll());
         return findForward(FWD_SUCCESS, form);
     }
+
 
 
     @RequestMapping(value = "/ReportConfiguration", method = RequestMethod.POST)
@@ -42,12 +46,37 @@ public class ReportConfigurationController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String currentUserId = getSysUserId(request);
+        form.setReportCategoryList(createReportCategoryList());
         boolean updated = reportService.updateReport(form, currentUserId);
         if (updated) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             return findForward(FWD_FAIL_INSERT, form);
         }
+    }
+
+    private List<ReportCategory> createReportCategoryList() {
+        List<ReportCategory> reportCategoryList = new ArrayList<>();
+        // N.B. If the order is to be changed just change the order but keep the
+        // id:value pairing the same
+        reportCategoryList.add(new ReportCategory("1", MessageUtil.getMessage("label.select.report.category.routine"), "menu_reports_routine", "", ""));
+        reportCategoryList.add(new ReportCategory("2", MessageUtil.getMessage("label.select.report.category.study"), "menu_reports_study", "", ""));
+        reportCategoryList.add(new ReportCategory("3", MessageUtil.getMessage("label.select.report.category.patientStatus"), "menu_reports_status_patient", "", "1"));
+        reportCategoryList.add(new ReportCategory("4", MessageUtil.getMessage("label.select.report.category.aggregate"), "menu_reports_aggregate", "", "1"));
+        reportCategoryList.add(new ReportCategory("5", MessageUtil.getMessage("label.select.report.category.management"), "menu_reports_management", "", "1"));
+        reportCategoryList.add(new ReportCategory("6", MessageUtil.getMessage("label.select.report.category.activity"), "menu_reports_activity", "", "5"));
+        reportCategoryList.add(new ReportCategory("7", MessageUtil.getMessage("label.select.report.category.management.nonConformity"), "menu_reports_nonconformity", "", "5"));
+        reportCategoryList.add(new ReportCategory("8", MessageUtil.getMessage("label.select.report.category.study.patientStatus"), "menu_reports_patients", "", "2"));
+        reportCategoryList.add(new ReportCategory("9", MessageUtil.getMessage("label.select.report.category.study.arv"), "menu_reports_arv", "", "7"));
+        reportCategoryList.add(new ReportCategory("10", MessageUtil.getMessage("label.select.report.category.study.eid"), "menu_reports_eid", "", "7"));
+        reportCategoryList.add(new ReportCategory("11", MessageUtil.getMessage("label.select.report.category.study.vl"), "menu_reports_vl", "", "7"));
+        reportCategoryList.add(new ReportCategory("12", MessageUtil.getMessage("label.select.report.category.study.indeterminate"), "menu_reports_indeterminate", "", "7"));
+        reportCategoryList.add(new ReportCategory("12", MessageUtil.getMessage("label.select.report.category.study.indicator"), "menu_reports_indicator", "", "2"));
+        reportCategoryList.add(new ReportCategory("13", MessageUtil.getMessage("label.select.report.category.study.nonConformity"), "menu_reports_nonconformity.study", "", "2"));
+        reportCategoryList.add(new ReportCategory("14", MessageUtil.getMessage("label.select.report.category.exportByDate"), "menu_reports_export", "", "2"));
+
+
+        return reportCategoryList;
     }
 
     @Override
