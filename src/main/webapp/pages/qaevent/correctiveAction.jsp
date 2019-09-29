@@ -239,15 +239,15 @@
         </tr>
         <c:forEach items="${form.actionLog}" var="actionLog" varStatus="loop">
             <tr><input type="hidden" name="action-log-id-${loop.index}" value="${actionLog.id}" />
-                <td><textarea name="correctiveAction-log-${loop.index}" onchange="checkIfValid()"><c:out value="${actionLog.correctiveAction}"/></textarea></td>
+                <td><textarea name="correctiveAction-log-${loop.index}" onchange="checkIfValid()" readonly><c:out value="${actionLog.correctiveAction}"/></textarea></td>
                 <td class="action-type">
                     <c:forEach items="${form.actionTypeList}" var="actionType">
-                        <input  type="checkbox" value="${actionType.id}" name="action-type-${loop.index}" checked="${actionLog.actionType.indexOf(actionType.id) != -1}" onchange="checkIfValid()"/>${actionType.value}<br />
+                        <input  disabled type="checkbox" value="${actionType.id}" name="action-type-${loop.index}" checked="${actionLog.actionType.indexOf(actionType.id) != -1}" onchange="checkIfValid()"/>${actionType.value}<br />
                     </c:forEach>
                 </td>
-                <td><input type="text" name="responsiblePerson-${loop.index}" onchange="checkIfValid()" value="<c:out value="${actionLog.personResponsible}"/>"/></td>
+                <td><input type="text" name="responsiblePerson-${loop.index}" onchange="checkIfValid()" readonly value="<c:out value="${actionLog.personResponsible}"/>"/></td>
                 <td>
-                    <input type="date" name="dateActionCompleted-${loop.index}" id="dateActionCompleted-${loop.index}" max="<%= today%>" value="<c:out value="${actionLog.dateCompleted}"/>"/>
+                    <input type="date" name="dateActionCompleted-${loop.index}" id="dateActionCompleted-${loop.index}" readonly max="<%= today%>" value="<c:out value="${actionLog.dateCompleted}"/>"/>
                 </td>
                 <td>
                     <input type="hidden" name="turnAroundTime-${loop.index}" id="turnAroundTime-${loop.index}" />
