@@ -122,7 +122,7 @@
     <ul id="report-ordering-panel" class="sortable sortable-tag ui-sortable report-ordering-panel">
 
     </ul>
-
+    <input name="idOrder" type="hidden" />
     <button>
         Save
     </button>
@@ -162,7 +162,9 @@
             if (rep.id == reportId) {
                 currentReport = rep;
             }
-            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == reportId ? 'current-report' : '') + '" list-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+            if (report.visible) {
+                html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == reportId ? 'current-report' : '') + '" report-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+            }
         }
         if (currentReport) {
             jQuery('input[name="name"]').val(currentReport.name);
@@ -176,8 +178,17 @@
     }
 
     function onSave() {
+        var order = jQuery(".report-sort-order");
+        var idOrder = [];
+        for (var i = 0; i < order.length; i++) {
+            var o = order[i];
+            var reportId = o.getAttribute('report-id');
+            idOrder.push(reportId);
+        }
+
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+        jQuery('input[name="idOrder"]').val(idOrder.join(','));
         form.action = "ReportConfiguration.do";
         form.submit();
     }

@@ -4,6 +4,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.reportconfiguration.form.ReportConfigurationForm;
 import org.openelisglobal.reportconfiguration.service.ReportService;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,8 @@ public class ReportConfigurationController extends BaseController {
 
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private SystemUserService systemUserService;
 
     @RequestMapping(value = "/ReportConfiguration", method = RequestMethod.GET)
     public ModelAndView showReports(HttpServletRequest request)
@@ -38,7 +41,7 @@ public class ReportConfigurationController extends BaseController {
                                     BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        boolean updated = false;// reportService.update(form);
+        boolean updated = reportService.updateReport(form);
         if (updated) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {

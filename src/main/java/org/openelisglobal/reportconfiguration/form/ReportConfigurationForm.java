@@ -16,6 +16,8 @@ public class ReportConfigurationForm extends BaseForm {
 
     private Report currentReport;
 
+    private String idOrder;
+
     public ReportConfigurationForm() {
         this.currentReport = new Report();
     }
@@ -50,5 +52,13 @@ public class ReportConfigurationForm extends BaseForm {
 
     public void setCurrentReport(Report currentReport) {
         this.currentReport = currentReport;
+    }
+
+    public String getIdOrder() {
+        return idOrder;
+    }
+
+    public void setIdOrder(String idOrder) {
+        this.idOrder = idOrder;
     }
 }
