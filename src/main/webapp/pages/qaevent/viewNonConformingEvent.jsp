@@ -235,7 +235,9 @@
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
-        document.getElementById("saveButtonId").disabled = disabled;
+        if (document.getElementById("saveButtonId")) {
+            document.getElementById("saveButtonId").disabled = disabled;
+        }
     }
 
     function enableSearch() {

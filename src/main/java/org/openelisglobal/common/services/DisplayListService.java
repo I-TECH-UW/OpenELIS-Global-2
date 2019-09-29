@@ -75,7 +75,7 @@ public class DisplayListService implements LocaleChangeListener {
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST,
-        ACTION_TYPE_LIST
+        ACTION_TYPE_LIST, LABORATORY_COMPONENT
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -154,10 +154,10 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.UNIT_OF_MEASURE_ACTIVE, createUOMList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE_INACTIVE, createUOMList());
         typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
-        typeToListMap.put(ListType.LAB_COMPONENT, createLabComponentList());
         typeToListMap.put(ListType.SEVERITY_CONSEQUENCES_LIST, createConsequencesList());
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
+        typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
 
         SystemConfiguration.getInstance().addLocalChangeListener(this);
     }
@@ -222,10 +222,10 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
         typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
-        typeToListMap.put(ListType.LAB_COMPONENT, createLabComponentList());
         typeToListMap.put(ListType.SEVERITY_CONSEQUENCES_LIST, createConsequencesList());
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
+        typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
     }
 
     public List<IdValuePair> getList(ListType listType) {
@@ -684,16 +684,6 @@ public class DisplayListService implements LocaleChangeListener {
         return searchCriteria;
     }
 
-    private List<IdValuePair> createLabComponentList() {
-        List<IdValuePair> labComponentList = new ArrayList<>();
-        List<LabComponent> labComponents = labComponentService.getAll();
-
-        for (LabComponent component: labComponents) {
-            labComponentList.add(new IdValuePair(component.getId(), component.getLocalizedName()));
-        }
-        return labComponentList;
-    }
-
     private List<IdValuePair> createConsequencesList() {
         List<IdValuePair> consequencesList = new ArrayList<>();
 
@@ -726,6 +716,25 @@ public class DisplayListService implements LocaleChangeListener {
         recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.input.actiontype.corrective")));
         recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.input.actiontype.preventive")));
         recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.input.actiontype.concurrent")));
+        return recurrenceList;
+    }
+
+    private List<IdValuePair> createLaboratoryComponentList() {
+        List<IdValuePair> recurrenceList = new ArrayList<>();
+
+        // N.B. If the order is to be changed just change the order but keep the
+        // id:value pairing the same
+        recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.laboratoryComponent.facilitiesAndSafety")));
+        recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.laboratoryComponent.organization")));
+        recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.laboratoryComponent.personnel")));
+        recurrenceList.add(new IdValuePair("4", MessageUtil.getMessage("label.select.laboratoryComponent.equipment")));
+        recurrenceList.add(new IdValuePair("5", MessageUtil.getMessage("label.select.laboratoryComponent.purchasing")));
+        recurrenceList.add(new IdValuePair("6", MessageUtil.getMessage("label.select.laboratoryComponent.process")));
+        recurrenceList.add(new IdValuePair("7", MessageUtil.getMessage("label.select.laboratoryComponent.information")));
+        recurrenceList.add(new IdValuePair("8", MessageUtil.getMessage("label.select.laboratoryComponent.documents")));
+        recurrenceList.add(new IdValuePair("9", MessageUtil.getMessage("label.select.laboratoryComponent.assessment")));
+        recurrenceList.add(new IdValuePair("10", MessageUtil.getMessage("label.select.laboratoryComponent.nceManagement")));
+        recurrenceList.add(new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
         return recurrenceList;
     }
 

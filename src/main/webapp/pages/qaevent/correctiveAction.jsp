@@ -159,7 +159,13 @@
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.page.correctiveAction.laboratoryComponent" /></td>
-            <td><c:out value="${form.laboratoryComponent}" /></td>
+            <td>
+                <c:forEach items="${form.labComponentList}" var="laboratoryComponent">
+                    <c:if test="${laboratoryComponent.id == form.laboratoryComponent}" >
+                        <c:out value="${laboratoryComponent.value}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.page.followUp.nceCategory" /></td>
@@ -295,7 +301,9 @@
 
 <script type="text/javascript">
     function setSave(disabled) {
-        document.getElementById("saveButtonId").disabled = disabled;
+        if (document.getElementById("saveButtonId")) {
+            document.getElementById("saveButtonId").disabled = disabled;
+        }
     }
 
     function enableSearch() {
@@ -501,20 +509,23 @@
 
     jQuery(document).ready( function() {
         setSave(true);
-        document.getElementById("addNewDate").addEventListener("click", addNewDate);
+        if (document.getElementById("addNewDate")) {
+            document.getElementById("addNewDate").addEventListener("click", addNewDate);
+        }
         // document.getElementById("dateCompleted").addEventListener("input", calculateTurnAroundTime);
-        document.getElementById("submitResolved").disabled = true;
+        if (document.getElementById("submitResolved")) {
+            document.getElementById("submitResolved").disabled = true;
+        }
         jQuery('input[name*="dateActionCompleted-"]').on('change', calculateTurnAroundTime)
         var effectiveRadios = document.getElementsByName("effective");
         for (var i = 0; i < effectiveRadios.length; i++) {
             effectiveRadios[i].addEventListener("input", checkNCE);
         }
-        if (actionTypes) {
+        /*if (actionTypes) {
             for (var i = 0; i < actionTypes.length; i++) {
                // jQuery('.action-type').append('<input type="checkbox" value="' + actionTypes[i].id + '" name="actionType" />' + actionTypes[i].value + '<br/>');
             }
-
-        }
+        } */
     });
 
 </script>
