@@ -119,7 +119,8 @@
 
     <div class="form-div">
         <label>Name</label>
-        <input name="currentReport.name" type="text" class="form-control"/>
+        <form:hidden path="currentReport.name"/>
+        <p><strong id="currentReportName"></strong></p>
     </div>
 
     <div class="form-div">
@@ -219,6 +220,7 @@
         }
         if (currentReport) {
             jQuery('input[name="currentReport.name"]').val(currentReport.name);
+            jQuery('#currentReportName').html(currentReport.name);
             jQuery('input[name="currentReport.id"]').val(currentReport.id);
             jQuery('select[name="currentReport.category"]').val(currentReport.category);
             jQuery('input[name="currentReport.isVisible"]').prop('checked', currentReport.isVisible == 'true');

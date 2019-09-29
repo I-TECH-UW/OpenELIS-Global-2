@@ -1,9 +1,14 @@
 package org.openelisglobal.reportconfiguration.valueholder;
 
+/**
+ *  The Category of the report.
+ */
 public class ReportCategory {
-
+    // ID of the Category
     private String id;
+    // The name of the Category
     private String name;
+    // The Menu element ID
     private String menuElementId;
     private String sortOrder;
     private String parentId;
