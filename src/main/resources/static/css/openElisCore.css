@@ -1285,3 +1285,11 @@ tr.border_top td {
 .edit-report-form {
 	padding: 10px 20px;
 }
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}

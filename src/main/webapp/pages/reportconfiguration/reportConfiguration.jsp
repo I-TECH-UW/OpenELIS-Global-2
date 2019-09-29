@@ -48,6 +48,9 @@
 <script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<link rel="stylesheet" media="screen" type="text/css"
+      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
 <p>Report configuration</p>
 
@@ -55,6 +58,7 @@
     var reports= [];
     <c:forEach items="${form.reportList}" var="report">
     var report = {};
+    report['id'] = '${report.id}';
     report['name'] = '${report.name}';
     report['type'] = '${report.id}';
     report['category'] = '${report.category}';
@@ -64,9 +68,9 @@
     reports.push(report);
     </c:forEach>
 </script>
-<table>
+<table id="report-table">
     <tr>
-        <th>Name</th><th>Type</th><th>Category</th><th>Visible</th>
+        <th>Name</th><th>Type</th><th>Category</th><th>Visible</th><th></th>
     </tr>
     <c:forEach items="${form.reportList}" var="report">
         <tr>
@@ -74,10 +78,16 @@
             <td><c:out value="${report.type}" /></td>
             <td><c:out value="${report.category}" /></td>
             <td><c:out value="${report.visible}" /></td>
+            <td>
+                <button onclick="editReport('<c:out value="${report.id}" />', '<c:out value="${report.type}" />', '<c:out value="${report.category}" />')">
+                    Edit
+                </button>
+            </td>
         </tr>
     </c:forEach>
 </table>
 
+<div id="edit-report-div">
 <form:form name="${form.formName}"
            action="${form.formAction}"
            modelAttribute="form"
@@ -92,38 +102,52 @@
     </div>
     <div class="form-div">
         <label>Type</label>
-        <form:select path="currentReport.type" cssClass="form-control">
+        <form:select path="currentReport.type" cssClass="form-control" onchange="onTypeCategoryChange()">
             <form:option value="">Select one</form:option>
             <form:options items="${form.types}" itemLabel="value" itemValue="id" />
         </form:select>
     </div>
     <div class="form-div">
         <label>Type</label>
-        <form:select path="currentReport.category" cssClass="form-control">
+        <form:select path="currentReport.category" cssClass="form-control" onchange="onTypeCategoryChange()">
             <form:option value="">Select one</form:option>
             <form:options items="${form.categories}" itemLabel="value" itemValue="id"/>
         </form:select>
     </div>
     <div class="form-div">
         <label>Visible</label>
-        <input type="checkbox" name="visible" />
+        <input type="checkbox" name="currentReport.visible" />
     </div>
 
-    <ul>
+    <ul id="report-ordering-panel" class="sortable sortable-tag ui-sortable report-ordering-panel">
 
     </ul>
 
     <button>
         Save
     </button>
-    <button>
+    <button onclick="return cancelEdit()">
         Cancel
     </button>
 
 </form:form>
+</div>
 
 <script>
-    function setReportOrderPanel(reportId, type, category) {
+
+    function cancelEdit() {
+        jQuery('#edit-report-div').hide();
+        jQuery('#report-table').show();
+        return false;
+    }
+
+    function onTypeCategoryChange() {
+        console.log('changed');
+    }
+
+    function editReport(reportId, type, category) {
+        jQuery('#edit-report-div').show();
+        jQuery('#report-table').hide();
         var visibleReports = [];
         for (var i = 0; i < reports.length; i++) {
             var report = reports[i];
@@ -132,8 +156,33 @@
             }
         }
         var html = [];
+        var currentReport;
         for (var i = 0; i < visibleReports.length; i++) {
-            html.push('<li class=""></li>')
+            var rep = visibleReports[i];
+            if (rep.id == reportId) {
+                currentReport = rep;
+            }
+            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == reportId ? 'current-report' : '') + '" list-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
         }
+        if (currentReport) {
+            jQuery('input[name="name"]').val(currentReport.name);
+            jQuery('input[name="id"]').val(currentReport.id);
+            jQuery('input[name="currentReport.type"]').val(currentReport.type);
+            jQuery('input[name="currentReport.category"]').val(currentReport.category);
+            jQuery('input[name="currentReport.visible"]').val(currentReport.visible);
+        }
+        jQuery('#report-ordering-panel').html(html.join(''));
+        jQuery('#report-ordering-panel').sortable();
     }
+
+    function onSave() {
+        var form = document.getElementById("mainForm");
+        window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+        form.action = "ReportConfiguration.do";
+        form.submit();
+    }
+
+    jQuery(document).ready(function() {
+        jQuery('#edit-report-div').hide();
+    })
 </script>
