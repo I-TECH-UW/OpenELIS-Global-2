@@ -26,8 +26,8 @@
         <property name="sortOrder">
             <column name="sort_order" sql-type="integer" not-null="true"/>
         </property>
-        <property name="visible">
-            <column name="visible" sql-type="boolean" not-null="true"/>
+        <property name="isVisible">
+            <column name="is_visible" sql-type="boolean" not-null="true"/>
         </property>
         <property name="menuElementId">
             <column name="menu_element_id" sql-type="varchar(100)" length="100" not-null="true"/>

@@ -41,7 +41,8 @@ public class ReportConfigurationController extends BaseController {
                                     BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        boolean updated = reportService.updateReport(form);
+        String currentUserId = getSysUserId(request);
+        boolean updated = reportService.updateReport(form, currentUserId);
         if (updated) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
@@ -53,6 +54,8 @@ public class ReportConfigurationController extends BaseController {
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
             return "ReportManagementDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/ReportConfiguration.do";
         } else if (FWD_FAIL.equals(forward)) {
             return "ReportManagementDefinition";
         } else {

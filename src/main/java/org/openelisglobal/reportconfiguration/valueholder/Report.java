@@ -15,7 +15,7 @@ public class Report extends BaseObject<String> {
     private String type;
     private String category;
     private Integer sortOrder;
-    private Boolean visible;
+    private Boolean isVisible;
     private String menuElementId;
     private String displayKey;
 
@@ -70,13 +70,13 @@ public class Report extends BaseObject<String> {
     }
 
     @Basic
-    @Column(name = "visible", nullable = true)
-    public Boolean getVisible() {
-        return visible;
+    @Column(name = "is_visible", nullable = true)
+    public Boolean getIsVisible() {
+        return isVisible;
     }
 
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
+    public void setIsVisible(Boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
     @Basic
@@ -108,13 +108,13 @@ public class Report extends BaseObject<String> {
                 Objects.equals(type, report.type) &&
                 Objects.equals(category, report.category) &&
                 Objects.equals(sortOrder, report.sortOrder) &&
-                Objects.equals(visible, report.visible) &&
+                Objects.equals(isVisible, report.isVisible) &&
                 Objects.equals(menuElementId, report.menuElementId) &&
                 Objects.equals(displayKey, report.displayKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, category, sortOrder, visible, menuElementId, displayKey);
+        return Objects.hash(id, type, category, sortOrder, isVisible, menuElementId, displayKey);
     }
 }

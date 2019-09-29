@@ -6,5 +6,5 @@ import org.openelisglobal.reportconfiguration.valueholder.Report;
 
 public interface ReportService extends BaseObjectService<Report, String> {
 
-    boolean updateReport(ReportConfigurationForm form);
+    boolean updateReport(ReportConfigurationForm form, String currentUserId);
 }

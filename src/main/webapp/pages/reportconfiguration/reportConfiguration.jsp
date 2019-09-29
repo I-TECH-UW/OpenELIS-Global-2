@@ -63,7 +63,7 @@
     report['type'] = '${report.id}';
     report['category'] = '${report.category}';
     report['menuElementId'] = '${report.menuElementId}';
-    report['visible'] = '${report.visible}';
+    report['isVisible'] = '${report.isVisible}';
     report['sortOrder'] = '${report.sortOrder}';
     reports.push(report);
     </c:forEach>
@@ -77,7 +77,7 @@
             <td><c:out value="${report.name}" /></td>
             <td><c:out value="${report.type}" /></td>
             <td><c:out value="${report.category}" /></td>
-            <td><c:out value="${report.visible}" /></td>
+            <td><c:out value="${report.isVisible}" /></td>
             <td>
                 <button onclick="editReport('<c:out value="${report.id}" />', '<c:out value="${report.type}" />', '<c:out value="${report.category}" />')">
                     Edit
@@ -98,7 +98,7 @@
 
     <div class="form-div">
         <label>Name</label>
-        <input name="name" type="text" class="form-control"/>
+        <input name="currentReport.name" type="text" class="form-control"/>
     </div>
     <div class="form-div">
         <label>Type</label>
@@ -116,14 +116,15 @@
     </div>
     <div class="form-div">
         <label>Visible</label>
-        <input type="checkbox" name="currentReport.visible" />
+        <input type="checkbox" name="currentReport.isVisible" />
     </div>
 
     <ul id="report-ordering-panel" class="sortable sortable-tag ui-sortable report-ordering-panel">
 
     </ul>
     <input name="idOrder" type="hidden" />
-    <button>
+    <input name="currentReport.id" type="hidden" />
+    <button onclick="save()">
         Save
     </button>
     <button onclick="return cancelEdit()">
@@ -162,22 +163,20 @@
             if (rep.id == reportId) {
                 currentReport = rep;
             }
-            if (report.visible) {
-                html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == reportId ? 'current-report' : '') + '" report-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
-            }
+            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == reportId ? 'current-report' : '') + '" report-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
         }
         if (currentReport) {
-            jQuery('input[name="name"]').val(currentReport.name);
-            jQuery('input[name="id"]').val(currentReport.id);
-            jQuery('input[name="currentReport.type"]').val(currentReport.type);
-            jQuery('input[name="currentReport.category"]').val(currentReport.category);
-            jQuery('input[name="currentReport.visible"]').val(currentReport.visible);
+            jQuery('input[name="currentReport.name"]').val(currentReport.name);
+            jQuery('input[name="currentReport.id"]').val(currentReport.id);
+            jQuery('select[name="currentReport.type"]').val(currentReport.type);
+            jQuery('select[name="currentReport.category"]').val(currentReport.category);
+            jQuery('input[name="currentReport.isVisible"]').prop('checked', currentReport.isVisible == 'true');
         }
         jQuery('#report-ordering-panel').html(html.join(''));
         jQuery('#report-ordering-panel').sortable();
     }
 
-    function onSave() {
+    function save() {
         var order = jQuery(".report-sort-order");
         var idOrder = [];
         for (var i = 0; i < order.length; i++) {
