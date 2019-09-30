@@ -161,6 +161,9 @@
         </td>
     </tr>
 </table>
+    <div class="center-caption"><button id="saveButtonId" onclick="savePage()">
+        <spring:message code="button.label.submit" />
+    </button></div>
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
@@ -242,10 +245,10 @@
             jQuery("#searchLabNumber").val(value);
         }
 
-        patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+        doSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
     }
 
-    function patientSearch(lastName, firstName, STNumber, subjectNumber, nationalId, labNumber, guid, suppressExternalSearch, success, failure){
+    function doSearch(lastName, firstName, STNumber, subjectNumber, nationalId, labNumber, guid, suppressExternalSearch, success, failure){
         if( !failure){failure = defaultFailure;	}
         new Ajax.Request (
             'ajaxQueryXML',  //url

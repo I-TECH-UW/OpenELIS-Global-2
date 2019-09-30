@@ -272,7 +272,7 @@
                 </td>
             </tr>
     </table>
-    <div class="center-caption"><button id="saveButtonId" onclick="savePage()">Submit</button></div>
+    <div class="center-caption"><button id="saveButtonId" onclick="savePage()"><spring:message code="label.button.save" /></button></div>
     <table class="full-table">
         <caption><spring:message code="nonconforming.page.correctiveAction.nceResolution" /></caption>
         <tr>
@@ -281,8 +281,10 @@
         <tr>
             <td colspan="2">
                 <spring:message code="nonconforming.page.correctiveAction.nceResolutionLabel" />
-                <form:radiobutton name="effective" path="effective" value="Yes" onclick="checkNCE"/> Yes
-                <form:radiobutton name="effective" path="effective" value="No" onclick="checkNCE"/> No
+                <form:radiobutton name="effective" path="effective" value="Yes" onclick="checkNCE"/>
+                <spring:message code="nonconforming.page.correctiveAction.yes" />
+                <form:radiobutton name="effective" path="effective" value="No" onclick="checkNCE"/>
+                <spring:message code="nonconforming.page.correctiveAction.no" />
             </td>
         </tr>
         <tr>

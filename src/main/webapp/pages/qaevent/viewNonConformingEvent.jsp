@@ -54,8 +54,8 @@
     <h2><spring:message code="nonconforming.page.view.title" /></h2>
 
     <select id="searchCriteria" tabindex="1" class="patientSearch">
-        <option value="<c:out value="1" />">Lab Order Number</option>
-        <option value="<c:out value="2" />">NCE Number</option>
+        <option value="<c:out value="1" />"><spring:message code="nonconforming.event.laborderNumber" /></option>
+        <option value="<c:out value="2" />"><spring:message code="nonconforming.event.ncenumber" /></option>
     </select>
     <input type="text" name="searchValue"
            value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
@@ -84,7 +84,7 @@
         <td><spring:message code="nonconforming.event.ncenumber" /></td>
         <td><form:hidden path="nceNumber" /><c:out value="${form.reportDate}" /></td>
 
-        <td><spring:message code="nonconforming.event.date" /></td>
+        <td><spring:message code="nonconforming.page.followUp.reportDate" /></td>
         <td><form:hidden path="reportDate" /><c:out value="${form.reportDate}" /></td>
     </tr>
     <tr>
@@ -123,7 +123,7 @@
 <table class="full-table">
     <tr>
         <td class="view-non-conforming-descriptions">
-            <spring:message code="nonconforming.event.description" />
+            <spring:message code="nonconforming.page.followUp.description" />
             <p><form:hidden path="description" /><c:out value="${form.description}" /></p>
         </td>
         <td>
@@ -155,7 +155,7 @@
     </tr>
     <tr>
         <td>
-            <spring:message code="nonconforming.event.suspectedCauses" />
+            <spring:message code="nonconforming.page.followUp.suspectedCause" />
             <p><form:hidden path="suspectedCauses" /><c:out value="${form.suspectedCauses}" /></p>
         </td>
         <td>
@@ -176,7 +176,7 @@
     </tr>
     <tr>
         <td>
-            <spring:message code="nonconforming.event.proposedAction" />
+            <spring:message code="nonconforming.page.followUp.proposedAction" />
             <p><form:hidden path="proposedAction" /><c:out value="${form.proposedAction}" /></p>
         </td>
         <td>
@@ -231,7 +231,11 @@
         </td>
     </tr>
 </table>
-<div class="center-caption"><button id="saveButtonId" onclick="savePage()">Submit</button></div>
+<div class="center-caption">
+    <button id="saveButtonId" onclick="savePage()">
+        <spring:message code="button.label.submit" />
+    </button>
+</div>
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
