@@ -26,6 +26,9 @@ public class NonConformityForm extends BaseForm {
     public interface NonConformity {
     }
 
+    public interface NonConformitySearch {
+    }
+
     @NotNull(groups = { NonConformity.class })
     private Boolean readOnly = Boolean.TRUE;
 
@@ -74,7 +77,7 @@ public class NonConformityForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { NonConformity.class })
     private String nationalId = "";
 
-    @ValidAccessionNumber(groups = { NonConformity.class })
+    @ValidAccessionNumber(groups = { NonConformity.class, NonConformitySearch.class })
     private String labNo = "";
 
     @NotNull(groups = { NonConformity.class })

@@ -12,7 +12,7 @@ public class LoginForm extends BaseForm {
     private String loginName = "";
 
     @NotBlank
-    private String password = "";
+    private String password;
 
     public LoginForm() {
         setFormName("loginForm");

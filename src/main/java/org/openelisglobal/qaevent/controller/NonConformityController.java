@@ -42,6 +42,7 @@ import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qaevent.form.NonConformityForm;
+import org.openelisglobal.qaevent.form.NonConformityForm.NonConformitySearch;
 import org.openelisglobal.qaevent.service.NonConformityHelper;
 import org.openelisglobal.qaevent.validator.NonConformityFormValidator;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
@@ -78,40 +79,48 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class NonConformityController extends BaseController {
 
     @Autowired
-    NonConformityFormValidator formValidator;
+    private NonConformityFormValidator formValidator;
 
     @Autowired
-    SampleService sampleService;
+    private SampleService sampleService;
     @Autowired
-    SampleItemService sampleItemService;
+    private SampleItemService sampleItemService;
     @Autowired
-    TypeOfSampleService typeOfSampleService;
+    private TypeOfSampleService typeOfSampleService;
     @Autowired
-    SampleHumanService sampleHumanService;
+    private SampleHumanService sampleHumanService;
     @Autowired
-    org.openelisglobal.person.service.PersonService personService;
+    private PersonService personService;
     @Autowired
-    ProviderService providerService;
+    private ProviderService providerService;
     @Autowired
-    OrganizationService organizationService;
+    private OrganizationService organizationService;
     @Autowired
-    ObservationHistoryService observationHistoryService;
+    private ObservationHistoryService observationHistoryService;
     @Autowired
-    SampleProjectService sampleProjectService;
+    private SampleProjectService sampleProjectService;
     @Autowired
-    TestSectionService testSectionService;
+    private TestSectionService testSectionService;
     @Autowired
-    SampleRequesterService sampleRequesterService;
+    private SampleRequesterService sampleRequesterService;
     @Autowired
-    ProjectService projectService;
+    private ProjectService projectService;
     @Autowired
-    SampleQaEventService sampleQaEventService;
+    private SampleQaEventService sampleQaEventService;
 
     @RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
-    public ModelAndView showNonConformity(HttpServletRequest request) throws LIMSInvalidConfigurationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        NonConformityForm form = new NonConformityForm();
-        String labNumber = request.getParameter("labNo");
+    public ModelAndView showNonConformity(HttpServletRequest request,
+            @Validated(NonConformitySearch.class) NonConformityForm form, BindingResult result)
+            throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form = new NonConformityForm();
+            return findForward(FWD_FAIL, form);
+        }
+        String labNumber = form.getLabNo();
+        // reset form. We only need labNo at this stage
+        form = new NonConformityForm();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             setupFormForLabNumber(labNumber, form);
         }
@@ -467,6 +476,8 @@ public class NonConformityController extends BaseController {
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
+            return "nonConformityDefiniton";
+        } else if (FWD_FAIL.equals(forward)) {
             return "nonConformityDefiniton";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/NonConformity.do";

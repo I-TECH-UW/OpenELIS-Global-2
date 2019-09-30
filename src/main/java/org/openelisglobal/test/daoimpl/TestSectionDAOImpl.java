@@ -194,7 +194,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
      */
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
+    public List getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException {
         List list = new Vector();
 
         String sql = "";
@@ -206,14 +206,13 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-                sql = "from TestSection where id in (" + sectionIdList + ")";
-            } else {
+            if (sectionIds.isEmpty()) {
                 return list;
             }
 
+            sql = "from TestSection where id in (:ids)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("ids", sectionIds);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
