@@ -242,7 +242,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         if (result.hasErrors()) {
             saveErrors(result);
-            findForward(FWD_FAIL_INSERT, form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
         refreshValues();
 

@@ -124,22 +124,22 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
     @Override
     protected String getPageSubtitleKey() {
         RequestType requestType = getRequestType(request);
-        String key = null;
+        String pageKey = null;
         switch (requestType) {
         case READWRITE: {
-            key = "banner.menu.editPatient.ReadWrite";
+            pageKey = "banner.menu.editPatient.ReadWrite";
             break;
         }
         case READONLY: {
-            key = "banner.menu.editPatient.ReadOnly";
+            pageKey = "banner.menu.editPatient.ReadOnly";
             break;
         }
 
         default: {
-            key = "banner.menu.editPatient.ReadOnly";
+            pageKey = "banner.menu.editPatient.ReadOnly";
         }
         }
 
-        return key;
+        return pageKey;
     }
 }
