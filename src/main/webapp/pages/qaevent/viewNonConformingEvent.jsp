@@ -312,6 +312,8 @@
                 document.getElementById("searchResults").insertAdjacentHTML('beforeend', addNCERow(resultNodes[i]));
             }
 
+        } else {
+            jQuery("#searchResults").html("<tr><th>No valid results</th></tr>");
         }
     }
 

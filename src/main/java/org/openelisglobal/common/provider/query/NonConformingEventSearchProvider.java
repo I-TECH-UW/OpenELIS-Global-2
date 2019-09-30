@@ -41,7 +41,7 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
         searchParameters.put("status", status);
         List<NcEvent> searchResults = new ArrayList<>();
         if (!"".equalsIgnoreCase(labNumber)) {
-            searchParameters.put("labNumber", labNumber);
+            searchParameters.put("labOrderNumber", labNumber);
         } else if (!"".equalsIgnoreCase(nceNumber)) {
             searchParameters.put("nceNumber", nceNumber);
         }

@@ -266,17 +266,18 @@
     }
 
     function processSearchSuccess(xhr) {
-        console.log(xhr)
         var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
         var message = xhr.responseXML.getElementsByTagName("message").item(0);
 
         if (message.firstChild.nodeValue == "valid") {
-            //$("#searchResults").html("");
+            jQuery("#searchResults").html("");
             var resultNodes = formField.getElementsByTagName("sample");
             for (var i = 0; i < resultNodes.length; i++) {
                 document.getElementById("searchResults").insertAdjacentHTML('beforeend', addSampleRow(resultNodes[i]));
             }
             document.getElementById("goToNCEForm").style.display = null;
+        } else {
+            jQuery("#searchResults").html("<tr><th>No valid results</th></tr>");
         }
     }
 
