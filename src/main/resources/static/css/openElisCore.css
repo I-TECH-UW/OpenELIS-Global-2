@@ -1286,3 +1286,12 @@ tr.border_top td {
 .new-select-list-item {
 	background: #5eb95e;
 }
+
+.available-tests-cation {
+	text-align: center;
+	margin: 6px 0px;
+}
+
+.highlighted-tests a {
+	color: #5eb95e;
+}
