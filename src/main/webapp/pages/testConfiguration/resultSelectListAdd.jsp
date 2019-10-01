@@ -37,7 +37,7 @@
 
 %>
 <script>
-    var normalConfirmAlert = '<spring:message code="confirguration.selectList.confirmChange" />';
+    var normalConfirmAlert = '<spring:message code="configuration.selectList.confirmChange" />';
     var validating = false;
 </script>
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
@@ -99,7 +99,7 @@
     <form:hidden path="nameEnglish"/>
     <form:hidden path="nameFrench"/>
 <h1 id="action"><spring:message code="configuration.selectList.assign.header"/></h1>
-<p class="verify-alert"><spring:message code="confirguration.selectList.verifyMessage"/></p>
+<p class="verify-alert"><spring:message code="configuration.selectList.verifyMessage"/></p>
 <p class="assign"><spring:message code="configuration.selectList.assign.description"/></p>
 <p><spring:message code="configuration.selectList.assign.new"/></p>
 

@@ -1,11 +1,9 @@
 package org.openelisglobal.testconfiguration.controller;
 
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testconfiguration.form.PanelCreateForm;
 import org.openelisglobal.testconfiguration.form.ResultSelectListForm;
-import org.openelisglobal.testconfiguration.service.ResultSelectListAddService;
+import org.openelisglobal.testconfiguration.service.ResultSelectListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,9 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ResultSelectListAddController extends BaseController {
@@ -25,7 +20,7 @@ public class ResultSelectListAddController extends BaseController {
     @Autowired
     private TestService testService;
     @Autowired
-    private ResultSelectListAddService resultSelectListAddService;
+    private ResultSelectListService resultSelectListService;
 
     @RequestMapping(value = "/ResultSelectListAdd", method = RequestMethod.GET)
     public ModelAndView showCreateResultSelectList(HttpServletRequest request) {
@@ -45,7 +40,7 @@ public class ResultSelectListAddController extends BaseController {
             form.setNameFrench(form.getNameEnglish());
         }
         form.setTests(testService.getAllTestsByDictionaryResult());
-        form.setTestDictionary(resultSelectListAddService.getTestSelectDictionary());
+        form.setTestDictionary(resultSelectListService.getTestSelectDictionary());
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
@@ -57,7 +52,7 @@ public class ResultSelectListAddController extends BaseController {
 
         addFlashMsgsToRequest(request);
         String currentUserId = getSysUserId(request);
-        boolean saved = resultSelectListAddService.addResultSelectList(form, currentUserId);
+        boolean saved = resultSelectListService.addResultSelectList(form, currentUserId);
         if (saved) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             return findForward(FWD_SUCCESS, form);

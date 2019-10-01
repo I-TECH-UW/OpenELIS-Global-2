@@ -1295,3 +1295,14 @@ tr.border_top td {
 .highlighted-tests a {
 	color: #5eb95e;
 }
+
+.rename-result-list-table {
+	margin: 0px auto;
+	width: 50%;
+}
+
+.rename-result-list-form {
+	width: 50%;
+	min-height: 50px;
+	margin: 20px auto;
+}

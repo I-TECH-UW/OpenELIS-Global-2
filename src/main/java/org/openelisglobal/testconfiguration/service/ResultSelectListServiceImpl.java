@@ -12,6 +12,7 @@ import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testconfiguration.form.ResultSelectListForm;
+import org.openelisglobal.testconfiguration.form.ResultSelectListRenameForm;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
@@ -22,7 +23,7 @@ import java.util.*;
 
 
 @Service
-public class ResultSelectListAddServiceImpl implements ResultSelectListAddService {
+public class ResultSelectListServiceImpl implements ResultSelectListService {
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -63,6 +64,25 @@ public class ResultSelectListAddServiceImpl implements ResultSelectListAddServic
             }
         }
         return testDictionary;
+    }
+
+    public List<Dictionary> getAllSelectListOptions() {
+        List<Dictionary> dictionaries = new ArrayList<>();
+        List<TestResult> testResults = resultService.getAllSortedTestResults();
+        List<String> ids = new ArrayList<>();
+
+        for (TestResult testResult : testResults) {
+            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+                if (!ids.contains(testResult.getValue())) {
+                    ids.add(testResult.getValue());
+                }
+            }
+        }
+        for (String id : ids) {
+            Dictionary dictionary = dictionaryService.getDictionaryById(id);
+            dictionaries.add(dictionary);
+        }
+        return dictionaries;
     }
 
     @Override
@@ -128,6 +148,32 @@ public class ResultSelectListAddServiceImpl implements ResultSelectListAddServic
             return true;
         } catch (ParseException pe) {
 
+        }
+        return false;
+    }
+
+    @Override
+    public boolean renameOption(ResultSelectListRenameForm form, String currentUserId) {
+        try {
+            Dictionary dictionary = dictionaryService.getDictionaryById(form.getResultSelectOptionId());
+
+            Localization localization = dictionary.getLocalizedDictionaryName();
+            if (localization == null) {
+                localization = new Localization();
+            }
+            localization.setEnglish(form.getNameEnglish());
+            localization.setFrench(form.getNameFrench());
+            localization.setSysUserId(currentUserId);
+            localization = localizationService.save(localization);
+
+
+            dictionary.setDictEntry(form.getNameEnglish());
+            dictionary.setLocalAbbreviation(form.getNameEnglish());
+            dictionary.setSysUserId(currentUserId);
+            dictionaryService.save(dictionary);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
