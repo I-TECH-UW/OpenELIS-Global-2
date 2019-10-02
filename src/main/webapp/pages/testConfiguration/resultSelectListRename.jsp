@@ -47,7 +47,7 @@
         onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
 <%=MessageUtil.getContextualMessage( "configuration.selectList.rename" ) %>
 <br><br>
-<div>
+<div id="form-div">
 <form:form name="${form.formName}"
            action="${form.formAction}"
            modelAttribute="form"
@@ -85,6 +85,7 @@
         </button>
     </div>
 </form:form>
+</div>
 <table>
     <c:forEach items="${form.resultSelectOptionList}" begin="0" end="${fn:length(form.resultSelectOptionList)}" step="4" var="option" varStatus="counter">
         <tr style="padding: 5px;">
@@ -117,7 +118,7 @@
         jQuery('.english').html(name);
         jQuery('.french').html(name);
         jQuery('#resultSelectOptionId').val(id);
-        jQuery("#mainForm").show();
+        jQuery("#form-div").show();
 
     }
 
@@ -128,11 +129,11 @@
     }
 
     function cancel() {
-        jQuery("#mainForm").hide();
+        jQuery("#form-div").hide();
         return false;
     }
 
     jQuery(document).ready( function() {
-        jQuery("#mainForm").hide();
+        jQuery("#form-div").hide();
     });
 </script>
