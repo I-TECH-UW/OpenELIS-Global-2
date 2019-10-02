@@ -1,5 +1,6 @@
 package org.openelisglobal.test.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,11 +182,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
         String sectionIdList = "";
 
         List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+        List<String> sectionIds = new ArrayList<>();
         for (int i = 0; i < userTestSectionList.size(); i++) {
             SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-            sectionIdList += sus.getTestSection().getId() + ",";
+            sectionIds.add(sus.getTestSection().getId());
         }
-        return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIdList);
+        return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIds);
     }
 
     @Override

@@ -142,11 +142,12 @@ public class MenuUtil {
             html.append(menu.getElementId());
             html.append("\" ");
 
-            if (!GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())) {
-                html.append(" title=\"");
-                html.append(getTooltip(menu, locale));
-                html.append("\" ");
-            }
+            // tooltips disabled as they were unnecessary and distracting in the menu
+//            if (!GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())) {
+//                html.append(" title=\"");
+//                html.append(getTooltip(menu, locale));
+//                html.append("\" ");
+//            }
 
             if (menu.isOpenInNewWindow()) {
                 html.append(" target=\"_blank\" ");
