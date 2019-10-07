@@ -24,9 +24,11 @@
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
 		<property name="hibernate.cache.use_second_level_cache">false</property>
 		<property name="hibernate.cache.use_query_cache">false</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/ci_general_9.6</property>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
 
 
-		<mapping resource="hibernate/hbm/Action.hbm.xml" />
+        <mapping resource="hibernate/hbm/Action.hbm.xml" />
 		<mapping resource="hibernate/hbm/Analysis.hbm.xml" />
 		<mapping resource="hibernate/hbm/AnalysisQaEvent.hbm.xml" />
 		<mapping
@@ -151,7 +153,15 @@
 		<mapping resource="hibernate/hbm/TypeOfDataIndicator.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleUrl.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleParam.hbm.xml" />
+        <mapping resource="hibernate/hbm/NceCategory.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NcEvent.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NceActionLog.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NceSpecimen.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NceType.hbm.xml"/>
+		<mapping resource="hibernate/hbm/NceSpecimen.hbm.xml"/>
+        <mapping resource="hibernate/hbm/LabComponent.hbm.xml"/>
+        <mapping resource="hibernate/hbm/NcEvent.hbm.xml"/>
 
-	</session-factory>
+    </session-factory>
 
 </hibernate-configuration>
