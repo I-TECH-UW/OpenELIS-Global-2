@@ -325,6 +325,37 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
+	<definition name="reportNonConformingEventDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/reportNonConformingEvent.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
+	<definition name="viewNonConformingEventDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/viewNonConformingEvent.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="correctiveActionDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/correctiveAction.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+
+	</definition>
+
 	<definition name="commonReportDefiniton"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"

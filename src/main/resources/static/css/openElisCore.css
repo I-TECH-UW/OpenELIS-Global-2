@@ -1267,6 +1267,7 @@ tr.border_top td {
 	cursor: pointer;
 }
 
+
 .form-div {
 	width: 100%;
 	margin-bottom: 5px;
@@ -1292,4 +1293,39 @@ tr.border_top td {
 
 .report-ordering-panel {
 	width: 400px;
+
+view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.view-non-conforming-descriptions {
+	width: 35%;
+}
+
+.full-table {
+	width: 80%;
+	text-align: center;
+}
+
+.center-caption {
+	text-align: center;
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+
 }
