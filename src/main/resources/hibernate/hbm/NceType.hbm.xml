@@ -4,8 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="org.openelisglobal.qaevent.valueholder.NceType" table="nce_type" schema="clinlims"
-           catalog="ci_general_9.6">
+    <class name="org.openelisglobal.qaevent.valueholder.NceType" table="nce_type" schema="clinlims">
         <id name="id"
             type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
