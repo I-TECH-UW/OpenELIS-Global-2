@@ -332,7 +332,7 @@
 		<put-attribute name="body"
 					   value="/pages/qaevent/reportNonConformingEvent.jsp" />
 		<put-attribute name="footer"
-					   value="/pages/common/saveCancelFooterButtons.jsp" />
+					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="viewNonConformingEventDefiniton"

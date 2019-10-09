@@ -6,18 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="org.openelisglobal.common.action.IActionConstants,
-				org.openelisglobal.common.formfields.FormFields,
-                org.openelisglobal.common.formfields.FormFields.Field,
-                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
-                org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
-                org.openelisglobal.common.services.PhoneNumberService,
-                org.openelisglobal.common.util.DateUtil,
-                org.openelisglobal.internationalization.MessageUtil,
-                org.openelisglobal.common.util.Versioning,
-                org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem,
-                org.openelisglobal.common.util.ConfigurationProperties" %>
+         import="org.openelisglobal.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

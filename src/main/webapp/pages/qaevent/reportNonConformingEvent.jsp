@@ -7,20 +7,12 @@
 --%>
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="org.openelisglobal.common.action.IActionConstants,
-				org.openelisglobal.common.formfields.FormFields,
-                org.openelisglobal.common.formfields.FormFields.Field,
-                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+         import="org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
-                org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
-                org.openelisglobal.common.services.PhoneNumberService,
-                org.openelisglobal.common.util.DateUtil,
+
                 org.openelisglobal.internationalization.MessageUtil,
-                org.openelisglobal.common.util.Versioning,
-                org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem,
-                org.openelisglobal.common.util.ConfigurationProperties" %>
+                org.openelisglobal.common.util.Versioning" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Date" %>
 <%@ page import="java.util.Calendar" %>
 
 <%@ page isELIgnored="false" %>
@@ -32,10 +24,6 @@
 
 <%! String basePath = "";
     IAccessionNumberValidator accessionNumberValidator;
-    boolean useProject = FormFields.getInstance().useField(Field.Project);
-    boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
-    boolean useSubjectNo = FormFields.getInstance().useField(Field.QASubjectNumber);
-    boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     String maxDate = df.format(Calendar.getInstance().getTime());
 %>
@@ -168,7 +156,9 @@
 <script type="text/javascript">
     function setSave(disabled) {
         var saveButton = $("saveButtonId");
-        saveButton.disabled = disabled;
+        if (saveButton) {
+            saveButton.disabled = disabled;
+        }
     }
 
     function checkIfValid() {
@@ -206,6 +196,7 @@
         if (specimenId.length > 0 && labNo !== "") {
             window.location = "ReportNonConformingEvent.do?labNo=" + labNo + "&specimenId=" + specimenId.join(",");
         }
+        return false;
     }
     /**
      *  Enable/Disable search button based on input
@@ -278,7 +269,7 @@
             for (var i = 0; i < resultNodes.length; i++) {
                 document.getElementById("searchResults").insertAdjacentHTML('beforeend', addSampleRow(resultNodes[i]));
             }
-            document.getElementById("goToNCEForm").style.display = null;
+            document.getElementById("goToNCEForm").style.display = '';
         } else {
             jQuery("#searchResults").html("<tr><th>No valid results</th></tr>");
         }
