@@ -149,13 +149,18 @@
         </td>
     </tr>
 </table>
-    <div class="center-caption"><button id="saveButtonId" onclick="savePage()">
-        <spring:message code="button.label.submit" />
-    </button></div>
+    <div class="center-caption">
+        <button id="cancelButton" onclick="cancelPage()">
+            <spring:message code="label.button.cancel" />
+        </button>
+        <button id="saveButtonId" onclick="savePage()">
+            <spring:message code="button.label.submit" />
+        </button>
+    </div>
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
-        var saveButton = $("saveButtonId");
+        var saveButton = jQuery("#saveButtonId");
         if (saveButton) {
             saveButton.disabled = disabled;
         }
@@ -196,6 +201,12 @@
         if (specimenId.length > 0 && labNo !== "") {
             window.location = "ReportNonConformingEvent.do?labNo=" + labNo + "&specimenId=" + specimenId.join(",");
         }
+        return false;
+    }
+
+    function cancelPage(e) {
+        e.preventDefault();
+        window.location = "Home.do";
         return false;
     }
     /**
@@ -307,6 +318,10 @@
     jQuery(document).ready( function() {
         setSave(true);
         document.getElementById("goToNCEForm").addEventListener("click", loadForm);
+        var cancelButton = document.getElementById("cancelButton");
+        if (cancelButton) {
+            cancelButton.addEventListener("click", cancelPage);
+        }
         document.getElementById("goToNCEForm").style.display = "none";
     });
 </script>
