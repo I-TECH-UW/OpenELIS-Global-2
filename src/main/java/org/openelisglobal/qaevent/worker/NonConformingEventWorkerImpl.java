@@ -156,6 +156,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             form.setNceNumber(event.getNceNumber());
             form.setId(event.getId());
             form.setLabOrderNumber(event.getLabOrderNumber());
+            form.setReportingUnit(event.getReportingUnitId());
 
             List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
 

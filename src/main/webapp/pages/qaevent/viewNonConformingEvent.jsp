@@ -89,7 +89,14 @@
         <td><form:hidden path="labOrderNumber" /><c:out value="${form.labOrderNumber}" /></td>
 
         <td><spring:message code="nonconforming.event.reportingUnit" /></td>
-        <td><form:hidden path="reportingUnit" /><c:out value="${form.reportingUnit}" /></td>
+        <td>
+            <form:hidden path="reportingUnit" />
+            <c:forEach items="${form.reportingUnits}" var="reportingUnit">
+                <c:if test="${reportingUnit.id == form.reportingUnit}" >
+                    <c:out value="${reportingUnit.value}" />
+                </c:if>
+            </c:forEach>
+        </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.specimen" /></td>
