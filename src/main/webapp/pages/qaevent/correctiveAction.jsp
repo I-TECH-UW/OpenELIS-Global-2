@@ -136,7 +136,13 @@
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.event.reportingUnit" /></td>
-            <td><c:out value="${form.reportingUnit}" /></td>
+            <td>
+                <c:forEach items="${form.reportingUnits}" var="reportingUnit">
+                    <c:if test="${reportingUnit.id == form.reportingUnit}" >
+                        <c:out value="${reportingUnit.value}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
 
         <tr>
