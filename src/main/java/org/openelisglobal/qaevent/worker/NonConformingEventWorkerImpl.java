@@ -136,6 +136,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
         PropertyUtils.setProperty(form, "severityRecurrenceList",
                 DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+        PropertyUtils.setProperty(form, "reportingUnits",
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
         form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
