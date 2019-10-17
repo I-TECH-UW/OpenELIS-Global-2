@@ -26,6 +26,8 @@ import org.openelisglobal.reports.action.implementation.IReportCreator;
 import org.openelisglobal.reports.action.implementation.IReportParameterSetter;
 import org.openelisglobal.reports.action.implementation.ReportImplementationFactory;
 import org.openelisglobal.reports.form.ReportForm;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,9 @@ public class ReportController extends BaseController {
 
     @Autowired
     ServletContext context;
+
+    @Autowired
+    private SiteInformationService siteInformationService;
 
     private static String reportPath = null;
     private static String imagesPath = null;
@@ -131,7 +136,13 @@ public class ReportController extends BaseController {
     }
 
     public String getReportPath() {
+
         if (reportPath == null) {
+            SiteInformation reportsPath = siteInformationService.getSiteInformationByName("reportsDirectory");
+            if (reportsPath != null) {
+                reportPath = reportsPath.getValue();
+                return reportPath;
+            }
             ClassLoader classLoader = getClass().getClassLoader();
             reportPath = classLoader.getResource("reports").getPath();
             try {
