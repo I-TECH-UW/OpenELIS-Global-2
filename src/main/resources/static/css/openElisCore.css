@@ -1328,3 +1328,43 @@ view-non-conforming-section-1 > td {
 .report-ordering-panel {
 	width: 400px;
 }
+
+.result-select-box {
+	width: 90%;
+	margin: 10px auto;
+	display: inline-block;
+}
+
+.result-list-test {
+	width: 200px;
+	float: left;
+	margin: 10px;
+}
+
+.result-list-test select {
+	width: 100%;
+}
+
+.new-select-list-item {
+	background: #5eb95e;
+}
+
+.available-tests-cation {
+	text-align: center;
+	margin: 6px 0px;
+}
+
+.highlighted-tests a {
+	color: #5eb95e;
+}
+
+.rename-result-list-table {
+	margin: 0px auto;
+	width: 50%;
+}
+
+.rename-result-list-form {
+	width: 50%;
+	min-height: 50px;
+	margin: 20px auto;
+}

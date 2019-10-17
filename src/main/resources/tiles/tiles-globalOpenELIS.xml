@@ -876,6 +876,26 @@
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
+	<definition name="resultSelectListDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/testConfiguration/resultSelectListAdd.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="resultSelectListRenameDefinition"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
 </tiles-definitions>
 
 
