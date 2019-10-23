@@ -35,8 +35,10 @@
 
 %>
 <script>
-    var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.labOrderNumber")%>";
+    var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.event.laborderNumber")%>";
     var affectedSpecimenText="<%= MessageUtil.getContextualMessage("nonconforming.affectedSpecimen")%>";
+    var specimenNumber="<%= MessageUtil.getContextualMessage("nonconforming.specimenNumber")%>";
+    var specimenType="<%= MessageUtil.getContextualMessage("nonconforming.specimenType")%>";
 </script>
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
@@ -308,8 +310,8 @@
             '<td>' + affectedSpecimenText + '</td>' +
             '<td><table id="sample-"><tr>\n' +
             '<th></th>' +
-            '<th>Specimen number</th>' +
-            '<th>Specimen type</th>' +
+            '<th>' + specimenNumber + '</th>' +
+            '<th>' + specimenType + '</th>' +
             '</tr>' + itemRows.join('') + '</table>' +
             '</td></tr>';
         return sampleTemplate;
