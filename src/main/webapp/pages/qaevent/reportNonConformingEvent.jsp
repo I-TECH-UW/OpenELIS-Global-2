@@ -81,10 +81,10 @@
     <form:hidden path="currentUserId" />
     <form:hidden path="status" />
     <form:hidden path="id" />
-<table>
+<table class="report-nce-table">
     <tr>
         <td><spring:message code="nonconforming.event.date" /></td>
-        <td><form:hidden path="reportDate" /><c:out value="${form.reportDate}" /></td>
+        <td class="report-nce-values-col"><form:hidden path="reportDate" /><c:out value="${form.reportDate}" /></td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.name" /></td>
@@ -135,19 +135,19 @@
     <tr>
         <td><spring:message code="nonconforming.event.description" /></td>
         <td>
-            <form:textarea path="description" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="description" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.suspectedCauses" /></td>
         <td>
-            <form:textarea path="suspectedCauses" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="suspectedCauses" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.proposedAction" /></td>
         <td>
-            <form:textarea path="proposedAction" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="proposedAction" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
 </table>

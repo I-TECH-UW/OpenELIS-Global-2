@@ -1368,3 +1368,11 @@ view-non-conforming-section-1 > td {
 	min-height: 50px;
 	margin: 20px auto;
 }
+
+.report-nce-table {
+	min-width: 60%;
+}
+
+.report-nce-values-col {
+	width: 60%
+}

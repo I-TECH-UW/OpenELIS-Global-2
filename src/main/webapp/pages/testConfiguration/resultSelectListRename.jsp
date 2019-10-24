@@ -108,15 +108,35 @@
 
 <script>
     var options= {};
+    var localization = {};
     <c:forEach items="${form.resultSelectOptionList}" var="dictionary">
         var id = '${dictionary.id}';
         options[id] = '${dictionary.dictEntry}';
+        localization[id] = "${dictionary.localizedDictionaryName.localeValues}"
     </c:forEach>
 
     function editName(id) {
         var name = options[id];
-        jQuery('.english').html(name);
-        jQuery('.french').html(name);
+        var fr = name;
+        var en = name;
+        if (localization[id] != '') {
+            var localized = localization[id];
+            var names = localized.substring(1, localized.indexOf('}'));
+            var parts = names.split(',');
+            for(var i = 0; i < parts.length; i++) {
+                var trimmed = parts[i].trim();
+                if (trimmed.startsWith('fr')) {
+                    fr = trimmed.substring(trimmed.indexOf('fr') + 3);
+                } else if (trimmed.startsWith('en')) {
+                    en = trimmed.substring(trimmed.indexOf('en') + 3);
+                }
+            }
+            if (parts[0].startsWith('fr')) {
+
+            }
+        }
+        jQuery('.english').html(en);
+        jQuery('.french').html(fr);
         jQuery('#resultSelectOptionId').val(id);
         jQuery("#form-div").show();
 

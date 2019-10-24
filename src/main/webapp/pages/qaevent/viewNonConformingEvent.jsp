@@ -211,19 +211,19 @@
     <tr>
         <td>
             <spring:message code="nonconforming.page.followUp.correctiveActionDescription" />
-            <p><form:textarea path="correctiveAction" onchange="checkIfValid()"></form:textarea></p>
+            <p><form:textarea path="correctiveAction" onchange="checkIfValid()" rows="5"></form:textarea></p>
         </td>
     </tr>
     <tr>
         <td>
             <spring:message code="nonconforming.page.followUp.prevConcActionDescription" />
-            <p><form:textarea path="controlAction"></form:textarea></p>
+            <p><form:textarea path="controlAction" rows="5"></form:textarea></p>
         </td>
     </tr>
     <tr>
         <td>
             <spring:message code="nonconforming.page.followUp.comments" />
-            <p><form:textarea path="comments"></form:textarea></p>
+            <p><form:textarea path="comments" rows="5"></form:textarea></p>
         </td>
     </tr>
 </table>
