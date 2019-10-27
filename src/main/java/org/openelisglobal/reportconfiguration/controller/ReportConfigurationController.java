@@ -47,7 +47,15 @@ public class ReportConfigurationController extends BaseController {
 
         String currentUserId = getSysUserId(request);
         form.setReportCategoryList(createReportCategoryList());
-        boolean updated = reportService.updateReport(form, currentUserId);
+        boolean updated = false;
+        if (!"".equalsIgnoreCase(form.getCurrentReport().getId())) {
+            updated = reportService.updateReport(form, currentUserId);
+        } else {
+            if (form.getReportDataFile() == null || form.getReportTemplateFile() == null) {
+                return findForward(FWD_VALIDATION_ERROR, form);
+            }
+            updated = reportService.createNewReport(form, currentUserId);
+        }
         if (updated) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {

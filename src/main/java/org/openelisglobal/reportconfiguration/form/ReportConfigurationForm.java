@@ -1,13 +1,16 @@
 package org.openelisglobal.reportconfiguration.form;
 
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.reportconfiguration.valueholder.Report;
 import org.openelisglobal.reportconfiguration.valueholder.ReportCategory;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ReportConfigurationForm extends BaseForm {
+public class ReportConfigurationForm extends BaseForm implements Serializable {
+
+    private static final long serialVersionUID = 74458L;
 
     private List<Report> reportList;
 
@@ -16,6 +19,18 @@ public class ReportConfigurationForm extends BaseForm {
     private Report currentReport;
 
     private String idOrder;
+
+
+    private MultipartFile reportTemplateFile;
+
+    /*
+     *
+     */
+    private MultipartFile reportDataFile;
+
+    private String menuDisplayKey;
+    private String menuActionUrl;
+
 
     public ReportConfigurationForm() {
         this.currentReport = new Report();
@@ -51,5 +66,37 @@ public class ReportConfigurationForm extends BaseForm {
 
     public void setReportCategoryList(List<ReportCategory> reportCategoryList) {
         this.reportCategoryList = reportCategoryList;
+    }
+
+    public MultipartFile getReportTemplateFile() {
+        return reportTemplateFile;
+    }
+
+    public void setReportTemplateFile(MultipartFile reportTemplateFile) {
+        this.reportTemplateFile = reportTemplateFile;
+    }
+
+    public MultipartFile getReportDataFile() {
+        return reportDataFile;
+    }
+
+    public void setReportDataFile(MultipartFile reportDataFile) {
+        this.reportDataFile = reportDataFile;
+    }
+
+    public String getMenuDisplayKey() {
+        return menuDisplayKey;
+    }
+
+    public void setMenuDisplayKey(String menuDisplayKey) {
+        this.menuDisplayKey = menuDisplayKey;
+    }
+
+    public String getMenuActionUrl() {
+        return menuActionUrl;
+    }
+
+    public void setMenuActionUrl(String menuActionUrl) {
+        this.menuActionUrl = menuActionUrl;
     }
 }

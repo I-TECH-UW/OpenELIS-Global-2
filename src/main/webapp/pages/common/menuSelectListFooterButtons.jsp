@@ -56,7 +56,7 @@
 	   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	   </td>
 	  <td>
-  			<html:button onclick="setMenuAction(this, document.getElementById('mainForm'), 'Cancel', 'no', '');" property="cancel" >
+  			<html:button onclick="setMenuActionUrl(this, document.getElementById('mainForm'), 'Cancel', 'no', '');" property="cancel" >
   			   <spring:message code="label.button.cancel"/>
   			</html:button>
 	    </td>
