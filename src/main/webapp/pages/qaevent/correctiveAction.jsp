@@ -215,7 +215,7 @@
         <tr>
             <td></td>
             <td>
-                <input type="date" max="<%= today%>" id="new-discussion-date"/>
+                <input id="new-discussion-date" placeholder="dd/MM/yyyy"/>
             </td>
         </tr>
         <tr>
@@ -243,7 +243,7 @@
                 </td>
                 <td><input type="text" name="responsiblePerson-${loop.index}" onchange="checkIfValid()" readonly value="<c:out value="${actionLog.personResponsible}"/>"/></td>
                 <td>
-                    <input type="date" name="dateActionCompleted-${loop.index}" id="dateActionCompleted-${loop.index}" readonly max="<%= today%>" value="<c:out value="${actionLog.dateCompleted}"/>"/>
+                    <input type="text" name="dateActionCompleted-${loop.index}" id="dateActionCompleted-${loop.index}" readonly max="<%= today%>" value="<c:out value="${actionLog.dateCompleted}"/>"/>
                 </td>
                 <td>
                     <input type="hidden" name="turnAroundTime-${loop.index}" id="turnAroundTime-${loop.index}" />
@@ -260,7 +260,7 @@
                 </td>
                 <td><input type="text" name="responsiblePerson-${fn:length(form.actionLog)}" onchange="checkIfValid()"/></td>
                 <td>
-                    <input type="date" name="dateActionCompleted-${fn:length(form.actionLog)}"  id="dateActionCompleted-${fn:length(form.actionLog)}" max="<%= today%>" />
+                    <input type="text" name="dateActionCompleted-${fn:length(form.actionLog)}"  id="dateActionCompleted-${fn:length(form.actionLog)}" max="<%= today%>" placeholder="dd/MM/yyyy" />
                 </td>
                 <td>
                     <input type="hidden" name="turnAroundTime-${fn:length(form.actionLog)}" id="turnAroundTime-${fn:length(form.actionLog)}" />
@@ -268,7 +268,7 @@
                 </td>
             </tr>
     </table>
-    <div class="center-caption"><button id="saveButtonId" onclick="savePage()"><spring:message code="label.button.save" /></button></div>
+    <div class="center-caption"><button id="saveButtonId" onclick="return savePage()"><spring:message code="label.button.save" /></button></div>
     <table class="full-table">
         <caption><spring:message code="nonconforming.page.correctiveAction.nceResolution" /></caption>
         <tr>
@@ -287,12 +287,12 @@
             <td><spring:message code="nonconforming.page.correctiveAction.signature" /></td>
             <td>
                 <spring:message code="nonconforming.page.correctiveAction.dateCompleted" />
-                <form:input path="dateCompleted" id="dateCompleted" type="date" max="<%= today %>" />
+                <form:input path="dateCompleted" id="dateCompleted" type="text" placeholder="dd/MM/yyyy" onchange="checkIfValid()"/>
             </td>
         </tr>
         <tr id="followUpAlert" style="display: none"><td colspan="2"><spring:message code="nonconforming.page.correctiveAction.followUpAlert" /></td></tr>
     </table>
-    <div class="center-caption"><button id="submitResolved" onclick="completeNCE()">
+    <div class="center-caption"><button id="submitResolved" onclick="return completeNCE()">
         <spring:message code="nonconforming.page.correctiveAction.submit" />
     </button></div>
 </c:if>
@@ -341,7 +341,6 @@
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         setActionLog();
-        console.log(document.getElementById("actionLogStr").value);
         form.action = "NCECorrectiveAction.do";
         form.submit();
     }
@@ -361,11 +360,14 @@
     }
 
     function completeNCE() {
-        var form = document.getElementById("mainForm");
-        window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        setActionLog();
-        form.action = "ResolveNonConformingEvent.do";
-        form.submit();
+        if (validatePastDate('dateCompleted')) {
+            var form = document.getElementById("mainForm");
+            window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+            setActionLog();
+            form.action = "ResolveNonConformingEvent.do";
+            form.submit();
+        }
+        return false;
     }
     /**
      *  Enable/Disable search button based on input
@@ -433,11 +435,11 @@
         var date = nce.getElementsByTagName("date").item(0);
         var nceNumberEl = nce.getElementsByTagName('ncenumber').item(0);
         var unit = nce.getElementsByTagName('unit').item(0);
-        var colorCode = nce.getElementsByTagName('colorCode').item(0);
+        var colorCode = nce.getElementsByTagName('color').item(0);
         var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
         var row = '<tr><td>' + (date ? date.firstChild.nodeValue : "") + '</td>' +
             '<td><a href="NCECorrectiveAction.do?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
-            '<td>' + (unit ? unit.firstChild.nodeValue : "") + '</td>' +
+            '<td>' + (unit && unit.firstChild ? unit.firstChild.nodeValue : "") + '</td>' +
             '<td>' + (colorCode ? colorCode.firstChild.nodeValue : "") + '</td>' +
             '</tr><tr>';
         return row;
@@ -460,6 +462,9 @@
             }
             actionType = actionType.join(",");
             if (correctiveAction == '' || discussionDate == '' || turnAroundTime == '' || dateCompleted == '' || responsiblePerson == '' || actionType == '') {
+                valid = false;
+            }
+            if(!validatePastDate('dateActionCompleted-'  + (i - 1) )) {
                 valid = false;
             }
         }
@@ -507,6 +512,18 @@
         checkIfValid();
     }
 
+    function validatePastDate(name) {
+        var date = new Date();
+        var doe = jQuery('input[name="' + name + '"]').val().split('/');
+        if(doe.length != 3) {
+            return false;
+        }
+        var d = new Date(doe[1] + '/' + doe[0] + '/' + doe[2]);
+        if (d < date) {
+            return true;
+        }
+        return false;
+    }
     jQuery(document).ready( function() {
         setSave(true);
         if (document.getElementById("addNewDate")) {

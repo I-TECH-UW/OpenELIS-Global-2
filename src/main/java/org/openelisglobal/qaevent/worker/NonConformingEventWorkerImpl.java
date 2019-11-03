@@ -72,7 +72,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         if (ncEvent != null) {
             ncEvent.setSysUserId(form.getCurrentUserId());
             // date from input field come in this pattern
-            Date dateOfEvent = getDate(form.getDateOfEvent(), "yyyy-MM-dd");
+            Date dateOfEvent = getDate(form.getDateOfEvent(), "dd/MM/yyyy");
             Date reportDate = getDate(form.getReportDate(), "dd/MM/yyyy");
 
             ncEvent.setStatus("Pending");
@@ -85,7 +85,11 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             ncEvent.setDescription(form.getDescription());
             ncEvent.setSuspectedCauses(form.getSuspectedCauses());
             ncEvent.setProposedAction(form.getProposedAction());
+            ncEvent.setReportingUnitId(form.getReportingUnit());
 
+            if (ncEvent.getNameOfReporter() == null || "".equalsIgnoreCase(ncEvent.getNameOfReporter())) {
+                ncEvent.setNameOfReporter(form.getName());
+            }
             ncEventService.update(ncEvent);
             return true;
         }
@@ -200,7 +204,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 NceActionLog al = new NceActionLog();
                 al.setCorrectiveAction(actionLog.element("correctiveAction").getText());
                 al.setTurnAroundTime(Integer.parseInt(actionLog.element("turnAroundTime").getText()));
-                al.setDateCompleted(getDate(actionLog.element("dateCompleted").getText(), "yyyy-MM-dd"));
+                al.setDateCompleted(getDate(actionLog.element("dateCompleted").getText(), "dd/MM/yyyy"));
                 al.setPersonResponsible(actionLog.element("personResponsible").getText());
                 if (actionLog.element("id") != null) {
                     al.setId(actionLog.element("id").getText());
@@ -288,7 +292,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             ncEvent.setEffective(form.getEffective());
             SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
             ncEvent.setSignature(systemUser.getNameForDisplay());
-            ncEvent.setDateCompleted(getDate(form.getDateCompleted(),"yyyy-MM-dd"));
+            ncEvent.setDateCompleted(getDate(form.getDateCompleted(),"dd/MM/yyyy"));
             ncEvent.setSysUserId(form.getCurrentUserId());
             ncEventService.update(ncEvent);
             return true;

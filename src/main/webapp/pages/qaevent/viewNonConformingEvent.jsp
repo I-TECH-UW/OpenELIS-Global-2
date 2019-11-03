@@ -81,7 +81,7 @@
         <td><form:hidden path="dateOfEvent" /><c:out value="${form.dateOfEvent}" /></td>
 
         <td><spring:message code="nonconforming.page.followUp.reportingPerson" /></td>
-        <td><form:hidden path="name" /><c:out value="${form.name}" /></td>
+        <td><form:hidden path="name" /><c:out value="${form.reporterName}" /></td>
     </tr>
 
     <tr>
@@ -100,7 +100,15 @@
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.specimen" /></td>
-        <td><form:hidden path="specimen" /><c:out value="${form.specimen}" /></td>
+        <td>
+            <form:hidden path="specimen" />
+            <c:forEach items="${form.specimens}" var="specimen" varStatus="counter">
+                <c:if test="${counter.index != 0}" >
+                    <c:out value=", " />
+                </c:if>
+                <c:out value="${specimen.typeOfSample.description}" />
+            </c:forEach>
+        </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.prescriberNameAndSite" /></td>
@@ -324,7 +332,7 @@
         var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
         var row = '<tr><td>' + (date ? date.firstChild.nodeValue : "") + '</td>' +
             '<td><a href="ViewNonConformingEvent.do?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
-            '<td>' + (unit ? unit.firstChild.nodeValue : "") + '</td>' +
+            '<td>' + (unit && unit.firstChild ? unit.firstChild.nodeValue : "") + '</td>' +
             '</tr><tr>';
         return row;
     }

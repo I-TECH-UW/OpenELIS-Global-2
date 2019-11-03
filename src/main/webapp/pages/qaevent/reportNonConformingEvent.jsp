@@ -100,7 +100,7 @@
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.eventdate" /></td>
-        <td><form:input path="dateOfEvent" type="date" max="<%= maxDate %>" onchange="checkIfValid()"/></td>
+        <td><form:input path="dateOfEvent" type="text" max="<%= maxDate %>" onchange="checkIfValid()" placeholder="dd/MM/yyyy"/></td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.laborderNumber" /></td>
@@ -162,7 +162,7 @@
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
-        var saveButton = jQuery("#saveButtonId");
+        var saveButton = document.getElementById("saveButtonId");
         if (saveButton) {
             saveButton.disabled = disabled;
         }
@@ -175,9 +175,22 @@
         var proposedAction = jQuery('input[name="proposedAction"]').val();
         // var reportingUnit = jQuery('input[name="reportingUnit"]').val();
         setSave(true);
-        if (doe != '' && desc !== '' && suspectedCauses !== '' && proposedAction !== '') {
+        if (doe != '' && desc !== '' && suspectedCauses !== '' && proposedAction !== '' && validDateOfEvent()) {
             setSave(false);
         }
+    }
+
+    function validDateOfEvent() {
+        var date = new Date();
+        var doe = jQuery('input[name="dateOfEvent"]').val().split('/');
+        if(doe.length != 3) {
+            return false;
+        }
+        var d = new Date(doe[1] + '/' + doe[0] + '/' + doe[2]);
+        if (d < date) {
+            return true;
+        }
+        return false;
     }
 
     /**
