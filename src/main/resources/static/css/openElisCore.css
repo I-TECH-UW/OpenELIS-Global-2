@@ -1,4 +1,4 @@
-/*=====================*/
+
 /* 
 * OpenELIS Main Stylesheet
 * Main styles used by OpenELIS
@@ -7,7 +7,7 @@
 * Clinical Informatics Research Group, University of Washington School of Nursing.
 * http://cirg.washington.edu
 */
-/*=====================*/
+
 
 /***** New organization of CSS - started 201106  *****/
 
@@ -1268,6 +1268,45 @@ tr.border_top td {
 }
 
 
+.result-select-box {
+	width: 90%;
+	margin: 10px auto;
+	display: inline-block;
+}
+
+.result-list-test {
+	width: 200px;
+	float: left;
+	margin: 10px;
+}
+
+.result-list-test select {
+	width: 100%;
+}
+
+.new-select-list-item {
+	background: #5eb95e;
+}
+
+.available-tests-cation {
+	text-align: center;
+	margin: 6px 0px;
+}
+
+.highlighted-tests a {
+	color: #5eb95e;
+}
+
+.rename-result-list-table {
+	margin: 0px auto;
+	width: 50%;
+}
+
+.rename-result-list-form {
+	width: 50%;
+	min-height: 50px;
+	margin: 20px auto;
+  
 .form-div {
 	width: 100%;
 	margin-bottom: 5px;
