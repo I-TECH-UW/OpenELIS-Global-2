@@ -325,6 +325,37 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
+	<definition name="reportNonConformingEventDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/reportNonConformingEvent.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
+	<definition name="viewNonConformingEventDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/viewNonConformingEvent.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="correctiveActionDefiniton"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/qaevent/correctiveAction.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+
+	</definition>
+
 	<definition name="commonReportDefiniton"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
@@ -835,6 +866,14 @@
 			value="/pages/barcode/elementsBarcodeConfig.jsp" />
 		<put-attribute name="sizeBarCodes"
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
+	</definition>
+
+	<definition name="ReportManagementDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="body"
+					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 </tiles-definitions>
