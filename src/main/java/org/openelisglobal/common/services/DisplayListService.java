@@ -47,6 +47,7 @@ import org.openelisglobal.qaevent.valueholder.LabComponent;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.reportconfiguration.valueholder.ReportCategory;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;

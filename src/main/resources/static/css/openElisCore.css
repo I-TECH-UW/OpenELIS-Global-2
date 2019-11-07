@@ -1268,7 +1268,6 @@ tr.border_top td {
 }
 
 
-
 .result-select-box {
 	width: 90%;
 	margin: 10px auto;
@@ -1307,6 +1306,32 @@ tr.border_top td {
 	width: 50%;
 	min-height: 50px;
 	margin: 20px auto;
+  
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
 
 view-non-conforming-section-1 > td {
 	width: 25%;

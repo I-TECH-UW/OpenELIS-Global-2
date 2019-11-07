@@ -884,7 +884,13 @@
 					   value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
 					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
-		<put-attribute name="footer"
+    
+	<definition name="ReportManagementDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="body"
+					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
+
+    <put-attribute name="footer"
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
