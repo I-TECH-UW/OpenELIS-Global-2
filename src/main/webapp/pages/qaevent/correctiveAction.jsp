@@ -6,18 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         import="org.openelisglobal.common.action.IActionConstants,
-				org.openelisglobal.common.formfields.FormFields,
-                org.openelisglobal.common.formfields.FormFields.Field,
-                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
-                org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
-                org.openelisglobal.common.services.PhoneNumberService,
-                org.openelisglobal.common.util.DateUtil,
-                org.openelisglobal.internationalization.MessageUtil,
-                org.openelisglobal.common.util.Versioning,
-                org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem,
-                org.openelisglobal.common.util.ConfigurationProperties" %>
+         import="
+                org.openelisglobal.common.util.Versioning" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Calendar" %>
 
@@ -146,7 +136,13 @@
         </tr>
         <tr>
             <td class="half-table"><spring:message code="nonconforming.event.reportingUnit" /></td>
-            <td><c:out value="${form.reportingUnit}" /></td>
+            <td>
+                <c:forEach items="${form.reportingUnits}" var="reportingUnit">
+                    <c:if test="${reportingUnit.id == form.reportingUnit}" >
+                        <c:out value="${reportingUnit.value}" />
+                    </c:if>
+                </c:forEach>
+            </td>
         </tr>
 
         <tr>

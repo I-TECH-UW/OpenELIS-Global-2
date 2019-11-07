@@ -6,8 +6,6 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "nce_action_log", schema = "clinlims", catalog = "ci_general_9.6")
 public class NceActionLog extends BaseObject<String> {
 
     private String id;
@@ -26,8 +24,6 @@ public class NceActionLog extends BaseObject<String> {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "corrective_action")
     public String getCorrectiveAction() {
         return correctiveAction;
     }
@@ -36,8 +32,6 @@ public class NceActionLog extends BaseObject<String> {
         this.correctiveAction = correctiveAction;
     }
 
-    @Basic
-    @Column(name = "action_type")
     public String getActionType() {
         return actionType;
     }
@@ -46,8 +40,6 @@ public class NceActionLog extends BaseObject<String> {
         this.actionType = actionType;
     }
 
-    @Basic
-    @Column(name = "person_responsible")
     public String getPersonResponsible() {
         return personResponsible;
     }
@@ -56,8 +48,6 @@ public class NceActionLog extends BaseObject<String> {
         this.personResponsible = personResponsible;
     }
 
-    @Basic
-    @Column(name = "date_completed")
     public Date getDateCompleted() {
         return dateCompleted;
     }
@@ -66,8 +56,6 @@ public class NceActionLog extends BaseObject<String> {
         this.dateCompleted = dateCompleted;
     }
 
-    @Basic
-    @Column(name = "turn_aound_time")
     public Integer getTurnAroundTime() {
         return turnAroundTime;
     }
@@ -76,8 +64,6 @@ public class NceActionLog extends BaseObject<String> {
         this.turnAroundTime = turnAoundTime;
     }
 
-    @Basic
-    @Column(name = "nc_event_id")
     public Integer getNcEventId() {
         return ncEventId;
     }

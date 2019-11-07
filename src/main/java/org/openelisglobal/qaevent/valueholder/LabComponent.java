@@ -2,19 +2,14 @@ package org.openelisglobal.qaevent.valueholder;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Entity
-@Table(name = "lab_component", schema = "clinlims", catalog = "ci_general_9.6")
 public class LabComponent extends BaseObject<String> {
     private String id;
     private String name;
     private Timestamp lastmodified;
 
-    @Id
-    @Column(name = "id")
     public String getId() {
         return id;
     }
@@ -23,8 +18,6 @@ public class LabComponent extends BaseObject<String> {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -33,8 +26,6 @@ public class LabComponent extends BaseObject<String> {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "lastmodified")
     public Timestamp getLastmodified() {
         return lastmodified;
     }

@@ -113,7 +113,7 @@ public class ReportNonConformingEventController extends BaseController {
             form.setSpecimens(sampleItems);
         }
 
-        PropertyUtils.setProperty(form, "testSections",
+        PropertyUtils.setProperty(form, "reportingUnits",
                      DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         requesterService.setSampleId(sample.getId());

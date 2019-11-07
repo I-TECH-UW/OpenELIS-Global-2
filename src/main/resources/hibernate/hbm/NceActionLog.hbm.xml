@@ -4,8 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="org.openelisglobal.qaevent.valueholder.NceActionLog" table="nce_action_log" schema="clinlims"
-           catalog="ci_general_9.6">
+    <class name="org.openelisglobal.qaevent.valueholder.NceActionLog" table="nce_action_log" schema="clinlims">
         <id name="id"
             type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />

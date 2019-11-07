@@ -6,8 +6,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Entity
-@Table(name = "nce_type", schema = "clinlims", catalog = "ci_general_9.6")
 public class NceType extends BaseObject<String> {
     private String id;
     private String name;
@@ -16,8 +14,6 @@ public class NceType extends BaseObject<String> {
     private String active;
     private Timestamp lastupdated;
 
-    @Id
-    @Column(name = "id")
     public String getId() {
         return id;
     }
@@ -26,8 +22,6 @@ public class NceType extends BaseObject<String> {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -36,8 +30,6 @@ public class NceType extends BaseObject<String> {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "display_key")
     public String getDisplayKey() {
         return displayKey;
     }
@@ -46,8 +38,6 @@ public class NceType extends BaseObject<String> {
         this.displayKey = displayKey;
     }
 
-    @Basic
-    @Column(name = "active")
     public String getActive() {
         return active;
     }
@@ -56,8 +46,6 @@ public class NceType extends BaseObject<String> {
         this.active = active;
     }
 
-    @Basic
-    @Column(name = "active")
     public Integer getCategoryId() {
         return categoryId;
     }
@@ -66,8 +54,6 @@ public class NceType extends BaseObject<String> {
         this.categoryId = categoryId;
     }
 
-    @Basic
-    @Column(name = "lastupdated")
     public Timestamp getLastupdated() {
         return lastupdated;
     }

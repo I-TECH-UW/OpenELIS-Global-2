@@ -6,8 +6,6 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "nc_event", schema = "clinlims", catalog = "ci_general_9.6")
 public class NcEvent extends BaseObject<String> {
     private String id;
     private Date reportDate;

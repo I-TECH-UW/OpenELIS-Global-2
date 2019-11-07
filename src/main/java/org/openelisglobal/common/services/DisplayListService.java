@@ -41,9 +41,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
-import org.openelisglobal.qaevent.service.LabComponentService;
 import org.openelisglobal.qaevent.service.QaEventService;
-import org.openelisglobal.qaevent.valueholder.LabComponent;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
@@ -104,8 +102,6 @@ public class DisplayListService implements LocaleChangeListener {
     private DictionaryService dictionaryService;
     @Autowired
     private TypeOfTestResultService typeOfTestResultService;
-    @Autowired
-    private LabComponentService labComponentService;
 
     @PostConstruct
     private void registerInstance() {

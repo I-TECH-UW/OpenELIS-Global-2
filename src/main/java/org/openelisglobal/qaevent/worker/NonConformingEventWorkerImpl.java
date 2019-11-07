@@ -136,8 +136,9 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
         PropertyUtils.setProperty(form, "severityRecurrenceList",
                 DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
-        PropertyUtils.setProperty(form, "severityRecurrenceList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+        PropertyUtils.setProperty(form, "reportingUnits",
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+
         SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
         form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
         form.setNceNumber(System.currentTimeMillis() + "");
@@ -155,6 +156,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             form.setNceNumber(event.getNceNumber());
             form.setId(event.getId());
             form.setLabOrderNumber(event.getLabOrderNumber());
+            form.setReportingUnit(event.getReportingUnitId());
 
             List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
 
@@ -184,21 +186,6 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             form.setDiscussionDate(event.getDiscussionDate());
             form.setControlAction(event.getControlAction());
             form.setComments(event.getComments());
-
-
-            /*StringBuilder builder = new StringBuilder();
-            Date[] discussionDates = event.getDiscussionDate();
-            if (discussionDates != null) {
-                boolean first = true;
-                for (Date d : discussionDates) {
-                    if (!first) {
-                        builder.append(",");
-                    }
-                    builder.append(DateUtil.formatDateAsText(d));
-                    first = false;
-                }
-            }
-            form.setDiscussionDate(builder.toString());*/
             form.setActionLog(nceActionLogService.getAllMatching("ncEventId", event.getId()));
         }
     }
