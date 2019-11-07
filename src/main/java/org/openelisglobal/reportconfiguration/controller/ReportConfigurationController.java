@@ -34,7 +34,7 @@ public class ReportConfigurationController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ReportConfigurationForm form = new ReportConfigurationForm();
         form.setReportCategoryList(createReportCategoryList());
-        form.setReportList(reportService.getAll());
+        form.setReportList(reportService.getReports());
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -79,9 +79,9 @@ public class ReportConfigurationController extends BaseController {
         reportCategoryList.add(new ReportCategory("10", MessageUtil.getMessage("label.select.report.category.study.eid"), "menu_reports_eid", "", "7"));
         reportCategoryList.add(new ReportCategory("11", MessageUtil.getMessage("label.select.report.category.study.vl"), "menu_reports_vl", "", "7"));
         reportCategoryList.add(new ReportCategory("12", MessageUtil.getMessage("label.select.report.category.study.indeterminate"), "menu_reports_indeterminate", "", "7"));
-        reportCategoryList.add(new ReportCategory("12", MessageUtil.getMessage("label.select.report.category.study.indicator"), "menu_reports_indicator", "", "2"));
-        reportCategoryList.add(new ReportCategory("13", MessageUtil.getMessage("label.select.report.category.study.nonConformity"), "menu_reports_nonconformity.study", "", "2"));
-        reportCategoryList.add(new ReportCategory("14", MessageUtil.getMessage("label.select.report.category.exportByDate"), "menu_reports_export", "", "2"));
+        reportCategoryList.add(new ReportCategory("13", MessageUtil.getMessage("label.select.report.category.study.indicator"), "menu_reports_indicator", "", "2"));
+        reportCategoryList.add(new ReportCategory("14", MessageUtil.getMessage("label.select.report.category.study.nonConformity"), "menu_reports_nonconformity.study", "", "2"));
+        reportCategoryList.add(new ReportCategory("15", MessageUtil.getMessage("label.select.report.category.exportByDate"), "menu_reports_export", "", "2"));
 
 
         return reportCategoryList;

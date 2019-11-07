@@ -1,6 +1,7 @@
 package org.openelisglobal.reportconfiguration.service;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.valueholder.Menu;
 import org.openelisglobal.reportconfiguration.dao.ReportDAO;
@@ -31,6 +32,15 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
 
     ReportServiceImpl() {
         super(Report.class);
+    }
+
+    @Override
+    public List<Report> getReports() {
+        List<Report> reportList = this.getAll();
+        for (Report report: reportList) {
+            report.setName(MessageUtil.getMessage(report.getDisplayKey()));
+        }
+        return reportList;
     }
 
     @Override
@@ -86,6 +96,7 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
             final String categoryId = form.getCurrentReport().getCategory();
             ReportCategory reportCategory = form.getReportCategoryList().stream().filter(rc -> rc.getId().equalsIgnoreCase(categoryId)).findFirst().orElse(null);
 
+            form.getCurrentReport().setDisplayKey(form.getMenuDisplayKey());
             Report createdReport = baseObjectDAO.update(form.getCurrentReport());
 
             Menu menu = menuService.getMenuByElementId(reportCategory.getMenuElementId());
