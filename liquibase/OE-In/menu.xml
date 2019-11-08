@@ -18,7 +18,7 @@
 
             INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action,
             display_key, tool_tip_key, new_window, is_active)
-            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_nonconformity'),3,'menu_non_conforming_corrective_actions','/CorrectiveAction.do',default,'banner.menu.nonconformity.correctiveActions','tooltip.banner.menu.nonconformity.correctiveActions',default,default);
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_nonconformity'),3,'menu_non_conforming_corrective_actions','/NCECorrectiveAction.do',default,'banner.menu.nonconformity.correctiveActions','tooltip.banner.menu.nonconformity.correctiveActions',default,default);
 
             INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action,
             display_key, tool_tip_key, new_window, is_active)
