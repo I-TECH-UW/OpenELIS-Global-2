@@ -19,13 +19,13 @@ package org.openelisglobal.common.provider.validation;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.util.CI.ProjectForm;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -43,7 +43,7 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
     }
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String accessionNumber = request.getParameter("accessionNumber");

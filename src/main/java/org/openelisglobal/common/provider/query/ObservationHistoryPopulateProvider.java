@@ -3,14 +3,14 @@
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
 * http://www.mozilla.org/MPL/
-* 
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.util.XMLUtil;
@@ -38,6 +37,7 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
@@ -72,12 +72,12 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 
     private Patient patient = new Patient();
     private Sample sample = new Sample();
-    Map<String, String> historyMap = new LinkedHashMap<String, String>();
+    Map<String, String> historyMap = new LinkedHashMap<>();
 //    private String projectFormName;
 //    private RequestType requestType = RequestType.UNKNOWN;
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String patientKey = (String) request.getParameter("patientKey");
@@ -172,7 +172,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 
     /**
      * Get all observations histories of a certain types
-     * 
+     *
      * @param listName
      * @return
      */

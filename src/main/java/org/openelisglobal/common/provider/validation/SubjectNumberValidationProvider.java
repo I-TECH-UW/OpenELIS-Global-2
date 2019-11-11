@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -28,6 +27,7 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -47,7 +47,7 @@ public class SubjectNumberValidationProvider extends BaseValidationProvider {
     }
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String queryResponse = "valid";

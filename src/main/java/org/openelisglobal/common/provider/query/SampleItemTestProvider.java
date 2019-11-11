@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -38,6 +37,7 @@ import org.openelisglobal.sample.util.CI.IProjectFormMapper;
 import org.openelisglobal.sample.util.CI.ProjectFormMapperFactory;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -58,7 +58,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         /**
          * The primary Key for a sample
@@ -107,7 +107,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
     private boolean wasTestSelected(String sampleKey, String projectFormName, String sampleItemType, String testTag)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ProjectData projectData = new ProjectData();
-        Map<String, Boolean> miniForm = new HashMap<String, Boolean>();
+        Map<String, Boolean> miniForm = new HashMap<>();
         miniForm.put(sampleItemType + "Taken", Boolean.TRUE);
         miniForm.put(testTag, Boolean.TRUE);
         PropertyUtils.copyProperties(projectData, miniForm);
@@ -139,7 +139,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
         TypeOfSampleTests sampleTests = typeOfSampleTestsList.get(0);
         List<Test> tests = sampleTests.tests;
 
-        List<Integer> testIds = new ArrayList<Integer>();
+        List<Integer> testIds = new ArrayList<>();
         for (Test test : tests) {
             testIds.add(Integer.valueOf(test.getId()));
         }
