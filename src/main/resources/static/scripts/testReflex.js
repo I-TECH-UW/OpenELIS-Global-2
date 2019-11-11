@@ -56,12 +56,28 @@ function buildPopUp(rawResponse, showPopup){
     }
 }
 function getSelectionRow(name, value, index, selected ){
-    var check = selected ? "checked='checked' " : "";
-    return "<p class='selection_element'><input style='vertical-align:text-bottom' id='selection_" +
-        index + "' class='selectionCheckbox' value='" +
-        value +  "' type='checkbox' " +
-        check + ">&nbsp;&nbsp;&nbsp;" +
-        name + "</p>";
+    var tempWrapper = document.createElement('div');
+    var p = document.createElement('p');
+    p.setAttribute('class', 'selection_element')
+    var input = document.createElement('input');
+    input.setAttribute('style', 'vertical-align:text-bottom');
+    input.setAttribute('id','selection_' + index);
+    input.setAttribute('class', 'selectionCheckbox');
+    input.setAttribute('value', value);
+    input.setAttribute('type','checkbox');
+    if (selected) {
+        input.setAttribute('checked', 'checked');
+    }
+    input.innerText = '&nbsp;&nbsp;&nbsp;' + name;
+    p.appendChild(input);
+    tempWrapper.appendChild(p);
+    return tempWrapper.innerHTML;
+
+    // return "<p class='selection_element'><input style='vertical-align:text-bottom' id='selection_" +
+    //     index + "' class='selectionCheckbox' value='" +
+    //     value +  "' type='checkbox' " +
+    //     check + ">&nbsp;&nbsp;&nbsp;" +
+    //     name + "</p>";
 }
 
 function modalSelectAll(selectBox){

@@ -26,10 +26,10 @@ public class UnifiedSystemUserForm extends BaseForm {
     private String userLoginName = "";
 
     // in validator
-    private String userPassword = "";
+    private String userPassword;
 
     // in validator
-    private String confirmPassword = "";
+    private String confirmPassword;
 
     @NotBlank
     @ValidName(nameType = NameType.FIRST_NAME)
