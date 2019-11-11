@@ -18,7 +18,7 @@ public interface QaEventService extends BaseObjectService<QaEvent, String> {
 
     List getPageOfQaEvents(int startingRecNo);
 
-    List getNextQaEventRecord(String id);
 
-    List getPreviousQaEventRecord(String id);
+
+
 }

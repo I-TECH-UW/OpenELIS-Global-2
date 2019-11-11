@@ -10,13 +10,13 @@ public interface TestTrailerService extends BaseObjectService<TestTrailer, Strin
 
     List getPageOfTestTrailers(int startingRecNo);
 
-    List getNextTestTrailerRecord(String id);
+
 
     Integer getTotalTestTrailerCount();
 
     TestTrailer getTestTrailerByName(TestTrailer testTrailer);
 
-    List getPreviousTestTrailerRecord(String id);
+
 
     List getAllTestTrailers();
 

@@ -21,7 +21,7 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Integer getTotalTestCount();
 
-    List getNextTestRecord(String id);
+
 
     List<Test> getAllActiveTests(boolean onlyTestsFullySetup);
 
@@ -37,7 +37,7 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     List<Test> getActiveTestByName(String testName);
 
-    List getPreviousTestRecord(String id);
+
 
     List getTestsByTestSection(String filter);
 

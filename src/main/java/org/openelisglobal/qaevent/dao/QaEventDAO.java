@@ -45,9 +45,9 @@ public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
 //	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-    public List getNextQaEventRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousQaEventRecord(String id) throws LIMSRuntimeException;
+
+
 
     public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
 

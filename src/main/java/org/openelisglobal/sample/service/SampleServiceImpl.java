@@ -393,12 +393,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSampleRecord(String id) {
-        return getBaseObjectDAO().getNextSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Sample getSampleByReferringId(String referringId) {
         return getBaseObjectDAO().getSampleByReferringId(referringId);
     }

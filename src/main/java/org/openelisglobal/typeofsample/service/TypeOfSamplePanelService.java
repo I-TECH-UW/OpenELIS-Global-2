@@ -12,13 +12,13 @@ public interface TypeOfSamplePanelService extends BaseObjectService<TypeOfSample
 
     List getPageOfTypeOfSamplePanel(int startingRecNo);
 
-    List getNextTypeOfSamplePanelRecord(String id);
+
 
     Integer getTotalTypeOfSamplePanelCount();
 
     List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId);
 
-    List getPreviousTypeOfSamplePanelRecord(String id);
+
 
     List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
 }

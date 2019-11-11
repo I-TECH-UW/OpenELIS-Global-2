@@ -216,21 +216,6 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextPersonRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Person", Person.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPersonRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Person", Person.class);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {

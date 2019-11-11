@@ -64,20 +64,8 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List<SampleItem> getPreviousSampleItemRecord(String id) {
-        return getBaseObjectDAO().getPreviousSampleItemRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<SampleItem> getAllSampleItems() {
         return getBaseObjectDAO().getAllSampleItems();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<SampleItem> getNextSampleItemRecord(String id) {
-        return getBaseObjectDAO().getNextSampleItemRecord(id);
     }
 
     @Override

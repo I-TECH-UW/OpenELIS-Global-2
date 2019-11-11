@@ -197,13 +197,6 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     @Override
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public List<SiteInformation> getNextSiteInformationRecord(String id) throws LIMSRuntimeException {
-        return getNextRecord(id, "SiteInformation", SiteInformation.class);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     public List<SiteInformation> getPreviousSiteInformationRecord(String id) throws LIMSRuntimeException {
         return getPreviousRecord(id, "SiteInformation", SiteInformation.class);
     }

@@ -38,10 +38,10 @@ public interface RoleDAO extends BaseDAO<Role, String> {
 //	public void updateData(Role role) throws LIMSRuntimeException;
 
     @SuppressWarnings("rawtypes")
-    public List getNextRoleRecord(String id) throws LIMSRuntimeException;
+
 
     @SuppressWarnings("rawtypes")
-    public List getPreviousRoleRecord(String id) throws LIMSRuntimeException;
+
 
     public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
 

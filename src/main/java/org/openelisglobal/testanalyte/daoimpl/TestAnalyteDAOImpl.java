@@ -254,14 +254,6 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "TestAnalyte", TestAnalyte.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException {
 
         return getPreviousRecord(id, "TestAnalyte", TestAnalyte.class);

@@ -371,14 +371,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSampleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Sample", Sample.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPreviousSampleRecord(String id) throws LIMSRuntimeException {
 
         return getPreviousRecord(id, "Sample", Sample.class);

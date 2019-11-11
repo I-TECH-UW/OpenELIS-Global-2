@@ -18,9 +18,9 @@ public interface PanelService extends BaseObjectService<Panel, String> {
 
     List<Panel> getAllActivePanels();
 
-    List getNextPanelRecord(String id);
 
-    List getPreviousPanelRecord(String id);
+
+
 
     Integer getTotalPanelCount();
 

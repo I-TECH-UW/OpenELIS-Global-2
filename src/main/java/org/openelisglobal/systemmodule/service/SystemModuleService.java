@@ -13,11 +13,11 @@ public interface SystemModuleService extends BaseObjectService<SystemModule, Str
 
     List getPageOfSystemModules(int startingRecNo);
 
-    List getNextSystemModuleRecord(String id);
+
 
     List getAllSystemModules();
 
-    List getPreviousSystemModuleRecord(String id);
+
 
     SystemModule getSystemModuleByName(String name);
 

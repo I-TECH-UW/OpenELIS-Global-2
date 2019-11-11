@@ -43,9 +43,9 @@ public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String>
 
 //	public void updateData(RenameTestSection testSection) throws LIMSRuntimeException;
 
-    public List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException;
+
+
 
     public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException;
 

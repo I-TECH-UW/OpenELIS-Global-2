@@ -13,9 +13,9 @@ public interface ProviderService extends BaseObjectService<Provider, String> {
 
     List getAllProviders();
 
-    List getNextProviderRecord(String id);
 
-    List getPreviousProviderRecord(String id);
+
+
 
     Provider getProviderByPerson(Person person);
 }

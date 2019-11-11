@@ -33,9 +33,9 @@ public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest, String> {
 
     public void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
 
-    public List getNextTypeOfSampleTestRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException;
 

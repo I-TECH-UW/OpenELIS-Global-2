@@ -43,9 +43,9 @@ public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 
 //	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
-    public List getNextReferenceTablesRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousReferenceTablesRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException;
 

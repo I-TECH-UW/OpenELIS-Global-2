@@ -12,7 +12,7 @@ public interface StatusOfSampleService extends BaseObjectService<StatusOfSample,
 
 //	boolean insertData(StatusOfSample sourceOfSample);
 
-    List getPreviousStatusOfSampleRecord(String id);
+
 
     List getPageOfStatusOfSamples(int startingRecNo);
 
@@ -22,5 +22,5 @@ public interface StatusOfSampleService extends BaseObjectService<StatusOfSample,
 
     List getAllStatusOfSamples();
 
-    List getNextStatusOfSampleRecord(String id);
+
 }

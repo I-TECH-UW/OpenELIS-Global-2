@@ -13,9 +13,9 @@ public interface TestAnalyteService extends BaseObjectService<TestAnalyte, Strin
 
     List getPageOfTestAnalytes(int startingRecNo);
 
-    List getNextTestAnalyteRecord(String id);
 
-    List getPreviousTestAnalyteRecord(String id);
+
+
 
     TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte);
 

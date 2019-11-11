@@ -10,7 +10,7 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 public interface TestResultService extends BaseObjectService<TestResult, String> {
     void getData(TestResult testResult);
 
-    List getNextTestResultRecord(String id);
+
 
     TestResult getTestResultById(TestResult testResult);
 
@@ -20,7 +20,7 @@ public interface TestResultService extends BaseObjectService<TestResult, String>
 
     List getPageOfTestResults(int startingRecNo);
 
-    List getPreviousTestResultRecord(String id);
+
 
     List getAllTestResults();
 

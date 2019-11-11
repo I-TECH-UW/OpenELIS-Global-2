@@ -38,9 +38,9 @@ public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String>
 
 //	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 //
-    public List getNextSystemUserSectionRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousSystemUserSectionRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
 
