@@ -255,78 +255,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSystemUserSectionRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "SystemUserSection", SystemUserSection.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemUserSectionRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "SystemUserSection", SystemUserSection.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException {
         return getTotalCount("SystemUserSection", SystemUserSection.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select sus.id from SystemUserSection sus order by sus.systemUser.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("SystemUserSectionDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select sus.id from SystemUserSection sus order by sus.systemUser.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("SystemUserSectionDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

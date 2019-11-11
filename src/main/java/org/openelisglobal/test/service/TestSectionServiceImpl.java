@@ -136,12 +136,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestSectionRecord(String id) {
-        return getBaseObjectDAO().getNextTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
@@ -150,12 +144,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
     @Transactional(readOnly = true)
     public Integer getTotalTestSectionCount() {
         return getBaseObjectDAO().getTotalTestSectionCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestSectionRecord(id);
     }
 
     @Override

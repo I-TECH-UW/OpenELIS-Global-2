@@ -46,20 +46,8 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSystemUserSectionRecord(String id) {
-        return getBaseObjectDAO().getNextSystemUserSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalSystemUserSectionCount() {
         return getBaseObjectDAO().getTotalSystemUserSectionCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemUserSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousSystemUserSectionRecord(id);
     }
 
     @Override

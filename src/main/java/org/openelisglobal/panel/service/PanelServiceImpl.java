@@ -60,18 +60,6 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPanelRecord(String id) {
-        return getBaseObjectDAO().getNextPanelRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPanelRecord(String id) {
-        return getBaseObjectDAO().getPreviousPanelRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalPanelCount() {
         return getBaseObjectDAO().getTotalPanelCount();
     }

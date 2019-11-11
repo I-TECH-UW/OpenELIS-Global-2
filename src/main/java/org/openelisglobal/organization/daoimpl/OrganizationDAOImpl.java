@@ -299,21 +299,6 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextOrganizationRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Organization", Organization.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousOrganizationRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Organization", Organization.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException {
         String sql = null;
@@ -390,51 +375,6 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
     @Transactional(readOnly = true)
     public Integer getTotalOrganizationCount() throws LIMSRuntimeException {
         return getTotalCount("Organization", Organization.class);
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.organizationName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.organizationName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

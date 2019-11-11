@@ -235,21 +235,6 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "TestTrailer", TestTrailer.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestTrailerRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "TestTrailer", TestTrailer.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException {
         try {
             String sql = "from TestTrailer t where t.testTrailerName = :param";
@@ -299,51 +284,6 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     @Transactional(readOnly = true)
     public Integer getTotalTestTrailerCount() throws LIMSRuntimeException {
         return getTotalCount("TestTrailer", TestTrailer.class);
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.testTrailerName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.testTrailerName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     // bugzilla 1482

@@ -72,12 +72,6 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<SiteInformation> getPreviousSiteInformationRecord(String id) {
-        return getBaseObjectDAO().getPreviousSiteInformationRecord(id);
-    }
-
-    @Override
     @Transactional
     public void persistData(SiteInformation siteInformation, boolean newSiteInformation) {
         if (newSiteInformation) {

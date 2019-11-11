@@ -285,35 +285,6 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
     // bugzilla 1761 removed getStatus() - no longer needed
 
     /**
-     * getNextStatusOfSampleRecord()
-     *
-     * @param id
-     * @return List
-     * @throws LIMSRuntimeException
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextStatusOfSampleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "StatusOfSample", StatusOfSample.class);
-
-    }
-
-    /**
-     * getPreviousStatusOfSampleRecord()
-     *
-     * @param id
-     * @return List
-     * @throws LIMSRuntimeException
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousStatusOfSampleRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "StatusOfSample", StatusOfSample.class);
-    }
-
-    /**
      * getTotalStatusOfSampleCount()
      *
      * @return Integer - total count
@@ -323,93 +294,6 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
     @Transactional(readOnly = true)
     public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException {
         return getTotalCount("StatusOfSample", StatusOfSample.class);
-    }
-
-    /**
-     * getNextRecord()
-     *
-     * @param id
-     * @param table
-     * @param clazz
-     *
-     * @return List
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select sos.id from StatusOfSample sos " + " order by sos.statusType, sos.code";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("StatusOfSampleDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    /**
-     * getPreviousRecord()
-     *
-     * @param id
-     * @param table
-     * @param clazz
-     *
-     * @return List
-     *
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select sos.id from StatusOfSample sos " + " order by sos.statusType desc, sos.code desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("StatusOfSampleDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
 //	 bugzilla 1482

@@ -52,18 +52,6 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException {
-        return getBaseObjectDAO().getNextPatientTypeRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException {
-        return getBaseObjectDAO().getPreviousPatientTypeRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException {
         return getBaseObjectDAO().getPatientTypeByName(patientType);
     }

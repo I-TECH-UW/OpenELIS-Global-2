@@ -280,20 +280,8 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalTypeOfSampleCount() {
         return getBaseObjectDAO().getTotalTypeOfSampleCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSampleRecord(id);
     }
 
     @Override

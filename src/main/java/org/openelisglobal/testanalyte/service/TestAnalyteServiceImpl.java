@@ -44,18 +44,6 @@ public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestAnalyteRecord(String id) {
-        return getBaseObjectDAO().getNextTestAnalyteRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestAnalyteRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestAnalyteRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) {
         return getBaseObjectDAO().getTestAnalyteById(testAnalyte);
     }

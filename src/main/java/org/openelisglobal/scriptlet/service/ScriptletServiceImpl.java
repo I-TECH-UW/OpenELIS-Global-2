@@ -33,12 +33,6 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousScriptletRecord(String id) {
-        return getBaseObjectDAO().getPreviousScriptletRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalScriptletCount() {
         return getBaseObjectDAO().getTotalScriptletCount();
     }
@@ -53,12 +47,6 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
     @Transactional(readOnly = true)
     public Scriptlet getScriptletByName(Scriptlet scriptlet) {
         return getBaseObjectDAO().getScriptletByName(scriptlet);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextScriptletRecord(String id) {
-        return getBaseObjectDAO().getNextScriptletRecord(id);
     }
 
     @Override
