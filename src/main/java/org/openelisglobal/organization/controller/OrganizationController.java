@@ -32,6 +32,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.service.OrganizationTypeService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -137,11 +138,13 @@ public class OrganizationController extends BaseController {
             organization = organizationService.getNext(id);
             String newId = organization.getId();
 
-            return new ModelAndView("redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start);
+            return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+                    + Encode.forUriComponent(start));
         } else if (FWD_PREVIOUS.equals(direction)) {
             organization = organizationService.getPrevious(id);
             String newId = organization.getId();
-            return new ModelAndView("redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start);
+            return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+                    + Encode.forUriComponent(start));
         }
 
         boolean isNew = (id == null) || "0".equals(id);
