@@ -441,20 +441,20 @@ public class SiteInformationController extends BaseController {
     @Override
     protected String findLocalForward(String forward) {
         String path = request.getRequestURI().substring(request.getContextPath().length());
-        String pathNoSuffix = path.substring(0, path.lastIndexOf('.'));
+        String pathWithoutSuffix = path.substring(0, path.lastIndexOf('.'));
         if (FWD_SUCCESS.equals(forward)) {
             return "siteInformationDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage.do";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = pathNoSuffix + "Menu.do";
+            String url = pathWithoutSuffix + "Menu.do";
             return "redirect:" + url;
         } else if (FWD_FAIL_INSERT.equals(forward)) {
-            String url = pathNoSuffix + ".do";
+            String url = pathWithoutSuffix + ".do";
             return "redirect:" + url;
         } else if (FWD_CANCEL.equals(forward)) {
             String prefix = "Cancel";
-            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
+            String url = pathWithoutSuffix.substring(pathWithoutSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
             return "redirect:" + url;
         } else {
             return "PageNotFound";
