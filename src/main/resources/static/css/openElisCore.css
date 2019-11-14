@@ -1267,6 +1267,68 @@ tr.border_top td {
 	cursor: pointer;
 }
 
+view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.view-non-conforming-descriptions {
+	width: 35%;
+}
+
+.full-table {
+	width: 80%;
+	text-align: center;
+}
+
+.center-caption {
+	text-align: center;
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+}
+
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}
+
 
 .result-select-box {
 	width: 90%;
@@ -1306,6 +1368,7 @@ tr.border_top td {
 	width: 50%;
 	min-height: 50px;
 	margin: 20px auto;
+}
   
 .form-div {
 	width: 100%;
@@ -1333,21 +1396,17 @@ tr.border_top td {
 .report-ordering-panel {
 	width: 400px;
 
-view-non-conforming-section-1 > td {
+.view-non-conforming-section-1 > td {
 	width: 25%;
 }
 
-.view-non-conforming-descriptions {
-	width: 35%;
+.report-nce-table {
+	min-width: 60%;
 }
 
-.full-table {
-	width: 80%;
-	text-align: center;
-}
 
-.center-caption {
-	text-align: center;
+.report-nce-values-col {
+	width: 60%
 }
 
 .corrective-action-section-1 {
@@ -1366,5 +1425,4 @@ view-non-conforming-section-1 > td {
 
 .column-right-text {
 	float: right;
-
 }

@@ -75,10 +75,17 @@
         // report['name'] = '${category.name}';
         // reportCategory.push(category);
     </c:forEach>
+    var _csrf = '?${_csrf.parameterName}=${_csrf.token}';
 </script>
+<div id="new-report-btn-div">
+    <button onclick="newReport()"><spring:message code="report.configuration.addNewReport" /></button>
+</div>
 <table id="report-table">
+
     <tr>
-        <th>Name</th><th>Category</th><th>Visible</th><th></th>
+        <th><spring:message code="report.configuration.name" /></th>
+        <th><spring:message code="report.configuration.category" /></th>
+        <th><spring:message code="report.configuration.visible" /></th><th></th>
     </tr>
     <c:forEach items="${form.reportList}" var="report">
         <tr>
@@ -92,16 +99,16 @@
             </td>
             <td>
                 <c:if test="${report.isVisible == 'true'}">
-                    Yes
+                    <spring:message code="report.configuration.yes" />
                 </c:if>
                 <c:if test="${report.isVisible != 'true'}">
-                    No
+                    <spring:message code="report.configuration.no" />
                 </c:if>
 
             </td>
             <td>
                 <button onclick="editReport('<c:out value="${report.id}" />', '<c:out value="${report.category}" />')">
-                    Edit
+                    <spring:message code="report.configuration.edit" />
                 </button>
             </td>
         </tr>
@@ -118,42 +125,108 @@
            id="mainForm">
 
     <div class="form-div">
-        <label>Name</label>
+        <label><spring:message code="report.configuration.name" /></label>
         <form:hidden path="currentReport.name"/>
         <p><strong id="currentReportName"></strong></p>
     </div>
 
     <div class="form-div">
-        <label>Type</label>
+        <label><spring:message code="report.configuration.category" /></label>
         <form:select path="currentReport.category" cssClass="form-control" onchange="onCategoryChange()">
             <form:option value="">Select one</form:option>
             <form:options items="${form.reportCategoryList}" itemLabel="name" itemValue="id"/>
         </form:select>
     </div>
     <div class="form-div">
-        <label>Visible</label>
+        <label><spring:message code="report.configuration.visible" /></label>
         <input type="checkbox" name="currentReport.isVisible" />
     </div>
 
-    <ul id="report-ordering-panel" class="sortable sortable-tag ui-sortable report-ordering-panel">
+    <ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
 
     </ul>
     <input name="idOrder" type="hidden" />
     <input name="currentReport.id" type="hidden" />
-    <button onclick="save()">
-        Save
+    <button onclick="save('mainForm')">
+        <spring:message code="label.button.save" />
     </button>
     <button onclick="return cancelEdit()">
-        Cancel
+        <spring:message code="label.button.cancel" />
     </button>
 
 </form:form>
+</div>
+
+<div id="new-report-div">
+    <form:form name="${form.formName}"
+               action="${form.formAction}"
+               modelAttribute="form"
+               onSubmit="return submitForm(this);"
+               method="${form.formMethod}"
+               cssClass="edit-report-form"
+               enctype="multipart/form-data"
+               id="new-report-form">
+
+        <div class="form-div">
+            <label><spring:message code="report.configuration.name" /> <span class="requiredlabel">*</span></label>
+            <form:input path="currentReport.name" cssClass="form-control" />
+        </div>
+
+        <div class="form-div">
+            <label><spring:message code="report.configuration.category" /><span class="requiredlabel">*</span></label>
+            <form:select path="currentReport.category" cssClass="form-control" onchange="onCategoryChange()">
+                <form:option value="">Select one</form:option>
+                <form:options items="${form.reportCategoryList}" itemLabel="name" itemValue="id"/>
+            </form:select>
+        </div>
+        <div class="form-div">
+            <label><spring:message code="report.configuration.visible" /></label>
+            <input type="checkbox" name="currentReport.isVisible" />
+        </div>
+
+        <!--<ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
+
+        </ul>-->
+        <input name="idOrder" type="hidden" />
+        <input name="currentReport.id" type="hidden" />
+        <div class="form-div">
+            <label><spring:message code="report.configuration.menuElementId" /><span class="requiredlabel">*</span></label>
+            <form:input type="text" path="currentReport.menuElementId" cssClass="form-control" />
+        </div>
+        <div class="form-div">
+            <label><spring:message code="report.configuration.menuDisplayKey" /><span class="requiredlabel">*</span></label>
+            <form:input type="text" path="menuDisplayKey" cssClass="form-control" />
+        </div>
+        <div class="form-div">
+            <label><spring:message code="report.configuration.menuActionUrl" /><span class="requiredlabel">*</span></label>
+            <form:input type="text" path="menuActionUrl" cssClass="form-control" />
+        </div>
+        <div class="form-div">
+            <label><spring:message code="report.configuration.attachReportData" /><span class="requiredlabel">*</span></label>
+            <form:input type="file" path="reportDataFile" accept=".jasper" cssClass="form-control" />
+        </div>
+
+        <div class="form-div">
+            <label><spring:message code="report.configuration.attachReportTemplate" /><span class="requiredlabel">*</span></label>
+            <form:input type="file" path="reportTemplateFile" accept=".jrxml" cssClass="form-control" />
+        </div>
+
+        <button onclick="return save('new-report-form')">
+            <spring:message code="label.button.save" />
+        </button>
+        <button onclick="return cancelEdit()">
+            <spring:message code="label.button.cancel" />
+        </button>
+
+    </form:form>
 </div>
 
 <script>
 
     function cancelEdit() {
         jQuery('#edit-report-div').hide();
+        jQuery('#new-report-div').hide();
+        jQuery('#new-report-btn-div').show();
         jQuery('#report-table').show();
         return false;
     }
@@ -167,17 +240,17 @@
             jQuery('#report-ordering-panel').sortable();
             return;
         }*/
-        var category = jQuery('select[name="currentReport.category"]').val();
-        var id = jQuery('input[name="currentReport.id"]').val();
+        var category = jQuery('select[name="currentReport.category"]:visible').val();
+        var id = jQuery('input[name="currentReport.id"]:visible').val();
         var found = false;
         var visibleReports = getVisibleReport(category);
         var html = [];
         for (var i = 0; i < visibleReports.length; i++) {
-            var rep = visibleReports[i];
-            if (rep.id == id) {
+            var r = visibleReports[i];
+            if (r.id == id) {
                 found = true;
             }
-            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (rep.id == id ? 'current-report' : '') + '" report-id="' + rep.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order ' + (r.id == id ? 'current-report' : '') + '" report-id="' + r.id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + r.name + '</li>');
         }
         if (!found) {
             var rep;
@@ -187,10 +260,12 @@
                     rep = report;
                 }
             }
-            html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order current-report"  report-id="' + id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+            if (rep) {
+                html.push('<li class="ui-state-default_oe ui-state-default_oe-tag report-sort-order current-report"  report-id="' + id + '"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + rep.name + '</li>');
+            }
         }
-        jQuery('#report-ordering-panel').html(html.join(''));
-        jQuery('#report-ordering-panel').sortable();
+        jQuery('.report-ordering-panel:visible').html(html.join(''));
+        jQuery('.report-ordering-panel:visible').sortable();
     }
 
     function getVisibleReport(category) {
@@ -206,6 +281,7 @@
 
     function editReport(reportId, category) {
         jQuery('#edit-report-div').show();
+        jQuery('#new-report-div').hide();
         jQuery('#report-table').hide();
         var visibleReports = getVisibleReport(category);
 
@@ -229,23 +305,46 @@
         jQuery('#report-ordering-panel').sortable();
     }
 
-    function save() {
-        var order = jQuery(".report-sort-order");
+    function newReport() {
+        jQuery('#new-report-div').show();
+        jQuery('#new-report-btn-div').hide();
+        jQuery('#report-table').hide();
+    }
+
+    function validateNewReport() {
+        var reportDataFile = jQuery('#reportDataFile').val();
+        var reportTemplateFile = jQuery('#reportTemplateFile').val();
+        var menuActionUrl = jQuery('#menuActionUrl').val();
+        var menuElementId = jQuery('#currentReport.menuElementId').val();
+        var menuDisplayKey = jQuery('#menuDisplayKey').val();
+        var name = jQuery('#currentReport.name').val();
+
+        if (reportDataFile == '' || reportTemplateFile == '' || menuActionUrl == '' || menuElementId == '' || menuDisplayKey || name == '') {
+            return false;
+        }
+    }
+    function save(id) {
+        var order = jQuery(".report-sort-order:visible");
         var idOrder = [];
         for (var i = 0; i < order.length; i++) {
             var o = order[i];
             var reportId = o.getAttribute('report-id');
             idOrder.push(reportId);
         }
+        if (id == 'new-report-form' && !validateNewReport()) {
+            alert('Fill in all required fields.')
+            return false;
+        }
 
-        var form = document.getElementById("mainForm");
+        var form = document.getElementById(id);
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         jQuery('input[name="idOrder"]').val(idOrder.join(','));
-        form.action = "ReportConfiguration.do";
+        form.action = "ReportConfiguration.do" + _csrf;
         form.submit();
     }
 
     jQuery(document).ready(function() {
+        jQuery('#new-report-div').hide();
         jQuery('#edit-report-div').hide();
     })
 </script>

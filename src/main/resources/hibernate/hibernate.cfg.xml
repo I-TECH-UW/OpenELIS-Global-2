@@ -153,9 +153,6 @@
 		<mapping resource="hibernate/hbm/TypeOfDataIndicator.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleUrl.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleParam.hbm.xml" />
-
-        <mapping resource="hibernate/hbm/Report.hbm.xml"/>
-
         <mapping resource="hibernate/hbm/NceCategory.hbm.xml"/>
         <mapping resource="hibernate/hbm/NcEvent.hbm.xml"/>
         <mapping resource="hibernate/hbm/NceActionLog.hbm.xml"/>
@@ -164,8 +161,7 @@
 		<mapping resource="hibernate/hbm/NceSpecimen.hbm.xml"/>
         <mapping resource="hibernate/hbm/LabComponent.hbm.xml"/>
         <mapping resource="hibernate/hbm/NcEvent.hbm.xml"/>
-
-
+        <mapping resource="hibernate/hbm/Report.hbm.xml"/>
     </session-factory>
 
 </hibernate-configuration>

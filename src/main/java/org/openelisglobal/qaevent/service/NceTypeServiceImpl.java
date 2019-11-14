@@ -1,6 +1,7 @@
 package org.openelisglobal.qaevent.service;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.qaevent.dao.NceTypeDAO;
 import org.openelisglobal.qaevent.valueholder.NceType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,11 @@ public class NceTypeServiceImpl extends BaseObjectServiceImpl<NceType, String> i
     @Override
     @Transactional(readOnly = true)
     public List getAllNceTypes() {
-        return baseObjectDAO.getAllNceType();
+        List<NceType> nceTypeList = baseObjectDAO.getAllNceType();
+        for (NceType type: nceTypeList) {
+            type.setName(MessageUtil.getMessage(type.getDisplayKey()));
+        }
+        return nceTypeList;
     }
 
     @Override

@@ -35,8 +35,10 @@
 
 %>
 <script>
-    var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.labOrderNumber")%>";
+    var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.event.laborderNumber")%>";
     var affectedSpecimenText="<%= MessageUtil.getContextualMessage("nonconforming.affectedSpecimen")%>";
+    var specimenNumber="<%= MessageUtil.getContextualMessage("nonconforming.specimenNumber")%>";
+    var specimenType="<%= MessageUtil.getContextualMessage("nonconforming.specimenType")%>";
 </script>
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
@@ -79,10 +81,10 @@
     <form:hidden path="currentUserId" />
     <form:hidden path="status" />
     <form:hidden path="id" />
-<table>
+<table class="report-nce-table">
     <tr>
         <td><spring:message code="nonconforming.event.date" /></td>
-        <td><form:hidden path="reportDate" /><c:out value="${form.reportDate}" /></td>
+        <td class="report-nce-values-col"><form:hidden path="reportDate" /><c:out value="${form.reportDate}" /></td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.name" /></td>
@@ -98,7 +100,7 @@
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.eventdate" /></td>
-        <td><form:input path="dateOfEvent" type="date" max="<%= maxDate %>" onchange="checkIfValid()"/></td>
+        <td><form:input path="dateOfEvent" type="text" max="<%= maxDate %>" onchange="checkIfValid()" placeholder="dd/MM/yyyy"/></td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.laborderNumber" /></td>
@@ -133,19 +135,19 @@
     <tr>
         <td><spring:message code="nonconforming.event.description" /></td>
         <td>
-            <form:textarea path="description" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="description" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.suspectedCauses" /></td>
         <td>
-            <form:textarea path="suspectedCauses" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="suspectedCauses" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
     <tr>
         <td><spring:message code="nonconforming.event.proposedAction" /></td>
         <td>
-            <form:textarea path="proposedAction" onchange="checkIfValid()"></form:textarea>
+            <form:textarea path="proposedAction" onchange="checkIfValid()" rows="5"></form:textarea>
         </td>
     </tr>
 </table>
@@ -160,7 +162,7 @@
 </c:if>
 <script type="text/javascript">
     function setSave(disabled) {
-        var saveButton = jQuery("#saveButtonId");
+        var saveButton = document.getElementById("saveButtonId");
         if (saveButton) {
             saveButton.disabled = disabled;
         }
@@ -173,9 +175,22 @@
         var proposedAction = jQuery('input[name="proposedAction"]').val();
         // var reportingUnit = jQuery('input[name="reportingUnit"]').val();
         setSave(true);
-        if (doe != '' && desc !== '' && suspectedCauses !== '' && proposedAction !== '') {
+        if (doe != '' && desc !== '' && suspectedCauses !== '' && proposedAction !== '' && validDateOfEvent()) {
             setSave(false);
         }
+    }
+
+    function validDateOfEvent() {
+        var date = new Date();
+        var doe = jQuery('input[name="dateOfEvent"]').val().split('/');
+        if(doe.length != 3) {
+            return false;
+        }
+        var d = new Date(doe[1] + '/' + doe[0] + '/' + doe[2]);
+        if (d < date) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -308,8 +323,8 @@
             '<td>' + affectedSpecimenText + '</td>' +
             '<td><table id="sample-"><tr>\n' +
             '<th></th>' +
-            '<th>Specimen number</th>' +
-            '<th>Specimen type</th>' +
+            '<th>' + specimenNumber + '</th>' +
+            '<th>' + specimenType + '</th>' +
             '</tr>' + itemRows.join('') + '</table>' +
             '</td></tr>';
         return sampleTemplate;

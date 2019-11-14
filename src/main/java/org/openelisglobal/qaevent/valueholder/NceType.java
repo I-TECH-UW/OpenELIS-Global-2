@@ -11,7 +11,7 @@ public class NceType extends BaseObject<String> {
     private String name;
     private String displayKey;
     private Integer categoryId;
-    private String active;
+    private Boolean active;
     private Timestamp lastupdated;
 
     public String getId() {
@@ -38,11 +38,11 @@ public class NceType extends BaseObject<String> {
         this.displayKey = displayKey;
     }
 
-    public String getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(String active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

@@ -868,6 +868,16 @@
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
 	</definition>
 
+
+	<definition name="ReportManagementDefinition"
+				extends="baseMenuDefinition">
+		<put-attribute name="body"
+					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+
 	<definition name="resultSelectListDefinition"
 				extends="baseMenuDefinition">
 		<put-attribute name="preSelectionHeader"
@@ -884,15 +894,11 @@
 					   value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
 					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
-    
-	<definition name="ReportManagementDefinition"
-				extends="baseMenuDefinition">
-		<put-attribute name="body"
-					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
 
-    <put-attribute name="footer"
+		<put-attribute name="footer"
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
+
 
 </tiles-definitions>
 
