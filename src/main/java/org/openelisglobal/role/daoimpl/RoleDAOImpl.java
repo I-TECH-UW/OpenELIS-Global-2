@@ -218,20 +218,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    @Transactional(readOnly = true)
-    public List getNextRoleRecord(String id) throws LIMSRuntimeException {
-        return getNextRecord(id, "Role", Role.class);
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    @Transactional(readOnly = true)
-    public List getPreviousRoleRecord(String id) throws LIMSRuntimeException {
-        return getPreviousRecord(id, "Role", Role.class);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {

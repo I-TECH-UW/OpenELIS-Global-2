@@ -43,9 +43,9 @@ public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
 //	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-    public List getNextTestTrailerRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTestTrailerRecord(String id) throws LIMSRuntimeException;
+
+
 
     public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException;
 

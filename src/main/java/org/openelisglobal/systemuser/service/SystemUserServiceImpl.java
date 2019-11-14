@@ -55,18 +55,6 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSystemUserRecord(String id) {
-        return getBaseObjectDAO().getNextSystemUserRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemUserRecord(String id) {
-        return getBaseObjectDAO().getPreviousSystemUserRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalSystemUserCount() {
         return getBaseObjectDAO().getTotalSystemUserCount();
     }

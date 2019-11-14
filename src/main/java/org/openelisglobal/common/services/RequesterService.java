@@ -92,31 +92,31 @@ public class RequesterService {
     }
 
     public String getRequesterFirstName() {
-        return person == null ? null : personService.getFirstName(getPerson());
+        return getPerson() == null ? null : personService.getFirstName(getPerson());
     }
 
     public String getRequesterLastName() {
-        return person == null ? null : personService.getLastName(getPerson());
+        return getPerson() == null ? null : personService.getLastName(getPerson());
     }
 
     public String getRequesterLastFirstName() {
-        return person == null ? null : personService.getLastFirstName(getPerson());
+        return getPerson() == null ? null : personService.getLastFirstName(getPerson());
     }
 
     public String getWorkPhone() {
-        return person == null ? null : personService.getWorkPhone(getPerson());
+        return getPerson() == null ? null : personService.getWorkPhone(getPerson());
     }
 
     public String getCellPhone() {
-        return person == null ? null : personService.getCellPhone(getPerson());
+        return getPerson() == null ? null : personService.getCellPhone(getPerson());
     }
 
     public String getFax() {
-        return person == null ? null : personService.getFax(getPerson());
+        return getPerson() == null ? null : personService.getFax(getPerson());
     }
 
     public String getEmail() {
-        return person == null ? null : personService.getEmail(getPerson());
+        return getPerson() == null ? null : personService.getEmail(getPerson());
     }
 
     public String getReferringSiteId() {

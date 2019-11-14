@@ -8,7 +8,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 public interface OrganizationService extends BaseObjectService<Organization, String> {
     void getData(Organization organization);
 
-    List getNextOrganizationRecord(String id);
+
 
     Organization getOrganizationByName(Organization organization, boolean ignoreCase);
 
@@ -20,7 +20,7 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
 
     List getAllOrganizations();
 
-    List getPreviousOrganizationRecord(String id);
+
 
     List getPagesOfSearchedOrganizations(int startRecNo, String searchString);
 

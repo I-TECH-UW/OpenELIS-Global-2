@@ -248,21 +248,6 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextProjectRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Project", Project.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousProjectRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Project", Project.class);
-    }
-
     // bugzilla 1978: added param activeOnly
     @Override
     @Transactional(readOnly = true)
@@ -342,50 +327,6 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     }
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.projectName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.projectName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
     // bugzilla 1482
     @Override
     public boolean duplicateProjectExists(Project project) throws LIMSRuntimeException {

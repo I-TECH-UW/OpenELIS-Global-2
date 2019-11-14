@@ -59,10 +59,10 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 //	List getAnalyses(String filter) throws LIMSRuntimeException;
 
 //	@SuppressWarnings("rawtypes")
-//	List getNextAnalysisRecord(String id) throws LIMSRuntimeException;
+
 //
 //	@SuppressWarnings("rawtypes")
-//	List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException;
+
 
 //	@SuppressWarnings("rawtypes")
 //	List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException;

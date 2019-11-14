@@ -45,12 +45,6 @@ public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSa
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTypeOfSamplePanelRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSamplePanelRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalTypeOfSamplePanelCount() {
         return getBaseObjectDAO().getTotalTypeOfSamplePanelCount();
     }
@@ -59,12 +53,6 @@ public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSa
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) {
         return getBaseObjectDAO().getTypeOfSamplePanelsForPanel(panelId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTypeOfSamplePanelRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSamplePanelRecord(id);
     }
 
     @Override

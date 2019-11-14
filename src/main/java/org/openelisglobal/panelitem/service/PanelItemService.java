@@ -14,11 +14,11 @@ public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 
     List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList);
 
-    List getPreviousPanelItemRecord(String id);
+
 
     List getPageOfPanelItems(int startingRecNo);
 
-    List getNextPanelItemRecord(String id);
+
 
     boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 

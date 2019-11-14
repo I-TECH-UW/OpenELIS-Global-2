@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,7 +23,6 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationServiceImpl;
@@ -413,8 +413,9 @@ public class TestAddController extends BaseController {
                     return result;
                 }
 
-                return GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
-                        : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                return GenericValidator.isBlankOrNull(o1.getSortOrder())
+                        || GenericValidator.isBlankOrNull(o2.getSortOrder()) ? 0
+                                : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
             }
         });
         return testResults;

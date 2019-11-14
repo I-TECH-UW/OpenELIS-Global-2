@@ -12,9 +12,9 @@ public interface SystemUserService extends BaseObjectService<SystemUser, String>
 
     List getAllSystemUsers();
 
-    List getNextSystemUserRecord(String id);
 
-    List getPreviousSystemUserRecord(String id);
+
+
 
     Integer getTotalSystemUserCount();
 

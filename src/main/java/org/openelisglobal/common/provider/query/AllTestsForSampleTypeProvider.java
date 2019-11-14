@@ -20,13 +20,13 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -38,7 +38,7 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String sampleTypeId = request.getParameter("sampleTypeId");

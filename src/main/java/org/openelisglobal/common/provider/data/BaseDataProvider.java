@@ -18,18 +18,18 @@ package org.openelisglobal.common.provider.data;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.servlet.data.AjaxServlet;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 //bugzilla 2443
 public abstract class BaseDataProvider implements IActionConstants {
 
     protected AjaxServlet ajaxServlet = null;
 
-    public abstract void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public abstract void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException;
 
     public void setServlet(AjaxServlet as) {

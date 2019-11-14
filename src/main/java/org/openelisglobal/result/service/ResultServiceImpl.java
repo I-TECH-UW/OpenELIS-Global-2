@@ -499,18 +499,6 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextResultRecord(String id) {
-        return getBaseObjectDAO().getNextResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousResultRecord(String id) {
-        return getBaseObjectDAO().getPreviousResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta) {
         getBaseObjectDAO().getResultByAnalysisAndAnalyte(result, analysis, ta);
 

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -279,20 +280,8 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalTypeOfSampleCount() {
         return getBaseObjectDAO().getTotalTypeOfSampleCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSampleRecord(id);
     }
 
     @Override
@@ -376,6 +365,8 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     @Transactional(readOnly = true)
     public Localization getLocalizationForSampleType(String id) {
         TypeOfSample typeOfSample = getTypeOfSampleById(id);
-        return typeOfSample != null ? typeOfSample.getLocalization() : null;
+        Localization localization = typeOfSample != null ? typeOfSample.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }

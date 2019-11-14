@@ -40,9 +40,9 @@ public interface NoteDAO extends BaseDAO<Note, String> {
 
 //	public void getData(Note note) throws LIMSRuntimeException;
 
-//	public List getNextNoteRecord(String id) throws LIMSRuntimeException;
+
 //
-//	public List getPreviousNoteRecord(String id) throws LIMSRuntimeException;
+
 
 //	public Integer getTotalNoteCount() throws LIMSRuntimeException;
 

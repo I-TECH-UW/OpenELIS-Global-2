@@ -56,9 +56,9 @@ public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
     public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
 
-    public List getNextTypeOfSampleRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
 

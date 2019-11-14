@@ -10,13 +10,13 @@ public interface ProjectService extends BaseObjectService<Project, String> {
 
     List getPageOfProjects(int startingRecNo);
 
-    List getPreviousProjectRecord(String id);
+
 
     Integer getTotalProjectCount();
 
     Project getProjectByLocalAbbreviation(Project project, boolean activeOnly);
 
-    List getNextProjectRecord(String id);
+
 
     Project getProjectById(String id);
 

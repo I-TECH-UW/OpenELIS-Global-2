@@ -20,13 +20,13 @@ package org.openelisglobal.common.provider.query;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class CodeForOrganizationProvider extends BaseQueryProvider {
@@ -39,7 +39,7 @@ public class CodeForOrganizationProvider extends BaseQueryProvider {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         StringBuilder xml = new StringBuilder();

@@ -367,12 +367,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<Sample> getSamplesCollectedOn(String collectionDate) {
         return getBaseObjectDAO().getSamplesCollectedOn(collectionDate);
     }
@@ -389,12 +383,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
             boolean filterByDomain) {
         return getBaseObjectDAO().getSamplesWithPendingQaEvents(sample, filterByCategory, qaEventCategoryId,
                 filterByDomain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextSampleRecord(String id) {
-        return getBaseObjectDAO().getNextSampleRecord(id);
     }
 
     @Override

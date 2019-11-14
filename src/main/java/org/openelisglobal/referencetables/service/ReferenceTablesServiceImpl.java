@@ -64,20 +64,8 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousReferenceTablesRecord(String id) {
-        return getBaseObjectDAO().getPreviousReferenceTablesRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPageOfReferenceTables(int startingRecNo) {
         return getBaseObjectDAO().getPageOfReferenceTables(startingRecNo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextReferenceTablesRecord(String id) {
-        return getBaseObjectDAO().getNextReferenceTablesRecord(id);
     }
 
     @Override

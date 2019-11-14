@@ -29,9 +29,9 @@ public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 
     public List getPatientTypes(String filter) throws LIMSRuntimeException;
 
-    public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException;
+
+
 
     public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
 

@@ -39,11 +39,11 @@ public interface GenderDAO extends BaseDAO<Gender, String> {
 
 //	public void updateData(Gender gender) throws LIMSRuntimeException;
 
-//	public List getNextGenderRecord(String id) throws LIMSRuntimeException;
+
 
     public Gender getGenderByType(String type) throws LIMSRuntimeException;
 
-//	public List getPreviousGenderRecord(String id) throws LIMSRuntimeException;
+
 
 //	public Integer getTotalGenderCount() throws LIMSRuntimeException;
 

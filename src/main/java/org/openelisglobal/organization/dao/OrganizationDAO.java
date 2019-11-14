@@ -45,9 +45,9 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
     public List getOrganizations(String filter) throws LIMSRuntimeException;
 
-    public List getNextOrganizationRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousOrganizationRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException;

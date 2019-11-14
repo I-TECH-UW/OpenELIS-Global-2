@@ -73,13 +73,13 @@ public interface TestAnalyteTestResultDAO {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getNextTestAnalyteTestResultRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPreviousTestAnalyteTestResultRecord(String id) throws LIMSRuntimeException;
+
 
 }

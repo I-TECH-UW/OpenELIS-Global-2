@@ -44,9 +44,9 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 //	public void updateData(Patient patient) throws LIMSRuntimeException;
 
-    public List getNextPatientRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException;
+
+
 
     public boolean externalIDExists(String patientExternalID);
 

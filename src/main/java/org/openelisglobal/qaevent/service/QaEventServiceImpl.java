@@ -63,18 +63,6 @@ public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent, String> i
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextQaEventRecord(String id) {
-        return getBaseObjectDAO().getNextQaEventRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousQaEventRecord(String id) {
-        return getBaseObjectDAO().getPreviousQaEventRecord(id);
-    }
-
-    @Override
     // TODO csl confirm that this is correct
     public void delete(QaEvent qaEvent) {
         update(qaEvent, IActionConstants.AUDIT_TRAIL_DELETE);

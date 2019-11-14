@@ -35,12 +35,6 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousStatusOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousStatusOfSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPageOfStatusOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfStatusOfSamples(startingRecNo);
     }
@@ -61,12 +55,6 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
     @Transactional(readOnly = true)
     public List getAllStatusOfSamples() {
         return getBaseObjectDAO().getAllStatusOfSamples();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextStatusOfSampleRecord(String id) {
-        return getBaseObjectDAO().getNextStatusOfSampleRecord(id);
     }
 
     @Override

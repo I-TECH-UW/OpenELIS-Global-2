@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
@@ -29,6 +28,7 @@ import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.organization.service.OrganizationContactService;
 import org.openelisglobal.organization.valueholder.OrganizationContact;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class RequestersForOrganizationProvider extends BaseQueryProvider {
@@ -39,7 +39,7 @@ public class RequestersForOrganizationProvider extends BaseQueryProvider {
     protected AjaxServlet ajaxServlet = null;
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String orgId = request.getParameter("orgId");

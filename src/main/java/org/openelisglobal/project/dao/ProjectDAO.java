@@ -43,9 +43,9 @@ public interface ProjectDAO extends BaseDAO<Project, String> {
 
 //	public void updateData(Project project) throws LIMSRuntimeException;
 
-    public List getNextProjectRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousProjectRecord(String id) throws LIMSRuntimeException;
+
+
 
     // bugzilla 1978: added param activeOnly
     public Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly)

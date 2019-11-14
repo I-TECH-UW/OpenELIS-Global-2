@@ -41,9 +41,9 @@ public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
 //	public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
 
-    public List getNextSystemUserRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousSystemUserRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalSystemUserCount() throws LIMSRuntimeException;
 

@@ -47,9 +47,9 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
     List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList) throws LIMSRuntimeException;
 
-    List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
 
-    List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException;
+
+
 
     TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
 

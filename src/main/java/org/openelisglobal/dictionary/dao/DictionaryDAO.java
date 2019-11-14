@@ -43,9 +43,9 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
 //	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException;
 
-//	public List getNextDictionaryRecord(String id) throws LIMSRuntimeException;
+
 //
-//	public List getPreviousDictionaryRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * Finds some dictionary values where

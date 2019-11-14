@@ -77,14 +77,14 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getNextTestReflexRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * @param testReflex

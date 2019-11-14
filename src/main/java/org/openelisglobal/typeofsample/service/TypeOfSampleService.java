@@ -19,11 +19,11 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, Str
 
     List getTypesForDomain(TypeOfSampleDAO.SampleDomain domain);
 
-    List getPreviousTypeOfSampleRecord(String id);
+
 
     Integer getTotalTypeOfSampleCount();
 
-    List getNextTypeOfSampleRecord(String id);
+
 
     TypeOfSample getTypeOfSampleById(String typeOfSampleId);
 

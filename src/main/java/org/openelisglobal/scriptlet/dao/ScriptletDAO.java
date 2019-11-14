@@ -45,9 +45,9 @@ public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
     public List getScriptlets(String filter) throws LIMSRuntimeException;
 
-    public List getNextScriptletRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException;
 

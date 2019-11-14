@@ -368,18 +368,6 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextResultLimitRecord(String id) throws LIMSRuntimeException {
-        return getBaseObjectDAO().getNextResultLimitRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException {
-        return getBaseObjectDAO().getPreviousResultLimitRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
         return getBaseObjectDAO().getAllResultLimitsForTest(testId);
     }

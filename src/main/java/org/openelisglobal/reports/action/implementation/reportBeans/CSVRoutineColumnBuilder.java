@@ -58,6 +58,25 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
  */
 abstract public class CSVRoutineColumnBuilder {
 
+    // these are used so we are not passing around strings in the methods that are
+    // appended to sql
+    // this is to cover any potential sql injection that could be introduced by a
+    // developer
+    protected enum SQLConstant {
+        DEMO("demo"), RESULT("result");
+
+        private final String nameInSql;
+
+        private SQLConstant(String name) {
+            nameInSql = name;
+        }
+
+        @Override
+        public String toString() {
+            return nameInSql;
+        }
+    }
+
     /**
      *
      */
@@ -212,6 +231,10 @@ abstract public class CSVRoutineColumnBuilder {
         });
     }
 
+    protected String formatDateForDatabaseSql(Date date) {
+        return postgresDateFormat.format(date);
+    }
+
     /**
      * @param value
      * @return
@@ -255,6 +278,11 @@ abstract public class CSVRoutineColumnBuilder {
             System.out.println("A null found " + column.dbName);
         }
         return result;
+    }
+
+    private String prepareColumnName(String columnName) {
+        // trim and escape the column name so it is safe from sql injection
+        return trimToPostgresMaxColumnName("\"" + columnName.replace('"', '\'') + "\"");
     }
 
     private String trimToPostgresMaxColumnName(String name) {
@@ -466,24 +494,26 @@ abstract public class CSVRoutineColumnBuilder {
      * For every sample, one row per sample item, one column per test result for
      * that sample item.
      *
-     * @param lowDatePostgres
-     * @param highDatePostgres
+     * @param lowDate
+     * @param highDate
      */
-    protected void appendResultCrosstab(String lowDatePostgres, String highDatePostgres) {
+    protected void appendResultCrosstab(java.sql.Date lowDate, java.sql.Date highDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
         // String excludeAnalytes = getExcludedAnalytesSet();
-        String listName = "result";
+        SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
                 + ".* " + " FROM sample_item AS si LEFT JOIN \n ");
 
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''" + lowDatePostgres
-                + "'')  AND s.entered_date <= date(''" + highDatePostgres + " '') " + "\n AND s.id = si.samp_id "
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
+                + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
+                // sql injection safe as user cannot overwrite validStatusId in database
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 + "\n AND a.id = r.analysis_id " + "\n AND r.test_result_id = tr.id" + "\n AND tr.test_id = t.id       "
                 // + (( excludeAnalytes == null)?"":
@@ -505,7 +535,7 @@ abstract public class CSVRoutineColumnBuilder {
             if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
                                            // it isn't clear it should be line
                                            // 446 may also have to be changed
-                query.append("\n, \"" + trimToPostgresMaxColumnName(testName) + "\" varchar(200) ");
+                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
             }
         }
         query.append(" ) \n");
@@ -529,14 +559,13 @@ abstract public class CSVRoutineColumnBuilder {
         return sb.toString();
     }
 
-    protected void appendObservationHistoryCrosstab(String lowDatePostgres, String highDatePostgres) {
-        String listName = "demo";
-        appendCrosstabPreamble(listName);
+    protected void appendObservationHistoryCrosstab(java.sql.Date lowDate, java.sql.Date highDate) {
+        appendCrosstabPreamble(SQLConstant.DEMO);
         query.append( // any Observation History items
                 "\n crosstab( " + "\n 'SELECT DISTINCT oh.sample_id as samp_id, oht.type_name, value "
                         + "\n FROM observation_history AS oh, sample AS s, observation_history_type AS oht "
-                        + "\n WHERE s.entered_date >= date(''" + lowDatePostgres + "'') "
-                        + "\n AND s.entered_date <= date(''" + highDatePostgres + "'')"
+                        + "\n WHERE s.entered_date >= date(''" + formatDateForDatabaseSql(lowDate) + "'') "
+                        + "\n AND s.entered_date <= date(''" + formatDateForDatabaseSql(highDate) + "'')"
                         + "\n AND s.id = oh.sample_id AND oh.observation_history_type_id = oht.id order by 1;' "
                         + "\n , "
                         + "\n 'SELECT DISTINCT oht.type_name FROM observation_history_type AS oht ORDER BY 1;' " + // must
@@ -569,19 +598,22 @@ abstract public class CSVRoutineColumnBuilder {
         // ... )
         query.append(" as demo ( " + " \"s_id\"                           numeric(10) ");
         for (ObservationHistoryType oht : allObHistoryTypes) {
+            // this is sql injection safe as users currently have no way of modifying fields
+            // in ObservationHistoryTypes
             query.append("\n," + oht.getTypeName() + " varchar(100) ");
         }
         query.append(" ) \n");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, listName);
+        appendCrosstabPostfix(lowDate, highDate, SQLConstant.DEMO);
     }
 
-    protected void appendCrosstabPreamble(String listName) {
+    protected void appendCrosstabPreamble(SQLConstant listName) {
         query.append(", \n\n ( SELECT s.id AS samp_id, " + listName + ".* " + " FROM sample AS s LEFT JOIN \n ");
     }
 
-    protected void appendCrosstabPostfix(String lowDatePostgres, String highDatePostgres, String listName) {
-        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.entered_date >= '" + lowDatePostgres + "'"
-                + " AND s.entered_date <= '" + highDatePostgres + "'" + " ORDER BY 1 " + "\n) AS " + listName + "\n ");
+    protected void appendCrosstabPostfix(java.sql.Date lowDate, java.sql.Date highDate, SQLConstant listName) {
+        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.entered_date >= '"
+                + formatDateForDatabaseSql(lowDate) + "'" + " AND s.entered_date <= '"
+                + formatDateForDatabaseSql(highDate) + "'" + " ORDER BY 1 " + "\n) AS " + listName + "\n ");
     }
 
     protected Object pad20(Object translate) {

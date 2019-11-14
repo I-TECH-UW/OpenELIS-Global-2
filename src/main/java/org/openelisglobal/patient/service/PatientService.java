@@ -20,13 +20,13 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
     List<Patient> getPatientsByNationalId(String nationalId);
 
-    List getPreviousPatientRecord(String id);
+
 
     Patient getPatientByPerson(Person person);
 
     List getPageOfPatients(int startingRecNo);
 
-    List getNextPatientRecord(String id);
+
 
     Patient getPatientByExternalId(String externalId);
 

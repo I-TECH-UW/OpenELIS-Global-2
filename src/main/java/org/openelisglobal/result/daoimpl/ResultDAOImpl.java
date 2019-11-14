@@ -336,21 +336,6 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextResultRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Result", Result.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousResultRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Result", Result.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Result getResultById(Result result) throws LIMSRuntimeException {
         return getResultById(result.getId());
     }

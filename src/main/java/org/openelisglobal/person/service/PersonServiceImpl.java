@@ -178,18 +178,6 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPersonRecord(String id) {
-        return getBaseObjectDAO().getNextPersonRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPersonRecord(String id) {
-        return getBaseObjectDAO().getPreviousPersonRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Person getPersonByLastName(String lastName) {
         return getBaseObjectDAO().getPersonByLastName(lastName);
     }

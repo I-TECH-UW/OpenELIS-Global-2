@@ -43,9 +43,9 @@ public interface PersonDAO extends BaseDAO<Person, String> {
 
 //	public void updateData(Person person) throws LIMSRuntimeException;
 
-    public List getNextPersonRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousPersonRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
 

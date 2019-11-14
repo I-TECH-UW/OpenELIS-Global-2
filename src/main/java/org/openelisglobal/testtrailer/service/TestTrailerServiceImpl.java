@@ -39,12 +39,6 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestTrailerRecord(String id) {
-        return getBaseObjectDAO().getNextTestTrailerRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalTestTrailerCount() {
         return getBaseObjectDAO().getTotalTestTrailerCount();
     }
@@ -53,12 +47,6 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
     @Transactional(readOnly = true)
     public TestTrailer getTestTrailerByName(TestTrailer testTrailer) {
         return getBaseObjectDAO().getTestTrailerByName(testTrailer);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestTrailerRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestTrailerRecord(id);
     }
 
     @Override

@@ -79,14 +79,14 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getNextTestAnalyteRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPreviousTestAnalyteRecord(String id) throws LIMSRuntimeException;
+
 
     /**
      * @param testAnalyte

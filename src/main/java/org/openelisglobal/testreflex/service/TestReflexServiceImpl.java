@@ -50,20 +50,8 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTestReflexRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestReflexRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) {
         return getBaseObjectDAO().getTestReflexsByTestAndFlag(testId, flag);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTestReflexRecord(String id) {
-        return getBaseObjectDAO().getNextTestReflexRecord(id);
     }
 
     @Override

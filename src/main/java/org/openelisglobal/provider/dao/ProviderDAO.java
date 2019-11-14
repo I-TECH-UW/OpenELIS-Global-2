@@ -44,9 +44,9 @@ public interface ProviderDAO extends BaseDAO<Provider, String> {
 
 //	public void updateData(Provider provider) throws LIMSRuntimeException;
 
-    public List getNextProviderRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousProviderRecord(String id) throws LIMSRuntimeException;
+
+
 
     /*
      * The intent of this is to find the provider linked to a person. It assumes

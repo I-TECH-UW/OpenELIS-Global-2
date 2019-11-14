@@ -16,7 +16,6 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.form.DictionaryForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -26,6 +25,7 @@ import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -120,14 +120,14 @@ public class DictionaryController extends BaseController {
         } else if (FWD_PREVIOUS.equals(direction)) {
             nextPrevId = dictionaryService.getPrevious(id).getId();
         }
-        if (GenericValidator.isBlankOrNull(nextPrevId)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(nextPrevId)) {
             Errors errors = new BaseErrors();
             errors.reject("dictionary.nextprev.error");
             saveErrors(errors);
             return new ModelAndView(findForward(FWD_FAIL));
         }
 
-        String url = "redirect:/Dictionary.do?ID=" + nextPrevId;
+        String url = "redirect:/Dictionary.do?ID=" + Encode.forUriComponent(nextPrevId);
         return new ModelAndView(url);
     }
 

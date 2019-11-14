@@ -214,21 +214,6 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextProviderRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Provider", Provider.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousProviderRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Provider", Provider.class);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {

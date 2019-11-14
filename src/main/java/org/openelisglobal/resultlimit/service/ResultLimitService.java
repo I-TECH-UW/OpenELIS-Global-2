@@ -17,9 +17,9 @@ public interface ResultLimitService extends BaseObjectService<ResultLimit, Strin
 
     void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-    List getNextResultLimitRecord(String id) throws LIMSRuntimeException;
 
-    List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException;
+
+
 
     List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
 

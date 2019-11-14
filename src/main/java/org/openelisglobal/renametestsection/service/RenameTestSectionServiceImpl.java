@@ -2,6 +2,7 @@ package org.openelisglobal.renametestsection.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -47,12 +48,6 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestSectionRecord(String id) {
-        return getBaseObjectDAO().getNextTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
@@ -61,12 +56,6 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     @Transactional(readOnly = true)
     public Integer getTotalTestSectionCount() {
         return getBaseObjectDAO().getTotalTestSectionCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestSectionRecord(id);
     }
 
     @Override
@@ -119,6 +108,8 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     @Transactional(readOnly = true)
     public Localization getLocalizationForRenameTestSection(String id) {
         RenameTestSection renameTestSection = getTestSectionById(id);
-        return renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Localization localization = renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }
