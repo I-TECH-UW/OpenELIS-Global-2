@@ -97,6 +97,8 @@ public class VLColumnBuilder extends CIColumnBuilder {
     public void makeSQL() {
         String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
         Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
+        // this is done to ensure that sql injection can't succeed
+        int testId = Integer.parseInt(test.getId());
         query = new StringBuilder();
         Date lowDate = dateRange.getLowDate();
         Date highDate = dateRange.getHighDate();
@@ -113,13 +115,13 @@ public class VLColumnBuilder extends CIColumnBuilder {
         // all observation history values
         appendObservationHistoryCrosstab(lowDate, highDate);
         // current ARV treatments
-        appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDate, highDate);
+        appendRepeatingObservation(SQLConstant.CURRENT_ARV_TREATMENT_INNS, 4, lowDate, highDate);
         // result
         // appendResultCrosstab(lowDatePostgres, highDatePostgres );
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(" WHERE " + "\n a.test_id =" + test.getId()
+        query.append(" WHERE " + "\n a.test_id =" + testId
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId) + "\n AND a.id=r.analysis_id"
                 + "\n AND a.sampitem_id = si.id" + "\n AND s.id = si.samp_id" + "\n AND s.id=sh.samp_id"
                 + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id"

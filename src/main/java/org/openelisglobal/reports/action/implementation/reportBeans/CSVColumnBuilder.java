@@ -67,7 +67,8 @@ abstract public class CSVColumnBuilder {
     protected enum SQLConstant {
         ARV_TREATMENT_ADV_EFF_GRD("arvTreatmentAdvEffGrd"), ARV_TREATMENT_ADV_EFF_TYPE("arvTreatmentAdvEffType"),
         COTRIMOXAZOLE_TREAT_ADV_EFF_GRD("cotrimoxazoleTreatAdvEffGrd"),
-        COTRIMOXAZOLE_TREAT_ADV_EFF_TYPE("cotrimoxazoleTreatAdvEffType"), CURRENT_DISEASE_OTHER("currentDiseaseOther"),
+        COTRIMOXAZOLE_TREAT_ADV_EFF_TYPE("cotrimoxazoleTreatAdvEffType"),
+        CURRENT_ARV_TREATMENT_INNS("currentARVTreatmentINNs"), CURRENT_DISEASE_OTHER("currentDiseaseOther"),
         CURRENT_DISEASES("currentDiseases"), DEMO("demo"), FUTURE_ARV_TREATMENT_INNS("futureARVTreatmentINNs"),
         ORGANIZATION("organization"), PRIOR_ARV_TREATMENT_INNS("priorARVTreatmentINNs"),
         PRIOR_DISEASE_OTHER("priorDiseaseOther"), PRIOR_DISEASES("priorDiseases"), RESULT("result");
