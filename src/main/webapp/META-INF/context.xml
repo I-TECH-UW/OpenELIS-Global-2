@@ -5,8 +5,9 @@
         maxTotal="20" maxIdle="10" maxWaitMillis="-1"
         name="jdbc/LimsDS" 
         type="javax.sql.DataSource" 
-        url="${OE_DB_URL}" 
-        username="${OE_DB_USERNAME}"
-        password="${OE_DB_USER_PASSWORD}" />
-        
+        url="jdbc:postgresql://localhost:5432/clinlims"
+        username="clinlims"
+        password="clinlims" />
 </Context>
+
+<!-- clinlims  -->

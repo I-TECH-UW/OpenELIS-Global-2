@@ -107,4 +107,6 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     String getResultType(Test test);
 
+    List<Test> getAllTestsByDictionaryResult();
+
 }

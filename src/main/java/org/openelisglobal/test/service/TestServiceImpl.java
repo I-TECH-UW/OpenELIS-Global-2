@@ -620,6 +620,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     @Transactional(readOnly = true)
+    public List<Test> getAllTestsByDictionaryResult() {
+        return getBaseObjectDAO().getAllTestsByDictionaryResult();
+    }
+    @Override
+    @Transactional(readOnly = true)
     public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {
         // TODO Auto-generated method stub
         return null;

@@ -23,6 +23,7 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.openelisglobal.localization.valueholder.Localization;
 
 public class Dictionary extends BaseObject<String> {
 
@@ -48,6 +49,8 @@ public class Dictionary extends BaseObject<String> {
 
     private Integer sortOrder;
 
+    private ValueHolder localizedDictionaryName;
+
     public Integer getSortOrder() {
         return sortOrder;
     }
@@ -67,6 +70,7 @@ public class Dictionary extends BaseObject<String> {
     public Dictionary() {
         super();
         this.dictionaryCategory = new ValueHolder();
+        this.localizedDictionaryName = new ValueHolder();
     }
 
     public String getId() {
@@ -119,6 +123,14 @@ public class Dictionary extends BaseObject<String> {
 
     public void setSelectedDictionaryCategoryId(String selectedDictionaryCategoryId) {
         this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
+    }
+
+    public Localization getLocalizedDictionaryName() {
+        return (Localization)localizedDictionaryName.getValue();
+    }
+
+    public void setLocalizedDictionaryName(Localization localizedDictionaryName) {
+        this.localizedDictionaryName.setValue(localizedDictionaryName);
     }
 
     @Override

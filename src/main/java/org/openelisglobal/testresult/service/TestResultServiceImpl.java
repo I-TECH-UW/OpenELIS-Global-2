@@ -1,11 +1,9 @@
 package org.openelisglobal.testresult.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.dao.TestResultDAO;
@@ -84,5 +82,25 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
     @Transactional(readOnly = true)
     public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
         return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List getAllSortedTestResults() {
+        List<TestResult> testResults = getBaseObjectDAO().getAllTestResults();
+        Collections.sort(testResults, new Comparator<TestResult>() {
+            @Override
+            public int compare(TestResult o1, TestResult o2) {
+                int result = o1.getTest().getId().compareTo(o2.getTest().getId());
+
+                if (result != 0) {
+                    return result;
+                }
+
+                return GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
+                        : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+            }
+        });
+        return testResults;
     }
 }

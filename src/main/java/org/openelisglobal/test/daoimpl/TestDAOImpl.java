@@ -1090,4 +1090,19 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         return null;
     }
+
+     @Override
+     @Transactional(readOnly = true)
+     public List<Test> getAllTestsByDictionaryResult() {
+         String sql = "From Test t where t.id in (select tr.test from TestResult tr where tr.testResultType in ('D','M','C')) ORDER BY t.description asc";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Test> tests = query.list();
+            // closeSession(); // CSL remove old
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getAllTestsByDictionaryResult");
+        }
+        return null;
+     }
 }
