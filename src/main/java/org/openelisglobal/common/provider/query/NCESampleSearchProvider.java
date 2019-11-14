@@ -1,26 +1,23 @@
 package org.openelisglobal.common.provider.query;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
-import org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.XMLUtil;
-import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NCESampleSearchProvider extends BaseQueryProvider {
 
@@ -32,7 +29,7 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
     protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String lastName = request.getParameter("lastName");
@@ -53,8 +50,9 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
         // have to get the patient and format the xml
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             Sample sample = sampleService.getSampleByAccessionNumber(labNumber);
-            if (sample != null)
+            if (sample != null) {
                 searchResults.add(sample);
+            }
         } else {
             List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
                     subjectNumber, nationalID, nationalID, patientID, guid);
@@ -82,7 +80,7 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValueAttribute("labOrderNumber", sample.getAccessionNumber(), xml);
         xml.append(">");
         List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
-        for (SampleItem sampleItem: sampleItems) {
+        for (SampleItem sampleItem : sampleItems) {
             xml.append("<item>");
             XMLUtil.appendKeyValue("id", sampleItem.getId(), xml);
             XMLUtil.appendKeyValue("number", sampleItem.getSortOrder(), xml);
@@ -102,4 +100,5 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
     public AjaxServlet getServlet() {
         return ajaxServlet;
     }
+
 }
