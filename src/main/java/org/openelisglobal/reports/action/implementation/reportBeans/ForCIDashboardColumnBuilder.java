@@ -20,6 +20,8 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.LOG;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 
+import java.sql.Date;
+
 //import org.apache.commons.validator.GenericValidator;
 
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
@@ -93,8 +95,8 @@ public class ForCIDashboardColumnBuilder extends CIColumnBuilder {
     public void makeSQL() {
         Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // all crosstab generated tables need to be listed in the following list and in
         // the WHERE clause at the bottom
@@ -115,8 +117,8 @@ public class ForCIDashboardColumnBuilder extends CIColumnBuilder {
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(" WHERE " + "\n dt.report_generation_time >= date('" + lowDatePostgres + "')"
-                + "\n AND dt.report_generation_time <= date('" + highDatePostgres + "')"
+        query.append(" WHERE " + "\n dt.report_generation_time >= date('" + formatDateForDatabaseSql(lowDate) + "')"
+                + "\n AND dt.report_generation_time <= date('" + formatDateForDatabaseSql(highDate) + "')"
                 + "\n AND dt.name = 'patientVL1'" + "\n AND a.test_id =" + test.getId() + "\n AND dt.row_id=s.id"
                 + "\n AND si.samp_id=s.id" + "\n AND a.sampitem_id = si.id" + "\n AND a.id=r.analysis_id"
                 + "\n AND s.id=sh.samp_id" + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id"

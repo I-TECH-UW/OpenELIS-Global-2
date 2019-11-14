@@ -12,6 +12,8 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVRo
 //import static org.openelisglobal.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.PROJECT;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.SAMPLE_STATUS;
 
+import java.sql.Date;
+
 //import org.apache.commons.validator.GenericValidator;
 
 import org.openelisglobal.common.services.StatusService;
@@ -24,7 +26,7 @@ import org.openelisglobal.reports.action.implementation.Report.DateRange;
  * output including looking up resource names. This class also can print out
  * just the XML needed for the Jasper report which helps make the CSV file (see
  * the call to generateJasperXML).
- * 
+ *
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jan 28, 2011
  */
@@ -65,59 +67,60 @@ public abstract class CIRoutineColumnBuilder extends CSVRoutineColumnBuilder {
 
     protected abstract void defineAllReportColumns();
 
+    @Override
     public abstract void makeSQL();
 
     /**
      * Useful when building the SQL String
-     * 
-     * @param lowDatePostgres
-     * @param highDatePostgres
+     *
+     * @param lowDate
+     * @param highDate
      * @return String starting "WHERE ..." joining patient, sample, organization
      */
-    protected String buildWhereSamplePatienOrgSQL(String lowDatePostgres, String highDatePostgres) {
+    protected String buildWhereSamplePatienOrgSQL(Date lowDate, Date highDate) {
         String WHERE_SAMPLE_PATIENT_ORG = " WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
-                + "\n AND s.entered_date >= '" + lowDatePostgres + "'" + "\n AND s.entered_date <= '" + highDatePostgres
-                + "'" + "\n AND s.id = sq.sample_id " + "\n AND pat.person_id = per.id "
-                + "\n AND sq.requester_type_id = rq.id "
+                + "\n AND s.entered_date >= '" + formatDateForDatabaseSql(lowDate) + "'" + "\n AND s.entered_date <= '"
+                + formatDateForDatabaseSql(highDate) + "'" + "\n AND s.id = sq.sample_id "
+                + "\n AND pat.person_id = per.id " + "\n AND sq.requester_type_id = rq.id "
                 // + ((GenericValidator.isBlankOrNull(projectStr))?"": " AND sp.proj_id = " +
                 // projectStr)
                 + "\n AND o.id = sq.requester_id ";
         return WHERE_SAMPLE_PATIENT_ORG;
     }
 
-    protected void appendRepeatingObservation(String aOhTypeName, int maxCols, String lowDatePostgres,
-            String highDatePostgres) {
+    protected void appendRepeatingObservation(SQLConstant aOhTypeName, int maxCols, Date lowDate, Date highDate) {
         appendCrosstabPreamble(aOhTypeName);
 
         query.append(" crosstab( " + "' SELECT s.id as s_id, type, value FROM Sample AS s " + " LEFT JOIN"
                 + " ( SELECT DISTINCT s.id as s_id , oh.observation_history_type_id AS type, oh.value AS value, oh.id "
                 + " FROM Sample as s, Observation_History AS oh" + " WHERE oh.sample_id = s.id"
-                + " AND s.entered_date >= date(''" + lowDatePostgres + "'') " + " AND s.entered_date <= date(''"
-                + highDatePostgres + "'')"
+                + " AND s.entered_date >= date(''" + formatDateForDatabaseSql(lowDate) + "'') "
+                + " AND s.entered_date <= date(''" + formatDateForDatabaseSql(highDate) + "'')"
                 + " AND oh.observation_history_type_id = (select id FROM observation_history_type WHERE type_name = ''"
                 + aOhTypeName + "'')  ORDER by 1,2, oh.id desc ) AS repeatCols" + " ON s.id = repeatCols.s_id"
-                + " WHERE s.entered_date >= date(''" + lowDatePostgres + "'') " + " AND s.entered_date <= date(''"
-                + highDatePostgres + "'')" + "' )" + " AS " + aOhTypeName + " ( s_id NUMERIC(10) ");
+                + " WHERE s.entered_date >= date(''" + formatDateForDatabaseSql(lowDate) + "'') "
+                + " AND s.entered_date <= date(''" + formatDateForDatabaseSql(highDate) + "'')" + "' )" + " AS "
+                + aOhTypeName + " ( s_id NUMERIC(10) ");
         for (int col = 1; col <= maxCols; col++) {
             query.append(", \"").append(aOhTypeName).append(col).append("\" VARCHAR(100)");
         }
         query.append(" )\n ");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, aOhTypeName);
+        appendCrosstabPostfix(lowDate, highDate, aOhTypeName);
     }
 
-    protected void appendOtherDiseaseCrosstab(String lowDatePostgres, String highDatePostgres, String diseaseListName,
-            String otherColumnName) {
+    protected void appendOtherDiseaseCrosstab(Date lowDate, Date highDate, SQLConstant diseaseListName,
+            SQLConstant otherColumnName) {
         appendCrosstabPreamble(otherColumnName);
         query.append(" crosstab( "
                 + " 'SELECT DISTINCT s.id, oh.observation_history_type_id AS ohType, oh.value AS value "
                 + " FROM  Sample as s, Observation_History AS oh, Observation_history_type as oht "
-                + " WHERE s.entered_date >= ''" + lowDatePostgres + "''" + "   AND s.entered_date <= ''"
-                + highDatePostgres + "''" + "   AND s.id = oh.sample_id "
-                + "   AND oh.observation_history_type_id = oht.id "
+                + " WHERE s.entered_date >= ''" + formatDateForDatabaseSql(lowDate) + "''"
+                + "   AND s.entered_date <= ''" + formatDateForDatabaseSql(highDate) + "''"
+                + "   AND s.id = oh.sample_id " + "   AND oh.observation_history_type_id = oht.id "
                 + "   AND oh.observation_history_type_id = (select id FROM observation_history_type WHERE type_name = ''"
                 + diseaseListName + "'') " + "   AND oh.value !~ ''^[0-9]+$'' " + " ORDER by 1,2,3' ) AS "
                 + otherColumnName + " ( s_id NUMERIC(10), " + otherColumnName + " varChar(100) ) " + "\n");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, otherColumnName);
+        appendCrosstabPostfix(lowDate, highDate, otherColumnName);
     }
 
     protected void defineBasicColumns() {
