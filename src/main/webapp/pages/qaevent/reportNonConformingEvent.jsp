@@ -309,25 +309,100 @@
     function addSampleRow(sample) {
         var items = sample.getElementsByTagName("item");
         var labOrderNumber = sample.getAttribute('labOrderNumber');
-        var itemRows = [];
+
+        var sampleWrapper = document.createElement('table');
+        
+        var sampleRowNode = document.createElement('tr');
+        sampleWrapper.appendChild(sampleRowNode);
+        
+        var sampleColumnNode = document.createElement('td');
+        sampleRowNode.appendChild(sampleColumnNode);
+        sampleColumnNode.appendChild(document.createTextNode(labOrderNumberText))
+        
+        sampleColumnNode = document.createElement('td');
+        sampleRowNode.appendChild(sampleColumnNode);
+        sampleColumnNode.appendChild(document.createTextNode(labOrderNumber))
+        
+        sampleRowNode = document.createElement('tr');
+        sampleWrapper.appendChild(sampleRowNode);
+        
+        sampleColumnNode = document.createElement('td');
+        sampleRowNode.appendChild(sampleColumnNode);
+        sampleColumnNode.appendChild(document.createTextNode(affectedSpecimenText))
+        
+        sampleColumnNode = document.createElement('td');
+        sampleRowNode.appendChild(sampleColumnNode);
+        
+        var sampleTableNode = document.createElement('table');
+        sampleColumnNode.appendChild(sampleTableNode);
+        sampleTableNode.setAttribute('id', 'sample-');
+        
+        var sampleTableRowNode = document.createElement('tr');
+        sampleTableNode.appendChild(sampleTableRowNode);
+        
+        var sampleTableHeaderNode = document.createElement('th');
+        sampleTableRowNode.appendChild(sampleTableHeaderNode);
+        
+        sampleTableHeaderNode = document.createElement('th');
+        sampleTableRowNode.appendChild(sampleTableHeaderNode);
+        sampleTableHeaderNode.appendChild(document.createTextNode(specimenNumber))
+        
+        sampleTableHeaderNode = document.createElement('th');
+        sampleTableRowNode.appendChild(sampleTableHeaderNode);
+        sampleTableHeaderNode.appendChild(document.createTextNode(specimenType))
+        
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            itemRows.push(
-                '<tr><td><input name="specimen" type="checkbox" data-labOrderNumber="' + labOrderNumber+ '" value="' + getValueFromXmlElement(item, 'id') + '"/></td>' +
-                '<td>' + labOrderNumber + '-' + getValueFromXmlElement(item, 'number') + '</td>' +
-                '<td>' + getValueFromXmlElement(item, 'type') + '</td></tr>'
-            )
+            sampleTableRowNode = document.createElement('tr');
+            
+            var sampleTableColumnNode = document.createElement('td');
+            sampleTableRowNode.appendChild(sampleTableColumnNode);
+            
+            var inputNode = document.createElement('input');
+            sampleTableColumnNode.appendChild(inputNode);
+            inputNode.setAttribute('type', 'checkbox');
+            inputNode.setAttribute('name', 'specimen');
+            inputNode.setAttribute('data-labOrderNumber', labOrderNumber);
+            inputNode.setAttribute('value', getValueFromXmlElement(item, 'id'));
+            
+            sampleTableColumnNode = document.createElement('td');
+            sampleTableRowNode.appendChild(sampleTableColumnNode);
+            sampleTableColumnNode.appendChild(document.createTextNode(labOrderNumber + '-' + getValueFromXmlElement(item, 'number')));
+            
+            sampleTableColumnNode = document.createElement('td');
+            sampleTableRowNode.appendChild(sampleTableColumnNode);
+            sampleTableColumnNode.appendChild(document.createTextNode(getValueFromXmlElement(item, 'type')));
+            
+            sampleTableNode.appendChild(sampleTableRowNode);
         }
-        var sampleTemplate = '<tr><td>' + labOrderNumberText + '</td>' +
-            '<td>' + labOrderNumber + '</td></tr><tr>' +
-            '<td>' + affectedSpecimenText + '</td>' +
-            '<td><table id="sample-"><tr>\n' +
-            '<th></th>' +
-            '<th>' + specimenNumber + '</th>' +
-            '<th>' + specimenType + '</th>' +
-            '</tr>' + itemRows.join('') + '</table>' +
-            '</td></tr>';
-        return sampleTemplate;
+        //resulting html 
+//        <tr>
+//         	<td>[labOrderNumberText]</td>
+//          <td>[labOrderNumber]</td>
+// 		  </tr>
+// 		  <tr>
+//        	<td>[affectedSpecimenText]</td>
+//          <td>
+// 			  <table id="sample-">
+// 				<tr>\n
+//          	  <th></th>
+//          	  <th>[specimenNumber]</th>
+//          	  <th>[specimenType]</th> 
+//          	</tr>
+//				... start repeating section
+// 				<tr>
+// 				  <td>
+// 					<input name="specimen" type="checkbox" data-labOrderNumber="[labOrderNumber]" value="[getValueFromXmlElement(item, 'id')]"/>
+// 				  </td>
+//                <td>[labOrderNumber]-[getValueFromXmlElement(item, 'number')]</td>
+//                <td>[getValueFromXmlElement(item, 'type')]</td>
+// 				</tr>
+// 				... end repeating section
+// 			  </table>
+//          </td>
+// 		  </tr>
+
+        return sampleWrapper.innerHTML;
     }
 
     jQuery(document).ready( function() {
