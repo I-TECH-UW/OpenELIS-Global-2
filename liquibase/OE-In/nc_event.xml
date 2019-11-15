@@ -22,7 +22,9 @@
             <column name="lab_order_number" type="character varying(30)" />
             <column name="prescriber_name" type="character varying(200)" />
             <column name="site" type="character varying(200)" />
-            <column name="reporting_unit_id" type="character varying(10)" />
+            <column name="reporting_unit_id" type="character varying(10)">
+                <constraints references="clinlims.test_section(id)" foreignKeyName="reporting_unit_nc_event_fk"/>
+            </column>
             <column name="description" type="text" />
             <column name="suspected_causes" type="text" />
             <column name="proposed_action" type="text" />

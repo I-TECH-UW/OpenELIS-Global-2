@@ -49,7 +49,7 @@
 	</resource-ref>
 
 	<!--tomcat disallowed Http method configuration -->
-	<!--<security-constraint>
+	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Forbidden</web-resource-name>
 			<url-pattern>/*</url-pattern>
@@ -79,7 +79,7 @@
         <user-data-constraint>
             <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
-    </security-constraint>-->
+    </security-constraint>
 
 	<context-param>
 		<param-name>defaultHtmlEscape</param-name>

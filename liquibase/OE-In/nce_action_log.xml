@@ -26,6 +26,7 @@
         <sql>
             ALTER TABLE clinlims.nce_action_log
             OWNER to clinlims;
+            ALTER SEQUENCE clinlims.nce_action_log_id_seq OWNER to clinlims;
         </sql>
     </changeSet>
 </databaseChangeLog>
