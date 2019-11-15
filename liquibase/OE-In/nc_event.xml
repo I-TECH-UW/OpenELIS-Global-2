@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
-    <changeSet author="john" id="1573238033073">
-        <comment>Creates NCE Type table</comment>
+    <changeSet author="john" id="1">
+        <comment>Creates NCE event id sequence</comment>
         <createSequence
                         incrementBy="1"
                         maxValue="2147483647"
@@ -10,6 +10,9 @@
                         schemaName="clinlims"
                         sequenceName="nc_event_id_seq"
                         startValue="1"/>
+    </changeSet>
+    <changeSet author="john" id="2">
+        <comment>Creates NCE event table</comment>
         <createTable tableName="nc_event" schemaName="clinlims">
             <column name="id" type="integer">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
@@ -46,6 +49,9 @@
             <column name="status" type="character varying(100)" />
             <column name="discussion_date" type="character varying(100)" />
         </createTable>
+    </changeSet>
+    <changeSet author="john" id="3">
+        <comment>assigns ownership of NCE event table</comment>
         <sql>
             ALTER TABLE clinlims.nc_event
             OWNER to clinlims;

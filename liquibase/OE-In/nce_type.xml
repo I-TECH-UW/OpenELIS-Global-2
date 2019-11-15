@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
-    <changeSet author="john" id="1573238033077">
-        <comment>Creates NCE Type table</comment>
+    <changeSet author="john" id="1">
+        <comment>Creates NCE Type id Sequence</comment>
         <createSequence
                         incrementBy="1"
                         maxValue="2147483647"
@@ -10,6 +10,9 @@
                         schemaName="clinlims"
                         sequenceName="nce_type_id_seq"
                         startValue="1"/>
+    </changeSet>
+    <changeSet author="john" id="2">
+        <comment>Creates NCE Type table</comment>
         <createTable tableName="nce_type" schemaName="clinlims">
             <column name="id" type="integer">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
@@ -22,6 +25,9 @@
             <column name="active" type="boolean" defaultValueBoolean="true" />
             <column name="last_updated" type="timestamp with time zone" />
         </createTable>
+    </changeSet>
+    <changeSet author="john" id="3">
+        <comment>Creates NCE Type ownership and first values</comment>
         <sql>
             ALTER TABLE clinlims.nce_type OWNER to clinlims;
             INSERT INTO clinlims.nce_type(id, name, display_key, category_id, active, last_updated) VALUES (nextval('clinlims.nce_type_id_seq'), 'Documentation error', 'nce.type.documentationError', (SELECT id FROM clinlims.nce_category WHERE name = 'General'), true, now());
