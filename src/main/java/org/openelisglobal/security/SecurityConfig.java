@@ -28,8 +28,8 @@ public class SecurityConfig {
     public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",
             "/LoginPage.do" };
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
-    public static final String[] RESOURCE_PAGES = { "/css/**", "/images/**", "/documentation/**", "/scripts/**",
-            "/jsp/**" };
+    public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
+            "/scripts/**", "/jsp/**" };
     public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer/**" };
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
