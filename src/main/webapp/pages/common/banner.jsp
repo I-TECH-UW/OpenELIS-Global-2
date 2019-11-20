@@ -85,7 +85,7 @@ function displayHelp(){
 </script>
 
 <div id="header">
-  	<div id="oe-logo" style="display: inline-block" onclick="navigateToHomePage();">
+  	<div id="oe-logo" onclick="navigateToHomePage();">
   		<img src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS" width="auto" height="71"/>
   	</div>
 	<div style="margin-left: 94px">
