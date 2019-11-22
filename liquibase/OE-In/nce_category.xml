@@ -21,6 +21,7 @@
         </createTable>
         <sql>
             ALTER TABLE clinlims.nce_category OWNER to clinlims;
+            ALTER SEQUENCE clinlims.nce_category_id_seq OWNER to clinlims;
             INSERT INTO clinlims.nce_category(id, name, display_key, active, last_updated) VALUES (nextval('clinlims.nce_category_id_seq'), 'General', 'nce.category.general', true, now());
             INSERT INTO clinlims.nce_category(id, name, display_key, active, last_updated) VALUES (nextval('clinlims.nce_category_id_seq'), 'Order', 'nce.category.order', true, now());
             INSERT INTO clinlims.nce_category(id, name, display_key, active, last_updated) VALUES (nextval('clinlims.nce_category_id_seq'), 'Sample', 'nce.category.sample', true, now());
