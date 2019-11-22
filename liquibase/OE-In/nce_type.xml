@@ -30,6 +30,7 @@
         <comment>Creates NCE Type ownership and first values</comment>
         <sql>
             ALTER TABLE clinlims.nce_type OWNER to clinlims;
+            ALTER SEQUENCE clinlims.nce_type_id_seq OWNER to clinlims;
             INSERT INTO clinlims.nce_type(id, name, display_key, category_id, active, last_updated) VALUES (nextval('clinlims.nce_type_id_seq'), 'Documentation error', 'nce.type.documentationError', (SELECT id FROM clinlims.nce_category WHERE name = 'General'), true, now());
             INSERT INTO clinlims.nce_type(id, name, display_key, category_id, active, last_updated) VALUES (nextval('clinlims.nce_type_id_seq'), 'Employee concern', 'nce.type.employeeConcern', (SELECT id FROM clinlims.nce_category WHERE name = 'General'), true, now());
             INSERT INTO clinlims.nce_type(id, name, display_key, category_id, active, last_updated) VALUES (nextval('clinlims.nce_type_id_seq'), 'Technology/Computer issue', 'nce.type.technologyIssue', (SELECT id FROM clinlims.nce_category WHERE name = 'General'), true, now());

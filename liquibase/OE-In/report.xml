@@ -29,6 +29,7 @@
         <comment>Creates report ownership and inserts first values</comment>
         <sql>
             ALTER TABLE clinlims.report OWNER to clinlims;
+            ALTER SEQUENCE clinlims.report_id_seq OWNER to clinlims;
             INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 0, 'menu_reports_status_patient.classique', 'Patient Status report classic version', true, 'openreports.patientTestStatus.classique');
             INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 1, 'menu_reports_status_patient.vreduit', 'Patient Status report reduced version', true, 'openreports.patientTestStatus.vreduit');
 

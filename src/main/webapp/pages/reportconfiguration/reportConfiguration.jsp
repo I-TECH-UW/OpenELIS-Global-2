@@ -169,7 +169,7 @@
 
         <div class="form-div">
             <label><spring:message code="report.configuration.name" /> <span class="requiredlabel">*</span></label>
-            <form:input path="currentReport.name" cssClass="form-control" />
+            <form:input path="currentReport.name" cssClass="form-control reportName" />
         </div>
 
         <div class="form-div">
@@ -191,7 +191,7 @@
         <input name="currentReport.id" type="hidden" />
         <div class="form-div">
             <label><spring:message code="report.configuration.menuElementId" /><span class="requiredlabel">*</span></label>
-            <form:input type="text" path="currentReport.menuElementId" cssClass="form-control" />
+            <form:input type="text" path="currentReport.menuElementId" cssClass="form-control menuElementId" />
         </div>
         <div class="form-div">
             <label><spring:message code="report.configuration.menuDisplayKey" /><span class="requiredlabel">*</span></label>
@@ -315,13 +315,14 @@
         var reportDataFile = jQuery('#reportDataFile').val();
         var reportTemplateFile = jQuery('#reportTemplateFile').val();
         var menuActionUrl = jQuery('#menuActionUrl').val();
-        var menuElementId = jQuery('#currentReport.menuElementId').val();
+        var menuElementId = jQuery('.menuElementId').val();
         var menuDisplayKey = jQuery('#menuDisplayKey').val();
-        var name = jQuery('#currentReport.name').val();
+        var name = jQuery('.reportName').val();
 
-        if (reportDataFile == '' || reportTemplateFile == '' || menuActionUrl == '' || menuElementId == '' || menuDisplayKey || name == '') {
+        if (reportDataFile == '' || reportTemplateFile == '' || menuActionUrl == '' || menuElementId == '' || menuDisplayKey == '' || name == '') {
             return false;
         }
+        return true;
     }
     function save(id) {
         var order = jQuery(".report-sort-order:visible");
