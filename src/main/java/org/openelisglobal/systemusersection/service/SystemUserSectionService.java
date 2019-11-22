@@ -12,11 +12,11 @@ public interface SystemUserSectionService extends BaseObjectService<SystemUserSe
 
     List getPageOfSystemUserSections(int startingRecNo);
 
-    List getNextSystemUserSectionRecord(String id);
+
 
     Integer getTotalSystemUserSectionCount();
 
-    List getPreviousSystemUserSectionRecord(String id);
+
 
     List getAllSystemUserSectionsBySystemUserId(int systemUserId);
 }

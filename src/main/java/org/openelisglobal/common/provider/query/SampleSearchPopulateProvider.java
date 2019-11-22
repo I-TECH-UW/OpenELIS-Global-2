@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -35,6 +34,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -54,7 +54,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String patientID = (String) request.getParameter("patientKey");
         String accessionNo = (String) request.getParameter("accessionNo");

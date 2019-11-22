@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -43,7 +43,7 @@ public class NonConformityRecordNumberValidationProvider extends BaseValidationP
     }
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String field = request.getParameter("fieldId");

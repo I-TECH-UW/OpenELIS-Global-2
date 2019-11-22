@@ -44,9 +44,9 @@ public interface StatusOfSampleDAO extends BaseDAO<StatusOfSample, String> {
 
 //	public void updateData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
 
-    public List getNextStatusOfSampleRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousStatusOfSampleRecord(String id) throws LIMSRuntimeException;
+
+
 
     // bugzilla 1411
     public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException;

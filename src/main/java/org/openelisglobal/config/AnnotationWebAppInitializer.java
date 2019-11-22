@@ -31,7 +31,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
         servletContext.addListener(new ContextLoaderListener(context));
         servletContext.addListener(new StartStopListener());
 
-        setupFilters(servletContext);
         setupServlets(servletContext);
     }
 
@@ -109,9 +108,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 LabelMakerServlet.class);
         labelMakerServlet.setLoadOnStartup(++startupOrder);
         labelMakerServlet.addMapping("/LabelMakerServlet");
-    }
-
-    private void setupFilters(ServletContext servletContext) {
     }
 
 }

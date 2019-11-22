@@ -9,9 +9,9 @@ import org.openelisglobal.person.valueholder.Person;
 public interface PersonService extends BaseObjectService<Person, String> {
     void getData(Person person);
 
-    List getNextPersonRecord(String id);
 
-    List getPreviousPersonRecord(String id);
+
+
 
     Person getPersonByLastName(String lastName);
 

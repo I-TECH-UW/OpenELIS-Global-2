@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -40,6 +39,7 @@ import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -83,7 +83,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private static final String PROVIDER_PHONE = "phone";
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String orderNumber = request.getParameter("orderNumber");

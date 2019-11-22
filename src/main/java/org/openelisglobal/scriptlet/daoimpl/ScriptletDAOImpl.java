@@ -231,21 +231,6 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
         return scriptlet;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextScriptletRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Scriptlet", Scriptlet.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousScriptletRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Scriptlet", Scriptlet.class);
-    }
-
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
@@ -297,51 +282,6 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     @Transactional(readOnly = true)
     public Integer getTotalScriptletCount() throws LIMSRuntimeException {
         return getTotalCount("Scriptlet", Scriptlet.class);
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.scriptletName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.scriptletName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

@@ -42,9 +42,9 @@ public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO
 
 //	public void updateData(T permissionModule) throws LIMSRuntimeException;
 
-    public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
 

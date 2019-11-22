@@ -46,6 +46,8 @@ public class AnalyzerImportServlet extends HttpServlet {
     private static final String USER_FIELD_NAME = "user";
     private static final String PASSWORD_FIELD_NAME = "password";
 
+    private static final long FILE_SIZE_MAX = 5 * 1024 * 1024;
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,6 +61,7 @@ public class AnalyzerImportServlet extends HttpServlet {
 
         try {
             ServletFileUpload upload = new ServletFileUpload();
+            upload.setFileSizeMax(FILE_SIZE_MAX);
 
             FileItemIterator iterator = upload.getItemIterator(request);
             while (iterator.hasNext()) {

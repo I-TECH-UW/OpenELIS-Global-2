@@ -218,20 +218,6 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSystemModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "SystemModule", SystemModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "SystemModule", SystemModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalSystemModuleCount() throws LIMSRuntimeException {
         return getTotalCount("SystemModule", SystemModule.class);
     }
@@ -251,60 +237,6 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             handleException(he, "getSystemModuleByName");
         }
         return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        int rrn;
-        try {
-            String sql = "select sm.id from SystemModule sm order by sm.systemModuleName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        int rrn;
-        try {
-            String sql = "select sm.id from SystemModule sm order by sm.systemModuleName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

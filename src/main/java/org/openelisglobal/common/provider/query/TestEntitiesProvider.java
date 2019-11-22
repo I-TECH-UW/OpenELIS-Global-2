@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -36,7 +36,7 @@ public class TestEntitiesProvider extends BaseQueryProvider {
     protected AjaxServlet ajaxServlet = null;
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String testId = request.getParameter("testId");

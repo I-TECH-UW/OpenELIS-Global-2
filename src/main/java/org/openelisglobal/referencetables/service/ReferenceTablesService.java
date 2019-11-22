@@ -18,11 +18,11 @@ public interface ReferenceTablesService extends BaseObjectService<ReferenceTable
 
     Integer getTotalReferenceTableCount();
 
-    List getPreviousReferenceTablesRecord(String id);
+
 
     List getPageOfReferenceTables(int startingRecNo);
 
-    List getNextReferenceTablesRecord(String id);
+
 
     Integer getTotalReferenceTablesCount();
 }

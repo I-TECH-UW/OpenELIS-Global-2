@@ -46,20 +46,8 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextSystemModuleRecord(String id) {
-        return getBaseObjectDAO().getNextSystemModuleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getAllSystemModules() {
         return getBaseObjectDAO().getAllSystemModules();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemModuleRecord(String id) {
-        return getBaseObjectDAO().getPreviousSystemModuleRecord(id);
     }
 
     @Override

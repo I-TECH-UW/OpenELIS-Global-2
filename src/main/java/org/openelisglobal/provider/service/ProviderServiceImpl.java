@@ -45,18 +45,6 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextProviderRecord(String id) {
-        return getBaseObjectDAO().getNextProviderRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousProviderRecord(String id) {
-        return getBaseObjectDAO().getPreviousProviderRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) {
         return getBaseObjectDAO().getProviderByPerson(person);
     }

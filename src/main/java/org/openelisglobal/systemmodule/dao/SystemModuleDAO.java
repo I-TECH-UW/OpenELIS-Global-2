@@ -38,9 +38,9 @@ public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
 //	public void updateData(SystemModule systemModule) throws LIMSRuntimeException;
 
-    public List getNextSystemModuleRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousSystemModuleRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
 

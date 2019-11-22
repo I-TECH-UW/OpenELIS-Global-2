@@ -3,14 +3,14 @@
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
@@ -18,10 +18,12 @@
 package org.openelisglobal.common.externalLinks;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -112,7 +114,7 @@ public class ExternalPatientSearch implements Runnable {
         }
 
         if (searchResults == null) {
-            searchResults = new ArrayList<PatientDemographicsSearchResults>();
+            searchResults = new ArrayList<>();
 
             convertXMLToResults();
         }
@@ -128,6 +130,7 @@ public class ExternalPatientSearch implements Runnable {
         return returnStatus;
     }
 
+    @Override
     public void run() {
         try {
             synchronized (this) {
@@ -138,7 +141,7 @@ public class ExternalPatientSearch implements Runnable {
                 if (connectionCredentialsIncomplete()) {
                     throw new IllegalStateException("Search requested before connection credentials set.");
                 }
-                errors = new ArrayList<String>();
+                errors = new ArrayList<>();
 
                 doSearch();
             }
@@ -264,12 +267,15 @@ public class ExternalPatientSearch implements Runnable {
 
         URI uriFinal = null;
         try {
-            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, firstName)
-                    .addParameter(GET_PARAM_LAST, lastName).addParameter(GET_PARAM_ST, STNumber)
-                    .addParameter(GET_PARAM_SUBJECT, subjectNumber).addParameter(GET_PARAM_NATIONAL_ID, nationalId)
-                    .addParameter(GET_PARAM_GUID, guid).addParameter(GET_PARAM_NAME, connectionName)
-                    .addParameter(GET_PARAM_PWD, connectionPassword).build();
-        } catch (URISyntaxException e) {
+            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, URLEncoder.encode(firstName, "UTF-8"))
+                    .addParameter(GET_PARAM_LAST, URLEncoder.encode(lastName, "UTF-8"))
+                    .addParameter(GET_PARAM_ST, URLEncoder.encode(STNumber, "UTF-8"))
+                    .addParameter(GET_PARAM_SUBJECT, URLEncoder.encode(subjectNumber, "UTF-8"))
+                    .addParameter(GET_PARAM_NATIONAL_ID, URLEncoder.encode(nationalId, "UTF-8"))
+                    .addParameter(GET_PARAM_GUID, URLEncoder.encode(guid, "UTF-8"))
+                    .addParameter(GET_PARAM_NAME, URLEncoder.encode(connectionName, "UTF-8"))
+                    .addParameter(GET_PARAM_PWD, URLEncoder.encode(connectionPassword, "UTF-8")).build();
+        } catch (URISyntaxException | UnsupportedEncodingException e) {
             errors.add(URI_BUILD_FAILURE);
         }
 

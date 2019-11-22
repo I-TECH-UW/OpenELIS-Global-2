@@ -45,9 +45,9 @@ public interface MethodDAO extends BaseDAO<Method, String> {
 
 //	public void updateData(Method method) throws LIMSRuntimeException;
 
-//	public List getNextMethodRecord(String id) throws LIMSRuntimeException;
+
 //
-//	public List getPreviousMethodRecord(String id) throws LIMSRuntimeException;
+
 
 //	public Method getMethodByName(Method method) throws LIMSRuntimeException;
 

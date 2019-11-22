@@ -62,12 +62,6 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestResultRecord(String id) {
-        return getBaseObjectDAO().getNextTestResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public TestResult getTestResultById(TestResult testResult) {
         return getBaseObjectDAO().getTestResultById(testResult);
     }
@@ -76,12 +70,6 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
     @Transactional(readOnly = true)
     public List getPageOfTestResults(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestResultRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestResultRecord(id);
     }
 
     @Override

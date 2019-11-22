@@ -40,12 +40,6 @@ public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousProjectRecord(String id) {
-        return getBaseObjectDAO().getPreviousProjectRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalProjectCount() {
         return getBaseObjectDAO().getTotalProjectCount();
     }
@@ -54,12 +48,6 @@ public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> i
     @Transactional(readOnly = true)
     public Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) {
         return getBaseObjectDAO().getProjectByLocalAbbreviation(project, activeOnly);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextProjectRecord(String id) {
-        return getBaseObjectDAO().getNextProjectRecord(id);
     }
 
     @Override

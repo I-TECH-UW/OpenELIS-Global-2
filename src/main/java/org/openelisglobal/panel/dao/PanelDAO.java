@@ -47,9 +47,9 @@ public interface PanelDAO extends BaseDAO<Panel, String> {
 
     public List<Panel> getAllPanels() throws LIMSRuntimeException;
 
-    public List getNextPanelRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousPanelRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
 

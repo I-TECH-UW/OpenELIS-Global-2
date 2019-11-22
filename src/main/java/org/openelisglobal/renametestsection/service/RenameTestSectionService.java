@@ -13,13 +13,13 @@ public interface RenameTestSectionService extends BaseObjectService<RenameTestSe
 
     RenameTestSection getTestSectionByName(RenameTestSection testSection);
 
-    List getNextTestSectionRecord(String id);
+
 
     List getPageOfTestSections(int startingRecNo);
 
     Integer getTotalTestSectionCount();
 
-    List getPreviousTestSectionRecord(String id);
+
 
     List getAllTestSections();
 

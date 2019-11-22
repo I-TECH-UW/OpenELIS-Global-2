@@ -199,18 +199,6 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextResultLimitRecord(String id) throws LIMSRuntimeException {
-        return getNextRecord(id, "ResultLimit", ResultLimit.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException {
-        return getPreviousRecord(id, "ResultLimit", ResultLimit.class);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {

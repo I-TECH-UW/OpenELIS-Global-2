@@ -15,9 +15,9 @@ public interface ResultService extends BaseObjectService<Result, String> {
 
     List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate);
 
-    List getNextResultRecord(String id);
 
-    List getPreviousResultRecord(String id);
+
+
 
     void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta);
 

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -40,6 +39,7 @@ import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -62,7 +62,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String resultIds = request.getParameter("resultIds");
@@ -106,22 +106,22 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
          * scriptlet_id then we are done. If it has only one Then we need to look for
          * the other
          */
-        ArrayList<TestReflex> selectableReflexes = new ArrayList<TestReflex>();
-        HashSet<String> reflexTriggers = new HashSet<String>();
-        HashSet<String> reflexTriggerIds = new HashSet<String>();
+        ArrayList<TestReflex> selectableReflexes = new ArrayList<>();
+        HashSet<String> reflexTriggers = new HashSet<>();
+        HashSet<String> reflexTriggerIds = new HashSet<>();
         // Both test given results on client
         if (resultIdSeries.length > 1) {
             /*
              * String[] testIdSeries = testIds.split(ID_SEPERATOR);
-             * 
+             *
              * List<TestReflex> testReflexesForResultOne =
              * reflexUtil.getTestReflexsForDictioanryResultTestId(resultIdSeries[0],
              * testIdSeries[0], true);
-             * 
+             *
              * if (!testReflexesForResultOne.isEmpty()) { List<TestReflex> sibTestReflexList
              * = reflexUtil.getTestReflexsForDictioanryResultTestId(resultIdSeries[1],
              * testIdSeries[1], true);
-             * 
+             *
              * boolean allChoicesFound = false; for (TestReflex reflexFromResultOne :
              * testReflexesForResultOne) { for (TestReflex sibReflex : sibTestReflexList) {
              * if (areSibs(reflexFromResultOne, sibReflex) &&

@@ -373,96 +373,11 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         return tr;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTestReflexRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "TestReflex", TestReflex.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "TestReflex", TestReflex.class);
-    }
-
     // bugzilla 1411
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestReflexCount() throws LIMSRuntimeException {
         return getTotalCount("TestReflex", TestReflex.class);
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select tr.id from TestReflex tr "
-                    + " order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select tr.id from TestReflex tr "
-                    + " order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     // bugzilla 1482

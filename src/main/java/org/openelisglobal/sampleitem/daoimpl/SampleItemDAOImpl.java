@@ -232,23 +232,6 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
-    public List<SampleItem> getNextSampleItemRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "SampleItem", SampleItem.class);
-
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
-    public List<SampleItem> getPreviousSampleItemRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "SampleItem", SampleItem.class);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException {
         // Use an expression to read in the Sample_Item by SAMP_ID

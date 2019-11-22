@@ -94,7 +94,8 @@
         jQuery(":file").css("width", "600px");
         function setAction(form, action, validate, parameters) {
         	var siteInfoName = jQuery("#siteInfoName").val()
-            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + jQuery("#removeImage").is(":checked");
+            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + jQuery("#removeImage").is(":checked") 
+            		+ "&_csrf=" + jQuery('input[name=_csrf]').val();
             form.validateDocument = new Object();
             form.validateDocument.value = validate;
 

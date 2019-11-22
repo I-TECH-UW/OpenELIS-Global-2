@@ -249,21 +249,6 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextPatientRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Patient", Patient.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Patient", Patient.class);
-    }
-
-    @Override
     public boolean externalIDExists(String patientExternalID) {
 
         List results;

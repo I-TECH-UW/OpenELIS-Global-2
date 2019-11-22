@@ -15,13 +15,13 @@ public interface TestSectionService extends BaseObjectService<TestSection, Strin
 
     TestSection getTestSectionByName(TestSection testSection);
 
-    List getNextTestSectionRecord(String id);
+
 
     List getPageOfTestSections(int startingRecNo);
 
     Integer getTotalTestSectionCount();
 
-    List getPreviousTestSectionRecord(String id);
+
 
     List<TestSection> getAllTestSections();
 

@@ -18,12 +18,12 @@ package org.openelisglobal.common.provider.data;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.data.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -47,7 +47,7 @@ public class NextTestSortOrderDataProvider extends BaseDataProvider {
         this.ajaxServlet = ajaxServlet;
     }
 
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String testSectionId = (String) request.getParameter("tsid");

@@ -33,9 +33,9 @@ public interface UnitOfMeasureDAO extends BaseDAO<UnitOfMeasure, String> {
 
 //	public void updateData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 //
-//	public List getNextUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
+
 //
-//	public List getPreviousUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
+
 
 //	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 

@@ -19,8 +19,10 @@ package org.openelisglobal.common.servlet.reports;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,10 +54,12 @@ public class LogoUploadServlet extends HttpServlet {
     private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
     private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
             + File.separator;
+    private String FULL_PREVIEW_FILE_PATH;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
         // check for authentication
         if (userModuleService.isSessionExpired(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -73,7 +77,7 @@ public class LogoUploadServlet extends HttpServlet {
             return;
         }
 
-        String uploadPreviewPath = getServletContext().getRealPath("") + PREVIEW_FILE_PATH
+        String uploadPreviewPath = FULL_PREVIEW_FILE_PATH
                 + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
 
         if (removeImage) {
@@ -82,7 +86,7 @@ public class LogoUploadServlet extends HttpServlet {
             updateImage(request, whichLogo, uploadPreviewPath);
         }
 
-        getServletContext().getRequestDispatcher("/PrintedReportsConfigurationMenu.do").forward(request, response);
+        response.sendRedirect(getServletContext().getContextPath() + "/PrintedReportsConfigurationMenu.do");
     }
 
     private void removeImage(String logoName, String uploadPreviewPath) {
@@ -134,7 +138,7 @@ public class LogoUploadServlet extends HttpServlet {
 
                     item.write(previewFile);
 
-                    writeToDatabase(previewFile, whichLogo);
+                    writeFileImageToDatabase(previewFile, whichLogo);
 
                     break;
                 }
@@ -147,7 +151,10 @@ public class LogoUploadServlet extends HttpServlet {
         }
     }
 
-    private void writeToDatabase(File file, String logoName) {
+    private void writeFileImageToDatabase(File file, String logoName) {
+        if (!fileInImageDirectory(file)) {
+            return;
+        }
         SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
         if (logoInformation == null) {
@@ -179,9 +186,27 @@ public class LogoUploadServlet extends HttpServlet {
         }
     }
 
+    private boolean fileInImageDirectory(File file) {
+        String filePath;
+        try {
+            filePath = file.getCanonicalPath();
+            return filePath.startsWith((new File(FULL_PREVIEW_FILE_PATH).getCanonicalPath()));
+        } catch (IOException e) {
+            LogEvent.logErrorStack(this.getClass().getName(), "fileInImageDirectory", e);
+            return false;
+        }
+    }
+
     private boolean validToWrite(FileItem item) {
-        return !item.isFormField() && item.getSize() > 0 && !GenericValidator.isBlankOrNull(item.getName())
+        boolean valid = !item.isFormField() && item.getSize() > 0 && !GenericValidator.isBlankOrNull(item.getName())
                 && (item.getName().contains("jpg") || item.getName().contains("png") || item.getName().contains("gif"));
+
+        try (InputStream input = item.getInputStream()) {
+            ImageIO.read(input);
+        } catch (IOException e) {
+            valid = false;
+        }
+        return valid;
     }
 
 }

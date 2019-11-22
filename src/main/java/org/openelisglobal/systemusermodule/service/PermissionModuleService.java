@@ -15,13 +15,13 @@ public interface PermissionModuleService<T extends PermissionModule> extends Bas
 
     List getPageOfPermissionModules(int startingRecNo);
 
-    List getNextPermissionModuleRecord(String id);
+
 
     List getAllPermissionModulesByAgentId(int systemUserId);
 
     boolean doesUserHaveAnyModules(int userId);
 
-    List getPreviousPermissionModuleRecord(String id);
+
 
     Set<String> getAllPermittedPagesFromAgentId(int roleId);
 }

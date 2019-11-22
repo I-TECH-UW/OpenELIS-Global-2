@@ -419,12 +419,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestRecord(String id) {
-        return getBaseObjectDAO().getNextTestRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) {
         List<Test> tests = getBaseObjectDAO().getAllActiveTests(onlyTestsFullySetup);
         return filterOnlyFullSetup(onlyTestsFullySetup, tests);
@@ -452,12 +446,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     @Transactional(readOnly = true)
     public List<Test> getActiveTestByName(String testName) {
         return getBaseObjectDAO().getActiveTestByName(testName);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestRecord(id);
     }
 
     @Override

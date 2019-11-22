@@ -46,6 +46,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         float: left;
         margin: 0 15px 0 0
     }
+	#oe-logo-img {
+	    height: 71px;
+	    width: auto;
+	}
     #oe-title {
         font-size: 24px;
         line-height: 32px;
@@ -62,7 +66,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body id="defaultErrorPage">
 
 <div id="header">
-    <div id="oe-logo"><img src="<%=basePath%>images/openelis_logo.png" title="OpenELIS" alt="OpenELIS"></div>
+    <div id="oe-logo"><img id="oe-logo-img" src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS"></div>
     <div id="oe-title"><spring:message code="homePage.heading" text="homePage.heading"/></div>
 </div>
       

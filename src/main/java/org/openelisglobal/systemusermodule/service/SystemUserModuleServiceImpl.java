@@ -55,12 +55,6 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPermissionModuleRecord(String id) {
-        return baseObjectDAO.getNextPermissionModuleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List getAllPermissionModulesByAgentId(int systemUserId) {
         return baseObjectDAO.getAllPermissionModulesByAgentId(systemUserId);
     }
@@ -68,12 +62,6 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
     @Override
     public boolean doesUserHaveAnyModules(int userId) {
         return baseObjectDAO.doesUserHaveAnyModules(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPermissionModuleRecord(String id) {
-        return baseObjectDAO.getPreviousPermissionModuleRecord(id);
     }
 
     @Override

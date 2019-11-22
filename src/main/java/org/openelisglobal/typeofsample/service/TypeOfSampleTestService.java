@@ -12,7 +12,7 @@ public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleT
 
     List getPageOfTypeOfSampleTests(int startingRecNo);
 
-    List getNextTypeOfSampleTestRecord(String id);
+
 
     List getAllTypeOfSampleTests();
 
@@ -20,7 +20,7 @@ public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleT
 
     TypeOfSampleTest getTypeOfSampleTestForTest(String testId);
 
-    List getPreviousTypeOfSampleRecord(String id);
+
 
     List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId);
 }

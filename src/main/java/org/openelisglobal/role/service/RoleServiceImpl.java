@@ -38,18 +38,6 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextRoleRecord(String id) {
-        return getBaseObjectDAO().getNextRoleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRoleRecord(String id) {
-        return getBaseObjectDAO().getPreviousRoleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<Role> getReferencingRoles(Role role) {
         return getBaseObjectDAO().getReferencingRoles(role);
     }

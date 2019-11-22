@@ -15,11 +15,11 @@ public interface TestReflexService extends BaseObjectService<TestReflex, String>
 
     List getTestReflexesByTestResult(TestResult testResult);
 
-    List getPreviousTestReflexRecord(String id);
+
 
     List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
 
-    List getNextTestReflexRecord(String id);
+
 
     Integer getTotalTestReflexCount();
 

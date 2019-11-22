@@ -55,9 +55,9 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
     public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-    public List getNextTestRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTestRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Test getTestByName(Test test) throws LIMSRuntimeException;
 

@@ -230,21 +230,6 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         return qaEvent;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextQaEventRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "QaEvent", QaEvent.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousQaEventRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "QaEvent", QaEvent.class);
-    }
-
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
@@ -296,49 +281,6 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
     @Transactional(readOnly = true)
     public Integer getTotalQaEventCount() throws LIMSRuntimeException {
         return getTotalCount("QaEvent", QaEvent.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.qaEventName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.qaEventName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

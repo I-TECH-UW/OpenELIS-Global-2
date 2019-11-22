@@ -33,9 +33,9 @@ public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel, String>
 
     public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
 
-    public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
 
-    public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException;
+
+
 
     public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException;
 

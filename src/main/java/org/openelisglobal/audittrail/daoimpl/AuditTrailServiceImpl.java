@@ -249,7 +249,10 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         // Iterate through all the fields in the object
         fieldIteration: for (int ii = 0; ii < fields.length; ii++) {
 
-            // make private fields accessible so we can access their values
+            // make private fields accessible so we can access their values.
+            // This is discouraged as it can introduce security vulnerabilities so care
+            // should be taken in this section of the code to not do anything other than
+            // read from this field so it can be saved in the audit log
             fields[ii].setAccessible(true);
 
             // if the current field is static, transient or final then don't log it as

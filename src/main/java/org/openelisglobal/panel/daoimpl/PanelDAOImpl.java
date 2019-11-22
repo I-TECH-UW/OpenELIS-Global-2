@@ -326,18 +326,6 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPanelRecord(String id) throws LIMSRuntimeException {
-        return getNextRecord(id, "Panel", Panel.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPanelRecord(String id) throws LIMSRuntimeException {
-        return getPreviousRecord(id, "Panel", Panel.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Panel getPanelByName(Panel panel) throws LIMSRuntimeException {
         return getPanelByName(panel.getPanelName());
     }
@@ -346,47 +334,6 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     @Transactional(readOnly = true)
     public Integer getTotalPanelCount() throws LIMSRuntimeException {
         return getTotalCount("Panel", Panel.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.panelName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            LogEvent.logError("PanelDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.panelName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            LogEvent.logError("PanelDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
     }
 
     @Override

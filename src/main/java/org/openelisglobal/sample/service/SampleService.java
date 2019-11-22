@@ -31,7 +31,7 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
     List getSamplesByStatusAndDomain(List statuses, String domain);
 
-    List getPreviousSampleRecord(String id);
+
 
     List<Sample> getSamplesReceivedOn(String recievedDate);
 
@@ -42,7 +42,7 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId,
             boolean filterByDomain);
 
-    List getNextSampleRecord(String id);
+
 
     Sample getSampleByReferringId(String referringId);
 

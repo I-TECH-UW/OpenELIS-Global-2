@@ -41,6 +41,7 @@ import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientSearchProvider extends BaseQueryProvider {
@@ -51,7 +52,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
     SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String lastName = request.getParameter("lastName");

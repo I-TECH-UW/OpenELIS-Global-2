@@ -19,12 +19,12 @@ package org.openelisglobal.common.provider.validation;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -42,7 +42,7 @@ public class PhoneNumberValidationProvider extends BaseValidationProvider {
     }
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String field = request.getParameter("fieldId");
