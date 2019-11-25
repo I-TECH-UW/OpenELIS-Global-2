@@ -260,15 +260,11 @@ public abstract class BaseController implements IActionConstants {
     }
 
     protected void saveErrors(Errors errors) {
-        if (request.getAttribute(Constants.REQUEST_ERRORS) == null) {
+        Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+        if (previousErrors == null) {
             request.setAttribute(Constants.REQUEST_ERRORS, errors);
-        } else {
-            Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
-            if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
-                previousErrors.addAllErrors(errors);
-            } else {
-                request.setAttribute(Constants.REQUEST_ERRORS, errors);
-            }
+        } else if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+            previousErrors.addAllErrors(errors);
         }
     }
 
