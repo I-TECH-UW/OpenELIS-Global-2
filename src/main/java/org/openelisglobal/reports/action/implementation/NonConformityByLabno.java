@@ -119,9 +119,9 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
         for (Sample sample : samples) {
             this.sample = sample;
             patient = ReportUtil.findPatient(sample);
-            project = ReportUtil.findProject(sample);
-            service = findService();
-            sampleQaEvents = findSampleQaEvents();
+//            project = ReportUtil.findProject(sample);
+//            service = findService();
+//            sampleQaEvents = findSampleQaEvents();
 
             ARVReportData data = new ARVReportData();
 
