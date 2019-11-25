@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
@@ -79,15 +79,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         this.projectFormId = projectFormId;
         try {
             initProjectData(form);
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "Constructor", e.getMessage());
         }
     }
 
@@ -282,7 +275,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     }
 
     protected void addHistory(List<ObservationHistory> histories, String ohNameKey, String value, ValueType type) {
-        if (!GenericValidator.isBlankOrNull(value)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             histories.add(buildObservationHistory(ohNameKey, value, type));
         }
     }
@@ -324,7 +317,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         if (YES_ANSWERS.contains(controlAnswer)) {
             for (AdverseEffect ae : adverseEffects) {
                 String value = ae.getGrade();
-                if (!GenericValidator.isBlankOrNull(value)) {
+                if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
                     histories.add(buildObservationHistory(historyType, value, ValueType.LITERAL));
                 }
             }
@@ -338,7 +331,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         if (YES_ANSWERS.contains(controlAnswer)) {
             for (AdverseEffect ae : adverseEffects) {
                 String value = ae.getType();
-                if (!GenericValidator.isBlankOrNull(value)) {
+                if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
                     histories.add(buildObservationHistory(historyType, value, ValueType.LITERAL));
                 }
             }
@@ -359,7 +352,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         List<ObservationHistory> histories = new ArrayList<>();
         if (YES_ANSWERS.contains(controlField)) {
             for (String answer : answers) {
-                if (!GenericValidator.isBlankOrNull(answer)) {
+                if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(answer)) {
                     ObservationHistory newHistory = buildObservationHistory(observationHistoryTypeName, answer,
                             valueType);
                     histories.add(newHistory);
@@ -417,14 +410,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getCollectionDate() {
         try {
             return (String) PropertyUtils.getProperty(form, "interviewDate");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getCollectionDate", e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -434,15 +421,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getReceivedDate() {
         try {
             return (String) PropertyUtils.getProperty(form, "receivedDateForDisplay");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "doSearch", e.getMessage());
         }
         return null;
     }
@@ -451,15 +431,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getCollectionTime() {
         try {
             return (String) PropertyUtils.getProperty(form, "interviewTime");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getCollectionTime", e.getMessage());
         }
         return null;
     }
@@ -468,15 +441,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getReceivedTime() {
         try {
             return (String) PropertyUtils.getProperty(form, "receivedTimeForDisplay");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getReceivedTime", e.getMessage());
         }
         return null;
     }
@@ -504,15 +470,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getSiteSubjectNumber() {
         try {
             return (String) PropertyUtils.getProperty(form, "siteSubjectNumber");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getSiteSubjectNumber", e.getMessage());
         }
         return null;
     }
@@ -527,15 +486,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
             } else {
                 try {
                     return PropertyUtils.getProperty(form, "centerCode").toString();
-                } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    LogEvent.logError(this.getClass().getName(), "getOrganiationId", e.getMessage());
                 }
                 return null;
             }
@@ -547,15 +499,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public ObservationData getObservationData() {
         try {
             return (ObservationData) (PropertyUtils.getProperty(getBaseForm(), "observations"));
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getObservationData", e.getMessage());
         }
         return null;
     }
@@ -570,15 +515,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getPatientId() {
         try {
             return (String) PropertyUtils.getProperty(form, "patientPK");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getPatientId", e.getMessage());
         }
         return null;
     }
@@ -593,15 +531,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public String getSampleId() {
         try {
             return (String) PropertyUtils.getProperty(form, "samplePK");
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(this.getClass().getName(), "getSampleId", e.getMessage());
         }
         return null;
     }

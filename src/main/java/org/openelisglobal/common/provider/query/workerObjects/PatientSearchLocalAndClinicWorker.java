@@ -24,6 +24,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.externalLinks.ExternalPatientSearch;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -86,7 +87,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
         Thread searchThread = new Thread(externalSearch);
         List<PatientSearchResults> localResults = null;
         List<PatientDemographicsSearchResults> clinicResults = null;
-        List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<PatientDemographicsSearchResults>();
+        List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<>();
 
         try {
 
@@ -102,10 +103,9 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
                 // TODO do something with the errors
             }
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "createSearchResultXML", e.getMessage());
         } catch (IllegalStateException ise) {
-
+            LogEvent.logError(this.getClass().getName(), "createSearchResultXML", ise.getMessage());
         }
 
         findNewPatients(localResults, clinicResults, newPatientsFromClinic);
@@ -190,7 +190,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
             List<PatientDemographicsSearchResults> newPatientsFromClinic) {
 
         if (clinicResults != null) {
-            List<String> currentGuids = new ArrayList<String>();
+            List<String> currentGuids = new ArrayList<>();
 
             for (PatientSearchResults result : results) {
                 if (!GenericValidator.isBlankOrNull(result.getGUID())) {

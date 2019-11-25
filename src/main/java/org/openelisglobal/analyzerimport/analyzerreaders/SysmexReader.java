@@ -26,6 +26,7 @@ import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 
 @SuppressWarnings("unused")
@@ -374,6 +375,7 @@ public class SysmexReader extends AnalyzerLineInserter {
                 try {
                     result = Double.parseDouble(fields[testIndex]) / scaleIndex[testIndex];
                 } catch (NumberFormatException nfe) {
+                    LogEvent.logError(this.getClass().getName(), "addAnalyzerResultFromLine", nfe.getMessage());
                     // no-op -- defaults to NAN
                 }
 

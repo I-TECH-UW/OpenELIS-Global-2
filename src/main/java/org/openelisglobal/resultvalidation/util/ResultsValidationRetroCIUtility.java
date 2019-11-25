@@ -34,6 +34,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.StatusService;
@@ -391,6 +392,8 @@ public class ResultsValidationRetroCIUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (Exception e) {
+                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
                             // no-op
                         }
 

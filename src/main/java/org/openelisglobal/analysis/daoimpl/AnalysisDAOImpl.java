@@ -862,7 +862,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (Exception e) {
-
             LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()",
                     e.toString());
             throw new LIMSRuntimeException("Error in getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e);
@@ -891,8 +890,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             if (!StringUtil.isNullorNill(revisionString)) {
                 try {
                     revision = Integer.parseInt(revisionString);
-                } catch (NumberFormatException nfe) {
-
+                } catch (NumberFormatException e) {
+                    LogEvent.logError("AnalysisDAOImpl", "getPreviousAnalysisForAmendedAnalysis()", e.toString());
+                    throw new LIMSRuntimeException("Error in getPreviousAnalysisForAmendedAnalysis()", e);
                 }
             }
 

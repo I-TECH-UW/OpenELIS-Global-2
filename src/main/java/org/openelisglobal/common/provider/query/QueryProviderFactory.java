@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
 
 /**
@@ -87,6 +88,7 @@ public class QueryProviderFactory {
                         propertyStream.close();
                         propertyStream = null;
                     } catch (Exception e) {
+                        LogEvent.logError(this.getClass().getName(), "getQueryProviderClassName", e.getMessage());
                     }
                 }
             }

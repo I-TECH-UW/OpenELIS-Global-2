@@ -32,6 +32,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -209,6 +210,8 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (Exception e) {
+                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
                             // no-op
                         }
 

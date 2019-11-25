@@ -104,8 +104,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
 //			System.out.println(this.orderMessage.printStructure());
 //			LogEvent.logError( "Debugging", "hl7", this.orderMessage.printStructure());
 //		}catch(HL7Exception e1){
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
+//        LogEvent.logError(this.getClass().getName(), "interpret", e1.getMessage());
 //		}
         try {
             patient = createPatientFromHL7();

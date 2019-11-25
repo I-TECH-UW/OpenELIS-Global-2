@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -378,6 +379,7 @@ public abstract class Report implements IReportCreator {
                     range += "  -  " + highDateStr;
                 }
             } catch (Exception ignored) {
+                LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
             }
             return range;
         }

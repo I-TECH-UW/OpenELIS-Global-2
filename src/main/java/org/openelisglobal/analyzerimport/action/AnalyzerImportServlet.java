@@ -32,6 +32,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.login.service.LoginService;
 import org.openelisglobal.login.valueholder.Login;
 import org.openelisglobal.spring.util.SpringContext;
@@ -96,13 +97,14 @@ public class AnalyzerImportServlet extends HttpServlet {
                 stream.close();
             }
         } catch (Exception ex) {
+            LogEvent.logError(this.getClass().getName(), "doPost", ex.getMessage());
             throw new ServletException(ex);
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    // LOG.warning(e.toString());
+                    LogEvent.logError(this.getClass().getName(), "doPost", e.getMessage());
                 }
             }
         }

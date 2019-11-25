@@ -215,8 +215,7 @@ public class ExternalPatientSearch implements Runnable {
             try {
                 httpclient.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LogEvent.logError(this.getClass().getName(), "doSearch", e.getMessage());
             }
         }
     }

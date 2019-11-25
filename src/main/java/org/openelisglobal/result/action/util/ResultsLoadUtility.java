@@ -40,6 +40,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.StatusService;
@@ -908,6 +909,7 @@ public class ResultsLoadUtility {
                 valid = value >= resultLimit.getLowValid() && value <= resultLimit.getHighValid();
 
             } catch (NumberFormatException nfe) {
+                LogEvent.logInfo(this.getClass().getName(), "getIsValid", nfe.getMessage());
                 // no-op
             }
         }
@@ -925,6 +927,7 @@ public class ResultsLoadUtility {
                 normal = value >= resultLimit.getLowNormal() && value <= resultLimit.getHighNormal();
 
             } catch (NumberFormatException nfe) {
+                LogEvent.logInfo(this.getClass().getName(), "getIsNormal", nfe.getMessage());
                 // no-op
             }
         }

@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.testconfiguration.form.UomCreateForm;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
@@ -46,16 +47,14 @@ public class UomCreateController extends BaseController {
             PropertyUtils.setProperty(form, "inactiveUomList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
         List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
         try {
             PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
     }
 

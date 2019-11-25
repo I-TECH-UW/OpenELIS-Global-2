@@ -508,6 +508,7 @@ public abstract class PatientReport extends Report {
             try {
                 resultValue += " (" + twoDecimalFormat.format(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
+                LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
                 // no-op
             }
         }
@@ -557,6 +558,7 @@ public abstract class PatientReport extends Report {
                 }
             }
         } catch (NumberFormatException e) {
+            LogEvent.logInfo(this.getClass().getName(), "getResultFlag", e.getMessage());
             // no-op
         }
 

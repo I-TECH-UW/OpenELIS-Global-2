@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -117,8 +118,7 @@ public class TestModifyEntryController extends BaseController {
             PropertyUtils.setProperty(form, "testList",
                     DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
 
         // gnr: ALL_TESTS calls getActiveTests, this could be a way to enable
@@ -132,8 +132,7 @@ public class TestModifyEntryController extends BaseController {
         try {
             PropertyUtils.setProperty(form, "testCatBeanList", testCatBeanList);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
     }
 
@@ -443,8 +442,7 @@ public class TestModifyEntryController extends BaseController {
         try {
             obj = (JSONObject) parser.parse(changeList);
         } catch (ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "postTestModifyEntry", e1.getMessage());
         }
 
         TestAddParams testAddParams = extractTestAddParms(obj, parser);

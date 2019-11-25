@@ -406,6 +406,9 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     m2 = newObject.getClass().getMethod("getCollectionDate", new Class[0]);
                     o2 = m2.invoke(newObject, (Object[]) new Class[0]);
                 } catch (NoSuchMethodException nsme) {
+                    LogEvent.logInfo(this.getClass().getName(), "processLabelValueFixes",
+                            "ignoring NoSuchMethodException getCollectionDate() for object of type: "
+                                    + o1.getClass().getName());
                     // ignore for SampleItem (which does not have getCollectionDate method
                 }
             }

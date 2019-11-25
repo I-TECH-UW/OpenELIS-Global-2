@@ -11,9 +11,9 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -71,8 +71,7 @@ public class TestSectionTestAssignController extends BaseController {
             PropertyUtils.setProperty(form, "testSectionList", joinedList);
             PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
 
     }
@@ -132,7 +131,7 @@ public class TestSectionTestAssignController extends BaseController {
             updateTestSection = true;
         }
 
-        if (!GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
             deActivateTestSection = testSectionService.get(deactivateTestSectionId);
             deActivateTestSection.setIsActive("N");
             deActivateTestSection.setSysUserId(currentUser);

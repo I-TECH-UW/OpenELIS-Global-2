@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -65,16 +66,14 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingSampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
         List<Panel> panels = panelService.getAllPanels();
         try {
             PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
 
         List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
@@ -93,8 +92,7 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
             PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
     }
 

@@ -178,8 +178,7 @@ public class LogoUploadServlet extends HttpServlet {
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LogEvent.logError(this.getClass().getName(), "writeFileImageToDatabase", e.getMessage());
                 }
             }
         }

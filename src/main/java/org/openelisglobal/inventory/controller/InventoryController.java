@@ -154,8 +154,7 @@ public class InventoryController extends BaseController {
             PropertyUtils.setProperty(form, "kitTypes", kitTypes);
             PropertyUtils.setProperty(form, "sources", sources);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
         }
     }
 
@@ -324,8 +323,7 @@ public class InventoryController extends BaseController {
                 newInventory.add(set);
             }
         } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(this.getClass().getName(), "createNewInventory", e.getMessage());
         }
 
     }
