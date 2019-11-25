@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.organization.dao.OrganizationTypeDAO;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +22,6 @@ public class OrganizationTypeServiceImpl extends BaseObjectServiceImpl<Organizat
     @Override
     protected OrganizationTypeDAO getBaseObjectDAO() {
         return baseObjectDAO;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Organization> getOrganizationsByTypeName(String orderByCol, String[] names) {
-        return getBaseObjectDAO().getOrganizationsByTypeName(orderByCol, names);
     }
 
     @Override

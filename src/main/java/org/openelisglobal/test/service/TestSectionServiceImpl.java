@@ -155,11 +155,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
     @Override
     @Transactional(readOnly = true)
     public List getTestSectionsBySysUserId(String filter, int sysUserId) {
-        String sectionIdList = "";
+        List<String> sectionIdList = new ArrayList<>();
 
         List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
         for (int i = 0; i < userTestSectionList.size(); i++) {
             SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+            sectionIdList.add(sus.getTestSection().getId());
         }
         return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId, sectionIdList);
     }
@@ -167,8 +168,6 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
     @Override
     @Transactional(readOnly = true)
     public List getAllTestSectionsBySysUserId(int sysUserId) {
-        String sectionIdList = "";
-
         List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
         List<String> sectionIds = new ArrayList<>();
         for (int i = 0; i < userTestSectionList.size(); i++) {

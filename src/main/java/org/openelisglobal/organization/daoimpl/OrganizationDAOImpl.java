@@ -486,11 +486,10 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
     @Override
     @Transactional(readOnly = true)
     public List<Organization> getOrganizationsByTypeName(String orderByProperty, String... typeNames) {
-        String sql = null;
         try {
-            sql = "SELECT o FROM Organization o INNER JOIN o.organizationTypes ot WHERE ot.name IN (:names) ";
+            String sql = "SELECT o FROM Organization o INNER JOIN o.organizationTypes ot WHERE ot.name IN (:names) ";
             sql += " AND o.isActive = 'Y' ";
-            if (null != orderByProperty) {
+            if (null != orderByProperty && columnNameIsInjectionSafe(orderByProperty)) {
                 sql += " ORDER BY o." + orderByProperty;
             }
             Session session = entityManager.unwrap(Session.class);

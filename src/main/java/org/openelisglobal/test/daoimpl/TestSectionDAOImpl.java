@@ -289,7 +289,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+    public List getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
             throws LIMSRuntimeException {
         List list = new Vector();
         String sql = "";
@@ -301,16 +301,15 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
-                        + sectionIdList + ") order by upper(t.testSectionName)";
+            if (sectionIdList.size() > 0) {
+                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in (:sectionIdList) order by upper(t.testSectionName)";
             } else {
                 return list;
             }
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter + "%");
+            query.setParameterList("sectionIdList", sectionIdList);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old

@@ -775,6 +775,10 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
         }
     }
 
+    protected boolean columnNameIsInjectionSafe(String columnName) {
+        return columnName.matches("[a-zA-Z0-9 _]+");
+    }
+
     // private static final int RANDOM_ALIAS_LENGTH = 5;
     // private static final String MULTI_NESTED_MARKING = ",";
     // private void addRestriction(Criteria criteria, String propertyName, Object

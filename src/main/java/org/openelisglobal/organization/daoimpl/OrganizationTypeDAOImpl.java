@@ -24,7 +24,6 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.organization.dao.OrganizationTypeDAO;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,35 +74,6 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 
         } catch (Exception e) {
             LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationTypeByName()", e.toString());
-            throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names)
-            throws LIMSRuntimeException {
-        String sql = null;
-        try {
-            sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
-            Session session = entityManager.unwrap(Session.class);
-            org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
-            @SuppressWarnings("unchecked")
-            OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);
-            sql = "where this.isActive = 'Y' ";
-            if (null != orderByCol) {
-                sql += " order by " + orderByCol;
-            }
-            @SuppressWarnings("unchecked")
-            List<Organization> orgs2 = session.createFilter(ot.getOrganizations(), sql).list();
-
-            session.flush();
-            session.clear();
-
-            return orgs2;
-
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationsByTypeName()", e.toString());
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

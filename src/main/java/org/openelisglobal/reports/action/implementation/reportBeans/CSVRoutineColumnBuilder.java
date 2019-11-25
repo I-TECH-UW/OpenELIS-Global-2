@@ -209,6 +209,7 @@ abstract public class CSVRoutineColumnBuilder {
     }
 
     protected void buildResultSet() throws SQLException {
+        // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
         // System.out.println("===1===\n" + sql.substring(0, 7000)); // the SQL is
