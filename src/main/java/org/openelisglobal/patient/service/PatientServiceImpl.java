@@ -49,24 +49,27 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     public final static String ADDRESS_COUNTRY = "Country";
     public final static String ADDRESS_CITY = "City";
 
-    public static String PATIENT_GUID_IDENTITY;
-    public static String PATIENT_NATIONAL_IDENTITY;
-    public static String PATIENT_ST_IDENTITY;
-    public static String PATIENT_SUBJECT_IDENTITY;
-    public static String PATIENT_AKA_IDENTITY;
-    public static String PATIENT_MOTHER_IDENTITY;
-    public static String PATIENT_INSURANCE_IDENTITY;
-    public static String PATIENT_OCCUPATION_IDENTITY;
-    public static String PATIENT_ORG_SITE_IDENTITY;
-    public static String PATIENT_MOTHERS_INITIAL_IDENTITY;
-    public static String PATIENT_EDUCATION_IDENTITY;
-    public static String PATIENT_MARITAL_IDENTITY;
-    public static String PATIENT_HEALTH_DISTRICT_IDENTITY;
-    public static String PATIENT_HEALTH_REGION_IDENTITY;
-    public static String PATIENT_OB_NUMBER_IDENTITY;
-    public static String PATIENT_PC_NUMBER_IDENTITY;
-    public static String PATIENT_NATIONALITY;
-    public static String PATIENT_OTHER_NATIONALITY;
+    // These have getters
+    private static String PATIENT_ST_IDENTITY;
+    private static String PATIENT_SUBJECT_IDENTITY;
+    private static String PATIENT_HEALTH_DISTRICT_IDENTITY;
+    private static String PATIENT_HEALTH_REGION_IDENTITY;
+
+    // these are only used in this class
+    private static String PATIENT_GUID_IDENTITY;
+    private static String PATIENT_NATIONAL_IDENTITY;
+    private static String PATIENT_AKA_IDENTITY;
+    private static String PATIENT_MOTHER_IDENTITY;
+    private static String PATIENT_INSURANCE_IDENTITY;
+    private static String PATIENT_OCCUPATION_IDENTITY;
+    private static String PATIENT_ORG_SITE_IDENTITY;
+    private static String PATIENT_MOTHERS_INITIAL_IDENTITY;
+    private static String PATIENT_EDUCATION_IDENTITY;
+    private static String PATIENT_MARITAL_IDENTITY;
+    private static String PATIENT_OB_NUMBER_IDENTITY;
+    private static String PATIENT_PC_NUMBER_IDENTITY;
+    private static String PATIENT_NATIONALITY;
+    private static String PATIENT_OTHER_NATIONALITY;
 
     @Autowired
     private PatientDAO baseObjectDAO;
@@ -188,6 +191,22 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     @Override
     protected PatientDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    public static String getPatientSTIdentity() {
+        return PATIENT_ST_IDENTITY;
+    }
+
+    public static String getPatientSubjectIdentity() {
+        return PATIENT_SUBJECT_IDENTITY;
+    }
+
+    public static String getPatientHealthDistrictIdentity() {
+        return PATIENT_HEALTH_DISTRICT_IDENTITY;
+    }
+
+    public static String getPatientHealthRegionIdentity() {
+        return PATIENT_HEALTH_REGION_IDENTITY;
     }
 
     @Override

@@ -169,7 +169,7 @@ public class AnalyzerTestNameController extends BaseController {
             forward = FWD_FAIL_INSERT;
         }
 
-        AnalyzerTestNameCache.instance().reloadCache();
+        AnalyzerTestNameCache.getInstance().reloadCache();
 
         return forward;
     }

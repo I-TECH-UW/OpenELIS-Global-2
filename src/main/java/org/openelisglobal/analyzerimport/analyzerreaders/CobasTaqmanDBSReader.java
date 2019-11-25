@@ -81,11 +81,11 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
             return false;
         }
 
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
                 TEST_NAME);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
                     TEST_NAME);
         }
 

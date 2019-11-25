@@ -71,11 +71,11 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
         int startingRecNo = Integer.parseInt(stringStartingRecNo);
 
         List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
-        List<String> analyzerList = AnalyzerTestNameCache.instance().getAnalyzerNames();
+        List<String> analyzerList = AnalyzerTestNameCache.getInstance().getAnalyzerNames();
         Analyzer analyzer = new Analyzer();
 
         for (String analyzerName : analyzerList) {
-            Collection<MappedTestName> mappedTestNames = AnalyzerTestNameCache.instance()
+            Collection<MappedTestName> mappedTestNames = AnalyzerTestNameCache.getInstance()
                     .getMappedTestsForAnalyzer(analyzerName).values();
             if (mappedTestNames.size() > 0) {
                 analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
@@ -152,7 +152,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
         for (int i = 0; i < selectedIDs.size(); i++) {
             String[] ids = selectedIDs.get(i).split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
             AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
-            testMapping.setAnalyzerId(AnalyzerTestNameCache.instance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
+            testMapping.setAnalyzerId(AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
             testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);
             testMapping.setSysUserId(getSysUserId(request));
             testMappingList.add(testMapping);
@@ -165,7 +165,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
             }
         }
 
-        AnalyzerTestNameCache.instance().reloadCache();
+        AnalyzerTestNameCache.getInstance().reloadCache();
         request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
         redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
         return findForward(FWD_SUCCESS_DELETE, form);

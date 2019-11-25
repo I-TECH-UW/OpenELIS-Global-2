@@ -108,7 +108,7 @@ public class EvolisReader extends AnalyzerLineInserter {
         if (fields.length == 7 && !GenericValidator.isBlankOrNull(analyzerAccessionNumber)
                 && analyzerAccessionNumber.length() > 6 && fields[assay].length() > 5) {
 
-            MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.EVOLIS,
+            MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.EVOLIS,
                     fields[assay]);
             AnalyzerResults analyzerResults = new AnalyzerResults();
             analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());

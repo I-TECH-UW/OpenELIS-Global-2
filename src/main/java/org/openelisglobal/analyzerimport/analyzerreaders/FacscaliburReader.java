@@ -149,11 +149,11 @@ public class FacscaliburReader extends AnalyzerLineInserter {
 
         for (int i = 0; i < testNameIndex.length; i++) {
             if (!GenericValidator.isBlankOrNull(testNameIndex[i])) {
-                MappedTestName mappedName = AnalyzerTestNameCache.instance()
+                MappedTestName mappedName = AnalyzerTestNameCache.getInstance()
                         .getMappedTest(AnalyzerTestNameCache.FACSCALIBUR, testNameIndex[i]);
 
                 if (mappedName == null) {
-                    mappedName = AnalyzerTestNameCache.instance()
+                    mappedName = AnalyzerTestNameCache.getInstance()
                             .getEmptyMappedTestName(AnalyzerTestNameCache.FACSCALIBUR, testNameIndex[i]);
                 }
 

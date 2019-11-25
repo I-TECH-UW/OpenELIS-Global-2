@@ -311,13 +311,13 @@ public class AnalyzerResultsController extends BaseController {
         for (AnalyzerResults analyzerResult : analyzerResultsList) {
             if (GenericValidator.isBlankOrNull(analyzerResult.getTestId())) {
                 if (reloadCache) {
-                    AnalyzerTestNameCache.instance().reloadCache();
+                    AnalyzerTestNameCache.getInstance().reloadCache();
                     reloadCache = false;
                 }
             }
 
             String analyzerTestName = analyzerResult.getTestName();
-            MappedTestName mappedTestName = AnalyzerTestNameCache.instance().getMappedTest(getAnalyzerNameFromRequest(),
+            MappedTestName mappedTestName = AnalyzerTestNameCache.getInstance().getMappedTest(getAnalyzerNameFromRequest(),
                     analyzerTestName);
             if (mappedTestName != null) {
                 analyzerResult.setTestName(mappedTestName.getOpenElisTestName());
@@ -338,7 +338,7 @@ public class AnalyzerResultsController extends BaseController {
 
     private List<AnalyzerResults> getAnalyzerResults() {
         return analyzerResultsService.getResultsbyAnalyzer(
-                AnalyzerTestNameCache.instance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
+                AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
     }
 
     protected AnalyzerResultItem analyzerResultsToAnalyzerResultItem(AnalyzerResults result) {
@@ -624,7 +624,7 @@ public class AnalyzerResultsController extends BaseController {
         String analyzer = null;
         String requestType = request.getParameter("type");
         if (!GenericValidator.isBlankOrNull(requestType)) {
-            analyzer = AnalyzerTestNameCache.instance().getDBNameForActionName(requestType);
+            analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(requestType);
         }
         return analyzer;
     }

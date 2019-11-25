@@ -358,11 +358,11 @@ public class SysmexReader extends AnalyzerLineInserter {
             int testIndex = orderedTestIndexs[i];
 
             if (!GenericValidator.isBlankOrNull(testNameIndex[testIndex])) {
-                MappedTestName mappedName = AnalyzerTestNameCache.instance()
+                MappedTestName mappedName = AnalyzerTestNameCache.getInstance()
                         .getMappedTest(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
 
                 if (mappedName == null) {
-                    mappedName = AnalyzerTestNameCache.instance()
+                    mappedName = AnalyzerTestNameCache.getInstance()
                             .getEmptyMappedTestName(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, testNameIndex[testIndex]);
                 }
 

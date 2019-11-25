@@ -396,7 +396,7 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
 
     @Override
     public String getTableId() {
-        return SampleServiceImpl.TABLE_REFERENCE_ID;
+        return SampleServiceImpl.getTableReferenceId();
     }
 
     @Override

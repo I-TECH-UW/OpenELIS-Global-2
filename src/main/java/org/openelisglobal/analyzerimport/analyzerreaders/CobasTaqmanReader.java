@@ -90,11 +90,11 @@ public class CobasTaqmanReader extends AnalyzerLineInserter {
         }
 
         AnalyzerResults analyzerResults = new AnalyzerResults();
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_TAQMAN,
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.COBAS_TAQMAN,
                 fields[TEST].replace("\"", "").trim());
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_TAQMAN,
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_TAQMAN,
                     fields[TEST].replace("\"", "").trim());
         }
 

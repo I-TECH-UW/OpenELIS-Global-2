@@ -27,6 +27,7 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.sample.service.SampleServiceImpl;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.service.SampleItemServiceImpl;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
@@ -64,8 +65,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
     private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
             .isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
-    public static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
 
     @Autowired
     private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
@@ -80,11 +80,14 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     @PostConstruct
     public void initializeGlobalVariables() {
         TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("NOTE").getId();
-        SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
     }
 
     NoteServiceImpl() {
         super(Note.class);
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override
@@ -151,16 +154,16 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
         if (noteObject.getBoundTo() == BoundTo.ANALYSIS) {
             sampleItem = ((Analysis) noteObject).getSampleItem();
             notes.addAll(getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(),
-                    SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
+                    SampleItemServiceImpl.getSampleItemTableReferenceId(), filter));
 
             sample = sampleItem.getSample();
             notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-                    SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+                    SampleServiceImpl.getTableReferenceId(), filter));
         } else if (noteObject.getBoundTo() == BoundTo.SAMPLE_ITEM) {
             sampleItem = (SampleItem) noteObject;
             sample = sampleItem.getSample();
             notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-                    SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+                    SampleServiceImpl.getTableReferenceId(), filter));
         }
 
         if (sample != null) {
@@ -312,16 +315,16 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     public static String getReferenceTableIdForNoteBinding(BoundTo binding) {
         switch (binding) {
         case ANALYSIS: {
-            return AnalysisServiceImpl.TABLE_REFERENCE_ID;
+            return AnalysisServiceImpl.getTableReferenceId();
         }
         case QA_EVENT: {
             return QAService.TABLE_REFERENCE_ID;
         }
         case SAMPLE: {
-            return SampleServiceImpl.TABLE_REFERENCE_ID;
+            return SampleServiceImpl.getTableReferenceId();
         }
         case SAMPLE_ITEM: {
-            return SAMPLE_ITEM_TABLE_REFERENCE_ID;
+            return SampleItemServiceImpl.getSampleItemTableReferenceId();
         }
         default: {
             return null;
@@ -331,7 +334,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
     public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
         return baseObjectDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1),
-                noteType.DBCode, AnalysisServiceImpl.TABLE_REFERENCE_ID);
+                noteType.DBCode, AnalysisServiceImpl.getTableReferenceId());
     }
 
     private String getNotePrefix(Note note, boolean excludeExternPrefix) {

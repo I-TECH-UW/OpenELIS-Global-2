@@ -139,7 +139,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
                 sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
             } else {
 
-                i = reportReferralResultValue(referralResults, i);
+                i = lastUsedReportReferralResultValue(referralResults, i);
                 ReferralResult referralResult = referralResults.get(i);
 
                 ClinicalPatientData data = new ClinicalPatientData();

@@ -56,7 +56,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Autowired
     private NoteService noteService;
 
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
     private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 
     @PostConstruct
@@ -68,6 +68,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public AnalysisServiceImpl() {
         super(Analysis.class);
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override

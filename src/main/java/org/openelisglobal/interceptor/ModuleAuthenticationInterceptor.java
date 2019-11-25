@@ -67,15 +67,10 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
     }
 
     protected boolean hasPermission(Errors errors, HttpServletRequest request) {
-        try {
-            if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-                return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
-            } else {
-                return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
-            }
-        } catch (NullPointerException e) {
-            LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermission()", e.toString());
-            return false;
+        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+            return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
+        } else {
+            return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
         }
     }
 

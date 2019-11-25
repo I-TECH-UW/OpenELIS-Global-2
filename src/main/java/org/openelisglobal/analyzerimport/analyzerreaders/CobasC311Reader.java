@@ -158,11 +158,11 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 
         AnalyzerResults analyzerResults = new AnalyzerResults();
 
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_C311,
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.COBAS_C311,
                 analyzerTestName);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_C311,
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_C311,
                     analyzerTestName);
         }
 

@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DependsOn({ "springContext" })
 public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
 
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
 
     @Autowired
     private static ResultDAO baseObjectDAO = SpringContext.getBean(ResultDAO.class);
@@ -71,6 +71,10 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
     @Override
     protected ResultDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override

@@ -115,7 +115,7 @@ public class PluginAnalyzerService {
     }
 
     private void registerAanlyzerInCache(String name, String id) {
-        AnalyzerTestNameCache.instance().registerPluginAnalyzer(name, id);
+        AnalyzerTestNameCache.getInstance().registerPluginAnalyzer(name, id);
     }
 
     public static class TestMapping {

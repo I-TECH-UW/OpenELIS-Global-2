@@ -39,8 +39,10 @@ public class AnalyzerTestNameCache {
             .getBean(AnalyzerTestMappingService.class);
     protected TestService testService = SpringContext.getBean(TestService.class);
 
-    private static final Object lock = new Object();
-    private static AnalyzerTestNameCache instance;
+    private static class SingletonHelper {
+        private static final AnalyzerTestNameCache INSTANCE = new AnalyzerTestNameCache();
+    }
+
     public final static String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
     public final static String COBAS_INTEGRA400_NAME = "Cobas Integra";
     public final static String FACSCALIBUR = "Facscalibur";
@@ -65,17 +67,8 @@ public class AnalyzerTestNameCache {
         requestTODBName.put("cobasc311", COBAS_C311);
     }
 
-    public static AnalyzerTestNameCache instance() {
-        synchronized (lock) {
-            if (instance == null) {
-                instance = new AnalyzerTestNameCache();
-            }
-        }
-        return instance;
-    }
-
-    public static void setTestInstance(AnalyzerTestNameCache cache) {
-        instance = cache;
+    public static AnalyzerTestNameCache getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public String getDBNameForActionName(String actionName) {

@@ -138,10 +138,10 @@ public class CobasReader extends AnalyzerLineInserter {
         String[] fields = line.split(DELIMITER);
 
         AnalyzerResults analyzerResults = new AnalyzerResults();
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(COBAS_INTEGRA400_NAME, fields[TEST]);
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(COBAS_INTEGRA400_NAME, fields[TEST]);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(COBAS_INTEGRA400_NAME, fields[TEST]);
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(COBAS_INTEGRA400_NAME, fields[TEST]);
         }
 
         analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());

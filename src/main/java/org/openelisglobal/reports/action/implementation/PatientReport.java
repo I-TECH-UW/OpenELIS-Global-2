@@ -308,11 +308,11 @@ public abstract class PatientReport extends Report {
 
         if (patientList.isEmpty()) {
             List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                    PatientServiceImpl.PATIENT_ST_IDENTITY);
+                    PatientServiceImpl.getPatientSTIdentity());
 
             if (identities.isEmpty()) {
                 identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                        PatientServiceImpl.PATIENT_SUBJECT_IDENTITY);
+                        PatientServiceImpl.getPatientSubjectIdentity());
             }
 
             if (!identities.isEmpty()) {
@@ -787,13 +787,13 @@ public abstract class PatientReport extends Report {
         setPatientName(data);
         data.setDept(patientDept);
         data.setCommune(patientCommune);
-        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
+        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.getPatientSTIdentity()));
         data.setSubjectNumber(
-                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
+                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.getPatientSubjectIdentity()));
         data.setHealthRegion(getLazyPatientIdentity(currentPatient, healthRegion,
-                PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
+                PatientServiceImpl.getPatientHealthRegionIdentity()));
         data.setHealthDistrict(getLazyPatientIdentity(currentPatient, healthDistrict,
-                PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
+                PatientServiceImpl.getPatientHealthDistrictIdentity()));
 
         data.setLabOrderType(observationHistoryService.getValueForSample(ObservationType.PROGRAM,
                 sampleService.getId(currentSample)));
@@ -856,7 +856,7 @@ public abstract class PatientReport extends Report {
      *         for the same test (e.g. a multi-select result) and those are in item
      *         item 2 and item 3 this routine returns #3.
      */
-    protected int reportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
+    protected int lastUsedReportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
         ReferralResult referralResult = referralResultsForReferral.get(i);
         reportReferralResultValue = "";
         String currTestId = referralResult.getTestId();
