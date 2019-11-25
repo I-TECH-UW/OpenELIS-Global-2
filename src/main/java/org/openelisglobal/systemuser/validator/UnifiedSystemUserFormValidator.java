@@ -20,7 +20,7 @@ public class UnifiedSystemUserFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
         UnifiedSystemUserForm form = (UnifiedSystemUserForm) target;
 
-        if (!form.getUserPassword().matches(UnifiedSystemUserController.DEFAULT_PASSWORD_FILLER + "+")) {
+        if (!form.getUserPassword().matches(UnifiedSystemUserController.DEFAULT_OBFUSCATED_CHARACTER + "+")) {
             ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
             if (!form.getUserPassword().equals(form.getConfirmPassword())) {
                 errors.reject("login.error.password.notmatch");

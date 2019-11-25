@@ -18,12 +18,10 @@
 package org.openelisglobal.common.externalLinks;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -267,15 +265,12 @@ public class ExternalPatientSearch implements Runnable {
 
         URI uriFinal = null;
         try {
-            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, URLEncoder.encode(firstName, "UTF-8"))
-                    .addParameter(GET_PARAM_LAST, URLEncoder.encode(lastName, "UTF-8"))
-                    .addParameter(GET_PARAM_ST, URLEncoder.encode(STNumber, "UTF-8"))
-                    .addParameter(GET_PARAM_SUBJECT, URLEncoder.encode(subjectNumber, "UTF-8"))
-                    .addParameter(GET_PARAM_NATIONAL_ID, URLEncoder.encode(nationalId, "UTF-8"))
-                    .addParameter(GET_PARAM_GUID, URLEncoder.encode(guid, "UTF-8"))
-                    .addParameter(GET_PARAM_NAME, URLEncoder.encode(connectionName, "UTF-8"))
-                    .addParameter(GET_PARAM_PWD, URLEncoder.encode(connectionPassword, "UTF-8")).build();
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
+            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, firstName)
+                    .addParameter(GET_PARAM_LAST, lastName).addParameter(GET_PARAM_ST, STNumber)
+                    .addParameter(GET_PARAM_SUBJECT, subjectNumber).addParameter(GET_PARAM_NATIONAL_ID, nationalId)
+                    .addParameter(GET_PARAM_GUID, guid).addParameter(GET_PARAM_NAME, connectionName)
+                    .addParameter(GET_PARAM_PWD, connectionPassword).build();
+        } catch (URISyntaxException e) {
             errors.add(URI_BUILD_FAILURE);
         }
 

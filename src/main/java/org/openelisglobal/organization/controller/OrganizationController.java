@@ -66,7 +66,7 @@ public class OrganizationController extends BaseController {
         return new OrganizationForm();
     }
 
-    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
+//    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
     private static boolean useState = FormFields.getInstance().useField(FormFields.Field.OrgState);
     private static boolean useDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT);
     private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);

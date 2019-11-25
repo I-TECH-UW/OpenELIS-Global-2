@@ -70,7 +70,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
     private static String MAINTENANCE_ADMIN_ID;
-    public static final char DEFAULT_PASSWORD_FILLER = '@';
+    public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     @PostConstruct
     private void initialize() {
@@ -319,7 +319,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private String getProxyPassword(Login login) {
         char[] chars = new char[9];
-        Arrays.fill(chars, DEFAULT_PASSWORD_FILLER);
+        Arrays.fill(chars, DEFAULT_OBFUSCATED_CHARACTER);
         return new String(chars);
         // return StringUtil.replaceAllChars(login.getPassword(),
         // DEFAULT_PASSWORD_FILLER);
@@ -456,7 +456,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String password = form.getUserPassword();
 
-        return !StringUtil.containsOnly(password, DEFAULT_PASSWORD_FILLER);
+        return !StringUtil.containsOnly(password, DEFAULT_OBFUSCATED_CHARACTER);
     }
 
     private void validateUser(UnifiedSystemUserForm form, Errors errors, boolean loginUserIsNew,
