@@ -127,7 +127,10 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
 
         } finally {
             try {
-                conn.close();
+                if (conn != null) {
+                    conn.close();
+                }
+
             } catch (SQLException sqle) {
                 // bugzilla 2154
                 LogEvent.logError("MycologyWorksheetProvider", "processRequest()", sqle.toString());

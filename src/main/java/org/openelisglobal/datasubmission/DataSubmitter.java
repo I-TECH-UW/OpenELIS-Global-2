@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -156,18 +156,28 @@ public class DataSubmitter {
             url.append(value.getValue());
             prefix = "&";
         }
-        HttpGet request = new HttpGet(url.toString());
-        request.setHeader("Accept", "application/json");
-        System.out.println("GET: " + request.getURI());
+        try {
+            HttpGet request = new HttpGet(url.toString());
+            request.setHeader("Accept", "application/json");
+            System.out.println("GET: " + request.getURI());
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println("Server returned: " + body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println("Server returned: " + body);
-        return body;
     }
 
     private String sendJSONPost(DataResource resource) throws ClientProtocolException, IOException {
@@ -179,47 +189,65 @@ public class DataSubmitter {
         String url = getBaseURL() + "/" + resource.getCollectionName();
         url += "/" + resource.getLevel();
 
-        HttpPost request = new HttpPost(url);
-        StringEntity entity = new StringEntity(createJSONString(resource.getColumnValues()));
-        entity.setContentType("application/json");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
-        request.setEntity(entity);
-        System.out.println("POST: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
+        try {
+            HttpPost request = new HttpPost(url);
+            StringEntity entity = new StringEntity(createJSONString(resource.getColumnValues()));
+            entity.setContentType("application/json");
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-type", "application/json");
+            request.setEntity(entity);
+            System.out.println("POST: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            System.out.println(IOUtils.toString(response.getEntity().getContent(), "UTF-8"));
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println("Server returned: " + body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println("Server returned: " + body);
-        return body;
     }
 
     private String sendJSONPut(DataResource resource, String level) throws ClientProtocolException, IOException {
         DefaultHttpClient client = new DefaultHttpClient();
         String url = getBaseURL() + "/" + resource.getName();
         url += "/" + level + "/" + resource.getLevelIdMap().get(level);
-        HttpPut request = new HttpPut(url);
-        StringEntity entity = new StringEntity(createJSONString(resource.getColumnValues()));
-        entity.setContentType("application/json");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
-        request.setEntity(entity);
-        System.out.println("PUT: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
+        try {
+            HttpPut request = new HttpPut(url);
+            StringEntity entity = new StringEntity(createJSONString(resource.getColumnValues()));
+            entity.setContentType("application/json");
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-type", "application/json");
+            request.setEntity(entity);
+            System.out.println("PUT: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            System.out.println(IOUtils.toString(response.getEntity().getContent(), "UTF-8"));
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println("Server returned: " + body);
+
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println("Server returned: " + body);
-
-        return body;
     }
 
     // get a resource based on its column-value pairs.
@@ -238,18 +266,28 @@ public class DataSubmitter {
             url.append(value.getValue());
             prefix = "&";
         }
-        HttpGet request = new HttpGet(url.toString());
-        request.setHeader("Accept", "application/json");
+        try {
+            HttpGet request = new HttpGet(url.toString());
+            request.setHeader("Accept", "application/json");
 
-        url.append("/");
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            url.append("/");
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println(body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(body);
-        return body;
     }
 
     // get a resource based on its column-value pairs.
@@ -261,59 +299,88 @@ public class DataSubmitter {
         url.append(table);
         url.append("/");
         url.append(id);
-        HttpGet request = new HttpGet(url.toString());
-        request.setHeader("Accept", "application/json");
+        try {
+            HttpGet request = new HttpGet(url.toString());
+            request.setHeader("Accept", "application/json");
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println(body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(body);
-        return body;
     }
 
     // used for talking to VL-DASHBOARD api to update an old entry
     public String sendJSONPut(String table, String foreignKey, List<DataValue> values) throws IOException {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpPut request = new HttpPut(getBaseURL() + "/" + table + "/" + foreignKey);
-        StringEntity entity = new StringEntity(createJSONString(values));
-        entity.setContentType("application/json");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
-        request.setEntity(entity);
+        try {
+            HttpPut request = new HttpPut(getBaseURL() + "/" + table + "/" + foreignKey);
+            StringEntity entity = new StringEntity(createJSONString(values));
+            entity.setContentType("application/json");
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-type", "application/json");
+            request.setEntity(entity);
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println(body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(body);
-        return body;
     }
 
     // used for talking to VL-DASHBOARD api to insert a new entry
     public String sendJSONPost(String table, List<DataValue> values) throws ClientProtocolException, IOException {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost(getBaseURL() + "/" + table);
-        StringEntity entity = new StringEntity(createJSONString(values));
-        entity.setContentType("application/json");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
-        request.setEntity(entity);
+        try {
+            HttpPost request = new HttpPost(getBaseURL() + "/" + table);
+            StringEntity entity = new StringEntity(createJSONString(values));
+            entity.setContentType("application/json");
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-type", "application/json");
+            request.setEntity(entity);
 
-        System.out.println(getBaseURL() + "/" + table);
+            System.out.println(getBaseURL() + "/" + table);
 
-        HttpResponse response = client.execute(request);
-        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            CloseableHttpResponse response = client.execute(request);
+            try {
+                if (response.getStatusLine().getStatusCode() != 201
+                        && response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException(
+                            "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+                }
+
+                String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                System.out.println(body);
+                return body;
+            } finally {
+                response.close();
+            }
+        } finally {
+            client.close();
         }
-
-        String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(body);
-        return body;
     }
 
     @SuppressWarnings("unchecked")

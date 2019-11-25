@@ -167,12 +167,21 @@ public class LogoUploadServlet extends HttpServlet {
 
         byte[] imageData = new byte[(int) file.length()];
 
+        FileInputStream fileInputStream = null;
         try {
-            FileInputStream fileInputStream = new FileInputStream(file);
+            fileInputStream = new FileInputStream(file);
             fileInputStream.read(imageData);
-            fileInputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
 
         Image image = new Image();

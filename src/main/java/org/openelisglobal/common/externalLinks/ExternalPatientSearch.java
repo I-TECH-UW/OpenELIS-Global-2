@@ -40,6 +40,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
@@ -161,7 +162,7 @@ public class ExternalPatientSearch implements Runnable {
     // protected for unit testing called from synchronized block
     protected void doSearch() {
 
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = new DefaultHttpClient();
         setTimeout(httpclient);
 
         HttpGet httpget = new HttpGet(connectionString);
@@ -211,6 +212,12 @@ public class ExternalPatientSearch implements Runnable {
             throw e;
         } finally {
             httpclient.getConnectionManager().shutdown();
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

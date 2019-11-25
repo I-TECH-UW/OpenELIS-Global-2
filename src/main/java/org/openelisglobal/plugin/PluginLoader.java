@@ -110,9 +110,10 @@ public class PluginLoader {
     }
 
     private void loadPlugin(File pluginFile) {
+        JarFile jar = null;
 
         try {
-            JarFile jar = new JarFile(pluginFile);
+            jar = new JarFile(pluginFile);
 
             if (!checkJDKVersions(pluginFile.getName(), jar)) {
                 return;
@@ -130,6 +131,12 @@ public class PluginLoader {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                jar.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
