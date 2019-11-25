@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.validation.Errors;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
@@ -26,7 +25,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        Errors errors = new BaseErrors();
+        BaseErrors errors = new BaseErrors();
         if (exception instanceof UsernameNotFoundException) {
             errors.reject("login.error.message");
         } else if (exception instanceof BadCredentialsException) {
@@ -43,7 +42,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         }
 
         request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
-
         redirectStrategy.sendRedirect(request, response, "/LoginPage.do");
     }
 
