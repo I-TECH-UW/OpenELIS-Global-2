@@ -76,9 +76,11 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 
             org.hibernate.Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 
-            query.setString(ID_TYPE_FOR_ST, PatientIdentityTypeMap.getInstance().getIDForType("ST"));
-            query.setString(ID_TYPE_FOR_SUBJECT_NUMBER, PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT"));
-            query.setString(ID_TYPE_FOR_GUID, PatientIdentityTypeMap.getInstance().getIDForType("GUID"));
+            query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
+            query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT")));
+            query.setInteger(ID_TYPE_FOR_GUID,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
 
             if (queryFirstName) {
                 query.setString(FIRST_NAME_PARAM, firstName);
@@ -141,19 +143,18 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(
                 "select p.id, pr.first_name, pr.last_name, p.gender, p.entered_birth_date, p.national_id, p.external_id, pi.identity_data as st, piSN.identity_data as subject, piGUID.identity_data as guid from patient p join person pr on p.person_id = pr.id ");
-        queryBuilder.append("left join patient_identity  pi on pi.patient_id = p.id and pi.identity_type_id = :'");
+        queryBuilder.append("left join patient_identity  pi on pi.patient_id = p.id and pi.identity_type_id = :");
         queryBuilder.append(ID_TYPE_FOR_ST);
-        queryBuilder.append("' ");
+        queryBuilder.append(" ");
 
-        queryBuilder
-                .append("left join patient_identity  piSN on piSN.patient_id = p.id and piSN.identity_type_id = :'");
+        queryBuilder.append("left join patient_identity  piSN on piSN.patient_id = p.id and piSN.identity_type_id = :");
         queryBuilder.append(ID_TYPE_FOR_SUBJECT_NUMBER);
-        queryBuilder.append("' ");
+        queryBuilder.append(" ");
 
         queryBuilder.append(
-                "left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = :'");
+                "left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = :");
         queryBuilder.append(ID_TYPE_FOR_GUID);
-        queryBuilder.append("' where ");
+        queryBuilder.append(" where ");
 
         if (lastName) {
             queryBuilder.append(" pr.last_name ilike :");
