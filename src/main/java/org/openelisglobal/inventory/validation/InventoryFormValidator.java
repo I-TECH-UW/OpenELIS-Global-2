@@ -31,7 +31,10 @@ public class InventoryFormValidator implements Validator {
         InventoryForm form = (InventoryForm) target;
 
         try {
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.isValidating();
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            Document doc = documentBuilderFactory.newDocumentBuilder()
                     .parse(new InputSource(new StringReader(form.getNewKitsXML())));
 
             NodeList newKits = doc.getElementsByTagName("kit");
