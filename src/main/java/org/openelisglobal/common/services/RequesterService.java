@@ -81,7 +81,7 @@ public class RequesterService {
     }
 
     public RequesterService(String sampleId) {
-        setSampleId(sampleId);
+        this.sampleId = sampleId;
     }
 
     public RequesterService() {

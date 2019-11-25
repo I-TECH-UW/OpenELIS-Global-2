@@ -117,7 +117,8 @@ public class ResultReportingConfigurationController extends BaseController {
     }
 
     private String createCronStatement(String hour, String min, boolean tweak) {
-        StringBuilder cronBuilder = new StringBuilder();
+        int approxStringLength = 10;
+        StringBuilder cronBuilder = new StringBuilder(approxStringLength);
 
         if (GenericValidator.isBlankOrNull(hour) || GenericValidator.isBlankOrNull(min)) {
             cronBuilder.append(NEVER);

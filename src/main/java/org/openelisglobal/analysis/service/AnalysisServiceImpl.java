@@ -9,10 +9,8 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.QAService;
@@ -398,13 +396,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
-    public void update(Analysis analysis, boolean skipAuditTrail) {
-        Analysis oldObject = getBaseObjectDAO().get(analysis.getId())
-                .orElseThrow(() -> new ObjectNotFoundException(analysis.getId(), "Analysis"));
-        if (auditTrailLog && !skipAuditTrail) {
-            auditTrailDAO.saveHistory(analysis, oldObject, analysis.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-                    getBaseObjectDAO().getTableName());
-        }
+    public void updateNoAuditTrail(Analysis analysis) {
         getBaseObjectDAO().update(analysis);
     }
 
@@ -609,9 +601,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional
-    public void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
+    public void updateAllNoAuditTrail(List<Analysis> updatedAnalysis) {
         for (Analysis analysis : updatedAnalysis) {
-            update(analysis, skipAuditTrail);
+            updateNoAuditTrail(analysis);
         }
     }
 }

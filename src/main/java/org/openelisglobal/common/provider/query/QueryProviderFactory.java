@@ -12,15 +12,17 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 /**
  * This class will abstract the ValidationProvider creation. It will read the
  * name of the class file from properties file and create the class
- * 
+ *
  * @version 1.0
  * @author diane benz
- * 
+ *
  */
 
 public class QueryProviderFactory {
 
-    private static QueryProviderFactory instance; // Instance of this
+    private static class SingletonHelper {
+        private static final QueryProviderFactory INSTANCE = new QueryProviderFactory(); // Instance of this
+    }
 
     // class
 
@@ -32,24 +34,16 @@ public class QueryProviderFactory {
 
     /**
      * Singleton global access for ValidationProviderFactory
-     * 
+     *
      */
 
     public static QueryProviderFactory getInstance() {
-        if (instance == null) {
-            synchronized (QueryProviderFactory.class) {
-                if (instance == null) {
-                    instance = new QueryProviderFactory();
-                }
-            }
-
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
      * Create an object for the full class name passed in.
-     * 
+     *
      * @param String full class name
      * @return Object Created object
      */
@@ -67,7 +61,7 @@ public class QueryProviderFactory {
     /**
      * Search for the ValidationProvider implementation class name in the
      * Validation.properties file for the given ValidationProvider name
-     * 
+     *
      * @param String ValidationProvider name e.g
      *               "OrganizationLocalAbbreviationValidationProvider"
      * @return String Full implementation class e.g

@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -60,7 +61,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     private boolean isVariableTypeOfSample;
 
-    public void initializeGlobalVariables() {
+    private final void initializeGlobalVariables() {
         USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
         VARIABLE_SAMPLE_TYPE_ID = typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable");
     }
@@ -121,7 +122,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         if (isVariableTypeOfSample) {
             xml.append("<variableSampleType/>");
         }
-        XMLUtil.appendKeyValue("sampleTypeId", sampleType, xml);
+        XMLUtil.appendKeyValue("sampleTypeId", StringUtil.concatToMaxIdLength(sampleType), xml);
         addTests(tests, xml);
 
         List<TypeOfSamplePanel> panelList = getPanelList(sampleType);

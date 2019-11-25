@@ -17,6 +17,7 @@
 package org.openelisglobal.common.services.historyservices;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -154,7 +155,7 @@ public abstract class AbstractHistoryService {
 
             byte[] bindata = history.getChanges();
 
-            String changes = bindata.toString();
+            String changes = new String(bindata, StandardCharsets.UTF_8);
             // System.out.println(history.getActivity() + " : "+ changes);
             getObservableChanges(history, changeMap, changes);
 

@@ -112,7 +112,7 @@ public class QAService {
     }
 
     public QAService(SampleQaEvent event) {
-        setSampleQaEvent(event);
+        sampleQaEvent = event;
     }
 
     public QAService() {

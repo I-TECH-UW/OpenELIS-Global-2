@@ -14,7 +14,6 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -45,8 +44,6 @@ public class PanelCreateController extends BaseController {
     private PanelTestConfigurationUtil panelTestConfigurationUtil;
     @Autowired
     private PanelCreateService panelCreateService;
-    @Autowired
-    private LocalizationService localizationService;
 
     public static final String NAME_SEPARATOR = "$";
 

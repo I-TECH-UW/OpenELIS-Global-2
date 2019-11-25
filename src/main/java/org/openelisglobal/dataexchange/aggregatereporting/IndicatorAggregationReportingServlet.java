@@ -17,6 +17,7 @@
 package org.openelisglobal.dataexchange.aggregatereporting;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -100,7 +101,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
                 // String.valueOf(readLength), new String(byteBuffer).trim());
 
                 if (readLength == -1) {
-                    return DocumentHelper.parseText(new String(byteBuffer).trim());
+                    return DocumentHelper.parseText(new String(byteBuffer, StandardCharsets.UTF_8).trim());
                 } else {
                     charCount += readLength;
                 }

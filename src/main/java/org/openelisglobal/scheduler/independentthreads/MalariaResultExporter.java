@@ -71,6 +71,7 @@ public class MalariaResultExporter extends Thread implements IMalariaResultExpor
         resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
     }
 
+    @Override
     public void setSleepInMins(long sleepInMin) {
         sleepTime = sleepInMin * 1000L * 60L;
 
@@ -124,7 +125,7 @@ public class MalariaResultExporter extends Thread implements IMalariaResultExpor
         String externalExportRowId;
 
         public SuccessReportHandler(String rowId) {
-            setRowId(rowId);
+            externalExportRowId = rowId;
         }
 
         public SuccessReportHandler() {

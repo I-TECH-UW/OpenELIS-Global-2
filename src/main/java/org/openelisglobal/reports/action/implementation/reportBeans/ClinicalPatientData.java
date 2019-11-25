@@ -19,7 +19,7 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.valueholder.Result;
 
-public class ClinicalPatientData {
+public final class ClinicalPatientData {
 
     private String patientName = "";
     private String nationalId;

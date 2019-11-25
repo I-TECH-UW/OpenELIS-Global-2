@@ -19,6 +19,8 @@ public class ValidationHelper {
     public static final String GENDER_REGEX = "^$|^M$|^F$";
     public static final String MESSAGE_KEY_REGEX = "(?i)^$|^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
     public static final String ID_REGEX = "^[0-9]*$";
+    public static final String HOUR_REGEX = "^[01]?[0-9]|2[0-3]$";
+    public static final String MINUTES_REGEX = "^[0-5]?[0-9]$";
     public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
     public static final String FLOAT_REGEX = "^[+-]?Infinity$|^([+-]?\\d*\\.?\\d*)$";
 

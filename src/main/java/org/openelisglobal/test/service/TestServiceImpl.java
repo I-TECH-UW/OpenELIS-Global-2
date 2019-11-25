@@ -73,7 +73,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         SystemConfiguration.getInstance().addLocalChangeListener(this);
     }
 
-    public synchronized void initializeGlobalVariables() {
+    private synchronized void initializeGlobalVariables() {
         TypeOfSample variableTypeOfSample = typeOfSampleService.getTypeOfSampleByLocalAbbrevAndDomain("Variable", "H");
         VARIABLE_TYPE_OF_SAMPLE_ID = variableTypeOfSample == null ? "-1" : variableTypeOfSample.getId();
 
@@ -623,6 +623,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     public List<Test> getAllTestsByDictionaryResult() {
         return getBaseObjectDAO().getAllTestsByDictionaryResult();
     }
+
     @Override
     @Transactional(readOnly = true)
     public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {

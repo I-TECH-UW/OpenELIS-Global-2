@@ -48,7 +48,7 @@ public class PatientEntry extends Accessioner implements IPatientEntry {
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         this();
         setFieldsFromForm(form);
-        setRequest(request);
+        this.request = request;
         setSysUserId(sysUserId);
     }
 
@@ -64,7 +64,7 @@ public class PatientEntry extends Accessioner implements IPatientEntry {
     }
 
     @Override
-    public void setFieldsFromForm(PatientEntryByProjectForm form)
+    public final void setFieldsFromForm(PatientEntryByProjectForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setAccessionNumber((String) form.get("labNo"));
         setPatientSiteSubjectNo((String) form.get("siteSubjectNumber"));

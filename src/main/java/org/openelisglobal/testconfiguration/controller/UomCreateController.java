@@ -11,7 +11,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.testconfiguration.form.UomCreateForm;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
@@ -30,8 +29,6 @@ public class UomCreateController extends BaseController {
 
     @Autowired
     UnitOfMeasureService unitOfMeasureService;
-    @Autowired
-    private LocalizationService localizationService;
 
     @RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
     public ModelAndView showUomCreate(HttpServletRequest request) {

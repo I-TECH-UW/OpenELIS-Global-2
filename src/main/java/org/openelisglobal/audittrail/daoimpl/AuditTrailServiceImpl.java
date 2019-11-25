@@ -217,7 +217,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 
         Field[] finalFieldsArray;
 
-        if (superClass != null && !superClass.getName().equals("java.lang.Object")) {
+        if (superClass != null && !superClass.equals(Object.class)) {
             finalFieldsArray = getAllFields(superClass, totalFields);
         } else {
             finalFieldsArray = totalFields;
@@ -273,7 +273,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                 // && (!fieldName.equals("collectionTimeForDisplay")) ) {
                 Class interfaces[] = fields[ii].getType().getInterfaces();
                 for (int i = 0; i < interfaces.length;) {
-                    if (interfaces[i].getName().equals("java.util.Collection")) {
+                    if (interfaces[i].equals(java.util.Collection.class)) {
                         continue fieldIteration;
                     }
                     i++;

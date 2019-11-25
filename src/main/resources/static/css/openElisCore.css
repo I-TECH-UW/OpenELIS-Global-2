@@ -160,6 +160,11 @@ caption {
 	margin: 0 5px 0 0
 }
 
+#oe-logo-img {
+	width: auto;
+	height: 71 px;
+}
+
 #oe-title {
 	font-size: 22px;
 	line-height: 27px;

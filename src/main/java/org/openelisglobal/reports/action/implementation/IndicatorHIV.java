@@ -31,6 +31,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.MathUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -199,7 +200,7 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
             if (testName.equals("CD4 en mm3") || testName.equals("CD4 en %") || testName.equals("CD4  Compte Abs")
                     || testName.equals("CD4 Compte en %") || testName.equals("Dénombrement des lymphocytes CD4 (mm3)")
                     || testName.equals("Dénombrement des lymphocytes  CD4 (%)")) {
-                if (firstResult.getMinNormal() == firstResult.getMaxNormal()) {
+                if (MathUtil.isEqual(firstResult.getMinNormal(), firstResult.getMaxNormal())) {
                     continue;
                 }
 

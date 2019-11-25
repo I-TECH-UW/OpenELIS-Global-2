@@ -116,9 +116,9 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId);
 
-    void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+    void updateAllNoAuditTrail(List<Analysis> updatedAnalysis);
 
-    void update(Analysis analysis, boolean skipAuditTrail);
+    void updateNoAuditTrail(Analysis analysis);
 
     String getTestDisplayName(Analysis analysis);
 

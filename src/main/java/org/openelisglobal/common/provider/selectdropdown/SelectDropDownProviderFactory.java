@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.selectdropdown;
@@ -26,15 +26,18 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 /**
  * This class will abstract the AutocompleteProvider creation. It will read the
  * name of the class file from properties file and create the class
- * 
+ *
  * @version 1.0
  * @author diane benz
- * 
+ *
  */
 
 public class SelectDropDownProviderFactory {
 
-    private static SelectDropDownProviderFactory instance; // Instance of this
+    private static class SingletonHelper {
+        private static final SelectDropDownProviderFactory INSTANCE = new SelectDropDownProviderFactory(); // Instance
+                                                                                                           // of this
+    }
 
     // class
 
@@ -43,24 +46,16 @@ public class SelectDropDownProviderFactory {
 
     /**
      * Singleton global access for AutocompleteProviderFactory
-     * 
+     *
      */
 
     public static SelectDropDownProviderFactory getInstance() {
-        if (instance == null) {
-            synchronized (SelectDropDownProviderFactory.class) {
-                if (instance == null) {
-                    instance = new SelectDropDownProviderFactory();
-                }
-            }
-
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
      * Create an object for the full class name passed in.
-     * 
+     *
      * @param String full class name
      * @return Object Created object
      */
@@ -81,7 +76,7 @@ public class SelectDropDownProviderFactory {
     /**
      * Search for the AutocompleteProvider implementation class name in the
      * Autocomplete.properties file for the given AutocompleteProvider name
-     * 
+     *
      * @param String AutocompleteProvider name e.g
      *               "OrganizationLocalAbbreviationAutocompleteProvider"
      * @return String Full implementation class e.g
@@ -131,10 +126,10 @@ public class SelectDropDownProviderFactory {
 
     /**
      * Autocomplete Provider creation method
-     * 
+     *
      * @param name
      * @return Autocomplete Provider object
-     * 
+     *
      */
     public BaseSelectDropDownProvider getSelectDropDownProvider(String name) throws LIMSRuntimeException {
         BaseSelectDropDownProvider provider = null;

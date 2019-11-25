@@ -61,8 +61,8 @@ public class ResultSaveService {
     }
 
     public ResultSaveService(Analysis analysis, String currentUserId) {
-        setAnalysis(analysis);
-        setCurrentUserId(currentUserId);
+        this.analysis = analysis;
+        this.currentUserId = currentUserId;
     }
 
     public void setAnalysis(Analysis analysis) {

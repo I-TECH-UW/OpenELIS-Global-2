@@ -508,7 +508,7 @@ public class StringUtil {
 
         String[] breakOnQuotes = line.split(QUOTE);
 
-        StringBuffer substitutedString = new StringBuffer();
+        StringBuffer substitutedString = new StringBuffer(line.length());
         for (String subString : breakOnQuotes) {
             if (subString.startsWith(COMMA) || subString.endsWith(COMMA)) {
                 substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
@@ -568,7 +568,7 @@ public class StringUtil {
             return null;
         }
 
-        StringBuilder boringString = new StringBuilder();
+        StringBuilder boringString = new StringBuilder(text.length());
 
         for (int i = 0; i < text.length(); i++) {
             boringString.append(replacement);
@@ -596,7 +596,7 @@ public class StringUtil {
         if (string.contains(toBeRemoved)) {
             String[] subStrings = string.trim().split(toBeRemoved);
 
-            StringBuffer reconstituted = new StringBuffer();
+            StringBuffer reconstituted = new StringBuffer(string.length());
 
             for (String subString : subStrings) {
                 reconstituted.append(subString);
@@ -721,5 +721,13 @@ public class StringUtil {
 
     public static String nullSafeToString(Object obj) {
         return obj == null ? "" : obj.toString();
+    }
+
+    public static String concatToMaxLength(String string, int maxLength) {
+        return string.length() > maxLength ? string.substring(0, maxLength) : string;
+    }
+
+    public static String concatToMaxIdLength(String string) {
+        return string.length() > 10 ? string.substring(0, 10) : string;
     }
 }

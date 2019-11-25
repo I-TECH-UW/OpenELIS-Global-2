@@ -296,7 +296,7 @@ public abstract class Accessioner implements IAccessioner {
         this.patientSiteSubjectNo = patientSiteSubjectNo;
     }
 
-    public void setSysUserId(String sysUserId) {
+    public final void setSysUserId(String sysUserId) {
         this.sysUserId = sysUserId;
     }
 

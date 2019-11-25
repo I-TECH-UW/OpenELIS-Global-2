@@ -11,7 +11,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -40,8 +39,6 @@ public class TestSectionCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private TestSectionCreateService testSectionCreateService;
-    @Autowired
-    private LocalizationService localizationService;
 
     @RequestMapping(value = "/TestSectionCreate", method = RequestMethod.GET)
     public ModelAndView showTestSectionCreate(HttpServletRequest request) {

@@ -241,7 +241,7 @@ public abstract class PatientReport extends Report {
 
         if (!updatedAnalysis.isEmpty()) {
             try {
-                analysisService.updateAll(updatedAnalysis, true);
+                analysisService.updateAllNoAuditTrail(updatedAnalysis);
 //				for (Analysis analysis : updatedAnalysis) {
 //					analysisService.update(analysis, true);
 //				}

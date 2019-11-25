@@ -74,6 +74,7 @@ public class ResultExporter extends Thread implements IResultExporter {
         resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
     }
 
+    @Override
     public void setSleepInMin(long sleepInMin) {
         sleepTime = sleepInMin * 1000L * 60L;
     }
@@ -93,6 +94,7 @@ public class ResultExporter extends Thread implements IResultExporter {
 
     }
 
+    @Override
     public void stopExports() {
         running = false;
     }
@@ -125,7 +127,7 @@ public class ResultExporter extends Thread implements IResultExporter {
         String externalExportRowId;
 
         public SuccessReportHandler(String rowId) {
-            setRowId(rowId);
+            externalExportRowId = rowId;
         }
 
         public SuccessReportHandler() {

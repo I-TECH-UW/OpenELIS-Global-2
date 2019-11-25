@@ -12,6 +12,7 @@ import org.openelisglobal.dataexchange.resultreporting.beans.ResultXmit;
 import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -24,6 +25,7 @@ import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
+@Scope("prototype")
 public class OrderResponseWorker {
 
     public enum Event {
@@ -36,6 +38,8 @@ public class OrderResponseWorker {
     private Event event;
     private ElectronicOrder eOrder;
     private OML_O21 originalMessage = new OML_O21();
+
+    private static int sequenceNum = 0;
 
     ResultReportXmit resultReport;
     private ORU_R01 hl7Message;
@@ -155,7 +159,6 @@ public class OrderResponseWorker {
 
     private String generateMessageId() {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        int sequenceNum = 0;
         if (sequenceNum != 0) {
             sequenceNum = ((sequenceNum - 1) % 99999) + 1;
         }

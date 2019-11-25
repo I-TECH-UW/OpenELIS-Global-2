@@ -55,7 +55,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
         this();
         setFieldsFromForm(form);
-        setRequest(request);
+        this.request = request;
         super.setSysUserId(sysUserId);
     }
 
@@ -71,7 +71,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    public void setFieldsFromForm(BaseForm form)
+    public final void setFieldsFromForm(BaseForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setAccessionNumber((String) form.get("labNo"));
         setPatientIdentifier((String) form.get("subjectNumber"));
