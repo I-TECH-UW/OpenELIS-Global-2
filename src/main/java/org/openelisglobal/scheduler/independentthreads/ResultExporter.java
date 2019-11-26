@@ -159,7 +159,7 @@ public class ResultExporter extends Thread implements IResultExporter {
                     reportExternalExportService.delete(report);
 
                 } catch (LIMSRuntimeException e) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", e);
+                    LogEvent.logErrorStack(e);
                     throw e;
                 }
 

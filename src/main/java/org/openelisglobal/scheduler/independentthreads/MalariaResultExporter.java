@@ -152,7 +152,7 @@ public class MalariaResultExporter extends Thread implements IMalariaResultExpor
                     reportExternalExportService.delete(report);
 
                 } catch (LIMSRuntimeException e) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", e);
+                    LogEvent.logErrorStack(e);
                     throw e;
                 }
 

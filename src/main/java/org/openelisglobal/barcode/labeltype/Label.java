@@ -302,7 +302,7 @@ public abstract class Label {
                 labelInfo = new BarcodeLabelInfo(code);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", e);
+            LogEvent.logErrorStack(e);
         }
     }
 

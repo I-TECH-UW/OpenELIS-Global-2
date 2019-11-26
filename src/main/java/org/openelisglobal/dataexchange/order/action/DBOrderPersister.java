@@ -242,7 +242,7 @@ public class DBOrderPersister implements IOrderPersister {
             eOrder.setPatient(patient);
             eOrderService.insert(eOrder);
         } catch (Exception e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "persist()", e);
+            LogEvent.logErrorStack(e);
             throw e;
         }
     }
@@ -264,7 +264,7 @@ public class DBOrderPersister implements IOrderPersister {
                 try {
                     eOrderService.update(eOrder);
                 } catch (Exception e) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "cancelOrder()", e);
+                    LogEvent.logErrorStack(e);
                 }
 
             }

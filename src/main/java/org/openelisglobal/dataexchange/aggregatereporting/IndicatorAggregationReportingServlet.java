@@ -122,7 +122,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
         try {
             reportImportService.updateReports(insertableImportReports, updatableImportReports);
         } catch (Exception e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateReports()", e);
+            LogEvent.logErrorStack(e);
         }
     }
 

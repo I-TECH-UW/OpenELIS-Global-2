@@ -94,7 +94,7 @@ public class TestRenameEntryController extends BaseController {
             try {
                 localizationService.updateTestNames(name, reportingName);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateTestNames()", e);
+                LogEvent.logErrorStack(e);
             }
 
         }

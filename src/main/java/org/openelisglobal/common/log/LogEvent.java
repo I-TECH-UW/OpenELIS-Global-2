@@ -65,19 +65,19 @@ public class LogEvent {
 
     /**
      * Write to the log file (type error)
-     *
-     * @param className  the class name
-     * @param methodName the method name
-     * @param throwable  -- exception which will be used to generate the stack trace
+     * 
+     * @param throwable -- exception which will be used to generate the stack trace
      */
-    public static void logErrorStack(String className, String methodName, Throwable throwable) {
+    public static void logErrorStack(Throwable throwable) {
         StringBuilder stackErrorMessage = new StringBuilder();
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
         for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
-            stackErrorMessage.append(throwable.getStackTrace()[i].toString());
+            stackErrorMessage.append(stackTrace[i].toString());
             stackErrorMessage.append(System.lineSeparator());
         }
         logError(stackErrorMessage.toString(), throwable);
-        getLog().error("Class: " + className + ", Method: " + methodName, throwable);
+        getLog().error("Class: " + stackTrace[0].getClassName() + ", Method: " + stackTrace[0].getMethodName(),
+                throwable);
     }
 
     /**

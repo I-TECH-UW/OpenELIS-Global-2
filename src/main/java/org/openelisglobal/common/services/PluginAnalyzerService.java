@@ -86,7 +86,7 @@ public class PluginAnalyzerService {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
         } catch (Exception e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", e);
+            LogEvent.logErrorStack(e);
         }
         return analyzer.getId();
     }

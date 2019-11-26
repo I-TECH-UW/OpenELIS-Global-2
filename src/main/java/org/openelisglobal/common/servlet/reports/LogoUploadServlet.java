@@ -107,7 +107,7 @@ public class LogoUploadServlet extends HttpServlet {
             try {
                 logoUploadService.removeImage(image, logoInformation);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", e);
+                LogEvent.logErrorStack(e);
             }
 
         }
@@ -190,7 +190,7 @@ public class LogoUploadServlet extends HttpServlet {
         try {
             logoUploadService.saveImage(image, newImage, imageId, logoInformation);
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", e);
+            LogEvent.logErrorStack(e);
         }
     }
 
@@ -200,7 +200,7 @@ public class LogoUploadServlet extends HttpServlet {
             filePath = file.getCanonicalPath();
             return filePath.startsWith((new File(FULL_PREVIEW_FILE_PATH).getCanonicalPath()));
         } catch (IOException e) {
-            LogEvent.logErrorStack(this.getClass().getName(), "fileInImageDirectory", e);
+            LogEvent.logErrorStack(e);
             return false;
         }
     }

@@ -115,7 +115,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (Exception e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "showReportPrint", e);
+                LogEvent.logErrorStack(e);
                 LogEvent.logDebug(e);
             }
         }

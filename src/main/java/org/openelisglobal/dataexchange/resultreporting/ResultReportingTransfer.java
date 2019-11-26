@@ -118,7 +118,7 @@ public class ResultReportingTransfer {
             try {
                 SpringContext.getBean(ReportExternalExportService.class).insert(report);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "bufferResults()", e);
+                LogEvent.logErrorStack(e);
             }
         }
 
@@ -162,7 +162,7 @@ public class ResultReportingTransfer {
 //					trackService.insert(document);
 //				}
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "markFinalResultsAsSent()", e);
+                LogEvent.logErrorStack(e);
             }
         }
     }
