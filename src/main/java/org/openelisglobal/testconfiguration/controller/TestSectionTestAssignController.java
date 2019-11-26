@@ -141,7 +141,7 @@ public class TestSectionTestAssignController extends BaseController {
             testSectionTestAssignService.updateTestAndTestSections(test, testSection, deActivateTestSection,
                     updateTestSection);
         } catch (HibernateException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

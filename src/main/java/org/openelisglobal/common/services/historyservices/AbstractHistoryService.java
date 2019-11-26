@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -93,9 +94,9 @@ public abstract class AbstractHistoryService {
                     addInsertion(history, items);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 

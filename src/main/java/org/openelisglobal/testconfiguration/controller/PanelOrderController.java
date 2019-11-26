@@ -124,7 +124,7 @@ public class PanelOrderController extends BaseController {
         try {
             panelService.updateAll(panels);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
@@ -155,7 +155,7 @@ public class PanelOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

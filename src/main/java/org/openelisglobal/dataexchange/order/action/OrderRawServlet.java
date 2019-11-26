@@ -67,7 +67,7 @@ public class OrderRawServlet extends HttpServlet {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return null;
             }
         }

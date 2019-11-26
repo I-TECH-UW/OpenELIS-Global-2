@@ -33,7 +33,7 @@ public class PathManager {
             try {
                 Files.createDirectory(queue);
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
     }
@@ -47,7 +47,7 @@ public class PathManager {
         try {
             Files.createFile(Paths.get( QUEUE + File.separator + timeFileName));
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class PathManager {
         try {
             Files.copy(Paths.get(file.getPath()), Paths.get( QUEUE + File.separator + newFileName), REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -68,7 +68,7 @@ public class PathManager {
         try {
             Files.setLastModifiedTime( Paths.get(file.getPath()), FileTime.fromMillis(System.currentTimeMillis()));
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

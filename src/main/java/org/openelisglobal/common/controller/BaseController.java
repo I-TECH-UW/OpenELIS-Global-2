@@ -159,7 +159,7 @@ public abstract class BaseController implements IActionConstants {
                 pageTitle = getMessageForKey(request, pageTitleKey, pageTitleKeyParameter);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
 
@@ -171,7 +171,7 @@ public abstract class BaseController implements IActionConstants {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }
 

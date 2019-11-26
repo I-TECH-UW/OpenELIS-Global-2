@@ -116,7 +116,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.close();
             } catch (Exception e) {
                 LogEvent.logErrorStack(this.getClass().getSimpleName(), "showReportPrint", e);
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 
@@ -148,7 +148,7 @@ public class ReportController extends BaseController {
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -161,7 +161,7 @@ public class ReportController extends BaseController {
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 throw new LIMSRuntimeException(e);
             }
         }

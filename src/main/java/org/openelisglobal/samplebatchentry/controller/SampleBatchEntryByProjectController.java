@@ -5,8 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.jfree.util.Log;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -54,8 +54,8 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             setupCommonFields(form, request);
             return findForward(setForward(form), form);
         } catch (Exception e) {
-            Log.error(e.toString());
-            e.printStackTrace();
+//            Log.error(e.toString());
+            LogEvent.logDebug(e);
             return findForward(FWD_FAIL, form);
         }
 

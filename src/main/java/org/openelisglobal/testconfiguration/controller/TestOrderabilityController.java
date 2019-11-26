@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.spring.util.SpringContext;
@@ -153,7 +154,7 @@ public class TestOrderabilityController extends BaseController {
         try {
             testService.updateAll(tests);
         } catch (HibernateException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
@@ -189,7 +190,7 @@ public class TestOrderabilityController extends BaseController {
                 list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

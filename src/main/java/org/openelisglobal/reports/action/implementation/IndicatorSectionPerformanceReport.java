@@ -26,6 +26,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
@@ -104,7 +105,7 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
         try {
             createReportItems();
         } catch (LIMSInvalidConfigurationException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

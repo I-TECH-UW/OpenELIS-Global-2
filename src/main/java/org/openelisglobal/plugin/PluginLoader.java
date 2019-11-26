@@ -79,7 +79,7 @@ public class PluginLoader {
         try {
             pluginsDirPath = URLDecoder.decode(classLoader.getResource(PLUGIN_ANALYZER).getPath(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException(e);
         }
         File pluginDir = new File(pluginsDirPath);
@@ -130,12 +130,12 @@ public class PluginLoader {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } finally {
             try {
                 jar.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 
@@ -234,13 +234,13 @@ public class PluginLoader {
             }
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         } catch (LIMSException e) {
             if (description != null) {
@@ -263,16 +263,16 @@ public class PluginLoader {
             APlugin instance = aClass.newInstance();
             instance.connect();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
         } catch (java.lang.InstantiationException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
         }
 

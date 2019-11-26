@@ -81,7 +81,7 @@ public class BaseForm implements Serializable {
             obj = PropertyUtils.getProperty(this, propertyName);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.getMessage(), e);
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return obj;
     }
@@ -92,7 +92,7 @@ public class BaseForm implements Serializable {
             obj = (String) PropertyUtils.getProperty(this, propertyName);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.getMessage(), e);
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return obj;
     }
@@ -104,7 +104,7 @@ public class BaseForm implements Serializable {
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.getMessage(), e);
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return obj;
     }

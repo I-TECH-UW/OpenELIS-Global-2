@@ -456,7 +456,7 @@ public class TestModifyEntryController extends BaseController {
             testModifyService.updateTestSets(testSets, testAddParams, nameLocalization, reportingNameLocalization,
                     currentUserId);
         } catch (HibernateException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             result.reject("error.hibernate.exception");
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
@@ -650,7 +650,7 @@ public class TestModifyEntryController extends BaseController {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return testAddParams;

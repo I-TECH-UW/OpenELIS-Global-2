@@ -27,7 +27,7 @@ public class XMLParser {
             }
             return valid;
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         }
     }

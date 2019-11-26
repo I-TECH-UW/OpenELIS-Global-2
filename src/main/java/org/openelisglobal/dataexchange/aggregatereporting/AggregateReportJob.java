@@ -259,7 +259,7 @@ public class AggregateReportJob implements Job {
                         try {
                             sleep(delayInMin * MILLI_SEC_PER_MIN);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            LogEvent.logDebug(e);
                         }
                         new ReportTransmission().sendReport(wrapper, castorPropertyName, url, false, instance);
                     }

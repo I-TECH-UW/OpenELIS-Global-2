@@ -21,6 +21,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -384,7 +385,7 @@ public class SampleEditController extends BaseController {
             if (e.getException() instanceof StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
             saveErrors(result);

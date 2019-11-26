@@ -6,6 +6,7 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryForm;
@@ -62,7 +63,7 @@ public class InventoryFormValidator implements Validator {
 
         } catch (SAXException | IOException | ParserConfigurationException e) {
             errors.rejectValue("newKitsXMl", "errors.field.format.xml");
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

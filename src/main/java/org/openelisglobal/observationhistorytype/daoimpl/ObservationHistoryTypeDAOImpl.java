@@ -56,7 +56,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             entities = query.list();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw (e);
         }
 

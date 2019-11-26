@@ -44,7 +44,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             query.setString("urlPath", urlPath);
             list = query.list();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
         }
@@ -66,7 +66,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 //			// closeSession(); // CSL remove old
 //		} catch (Exception e) {
 //			// bugzilla 2154
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule insertData()", e);
 //		}

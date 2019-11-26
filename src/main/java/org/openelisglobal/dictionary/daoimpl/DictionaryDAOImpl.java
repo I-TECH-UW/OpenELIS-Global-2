@@ -271,7 +271,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
 //		}
 //
@@ -677,7 +677,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			}
 //
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Dictionary getTotalSearchedDictionarys()", e);
 //		}
 //

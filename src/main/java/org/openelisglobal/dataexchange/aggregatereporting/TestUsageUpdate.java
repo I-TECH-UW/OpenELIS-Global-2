@@ -170,7 +170,7 @@ public class TestUsageUpdate implements IResultUpdate {
         try {
             json.writeJSONString(buffer);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         String data = buffer.toString().replace("\n", "");

@@ -1290,7 +1290,7 @@ public abstract class Accessioner implements IAccessioner {
      * @param e          the thrown exception of which to print the stack trace.
      */
     public void logAndAddMessage(String methodName, String messageKey, Exception e) {
-        e.printStackTrace();
+        LogEvent.logDebug(e);
         LogEvent.logError(e.toString(), e);
         if (!messages.hasErrors()) {
             messages.reject(messageKey);
@@ -1334,7 +1334,7 @@ public abstract class Accessioner implements IAccessioner {
             }
 
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         // dynaForm.set("orbservations", observations);
 

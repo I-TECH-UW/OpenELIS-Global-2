@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.DateUtil;
@@ -111,7 +112,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
             test = createTestFromHl7();
             extractOrderInformation();
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return buildResultList(true);
         }
         return buildResultList(false);
@@ -263,7 +264,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
                     }
 
                 } catch (HL7Exception e) {
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     results.add(InterpreterResults.INTERPRET_ERROR);
                 }
             }
@@ -314,7 +315,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
         try {
             return orderMessage.encode();
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return null;

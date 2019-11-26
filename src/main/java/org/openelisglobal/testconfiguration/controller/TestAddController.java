@@ -138,7 +138,7 @@ public class TestAddController extends BaseController {
         try {
             testAddService.addTests(testSets, nameLocalization, reportingNameLocalization, currentUserId);
         } catch (HibernateException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         testService.refreshTestNames();
@@ -325,7 +325,7 @@ public class TestAddController extends BaseController {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return testAddParams;

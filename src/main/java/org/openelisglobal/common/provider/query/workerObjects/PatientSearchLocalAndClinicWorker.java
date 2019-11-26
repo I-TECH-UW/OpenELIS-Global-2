@@ -134,7 +134,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
                 insertNewPatients(results);
             }
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.role.service.RoleService;
@@ -61,7 +62,7 @@ public class SampleTypeCreateController extends BaseController {
                     getExistingTestNames(typeOfSamples, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -106,7 +107,7 @@ public class SampleTypeCreateController extends BaseController {
             sampleTypeCreateService.createAndInsertSampleType(localization, typeOfSample, workplanModule, resultModule,
                     validationModule, workplanResultModule, resultResultModule, validationValidationModule);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

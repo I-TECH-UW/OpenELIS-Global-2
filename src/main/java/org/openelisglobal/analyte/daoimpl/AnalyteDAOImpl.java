@@ -254,7 +254,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
 //		}
 //
@@ -475,7 +475,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			}
 //
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getTotalSearchedAnalyteCount()", e);
 //		}
 //

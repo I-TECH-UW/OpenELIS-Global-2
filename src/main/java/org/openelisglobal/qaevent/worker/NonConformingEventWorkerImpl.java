@@ -1,17 +1,25 @@
 package org.openelisglobal.qaevent.worker;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.*;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.json.JSONArray;
-import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
-import org.openelisglobal.qaevent.service.*;
+import org.openelisglobal.qaevent.service.NCEventService;
+import org.openelisglobal.qaevent.service.NceActionLogService;
+import org.openelisglobal.qaevent.service.NceCategoryService;
+import org.openelisglobal.qaevent.service.NceSpecimenService;
+import org.openelisglobal.qaevent.service.NceTypeService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.openelisglobal.qaevent.valueholder.NceSpecimen;
@@ -21,15 +29,6 @@ import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
@@ -56,7 +55,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         event.setNceNumber(nceNumber);
         event.setLabOrderNumber(labOrderId);
         event = ncEventService.save(event);
-        for(String specimenId: specimens) {
+        for (String specimenId : specimens) {
             NceSpecimen specimen = new NceSpecimen();
             specimen.setNceId(Integer.parseInt(event.getId()));
             specimen.setSampleItemId(Integer.parseInt(specimenId));
@@ -119,7 +118,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
     }
 
     /**
-     *  Given a String value, returns the equivalent {@link Date} object.
+     * Given a String value, returns the equivalent {@link Date} object.
+     * 
      * @param value
      * @return {@link Date} object or null if there is a parse error.
      */
@@ -127,11 +127,14 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
             return new Date(format.parse(value).getTime());
-        } catch (ParseException e) {}
+        } catch (ParseException e) {
+        }
         return null;
     }
 
-    public void initFormForFollowUp(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException{
+    @Override
+    public void initFormForFollowUp(String nceNumber, NonConformingEventForm form)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         form.setNceCategories(nceCategoryService.getAllNceCategories());
         form.setNceTypes(nceTypeService.getAllNceTypes());
         PropertyUtils.setProperty(form, "labComponentList",
@@ -165,7 +168,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
 
             List<SampleItem> sampleItems = new ArrayList<>();
-            for (NceSpecimen specimen: specimenList) {
+            for (NceSpecimen specimen : specimenList) {
                 SampleItem si = sampleItemService.getData(specimen.getSampleItemId() + "");
                 sampleItems.add(si);
             }
@@ -173,7 +176,9 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         }
     }
 
-    public void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    @Override
+    public void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         this.initFormForFollowUp(nceNumber, form);
         NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
         if (event != null) {
@@ -212,44 +217,38 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 nceActionLogList.add(al);
             }
 
-            /*int length = nceActionLogStr.length();
-           //  JSONArray arr = new JSONArray(nceActionLogStr);
-            ObjectMapper objectMapper = new ObjectMapper();
-            final JsonNode arrNode = objectMapper.readTree(nceActionLogStr);
-
-            // form.setActionLog(nceActionLogList);
-            for (final JsonNode objNode : arrNode) {
-
-                JsonNode ca = objNode.get("actionType");
-                actionLog.setActionType(ca.asText());
-
-                JsonNode pr = objNode.get("personResponsible");
-                actionLog.setPersonResponsible(pr.asText());
-
-                JsonNode tat = objNode.get("turnAroundTime");
-                actionLog.setTurnAroundTime(tat.asInt());
-
-                JsonNode dc = objNode.get("dateCompleted");
-                String date = dc.asText();
-                actionLog.setDateCompleted(getDate(date, "yyyy-MM-dd"));
-
-                if (objNode.has("ncEventId")) {
-                    actionLog.setNcEventId(objNode.get("ncEventId").asInt());
-                }
-                if (objNode.has("id")) {
-                    actionLog.setId(objNode.get("id").asInt() + "");
-                }
-                nceActionLogList.add(actionLog);
-            }*/
+            /*
+             * int length = nceActionLogStr.length(); // JSONArray arr = new
+             * JSONArray(nceActionLogStr); ObjectMapper objectMapper = new ObjectMapper();
+             * final JsonNode arrNode = objectMapper.readTree(nceActionLogStr);
+             * 
+             * // form.setActionLog(nceActionLogList); for (final JsonNode objNode :
+             * arrNode) {
+             * 
+             * JsonNode ca = objNode.get("actionType");
+             * actionLog.setActionType(ca.asText());
+             * 
+             * JsonNode pr = objNode.get("personResponsible");
+             * actionLog.setPersonResponsible(pr.asText());
+             * 
+             * JsonNode tat = objNode.get("turnAroundTime");
+             * actionLog.setTurnAroundTime(tat.asInt());
+             * 
+             * JsonNode dc = objNode.get("dateCompleted"); String date = dc.asText();
+             * actionLog.setDateCompleted(getDate(date, "yyyy-MM-dd"));
+             * 
+             * if (objNode.has("ncEventId")) {
+             * actionLog.setNcEventId(objNode.get("ncEventId").asInt()); } if
+             * (objNode.has("id")) { actionLog.setId(objNode.get("id").asInt() + ""); }
+             * nceActionLogList.add(actionLog); }
+             */
             return nceActionLogList;
-        } /*catch (JsonParseException e) {
-            jpe.printStackTrace();
-        } catch (JsonMappingException e) {
-            jme.printStackTrace();
-        } catch (IOException e) {
-            io.printStackTrace();
-        }*/ catch (Exception e) {
-            e.printStackTrace();
+        } /*
+           * catch (JsonParseException e) { jpLogEvent.logDebug(e); } catch
+           * (JsonMappingException e) { jmLogEvent.logDebug(e); } catch (IOException e) {
+           * io.printStackTrace(); }
+           */ catch (Exception e) {
+            LogEvent.logDebug(e);
         }
         return null;
     }
@@ -258,7 +257,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         if (form.getActionLogStr() != null) {
             List<NceActionLog> actionLogs = initNceActionLog(form.getActionLogStr());
             if (actionLogs != null) {
-                for (NceActionLog actionLog: actionLogs) {
+                for (NceActionLog actionLog : actionLogs) {
                     actionLog.setNcEventId(Integer.parseInt(ncEvent.getId()));
                     actionLog.setSysUserId(form.getCurrentUserId());
                     nceActionLogService.save(actionLog);
@@ -281,7 +280,6 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         return false;
     }
 
-
     @Override
     public boolean resolveNCEvent(NonConformingEventForm form) {
         NcEvent ncEvent = ncEventService.get(form.getId());
@@ -292,7 +290,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             ncEvent.setEffective(form.getEffective());
             SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
             ncEvent.setSignature(systemUser.getNameForDisplay());
-            ncEvent.setDateCompleted(getDate(form.getDateCompleted(),"dd/MM/yyyy"));
+            ncEvent.setDateCompleted(getDate(form.getDateCompleted(), "dd/MM/yyyy"));
             ncEvent.setSysUserId(form.getCurrentUserId());
             ncEventService.update(ncEvent);
             return true;

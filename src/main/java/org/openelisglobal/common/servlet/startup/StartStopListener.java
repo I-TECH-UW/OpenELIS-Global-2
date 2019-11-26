@@ -5,6 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.plugin.PluginLoader;
 import org.openelisglobal.scheduler.IndependentThreadStarter;
 import org.openelisglobal.scheduler.LateStartScheduler;
@@ -42,7 +43,7 @@ public final class StartStopListener implements ServletContextListener {
             lateStartScheduler.shutdown();
         } catch (Exception e) {
             if (e instanceof SchedulerException) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
             // rethrow as a runtime exception
             throw new IllegalStateException(e);

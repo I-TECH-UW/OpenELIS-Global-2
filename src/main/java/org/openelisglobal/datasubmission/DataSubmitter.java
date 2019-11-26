@@ -99,7 +99,7 @@ public class DataSubmitter {
             } catch (Exception e) {
                 success = false;
                 LogEvent.logError(e.toString(), e);
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } finally {
                 // remove extra information as it does not need to be saved to database
                 columnValues.removeAll(commonValues);

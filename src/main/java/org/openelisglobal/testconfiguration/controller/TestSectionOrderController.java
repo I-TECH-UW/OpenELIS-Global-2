@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -49,7 +50,7 @@ public class TestSectionOrderController extends BaseController {
             PropertyUtils.setProperty(form, "testSectionList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -108,7 +109,7 @@ public class TestSectionOrderController extends BaseController {
         try {
             testSectionService.updateAll(testSections);
         } catch (HibernateException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
@@ -133,7 +134,7 @@ public class TestSectionOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

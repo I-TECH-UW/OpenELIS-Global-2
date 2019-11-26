@@ -13,6 +13,7 @@ import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -106,7 +107,7 @@ public class PatientManagementController extends BaseController {
                 if (e.getException() instanceof StaleObjectStateException) {
                     result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
                 } else {
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     result.reject("errors.UpdateException", "errors.UpdateException");
                 }
                 request.setAttribute(ALLOW_EDITS_KEY, "false");

@@ -107,10 +107,10 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return null;
             } catch (DocumentException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return null;
             }
         }

@@ -12,6 +12,7 @@ import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
@@ -204,7 +205,7 @@ public class BarcodeLabelMaker {
             document.close();
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return stream;

@@ -26,6 +26,7 @@ import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
@@ -90,7 +91,7 @@ public class EvolisReader extends AnalyzerLineInserter {
             try {
                 persistResults(results, currentUserId);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 successful = false;
             }
 

@@ -131,7 +131,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
         try {
             json.writeJSONString(out);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         String jsonText = out.toString().replace("\n", "");
 

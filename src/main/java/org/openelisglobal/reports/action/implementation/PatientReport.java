@@ -181,11 +181,11 @@ public abstract class PatientReport extends Report {
             PropertyUtils.setProperty(form, "useHighAccessionDirect", Boolean.TRUE);
             PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

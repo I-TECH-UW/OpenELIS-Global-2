@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -77,7 +78,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
             PropertyUtils.setProperty(form, "useUpperDateRange", true);
             PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("instructions.report.referral"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

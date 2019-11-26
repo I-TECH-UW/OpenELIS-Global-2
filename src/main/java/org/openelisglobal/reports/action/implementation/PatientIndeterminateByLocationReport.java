@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -59,7 +60,7 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
             List<Organization> list = OrganizationTypeList.EID_ORGS_BY_NAME.getList();
             PropertyUtils.setProperty(form, "locationCodeList", list);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

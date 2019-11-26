@@ -90,7 +90,7 @@ public class UomCreateController extends BaseController {
         try {
             unitOfMeasureService.insert(unitOfMeasure);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);

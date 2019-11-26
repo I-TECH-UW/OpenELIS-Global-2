@@ -37,7 +37,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             } catch (IllegalArgumentException e) {
                 LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
                         "request type '" + requestTypeStr + "' invalid");
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return RequestType.UNKNOWN;
             }
         }

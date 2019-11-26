@@ -172,7 +172,7 @@ public class LogoUploadServlet extends HttpServlet {
             fileInputStream = new FileInputStream(file);
             fileInputStream.read(imageData);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } finally {
             if (fileInputStream != null) {
                 try {

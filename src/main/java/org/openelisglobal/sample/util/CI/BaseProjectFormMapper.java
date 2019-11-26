@@ -412,7 +412,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
             return (String) PropertyUtils.getProperty(form, "interviewDate");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.getMessage(), e);
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return null;
     }

@@ -138,7 +138,7 @@ public class PanelCreateController extends BaseController {
             panelCreateService.insert(localization, panel, workplanModule, resultModule, validationModule,
                     workplanResultModule, resultResultModule, validationValidationModule, sampleTypeId, systemUserId);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);

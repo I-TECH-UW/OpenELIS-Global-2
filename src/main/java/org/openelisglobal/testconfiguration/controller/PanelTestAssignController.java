@@ -142,7 +142,7 @@ public class PanelTestAssignController extends BaseController {
             try {
                 panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 

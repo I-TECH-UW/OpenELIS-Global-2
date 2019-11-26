@@ -251,7 +251,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
         }
 
@@ -461,7 +461,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getTotalSearchedOrganizations()", e);
         }
 

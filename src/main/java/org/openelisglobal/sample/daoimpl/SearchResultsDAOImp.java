@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.SessionFactory;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
@@ -109,7 +110,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             }
             queryResults = query.list();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
         }
 

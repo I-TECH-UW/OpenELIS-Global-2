@@ -22,6 +22,7 @@ import java.util.List;
 import org.openelisglobal.analyzerresults.service.AnalyzerResultsService;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class AnalyzerLineInserter {
@@ -45,7 +46,7 @@ public abstract class AnalyzerLineInserter {
             try {
                 persistResults(results, currentUserId);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return false;
             }
         }

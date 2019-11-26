@@ -338,7 +338,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
         }
 
@@ -450,7 +450,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return list;
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
 //		}
 //
@@ -771,7 +771,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCount()", e);
         }
 
@@ -833,7 +833,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			}
 //
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
 //		}
 //
@@ -863,7 +863,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
 //		}
 //		return count;

@@ -20,6 +20,7 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +160,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
             try {
                 analyzerTestMappingService.delete(testMapping);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 saveErrors(result);
                 return findForward(performMenuAction(form, request), form);
             }

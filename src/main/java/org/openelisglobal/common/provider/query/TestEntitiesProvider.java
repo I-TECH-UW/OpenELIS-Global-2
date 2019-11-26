@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
@@ -55,11 +56,11 @@ public class TestEntitiesProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             } catch (IllegalStateException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }

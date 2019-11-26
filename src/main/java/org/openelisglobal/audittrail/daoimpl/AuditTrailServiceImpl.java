@@ -297,7 +297,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                 } catch (Exception e) {
                     // buzilla 2154
                     LogEvent.logError(e.toString(), e);
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     propertyNewState = "";
                 }
 
@@ -313,7 +313,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                 } catch (Exception e) {
                     // buzilla 2154
                     LogEvent.logError(e.toString(), e);
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     propertyPreUpdateState = "";
                 }
 

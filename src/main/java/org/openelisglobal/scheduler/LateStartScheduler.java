@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.MalariaSurveilance.MalariaSurveilanceJob;
 import org.openelisglobal.dataexchange.aggregatereporting.AggregateReportJob;
@@ -70,7 +71,7 @@ public class LateStartScheduler {
                 scheduler.shutdown();
                 checkAndStartScheduler();
             } catch (SchedulerException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
     }
@@ -87,9 +88,9 @@ public class LateStartScheduler {
 
             scheduler.start();
         } catch (SchedulerException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -156,9 +157,9 @@ public class LateStartScheduler {
                     }
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } catch (SchedulerException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 
