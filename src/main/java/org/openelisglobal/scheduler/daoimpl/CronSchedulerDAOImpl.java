@@ -36,7 +36,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //
 //		try {
 //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			@SuppressWarnings("unchecked")
+//			
 //			List<CronScheduler> schedulers = query.list();
 //			// closeSession(); // CSL remove old
 //			return schedulers;

@@ -35,7 +35,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfStatusOfSamples(int startingRecNo) {
+    public List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfStatusOfSamples(startingRecNo);
     }
 
@@ -53,7 +53,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllStatusOfSamples() {
+    public List<StatusOfSample> getAllStatusOfSamples() {
         return getBaseObjectDAO().getAllStatusOfSamples();
     }
 

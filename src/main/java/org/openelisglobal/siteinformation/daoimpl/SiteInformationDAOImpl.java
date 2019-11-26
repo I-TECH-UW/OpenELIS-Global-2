@@ -135,7 +135,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException {
         List<SiteInformation> list;
@@ -154,7 +154,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
             throws LIMSRuntimeException {

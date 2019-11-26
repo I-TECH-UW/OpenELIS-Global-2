@@ -145,7 +145,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Role> getAllRoles() throws LIMSRuntimeException {
         List<Role> list = null;
@@ -162,7 +162,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
         List<Role> list = null;
@@ -179,7 +179,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
         List<Role> list = null;
@@ -218,7 +218,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
         if (GenericValidator.isBlankOrNull(role.getId())) {

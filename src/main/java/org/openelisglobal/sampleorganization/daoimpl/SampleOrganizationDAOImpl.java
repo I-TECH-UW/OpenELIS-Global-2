@@ -184,12 +184,12 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             String sql = "from SampleOrganization so where samp_id = :param";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
-            List list = query.list();
+            List<SampleOrganization> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             SampleOrganization so = null;
             if (list.size() > 0) {
-                so = (SampleOrganization) list.get(0);
+                so = list.get(0);
                 PropertyUtils.copyProperties(sampleOrganization, so);
             }
         } catch (Exception e) {

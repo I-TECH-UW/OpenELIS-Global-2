@@ -365,7 +365,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getSamplesByStatusAndDomain(List statuses, String domain) {
+    public List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain) {
         return getBaseObjectDAO().getSamplesByStatusAndDomain(statuses, domain);
     }
 
@@ -416,7 +416,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSamples(int startingRecNo) {
+    public List<Sample> getPageOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSamples(startingRecNo);
     }
 

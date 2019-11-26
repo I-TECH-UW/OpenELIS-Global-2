@@ -15,8 +15,8 @@
 */
 package org.openelisglobal.test.daoimpl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -169,7 +169,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
         List<TestSection> list = null;
@@ -194,8 +194,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
      */
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds)
+            throws LIMSRuntimeException {
+        List<TestSection> list = new ArrayList<>();
 
         String sql = "";
 
@@ -226,8 +227,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
+        List<TestSection> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -268,8 +269,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getTestSections(String filter) throws LIMSRuntimeException {
+        List<TestSection> list;
         try {
             String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -289,9 +290,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
+    public List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
             throws LIMSRuntimeException {
-        List list = new Vector();
+        List<TestSection> list = new ArrayList<>();
         String sql = "";
 
         try {
@@ -323,7 +324,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
         try {
@@ -369,7 +370,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             }
             query.setInteger("id", Integer.parseInt(testSectionId));
 
-            List list = query.list();
+            List<TestSection> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
@@ -388,7 +389,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            @SuppressWarnings("unchecked")
+
             List<TestSection> sections = query.list();
             // closeSession(); // CSL remove old
             return sections;
@@ -414,7 +415,6 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {

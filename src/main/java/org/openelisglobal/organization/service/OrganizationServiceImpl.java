@@ -128,7 +128,7 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllOrganizations() {
+    public List<Organization> getAllOrganizations() {
         return getBaseObjectDAO().getAllOrganizations();
     }
 
@@ -140,13 +140,13 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfOrganizations(int startingRecNo) {
+    public List<Organization> getPageOfOrganizations(int startingRecNo) {
         return getBaseObjectDAO().getPageOfOrganizations(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getOrganizations(String filter) {
+    public List<Organization> getOrganizations(String filter) {
         return getBaseObjectDAO().getOrganizations(filter);
     }
 

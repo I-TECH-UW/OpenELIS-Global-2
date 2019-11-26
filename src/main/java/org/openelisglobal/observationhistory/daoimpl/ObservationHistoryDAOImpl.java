@@ -63,7 +63,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
             throws LIMSRuntimeException {
@@ -86,7 +86,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId)
@@ -108,7 +108,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) throws LIMSRuntimeException {
@@ -204,7 +204,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
      * Read a list of entities which match those fields(members) in the entity which
      * are filled in.
      */
-    @SuppressWarnings("unchecked")
+    
     public List<ObservationHistory> readByExample(ObservationHistory entity) throws LIMSRuntimeException {
         List<ObservationHistory> results;
         try {

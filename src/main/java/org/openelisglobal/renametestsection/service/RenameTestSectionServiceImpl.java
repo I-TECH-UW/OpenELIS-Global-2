@@ -36,7 +36,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) {
+    public List<RenameTestSection> getTestSections(String filter) {
         return getBaseObjectDAO().getTestSections(filter);
     }
 
@@ -48,7 +48,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) {
+    public List<RenameTestSection> getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
 
@@ -60,7 +60,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSections() {
+    public List<RenameTestSection> getAllTestSections() {
         return getBaseObjectDAO().getAllTestSections();
     }
 

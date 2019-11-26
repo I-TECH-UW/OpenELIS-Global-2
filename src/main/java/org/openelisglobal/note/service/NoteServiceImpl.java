@@ -378,7 +378,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllNotesByRefIdRefTable(Note note) {
+    public List<Note> getAllNotesByRefIdRefTable(Note note) {
         return getBaseObjectDAO().getAllNotesByRefIdRefTable(note);
     }
 

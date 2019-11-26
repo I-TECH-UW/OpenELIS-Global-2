@@ -39,7 +39,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException {
         List<InventoryReceipt> inventoryReceipts;
@@ -172,7 +172,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         InventoryReceipt inventory = null;
 
         try {
-            List inventoryReceipts;
+            List<InventoryReceipt> inventoryReceipts;
 
             String sql = "from InventoryReceipt where invitem_id = :id";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -182,7 +182,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
-                inventory = (InventoryReceipt) inventoryReceipts.get(0);
+                inventory = inventoryReceipts.get(0);
             }
 
         } catch (Exception e) {

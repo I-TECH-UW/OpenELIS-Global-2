@@ -591,7 +591,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     @Transactional(readOnly = true)
     public Optional<T> getPrevious(String id) {
         int start = (Integer.valueOf(id)).intValue();
-        String table = getObjectName();
 
         List<T> list;
         try {

@@ -311,7 +311,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
     public boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException {
         try {
 
-            List list;
+            List<Gender> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates

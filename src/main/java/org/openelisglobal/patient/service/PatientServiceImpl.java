@@ -552,7 +552,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPatients(int startingRecNo) {
+    public List<Patient> getPageOfPatients(int startingRecNo) {
         return getBaseObjectDAO().getPageOfPatients(startingRecNo);
     }
 
@@ -564,7 +564,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPatients() {
+    public List<Patient> getAllPatients() {
         return getBaseObjectDAO().getAllPatients();
     }
 

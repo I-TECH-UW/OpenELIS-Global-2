@@ -225,7 +225,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
         try {
@@ -244,7 +244,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Panel> getAllPanels() throws LIMSRuntimeException {
         try {
@@ -264,8 +264,8 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
+        List<Panel> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -306,8 +306,8 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getActivePanels(String filter) throws LIMSRuntimeException {
-        List list = null;
+    public List<Panel> getActivePanels(String filter) throws LIMSRuntimeException {
+        List<Panel> list = null;
         try {
             String sql = "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by upper(p.panelName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -340,7 +340,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public boolean duplicatePanelExists(Panel panel) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Panel> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -376,7 +376,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public boolean duplicatePanelDescriptionExists(Panel panel) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Panel> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -439,7 +439,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     }
 
     private void loadMaps() {
-        List allPanels = getAllActivePanels();
+        List<Panel> allPanels = getAllActivePanels();
 
         if (allPanels != null) {
             ID_NAME_MAP = new HashMap<>();
@@ -469,7 +469,6 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("name", panelName);
 
-            @SuppressWarnings("unchecked")
             List<Panel> panelList = query.list();
 
             // closeSession(); // CSL remove old

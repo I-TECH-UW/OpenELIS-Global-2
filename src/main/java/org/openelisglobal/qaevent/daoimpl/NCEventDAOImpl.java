@@ -1,5 +1,8 @@
 package org.openelisglobal.qaevent.daoimpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -8,9 +11,6 @@ import org.openelisglobal.qaevent.dao.NCEventDAO;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Transactional
@@ -23,7 +23,7 @@ public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEv
     @Override
     @Transactional
     public List<NcEvent> findByNCENumberOrLabOrderId(String nceNumber, String labOrderId) {
-        List list = new ArrayList();
+        List<NcEvent> list = new ArrayList();
         try {
             String sql = "from NcEvent where nceNumber = :nceNumber or labOrderNumber = :labOrderNumber";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);

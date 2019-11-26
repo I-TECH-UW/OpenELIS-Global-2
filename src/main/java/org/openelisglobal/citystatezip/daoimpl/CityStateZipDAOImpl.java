@@ -44,7 +44,6 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         super(CityStateZip.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<CityStateZip> getCities(String filter) throws LIMSRuntimeException {
@@ -182,7 +181,6 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         return cityStateZips;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException {

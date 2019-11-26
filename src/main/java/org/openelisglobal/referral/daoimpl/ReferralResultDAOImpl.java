@@ -72,7 +72,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ReferralResult> getReferralResultsForReferral(String referralId) throws LIMSRuntimeException {
         if (!GenericValidator.isBlankOrNull(referralId)) {
@@ -154,7 +154,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException {
         String sql = "From ReferralResult rr where rr.result.id= :resultId";

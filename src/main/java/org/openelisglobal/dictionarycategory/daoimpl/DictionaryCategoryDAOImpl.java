@@ -178,7 +178,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 
 //	@Override
 //	public List getAllDictionaryCategorys() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //
 //		try {
 //			String sql = "from DictionaryCategory";
@@ -200,7 +200,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 
 //	@Override
 //	public List getPageOfDictionaryCategorys(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
@@ -262,7 +262,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		// bugzilla 1908
 //		int rrn = 0;
 //		try {
@@ -294,7 +294,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		// bugzilla 1908
 //		int rrn = 0;
 //		try {
@@ -327,7 +327,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
             throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<DictionaryCategory> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -370,7 +370,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
      * Read a list of DictionaryCategory which match those field in the entity which
      * are filled in.
      */
-//	@SuppressWarnings("unchecked")
+//
 //	public List<DictionaryCategory> readByExample(DictionaryCategory entity) throws LIMSRuntimeException {
 //		List<DictionaryCategory> results;
 //		try {
@@ -384,7 +384,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException {
 //
 //		String sql = "from DictionaryCategory dc where dc.categoryName = :name";

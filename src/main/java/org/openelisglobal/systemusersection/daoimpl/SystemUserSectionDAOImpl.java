@@ -176,8 +176,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUserSections() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserSection> getAllSystemUserSections() throws LIMSRuntimeException {
+        List<SystemUserSection> list ;
         try {
             String sql = "from SystemUserSection";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -195,8 +195,9 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUserSectionsBySystemUserId(int systemUserId) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId)
+            throws LIMSRuntimeException {
+        List<SystemUserSection> list ;
         try {
             String sql = "from SystemUserSection s where s.systemUser.id = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -215,8 +216,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUserSection> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -263,7 +264,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
     public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<SystemUserSection> list = new ArrayList();
 
             String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2 and s.id != :param3";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);

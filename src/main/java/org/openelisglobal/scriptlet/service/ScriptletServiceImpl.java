@@ -39,7 +39,7 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfScriptlets(int startingRecNo) {
+    public List<Scriptlet> getPageOfScriptlets(int startingRecNo) {
         return getBaseObjectDAO().getPageOfScriptlets(startingRecNo);
     }
 
@@ -57,13 +57,13 @@ public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getScriptlets(String filter) {
+    public List<Scriptlet> getScriptlets(String filter) {
         return getBaseObjectDAO().getScriptlets(filter);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllScriptlets() {
+    public List<Scriptlet> getAllScriptlets() {
         return getBaseObjectDAO().getAllScriptlets();
     }
 

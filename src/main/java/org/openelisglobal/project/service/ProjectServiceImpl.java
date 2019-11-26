@@ -34,7 +34,7 @@ public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfProjects(int startingRecNo) {
+    public List<Project> getPageOfProjects(int startingRecNo) {
         return getBaseObjectDAO().getPageOfProjects(startingRecNo);
     }
 
@@ -58,7 +58,7 @@ public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getProjects(String filter, boolean activeOnly) {
+    public List<Project> getProjects(String filter, boolean activeOnly) {
         return getBaseObjectDAO().getProjects(filter, activeOnly);
     }
 

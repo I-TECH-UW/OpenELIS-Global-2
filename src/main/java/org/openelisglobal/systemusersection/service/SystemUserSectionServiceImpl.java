@@ -34,13 +34,13 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUserSections() {
+    public List<SystemUserSection> getAllSystemUserSections() {
         return getBaseObjectDAO().getAllSystemUserSections();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUserSections(int startingRecNo) {
+    public List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSystemUserSections(startingRecNo);
     }
 
@@ -52,7 +52,7 @@ public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUs
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUserSectionsBySystemUserId(int systemUserId) {
+    public List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId) {
         return getBaseObjectDAO().getAllSystemUserSectionsBySystemUserId(systemUserId);
     }
 

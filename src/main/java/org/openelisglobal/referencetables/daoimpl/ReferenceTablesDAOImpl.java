@@ -215,8 +215,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTables() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getAllReferenceTables() throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -236,8 +236,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -289,7 +289,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<ReferenceTables> list = new ArrayList<>();
             String sql;
 
             // not case sensitive hemolysis and Hemolysis are considered
@@ -336,8 +336,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     // bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -372,10 +372,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     public ReferenceTables getReferenceTableByName(String tableName) {
         try {
             String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("tableName", tableName.toLowerCase().trim());
 
-            ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
+            ReferenceTables table = query.setMaxResults(1).uniqueResult();
 
             return table;
 

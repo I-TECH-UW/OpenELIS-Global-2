@@ -36,7 +36,7 @@ public interface NoteService extends BaseObjectService<Note, String> {
 
     List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId);
 
-    List getAllNotesByRefIdRefTable(Note note);
+    List<Note> getAllNotesByRefIdRefTable(Note note);
 
     List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id);
 

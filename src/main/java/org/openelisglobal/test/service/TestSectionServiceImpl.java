@@ -118,7 +118,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) {
+    public List<TestSection> getTestSections(String filter) {
         return getBaseObjectDAO().getTestSections(filter);
     }
 
@@ -136,7 +136,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) {
+    public List<TestSection> getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
 
@@ -154,12 +154,13 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSectionsBySysUserId(String filter, int sysUserId) {
+    public List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId) {
         List<String> sectionIdList = new ArrayList<>();
 
-        List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+        List<SystemUserSection> userTestSectionList = systemUserSectionService
+                .getAllSystemUserSectionsBySystemUserId(sysUserId);
         for (int i = 0; i < userTestSectionList.size(); i++) {
-            SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+            SystemUserSection sus = userTestSectionList.get(i);
             sectionIdList.add(sus.getTestSection().getId());
         }
         return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId, sectionIdList);
@@ -167,11 +168,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSectionsBySysUserId(int sysUserId) {
-        List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+    public List<TestSection> getAllTestSectionsBySysUserId(int sysUserId) {
+        List<SystemUserSection> userTestSectionList = systemUserSectionService
+                .getAllSystemUserSectionsBySystemUserId(sysUserId);
         List<String> sectionIds = new ArrayList<>();
         for (int i = 0; i < userTestSectionList.size(); i++) {
-            SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+            SystemUserSection sus = userTestSectionList.get(i);
             sectionIds.add(sus.getTestSection().getId());
         }
         return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIds);

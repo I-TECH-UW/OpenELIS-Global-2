@@ -28,15 +28,11 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
 
 //	public void deleteData(List samples) throws LIMSRuntimeException;
 
-    List getPageOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    List<Sample> getPageOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
     void getData(Sample sample) throws LIMSRuntimeException;
 
 //	public void updateData(Sample sample) throws LIMSRuntimeException;
-
-
-
-
 
     void getSampleByAccessionNumber(Sample sample) throws LIMSRuntimeException;
 
@@ -44,7 +40,7 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
 
 //	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException;
 
-    List getSamplesByStatusAndDomain(List statuses, String domain) throws LIMSRuntimeException;
+    List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain) throws LIMSRuntimeException;
 
     List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId,
             boolean filterByDomain) throws LIMSRuntimeException;

@@ -39,9 +39,9 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
-    public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
+    public List<ResultInventory> getAllResultInventorys() throws LIMSRuntimeException {
         List<ResultInventory> resultInventories;
         try {
             String sql = "from ResultInventory";
@@ -164,7 +164,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
         List<ResultInventory> resultInventories = null;

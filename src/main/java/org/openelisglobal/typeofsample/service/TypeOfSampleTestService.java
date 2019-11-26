@@ -10,17 +10,13 @@ public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleT
 
     List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId);
 
-    List getPageOfTypeOfSampleTests(int startingRecNo);
+    List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo);
 
-
-
-    List getAllTypeOfSampleTests();
+    List<TypeOfSampleTest> getAllTypeOfSampleTests();
 
     Integer getTotalTypeOfSampleTestCount();
 
     TypeOfSampleTest getTypeOfSampleTestForTest(String testId);
-
-
 
     List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId);
 }

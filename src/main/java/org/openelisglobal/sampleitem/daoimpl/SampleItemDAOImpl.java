@@ -171,7 +171,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException {
         List<SampleItem> list;
@@ -190,7 +190,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException {
         List<SampleItem> list;
@@ -240,7 +240,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setInteger("param", Integer.parseInt(sampleItem.getSample().getId()));
-            @SuppressWarnings("unchecked")
+            
             List<SampleItem> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
@@ -272,7 +272,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException {
 
@@ -298,7 +298,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
      *      org.openelisglobal.typeofsample.valueholder.TypeOfSample)
      */
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
         try {
@@ -331,7 +331,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
             query.setParameterList("statusIds", includedStatusList);
-            @SuppressWarnings("unchecked")
+            
             List<SampleItem> list = query.list();
 
             return list;

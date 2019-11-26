@@ -155,8 +155,8 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllProviders() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Provider> getAllProviders() throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
         try {
             String sql = "from Provider";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -174,8 +174,8 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -214,13 +214,13 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
         List<Provider> list = null;
         try {
             String sql = "from Provider p where p.person.id = :personId";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("personId", Integer.parseInt(person.getId()));
 
             list = query.list();

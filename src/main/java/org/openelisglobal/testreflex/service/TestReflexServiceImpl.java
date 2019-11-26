@@ -38,13 +38,13 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestReflexs(int startingRecNo) {
+    public List<TestReflex> getPageOfTestReflexs(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestReflexs(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestReflexesByTestResult(TestResult testResult) {
+    public List<TestReflex> getTestReflexesByTestResult(TestResult testResult) {
         return getBaseObjectDAO().getTestReflexesByTestResult(testResult);
     }
 
@@ -62,7 +62,7 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestReflexs() {
+    public List<TestReflex> getAllTestReflexs() {
         return getBaseObjectDAO().getAllTestReflexs();
     }
 
@@ -79,7 +79,7 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte) {
+    public List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte) {
         return getBaseObjectDAO().getTestReflexesByTestResultAndTestAnalyte(testResult, testAnalyte);
     }
 

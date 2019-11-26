@@ -33,7 +33,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public List<InventoryLocation> getAllInventoryLocations() throws LIMSRuntimeException {
 //		List<InventoryLocation> inventoryItems;
 //		try {

@@ -58,7 +58,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException {
 //		List<Analyzer> analyzer;
 //		try {

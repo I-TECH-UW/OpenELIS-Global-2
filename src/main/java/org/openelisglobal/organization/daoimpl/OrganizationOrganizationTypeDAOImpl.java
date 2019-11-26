@@ -70,7 +70,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
@@ -88,7 +88,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
         return orgIdList;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {

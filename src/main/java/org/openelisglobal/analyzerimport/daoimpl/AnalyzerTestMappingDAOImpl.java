@@ -71,7 +71,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException {
 //		List<AnalyzerTestMapping> list = null;
 //		try {

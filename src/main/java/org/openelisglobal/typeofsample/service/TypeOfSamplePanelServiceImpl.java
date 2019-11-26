@@ -33,13 +33,13 @@ public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSa
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamplePanels() {
+    public List<TypeOfSamplePanel> getAllTypeOfSamplePanels() {
         return getBaseObjectDAO().getAllTypeOfSamplePanels();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamplePanel(int startingRecNo) {
+    public List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTypeOfSamplePanel(startingRecNo);
     }
 

@@ -185,8 +185,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUsers() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException {
+        List<SystemUser> list ;
         try {
             String sql = "from SystemUser";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -204,8 +204,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUser> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -255,7 +255,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<SystemUser> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -289,7 +289,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
         List<SystemUser> list;

@@ -144,8 +144,8 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResultLimits() throws LIMSRuntimeException {
-        List list;
+    public List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException {
+        List<ResultLimit> list;
         try {
             String sql = "from ResultLimit";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -162,8 +162,8 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
+        List<ResultLimit> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -199,7 +199,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 

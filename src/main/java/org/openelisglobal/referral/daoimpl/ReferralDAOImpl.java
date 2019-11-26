@@ -71,7 +71,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
 
@@ -93,7 +93,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
         String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
@@ -144,7 +144,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
         if (!GenericValidator.isBlankOrNull(id)) {
@@ -170,7 +170,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
      * @see org.openelisglobal.referral.dao.ReferralDAO#getAllReferralsByOrganization(java.lang.String,
      *      java.sql.Date, java.sql.Date)
      */
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {

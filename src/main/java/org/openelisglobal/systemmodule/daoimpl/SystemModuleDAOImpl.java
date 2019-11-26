@@ -162,8 +162,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemModules() throws LIMSRuntimeException {
-        List list;
+    public List<SystemModule> getAllSystemModules() throws LIMSRuntimeException {
+        List<SystemModule> list;
         try {
             String sql = "from SystemModule";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -180,8 +180,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemModule> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -243,7 +243,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
     public boolean duplicateSystemModuleExists(SystemModule systemModule) throws LIMSRuntimeException {
         try {
 
-            List list;
+            List<SystemModule> list;
 
             String sql = "from SystemModule s where trim(s.systemModuleName) = :moduleName and s.id != :moduleId";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);

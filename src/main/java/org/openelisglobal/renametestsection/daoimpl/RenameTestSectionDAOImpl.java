@@ -171,8 +171,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSections() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<RenameTestSection> getAllTestSections() throws LIMSRuntimeException {
+        List<RenameTestSection> list = new Vector<>();
         try {
             String sql = "from TestSection";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -192,8 +192,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<RenameTestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
+        List<RenameTestSection> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -239,12 +239,12 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", testSection.getTestSectionName());
 
-            List list = query.list();
+            List<RenameTestSection> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             RenameTestSection t = null;
             if (list.size() > 0) {
-                t = (RenameTestSection) list.get(0);
+                t = list.get(0);
             }
 
             return t;
@@ -259,8 +259,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<RenameTestSection> getTestSections(String filter) throws LIMSRuntimeException {
+        List<RenameTestSection> list = new Vector<>();
         try {
             String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -303,7 +303,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
     public boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<RenameTestSection> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates

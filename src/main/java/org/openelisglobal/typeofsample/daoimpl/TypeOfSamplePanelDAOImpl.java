@@ -102,9 +102,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list ;
         try {
             String sql = "from TypeOfSamplePanel";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -124,9 +124,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
@@ -168,7 +168,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
         List<TypeOfSamplePanel> list;
@@ -193,7 +193,6 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
         return list;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {

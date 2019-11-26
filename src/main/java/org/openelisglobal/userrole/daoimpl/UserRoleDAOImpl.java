@@ -209,7 +209,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+
     public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
         List<String> userRoles;
 

@@ -30,7 +30,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> imp
         super(DocumentTrack.class);
     }
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId)
 //			throws LIMSRuntimeException {

@@ -37,7 +37,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
         super(PersonAddress.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
         String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";

@@ -11,25 +11,21 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 public interface TestReflexService extends BaseObjectService<TestReflex, String> {
     void getData(TestReflex testReflex);
 
-    List getPageOfTestReflexs(int startingRecNo);
+    List<TestReflex> getPageOfTestReflexs(int startingRecNo);
 
-    List getTestReflexesByTestResult(TestResult testResult);
-
-
+    List<TestReflex> getTestReflexesByTestResult(TestResult testResult);
 
     List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
 
-
-
     Integer getTotalTestReflexCount();
 
-    List getAllTestReflexs();
+    List<TestReflex> getAllTestReflexs();
 
     boolean isReflexedTest(Analysis analysis);
 
     List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag);
 
-    List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
+    List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
 
     List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId);
 }

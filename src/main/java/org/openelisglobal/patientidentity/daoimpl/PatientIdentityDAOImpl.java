@@ -22,7 +22,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 
@@ -148,7 +148,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
             throws LIMSRuntimeException {

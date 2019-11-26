@@ -8,15 +8,11 @@ import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 public interface SystemUserSectionService extends BaseObjectService<SystemUserSection, String> {
     void getData(SystemUserSection systemUserSection);
 
-    List getAllSystemUserSections();
+    List<SystemUserSection> getAllSystemUserSections();
 
-    List getPageOfSystemUserSections(int startingRecNo);
-
-
+    List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo);
 
     Integer getTotalSystemUserSectionCount();
 
-
-
-    List getAllSystemUserSectionsBySystemUserId(int systemUserId);
+    List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId);
 }

@@ -40,13 +40,13 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTablesForHl7Encoding() {
+    public List<ReferenceTables> getAllReferenceTablesForHl7Encoding() {
         return getBaseObjectDAO().getAllReferenceTablesForHl7Encoding();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTables() {
+    public List<ReferenceTables> getAllReferenceTables() {
         return getBaseObjectDAO().getAllReferenceTables();
     }
 
@@ -64,7 +64,7 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfReferenceTables(int startingRecNo) {
+    public List<ReferenceTables> getPageOfReferenceTables(int startingRecNo) {
         return getBaseObjectDAO().getPageOfReferenceTables(startingRecNo);
     }
 

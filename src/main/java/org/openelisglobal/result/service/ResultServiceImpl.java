@@ -571,7 +571,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResults() {
+    public List<Result> getAllResults() {
         return getBaseObjectDAO().getAllResults();
     }
 
@@ -589,7 +589,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResults(int startingRecNo) {
+    public List<Result> getPageOfResults(int startingRecNo) {
         return getBaseObjectDAO().getPageOfResults(startingRecNo);
     }
 

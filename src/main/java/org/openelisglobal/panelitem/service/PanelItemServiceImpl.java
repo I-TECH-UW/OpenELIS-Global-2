@@ -57,7 +57,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPanelItems(int startingRecNo) {
+    public List<PanelItem> getPageOfPanelItems(int startingRecNo) {
         return getBaseObjectDAO().getPageOfPanelItems(startingRecNo);
     }
 
@@ -75,13 +75,13 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPanelItems() {
+    public List<PanelItem> getAllPanelItems() {
         return getBaseObjectDAO().getAllPanelItems();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPanelItems(String filter) {
+    public List<PanelItem> getPanelItems(String filter) {
         return getBaseObjectDAO().getPanelItems(filter);
     }
 

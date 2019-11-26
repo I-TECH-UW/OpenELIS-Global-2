@@ -172,8 +172,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModules() throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getAllPermissionModules() throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             String sql = "from RoleModule";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -190,8 +190,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             String sql = "from RoleModule s where s.role.id = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -209,8 +209,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -275,7 +275,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
         try {
 
-            List list;
+            List<RoleModule> list;
 
             String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);

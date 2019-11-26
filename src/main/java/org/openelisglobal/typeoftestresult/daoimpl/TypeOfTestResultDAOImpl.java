@@ -289,7 +289,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
     public boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
         try {
 
-            List list;
+            List<TypeOfTestResult> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -329,10 +329,10 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", typeOfTestResult.getTestResultType().trim().toUpperCase());
 
-            List list = query.list();
+            List<TypeOfTestResult> list = query.list();
 
             if (list != null && list.size() > 0) {
-                totr = (TypeOfTestResult) list.get(0);
+                totr = list.get(0);
             }
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old

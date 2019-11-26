@@ -159,8 +159,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPanelItems() throws LIMSRuntimeException {
-        List list;
+    public List<PanelItem> getAllPanelItems() throws LIMSRuntimeException {
+        List<PanelItem> list;
         try {
             String sql = "from PanelItem P order by P.panel.id ";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -177,8 +177,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<PanelItem> getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException {
+        List<PanelItem> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -215,8 +215,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
     @Override
     @Transactional(readOnly = true)
-    public List getPanelItems(String filter) throws LIMSRuntimeException {
-        List list;
+    public List<PanelItem> getPanelItems(String filter) throws LIMSRuntimeException {
+        List<PanelItem> list;
         try {
             String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -235,8 +235,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
     @Override
     @Transactional(readOnly = true)
-    public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException {
-        List list;
+    public List<PanelItem> getPanelItemsForPanel(String panelId) throws LIMSRuntimeException {
+        List<PanelItem> list;
         try {
             String sql = "from PanelItem p where p.panel.id = :panelId";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -263,7 +263,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
     @Override
     public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
         try {
-            List list;
+            List<PanelItem> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -296,7 +296,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
     @Transactional(readOnly = true)
     public boolean getDuplicateSortOrderForPanel(PanelItem panelItem) throws LIMSRuntimeException {
         try {
-            List list;
+            List<PanelItem> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -338,7 +338,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 //
 //			if (onlyTestsFullySetup && list != null && list.size() > 0) {
 //				Iterator panelItemIterator = list.iterator();
-//				list = new Vector();
+//				list ;
 //				while (panelItemIterator.hasNext()) {
 //					PanelItem panelItem = (PanelItem) panelItemIterator.next();
 //					String testName = panelItem.getTestName();
@@ -359,7 +359,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 //		}
 //	}
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<PanelItem> getPanelItemByTestId(String testId) throws LIMSRuntimeException {
@@ -379,7 +378,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)

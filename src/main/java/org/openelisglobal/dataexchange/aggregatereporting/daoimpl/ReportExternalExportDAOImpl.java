@@ -120,7 +120,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId)

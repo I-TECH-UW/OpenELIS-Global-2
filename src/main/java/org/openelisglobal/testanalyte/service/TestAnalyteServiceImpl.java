@@ -32,13 +32,13 @@ public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestAnalytes() {
+    public List<TestAnalyte> getAllTestAnalytes() {
         return getBaseObjectDAO().getAllTestAnalytes();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestAnalytes(int startingRecNo) {
+    public List<TestAnalyte> getPageOfTestAnalytes(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestAnalytes(startingRecNo);
     }
 
@@ -50,13 +50,13 @@ public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestAnalytesPerTest(Test test) {
+    public List<TestAnalyte> getAllTestAnalytesPerTest(Test test) {
         return getBaseObjectDAO().getAllTestAnalytesPerTest(test);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestAnalytes(String filter) {
+    public List<TestAnalyte> getTestAnalytes(String filter) {
         return getBaseObjectDAO().getTestAnalytes(filter);
     }
 }

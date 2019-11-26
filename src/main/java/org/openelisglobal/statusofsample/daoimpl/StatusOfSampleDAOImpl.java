@@ -53,14 +53,14 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", statusofsample.getStatusType());
             query.setParameter("param2", statusofsample.getCode());
-            List list = query.list();
+            List<StatusOfSample> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             StatusOfSample statusOfSamp = null;
 
             if (list.size() > 0) {
-                statusOfSamp = (StatusOfSample) list.get(0);
+                statusOfSamp = list.get(0);
             }
 
             return statusOfSamp;
@@ -206,9 +206,9 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
      */
     @Override
     @Transactional(readOnly = true)
-    public List getAllStatusOfSamples() throws LIMSRuntimeException {
+    public List<StatusOfSample> getAllStatusOfSamples() throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<StatusOfSample> list ;
         try {
             String sql = "from StatusOfSample sos order by sos.statusOfSampleName ";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -234,9 +234,9 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
      */
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException {
+    public List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<StatusOfSample> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -309,7 +309,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
     public boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException {
         try {
 
-            List list = new Vector();
+            List<StatusOfSample> list ;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates

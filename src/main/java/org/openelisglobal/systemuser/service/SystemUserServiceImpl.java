@@ -43,13 +43,13 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUsers(int startingRecNo) {
+    public List<SystemUser> getPageOfSystemUsers(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSystemUsers(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUsers() {
+    public List<SystemUser> getAllSystemUsers() {
         return getBaseObjectDAO().getAllSystemUsers();
     }
 

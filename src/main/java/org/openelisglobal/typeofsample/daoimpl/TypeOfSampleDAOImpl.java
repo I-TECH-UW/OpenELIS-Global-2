@@ -177,8 +177,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamples() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TypeOfSample> getAllTypeOfSamples() throws LIMSRuntimeException {
+        List<TypeOfSample> list ;
         try {
             String sql = "from TypeOfSample order by description";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -196,7 +196,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException {
         List<TypeOfSample> list = new ArrayList<>();
@@ -216,8 +216,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException {
+        List<TypeOfSample> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -259,8 +259,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     // bugzilla 1387 added domain parm
     @Override
     @Transactional(readOnly = true)
-    public List getTypes(String filter, String domain) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TypeOfSample> getTypes(String filter, String domain) throws LIMSRuntimeException {
+        List<TypeOfSample> list ;
         try {
 
             String sql = "";
@@ -292,8 +292,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TypeOfSample> getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException {
+        List<TypeOfSample> list ;
         String key = getKeyForDomain(domain);
 
         try {
@@ -314,7 +314,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         return list;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain domain) throws LIMSRuntimeException {
@@ -422,12 +421,12 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                 query.setParameter("param2", tos.getDomain());
             }
 
-            List list = query.list();
+            List<TypeOfSample> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             TypeOfSample typeOfSample = null;
             if (list.size() > 0) {
-                typeOfSample = (TypeOfSample) list.get(0);
+                typeOfSample = list.get(0);
             }
 
             return typeOfSample;
@@ -444,7 +443,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     public boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<TypeOfSample> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -487,7 +486,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Transactional(readOnly = true)
     public String getNameForTypeOfSampleId(String id) {
         if (ID_NAME_MAP == null) {
-            List allTypes = getAllTypeOfSamples();
+            List<TypeOfSample> allTypes = getAllTypeOfSamples();
 
             if (allTypes != null) {
                 ID_NAME_MAP = new HashMap<>();

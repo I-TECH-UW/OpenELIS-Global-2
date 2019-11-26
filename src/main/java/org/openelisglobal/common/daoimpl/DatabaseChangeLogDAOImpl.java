@@ -44,7 +44,7 @@ public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
     EntityManager entityManager;
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
         List<DatabaseChangeLog> results;

@@ -11,7 +11,7 @@ public interface ResultInventoryService extends BaseObjectService<ResultInventor
 
     ResultInventory getResultInventoryById(ResultInventory resultInventory);
 
-    List getAllResultInventoryss();
+    List<ResultInventory> getAllResultInventoryss();
 
     List<ResultInventory> getResultInventorysByResult(Result result);
 }

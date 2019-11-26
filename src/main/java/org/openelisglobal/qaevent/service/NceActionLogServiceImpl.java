@@ -1,5 +1,7 @@
 package org.openelisglobal.qaevent.service;
 
+import java.util.List;
+
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.qaevent.dao.NceActionLogDAO;
@@ -8,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class NceActionLogServiceImpl extends BaseObjectServiceImpl<NceActionLog, String> implements NceActionLogService {
+public class NceActionLogServiceImpl extends BaseObjectServiceImpl<NceActionLog, String>
+        implements NceActionLogService {
 
     @Autowired
     protected NceActionLogDAO baseObjectDAO;
@@ -22,7 +23,7 @@ public class NceActionLogServiceImpl extends BaseObjectServiceImpl<NceActionLog,
 
     @Override
     @Transactional
-    public List getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
+    public List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
         return null;
     }
 

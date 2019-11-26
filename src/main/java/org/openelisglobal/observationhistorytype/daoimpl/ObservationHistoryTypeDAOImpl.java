@@ -22,7 +22,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
         List<ObservationHistoryType> historyTypeList;
@@ -47,7 +47,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
      * Read all entities from the database.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
         List<ObservationHistoryType> entities;

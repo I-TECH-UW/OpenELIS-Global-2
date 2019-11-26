@@ -120,7 +120,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException {
         List<PatientPatientType> patientTypes;

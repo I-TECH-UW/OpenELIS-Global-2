@@ -9,15 +9,11 @@ import org.openelisglobal.person.valueholder.Person;
 public interface PersonService extends BaseObjectService<Person, String> {
     void getData(Person person);
 
-
-
-
-
     Person getPersonByLastName(String lastName);
 
-    List getPageOfPersons(int startingRecNo);
+    List<Person> getPageOfPersons(int startingRecNo);
 
-    List getAllPersons();
+    List<Person> getAllPersons();
 
     Person getPersonById(String personId);
 

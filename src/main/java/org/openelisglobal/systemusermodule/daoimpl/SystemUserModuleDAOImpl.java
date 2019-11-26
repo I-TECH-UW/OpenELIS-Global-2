@@ -179,8 +179,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModules() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getAllPermissionModules() throws LIMSRuntimeException {
+        List<SystemUserModule> list ;
         try {
             String sql = "from SystemUserModule";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -198,8 +198,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
+        List<SystemUserModule> list ;
         try {
             String sql = "from SystemUserModule s where s.systemUser.id = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -217,8 +217,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUserModule> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -265,7 +265,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
     public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<SystemUserModule> list = new ArrayList();
 
             String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -318,7 +318,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
-        List userModuleList = getAllPermissionModulesByAgentId(userId);
+        List<SystemUserModule> userModuleList = getAllPermissionModulesByAgentId(userId);
         return userModuleList.size() > 0;
     }
 

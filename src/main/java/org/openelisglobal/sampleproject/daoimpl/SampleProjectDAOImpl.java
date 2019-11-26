@@ -183,12 +183,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
     // Diane - bugzilla 1920
     @Override
     @Transactional(readOnly = true)
-    public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
-        List sampleProjects = new ArrayList();
+    public List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
+        List<SampleProject> sampleProjects = new ArrayList<>();
 
         try {
             String sql = "from SampleProject sp where sp.project = :param";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", projId);
 
             sampleProjects = query.list();
@@ -205,14 +205,14 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
         List<SampleProject> sampleProjects = null;
 
         try {
             String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
 
             sampleProjects = query.list();
@@ -225,7 +225,6 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
         return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
@@ -235,7 +234,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             String sql = "FROM SampleProject as sp "
                     + " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
                     + " AND   so.organization.id = :organizationId ) ";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setString("projectName", projectName);
             query.setDate("dateLow", lowReceivedDate);

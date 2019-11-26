@@ -198,7 +198,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 //	@Override
 //	public List getAllDictionarys() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Dictionary";
 //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -219,7 +219,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 //	@Override
 //	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //
 //		try {
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -245,7 +245,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     // bugzilla 1413
 //	@Override
 //	public List getPagesOfSearchedDictionarys(int startingRecNo, String searchString) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		String wildCard = "*";
 //		String newSearchStr;
 //		String sql;
@@ -353,7 +353,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", categoryFilter);
             }
 
-            @SuppressWarnings("unchecked")
+            
             List<Dictionary> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
@@ -408,7 +408,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param1", fieldValue);
 
-            @SuppressWarnings("unchecked")
+            
             List<Dictionary> list = query.list();
             return list;
 
@@ -432,7 +432,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		// bugzilla 1908
 //		int rrn = 0;
 //		try {
@@ -465,7 +465,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		int rrn = 0;
 //		try {
 //			// bugzilla 1908 cannot use named query for postgres because of
@@ -541,7 +541,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException {
 //		try {
 //			String sql = null;
@@ -686,7 +686,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException {
 //		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
 //

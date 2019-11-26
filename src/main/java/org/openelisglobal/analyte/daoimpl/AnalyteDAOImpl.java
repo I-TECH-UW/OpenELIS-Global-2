@@ -183,7 +183,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
 //	@Override
 //	public List getAllAnalytes() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Analyte";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -202,7 +202,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
 //	@Override
 //	public List getPageOfAnalytes(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -228,7 +228,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
     // bugzilla 2370
 //	@Override
 //	public List getPagesOfSearchedAnalytes(int startingRecNo, String searchString) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		String wildCard = "*";
 //		String newSearchStr;
 //		String sql;
@@ -280,7 +280,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
     // this is for autocomplete
 //	@Override
 //	public List getAnalytes(String filter) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Analyte a where upper(a.analyteName) like upper(:param) and a.isActive='Y' order by upper(a.analyteName)";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -331,13 +331,13 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
                 query.setString("param", analyte.getAnalyteName());
             }
 
-            List list = query.list();
+            List<Analyte> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             Analyte ana = null;
             if (list.size() > 0) {
-                ana = (Analyte) list.get(0);
+                ana = list.get(0);
             }
 
             return ana;
@@ -359,7 +359,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.analyteName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -381,7 +381,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t order by t.analyteName desc where name <= " + enquote(id);
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -403,7 +403,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
     public boolean duplicateAnalyteExists(Analyte analyte) {
         try {
 
-            List list = new ArrayList();
+            List<Analyte> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates

@@ -37,7 +37,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
         List<OrganizationType> list = null;
@@ -65,7 +65,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 
             query.setString("name", name);
 
-            @SuppressWarnings("unchecked")
+            
             List<OrganizationType> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old

@@ -38,7 +38,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         super(ReportExternalImport.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
@@ -105,7 +105,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<String> getUniqueSites() throws LIMSRuntimeException {
@@ -122,7 +122,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
@@ -147,7 +147,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)

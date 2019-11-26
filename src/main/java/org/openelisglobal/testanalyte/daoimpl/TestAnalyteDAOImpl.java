@@ -163,8 +163,8 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestAnalytes() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestAnalyte> getAllTestAnalytes() throws LIMSRuntimeException {
+        List<TestAnalyte> list ;
         try {
             String sql = "from TestAnalyte";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -182,8 +182,8 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestAnalyte> getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException {
+        List<TestAnalyte> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -225,7 +225,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
     // TODO: need to convert to hibernate ( not in use??? )
     @Override
     @Transactional(readOnly = true)
-    public List getTestAnalytes(String filter) throws LIMSRuntimeException {
+    public List<TestAnalyte> getTestAnalytes(String filter) throws LIMSRuntimeException {
 
         return null;
         /*
@@ -272,8 +272,8 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException {
-        List list;
+    public List<TestAnalyte> getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException {
+        List<TestAnalyte> list;
 
         if (test == null || StringUtil.isNullorNill(test.getId())) {
             return new ArrayList();

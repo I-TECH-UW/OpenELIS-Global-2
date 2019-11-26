@@ -99,7 +99,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         // closeSession(); // CSL remove old
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {

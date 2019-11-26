@@ -146,7 +146,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
         List<ResultSignature> resultSignatures = null;
@@ -197,7 +197,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {

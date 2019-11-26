@@ -100,7 +100,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException {
 
@@ -125,8 +125,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException {
+        List<TypeOfSampleTest> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
@@ -162,7 +162,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException {
         String sql = "from TypeOfSampleTest tt where tt.typeOfSampleId = :sampleId";
@@ -185,7 +185,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException {
 
@@ -205,7 +205,6 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException {

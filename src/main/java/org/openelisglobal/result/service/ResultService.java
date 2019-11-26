@@ -15,10 +15,6 @@ public interface ResultService extends BaseObjectService<Result, String> {
 
     List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate);
 
-
-
-
-
     void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta);
 
     List<Result> getResultsByAnalysis(Analysis analysis);
@@ -43,13 +39,13 @@ public interface ResultService extends BaseObjectService<Result, String> {
 
     List<Result> getChildResults(String resultId);
 
-    List getAllResults();
+    List<Result> getAllResults();
 
     Result getResultById(Result result);
 
     Result getResultById(String resultId);
 
-    List getPageOfResults(int startingRecNo);
+    List<Result> getPageOfResults(int startingRecNo);
 
     String getSignature(Result result);
 

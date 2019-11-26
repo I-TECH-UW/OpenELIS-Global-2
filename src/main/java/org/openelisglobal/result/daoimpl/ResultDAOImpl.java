@@ -182,7 +182,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Transactional(readOnly = true)
     public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta)
             throws LIMSRuntimeException {
-        List results;
+        List<Result> results;
         try {
             Analyte analyte = ta.getAnalyte();
 
@@ -197,7 +197,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
             Result thisResult;
             if (results != null && results.size() > 0) {
-                thisResult = (Result) results.get(0);
+                thisResult = results.get(0);
             } else {
                 thisResult = null;
             }
@@ -215,7 +215,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException {
         try {
@@ -246,7 +246,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Override
     @Transactional(readOnly = true)
     public void getResultByTestResult(Result result, TestResult testResult) throws LIMSRuntimeException {
-        List results;
+        List<Result> results;
         try {
             String sql = "from Result r where r.testResult = :testResultId";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -258,7 +258,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
             Result thisResult;
             if (results != null && results.size() > 0) {
-                thisResult = (Result) results.get(0);
+                thisResult = results.get(0);
             } else {
                 thisResult = null;
             }
@@ -277,8 +277,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResults() throws LIMSRuntimeException {
-        List results;
+    public List<Result> getAllResults() throws LIMSRuntimeException {
+        List<Result> results;
         try {
             String sql = "from Result";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -296,8 +296,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResults(int startingRecNo) throws LIMSRuntimeException {
-        List results;
+    public List<Result> getPageOfResults(int startingRecNo) throws LIMSRuntimeException {
+        List<Result> results;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -357,7 +357,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getReportableResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException {
         try {
@@ -379,7 +379,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList)
             throws LIMSRuntimeException {
@@ -407,7 +407,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException {
 
@@ -435,7 +435,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException {
         if (analysisIdList.isEmpty()) {
@@ -461,7 +461,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestAndSample(String sampleId, String testId) {
         String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id = :testId";
@@ -483,7 +483,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForSample(Sample sample) throws LIMSRuntimeException {
         String sql = "From Result r where r.analysis.sampleItem.sample.id = :sampleId";
@@ -502,7 +502,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getChildResults(String resultId) throws LIMSRuntimeException {
         String sql = "From Result r where r.parentResult.id = :parentId";
@@ -521,7 +521,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
             throws LIMSRuntimeException {
@@ -545,7 +545,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
             throws LIMSRuntimeException {
@@ -569,7 +569,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
             throws LIMSRuntimeException {

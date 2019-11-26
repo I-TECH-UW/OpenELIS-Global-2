@@ -25,9 +25,9 @@ public class ReportDAOImpl extends BaseDAOImpl<Report, String> implements Report
             String sql = "SELECT max(r.sortOrder) from Report r where r.category = :category";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("category", category);
-            List list = query.list();
+            List<Integer> list = query.list();
             if (list.size() > 0) {
-                return (Integer) list.get(0);
+                return list.get(0);
             }
             return -1;
 
