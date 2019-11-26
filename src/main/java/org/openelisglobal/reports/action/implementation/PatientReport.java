@@ -88,7 +88,9 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 
 public abstract class PatientReport extends Report {
 
+    // not threadSafe, use this classes formatTwoDecimals method when using this
     private static final DecimalFormat twoDecimalFormat = new DecimalFormat("#.##");
+
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
@@ -506,7 +508,7 @@ public abstract class PatientReport extends Report {
         String resultValue = data.getResult();
         if (TestIdentityService.getInstance().isTestNumericViralLoad(analysisService.getTest(currentAnalysis))) {
             try {
-                resultValue += " (" + twoDecimalFormat.format(Math.log10(Double.parseDouble(resultValue))) + ")log ";
+                resultValue += " (" + formatTwoDecimals(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
                 LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
                 // no-op
@@ -514,6 +516,11 @@ public abstract class PatientReport extends Report {
         }
 
         return resultValue + (augmentResultWithFlag() ? getResultFlag(result, null) : "");
+    }
+
+    // thread safe implementation
+    protected synchronized String formatTwoDecimals(Double value) {
+        return twoDecimalFormat.format(value);
     }
 
     protected String getResultFlag(Result result, String imbed) {

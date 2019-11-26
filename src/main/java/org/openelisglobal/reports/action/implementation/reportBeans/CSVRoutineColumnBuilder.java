@@ -24,6 +24,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVRo
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -232,8 +233,24 @@ abstract public class CSVRoutineColumnBuilder {
         });
     }
 
-    protected String formatDateForDatabaseSql(Date date) {
+    protected synchronized String formatDateForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
         return postgresDateFormat.format(date);
+    }
+
+    private synchronized String formatDateTimeForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.format(date);
+    }
+
+    protected synchronized Date parseDateForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.parse(date);
+    }
+
+    private synchronized Date parseDateTimeForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.parse(date);
     }
 
     /**
@@ -242,7 +259,7 @@ abstract public class CSVRoutineColumnBuilder {
      */
     protected String datetimeToLocalDate(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
+            Date parsed = parseDateTimeForDatabaseSql(value);
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             return DateUtil.convertSqlDateToStringDate(date);
         } catch (Exception e) {
@@ -252,7 +269,7 @@ abstract public class CSVRoutineColumnBuilder {
 
     protected String datetimeToLocalDateTime(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
+            Date parsed = parseDateTimeForDatabaseSql(value);
             return DateUtil.formatDateTimeAsText(parsed);
         } catch (Exception e) {
             return value;
@@ -425,7 +442,7 @@ abstract public class CSVRoutineColumnBuilder {
 
         public String translateAge(Strategy strategy, String end) throws Exception {
             Date birthday = resultSet.getDate("birth_date");
-            Date endDate = postgresDateTime.parse(end);
+            Date endDate = parseDateTimeForDatabaseSql(end);
             if ((birthday != null) && (endDate != null)) {
                 switch (strategy) {
                 case AGE_YEARS:
