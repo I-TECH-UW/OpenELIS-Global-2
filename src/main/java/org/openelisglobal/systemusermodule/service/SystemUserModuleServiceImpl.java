@@ -37,7 +37,7 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModules() {
+    public List<SystemUserModule> getAllPermissionModules() {
         return baseObjectDAO.getAllPermissionModules();
     }
 
@@ -49,13 +49,13 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPermissionModules(int startingRecNo) {
+    public List<SystemUserModule> getPageOfPermissionModules(int startingRecNo) {
         return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModulesByAgentId(int systemUserId) {
+    public List<SystemUserModule> getAllPermissionModulesByAgentId(int systemUserId) {
         return baseObjectDAO.getAllPermissionModulesByAgentId(systemUserId);
     }
 

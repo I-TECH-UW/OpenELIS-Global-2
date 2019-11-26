@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 
@@ -53,11 +54,11 @@ public class ReportSpecificationList implements Serializable {
         try {
             PropertyUtils.setProperty(form, "selectList", this);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

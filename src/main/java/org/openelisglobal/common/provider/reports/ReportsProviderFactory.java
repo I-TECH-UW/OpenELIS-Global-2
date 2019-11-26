@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.reports;
@@ -26,15 +26,17 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 /**
  * This class will abstract the ReportsProvider creation. It will read the name
  * of the class file from properties file and create the class
- * 
+ *
  * @version 1.0
  * @author diane benz
- * 
+ *
  */
 
 public class ReportsProviderFactory {
 
-    private static ReportsProviderFactory instance; // Instance of this
+    private static class SingletonHelper {
+        private static final ReportsProviderFactory INSTANCE = new ReportsProviderFactory(); // Instance of this
+    }
 
     // class
 
@@ -43,24 +45,16 @@ public class ReportsProviderFactory {
 
     /**
      * Singleton global access for ReportsProviderFactory
-     * 
+     *
      */
 
     public static ReportsProviderFactory getInstance() {
-        if (instance == null) {
-            synchronized (ReportsProviderFactory.class) {
-                if (instance == null) {
-                    instance = new ReportsProviderFactory();
-                }
-            }
-
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
      * Create an object for the full class name passed in.
-     * 
+     *
      * @param String full class name
      * @return Object Created object
      */
@@ -71,7 +65,7 @@ public class ReportsProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReportsProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(ReportsProviderFactory.class));
         }
@@ -81,7 +75,7 @@ public class ReportsProviderFactory {
     /**
      * Search for the ReportsProvider implementation class name in the
      * Reports.properties file for the given ReportsProvider name
-     * 
+     *
      * @param String ReportsProvider name e.g "MycologyWorksheetProvider"
      * @return String Full implementation class e.g
      *         "org.openelisglobal.common.reports.provider"
@@ -100,7 +94,7 @@ public class ReportsProviderFactory {
                 reportsProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e,
                         LogEvent.getLog(ReportsProviderFactory.class));
             } finally {
@@ -110,7 +104,7 @@ public class ReportsProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -119,7 +113,7 @@ public class ReportsProviderFactory {
         String mapping = reportsProviderClassMap.getProperty(reportsProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", reportsProvidername);
+            LogEvent.logError(this.getClass().getName(), "getReportsProviderClassName", reportsProvidername);
             throw new LIMSRuntimeException(
                     "getReportsProviderClassName - Unable to find mapping for " + reportsProvidername);
         }
@@ -128,10 +122,10 @@ public class ReportsProviderFactory {
 
     /**
      * Reports Provider creation method
-     * 
+     *
      * @param name
      * @return Reports Provider object
-     * 
+     *
      */
     public BaseReportsProvider getReportsProvider(String name) throws LIMSRuntimeException {
         BaseReportsProvider provider = null;

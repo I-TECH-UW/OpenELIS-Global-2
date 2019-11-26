@@ -151,7 +151,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
                 sampleItem.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("SampleItemDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleItem getData()", e);
         }
     }
@@ -171,7 +171,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException {
         List<SampleItem> list;
@@ -182,7 +182,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SampleItemDAOImpl", "getAllSampleItems()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleItem getAllSampleItems()", e);
         }
 
@@ -190,7 +190,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException {
         List<SampleItem> list;
@@ -208,7 +208,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("SampleItemDAOImpl", "getPageOfSampleItems()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleItem getPageOfSampleItems()", e);
         }
 
@@ -223,7 +223,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("SampleItemDAOImpl", "readSampleItem()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleItem readSampleItem()", e);
         }
 
@@ -240,7 +240,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setInteger("param", Integer.parseInt(sampleItem.getSample().getId()));
-            @SuppressWarnings("unchecked")
+            
             List<SampleItem> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
@@ -265,14 +265,14 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
                 PropertyUtils.copyProperties(sampleItem, si);
             }
         } catch (Exception e) {
-            LogEvent.logError("SampleItemDAOImpl", "getDataBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleItem getDataBySample()", e);
         }
 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException {
 
@@ -286,9 +286,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
             return list;
 
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleItemDAOImpl", "getSampleItemsBySampleId()", he.toString());
-            throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", e);
         }
 
     }
@@ -298,7 +298,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
      *      org.openelisglobal.typeofsample.valueholder.TypeOfSample)
      */
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
         try {
@@ -312,9 +312,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
             return list;
 
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleItemDAOImpl", "getSampleItemsBySampleIdAndType()", he.toString());
-            throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", e);
         }
     }
 
@@ -331,13 +331,13 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
             query.setParameterList("statusIds", includedStatusList);
-            @SuppressWarnings("unchecked")
+            
             List<SampleItem> list = query.list();
 
             return list;
 
-        } catch (HibernateException he) {
-            handleException(he, "getSampleItemsBySampleIdAndStatus");
+        } catch (HibernateException e) {
+            handleException(e, "getSampleItemsBySampleIdAndStatus");
         }
 
         return null;

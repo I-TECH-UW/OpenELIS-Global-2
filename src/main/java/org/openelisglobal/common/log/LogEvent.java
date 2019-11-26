@@ -29,9 +29,8 @@ public class LogEvent {
     /**
      * Write to the log file (type error)
      *
-     * @param className    the class name
-     * @param methodName   the method name
      * @param errorMessage the error message
+     * @param throwable    the error to log
      */
     public static void logError(String className, String methodName, String errorMessage) {
         getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
@@ -40,18 +39,45 @@ public class LogEvent {
     /**
      * Write to the log file (type error)
      *
-     * @param className  the class name
-     * @param methodName the method name
-     * @param throwable  -- exception which will be used to generate the stack trace
+     * @param errorMessage the error message
+     * @param throwable    the error to log
      */
-    public static void logErrorStack(String className, String methodName, Throwable throwable) {
+    public static void logError(String errorMessage, Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param throwable the error to log
+     */
+    public static void logError(Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
+    }
+
+    /**
+     * Write to the log file (type error)
+     * 
+     * @param throwable -- exception which will be used to generate the stack trace
+     */
+    public static void logErrorStack(Throwable throwable) {
         StringBuilder stackErrorMessage = new StringBuilder();
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
         for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
-            stackErrorMessage.append(throwable.getStackTrace()[i].toString());
+            stackErrorMessage.append(stackTrace[i].toString());
             stackErrorMessage.append(System.lineSeparator());
         }
-        logError(className, methodName, stackErrorMessage.toString());
-        getLog().error("Class: " + className + ", Method: " + methodName, throwable);
+        logError(stackErrorMessage.toString(), throwable);
+        getLog().error("Class: " + stackTrace[0].getClassName() + ", Method: " + stackTrace[0].getMethodName(),
+                throwable);
     }
 
     /**
@@ -63,6 +89,33 @@ public class LogEvent {
      */
     public static void logDebug(String className, String methodName, String debugMessage) {
         getLog().debug("Class: " + className + ", Method: " + methodName + ", Debug: " + debugMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param errorMessage the error message
+     * @param throwable    the error to log
+     */
+    public static void logDebug(String debugMessage, Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + debugMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param throwable the error to log
+     */
+    public static void logDebug(Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
     }
 
     /**

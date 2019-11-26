@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.service.BaseObjectService;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.test.beanItems.TestResultItem.ResultDisplayType;
 import org.openelisglobal.test.valueholder.Test;
@@ -21,15 +22,13 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Integer getTotalTestCount();
 
-
-
     List<Test> getAllActiveTests(boolean onlyTestsFullySetup);
 
-    List getTestsByTestSectionAndMethod(String filter, String filter2);
+    List<Test> getTestsByTestSectionAndMethod(String filter, String filter2);
 
     List<Test> getTestsByTestSectionId(String id);
 
-    List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId);
+    List<Test> getPageOfTestsBySysUserId(int startingRecNo, int sysUserId);
 
     Integer getTotalSearchedTestCount(String searchString);
 
@@ -37,15 +36,13 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     List<Test> getActiveTestByName(String testName);
 
+    List<Test> getTestsByTestSection(String filter);
 
+    List<Test> getPageOfSearchedTests(int startingRecNo, String searchString);
 
-    List getTestsByTestSection(String filter);
+    List<Test> getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup);
 
-    List getPageOfSearchedTests(int startingRecNo, String searchString);
-
-    List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup);
-
-    List getMethodsByTestSection(String filter);
+    List<Method> getMethodsByTestSection(String filter);
 
     List<Test> getActiveTestsByLoinc(String loincCode);
 
@@ -63,11 +60,11 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Test getTestById(String testId);
 
-    List getTestsByMethod(String filter);
+    List<Test> getTestsByMethod(String filter);
 
-    List getPageOfTests(int startingRecNo);
+    List<Test> getPageOfTests(int startingRecNo);
 
-    List getTests(String filter, boolean onlyTestsFullySetup);
+    List<Test> getTests(String filter, boolean onlyTestsFullySetup);
 
     List<Test> getAllTests(boolean onlyTestsFullySetup);
 

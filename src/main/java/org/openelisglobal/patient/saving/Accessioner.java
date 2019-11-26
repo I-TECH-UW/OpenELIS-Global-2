@@ -296,7 +296,7 @@ public abstract class Accessioner implements IAccessioner {
         this.patientSiteSubjectNo = patientSiteSubjectNo;
     }
 
-    public void setSysUserId(String sysUserId) {
+    public final void setSysUserId(String sysUserId) {
         this.sysUserId = sysUserId;
     }
 
@@ -1290,8 +1290,8 @@ public abstract class Accessioner implements IAccessioner {
      * @param e          the thrown exception of which to print the stack trace.
      */
     public void logAndAddMessage(String methodName, String messageKey, Exception e) {
-        e.printStackTrace();
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, e.toString());
+        LogEvent.logDebug(e);
+        LogEvent.logError(e.toString(), e);
         if (!messages.hasErrors()) {
             messages.reject(messageKey);
         }
@@ -1334,7 +1334,7 @@ public abstract class Accessioner implements IAccessioner {
             }
 
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         // dynaForm.set("orbservations", observations);
 

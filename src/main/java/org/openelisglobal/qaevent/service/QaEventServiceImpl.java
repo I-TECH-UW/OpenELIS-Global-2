@@ -40,13 +40,13 @@ public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getQaEvents(String filter) {
+    public List<QaEvent> getQaEvents(String filter) {
         return getBaseObjectDAO().getQaEvents(filter);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllQaEvents() {
+    public List<QaEvent> getAllQaEvents() {
         return getBaseObjectDAO().getAllQaEvents();
     }
 
@@ -58,7 +58,7 @@ public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfQaEvents(int startingRecNo) {
+    public List<QaEvent> getPageOfQaEvents(int startingRecNo) {
         return getBaseObjectDAO().getPageOfQaEvents(startingRecNo);
     }
 

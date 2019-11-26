@@ -140,13 +140,13 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
                 resultSignature.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
         List<ResultSignature> resultSignatures = null;
@@ -163,7 +163,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             return resultSignatures;
 
         } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureByResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
         }
     }
@@ -175,7 +175,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
         }
 
@@ -192,12 +192,12 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return re;
         } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {

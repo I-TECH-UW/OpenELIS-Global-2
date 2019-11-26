@@ -1,11 +1,11 @@
 package org.openelisglobal.qaevent.service;
 
+import java.util.List;
+
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 
-import java.util.List;
-
 public interface NceSpecimenService extends BaseObjectService<NceSpecimen, String> {
 
-    List getSpecimenByNceId(String nceId);
+    List<NceSpecimen> getSpecimenByNceId(String nceId);
 }

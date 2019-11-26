@@ -20,6 +20,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -70,7 +71,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
     private static String MAINTENANCE_ADMIN_ID;
-    public static final char DEFAULT_PASSWORD_FILLER = '@';
+    public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     @PostConstruct
     private void initialize() {
@@ -122,7 +123,7 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             PropertyUtils.setProperty(form, "roles", displayRoles);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -319,7 +320,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private String getProxyPassword(Login login) {
         char[] chars = new char[9];
-        Arrays.fill(chars, DEFAULT_PASSWORD_FILLER);
+        Arrays.fill(chars, DEFAULT_OBFUSCATED_CHARACTER);
         return new String(chars);
         // return StringUtil.replaceAllChars(login.getPassword(),
         // DEFAULT_PASSWORD_FILLER);
@@ -430,10 +431,10 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
                     loggedOnUserId);
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
                 errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
             } else {
                 errors.reject("errors.UpdateException", "errors.UpdateException");
@@ -456,7 +457,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String password = form.getUserPassword();
 
-        return !StringUtil.containsOnly(password, DEFAULT_PASSWORD_FILLER);
+        return !StringUtil.containsOnly(password, DEFAULT_OBFUSCATED_CHARACTER);
     }
 
     private void validateUser(UnifiedSystemUserForm form, Errors errors, boolean loginUserIsNew,
@@ -514,7 +515,7 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             int timeInMin = Integer.parseInt(timeout);
             return timeInMin > 0 && timeInMin < 601;
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }

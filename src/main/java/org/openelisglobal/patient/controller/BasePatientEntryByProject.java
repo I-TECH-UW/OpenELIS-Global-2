@@ -10,7 +10,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.organization.util.OrganizationTypeList;
@@ -32,13 +31,13 @@ public abstract class BasePatientEntryByProject extends BaseController {
 
     protected RequestType getRequestType(HttpServletRequest httpRequest) {
         String requestTypeStr = httpRequest.getParameter("type");
-        if (!GenericValidator.isBlankOrNull(requestTypeStr)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(requestTypeStr)) {
             try {
                 return RequestType.valueOf(requestTypeStr.toUpperCase());
             } catch (IllegalArgumentException e) {
                 LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
                         "request type '" + requestTypeStr + "' invalid");
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return RequestType.UNKNOWN;
             }
         }
@@ -97,7 +96,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter patient into system");
+        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter patient into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         saveErrors(errors);

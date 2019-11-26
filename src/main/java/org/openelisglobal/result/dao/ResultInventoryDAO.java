@@ -28,13 +28,13 @@ public interface ResultInventoryDAO extends BaseDAO<ResultInventory, String> {
 
 //	public void deleteData(List results) throws LIMSRuntimeException;
 
-    public List getAllResultInventoryss() throws LIMSRuntimeException;
+    List<ResultInventory> getAllResultInventorys() throws LIMSRuntimeException;
 
-    public void getData(ResultInventory resultInventory) throws LIMSRuntimeException;
+    void getData(ResultInventory resultInventory) throws LIMSRuntimeException;
 
 //	public void updateData(ResultInventory resultInventory) throws LIMSRuntimeException;
 
-    public ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException;
+    ResultInventory getResultInventoryById(ResultInventory resultInventory) throws LIMSRuntimeException;
 
-    public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException;
+    List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException;
 }

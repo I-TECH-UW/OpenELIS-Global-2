@@ -39,9 +39,9 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
-    public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
+    public List<ResultInventory> getAllResultInventorys() throws LIMSRuntimeException {
         List<ResultInventory> resultInventories;
         try {
             String sql = "from ResultInventory";
@@ -50,7 +50,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getAllResultInventorys()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getAllResultInventorys()", e);
         }
 
@@ -158,13 +158,13 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
                 resultInventory.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
         List<ResultInventory> resultInventories = null;
@@ -181,7 +181,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             return resultInventories;
 
         } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryByResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryByResult()", e);
         }
     }
@@ -193,7 +193,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "readResultInventory()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory readResultInventory()", e);
         }
 
@@ -210,7 +210,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return re;
         } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryById()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryById()", e);
         }
     }

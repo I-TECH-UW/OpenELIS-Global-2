@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.testconfiguration.form.SampleTypeOrderForm;
 import org.openelisglobal.testconfiguration.validator.SampleTypeOrderFormValidator;
@@ -49,7 +50,7 @@ public class SampleTypeOrderController extends BaseController {
             PropertyUtils.setProperty(form, "sampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -85,8 +86,8 @@ public class SampleTypeOrderController extends BaseController {
 
         try {
             typeOfSampleService.updateAll(typeOfSamples);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
@@ -111,7 +112,7 @@ public class SampleTypeOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

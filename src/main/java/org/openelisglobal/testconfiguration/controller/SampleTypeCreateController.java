@@ -10,8 +10,8 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -40,8 +40,6 @@ public class SampleTypeCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private SampleTypeCreateService sampleTypeCreateService;
-    @Autowired
-    private LocalizationService localizationService;
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
     public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -64,7 +62,7 @@ public class SampleTypeCreateController extends BaseController {
                     getExistingTestNames(typeOfSamples, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -108,8 +106,8 @@ public class SampleTypeCreateController extends BaseController {
         try {
             sampleTypeCreateService.createAndInsertSampleType(localization, typeOfSample, workplanModule, resultModule,
                     validationModule, workplanResultModule, resultResultModule, validationValidationModule);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

@@ -25,6 +25,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -190,6 +191,7 @@ public class RetroCIReflexActions extends ReflexAction {
                 calculatedResult.setValue(String.valueOf(result));
 
             } catch (NumberFormatException e) {
+                LogEvent.logInfo(this.getClass().getName(), "getCD4CalculationResult", e.getMessage());
                 // no op final result should be null. Handles the case of "XXXX"
             }
         }

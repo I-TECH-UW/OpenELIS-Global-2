@@ -19,6 +19,7 @@ package org.openelisglobal.analyzerimport.action;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +32,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.login.service.LoginService;
 import org.openelisglobal.login.valueholder.Login;
 import org.openelisglobal.spring.util.SpringContext;
@@ -47,6 +49,8 @@ public class AnalyzerImportServlet extends HttpServlet {
     private static final String PASSWORD_FIELD_NAME = "password";
 
     private static final long FILE_SIZE_MAX = 5 * 1024 * 1024;
+    private static final long FIELD_SIZE_MAX = 1024;
+    private static final long TOTAL_SIZE_MAX = FILE_SIZE_MAX + (2 * FIELD_SIZE_MAX);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -62,6 +66,7 @@ public class AnalyzerImportServlet extends HttpServlet {
         try {
             ServletFileUpload upload = new ServletFileUpload();
             upload.setFileSizeMax(FILE_SIZE_MAX);
+            upload.setSizeMax(TOTAL_SIZE_MAX);
 
             FileItemIterator iterator = upload.getItemIterator(request);
             while (iterator.hasNext()) {
@@ -73,9 +78,9 @@ public class AnalyzerImportServlet extends HttpServlet {
                 if (item.isFormField()) {
 
                     if (PASSWORD_FIELD_NAME.equals(item.getFieldName())) {
-                        password = streamToString(stream);
+                        password = fieldStreamToString(stream);
                     } else if (USER_FIELD_NAME.equals(item.getFieldName())) {
-                        user = streamToString(stream);
+                        user = fieldStreamToString(stream);
                     }
 
                 } else {
@@ -91,14 +96,15 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 stream.close();
             }
-        } catch (Exception ex) {
-            throw new ServletException(ex);
+        } catch (Exception e) {
+            LogEvent.logError(e.getMessage(), e);
+            throw new ServletException(e);
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    // LOG.warning(e.toString());
+                    LogEvent.logError(e.getMessage(), e);
                 }
             }
         }
@@ -164,12 +170,28 @@ public class AnalyzerImportServlet extends HttpServlet {
         }
     }
 
-    private String streamToString(InputStream stream) throws IOException {
-        StringBuilder builder = new StringBuilder();
+//    private String streamToString(InputStream stream) throws IOException {
+//        StringBuilder builder = new StringBuilder();
+//        int len;
+//        byte[] buffer = new byte[1024];
+//        while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
+//            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+//        }
+//        return builder.toString();
+//    }
+
+    private String fieldStreamToString(InputStream stream) throws IOException {
+        StringBuilder builder = new StringBuilder((int) (FIELD_SIZE_MAX / 2));
         int len;
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[32];
+        int totalFieldSize = 0;
+
         while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-            builder.append(new String(buffer, 0, len));
+            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+            totalFieldSize += len;
+            if (totalFieldSize >= FIELD_SIZE_MAX) {
+                break;
+            }
         }
         return builder.toString();
     }

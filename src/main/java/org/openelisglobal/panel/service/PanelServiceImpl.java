@@ -66,7 +66,7 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getActivePanels(String filter) {
+    public List<Panel> getActivePanels(String filter) {
         return getBaseObjectDAO().getActivePanels(filter);
     }
 
@@ -84,7 +84,7 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPanels(int startingRecNo) {
+    public List<Panel> getPageOfPanels(int startingRecNo) {
         return getBaseObjectDAO().getPageOfPanels(startingRecNo);
     }
 

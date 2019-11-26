@@ -28,13 +28,13 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPatientTypes() throws LIMSRuntimeException {
+    public List<PatientType> getAllPatientTypes() throws LIMSRuntimeException {
         return getBaseObjectDAO().getAllPatientTypes();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
+    public List<PatientType> getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
         return getBaseObjectDAO().getPageOfPatientType(startingRecNo);
     }
 
@@ -46,7 +46,7 @@ public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getPatientTypes(String filter) throws LIMSRuntimeException {
+    public List<PatientType> getPatientTypes(String filter) throws LIMSRuntimeException {
         return getBaseObjectDAO().getPatientTypes(filter);
     }
 

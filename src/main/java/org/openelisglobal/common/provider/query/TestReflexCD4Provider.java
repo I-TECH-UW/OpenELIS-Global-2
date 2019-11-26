@@ -48,6 +48,8 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
     private final String VALUE_SEPERATOR = ",";
     protected AjaxServlet ajaxServlet = null;
 
+    private static int MAX_DOUBLE_LENGTH = 20;
+
     private TestReflexCD4Provider() {
         Test test = testService.getTestByName("CD4 percentage count");
         if (test != null) {
@@ -69,7 +71,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
         String resultIds = request.getParameter("results");
         String values = request.getParameter("values");
         String childRow = request.getParameter("childRow");
-        StringBuilder xml = new StringBuilder();
+        StringBuilder xml = new StringBuilder(childRow.length() + MAX_DOUBLE_LENGTH);
         String result = VALID;
 
         if (initialConditionsSatisfied(resultIds, values, childRow)) {

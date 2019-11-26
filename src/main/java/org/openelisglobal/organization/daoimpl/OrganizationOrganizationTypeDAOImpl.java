@@ -48,7 +48,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("id", Integer.parseInt(id));
             query.executeUpdate();
         } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "deleteAllLinksForOrganization()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
         }
     }
@@ -64,13 +64,13 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.executeUpdate();
 
         } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "linkOrganizationAndType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
@@ -82,13 +82,13 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             orgIdList = query.list();
 
         } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "getOrganizationForType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
         }
         return orgIdList;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
@@ -108,7 +108,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
     private void handleException(Exception e, String string) {
         // TODO Auto-generated method stub
-        e.printStackTrace();
+        LogEvent.logDebug(e);
 
     }
 }

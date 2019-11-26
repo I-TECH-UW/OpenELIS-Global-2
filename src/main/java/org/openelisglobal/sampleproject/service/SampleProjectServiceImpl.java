@@ -40,7 +40,7 @@ public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProjec
 
     @Override
     @Transactional(readOnly = true)
-    public List getSampleProjectsByProjId(String projId) {
+    public List<SampleProject> getSampleProjectsByProjId(String projId) {
         return getBaseObjectDAO().getSampleProjectsByProjId(projId);
     }
 

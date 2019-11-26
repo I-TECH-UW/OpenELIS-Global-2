@@ -4,10 +4,10 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class AccessionNumberConstraintValidator implements ConstraintValidator<ValidAccessionNumber, String> {
@@ -21,7 +21,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (GenericValidator.isBlankOrNull(value)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
         }
         if (AccessionFormat.ANY.equals(validateAccessionNumberConstraint.format())) {
@@ -32,7 +32,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
             return ValidationResults.SUCCESS.equals(factory.getValidator(validateAccessionNumberConstraint.format())
                     .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
         } catch (IllegalArgumentException | LIMSInvalidConfigurationException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         }
     }

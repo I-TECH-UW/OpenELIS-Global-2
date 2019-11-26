@@ -33,7 +33,7 @@ public class JSONUtils {
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse((String) obj);
         } else {
-            LogEvent.logError("ValidationHelper", "convertToJSONObject",
+            LogEvent.logError("JSONUtils", "getAsObject",
                     obj.getClass().getSimpleName() + " cannot be converted to JSONObjects");
             throw new ClassCastException();
         }
@@ -55,7 +55,7 @@ public class JSONUtils {
             JSONParser parser = new JSONParser();
             return (JSONArray) parser.parse((String) obj);
         } else {
-            LogEvent.logError("ValidationHelper", "convertToJSONArray",
+            LogEvent.logError("JSONUtils", "getAsArray",
                     obj.getClass().getSimpleName() + " cannot be converted to JSONArray");
             throw new ClassCastException();
         }

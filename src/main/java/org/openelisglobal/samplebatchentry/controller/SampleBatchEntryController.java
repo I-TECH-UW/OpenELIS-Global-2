@@ -14,6 +14,7 @@ import org.dom4j.Element;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -173,13 +174,13 @@ public class SampleBatchEntryController extends BaseController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // ActionError error;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 // error = new ActionError("errors.OptimisticLockException", null, null);
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }

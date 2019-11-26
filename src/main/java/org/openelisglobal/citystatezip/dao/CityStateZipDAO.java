@@ -31,31 +31,32 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
  */
 public interface CityStateZipDAO extends BaseDAO<CityStateZip, String> {
 
-    public List getCities(String filter) throws LIMSRuntimeException;
+    List<CityStateZip> getCities(String filter) throws LIMSRuntimeException;
 
-    public List getZipCodesByCity(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    List<CityStateZip> getZipCodesByCity(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
-    public List getCitiesByZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    List<CityStateZip> getCitiesByZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
-    public List getAllStateCodes() throws LIMSRuntimeException;
+    List<CityStateZip> getAllStateCodes() throws LIMSRuntimeException;
 
-    public CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
-    public CityStateZip getState(CityStateZip cityStateZip) throws LIMSRuntimeException;
-
-    // bugzilla 1765
-    public CityStateZip getCity(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    CityStateZip getState(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
     // bugzilla 1765
-    public CityStateZip getZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    CityStateZip getCity(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
     // bugzilla 1765
-    public boolean isCityStateZipComboValid(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    CityStateZip getZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
     // bugzilla 1765
-    public List getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    boolean isCityStateZipComboValid(CityStateZip cityStateZip) throws LIMSRuntimeException;
+
+    // bugzilla 1765
+    List<CityStateZip> getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip)
+            throws LIMSRuntimeException;
 
     // bugizla 2393
-    public String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
+    String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip) throws LIMSRuntimeException;
 
 }

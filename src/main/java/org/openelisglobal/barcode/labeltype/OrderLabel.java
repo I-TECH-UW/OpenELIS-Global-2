@@ -38,7 +38,7 @@ public class OrderLabel extends Label {
             height = Float
                     .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_HEIGHT));
         } catch (Exception e) {
-            LogEvent.logError("OrderLabel", "OrderLabel OrderLabel()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
         // get information to display above bar code
         Person person = patient.getPerson();
@@ -148,7 +148,7 @@ public class OrderLabel extends Label {
         try {
             max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED));
         } catch (Exception e) {
-            LogEvent.logError("OrderLabel", "OrderLabel getMaxNumLabels()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
         return max;
     }

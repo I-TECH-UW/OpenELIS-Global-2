@@ -225,7 +225,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //		try {
 //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			@SuppressWarnings("unchecked")
+//
 //			List<TestSection> sections = query.list();
 //			// closeSession(); // CSL remove old
 //			return sections;
@@ -364,7 +364,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
     @Override
     public boolean duplicateUnitOfMeasureExists(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
         try {
-            List list;
+            List<UnitOfMeasure> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -388,7 +388,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UnitOfMeasureDAOImpl", "duplicateUnitOfMeasureExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateUnitOfMeasureExists()", e);
         }
     }

@@ -92,7 +92,7 @@ public class BatchTestReassignmentFormValidator implements Validator {
                 }
             }
 
-        } catch (ParseException jsExcp) {
+        } catch (ParseException e) {
             errors.rejectValue("jsonWad", "error.field.json.format.invalid");
         }
     }

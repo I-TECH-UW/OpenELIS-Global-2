@@ -39,7 +39,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException {
         List<InventoryReceipt> inventoryReceipts;
@@ -50,7 +50,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getAllInventoryReceipts()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
         }
 
@@ -145,7 +145,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
                 inventoryReceipt.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getData()", e);
         }
     }
@@ -159,7 +159,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "readInventoryReceipt()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
         }
 
@@ -172,7 +172,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         InventoryReceipt inventory = null;
 
         try {
-            List inventoryReceipts;
+            List<InventoryReceipt> inventoryReceipts;
 
             String sql = "from InventoryReceipt where invitem_id = :id";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -182,11 +182,11 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
-                inventory = (InventoryReceipt) inventoryReceipts.get(0);
+                inventory = inventoryReceipts.get(0);
             }
 
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getInventoryReceiptByInventoryItemId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getInventoryReceiptByInventoryItemId()", e);
         }
 

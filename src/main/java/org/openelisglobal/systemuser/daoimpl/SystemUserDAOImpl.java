@@ -178,15 +178,15 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUsers() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException {
+        List<SystemUser> list ;
         try {
             String sql = "from SystemUser";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -195,7 +195,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getAllSystemUsers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
         }
 
@@ -204,8 +204,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUser> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -221,7 +221,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getPageOfSystemUsers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
         }
 
@@ -236,7 +236,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "readSystemUser()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
         }
 
@@ -255,7 +255,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<SystemUser> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -283,13 +283,13 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "duplicateSystemUserExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
         List<SystemUser> list;
@@ -301,7 +301,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemUserDAOImpl", "getDataForUser()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
         }
 

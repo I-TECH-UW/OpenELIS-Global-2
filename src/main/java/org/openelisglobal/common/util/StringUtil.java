@@ -184,7 +184,7 @@ public class StringUtil {
                 String post = phone.substring(9, 13);
                 returnPhone = area + "/" + pre + "-" + post;
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatPhone()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -205,7 +205,7 @@ public class StringUtil {
                 String post = phone.substring(8, 12);
                 returnPhone = "(" + area + ")" + pre + "-" + post;
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatPhoneForDisplay()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -220,7 +220,7 @@ public class StringUtil {
             try {
                 returnPhone = phone.substring(13);
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatExtensionForDisplay()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -247,7 +247,7 @@ public class StringUtil {
             }
             return sb.toString();
         } catch (Exception e) {
-            LogEvent.logError("StringUtil", "convertStringToRegEx()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting string to regular expression ", e);
         }
     }
@@ -259,7 +259,7 @@ public class StringUtil {
             }
             return "";
         } catch (Exception e) {
-            LogEvent.logError("StringUtil", "trim()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error trimming string ", e);
         }
     }
@@ -508,7 +508,7 @@ public class StringUtil {
 
         String[] breakOnQuotes = line.split(QUOTE);
 
-        StringBuffer substitutedString = new StringBuffer();
+        StringBuffer substitutedString = new StringBuffer(line.length());
         for (String subString : breakOnQuotes) {
             if (subString.startsWith(COMMA) || subString.endsWith(COMMA)) {
                 substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
@@ -568,7 +568,7 @@ public class StringUtil {
             return null;
         }
 
-        StringBuilder boringString = new StringBuilder();
+        StringBuilder boringString = new StringBuilder(text.length());
 
         for (int i = 0; i < text.length(); i++) {
             boringString.append(replacement);
@@ -596,7 +596,7 @@ public class StringUtil {
         if (string.contains(toBeRemoved)) {
             String[] subStrings = string.trim().split(toBeRemoved);
 
-            StringBuffer reconstituted = new StringBuffer();
+            StringBuffer reconstituted = new StringBuffer(string.length());
 
             for (String subString : subStrings) {
                 reconstituted.append(subString);
@@ -701,7 +701,7 @@ public class StringUtil {
         try {
             return new Double(significantDigits);
         } catch (NumberFormatException e) {
-            LogEvent.logError("StringUtil", "doubleWithInfinity(" + significantDigits + ")", e.toString());
+            LogEvent.logError(e.toString(), e);
             return null;
         }
     }
@@ -721,5 +721,13 @@ public class StringUtil {
 
     public static String nullSafeToString(Object obj) {
         return obj == null ? "" : obj.toString();
+    }
+
+    public static String concatToMaxLength(String string, int maxLength) {
+        return string.length() > maxLength ? string.substring(0, maxLength) : string;
+    }
+
+    public static String concatToMaxIdLength(String string) {
+        return string.length() > 10 ? string.substring(0, 10) : string;
     }
 }

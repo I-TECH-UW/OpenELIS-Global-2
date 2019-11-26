@@ -159,8 +159,8 @@ public abstract class BaseController implements IActionConstants {
                 pageTitle = getMessageForKey(request, pageTitleKey, pageTitleKeyParameter);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageTitleKey);
+            LogEvent.logDebug(e);
+            LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
 
         try {
@@ -171,8 +171,8 @@ public abstract class BaseController implements IActionConstants {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageSubtitleKey);
+            LogEvent.logDebug(e);
+            LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }
 
         if (null != pageTitle) {
@@ -260,15 +260,11 @@ public abstract class BaseController implements IActionConstants {
     }
 
     protected void saveErrors(Errors errors) {
-        if (request.getAttribute(Constants.REQUEST_ERRORS) == null) {
+        Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+        if (previousErrors == null) {
             request.setAttribute(Constants.REQUEST_ERRORS, errors);
-        } else {
-            Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
-            if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
-                previousErrors.addAllErrors(errors);
-            } else {
-                request.setAttribute(Constants.REQUEST_ERRORS, errors);
-            }
+        } else if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+            previousErrors.addAllErrors(errors);
         }
     }
 
@@ -295,7 +291,7 @@ public abstract class BaseController implements IActionConstants {
             servletOutputStream.write(errorMsg);
 
         } catch (IOException e) {
-            LogEvent.logError("PrintWorkplanReportController", "writeErrorsToResponse", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
     }
@@ -333,7 +329,7 @@ public abstract class BaseController implements IActionConstants {
             request.getSession().setAttribute(objectName, newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormSessionObject", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return form;
         }
     }
@@ -345,7 +341,7 @@ public abstract class BaseController implements IActionConstants {
             request.getSession().setAttribute("form", newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormToType", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return null;
         }
     }

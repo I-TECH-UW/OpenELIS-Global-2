@@ -70,7 +70,7 @@ public class HivStatusProvider extends BaseQueryProvider {
             }
             XMLUtil.appendKeyValue(HIV_STATUS_OH_TYPE, hivStatus, xml);
         } catch (Exception e) {
-            LogEvent.logError("HivStatusProvider", "findHivStatus()", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             retVal = INVALID;
         }
         return retVal;

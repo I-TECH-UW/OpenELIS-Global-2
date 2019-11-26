@@ -99,7 +99,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         // closeSession(); // CSL remove old
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
@@ -130,7 +130,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
             // closeSession(); // CSL remove old
             return requester;
         } catch (HibernateException e) {
-            LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
         }
     }

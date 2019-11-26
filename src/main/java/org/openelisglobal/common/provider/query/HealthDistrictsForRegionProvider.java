@@ -61,6 +61,11 @@ public class HealthDistrictsForRegionProvider extends BaseQueryProvider {
             xml.append(" />");
         }
         xml.append("</districts>");
+
+        // prevent potential DOS with StringBuilder
+        if (selectedValue.length() > 10) {
+            selectedValue = selectedValue.subSequence(0, 10) + "...";
+        }
         XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
     }
 

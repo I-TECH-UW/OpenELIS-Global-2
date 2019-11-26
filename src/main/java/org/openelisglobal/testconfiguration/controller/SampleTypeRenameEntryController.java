@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -85,8 +86,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 
             try {
                 localizationService.update(name);
-            } catch (HibernateException lre) {
-                lre.printStackTrace();
+            } catch (HibernateException e) {
+                LogEvent.logDebug(e);
             }
         }
 

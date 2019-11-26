@@ -166,15 +166,15 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestTrailers() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestTrailer> getAllTestTrailers() throws LIMSRuntimeException {
+        List<TestTrailer> list ;
         try {
             String sql = "from TestTrailer";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -185,7 +185,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getAllTestTrailers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer getAllTestTrailers()", e);
         }
 
@@ -194,8 +194,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestTrailer> getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException {
+        List<TestTrailer> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -211,7 +211,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getPageOfTestTrailers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer getPageOfTestTrailers()", e);
         }
 
@@ -226,7 +226,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "readTestTrailer()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer readTestTrailer()", e);
         }
 
@@ -241,19 +241,19 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", testTrailer.getTestTrailerName());
 
-            List list = query.list();
+            List<TestTrailer> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             TestTrailer t = null;
             if (list.size() > 0) {
-                t = (TestTrailer) list.get(0);
+                t = list.get(0);
             }
 
             return t;
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getTestTrailerByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailerByName()", e);
         }
     }
@@ -261,8 +261,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestTrailers(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestTrailer> getTestTrailers(String filter) throws LIMSRuntimeException {
+        List<TestTrailer> list ;
         try {
             String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by upper(t.testTrailerName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -273,7 +273,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "getTestTrailers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailers(String filter)", e);
         }
         return list;
@@ -291,7 +291,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     public boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<TestTrailer> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -319,7 +319,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestTrailerDAOImpl", "duplicateTestTrailerExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestTrailerExists()", e);
         }
     }

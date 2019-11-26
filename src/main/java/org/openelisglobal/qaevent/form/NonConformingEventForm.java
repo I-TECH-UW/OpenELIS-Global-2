@@ -1,13 +1,14 @@
 package org.openelisglobal.qaevent.form;
 
+import java.util.List;
+
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.openelisglobal.qaevent.valueholder.NceCategory;
+import org.openelisglobal.qaevent.valueholder.NceType;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
-
-import java.util.List;
 
 public class NonConformingEventForm extends BaseForm {
 
@@ -82,7 +83,7 @@ public class NonConformingEventForm extends BaseForm {
 
     private List<NceCategory> nceCategories;
 
-    private List<IdValuePair> nceTypes;
+    private List<NceType> nceTypes;
 
     private List<IdValuePair> labComponentList;
 
@@ -324,11 +325,11 @@ public class NonConformingEventForm extends BaseForm {
         this.discussionDate = discussionDate;
     }
 
-    public List getActionLog() {
+    public List<NceActionLog> getActionLog() {
         return actionLog;
     }
 
-    public void setActionLog(List actionLog) {
+    public void setActionLog(List<NceActionLog> actionLog) {
         this.actionLog = actionLog;
     }
 
@@ -372,12 +373,12 @@ public class NonConformingEventForm extends BaseForm {
         this.nceCategories = nceCategories;
     }
 
-    public List<IdValuePair> getNceTypes() {
+    public List<NceType> getNceTypes() {
         return nceTypes;
     }
 
-    public void setNceTypes(List<IdValuePair> nceTypes) {
-        this.nceTypes = nceTypes;
+    public void setNceTypes(List<NceType> list) {
+        this.nceTypes = list;
     }
 
     public List<IdValuePair> getLabComponentList() {

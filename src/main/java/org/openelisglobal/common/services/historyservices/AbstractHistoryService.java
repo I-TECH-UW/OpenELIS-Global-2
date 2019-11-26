@@ -17,6 +17,7 @@
 package org.openelisglobal.common.services.historyservices;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -92,9 +94,9 @@ public abstract class AbstractHistoryService {
                     addInsertion(history, items);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 
@@ -154,7 +156,7 @@ public abstract class AbstractHistoryService {
 
             byte[] bindata = history.getChanges();
 
-            String changes = bindata.toString();
+            String changes = new String(bindata, StandardCharsets.UTF_8);
             // System.out.println(history.getActivity() + " : "+ changes);
             getObservableChanges(history, changeMap, changes);
 

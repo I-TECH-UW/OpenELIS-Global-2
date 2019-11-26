@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -26,11 +27,11 @@ public class RetroCIPatientCollectionReport extends CollectionReport implements 
             PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("patient.report.collection.name"));
             PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -51,11 +52,11 @@ public class RetroCIPatientCollectionReport extends CollectionReport implements 
                     try {
                         PropertyUtils.setProperty(form, "accessionDirect", sample.getAccessionNumber());
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     }
 
                     if ("InitialARV_Id".equals(projects.get(0).getValue())) {

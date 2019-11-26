@@ -46,7 +46,7 @@ public class ResultHistoryService extends AbstractHistoryService {
         if (analysis.getTest() != null) {
             History searchHistory = new History();
             searchHistory.setReferenceId(result.getId());
-            searchHistory.setReferenceTable(ResultServiceImpl.TABLE_REFERENCE_ID);
+            searchHistory.setReferenceTable(ResultServiceImpl.getTableReferenceId());
             historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
             newValueMap = new HashMap<>();

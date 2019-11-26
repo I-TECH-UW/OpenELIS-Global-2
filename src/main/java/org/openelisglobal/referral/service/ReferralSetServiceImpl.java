@@ -109,7 +109,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                         referralResultList = referralResultService.getReferralResultsForReferral(referral.getId());
                     }
 
-                    if (referralResultList.isEmpty()) {
+                    if (referralResultList.isEmpty() || referral == null) {
                         if (!finalizedId.equals(childAnalysis.getStatusId())) {
                             allAnalysisFinished = false;
                             break;

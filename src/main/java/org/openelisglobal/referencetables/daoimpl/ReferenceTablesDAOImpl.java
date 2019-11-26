@@ -208,15 +208,15 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReferenceTablesDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTables() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getAllReferenceTables() throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -227,7 +227,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReferenceTablesDAOImpl", "getAllReferenceTables()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getAllReferenceTables()", e);
         }
 
@@ -236,8 +236,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -253,7 +253,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReferenceTablesDAOImpl", "getPageOfReferenceTables()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getPageOfReferenceTables()", e);
         }
 
@@ -268,7 +268,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReferenceTablesDAOImpl", "readReferenceTables()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables readReferenceTables(idString)", e);
         }
 
@@ -289,7 +289,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<ReferenceTables> list = new ArrayList<>();
             String sql;
 
             // not case sensitive hemolysis and Hemolysis are considered
@@ -328,7 +328,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReferenceTablesDAOImpl", "duplicateReferenceTablesExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateReferenceTablesExists()", e);
         }
     }
@@ -336,8 +336,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     // bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
     @Override
     @Transactional(readOnly = true)
-    public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<ReferenceTables> getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException {
+        List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -348,7 +348,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // buzilla 2154
-            LogEvent.logError("ReferenceTableDAOImpl", "getAllReferenceTablesForHl7Encoding()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ReferenceTables getAllReferenceTablesForHl7Encoding()", e);
         }
 
@@ -372,10 +372,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     public ReferenceTables getReferenceTableByName(String tableName) {
         try {
             String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("tableName", tableName.toLowerCase().trim());
 
-            ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
+            ReferenceTables table = query.setMaxResults(1).uniqueResult();
 
             return table;
 

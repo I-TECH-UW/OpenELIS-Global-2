@@ -20,9 +20,7 @@ import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.util.OrganizationTypeList;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -38,13 +36,11 @@ public abstract class BaseSampleEntryController extends BaseController {
 
     public static final String FWD_EID_ENTRY = "eid_entry";
     public static final String FWD_VL_ENTRY = "vl_entry";
-    private static int referenceLabParentId = 0;
+
     @Autowired
     private GenderService genderService;
     @Autowired
     private ProjectService projectService;
-    @Autowired
-    private OrganizationService organizationService;
     @Autowired
     private LocalizationService localizationService;
 
@@ -92,21 +88,6 @@ public abstract class BaseSampleEntryController extends BaseController {
         PropertyUtils.setProperty(form, "organizationTypeLists", OrganizationTypeList.MAP);
 
         return;
-    }
-
-    protected int getReferenceLabParentId() {
-        if (referenceLabParentId == 0) {
-            String parentOrgName = ConfigurationProperties.getInstance()
-                    .getPropertyValue(Property.ReferingLabParentOrg);
-
-            if (parentOrgName != null) { // this dosn't seem to actually do anything. is parentOrg referenced anyplace?
-                Organization parentOrg = new Organization();
-                parentOrg.setName(parentOrgName);
-                parentOrg = organizationService.getOrganizationByName(parentOrg, false);
-            }
-        }
-
-        return referenceLabParentId;
     }
 
     /**
@@ -178,7 +159,7 @@ public abstract class BaseSampleEntryController extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter sample into system");
+        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter sample into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         addErrors(request, errors);

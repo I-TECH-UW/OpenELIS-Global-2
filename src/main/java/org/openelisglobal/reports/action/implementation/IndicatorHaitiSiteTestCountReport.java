@@ -31,6 +31,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
@@ -96,7 +97,7 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
             PropertyUtils.setProperty(form, "monthList", MONTH_LIST);
             PropertyUtils.setProperty(form, "yearList", getYearList());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
     }
@@ -203,8 +204,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                     targetMonthTestCount.put(test, current + additional);
                 }
 
-            } catch (ParseException pe) {
-                System.out.println(pe);
+            } catch (ParseException e) {
+                System.out.println(e);
             }
 
         }

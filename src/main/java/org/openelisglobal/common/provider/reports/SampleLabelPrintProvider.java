@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.reports;
@@ -48,13 +48,14 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.openelisglobal.common.provider.reports.BaseReportsProvider#processRequest
      * (java.util.Map, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse) bugzilla 2380: this method now throws
      * exceptions instead of returning boolean successful
      */
+    @Override
     public void processRequest(Map parameters, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, PrintException, LIMSPrintException, LIMSInvalidPrinterException {
 
@@ -99,9 +100,9 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 numberOfLabelCopiesString = SystemConfiguration.getInstance()
                         .getLabelNumberOfCopies("print.label.numberofcopies");
                 numberOfLabelCopies = Integer.parseInt(numberOfLabelCopiesString);
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError("SampleLabelPrintProvider", "processRequest()", nfe.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
             String accessionNumber = (String) parameters.get("Accession_Number");
@@ -133,23 +134,28 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
     }
 
     class MyPrintJobListener implements PrintJobListener {
+        @Override
         public void printDataTransferCompleted(PrintJobEvent pje) {
             // System.out
             // .println("The print data has been transferred to the print service");
         }
 
+        @Override
         public void printJobCanceled(PrintJobEvent pje) {
             // System.out.println("The print job was cancelled");
         }
 
+        @Override
         public void printJobCompleted(PrintJobEvent pje) {
             // System.out.println("The print job was completed");
         }
 
+        @Override
         public void printJobFailed(PrintJobEvent pje) {
             // System.out.println("The print job has failed");
         }
 
+        @Override
         public void printJobNoMoreEvents(PrintJobEvent pje) {
             // System.out
             // .println("No more events will be delivered from this print service for this
@@ -160,6 +166,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
             // is not able to determine when the job completes.
         }
 
+        @Override
         public void printJobRequiresAttention(PrintJobEvent pje) {
             // System.out
             // .println("The print service requires some attention to repair some problem.

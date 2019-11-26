@@ -88,7 +88,9 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 
 public abstract class PatientReport extends Report {
 
+    // not threadSafe, use this classes formatTwoDecimals method when using this
     private static final DecimalFormat twoDecimalFormat = new DecimalFormat("#.##");
+
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
@@ -179,11 +181,11 @@ public abstract class PatientReport extends Report {
             PropertyUtils.setProperty(form, "useHighAccessionDirect", Boolean.TRUE);
             PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 
@@ -241,13 +243,13 @@ public abstract class PatientReport extends Report {
 
         if (!updatedAnalysis.isEmpty()) {
             try {
-                analysisService.updateAll(updatedAnalysis, true);
+                analysisService.updateAllNoAuditTrail(updatedAnalysis);
 //				for (Analysis analysis : updatedAnalysis) {
 //					analysisService.update(analysis, true);
 //				}
 
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(e);
             }
         }
     }
@@ -308,11 +310,11 @@ public abstract class PatientReport extends Report {
 
         if (patientList.isEmpty()) {
             List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                    PatientServiceImpl.PATIENT_ST_IDENTITY);
+                    PatientServiceImpl.getPatientSTIdentity());
 
             if (identities.isEmpty()) {
                 identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                        PatientServiceImpl.PATIENT_SUBJECT_IDENTITY);
+                        PatientServiceImpl.getPatientSubjectIdentity());
             }
 
             if (!identities.isEmpty()) {
@@ -506,13 +508,19 @@ public abstract class PatientReport extends Report {
         String resultValue = data.getResult();
         if (TestIdentityService.getInstance().isTestNumericViralLoad(analysisService.getTest(currentAnalysis))) {
             try {
-                resultValue += " (" + twoDecimalFormat.format(Math.log10(Double.parseDouble(resultValue))) + ")log ";
+                resultValue += " (" + formatTwoDecimals(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
+                LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
                 // no-op
             }
         }
 
         return resultValue + (augmentResultWithFlag() ? getResultFlag(result, null) : "");
+    }
+
+    // thread safe implementation
+    protected synchronized String formatTwoDecimals(Double value) {
+        return twoDecimalFormat.format(value);
     }
 
     protected String getResultFlag(Result result, String imbed) {
@@ -557,6 +565,7 @@ public abstract class PatientReport extends Report {
                 }
             }
         } catch (NumberFormatException e) {
+            LogEvent.logInfo(this.getClass().getName(), "getResultFlag", e.getMessage());
             // no-op
         }
 
@@ -785,13 +794,13 @@ public abstract class PatientReport extends Report {
         setPatientName(data);
         data.setDept(patientDept);
         data.setCommune(patientCommune);
-        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
+        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.getPatientSTIdentity()));
         data.setSubjectNumber(
-                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
+                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.getPatientSubjectIdentity()));
         data.setHealthRegion(getLazyPatientIdentity(currentPatient, healthRegion,
-                PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
+                PatientServiceImpl.getPatientHealthRegionIdentity()));
         data.setHealthDistrict(getLazyPatientIdentity(currentPatient, healthDistrict,
-                PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
+                PatientServiceImpl.getPatientHealthDistrictIdentity()));
 
         data.setLabOrderType(observationHistoryService.getValueForSample(ObservationType.PROGRAM,
                 sampleService.getId(currentSample)));
@@ -854,7 +863,7 @@ public abstract class PatientReport extends Report {
      *         for the same test (e.g. a multi-select result) and those are in item
      *         item 2 and item 3 this routine returns #3.
      */
-    protected int reportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
+    protected int lastUsedReportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
         ReferralResult referralResult = referralResultsForReferral.get(i);
         reportReferralResultValue = "";
         String currTestId = referralResult.getTestId();

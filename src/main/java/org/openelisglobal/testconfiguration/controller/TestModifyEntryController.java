@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -117,8 +118,7 @@ public class TestModifyEntryController extends BaseController {
             PropertyUtils.setProperty(form, "testList",
                     DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
         // gnr: ALL_TESTS calls getActiveTests, this could be a way to enable
@@ -132,8 +132,7 @@ public class TestModifyEntryController extends BaseController {
         try {
             PropertyUtils.setProperty(form, "testCatBeanList", testCatBeanList);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -442,9 +441,8 @@ public class TestModifyEntryController extends BaseController {
         JSONObject obj = null;
         try {
             obj = (JSONObject) parser.parse(changeList);
-        } catch (ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (ParseException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
 
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
@@ -457,8 +455,8 @@ public class TestModifyEntryController extends BaseController {
         try {
             testModifyService.updateTestSets(testSets, testAddParams, nameLocalization, reportingNameLocalization,
                     currentUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
             result.reject("error.hibernate.exception");
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
@@ -652,7 +650,7 @@ public class TestModifyEntryController extends BaseController {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return testAddParams;

@@ -148,15 +148,15 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllProviders() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Provider> getAllProviders() throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
         try {
             String sql = "from Provider";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -165,7 +165,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getAllProviders()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getAllProviders()", e);
         }
 
@@ -174,8 +174,8 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -190,7 +190,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getPageOfProviders()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getPageOfProviders()", e);
         }
 
@@ -205,7 +205,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "readProvider()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider readProvider()", e);
         }
 
@@ -214,20 +214,20 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
         List<Provider> list = null;
         try {
             String sql = "from Provider p where p.person.id = :personId";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("personId", Integer.parseInt(person.getId()));
 
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ProviderDAOImpl", "getProviderByPerson()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getProviderByPerson()", e);
         }
 

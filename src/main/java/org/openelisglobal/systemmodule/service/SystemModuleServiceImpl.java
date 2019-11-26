@@ -40,13 +40,13 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemModules(int startingRecNo) {
+    public List<SystemModule> getPageOfSystemModules(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSystemModules(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemModules() {
+    public List<SystemModule> getAllSystemModules() {
         return getBaseObjectDAO().getAllSystemModules();
     }
 

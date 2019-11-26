@@ -1,5 +1,6 @@
 package org.openelisglobal.common.form;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -8,7 +9,12 @@ import org.openelisglobal.common.log.LogEvent;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
-public class BaseForm {
+public class BaseForm implements Serializable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2614369858245937250L;
 
     @SafeHtml
     private String formName;
@@ -74,8 +80,8 @@ public class BaseForm {
         try {
             obj = PropertyUtils.getProperty(this, propertyName);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError("BaseForm", "get()", e.getMessage());
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
+            LogEvent.logDebug(e);
         }
         return obj;
     }
@@ -85,8 +91,8 @@ public class BaseForm {
         try {
             obj = (String) PropertyUtils.getProperty(this, propertyName);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError("BaseForm", "getString()", e.getMessage());
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
+            LogEvent.logDebug(e);
         }
         return obj;
     }
@@ -97,8 +103,8 @@ public class BaseForm {
             obj = (String[]) PropertyUtils.getProperty(this, propertyName);
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError("BaseForm", "getStrings()", e.getMessage());
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
+            LogEvent.logDebug(e);
         }
         return obj;
     }

@@ -18,7 +18,7 @@ public class ConnectionValidator {
         try {
             ping.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return false;
         }
         ping.deleteOnExit();

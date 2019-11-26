@@ -317,7 +317,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
         try {
             typeName = patientInfo.getPatientType();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             System.out.println("typeName ignored");
         }
 

@@ -42,47 +42,42 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
 //	boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException;
 
-//	@SuppressWarnings("rawtypes")
+//
 //	void deleteData(List analysiss) throws LIMSRuntimeException;
 
-//	@SuppressWarnings("rawtypes")
+//
 //	List getAllAnalyses() throws LIMSRuntimeException;
 
-//	@SuppressWarnings("rawtypes")
+//
 //	List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException;
 
     void getData(Analysis analysis) throws LIMSRuntimeException;
 
 //	void updateData(Analysis analysis) throws LIMSRuntimeException;
 
-//	@SuppressWarnings("rawtypes")
+//
 //	List getAnalyses(String filter) throws LIMSRuntimeException;
 
-//	@SuppressWarnings("rawtypes")
+//
 
 //
-//	@SuppressWarnings("rawtypes")
+//
 
-
-//	@SuppressWarnings("rawtypes")
+//
 //	List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException;
+    List<Analysis> getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList)
+    List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList)
             throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException;
+    List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList)
+            throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
+    List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList)
+    List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList)
             throws LIMSRuntimeException;
 
     List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) throws LIMSRuntimeException;
@@ -95,49 +90,38 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String statusId, Set<Integer> statusIds)
             throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAnalysesReadyToBeReported() throws LIMSRuntimeException;
+    List<Analysis> getAnalysesReadyToBeReported() throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException;
+    List<Analysis> getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException;
+    List<Analysis> getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers) throws LIMSRuntimeException;
-
-    @SuppressWarnings("rawtypes")
-    List getAnalysesAlreadyReportedBySample(Sample sample) throws LIMSRuntimeException;
-
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
-
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) throws LIMSRuntimeException;
-
-    @SuppressWarnings("rawtypes")
-    List getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
-
-    @SuppressWarnings("rawtypes")
-    List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test, boolean includeLatestRevision)
+    List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List<String> accessionNumbers)
             throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getAllMaxRevisionAnalysesPerTest(Test test) throws LIMSRuntimeException;
+    List<Analysis> getAnalysesAlreadyReportedBySample(Sample sample) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) throws LIMSRuntimeException;
+    List<Analysis> getMaxRevisionAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) throws LIMSRuntimeException;
+    List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) throws LIMSRuntimeException;
+
+    List<Analysis> getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
+
+    List<Analysis> getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
+            boolean includeLatestRevision) throws LIMSRuntimeException;
+
+    List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test) throws LIMSRuntimeException;
+
+    List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) throws LIMSRuntimeException;
+
+    List<Analysis> getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample)
+            throws LIMSRuntimeException;
 
     Analysis getPreviousAnalysisForAmendedAnalysis(Analysis analysis) throws LIMSRuntimeException;
 
     void getMaxRevisionAnalysisBySampleAndTest(Analysis analysis) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
+    List<Analysis> getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException;
 
     List<Analysis> getAnalysesForStatusId(String statusId) throws LIMSRuntimeException;
 

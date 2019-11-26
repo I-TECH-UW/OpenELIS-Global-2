@@ -55,7 +55,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
         this();
         setFieldsFromForm(form);
-        setRequest(request);
+        this.request = request;
         super.setSysUserId(sysUserId);
     }
 
@@ -71,7 +71,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    public void setFieldsFromForm(BaseForm form)
+    public final void setFieldsFromForm(BaseForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setAccessionNumber((String) form.get("labNo"));
         setPatientIdentifier((String) form.get("subjectNumber"));
@@ -121,9 +121,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         }
 
         if (testSampleMismatch) {
-            // TO DO add this back in spring
-            // messages.add(ActionErrors.GLOBAL_MESSAGE, new
-            // ActionError("errors.no.sample"));
+            messages.reject("errors.no.sample");
             throw new Exception("Mis-match between tests and sample types.");
         }
 
@@ -217,7 +215,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             List<Analysis> analysisList = SampleItemTestProvider.findAnalysis(sampleId, projectForm.getProjectFormId(),
                     tProjectData);
             return cleanupExistingAnalysis(analysisList);
-        } catch (IllegalArgumentException ignore) {
+        } catch (IllegalArgumentException e) {
             return null; // reversing the test boxes resulted in NO valid resuest, so we can move on.
         }
     }

@@ -112,7 +112,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
             }
 
         } catch (Exception e) {
-            LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
         }
     }
@@ -139,7 +139,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
             if (grouping.addSample) {
 //				try {
                 sampleService.insertDataWithAccessionNumber(grouping.sample);
-//				} catch (LIMSRuntimeException lre) {
+//				} catch (LIMSRuntimeException e) {
 //					Errors errors = new BaseErrors();
 //					String errorMsg = "warning.duplicate.accession";
 //					errors.reject(errorMsg, new String[] { grouping.sample.getAccessionNumber() }, errorMsg);

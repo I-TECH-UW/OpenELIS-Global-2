@@ -76,7 +76,7 @@ public abstract class IndicatorReport extends Report {
         try {
             lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
             highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
-        } catch (LIMSRuntimeException re) {
+        } catch (LIMSRuntimeException e) {
             errorFound = true;
             ErrorMessages msgs = new ErrorMessages();
             msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));

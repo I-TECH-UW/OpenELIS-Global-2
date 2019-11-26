@@ -33,13 +33,13 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfProviders(int startingRecNo) {
+    public List<Provider> getPageOfProviders(int startingRecNo) {
         return getBaseObjectDAO().getPageOfProviders(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllProviders() {
+    public List<Provider> getAllProviders() {
         return getBaseObjectDAO().getAllProviders();
     }
 

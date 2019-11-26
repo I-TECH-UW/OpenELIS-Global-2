@@ -190,7 +190,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
+    public List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
         try {
 
             String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
@@ -199,19 +199,19 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
             query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
-            List list = query.list();
+            List<Note> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
         } catch (Exception e) {
-            LogEvent.logError("NoteDAOImpl", "getAllNotesByRefIdRefTable()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
         }
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws LIMSRuntimeException {
 //		try {
 //			String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId and n.noteType = :noteType order by n.lastupdated";
@@ -295,7 +295,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+
     public boolean duplicateNoteExists(Note note) {
         try {
 
@@ -321,12 +321,12 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
             return list.size() > 0;
 
         } catch (Exception e) {
-            LogEvent.logError("NoteDAOImpl", "duplicateNoteExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
         }
     }
 
-//	@SuppressWarnings("unchecked")
+//
 //	@Override
 //	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject)
 //			throws LIMSRuntimeException {
@@ -350,7 +350,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id)
 //			throws LIMSRuntimeException {
 //		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId order by n.lastupdated asc";
@@ -372,7 +372,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
             List<String> filter) throws LIMSRuntimeException {

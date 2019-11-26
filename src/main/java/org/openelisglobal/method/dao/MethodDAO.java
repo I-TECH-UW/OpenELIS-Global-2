@@ -39,15 +39,13 @@ public interface MethodDAO extends BaseDAO<Method, String> {
 
 //	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException;
 
-    public List getMethods(String filter) throws LIMSRuntimeException;
+    List<Method> getMethods(String filter) throws LIMSRuntimeException;
 
 //	public void getData(Method method) throws LIMSRuntimeException;
 
 //	public void updateData(Method method) throws LIMSRuntimeException;
 
-
 //
-
 
 //	public Method getMethodByName(Method method) throws LIMSRuntimeException;
 

@@ -36,43 +36,38 @@ public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
         HUMAN, ANIMAL, ENVIRONMENTAL
     }
 
-    public String getNameForTypeOfSampleId(String id);
+    String getNameForTypeOfSampleId(String id);
 
 //	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
 //	public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
 
-    public List getAllTypeOfSamples() throws LIMSRuntimeException;
+    List<TypeOfSample> getAllTypeOfSamples() throws LIMSRuntimeException;
 
-    public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
+    List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
 
-    public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
 //	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
-    public List getTypes(String filter, String domain) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypes(String filter, String domain) throws LIMSRuntimeException;
 
-    public List getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
 
+    Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
 
-
-
-
-    public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
-
-    public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
+    TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
             throws LIMSRuntimeException;
 
-    public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
+    TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
 
-    public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
 
-    public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
-            throws LIMSRuntimeException;
+    TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain) throws LIMSRuntimeException;
 
-    public TypeOfSample getSampleTypeFromTest(Test test);
+    TypeOfSample getSampleTypeFromTest(Test test);
 
     void clearMap();
 

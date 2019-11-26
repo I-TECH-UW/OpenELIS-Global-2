@@ -19,6 +19,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -103,8 +104,7 @@ public class TestAddController extends BaseController {
                     DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
             PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
         return findForward(FWD_SUCCESS, form);
@@ -127,9 +127,8 @@ public class TestAddController extends BaseController {
         JSONObject obj = null;
         try {
             obj = (JSONObject) parser.parse(jsonString);
-        } catch (ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (ParseException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
         List<TestSet> testSets = createTestSets(testAddParams);
@@ -138,8 +137,8 @@ public class TestAddController extends BaseController {
 
         try {
             testAddService.addTests(testSets, nameLocalization, reportingNameLocalization, currentUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         testService.refreshTestNames();
@@ -326,7 +325,7 @@ public class TestAddController extends BaseController {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return testAddParams;
@@ -400,26 +399,23 @@ public class TestAddController extends BaseController {
         return getGroupedDictionaryPairs(dictionaryIdGroups);
     }
 
-    /*@SuppressWarnings("unchecked")
-    private List<TestResult> getSortedTestResults() {
-        List<TestResult> testResults = testResultService.getAllTestResults();
-
-        Collections.sort(testResults, new Comparator<TestResult>() {
-            @Override
-            public int compare(TestResult o1, TestResult o2) {
-                int result = o1.getTest().getId().compareTo(o2.getTest().getId());
-
-                if (result != 0) {
-                    return result;
-                }
-
-                return GenericValidator.isBlankOrNull(o1.getSortOrder())
-                        || GenericValidator.isBlankOrNull(o2.getSortOrder()) ? 0
-                                : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
-            }
-        });
-        return testResults;
-    }*/
+    /*
+     * @SuppressWarnings("unchecked") private List<TestResult>
+     * getSortedTestResults() { List<TestResult> testResults =
+     * testResultService.getAllTestResults();
+     *
+     * Collections.sort(testResults, new Comparator<TestResult>() {
+     *
+     * @Override public int compare(TestResult o1, TestResult o2) { int result =
+     * o1.getTest().getId().compareTo(o2.getTest().getId());
+     *
+     * if (result != 0) { return result; }
+     *
+     * return GenericValidator.isBlankOrNull(o1.getSortOrder()) ||
+     * GenericValidator.isBlankOrNull(o2.getSortOrder()) ? 0 :
+     * Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder()); }
+     * }); return testResults; }
+     */
 
     private HashSet<String> getDictionaryIdGroups(List<TestResult> testResults) {
         HashSet<String> dictionaryIdGroups = new HashSet<>();

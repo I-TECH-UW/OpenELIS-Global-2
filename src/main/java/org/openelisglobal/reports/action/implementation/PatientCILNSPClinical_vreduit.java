@@ -185,7 +185,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                 sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
             } else {
 
-                i = reportReferralResultValue(referralResults, i);
+                i = lastUsedReportReferralResultValue(referralResults, i);
                 ReferralResult referralResult = referralResults.get(i);
 
                 ClinicalPatientData data = new ClinicalPatientData();

@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.spring.util.SpringContext;
@@ -155,8 +156,8 @@ public class TestActivationController extends BaseController {
 
         try {
             testActivationService.updateAll(deactivateTests, activateTests, deactivateSampleTypes, activateSampleTypes);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
         List<TestActivationBean> activeTestList = createTestList(true, true);
@@ -236,7 +237,7 @@ public class TestActivationController extends BaseController {
                 list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;
@@ -258,7 +259,7 @@ public class TestActivationController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

@@ -25,6 +25,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
@@ -458,12 +459,12 @@ public class ReferredOutTestsController extends BaseController {
         try {
             referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
                     removableReferralResults, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 errorMsg = "error.system";
             }
 
@@ -644,7 +645,7 @@ public class ReferredOutTestsController extends BaseController {
                             }
                         }
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     }
                 } else {
                     ReferralResult referralResult = referralSet.getNextReferralResult();
@@ -782,7 +783,7 @@ public class ReferredOutTestsController extends BaseController {
                 newTestList.add(referralTest);
             }
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException(e);
         }
 

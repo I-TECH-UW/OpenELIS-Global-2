@@ -36,32 +36,28 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 //	public void deleteData(List patients) throws LIMSRuntimeException;
 
-    public List getAllPatients() throws LIMSRuntimeException;
+    List<Patient> getAllPatients() throws LIMSRuntimeException;
 
-    public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
+    List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Patient patient) throws LIMSRuntimeException;
+    void getData(Patient patient) throws LIMSRuntimeException;
 
 //	public void updateData(Patient patient) throws LIMSRuntimeException;
 
+    boolean externalIDExists(String patientExternalID);
 
+    Patient readPatient(String idString);
 
+    Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
 
+    Patient getPatientByNationalId(String subjectNumber);
 
-    public boolean externalIDExists(String patientExternalID);
+    List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
 
-    public Patient readPatient(String idString);
+    Patient getPatientByExternalId(String externalId);
 
-    public Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
-
-    public Patient getPatientByNationalId(String subjectNumber);
-
-    public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
-
-    public Patient getPatientByExternalId(String externalId);
-
-    public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
+    List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
             throws LIMSRuntimeException;
 
-    public Patient getData(String patientId) throws LIMSRuntimeException;
+    Patient getData(String patientId) throws LIMSRuntimeException;
 }

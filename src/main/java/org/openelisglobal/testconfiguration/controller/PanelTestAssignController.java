@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.panel.service.PanelService;
@@ -68,8 +69,7 @@ public class PanelTestAssignController extends BaseController {
         try {
             PropertyUtils.setProperty(form, "panelList", panels);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
         if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
@@ -95,8 +95,7 @@ public class PanelTestAssignController extends BaseController {
 
                 PropertyUtils.setProperty(form, "selectedPanel", panelTests);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LogEvent.logError(e.getMessage(), e);
             }
         }
     }
@@ -142,8 +141,8 @@ public class PanelTestAssignController extends BaseController {
 
             try {
                 panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
             }
         }
 

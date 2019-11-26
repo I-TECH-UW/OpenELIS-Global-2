@@ -50,9 +50,9 @@ public class ReportTransmission {
             orWorker.createReport(resultReport);
             sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
         } catch (HL7Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (IOException e) {
-            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
     }
 
@@ -77,12 +77,12 @@ public class ReportTransmission {
 
             sendRawReport(xmlString, url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
 
-        } catch (UnknownHostException he) {
+        } catch (UnknownHostException e) {
             List<String> errors = new ArrayList<>();
-            errors.add(he.toString());
+            errors.add(e.toString());
             responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
         } catch (Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
 
     }
@@ -118,7 +118,7 @@ public class ReportTransmission {
                 }
             }
         } catch (Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
 
     }
@@ -134,7 +134,7 @@ public class ReportTransmission {
 
             transmissionMap.load(propertyStream);
         } catch (IOException e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to load transmission resource mappings.", e);
         } finally {
             if (null != propertyStream) {
@@ -142,7 +142,7 @@ public class ReportTransmission {
                     propertyStream.close();
                     propertyStream = null;
                 } catch (Exception e) {
-                    LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }

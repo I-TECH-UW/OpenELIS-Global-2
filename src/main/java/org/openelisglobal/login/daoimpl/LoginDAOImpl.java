@@ -182,7 +182,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
 //	@Override
 //	public List getAllLoginUsers() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Login";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -200,7 +200,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
 //	@Override
 //	public List getPageOfLoginUsers(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -261,7 +261,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		int rrn = 0;
 //		try {
 //			String sql = "select l.id from Login l order by l.loginName";
@@ -288,7 +288,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		int rrn = 0;
 //		try {
 //			String sql = "select l.id from Login l order by l.loginName";
@@ -314,7 +314,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
     public boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Login> list = new ArrayList<>();
 
             String sql = "from Login l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -335,7 +335,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("LoginDAOImpl", "duplicateLoginNameExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
         }
     }
@@ -452,7 +452,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("LoginDAOImpl", "getPasswordExpiredDayNo()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
         }
 
@@ -480,7 +480,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("LoginDAOImpl", "getSystemUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getSystemUserId()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old

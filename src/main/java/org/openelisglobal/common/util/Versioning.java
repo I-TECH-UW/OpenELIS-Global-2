@@ -37,20 +37,17 @@ public class Versioning {
 
         try {
             propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
-
             properties = new Properties();
-
             properties.load(propertyStream);
-
         } catch (Exception e) {
-            LogEvent.logError("Versioning", "", e.toString());
+            LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                     propertyStream = null;
                 } catch (Exception e) {
-                    LogEvent.logError("Versioning", "static initializer", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }

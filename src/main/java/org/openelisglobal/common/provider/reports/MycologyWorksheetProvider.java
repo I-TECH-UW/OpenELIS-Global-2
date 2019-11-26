@@ -110,9 +110,9 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             servletOutputStream.write(bytes, 0, bytes.length);
             servletOutputStream.flush();
             servletOutputStream.close();
-        } catch (JRException jre) {
+        } catch (JRException e) {
             // bugzilla 2154
-            LogEvent.logError("MycologyWorksheetProvider", "processRequest()", jre.toString());
+            LogEvent.logError(e.toString(), e);
             // display stack trace in the browser
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -122,15 +122,18 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             errors.reject("errors.jasperreport.general");
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("MycologyWorksheetProvider", "processRequest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             errors.reject("errors.jasperreport.general");
 
         } finally {
             try {
-                conn.close();
-            } catch (SQLException sqle) {
+                if (conn != null) {
+                    conn.close();
+                }
+
+            } catch (SQLException e) {
                 // bugzilla 2154
-                LogEvent.logError("MycologyWorksheetProvider", "processRequest()", sqle.toString());
+                LogEvent.logError(e.toString(), e);
             }
         }
 

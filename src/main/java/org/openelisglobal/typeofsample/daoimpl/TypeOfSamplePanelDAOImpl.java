@@ -95,16 +95,16 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
                 typeOfSamplePanel.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list ;
         try {
             String sql = "from TypeOfSamplePanel";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -115,7 +115,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getAllTypeOfSamples()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getAllTypeOfSamplePanels()", e);
         }
 
@@ -124,9 +124,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
@@ -139,7 +139,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getPageOfTypeOfSamplePanels()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getPageOfTypeOfSamples()", e);
         }
 
@@ -154,7 +154,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "readTypeOfSample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel readTypeOfSample()", e);
         }
 
@@ -168,7 +168,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
         List<TypeOfSamplePanel> list;
@@ -186,14 +186,13 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
         }
 
         return list;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {

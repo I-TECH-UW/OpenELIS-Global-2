@@ -30,7 +30,7 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
         super(Menu.class);
     }
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<Menu> getAllMenus() throws LIMSRuntimeException {
 //
@@ -48,7 +48,7 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 //		}
 //	}
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<Menu> getAllActiveMenus() throws LIMSRuntimeException {
 //

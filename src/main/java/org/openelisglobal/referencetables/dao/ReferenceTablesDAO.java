@@ -35,27 +35,23 @@ public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 
 //	public void deleteData(List referenceTableses) throws LIMSRuntimeException;
 
-    public List getAllReferenceTables() throws LIMSRuntimeException;
+    List<ReferenceTables> getAllReferenceTables() throws LIMSRuntimeException;
 
-    public List getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException;
+    List<ReferenceTables> getPageOfReferenceTables(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException;
+    void getData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
 //	public void updateData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
+    Integer getTotalReferenceTablesCount() throws LIMSRuntimeException;
 
+    List<ReferenceTables> getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException;
 
+    ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) throws LIMSRuntimeException;
 
+    ReferenceTables getReferenceTableByName(String tableName) throws LIMSRuntimeException;
 
-    public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException;
-
-    public List getAllReferenceTablesForHl7Encoding() throws LIMSRuntimeException;
-
-    public ReferenceTables getReferenceTableByName(ReferenceTables referenceTables) throws LIMSRuntimeException;
-
-    public ReferenceTables getReferenceTableByName(String tableName) throws LIMSRuntimeException;
-
-    public Integer getTotalReferenceTableCount() throws LIMSRuntimeException;
+    Integer getTotalReferenceTableCount() throws LIMSRuntimeException;
 
     boolean duplicateReferenceTablesExists(ReferenceTables referenceTables, boolean isNew) throws LIMSRuntimeException;
 

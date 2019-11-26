@@ -1,9 +1,15 @@
 package org.openelisglobal.testconfiguration.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -18,9 +24,6 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-
 
 @Service
 public class ResultSelectListServiceImpl implements ResultSelectListService {
@@ -66,6 +69,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
         return testDictionary;
     }
 
+    @Override
     public List<Dictionary> getAllSelectListOptions() {
         List<Dictionary> dictionaries = new ArrayList<>();
         List<TestResult> testResults = resultService.getAllSortedTestResults();
@@ -108,18 +112,18 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
 
         JSONParser parser = new JSONParser();
         try {
-            JSONObject obj = (JSONObject)parser.parse(s);
+            JSONObject obj = (JSONObject) parser.parse(s);
             String testsStr = (String) obj.get("tests");
             JSONArray tests = (JSONArray) parser.parse(testsStr);
-            for(int j = 0; j < tests.size(); j++) {
-                JSONObject testObject = (JSONObject)tests.get(j);
+            for (int j = 0; j < tests.size(); j++) {
+                JSONObject testObject = (JSONObject) tests.get(j);
 
-                String testId = (String)testObject.get("id");
+                String testId = (String) testObject.get("id");
                 Test test = testService.getTestById(testId);
-                JSONArray items = (JSONArray)testObject.get("items");
+                JSONArray items = (JSONArray) testObject.get("items");
 
                 for (int i = 0; i < items.size(); i++) {
-                    JSONObject object = (JSONObject)items.get(i);
+                    JSONObject object = (JSONObject) items.get(i);
 
                     if (object.containsKey("id")) {
                         Map<String, Object> filter = new HashMap<>();
@@ -135,7 +139,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
                         testResult.setIsQuantifiable((Boolean) object.get("qualifiable"));
                         testResult.setIsNormal((Boolean) object.get("normal"));
                         testResult.setValue(dictionary.getId());
-                        long order = (Long)object.get("order");
+                        long order = (Long) object.get("order");
                         testResult.setSortOrder(String.valueOf(order * 10));
                         testResult.setTest(test);
                         testResult.setTestResultType("D");
@@ -146,7 +150,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
                 }
             }
             return true;
-        } catch (ParseException pe) {
+        } catch (ParseException e) {
 
         }
         return false;
@@ -166,14 +170,13 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             localization.setSysUserId(currentUserId);
             localization = localizationService.save(localization);
 
-
             dictionary.setDictEntry(form.getNameEnglish());
             dictionary.setLocalAbbreviation(form.getNameEnglish());
             dictionary.setSysUserId(currentUserId);
             dictionaryService.save(dictionary);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return false;
     }

@@ -184,7 +184,6 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     private void createTypeOfSampleIdentityMap() {
         typeOfSampleIdtoTypeOfSampleMap = new HashMap<>();
 
-        @SuppressWarnings("unchecked")
         List<TypeOfSample> typeOfSampleList = baseObjectDAO.getAllTypeOfSamples();
 
         for (TypeOfSample typeOfSample : typeOfSampleList) {
@@ -212,7 +211,6 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         return typeOfSampleWellKnownNameToIdMap.get(name);
     }
 
-    @SuppressWarnings("unchecked")
     private void createSampleNameIDMaps() {
         typeOfSampleIdToNameMap = new HashMap<>();
         typeOfSampleWellKnownNameToIdMap = new HashMap<>();
@@ -262,7 +260,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamples() {
+    public List<TypeOfSample> getAllTypeOfSamples() {
         return baseObjectDAO.getAllTypeOfSamples();
     }
 
@@ -274,7 +272,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getTypesForDomain(SampleDomain domain) {
+    public List<TypeOfSample> getTypesForDomain(SampleDomain domain) {
         return getBaseObjectDAO().getTypesForDomain(domain);
     }
 
@@ -304,13 +302,13 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamples(int startingRecNo) {
+    public List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTypeOfSamples(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTypes(String filter, String domain) {
+    public List<TypeOfSample> getTypes(String filter, String domain) {
         return getBaseObjectDAO().getTypes(filter, domain);
     }
 

@@ -33,7 +33,7 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestTrailers(int startingRecNo) {
+    public List<TestTrailer> getPageOfTestTrailers(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestTrailers(startingRecNo);
     }
 
@@ -51,13 +51,13 @@ public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestTrailers() {
+    public List<TestTrailer> getAllTestTrailers() {
         return getBaseObjectDAO().getAllTestTrailers();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestTrailers(String filter) {
+    public List<TestTrailer> getTestTrailers(String filter) {
         return getBaseObjectDAO().getTestTrailers(filter);
     }
 

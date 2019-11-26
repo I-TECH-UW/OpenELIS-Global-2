@@ -10,15 +10,12 @@ public interface QaEventService extends BaseObjectService<QaEvent, String> {
 
     QaEvent getQaEventByName(QaEvent qaEvent);
 
-    List getQaEvents(String filter);
+    List<QaEvent> getQaEvents(String filter);
 
-    List getAllQaEvents();
+    List<QaEvent> getAllQaEvents();
 
     Integer getTotalQaEventCount();
 
-    List getPageOfQaEvents(int startingRecNo);
-
-
-
+    List<QaEvent> getPageOfQaEvents(int startingRecNo);
 
 }

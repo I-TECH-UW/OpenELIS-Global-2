@@ -268,7 +268,7 @@ public class SiteInformationController extends BaseController {
             }
             try {
                 localizationService.update(localization);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 errors = new BaseErrors();
                 errors.reject("errors.UpdateException");
                 saveErrors(errors);
@@ -317,9 +317,9 @@ public class SiteInformationController extends BaseController {
             if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
                 localeResolver.setLocale(request, response, Locale.forLanguageTag(siteInformation.getValue()));
             }
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
 
                 errorMsg = "errors.OptimisticLockException";
 
@@ -418,7 +418,7 @@ public class SiteInformationController extends BaseController {
      * id = siteInformation.getId(); } else { // just disable next button
      * request.setAttribute(PREVIOUS_DISABLED, TRUE); } }
      *
-     * } catch (LIMSRuntimeException lre) { request.setAttribute(ALLOW_EDITS_KEY,
+     * } catch (LIMSRuntimeException e) { request.setAttribute(ALLOW_EDITS_KEY,
      * FALSE); // disable previous and next request.setAttribute(PREVIOUS_DISABLED,
      * TRUE); request.setAttribute(NEXT_DISABLED, TRUE); forward = FWD_FAIL_INSERT;
      * } if (forward.equals(FWD_FAIL_INSERT)) { return findForward(forward, form); }

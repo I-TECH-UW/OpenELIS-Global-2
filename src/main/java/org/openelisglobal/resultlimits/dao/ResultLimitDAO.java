@@ -27,17 +27,13 @@ public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
 
 //	void deleteData(List resultLimits) throws LIMSRuntimeException;
 
-    List getAllResultLimits() throws LIMSRuntimeException;
+    List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException;
 
-    List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
+    List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
 
     void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
 //	void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
-
-
-
-
 
     List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
 

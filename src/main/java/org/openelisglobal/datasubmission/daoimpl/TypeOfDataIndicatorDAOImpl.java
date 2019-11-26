@@ -36,7 +36,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfDataIndicatorDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getData()", e);
         }
     }
@@ -52,7 +52,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TypeOfDataIndicator", "getAllTypeOfDataIndicator()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getAllTypeOfDataIndicator()", e);
         }
 
@@ -69,7 +69,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             return dataValue;
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfDataIndicatorDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getData()", e);
         }
     }

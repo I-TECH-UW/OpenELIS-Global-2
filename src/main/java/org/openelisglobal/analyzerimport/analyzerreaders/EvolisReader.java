@@ -26,6 +26,7 @@ import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
@@ -89,8 +90,8 @@ public class EvolisReader extends AnalyzerLineInserter {
             // ensure transaction block
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
                 successful = false;
             }
 
@@ -108,7 +109,7 @@ public class EvolisReader extends AnalyzerLineInserter {
         if (fields.length == 7 && !GenericValidator.isBlankOrNull(analyzerAccessionNumber)
                 && analyzerAccessionNumber.length() > 6 && fields[assay].length() > 5) {
 
-            MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.EVOLIS,
+            MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.EVOLIS,
                     fields[assay]);
             AnalyzerResults analyzerResults = new AnalyzerResults();
             analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());

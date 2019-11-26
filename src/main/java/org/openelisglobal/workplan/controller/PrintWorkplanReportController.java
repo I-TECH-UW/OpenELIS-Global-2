@@ -89,11 +89,11 @@ public class PrintWorkplanReportController extends BaseController {
             servletOutputStream.flush();
             servletOutputStream.close();
 
-        } catch (JRException jre) {
-            LogEvent.logError("PringWorkplanReportAction", "processRequest()", jre.toString());
+        } catch (JRException e) {
+            LogEvent.logError(e.toString(), e);
             result.reject("error.jasper", "error.jasper");
         } catch (Exception e) {
-            LogEvent.logError("PrintWorkplanReportAction", "processRequest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             result.reject("error.jasper", "error.jasper");
         }
 

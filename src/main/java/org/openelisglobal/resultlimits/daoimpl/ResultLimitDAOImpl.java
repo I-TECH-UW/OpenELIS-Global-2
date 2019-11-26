@@ -137,15 +137,15 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
                 resultLimit.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("ResultLimitsDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResultLimits() throws LIMSRuntimeException {
-        List list;
+    public List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException {
+        List<ResultLimit> list;
         try {
             String sql = "from ResultLimit";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -153,7 +153,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultLimitsDAOImpl", "getAllResultLimits()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getAllResultLimits()", e);
         }
 
@@ -162,8 +162,8 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
+        List<ResultLimit> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -177,7 +177,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultLimitsDAOImpl", "getPageOfResultLimits()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getPageOfResultLimits()", e);
         }
 
@@ -191,7 +191,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ResultLimitDAOImpl", "readResultLimit()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit readResultLimit()", e);
         }
 
@@ -199,7 +199,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 

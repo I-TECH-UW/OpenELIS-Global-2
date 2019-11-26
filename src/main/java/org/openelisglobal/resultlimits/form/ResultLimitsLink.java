@@ -276,7 +276,7 @@ public class ResultLimitsLink {
 
         try {
             return Double.parseDouble(value);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return defaultValue;
         }
     }

@@ -350,13 +350,13 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResultLimits() throws LIMSRuntimeException {
+    public List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException {
         return getBaseObjectDAO().getAllResultLimits();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
+    public List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
         return getBaseObjectDAO().getPageOfResultLimits(startingRecNo);
     }
 

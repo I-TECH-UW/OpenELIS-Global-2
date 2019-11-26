@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {
     public enum Parameter {
@@ -28,11 +29,11 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
 
     private String reportTitle;
     private String instructions;
-    private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+    private ArrayList<Parameter> parameters = new ArrayList<>();
 
     /**
      * Constructor for a single parameter.
-     * 
+     *
      * @param parameter    The parameter which will appear on the parameter page
      * @param title        The title for the page, it will appear above the
      *                     parameters
@@ -82,7 +83,7 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

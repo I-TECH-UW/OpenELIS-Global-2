@@ -32,6 +32,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -52,6 +53,7 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 public class TestReflexUserChoiceProvider extends BaseQueryProvider {
 
     private static final String ID_SEPERATOR = ",";
+    private static final int MAX_FIELD_SIZE = 1024;
     protected AjaxServlet ajaxServlet = null;
 
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
@@ -79,6 +81,12 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 || (GenericValidator.isBlankOrNull(analysisIds) && GenericValidator.isBlankOrNull(accessionNumber))) {
             jResult = INVALID;
             jString = "Internal error, please contact Admin and file bug report";
+        } else if (resultIds.length() > MAX_FIELD_SIZE || testIds.length() > MAX_FIELD_SIZE
+                || rowIndex.length() > MAX_FIELD_SIZE || analysisIds.length() > MAX_FIELD_SIZE
+                || accessionNumber.length() > MAX_FIELD_SIZE) {
+            // check field size, so potential DOS attack is harder
+            jResult = INVALID;
+            jString = "Internal error, please contact Admin and file bug report";
         } else {
             jResult = createJsonTestReflex(resultIds, analysisIds, testIds, accessionNumber, rowIndex, jsonResult);
             StringWriter out = new StringWriter();
@@ -86,7 +94,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }
@@ -108,7 +116,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
          */
         ArrayList<TestReflex> selectableReflexes = new ArrayList<>();
         HashSet<String> reflexTriggers = new HashSet<>();
-        HashSet<String> reflexTriggerIds = new HashSet<>();
+//        HashSet<String> reflexTriggerIds = new HashSet<>();
         // Both test given results on client
         if (resultIdSeries.length > 1) {
             /*
@@ -201,14 +209,14 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
     }
 
     private void createTriggerList(HashSet<String> reflexTriggers, String reflexTriggerIds, JSONObject jsonResult) {
-        StringBuilder triggers = new StringBuilder();
+        StringBuilder triggers = new StringBuilder(32);
         for (String trigger : reflexTriggers) {
             triggers.append(trigger);
             triggers.append(",");
         }
         jsonResult.put("triggers", triggers.deleteCharAt(triggers.length() - 1).toString());
 
-        triggers = new StringBuilder();
+        triggers = new StringBuilder(32);
 
         String[] sortedTriggerIds = reflexTriggerIds.split(",");
         Arrays.sort(sortedTriggerIds);

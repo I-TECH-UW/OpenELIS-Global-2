@@ -1,9 +1,13 @@
 package org.openelisglobal.testresult.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.dao.TestResultDAO;
@@ -68,25 +72,25 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestResults(int startingRecNo) {
+    public List<TestResult> getPageOfTestResults(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestResults() {
+    public List<TestResult> getAllTestResults() {
         return getBaseObjectDAO().getAllTestResults();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
+    public List<TestResult> getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
         return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSortedTestResults() {
+    public List<TestResult> getAllSortedTestResults() {
         List<TestResult> testResults = getBaseObjectDAO().getAllTestResults();
         Collections.sort(testResults, new Comparator<TestResult>() {
             @Override
@@ -97,7 +101,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
                     return result;
                 }
 
-                return GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
+                return org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
                         : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
             }
         });

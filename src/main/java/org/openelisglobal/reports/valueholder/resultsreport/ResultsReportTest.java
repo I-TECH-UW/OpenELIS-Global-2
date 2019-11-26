@@ -49,7 +49,7 @@ public class ResultsReportTest {
     private List analyteResults;
 
     // bugzilla 1856
-    private List children;
+    private List<ResultsReportTest> children;
 
     // bugzilla 1856 this is used for sorting:
     // parent tests are loaded into the list of tests to sort in order to
@@ -121,11 +121,11 @@ public class ResultsReportTest {
         this.testMessage = testMessage;
     }
 
-    public List getChildren() {
+    public List<ResultsReportTest> getChildren() {
         return children;
     }
 
-    public void setChildren(List children) {
+    public void setChildren(List<ResultsReportTest> children) {
         this.children = children;
     }
 

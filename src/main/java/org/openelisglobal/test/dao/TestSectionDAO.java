@@ -37,19 +37,16 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
     List<TestSection> getAllTestSections() throws LIMSRuntimeException;
 
-    List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
+    List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
 
     void getData(TestSection testSection) throws LIMSRuntimeException;
 
 //	public void updateData(TestSection testSection) throws LIMSRuntimeException;
 
-    List getTestSections(String filter) throws LIMSRuntimeException;
+    List<TestSection> getTestSections(String filter) throws LIMSRuntimeException;
 
-    List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList) throws LIMSRuntimeException;
-
-
-
-
+    List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
+            throws LIMSRuntimeException;
 
     TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
 
@@ -65,5 +62,5 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
     boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException;
 
-    List getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException;
+    List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException;
 }

@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
@@ -191,7 +192,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
 
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

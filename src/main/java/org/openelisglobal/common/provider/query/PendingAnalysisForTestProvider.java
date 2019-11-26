@@ -28,6 +28,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
@@ -80,11 +81,11 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             } catch (IllegalStateException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }

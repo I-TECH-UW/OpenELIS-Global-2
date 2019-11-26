@@ -33,8 +33,6 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.project.valueholder.Project;
-import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVReportData;
 import org.openelisglobal.reports.action.util.ReportUtil;
 import org.openelisglobal.sample.service.SampleService;
@@ -60,20 +58,20 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
     ObservationHistoryType observationType = observationTypeService.getByName("nameOfDoctor");
     private String OBSERVATION_DOCTOR_ID = observationType.getId();
 
-    private String lowDateStr;
-    private String highDateStr;
+//    private String lowDateStr;
+//    private String highDateStr;
     private String lowerNumber;
     private String upperNumber;
-    private DateRange dateRange;
+//    private DateRange dateRange;
 
     private ArrayList<ARVReportData> reportItems;
 
     private Sample sample;
-    private Project project;
-    private String service;
+//    private Project project;
+//    private String service;
     private Patient patient;
-    private QaEvent qaEvent;
-    private List<SampleQaEvent> sampleQaEvents;
+//    private QaEvent qaEvent;
+//    private List<SampleQaEvent> sampleQaEvents;
 
     @Override
     protected void createReportParameters() throws IllegalStateException {
@@ -99,7 +97,7 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
         super.initializeReport();
         lowerNumber = form.getString("accessionDirect");
         upperNumber = form.getString("highAccessionDirect");
-        dateRange = new DateRange(lowDateStr, highDateStr);
+//        dateRange = new DateRange(lowDateStr, highDateStr);
         createReportParameters();
         errorFound = !validateAccessionNumbers();
         if (errorFound) {
@@ -121,9 +119,9 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
         for (Sample sample : samples) {
             this.sample = sample;
             patient = ReportUtil.findPatient(sample);
-            project = ReportUtil.findProject(sample);
-            service = findService();
-            sampleQaEvents = findSampleQaEvents();
+//            project = ReportUtil.findProject(sample);
+//            service = findService();
+//            sampleQaEvents = findSampleQaEvents();
 
             ARVReportData data = new ARVReportData();
 

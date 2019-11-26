@@ -1,5 +1,7 @@
 package org.openelisglobal.qaevent.daoimpl;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -10,8 +12,6 @@ import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Component
 @Transactional
 public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> implements NceSpecimenDAO {
@@ -21,8 +21,8 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
     }
 
     @Override
-    public List getSpecimenByNceId(String nceId) throws LIMSRuntimeException {
-        List list;
+    public List<NceSpecimen> getSpecimenByNceId(String nceId) throws LIMSRuntimeException {
+        List<NceSpecimen> list;
         try {
             String sql = "from NceSpecimen ns where ns.nceId=:nceId ";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -32,7 +32,7 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("NceSpecimenDAOImpl", "getSpecimenByNceId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

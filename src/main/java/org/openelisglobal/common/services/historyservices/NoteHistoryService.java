@@ -62,11 +62,11 @@ public class NoteHistoryService extends AbstractHistoryService {
 
     private void addAnalysisNotes(Sample sample) {
         History searchHistory = new History();
-        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+        searchHistory.setReferenceTable(NoteServiceImpl.getTableReferenceId());
         SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
         List<Analysis> analysisList = sampleSampleService.getAnalysis(sample);
         Note searchNote = new Note();
-        searchNote.setReferenceTableId(AnalysisServiceImpl.TABLE_REFERENCE_ID);
+        searchNote.setReferenceTableId(AnalysisServiceImpl.getTableReferenceId());
         for (Analysis analysis : analysisList) {
             searchNote.setReferenceId(analysis.getId());
 
@@ -82,10 +82,10 @@ public class NoteHistoryService extends AbstractHistoryService {
 
     private void addOrderNotes(Sample sample) {
         History searchHistory = new History();
-        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+        searchHistory.setReferenceTable(NoteServiceImpl.getTableReferenceId());
 
         Note searchNote = new Note();
-        searchNote.setReferenceTableId(SampleServiceImpl.TABLE_REFERENCE_ID);
+        searchNote.setReferenceTableId(SampleServiceImpl.getTableReferenceId());
         searchNote.setReferenceId(sample.getId());
 
         List<Note> notes = noteService.getAllNotesByRefIdRefTable(searchNote);
@@ -99,7 +99,7 @@ public class NoteHistoryService extends AbstractHistoryService {
 
     private void addQANotes(Sample sample) {
         History searchHistory = new History();
-        searchHistory.setReferenceTable(NoteServiceImpl.TABLE_REFERENCE_ID);
+        searchHistory.setReferenceTable(NoteServiceImpl.getTableReferenceId());
 
         Note searchNote = new Note();
         searchNote.setReferenceTableId(QAService.TABLE_REFERENCE_ID);

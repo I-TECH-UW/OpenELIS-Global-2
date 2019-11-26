@@ -151,15 +151,15 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPersons() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Person> getAllPersons() throws LIMSRuntimeException {
+        List<Person> list = new Vector<>();
         try {
             String sql = "from Person";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -168,7 +168,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getAllPersons()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
         }
 
@@ -177,8 +177,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
+        List<Person> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -193,7 +193,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getPageOfPersons()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
         }
 
@@ -208,7 +208,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "readPerson()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person readPerson()", e);
         }
 
@@ -216,20 +216,20 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {
         List<Person> list = null;
         try {
             String sql = "from Person p where p.lastName = :lastName";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("lastName", lastName);
 
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("PersonDAOImpl", "getPersonByLastName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
         }
 
@@ -245,9 +245,9 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
     public Person getPersonById(String personId) throws LIMSRuntimeException {
         String sql = "From Person p where id = :personId";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("personId", Integer.parseInt(personId));
-            Person person = (Person) query.uniqueResult();
+            Person person = query.uniqueResult();
             // closeSession(); // CSL remove old
             return person;
         } catch (HibernateException e) {

@@ -91,7 +91,11 @@ public class LogoUploadServlet extends HttpServlet {
 
     private void removeImage(String logoName, String uploadPreviewPath) {
         File previewFile = new File(uploadPreviewPath);
-        previewFile.delete();
+
+        boolean deleteSuccess = previewFile.delete();
+        if (!deleteSuccess) {
+            LogEvent.logError(this.getClass().getName(), "removeImage", "could not delete preview file");
+        }
 
         SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
@@ -106,8 +110,8 @@ public class LogoUploadServlet extends HttpServlet {
 
             try {
                 logoUploadService.removeImage(image, logoInformation);
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(e);
             }
 
         }
@@ -144,10 +148,10 @@ public class LogoUploadServlet extends HttpServlet {
                 }
             }
 
-        } catch (FileUploadException ex) {
-            throw new ServletException(ex);
-        } catch (Exception ex) {
-            throw new ServletException(ex);
+        } catch (FileUploadException e) {
+            throw new ServletException(e);
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
 
@@ -165,14 +169,26 @@ public class LogoUploadServlet extends HttpServlet {
 
         boolean newImage = GenericValidator.isBlankOrNull(imageId);
 
-        byte[] imageData = new byte[(int) file.length()];
+        long fileSize = file.length();
+        byte[] imageData = new byte[(int) fileSize];
 
+        FileInputStream fileInputStream = null;
         try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            fileInputStream.read(imageData);
-            fileInputStream.close();
+            fileInputStream = new FileInputStream(file);
+            int bytesRead = fileInputStream.read(imageData);
+            if (bytesRead != fileSize) {
+                throw new IOException("file size changed between array allocation and file read, suspected attack");
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logError(e);
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    LogEvent.logError(e.getMessage(), e);
+                }
+            }
         }
 
         Image image = new Image();
@@ -181,8 +197,8 @@ public class LogoUploadServlet extends HttpServlet {
 
         try {
             logoUploadService.saveImage(image, newImage, imageId, logoInformation);
-        } catch (LIMSRuntimeException lre) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", lre);
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logErrorStack(e);
         }
     }
 
@@ -192,7 +208,7 @@ public class LogoUploadServlet extends HttpServlet {
             filePath = file.getCanonicalPath();
             return filePath.startsWith((new File(FULL_PREVIEW_FILE_PATH).getCanonicalPath()));
         } catch (IOException e) {
-            LogEvent.logErrorStack(this.getClass().getName(), "fileInImageDirectory", e);
+            LogEvent.logErrorStack(e);
             return false;
         }
     }

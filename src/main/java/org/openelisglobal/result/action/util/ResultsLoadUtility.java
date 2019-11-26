@@ -40,6 +40,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.StatusService;
@@ -656,14 +657,12 @@ public class ResultsLoadUtility {
         String referralReasonId = null;
         boolean referralCanceled = false;
         if (supportReferrals) {
-            if (analysis != null) {
-                Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
-                if (referral != null) {
-                    referralCanceled = referral.isCanceled();
-                    referralId = referral.getId();
-                    if (!referral.isCanceled()) {
-                        referralReasonId = referral.getReferralReasonId();
-                    }
+            Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+            if (referral != null) {
+                referralCanceled = referral.isCanceled();
+                referralId = referral.getId();
+                if (!referral.isCanceled()) {
+                    referralReasonId = referral.getReferralReasonId();
                 }
             }
         }
@@ -907,7 +906,8 @@ public class ResultsLoadUtility {
 
                 valid = value >= resultLimit.getLowValid() && value <= resultLimit.getHighValid();
 
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
+                LogEvent.logInfo(this.getClass().getName(), "getIsValid", e.getMessage());
                 // no-op
             }
         }
@@ -924,7 +924,8 @@ public class ResultsLoadUtility {
 
                 normal = value >= resultLimit.getLowNormal() && value <= resultLimit.getHighNormal();
 
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
+                LogEvent.logInfo(this.getClass().getName(), "getIsNormal", e.getMessage());
                 // no-op
             }
         }

@@ -164,15 +164,15 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllScriptlets() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Scriptlet> getAllScriptlets() throws LIMSRuntimeException {
+        List<Scriptlet> list ;
         try {
             String sql = "from Scriptlet";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -183,7 +183,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getAllScriptlets()", e);
         }
 
@@ -192,8 +192,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Scriptlet> getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException {
+        List<Scriptlet> list ;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -209,7 +209,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getPageOfScriptlets()", e);
         }
 
@@ -224,7 +224,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet readScriptlet()", e);
         }
 
@@ -234,8 +234,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getScriptlets(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Scriptlet> getScriptlets(String filter) throws LIMSRuntimeException {
+        List<Scriptlet> list ;
         try {
             String sql = "from Scriptlet s where upper(s.scriptletName) like upper(:param) order by upper(s.scriptletName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -246,7 +246,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getScriptlets(String filter)", e);
         }
         return list;
@@ -260,19 +260,19 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", scriptlet.getScriptletName());
 
-            List list = query.list();
+            List<Scriptlet> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             Scriptlet s = null;
             if (list.size() > 0) {
-                s = (Scriptlet) list.get(0);
+                s = list.get(0);
             }
 
             return s;
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getScriptletByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getScriptletByName()", e);
         }
     }
@@ -288,7 +288,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     public boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Scriptlet> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -316,7 +316,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "duplicateScriptletExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateScriptletExists()", e);
         }
     }

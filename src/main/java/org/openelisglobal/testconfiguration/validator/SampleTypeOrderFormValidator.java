@@ -40,7 +40,7 @@ public class SampleTypeOrderFormValidator implements Validator {
                 }
             }
         } catch (ParseException e) {
-            LogEvent.logError("SampleTypeOrderFormValidator", "validate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             errors.rejectValue("jsonChangeList", "error.field.format.json");
         }
 

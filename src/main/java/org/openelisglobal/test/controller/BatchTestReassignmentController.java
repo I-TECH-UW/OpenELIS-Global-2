@@ -82,7 +82,7 @@ public class BatchTestReassignmentController extends BaseController {
             analysisService.updateAnalysises(cancelAnalysis, newAnalysis, getSysUserId(request));
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "showBatchTestReassignmentUpdate", e);
+            LogEvent.logErrorStack(e);
         }
 
         if (changeBeans.isEmpty()) {
@@ -152,7 +152,7 @@ public class BatchTestReassignmentController extends BaseController {
                 changedMetaInfo.sampleTypeName = (String) obj.get("sampleType");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
     }
@@ -236,7 +236,7 @@ public class BatchTestReassignmentController extends BaseController {
         try {
             replacementTestArray = (JSONArray) parser.parse(replacementTests);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return replacementTestList;
         }
 
@@ -258,7 +258,7 @@ public class BatchTestReassignmentController extends BaseController {
         try {
             modifyAnalysisArray = (JSONArray) parser.parse(sampleIdList);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return analysisList;
         }
 

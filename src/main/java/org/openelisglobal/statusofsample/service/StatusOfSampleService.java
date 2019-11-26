@@ -12,15 +12,12 @@ public interface StatusOfSampleService extends BaseObjectService<StatusOfSample,
 
 //	boolean insertData(StatusOfSample sourceOfSample);
 
-
-
-    List getPageOfStatusOfSamples(int startingRecNo);
+    List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo);
 
     Integer getTotalStatusOfSampleCount();
 
     StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample);
 
-    List getAllStatusOfSamples();
-
+    List<StatusOfSample> getAllStatusOfSamples();
 
 }

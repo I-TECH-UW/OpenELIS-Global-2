@@ -11,9 +11,9 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -74,8 +74,7 @@ public class SampleTypeTestAssignController extends BaseController {
             PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
             PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -150,7 +149,7 @@ public class SampleTypeTestAssignController extends BaseController {
         }
 
 //------------------------------------------
-        if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
             deActivateTypeOfSample = SpringContext.getBean(TypeOfSampleService.class)
                     .getTransientTypeOfSampleById(deactivateSampleTypeId);
             deActivateTypeOfSample.setIsActive(false);
@@ -160,8 +159,8 @@ public class SampleTypeTestAssignController extends BaseController {
         try {
             sampleTypeTestAssignService.update(typeOfSample, testId, typeOfSamplesTestID, sampleTypeId,
                     deleteExistingTypeOfSampleTest, updateTypeOfSample, deActivateTypeOfSample, systemUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);

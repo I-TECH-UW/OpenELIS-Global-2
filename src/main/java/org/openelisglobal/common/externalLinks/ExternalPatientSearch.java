@@ -18,12 +18,10 @@
 package org.openelisglobal.common.externalLinks;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +40,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
@@ -163,7 +162,7 @@ public class ExternalPatientSearch implements Runnable {
     // protected for unit testing called from synchronized block
     protected void doSearch() {
 
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = new DefaultHttpClient();
         setTimeout(httpclient);
 
         HttpGet httpget = new HttpGet(connectionString);
@@ -184,35 +183,40 @@ public class ExternalPatientSearch implements Runnable {
             setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("Tinny time out" + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("you no talks? " + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("all else failed " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (UnrecoverableKeyException e) {
             errors.add("Unrecoverable key error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (NoSuchAlgorithmException e) {
             errors.add("No such encyrption algorithm error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (KeyStoreException e) {
             errors.add("Keystore error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (RuntimeException e) {
             errors.add("Runtime error trying to retrieve patient information.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             httpget.abort();
             throw e;
         } finally {
             httpclient.getConnectionManager().shutdown();
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                LogEvent.logError(e.getMessage(), e);
+            }
         }
     }
 
@@ -267,15 +271,12 @@ public class ExternalPatientSearch implements Runnable {
 
         URI uriFinal = null;
         try {
-            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, URLEncoder.encode(firstName, "UTF-8"))
-                    .addParameter(GET_PARAM_LAST, URLEncoder.encode(lastName, "UTF-8"))
-                    .addParameter(GET_PARAM_ST, URLEncoder.encode(STNumber, "UTF-8"))
-                    .addParameter(GET_PARAM_SUBJECT, URLEncoder.encode(subjectNumber, "UTF-8"))
-                    .addParameter(GET_PARAM_NATIONAL_ID, URLEncoder.encode(nationalId, "UTF-8"))
-                    .addParameter(GET_PARAM_GUID, URLEncoder.encode(guid, "UTF-8"))
-                    .addParameter(GET_PARAM_NAME, URLEncoder.encode(connectionName, "UTF-8"))
-                    .addParameter(GET_PARAM_PWD, URLEncoder.encode(connectionPassword, "UTF-8")).build();
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
+            uriFinal = new URIBuilder(uriStart).addParameter(GET_PARAM_FIRST, firstName)
+                    .addParameter(GET_PARAM_LAST, lastName).addParameter(GET_PARAM_ST, STNumber)
+                    .addParameter(GET_PARAM_SUBJECT, subjectNumber).addParameter(GET_PARAM_NATIONAL_ID, nationalId)
+                    .addParameter(GET_PARAM_GUID, guid).addParameter(GET_PARAM_NAME, connectionName)
+                    .addParameter(GET_PARAM_PWD, connectionPassword).build();
+        } catch (URISyntaxException e) {
             errors.add(URI_BUILD_FAILURE);
         }
 

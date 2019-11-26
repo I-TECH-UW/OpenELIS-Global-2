@@ -129,13 +129,13 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
                 siteInformation.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("SiteInformationsDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException {
         List<SiteInformation> list;
@@ -146,7 +146,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SiteInformationsDAOImpl", "getAllSiteInformation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation getAllSiteInformation()", e);
         }
 
@@ -154,7 +154,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
             throws LIMSRuntimeException {
@@ -187,7 +187,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SiteInformationDAOImpl", "readSiteInformation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation readSiteInformation()", e);
         }
 

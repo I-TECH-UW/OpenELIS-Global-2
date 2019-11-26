@@ -22,7 +22,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
         List<ObservationHistoryType> historyTypeList;
@@ -38,7 +38,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
             return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 
         } catch (Exception e) {
-            LogEvent.logError("ObservationHistoryTypeDAOImpl ", "getByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ObservationHistoryTypeDAOImpl  getByName()", e);
         }
     }
@@ -47,7 +47,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
      * Read all entities from the database.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
         List<ObservationHistoryType> entities;
@@ -56,7 +56,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             entities = query.list();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw (e);
         }
 

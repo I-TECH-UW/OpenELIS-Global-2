@@ -138,10 +138,10 @@ public class DictionaryMenuController extends BaseMenuController {
 
         try {
             dictionaryService.deleteAll(dictionaries);
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryMenuController", "showDeleteDictionary()", lre.toString());
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            LogEvent.logError(e.toString(), e);
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
             } else {
                 result.reject("errors.DeleteException");

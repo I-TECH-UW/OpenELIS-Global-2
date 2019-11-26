@@ -1,7 +1,5 @@
 package org.openelisglobal.barcode.daoimpl;
 
-import java.util.List;
-
 import org.openelisglobal.barcode.dao.BarcodeLabelInfoDAO;
 import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -23,9 +21,6 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
     public BarcodeLabelInfoDAOImpl() {
         super(BarcodeLabelInfo.class);
     }
-
-    @SuppressWarnings("rawtypes")
-    List list;
 
     /*
      * // * (non-Javadoc) // * // * @see // *

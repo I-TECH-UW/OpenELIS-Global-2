@@ -135,18 +135,10 @@ public class ExchangeConfigurationService {
     }
 
     public ExchangeConfigurationService(ConfigurationDomain domain) {
-        setDomain(domain);
-    }
-
-    public ExchangeConfigurationService(String urlTestToken) {
-        setDomainByUrlTestToken(urlTestToken);
-    }
-
-    public void setDomain(ConfigurationDomain domain) {
         this.domain = domain;
     }
 
-    public void setDomainByUrlTestToken(String urlTestToken) {
+    public ExchangeConfigurationService(String urlTestToken) {
         domain = testTokenToDomainMap.get(urlTestToken);
         exchangeType = testTokenToExchangeTypeMap.get(urlTestToken);
     }

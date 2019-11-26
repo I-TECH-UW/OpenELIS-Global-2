@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -137,16 +138,16 @@ public abstract class CollectionReport implements IReportCreator {
 
             return outputBytes;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } finally {
             try {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+            } catch (IOException e) {
+                LogEvent.logDebug(e);
             }
         }
         return null;
@@ -167,7 +168,7 @@ public abstract class CollectionReport implements IReportCreator {
             try {
                 return reportCreator.runReport();
             } catch (Exception e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 

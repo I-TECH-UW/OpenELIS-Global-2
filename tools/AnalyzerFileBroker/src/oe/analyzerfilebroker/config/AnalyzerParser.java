@@ -40,7 +40,7 @@ public class AnalyzerParser {
                     }
 
                     config.setPeriod(intPeriod);
-                }catch(NumberFormatException ne){
+                }catch(NumberFormatException e){
                     System.out.println(config.getName() + ": " +StringLocalization.instance().getStringForKey("error.period.format"));
                     return false;
                 }

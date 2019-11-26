@@ -24,6 +24,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.ResultSaveService;
@@ -267,12 +268,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         try {
             logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 errorMsg = "errors.UpdateException";
             }
 
@@ -461,7 +462,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     }
                 }
             } catch (ParseException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
     }

@@ -154,8 +154,7 @@ public class InventoryController extends BaseController {
             PropertyUtils.setProperty(form, "kitTypes", kitTypes);
             PropertyUtils.setProperty(form, "sources", sources);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -224,7 +223,7 @@ public class InventoryController extends BaseController {
             }
 
 //			tx.commit();
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
 //			tx.rollback();
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
@@ -324,8 +323,7 @@ public class InventoryController extends BaseController {
                 newInventory.add(set);
             }
         } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
     }
@@ -428,9 +426,9 @@ public class InventoryController extends BaseController {
                     errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) },
                             "errors.invalid");
                 }
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError("TestResultUpdateAction", "validateAll()", nfe.toString());
+                LogEvent.logError(e.toString(), e);
                 errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
             }
         }

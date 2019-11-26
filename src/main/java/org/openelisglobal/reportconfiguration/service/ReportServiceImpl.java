@@ -1,5 +1,12 @@
 package org.openelisglobal.reportconfiguration.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.menu.service.MenuService;
@@ -12,13 +19,6 @@ import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> implements ReportService {
@@ -37,7 +37,7 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
     @Override
     public List<Report> getReports() {
         List<Report> reportList = this.getAll();
-        for (Report report: reportList) {
+        for (Report report : reportList) {
             report.setName(MessageUtil.getMessage(report.getDisplayKey()));
         }
         return reportList;
@@ -47,10 +47,12 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
     public boolean updateReport(ReportConfigurationForm form, String currentUserId) {
         try {
             Report report = baseObjectDAO.get(form.getCurrentReport().getId()).get();
-            List<Integer> idOrder = Arrays.asList(form.getIdOrder().split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+            List<Integer> idOrder = Arrays.asList(form.getIdOrder().split(",")).stream().map(Integer::parseInt)
+                    .collect(Collectors.toList());
 
             final String categoryId = form.getCurrentReport().getCategory();
-            ReportCategory reportCategory = form.getReportCategoryList().stream().filter( rc -> rc.getId().equalsIgnoreCase(categoryId)).findFirst().orElse(null);
+            ReportCategory reportCategory = form.getReportCategoryList().stream()
+                    .filter(rc -> rc.getId().equalsIgnoreCase(categoryId)).findFirst().orElse(null);
             if (report != null) {
                 String previousCategory = report.getCategory();
                 report.setName(form.getCurrentReport().getName());
@@ -82,7 +84,7 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return false;
     }
@@ -94,7 +96,8 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
             form.getCurrentReport().setSortOrder(maxSortOrder + 1);
 
             final String categoryId = form.getCurrentReport().getCategory();
-            ReportCategory reportCategory = form.getReportCategoryList().stream().filter(rc -> rc.getId().equalsIgnoreCase(categoryId)).findFirst().orElse(null);
+            ReportCategory reportCategory = form.getReportCategoryList().stream()
+                    .filter(rc -> rc.getId().equalsIgnoreCase(categoryId)).findFirst().orElse(null);
 
             form.getCurrentReport().setDisplayKey(form.getMenuDisplayKey());
             Report createdReport = baseObjectDAO.update(form.getCurrentReport());
@@ -127,13 +130,13 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
                         form.getReportTemplateFile().transferTo(templateFile);
 
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     }
                 }
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         return false;
     }

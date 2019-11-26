@@ -166,13 +166,13 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
         List<Test> list = new Vector<>();
@@ -190,7 +190,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
         List<Test> list = new Vector<>();
@@ -223,7 +223,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //		return list;
 //	}
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException {
@@ -249,7 +248,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      */
 //	@Override
 //	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		String sectionIdList = "";
 //		String sql;
 //
@@ -284,8 +283,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
+        List<Test> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -301,7 +300,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getPageOfTests()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getPageOfTests()", e);
         }
 
@@ -311,8 +310,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // bugzilla 2371
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException {
+        List<Test> list;
         String wildCard = "*";
         String newSearchStr;
         String sql;
@@ -338,7 +337,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
         }
 
@@ -356,7 +355,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      */
 //	@Override
 //	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -413,7 +412,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //			String sectionIdList = "";
 //
-//			@SuppressWarnings("unchecked")
+//
 //			List<SystemUserSection> userTestSectionList = systemUserSectionDAO
 //					.getAllSystemUserSectionsBySystemUserId(sysUserId);
 //
@@ -444,13 +443,13 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
-//			@SuppressWarnings("unchecked")
+//
 //			List<Test> list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return list;
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
 //		}
 //
@@ -464,7 +463,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "readTest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test readTest()", e);
         }
 
@@ -475,8 +474,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // bugzilla 2291 added onlyTestsFullySetup
     @Override
     @Transactional(readOnly = true)
-    public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
+        List<Test> list;
         try {
             String sql = "from Test t where upper(t.testName) like upper(:param) and t.isActive='Y' order by upper(t.testName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -487,7 +486,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getTests()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTests(String filter)", e);
         }
 
@@ -508,7 +507,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
-            @SuppressWarnings("unchecked")
             List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
@@ -521,7 +519,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             return t;
 
         } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getTestByName() " + testName, e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
     }
@@ -534,7 +532,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
-            @SuppressWarnings("unchecked")
             List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
@@ -548,13 +545,13 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException {
         try {
@@ -573,7 +570,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Test getActiveTestById(Integer testId) throws LIMSRuntimeException {
         List<Test> list = null;
@@ -603,7 +600,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestById()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestById()", e);
         }
 
@@ -613,19 +610,19 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getMethodsByTestSection(String filter) throws LIMSRuntimeException {
+    public List<Method> getMethodsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            List methods = new ArrayList();
+            List<Method> methods = new ArrayList();
 
             for (int i = 0; i < list.size(); i++) {
-                Test t = (Test) list.get(i);
+                Test t = list.get(i);
                 /*
                  * System.out.println("This is test " + t.getId() + " " + t.getTestName());
                  */
@@ -643,7 +640,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getMethodsByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethodsByTestSection(String filter)", e);
         }
     }
@@ -651,20 +648,20 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByTestSection(String filter) throws LIMSRuntimeException {
+    public List<Test> getTestsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("param", Integer.parseInt(filter));
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByTestSection(String filter)", e);
         }
     }
@@ -677,7 +674,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("id", Integer.parseInt(id));
 
-            List list = query.list();
+            List<Test> list = query.list();
             // closeSession(); // CSL remove old
             return list;
 
@@ -691,20 +688,20 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByMethod(String filter) throws LIMSRuntimeException {
+    public List<Test> getTestsByMethod(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.method = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByMethod()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
         }
     }
@@ -712,21 +709,21 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
+    public List<Test> getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param1 and t.method = :param2";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param1", filter);
             query.setParameter("param2", filter2);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByMethod()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
         }
     }
@@ -760,18 +757,18 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", newSearchStr);
 
-            List results = query.list();
+            List<Long> results = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (results != null && results.get(0) != null) {
                 if (results.get(0) != null) {
-                    count = ((Long) results.get(0)).intValue();
+                    count = results.get(0).intValue();
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCount()", e);
         }
 
@@ -833,7 +830,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			}
 //
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
 //		}
 //
@@ -863,7 +860,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
 //		}
 //		return count;
@@ -875,7 +872,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public boolean duplicateTestExists(Test test) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Test> list = new ArrayList();
 
             if (test.getIsActive().equalsIgnoreCase("Y")) {
                 // not case sensitive hemolysis and Hemolysis are considered
@@ -901,7 +898,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             return !list.isEmpty();
 
         } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "duplicateTestExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestExists()", e);
         }
     }
@@ -945,7 +942,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         try {
 
-            List list;
+            List<Test> list;
             Test testWithHighestSortOrder;
 
             String sql = "from Test t where t.testSection = :param and t.sortOrder is not null order by t.sortOrder desc";
@@ -957,7 +954,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (list.size() > 0) {
-                testWithHighestSortOrder = (Test) list.get(0);
+                testWithHighestSortOrder = list.get(0);
                 if (testWithHighestSortOrder != null
                         && !StringUtil.isNullorNill(testWithHighestSortOrder.getSortOrder())) {
                     result = (Integer.parseInt(testWithHighestSortOrder.getSortOrder()) + 1);
@@ -966,7 +963,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getNextAvailableSortOrderByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getNextAvailableSortOrderByTestSection()", e);
         }
         return result;
@@ -977,7 +974,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      *      all entities from the database sorted by an appropriate property
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException {
         List<Test> entities;
@@ -994,7 +991,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             entities = query.list();
             // closeSession(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getAllOrderBy()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getAllOrderBy()", e);
         }
 
@@ -1055,7 +1052,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getTestsByLoincCode(String loincCode) {
@@ -1073,7 +1069,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getActiveTestsByLoinc(String loincCode) {
@@ -1091,10 +1086,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         return null;
     }
 
-     @Override
-     @Transactional(readOnly = true)
-     public List<Test> getAllTestsByDictionaryResult() {
-         String sql = "From Test t where t.id in (select tr.test from TestResult tr where tr.testResultType in ('D','M','C')) ORDER BY t.description asc";
+    @Override
+    @Transactional(readOnly = true)
+    public List<Test> getAllTestsByDictionaryResult() {
+        String sql = "From Test t where t.id in (select tr.test from TestResult tr where tr.testResultType in ('D','M','C')) ORDER BY t.description asc";
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             List<Test> tests = query.list();
@@ -1104,5 +1099,5 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             handleException(e, "getAllTestsByDictionaryResult");
         }
         return null;
-     }
+    }
 }

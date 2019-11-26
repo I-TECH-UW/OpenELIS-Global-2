@@ -46,20 +46,20 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getAllTestAnalytes() throws LIMSRuntimeException;
+    List<TestAnalyte> getAllTestAnalytes() throws LIMSRuntimeException;
 
     /**
      * @param startingRecNo
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
+    List<TestAnalyte> getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
 
     /**
      * @param testAnalyte
      * @throws LIMSRuntimeException
      */
-    public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
     /**
      * @param testAnalyte
@@ -72,7 +72,7 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getTestAnalytes(String filter) throws LIMSRuntimeException;
+    List<TestAnalyte> getTestAnalytes(String filter) throws LIMSRuntimeException;
 
     /**
      * @param id
@@ -80,26 +80,24 @@ public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
      * @throws LIMSRuntimeException
      */
 
-
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-
 
     /**
      * @param testAnalyte
      * @return
      * @throws LIMSRuntimeException
      */
-    public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
     /**
      * @param test
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
+    List<TestAnalyte> getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
 
 }

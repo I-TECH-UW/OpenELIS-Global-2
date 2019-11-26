@@ -155,15 +155,15 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemModuleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemModules() throws LIMSRuntimeException {
-        List list;
+    public List<SystemModule> getAllSystemModules() throws LIMSRuntimeException {
+        List<SystemModule> list;
         try {
             String sql = "from SystemModule";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -171,7 +171,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getAllSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
         }
 
@@ -180,8 +180,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemModule> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -195,7 +195,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getPageOfSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
         }
 
@@ -209,7 +209,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "readSystemModule()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
         }
 
@@ -233,8 +233,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             SystemModule module = (SystemModule) query.uniqueResult();
             // closeSession(); // CSL remove old
             return module;
-        } catch (HibernateException he) {
-            handleException(he, "getSystemModuleByName");
+        } catch (HibernateException e) {
+            handleException(e, "getSystemModuleByName");
         }
         return null;
     }
@@ -243,7 +243,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
     public boolean duplicateSystemModuleExists(SystemModule systemModule) throws LIMSRuntimeException {
         try {
 
-            List list;
+            List<SystemModule> list;
 
             String sql = "from SystemModule s where trim(s.systemModuleName) = :moduleName and s.id != :moduleId";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -261,7 +261,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             return list.size() > 0;
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "duplicateSystemModuleExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
         }
     }

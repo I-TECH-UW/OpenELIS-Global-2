@@ -175,7 +175,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getData()", e);
         }
     }
@@ -183,7 +183,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //	@Override
 //	@SuppressWarnings("rawtypes")
 //	public List getAllAnalyses() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Analysis a order by a.id";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -202,7 +202,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //	@Override
 //	@SuppressWarnings("rawtypes")
 //	public List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //
 //		try {
 //			// calculate maxRow to be one more than the page size
@@ -231,7 +231,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             analysis = entityManager.unwrap(Session.class).get(Analysis.class, idString);
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "readAnalysis()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis readAnalysis()", e);
         }
 
@@ -241,7 +241,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //	@Override
 //	@SuppressWarnings("rawtypes")
 //	public List getAnalyses(String filter) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Analysis a where upper(a.analysisType) like upper(:param) order by upper(a.analysisType)";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -277,7 +277,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //	@Override
 //	@SuppressWarnings({ "rawtypes", "unchecked" })
 //	public List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Analysis a where a.test = :testId and (a.status is null or a.status NOT IN (:exclusionList)) order by a.sampleItem.sample.accessionNumber";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -296,7 +296,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //
 //		return list;
 //	}
-    @SuppressWarnings("unchecked")
 
     @Override
     @Transactional(readOnly = true)
@@ -311,13 +310,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndStatuses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestAndStatuses()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList)
             throws LIMSRuntimeException {
@@ -334,12 +333,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestsAndStatuses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList)
@@ -353,13 +351,12 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndExcludedStatuses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestAndExcludedStatuses()", e);
         }
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
@@ -378,12 +375,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestSectionAndStatuses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList)
@@ -399,13 +395,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestSectionAndExcludedStatuses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndExcludedStatuses()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) throws LIMSRuntimeException {
         List<Analysis> list = null;
@@ -417,7 +413,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             list = query.list();
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItem()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItem()", e);
         }
 
@@ -425,7 +421,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem, Set<Integer> statusIds)
             throws LIMSRuntimeException {
@@ -438,21 +434,20 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId not in ( :statusList )";
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleItemId", Integer.parseInt(sampleItem.getId()));
             query.setParameterList("statusList", statusIds);
 
             analysisList = query.list();
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItemsExcludingByStatusIds()", e);
         }
 
         return analysisList;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String statusId, Set<Integer> statusIds)
@@ -464,7 +459,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatus and a.statusId not in (:excludedStatusIds)";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleStatus", Integer.parseInt(statusId));
             query.setParameterList("excludedStatusIds", statusIds);
 
@@ -479,7 +474,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleStatusId(String statusId) throws LIMSRuntimeException {
         List<Analysis> analysisList = null;
@@ -487,20 +482,19 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatusId";
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleStatusId", Integer.parseInt(statusId));
 
             analysisList = query.list();
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItemsExcludingByStatusIds()", e);
         }
 
         return analysisList;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds)
@@ -512,7 +506,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId and a.statusId not in ( :excludedIds)";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
             query.setParameterList("excludedIds", statusIds);
             List<Analysis> analysisList = query.list();
@@ -525,7 +519,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> statusIds)
@@ -537,7 +530,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId and a.statusId in ( :statusIds)";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
             query.setParameterList("statusIds", statusIds);
             List<Analysis> analysisList = query.list();
@@ -558,7 +551,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
      *
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesReadyToBeReported() throws LIMSRuntimeException {
         try {
@@ -574,7 +567,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysesReadyToBeReported()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getAnalysesReadyToBeReported()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -583,7 +576,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException {
         try {
@@ -597,13 +590,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getallChildAnalysesByResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getallChildAnalysesByResult()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
         try {
@@ -622,13 +615,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
     }
 
     // bugzilla 2300 (separate method for sample tracking)
-    @SuppressWarnings("unchecked")
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem)
@@ -645,13 +638,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
         try {
@@ -669,13 +662,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getRevisionHistoryOfAnalysesBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getRevisionHistoryOfAnalysesBySample()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
             boolean includeLatestRevision) throws LIMSRuntimeException {
@@ -702,13 +695,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getRevisionHistoryOfAnalysesBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getRevisionHistoryOfAnalysesBySample()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test) throws LIMSRuntimeException {
         try {
@@ -728,14 +721,14 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getAllMaxRevisionAnalysesPerTest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllMaxRevisionAnalysesPerTest()", e);
         }
     }
 
     // bugzilla 2227, 2258
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException {
         try {
@@ -751,7 +744,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesReadyToBeReported()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesReadyToBeReported()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -761,9 +754,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
     // bugzilla 1900
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
-    public List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers)
+    public List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List<String> accessionNumbers)
             throws LIMSRuntimeException {
         List<Analysis> list = new Vector<>();
         try {
@@ -787,7 +780,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
 
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesReadyForReportPreviewBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getMaxRevisionAnalysesReadyForReportPreviewBySample()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -804,7 +797,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return entityManager.unwrap(Session.class).getNamedQuery("analysis.getAnalysesAlreadyReportedBySample")
                     .setParameter("sampleId", sample.getId()).list();
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysesAlreadyReportedBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getAnalysesAlreadyReportedBySample()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -814,7 +807,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
     // bugzilla 2264
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample)
             throws LIMSRuntimeException {
@@ -831,8 +824,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
-                    e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
                     e);
         } finally {
@@ -845,12 +837,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Transactional(readOnly = true)
-    public List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Analysis> getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample)
+            throws LIMSRuntimeException {
+        List<Analysis> list = new Vector<>();
 
         try {
 
-            List analysisStatusesToInclude = new ArrayList();
+            List<String> analysisStatusesToInclude = new ArrayList<>();
             analysisStatusesToInclude.add(SystemConfiguration.getInstance().getAnalysisStatusAssigned());
             // see question in 1900 do we need to include this?
             // Answer NO
@@ -862,9 +855,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (Exception e) {
-
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()",
-                    e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e);
         } finally {
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -884,15 +875,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // revision is 1 less than the analysis passed in
 
             String sql = "from Analysis a where a.revision = :param and a.sampleItem = :param2 and a.test = :param3 and a.status NOT IN (:param4)";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             String revisionString = analysis.getRevision();
             int revision = 0;
             if (!StringUtil.isNullorNill(revisionString)) {
                 try {
                     revision = Integer.parseInt(revisionString);
-                } catch (NumberFormatException nfe) {
-
+                } catch (NumberFormatException e) {
+                    LogEvent.logError(e.toString(), e);
+                    throw new LIMSRuntimeException("Error in getPreviousAnalysisForAmendedAnalysis()", e);
                 }
             }
 
@@ -900,19 +892,19 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("param2", analysis.getSampleItem());
             query.setParameter("param3", analysis.getTest());
 
-            List statusesToExclude = new ArrayList();
+            List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
             query.setParameterList("param4", statusesToExclude);
-            List list = query.list();
+            List<Analysis> list = query.list();
             if ((list != null) && !list.isEmpty()) {
-                previousAnalysis = (Analysis) list.get(0);
+                previousAnalysis = list.get(0);
             }
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getPreviousAnalysisForAmendedAnalysis()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Exception occurred in getPreviousAnalysisForAmendedAnalysis", e);
         }
         return previousAnalysis;
@@ -966,7 +958,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", analysis.getSampleItem().getId());
             query.setParameter("param2", analysis.getTest().getId());
-            List statusesToExclude = new ArrayList();
+            List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
             query.setParameterList("param3", statusesToExclude);
             anal = (Analysis) query.uniqueResult();
@@ -981,7 +973,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         } catch (Exception e) {
 
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysisBySampleAndTest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysisBySampleAndTest()", e);
         }
 
@@ -990,9 +982,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Transactional(readOnly = true)
-    public List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
+    public List<Analysis> getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<Analysis> list = new Vector<>();
         try {
 
             String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
@@ -1003,14 +995,14 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", sampleItem.getId());
-            List statusesToExclude = new ArrayList();
+            List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
             query.setParameterList("param2", statusesToExclude);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
 
@@ -1018,7 +1010,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesForStatusId(String statusId) throws LIMSRuntimeException {
 
@@ -1032,14 +1024,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisForStatusId");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisForStatusId");
         }
 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
@@ -1051,7 +1042,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.startedDate = :startedDate and a.statusId not in ( :statusList )";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
             query.setParameterList("statusList", statusIds);
 
@@ -1066,26 +1057,25 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisStartedOn(Date collectionDate) throws LIMSRuntimeException {
 
         try {
             String sql = "from Analysis a where a.startedDate = :startedDate";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
 
             List<Analysis> list = query.list();
             return list;
 
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisStartedOn");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedOn");
         }
 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
@@ -1097,7 +1087,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate and a.statusId not in ( :statusList )";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
             query.setParameterList("statusList", statusIds);
 
@@ -1111,21 +1101,21 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisCollectedOn(Date collectionDate) throws LIMSRuntimeException {
 
         try {
             String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
 
             List<Analysis> list = query.list();
             // closeSession(); // CSL remove old
             return list;
 
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisStartedOn");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedOn");
         }
 
         return null;
@@ -1136,7 +1126,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
      *      java.util.List)
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisBySampleAndTestIds(String sampleId, List<Integer> testIds) {
         List<Analysis> list = null;
@@ -1153,16 +1143,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (HibernateException he) {
-            LogEvent.logError("AnalysisDAOImpl", "getAnalysisBySampleAndTestIds()", he.toString());
-            throw new LIMSRuntimeException("Error in getAnalysisStartedOn()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in getAnalysisStartedOn()", e);
         }
 
         return list;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate)
             throws LIMSRuntimeException {
@@ -1170,7 +1160,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.testSection.id = :testSectionId and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testSectionId", Integer.parseInt(sectionID));
             query.setDate("lowDate", lowDate);
             query.setDate("highDate", highDate);
@@ -1178,30 +1168,30 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             List<Analysis> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisByTestSectionAndCompletedDateRange");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisByTestSectionAndCompletedDateRange");
         }
 
         return null;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate)
             throws LIMSRuntimeException {
         String sql = "From Analysis a where a.startedDate BETWEEN :lowDate AND :highDate or a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("lowDate", lowDate);
             query.setDate("highDate", highDate);
 
             List<Analysis> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisStartedOrCompletedInDateRange");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedOrCompletedInDateRange");
         }
 
         return null;
@@ -1209,7 +1199,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleId(String id) throws LIMSRuntimeException {
         List<Analysis> list = null;
@@ -1229,7 +1219,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) throws LIMSRuntimeException {
@@ -1237,7 +1227,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
@@ -1255,7 +1245,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID)
@@ -1263,7 +1252,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.statusId = :statusID and a.startedDate BETWEEN :lowDate AND :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("statusID", Integer.parseInt(statusID));
             query.setDate("lowDate", lowDate);
             query.setDate("highDate", highDate);
@@ -1279,7 +1268,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate)
@@ -1287,7 +1275,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.completedDate >= :lowDate AND a.completedDate < :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setTimestamp("lowDate", lowDate);
             query.setTimestamp("highDate", highDate);
 
@@ -1302,14 +1290,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisEnteredAfterDate(Timestamp date) throws LIMSRuntimeException {
         String sql = "From Analysis a where a.enteredDate > :date";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setTimestamp("date", date);
 
             List<Analysis> analysisList = query.list();
@@ -1323,7 +1310,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId)
@@ -1335,7 +1321,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.sampleItem.sample.accessionNumber = :accessionNumber and a.test.id = :testId";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("accessionNumber", accessionNumber);
             query.setInteger("testId", Integer.parseInt(testId));
             List<Analysis> analysises = query.list();
@@ -1359,17 +1345,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.test.testName in (:testNames) and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameterList("testNames", testNames);
             query.setDate("lowDate", lowDate);
             query.setDate("highDate", highDate);
 
-            @SuppressWarnings("unchecked")
             List<Analysis> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisByTestNamesAndCompletedDateRange");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisByTestNamesAndCompletedDateRange");
         }
 
         return null;
@@ -1386,17 +1371,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.test.description in (:descriptions) and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameterList("descriptions", descriptions);
             query.setDate("lowDate", lowDate);
             query.setDate("highDate", highDate);
 
-            @SuppressWarnings("unchecked")
             List<Analysis> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (HibernateException he) {
-            handleException(he, "getAnalysisByTestDescriptionsAndCompletedDateRange");
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisByTestDescriptionsAndCompletedDateRange");
         }
 
         return null;
@@ -1409,11 +1393,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId = :statusId";
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
             query.setInteger("statusId", Integer.parseInt(statusId));
 
-            @SuppressWarnings("unchecked")
             List<Analysis> analysisList = query.list();
             return analysisList;
         } catch (Exception e) {
@@ -1440,7 +1423,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList,
@@ -1452,7 +1434,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id in (:sampleIdList) and a.test.id in (:testIdList) and a.statusId in (:statusIdList) order by a.releasedDate desc";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameterList("sampleIdList", sampleIdList);
             query.setParameterList("testIdList", testIdList);
             query.setParameterList("statusIdList", statusIdList);

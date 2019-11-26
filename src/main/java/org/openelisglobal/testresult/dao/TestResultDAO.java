@@ -37,29 +37,25 @@ public interface TestResultDAO extends BaseDAO<TestResult, String> {
 
 //	public void deleteData(List testResults) throws LIMSRuntimeException;
 
-    public List getAllTestResults() throws LIMSRuntimeException;
+    List<TestResult> getAllTestResults() throws LIMSRuntimeException;
 
-    public List getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
+    List<TestResult> getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(TestResult testResult) throws LIMSRuntimeException;
+    void getData(TestResult testResult) throws LIMSRuntimeException;
 
 //	public void updateData(TestResult testResult) throws LIMSRuntimeException;
 
+    TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
 
+    List<TestResult> getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-
-
-    public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
-
-    public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException;
-
-    public List getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
+    List<TestResult> getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
 
     /*
      * Finds a TestResult by a test id and dictionary result id
      */
-    public TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException;
+    TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException;
 
-    public List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
+    List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
 
 }

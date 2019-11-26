@@ -13,6 +13,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
@@ -185,7 +186,7 @@ public class ResultsValidation {
                     }
                     return matchCount != dictionaryIds.size();
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     return false;
                 }
             }

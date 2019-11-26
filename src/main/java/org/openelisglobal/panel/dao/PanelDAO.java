@@ -35,40 +35,36 @@ public interface PanelDAO extends BaseDAO<Panel, String> {
 
 //	public void deleteData(List panels) throws LIMSRuntimeException;
 
-    public List<Panel> getAllActivePanels() throws LIMSRuntimeException;
+    List<Panel> getAllActivePanels() throws LIMSRuntimeException;
 
-    public List getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
+    List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Panel panel) throws LIMSRuntimeException;
+    void getData(Panel panel) throws LIMSRuntimeException;
 
 //	public void updateData(Panel panel) throws LIMSRuntimeException;
 
-    public List getActivePanels(String filter) throws LIMSRuntimeException;
+    List<Panel> getActivePanels(String filter) throws LIMSRuntimeException;
 
-    public List<Panel> getAllPanels() throws LIMSRuntimeException;
+    List<Panel> getAllPanels() throws LIMSRuntimeException;
 
+    Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
 
+    Integer getTotalPanelCount() throws LIMSRuntimeException;
 
+    String getNameForPanelId(String panelId);
 
+    String getDescriptionForPanelId(String id);
 
-    public Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
+    String getIdForPanelName(String name);
 
-    public Integer getTotalPanelCount() throws LIMSRuntimeException;
+    Panel getPanelByName(String panelName) throws LIMSRuntimeException;
 
-    public String getNameForPanelId(String panelId);
+    Panel getPanelById(String id) throws LIMSRuntimeException;
 
-    public String getDescriptionForPanelId(String id);
+    boolean duplicatePanelExists(Panel panel);
 
-    public String getIdForPanelName(String name);
+    boolean duplicatePanelDescriptionExists(Panel panel);
 
-    public Panel getPanelByName(String panelName) throws LIMSRuntimeException;
-
-    public Panel getPanelById(String id) throws LIMSRuntimeException;
-
-    public boolean duplicatePanelExists(Panel panel);
-
-    public boolean duplicatePanelDescriptionExists(Panel panel);
-
-    public void clearIDMaps();
+    void clearIDMaps();
 
 }

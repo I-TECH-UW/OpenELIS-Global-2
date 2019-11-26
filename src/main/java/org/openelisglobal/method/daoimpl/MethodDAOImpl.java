@@ -182,7 +182,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 //	@Override
 //	public List getAllMethods() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Method";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -201,7 +201,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 //	@Override
 //	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -256,8 +256,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getMethods(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Method> getMethods(String filter) throws LIMSRuntimeException {
+        List<Method> list = new Vector<>();
         try {
             String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -268,7 +268,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
         }
         return list;
@@ -309,7 +309,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.methodName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -331,7 +331,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t order by t.methodName desc where name <= " + enquote(id);
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -353,7 +353,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Method> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -380,7 +380,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "duplicateMethodExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
         }
     }

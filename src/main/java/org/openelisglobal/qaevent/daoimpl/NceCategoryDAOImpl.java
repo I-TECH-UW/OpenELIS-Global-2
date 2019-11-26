@@ -1,5 +1,7 @@
 package org.openelisglobal.qaevent.daoimpl;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -8,8 +10,6 @@ import org.openelisglobal.qaevent.dao.NceCategoryDAO;
 import org.openelisglobal.qaevent.valueholder.NceCategory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 @Transactional
@@ -21,8 +21,8 @@ public class NceCategoryDAOImpl extends BaseDAOImpl<NceCategory, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllNceCategory() throws LIMSRuntimeException {
-        List list;
+    public List<NceCategory> getAllNceCategory() throws LIMSRuntimeException {
+        List<NceCategory> list;
         try {
             String sql = "from NceCategory nc order by nc.id";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -31,7 +31,7 @@ public class NceCategoryDAOImpl extends BaseDAOImpl<NceCategory, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("NceCategoryDaoImpl", "getAllNceCategory()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

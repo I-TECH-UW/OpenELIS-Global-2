@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.testconfiguration.form.UomRenameEntryForm;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
@@ -79,8 +80,8 @@ public class UomRenameEntryController extends BaseController {
 
             try {
                 unitOfMeasureService.update(unitOfMeasure);
-            } catch (HibernateException lre) {
-                lre.printStackTrace();
+            } catch (HibernateException e) {
+                LogEvent.logDebug(e);
             }
 
         }

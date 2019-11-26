@@ -66,7 +66,7 @@ public class OrganizationController extends BaseController {
         return new OrganizationForm();
     }
 
-    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
+//    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
     private static boolean useState = FormFields.getInstance().useField(FormFields.Field.OrgState);
     private static boolean useDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT);
     private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
@@ -314,14 +314,14 @@ public class OrganizationController extends BaseController {
 
             linkOrgWithOrgType(organization);
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationUpdateAction", "performAction()", lre.toString());
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            LogEvent.logError(e.toString(), e);
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
             } else {
                 // bugzilla 1482
-                if (lre.getException() instanceof LIMSDuplicateRecordException) {
+                if (e.getException() instanceof LIMSDuplicateRecordException) {
                     String messageKey = "organization.organization";
                     String msg = MessageUtil.getMessage(messageKey);
                     result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },

@@ -81,7 +81,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToSqlDate()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -96,7 +96,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateTimeToSqlDate()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -112,7 +112,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTruncatedTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -128,7 +128,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -145,9 +145,8 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil",
-                        "convertStringDateToTimestampWithPattern()\nPattern: " + pattern + "\nDate: " + date,
-                        e.toString());
+                LogEvent.logError(e.toString(),
+                        e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -165,8 +164,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTimestampWithPattern()\nlocale: " + locale
-                        + "\nPattern: " + pattern + "\nDate: " + date, e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -194,7 +192,7 @@ public class DateUtil {
             try {
                 returnDate = format.format(date);
             } catch (Exception e) {
-                LogEvent.logError("DateUtil", "convertSqlDateToStringDate()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -227,7 +225,7 @@ public class DateUtil {
             returnDate = format.format(date);
         } catch (Exception e) {
 
-            LogEvent.logError("DateUtil", "convertTimestampToStringDate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting date", e);
         }
 
@@ -258,7 +256,7 @@ public class DateUtil {
 
                 returnTime = hours + ":" + minutes;
             } catch (Exception e) {
-                LogEvent.logError("DateUtil", "convertTimestampToStringTime()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -304,7 +302,7 @@ public class DateUtil {
                 tsToReturn = new Timestamp(date.getTime());
             } catch (Exception e) {
                 // bugzilla 2154
-                LogEvent.logError("DateUtil", "formatStringToTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }

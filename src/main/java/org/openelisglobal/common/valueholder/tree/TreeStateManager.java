@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.valueholder.tree;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 /**
  * The class which stores the state of the tree in the user session. The state
  * of the tree can include expanded nodes, highlighted node, paginated node etc.
- * 
+ *
  * @author jalpesh
  *
  */
@@ -54,9 +54,9 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * PaginatedNodeData
-     * 
+     *
      * Contains data related to the paginated node
-     * 
+     *
      */
     public class PaginatedNodeData implements Serializable {
         protected String nodePath;
@@ -78,21 +78,24 @@ public class TreeStateManager implements java.io.Serializable {
 
         /**
          * Private method used by the TreeStateManager
-         * 
+         *
          * @param request
          */
         protected PaginatedNodeData(HttpServletRequest request) {
-            if (request == null)
+            if (request == null) {
                 return;
+            }
 
             nodePath = request.getParameter(name + "_pageRequestNodePath");
             pageBegin = request.getParameter(name + "_pageBegin");
 
-            if (!isEmpty(request, name + "_pageAction"))
+            if (!isEmpty(request, name + "_pageAction")) {
                 pageAction = Integer.parseInt(request.getParameter(name + "_pageAction"));
+            }
 
-            if (!isEmpty(request, name + "_pageSize"))
+            if (!isEmpty(request, name + "_pageSize")) {
                 pageSize = Integer.parseInt(request.getParameter(name + "_pageSize"));
+            }
 
             firstChildName = request.getParameter(name + "_firstChildName");
             firstChildPath = request.getParameter(name + "_firstChildPath");
@@ -104,19 +107,20 @@ public class TreeStateManager implements java.io.Serializable {
 
         /**
          * Return the page range begin for this paginated tree node
-         * 
+         *
          * @return
          */
         public int getPageRangeBegin() {
-            if (pageBegin == null)
+            if (pageBegin == null) {
                 return -1;
-            else
+            } else {
                 return Integer.parseInt(pageBegin);
+            }
         }
 
         /**
          * Returns the action performed by the user on the paginated node.
-         * 
+         *
          * @return An integer which could be MOVE_FORWARD, if the user had hit the next
          *         button, or MOVE_BACKWARD if the user had hit the previous button. If
          *         no action has been performed it will return -1
@@ -128,7 +132,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the data field of the first child in the current window of the
          * paginated node.
-         * 
+         *
          * @return Returns the firstChildData field.
          */
         public String getFirstChildData() {
@@ -138,7 +142,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the name of the first child in the current window of the paginated
          * node.
-         * 
+         *
          * @return Returns the firstChildName.
          */
         public String getFirstChildName() {
@@ -148,7 +152,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the node path of the first child in the current window of the
          * paginated node.
-         * 
+         *
          * @return Returns the firstChildPath.
          */
         public String getFirstChildPath() {
@@ -158,7 +162,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the data field of the last child in the current window of the
          * paginated node.
-         * 
+         *
          * @return Returns the lastChildData.
          */
         public String getLastChildData() {
@@ -168,7 +172,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the name of the last child in the current window of the paginated
          * node.
-         * 
+         *
          * @return Returns the lastChildName.
          */
         public String getLastChildName() {
@@ -178,7 +182,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Return the node path of the last child in the current window of the paginated
          * node.
-         * 
+         *
          * @return Returns the lastChildPath.
          */
         public String getLastChildPath() {
@@ -195,6 +199,7 @@ public class TreeStateManager implements java.io.Serializable {
         /**
          * Sample toString implementation for debugging.
          */
+        @Override
         public String toString() {
             return "Paginated Node is :" + nodePath + "\n" + "   PageAction     :" + pageAction + "\n"
                     + "   PageBegin      :" + pageBegin + "\n" + "   firstChildName :" + firstChildName + "\n"
@@ -213,7 +218,7 @@ public class TreeStateManager implements java.io.Serializable {
      * Return an instance of the TreeStateManager for the tree with the given name.
      * If the object does not exist in the session, it creates a new one and saves
      * it in the user session.
-     * 
+     *
      * @param session The session object
      * @param name    The name of the tree
      * @return TreeStateManager instance.
@@ -292,7 +297,7 @@ public class TreeStateManager implements java.io.Serializable {
      * Process the state of the tree after a user has performed either of the
      * following actions in the tree - expanded a node, collapsed a node, zoomed in
      * or out, paged through a window or selected a node.
-     * 
+     *
      * @param request The request object which would contain this information
      */
     public void processState(HttpServletRequest request) {
@@ -329,7 +334,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Retrieve the popup items from the request.
-     * 
+     *
      * @param request
      */
     private void setPopupItems(HttpServletRequest request) {
@@ -363,7 +368,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Return whether or not the given node path is paginated or not.
-     * 
+     *
      * @param nodePath The path of the node
      * @return true or false depending whether the node is paginated or not.
      */
@@ -373,28 +378,30 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Force a particular node path to be paginated, if it is not already paginated.
-     * 
+     *
      * @param nodePath
      * @return
      */
     public void addNodePathAsPaginated(String nodePath) {
-        if (!isNodePathPaginated(nodePath))
+        if (!isNodePathPaginated(nodePath)) {
             paginatedNodes.put(nodePath, new PaginatedNodeData(null));
+        }
     }
 
     /**
      * Remove the given node as being paginated.
-     * 
+     *
      * @param node The tree node object
      */
     public void removeNodePathAsPaginated(String nodePath) {
-        if (isNodePathPaginated(nodePath))
+        if (isNodePathPaginated(nodePath)) {
             paginatedNodes.remove(nodePath);
+        }
     }
 
     /**
      * Return the data associated with the paginated node
-     * 
+     *
      * @param node The path of the tree node
      * @return The paginated node data for the given tree node
      */
@@ -405,7 +412,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Marks all nodes below the given path to be expanded.
-     * 
+     *
      * @param nodePath The path to the tree node.
      */
     public void setExpandNodesFromPath(String nodePath) {
@@ -418,12 +425,13 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Add a particular node, identified by its path as expanded in the tree.
-     * 
+     *
      * @param nodePath
      */
     public void addNodeAsExpanded(String nodePath) {
-        if (nodePath == null || nodePath.length() == 0)
+        if (nodePath == null || nodePath.length() == 0) {
             return;
+        }
 
         expandedNodes.put(nodePath, "true");
     }
@@ -431,7 +439,7 @@ public class TreeStateManager implements java.io.Serializable {
     /**
      * Indicate whether or not the given node, identified by its path is expanded or
      * not
-     * 
+     *
      * @param nodePath The node path
      * @return
      */
@@ -448,7 +456,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Return the Enumeration of the expanded nodes
-     * 
+     *
      * @return Enumeration of the expanded nodes containing key values.
      */
     public Enumeration getExpandedNodes() {
@@ -458,7 +466,7 @@ public class TreeStateManager implements java.io.Serializable {
     /**
      * Reset the tree state manager to its default state - removing any expanded
      * nodes, highlighted nodes, paginated nodes or user data.
-     * 
+     *
      */
     public void reset() {
         expandedNodes = new Hashtable();
@@ -474,12 +482,13 @@ public class TreeStateManager implements java.io.Serializable {
     /**
      * Removes the node from the expanded node list in the tree (ie marks it as
      * collapsed).
-     * 
+     *
      * @param nodePath
      */
     public void removeNodeAsExpanded(String nodePath) {
-        if (nodePath == null || nodePath.length() == 0)
+        if (nodePath == null || nodePath.length() == 0) {
             return;
+        }
 
         expandedNodes.remove(nodePath);
     }
@@ -492,7 +501,7 @@ public class TreeStateManager implements java.io.Serializable {
     /**
      * Allow a user to store a custom object in the TreeStateManager. Please note
      * that the key and the value objects should both be serializable.
-     * 
+     *
      * @param key   The key to lookup the value ob
      * @param value
      */
@@ -502,7 +511,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Allow a user to remove a custom object in the TreeStateManager.
-     * 
+     *
      * @param key The key to remove
      */
     public Object remove(Object key) {
@@ -511,7 +520,7 @@ public class TreeStateManager implements java.io.Serializable {
 
     /**
      * Retrieve data which was stored using the put method.
-     * 
+     *
      * @param key
      * @return
      */

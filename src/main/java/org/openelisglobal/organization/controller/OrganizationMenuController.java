@@ -147,12 +147,12 @@ public class OrganizationMenuController extends BaseMenuController {
             // System.out.println("Going to delete Organization");
             organizationService.deleteAll(organizations);
             // System.out.println("Just deleted Organization");
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDeleteAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
 
             String errorMsg;
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";

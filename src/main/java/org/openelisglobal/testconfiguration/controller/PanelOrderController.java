@@ -16,6 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.panel.service.PanelService;
@@ -59,8 +60,7 @@ public class PanelOrderController extends BaseController {
             PropertyUtils.setProperty(form, "existingSampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
         HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
@@ -92,8 +92,7 @@ public class PanelOrderController extends BaseController {
             PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
             PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -125,7 +124,7 @@ public class PanelOrderController extends BaseController {
         try {
             panelService.updateAll(panels);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
@@ -156,7 +155,7 @@ public class PanelOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

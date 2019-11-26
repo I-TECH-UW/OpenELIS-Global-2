@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -80,7 +81,7 @@ public class PanelRenameEntryController extends BaseController {
             try {
                 localizationService.update(name);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
         DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);

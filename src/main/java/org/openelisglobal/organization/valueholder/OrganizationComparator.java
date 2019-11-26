@@ -45,7 +45,7 @@ public class OrganizationComparator implements Comparable<Organization> {
                 Integer num1 = Integer.valueOf(o1.getShortName());
                 Integer num2 = Integer.valueOf(o2.getShortName());
                 return num1.compareTo(num2);
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return o1.getShortName().compareTo(o2.getShortName());
             }
         }

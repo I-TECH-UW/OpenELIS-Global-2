@@ -12,9 +12,9 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -45,8 +45,6 @@ public class PanelCreateController extends BaseController {
     private PanelTestConfigurationUtil panelTestConfigurationUtil;
     @Autowired
     private PanelCreateService panelCreateService;
-    @Autowired
-    private LocalizationService localizationService;
 
     public static final String NAME_SEPARATOR = "$";
 
@@ -68,16 +66,14 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingSampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
         List<Panel> panels = panelService.getAllPanels();
         try {
             PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
 
         List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
@@ -96,8 +92,7 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
             PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -142,8 +137,8 @@ public class PanelCreateController extends BaseController {
         try {
             panelCreateService.insert(localization, panel, workplanModule, resultModule, validationModule,
                     workplanResultModule, resultResultModule, validationValidationModule, sampleTypeId, systemUserId);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);

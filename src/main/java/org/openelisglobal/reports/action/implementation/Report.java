@@ -26,16 +26,15 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.spring.util.SpringContext;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -44,8 +43,6 @@ import net.sf.jasperreports.engine.JasperRunManager;
 
 public abstract class Report implements IReportCreator {
 
-    public static ImageService imageService = SpringContext.getBean(ImageService.class);
-    public static SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
     private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
     public static final String ERROR_REPORT = "NoticeOfReportError";
 
@@ -284,7 +281,7 @@ public abstract class Report implements IReportCreator {
 
         try {
             checkDate = DateUtil.convertStringDateToSqlDate(checkDateStr);
-        } catch (LIMSRuntimeException re) {
+        } catch (LIMSRuntimeException e) {
             add1LineErrorMessage("report.error.message.date.format", " " + checkDateStr);
             return null;
         }
@@ -377,7 +374,8 @@ public abstract class Report implements IReportCreator {
                 if (!GenericValidator.isBlankOrNull(highDateStr)) {
                     range += "  -  " + highDateStr;
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
             }
             return range;
         }
