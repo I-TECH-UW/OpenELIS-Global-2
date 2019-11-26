@@ -160,7 +160,7 @@ public abstract class BaseController implements IActionConstants {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageTitleKey);
+            LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
 
         try {
@@ -172,7 +172,7 @@ public abstract class BaseController implements IActionConstants {
 
         } catch (Exception e) {
             e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageSubtitleKey);
+            LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }
 
         if (null != pageTitle) {
@@ -291,7 +291,7 @@ public abstract class BaseController implements IActionConstants {
             servletOutputStream.write(errorMsg);
 
         } catch (IOException e) {
-            LogEvent.logError("PrintWorkplanReportController", "writeErrorsToResponse", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
     }
@@ -329,7 +329,7 @@ public abstract class BaseController implements IActionConstants {
             request.getSession().setAttribute(objectName, newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormSessionObject", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return form;
         }
     }
@@ -341,7 +341,7 @@ public abstract class BaseController implements IActionConstants {
             request.getSession().setAttribute("form", newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormToType", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return null;
         }
     }

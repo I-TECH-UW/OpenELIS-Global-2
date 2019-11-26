@@ -103,9 +103,9 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
                 // TODO do something with the errors
             }
         } catch (InterruptedException e) {
-            LogEvent.logError(this.getClass().getName(), "createSearchResultXML", e.getMessage());
-        } catch (IllegalStateException ise) {
-            LogEvent.logError(this.getClass().getName(), "createSearchResultXML", ise.getMessage());
+            LogEvent.logError(e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
 
         findNewPatients(localResults, clinicResults, newPatientsFromClinic);
@@ -133,8 +133,8 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
             for (PatientDemographicsSearchResults results : newPatientsFromClinic) {
                 insertNewPatients(results);
             }
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            e.printStackTrace();
         }
     }
 

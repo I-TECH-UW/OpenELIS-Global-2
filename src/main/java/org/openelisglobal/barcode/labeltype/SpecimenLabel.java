@@ -48,7 +48,7 @@ public class SpecimenLabel extends Label {
             height = Float.parseFloat(
                     ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT));
         } catch (Exception e) {
-            LogEvent.logError("SpecimenLabel", "SpecimenLabel SpecimenLabel()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
         // get information for displaying above bar code
         SampleOrderService sampleOrderService = new SampleOrderService(sample);
@@ -181,7 +181,7 @@ public class SpecimenLabel extends Label {
             max = Integer
                     .parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_SPECIMEN_PRINTED));
         } catch (Exception e) {
-            LogEvent.logError("SpecimenLabel", "SpecimenLabel getMaxNumLabels()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
 
         return max;

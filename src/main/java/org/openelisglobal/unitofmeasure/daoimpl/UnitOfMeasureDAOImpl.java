@@ -388,7 +388,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UnitOfMeasureDAOImpl", "duplicateUnitOfMeasureExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateUnitOfMeasureExists()", e);
         }
     }

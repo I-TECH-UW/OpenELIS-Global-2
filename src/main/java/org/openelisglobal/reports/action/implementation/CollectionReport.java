@@ -145,8 +145,8 @@ public abstract class CollectionReport implements IReportCreator {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return null;

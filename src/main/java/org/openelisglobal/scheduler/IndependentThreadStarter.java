@@ -44,7 +44,7 @@ public class IndependentThreadStarter {
             try {
                 period = Long.parseLong(reportInterval);
             } catch (NumberFormatException e) {
-                LogEvent.logError("IndependentThreadStarter", "start", "Unable to parse " + reportInterval);
+                LogEvent.logError("Unable to parse " + reportInterval, e);
             }
 
             resultExporter.setSleepInMin(period);

@@ -152,8 +152,8 @@ public class TestOrderabilityController extends BaseController {
 
         try {
             testService.updateAll(tests);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         SpringContext.getBean(TypeOfSampleService.class).clearCache();

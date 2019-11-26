@@ -281,7 +281,7 @@ public abstract class Report implements IReportCreator {
 
         try {
             checkDate = DateUtil.convertStringDateToSqlDate(checkDateStr);
-        } catch (LIMSRuntimeException re) {
+        } catch (LIMSRuntimeException e) {
             add1LineErrorMessage("report.error.message.date.format", " " + checkDateStr);
             return null;
         }
@@ -374,7 +374,7 @@ public abstract class Report implements IReportCreator {
                 if (!GenericValidator.isBlankOrNull(highDateStr)) {
                     range += "  -  " + highDateStr;
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
                 LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
             }
             return range;

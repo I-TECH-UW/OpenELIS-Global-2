@@ -85,8 +85,8 @@ public class SampleTypeOrderController extends BaseController {
 
         try {
             typeOfSampleService.updateAll(typeOfSamples);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);

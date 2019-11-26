@@ -99,7 +99,7 @@ public abstract class BaseSiteYearAccessionValidator {
             if (year != Integer.parseInt(currentHighAccessionNumber.substring(YEAR_START, YEAR_END))) {
                 return createFirstAccessionNumber(null);
             }
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return createFirstAccessionNumber(null);
         }
 
@@ -150,13 +150,13 @@ public abstract class BaseSiteYearAccessionValidator {
                 if ((year - 2000) != Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END))) {
                     return ValidationResults.YEAR_FAIL;
                 }
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return ValidationResults.YEAR_FAIL;
             }
         } else {
             try { // quick and dirty to make sure they are digits
                 Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END));
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return ValidationResults.YEAR_FAIL;
             }
         }

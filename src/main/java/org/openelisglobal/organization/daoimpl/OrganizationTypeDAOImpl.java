@@ -48,7 +48,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
         }
 
@@ -73,7 +73,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
             return list.size() > 0 ? list.get(0) : null;
 
         } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationTypeByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

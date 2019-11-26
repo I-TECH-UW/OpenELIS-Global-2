@@ -313,7 +313,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // } else {
             // return localization.getEnglish();
             // }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             System.out.println("buildTestName caught LAZY");
             return "ts:btn:284:name";
         }
@@ -357,7 +357,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // } else {
             // return localization.getEnglish();
             // }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             System.out.println("reporting caught LAZY");
             return "ts:brtn:322:name";
         }
@@ -386,7 +386,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // return localization.getEnglish() + sampleName;
             // // return "ts:batn:342:name:" + test.getDescription();
             // }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             System.out.println("augmented caught LAZY");
             return "ts:batn:345:name:" + test.getDescription();
         }
@@ -521,7 +521,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             return result;
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
         }
     }

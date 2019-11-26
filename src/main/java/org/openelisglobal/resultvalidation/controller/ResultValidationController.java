@@ -227,8 +227,8 @@ public class ResultValidationController extends BaseResultValidationController {
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "showResultValidationSave()", lre);
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logErrorStack(this.getClass().getSimpleName(), "showResultValidationSave()", e);
         }
 
         for (IResultUpdate updater : updaters) {

@@ -267,12 +267,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         try {
             logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                e.printStackTrace();
                 errorMsg = "errors.UpdateException";
             }
 

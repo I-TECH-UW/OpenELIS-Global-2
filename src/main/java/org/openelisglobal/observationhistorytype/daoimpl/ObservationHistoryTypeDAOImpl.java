@@ -38,7 +38,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
             return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 
         } catch (Exception e) {
-            LogEvent.logError("ObservationHistoryTypeDAOImpl ", "getByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ObservationHistoryTypeDAOImpl  getByName()", e);
         }
     }

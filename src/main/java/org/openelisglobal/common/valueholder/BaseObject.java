@@ -91,7 +91,7 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
                 Thread.sleep(100);
             } catch (Exception e) {
                 // bugzilla 2154
-                LogEvent.logError("BaseObject", "setLastupdatedFields()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
             ts = new Timestamp(System.currentTimeMillis());

@@ -203,8 +203,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                     targetMonthTestCount.put(test, current + additional);
                 }
 
-            } catch (ParseException pe) {
-                System.out.println(pe);
+            } catch (ParseException e) {
+                System.out.println(e);
             }
 
         }

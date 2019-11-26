@@ -65,7 +65,7 @@ public class ValidationProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ValidationProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(ValidationProviderFactory.class));
         }
@@ -95,7 +95,7 @@ public class ValidationProviderFactory {
                 validationProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
                         LogEvent.getLog(ValidationProviderFactory.class));
             } finally {
@@ -105,8 +105,7 @@ public class ValidationProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()",
-                                e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -115,7 +114,7 @@ public class ValidationProviderFactory {
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError("ValidationProviderFactory", "getValidationProviderClassName()", validationProvidername);
+            LogEvent.logError(this.getClass().getName(), "getValidationProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getValidationProviderClassName - Unable to find mapping for " + validationProvidername);
         }

@@ -88,7 +88,7 @@ public class QueryProviderFactory {
                         propertyStream.close();
                         propertyStream = null;
                     } catch (Exception e) {
-                        LogEvent.logError(this.getClass().getName(), "getQueryProviderClassName", e.getMessage());
+                        LogEvent.logError(e.getMessage(), e);
                     }
                 }
             }

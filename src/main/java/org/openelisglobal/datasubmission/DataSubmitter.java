@@ -98,7 +98,7 @@ public class DataSubmitter {
                 }
             } catch (Exception e) {
                 success = false;
-                LogEvent.logError("DataSubmitter", "performAction()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 e.printStackTrace();
             } finally {
                 // remove extra information as it does not need to be saved to database

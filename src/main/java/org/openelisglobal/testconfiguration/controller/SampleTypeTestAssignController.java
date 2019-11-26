@@ -74,7 +74,7 @@ public class SampleTypeTestAssignController extends BaseController {
             PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
             PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -159,8 +159,8 @@ public class SampleTypeTestAssignController extends BaseController {
         try {
             sampleTypeTestAssignService.update(typeOfSample, testId, typeOfSamplesTestID, sampleTypeId,
                     deleteExistingTypeOfSampleTest, updateTypeOfSample, deActivateTypeOfSample, systemUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);

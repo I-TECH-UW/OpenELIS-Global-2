@@ -344,7 +344,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
         } catch (Exception e) {
             // buzilla 2154
-            LogEvent.logError("AnalyteDAOImpl", "getAnalyteByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
         }
     }
@@ -435,7 +435,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
             return list.size() > 0;
         } catch (Exception e) {
             // buzilla 2154
-            LogEvent.logError("AnalyteDAOImpl", "duplicateAnalyteExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
         }
     }

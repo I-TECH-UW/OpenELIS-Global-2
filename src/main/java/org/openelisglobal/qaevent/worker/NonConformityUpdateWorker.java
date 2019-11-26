@@ -312,14 +312,14 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
                 }
             }
 
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                e.printStackTrace();
                 errors.reject("errors.UpdateException", "errors.UpdateException");
             }
-            throw lre;
+            throw e;
 
         }
 

@@ -184,7 +184,7 @@ public class StringUtil {
                 String post = phone.substring(9, 13);
                 returnPhone = area + "/" + pre + "-" + post;
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatPhone()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -205,7 +205,7 @@ public class StringUtil {
                 String post = phone.substring(8, 12);
                 returnPhone = "(" + area + ")" + pre + "-" + post;
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatPhoneForDisplay()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -220,7 +220,7 @@ public class StringUtil {
             try {
                 returnPhone = phone.substring(13);
             } catch (Exception e) {
-                LogEvent.logError("StringUtil", "formatExtensionForDisplay()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
 
         }
@@ -247,7 +247,7 @@ public class StringUtil {
             }
             return sb.toString();
         } catch (Exception e) {
-            LogEvent.logError("StringUtil", "convertStringToRegEx()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting string to regular expression ", e);
         }
     }
@@ -259,7 +259,7 @@ public class StringUtil {
             }
             return "";
         } catch (Exception e) {
-            LogEvent.logError("StringUtil", "trim()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error trimming string ", e);
         }
     }
@@ -701,7 +701,7 @@ public class StringUtil {
         try {
             return new Double(significantDigits);
         } catch (NumberFormatException e) {
-            LogEvent.logError("StringUtil", "doubleWithInfinity(" + significantDigits + ")", e.toString());
+            LogEvent.logError(e.toString(), e);
             return null;
         }
     }

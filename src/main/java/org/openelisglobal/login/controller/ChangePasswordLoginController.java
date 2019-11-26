@@ -77,9 +77,9 @@ public class ChangePasswordLoginController extends BaseController {
                 loginService.update(login);
             }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
             result.reject("login.error.message");
         }
         if (result.hasErrors()) {

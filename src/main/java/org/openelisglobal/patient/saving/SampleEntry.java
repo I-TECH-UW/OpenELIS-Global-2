@@ -217,7 +217,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             List<Analysis> analysisList = SampleItemTestProvider.findAnalysis(sampleId, projectForm.getProjectFormId(),
                     tProjectData);
             return cleanupExistingAnalysis(analysisList);
-        } catch (IllegalArgumentException ignore) {
+        } catch (IllegalArgumentException e) {
             return null; // reversing the test boxes resulted in NO valid resuest, so we can move on.
         }
     }

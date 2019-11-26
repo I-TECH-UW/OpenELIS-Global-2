@@ -574,12 +574,12 @@ public class ResultsReportProvider extends BaseReportsProvider {
                 } catch (Exception e) {
                     Errors errors = new BaseErrors();
                     // bugzilla 2154
-                    LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
+                    LogEvent.logError(e.toString(), e);
 
                     if (e instanceof JRException) {
                         errors.reject("errors.jasperreport.general");
                         // bugzilla 2154
-                        LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
+                        LogEvent.logError(e.toString(), e);
                         // bugzilla 1900
                     } else if (e instanceof LIMSResultsReportHasNoDataException) {
                         if (accessionNumbers.size() > 1) {

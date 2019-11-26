@@ -80,8 +80,8 @@ public class TestSectionRenameEntryController extends BaseController {
 
             try {
                 localizationService.update(name);
-            } catch (HibernateException lre) {
-                lre.printStackTrace();
+            } catch (HibernateException e) {
+                e.printStackTrace();
             }
 
         }

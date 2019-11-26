@@ -225,7 +225,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
      * @return new RuntimeException
      */
     protected LIMSRuntimeException createAndLogException(String methodName, Exception e) {
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, e.toString());
+        LogEvent.logError(e.toString(), e);
         return new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + methodName, e);
     }
 //

@@ -163,7 +163,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
                 testSection.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getData()", e);
         }
     }
@@ -180,7 +180,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
         }
         return list;
@@ -218,7 +218,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
         }
         return list;
@@ -243,7 +243,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
         }
 
@@ -258,7 +258,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection readCity()", e);
         }
 
@@ -279,7 +279,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
         }
 
@@ -315,7 +315,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
         }
 
@@ -342,7 +342,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             return null;
 
         } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getTestSectionByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
         }
     }
@@ -376,7 +376,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             return !list.isEmpty();
 
         } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "duplicateTestSectionExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
         }
     }

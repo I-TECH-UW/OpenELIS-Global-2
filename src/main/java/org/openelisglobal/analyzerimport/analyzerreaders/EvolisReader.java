@@ -89,8 +89,8 @@ public class EvolisReader extends AnalyzerLineInserter {
             // ensure transaction block
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                e.printStackTrace();
                 successful = false;
             }
 

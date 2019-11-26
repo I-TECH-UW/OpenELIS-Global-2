@@ -65,7 +65,7 @@ public class AutocompleteProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("AutocompleteProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(AutocompleteProviderFactory.class));
         }
@@ -95,7 +95,7 @@ public class AutocompleteProviderFactory {
                 validationProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("AutocompleteProviderFactory", "getAutocompleteProviderClassName()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
                         LogEvent.getLog(AutocompleteProviderFactory.class));
             } finally {
@@ -105,8 +105,7 @@ public class AutocompleteProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("AutocompleteProviderFactory", "getAutocompleteProviderClassName()",
-                                e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -114,8 +113,7 @@ public class AutocompleteProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-            LogEvent.logError("AutocompleteProviderFactory", "getAutocompleteProviderClassName()",
-                    validationProvidername);
+//            LogEvent.logError(this.getClass().getName(), "getAutocompleteProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getAutocompleteProviderClassName - Unable to find mapping for " + validationProvidername);
         }

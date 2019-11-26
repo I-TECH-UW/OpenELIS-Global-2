@@ -164,7 +164,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getData()", e);
         }
     }
@@ -183,7 +183,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getAllScriptlets()", e);
         }
 
@@ -209,7 +209,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getPageOfScriptlets()", e);
         }
 
@@ -224,7 +224,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet readScriptlet()", e);
         }
 
@@ -246,7 +246,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getScriptlets(String filter)", e);
         }
         return list;
@@ -272,7 +272,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "getScriptletByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Scriptlet getScriptletByName()", e);
         }
     }
@@ -316,7 +316,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ScriptletDAOImpl", "duplicateScriptletExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateScriptletExists()", e);
         }
     }

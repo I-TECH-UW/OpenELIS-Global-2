@@ -51,7 +51,7 @@ public class TestActivationFormValidator implements Validator {
                 }
             }
         } catch (ParseException e) {
-            LogEvent.logError("TestActivationFormValidator", "validate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             errors.rejectValue("jsonChangeList", "error.field.format.json");
         }
 

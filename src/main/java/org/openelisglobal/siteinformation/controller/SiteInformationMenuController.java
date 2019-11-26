@@ -182,9 +182,9 @@ public class SiteInformationMenuController extends BaseMenuController {
             // siteInformationService.delete(siteInformationId, getSysUserId(request));
             // }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";

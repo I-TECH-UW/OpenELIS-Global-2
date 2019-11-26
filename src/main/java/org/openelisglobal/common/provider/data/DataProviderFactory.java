@@ -64,7 +64,7 @@ public class DataProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DataProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(DataProviderFactory.class));
         }
@@ -93,7 +93,7 @@ public class DataProviderFactory {
                 dataProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load data provider class mappings.", e,
                         LogEvent.getLog(DataProviderFactory.class));
             } finally {
@@ -103,7 +103,7 @@ public class DataProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class DataProviderFactory {
         String mapping = dataProviderClassMap.getProperty(dataProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", dataProvidername);
+//            LogEvent.logError(this.getClass().getName(), "getDataProviderClassName", dataProvidername, e);
             throw new LIMSRuntimeException("getDataProviderClassName - Unable to find mapping for " + dataProvidername);
         }
         return mapping;

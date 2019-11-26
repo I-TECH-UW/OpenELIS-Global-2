@@ -148,7 +148,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryLocationDAOImpl", "readInventoryLocation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
         }
 

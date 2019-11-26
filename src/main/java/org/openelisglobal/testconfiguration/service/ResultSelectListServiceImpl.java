@@ -146,7 +146,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
                 }
             }
             return true;
-        } catch (ParseException pe) {
+        } catch (ParseException e) {
 
         }
         return false;

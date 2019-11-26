@@ -380,11 +380,11 @@ public class SampleEditController extends BaseController {
         try {
             sampleEditService.editSample(form, request, updatedSample, sampleChanged, getSysUserId(request));
 
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                e.printStackTrace();
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
             saveErrors(result);

@@ -163,7 +163,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SampleHumanDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman getData()", e);
         }
     }
@@ -176,7 +176,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SampleHumanDAOImpl", "readSampleHuman()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman readSampleHuman()", e);
         }
 
@@ -200,7 +200,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
                 PropertyUtils.copyProperties(sampleHuman, sh);
             }
         } catch (Exception e) {
-            LogEvent.logError("SampleHumanDAOImpl", "getDataBySample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman getDataBySample()", e);
         }
 
@@ -215,9 +215,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sId", Integer.parseInt(sample.getId()));
             patient = (Patient) query.uniqueResult();
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleHumanDAOImpl", "getPatientForSample()", he.toString());
-            throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", e);
         }
 
         return patient;
@@ -234,8 +234,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             // closeSession(); // CSL remove old
 
             return provider;
-        } catch (HibernateException he) {
-            handleException(he, "getProviderForSample");
+        } catch (HibernateException e) {
+            handleException(e, "getProviderForSample");
         }
 
         return null;
@@ -253,9 +253,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("patientId", Integer.parseInt(patientID));
             samples = query.list();
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleHumanDAOImpl", "getSamplesForPatient()", he.toString());
-            throw new LIMSRuntimeException("Error in SampleHuman getSamplesForPatient()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException(e);
         }
 
         return samples;

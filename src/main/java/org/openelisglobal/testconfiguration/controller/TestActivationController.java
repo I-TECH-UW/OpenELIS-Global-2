@@ -155,8 +155,8 @@ public class TestActivationController extends BaseController {
 
         try {
             testActivationService.updateAll(deactivateTests, activateTests, deactivateSampleTypes, activateSampleTypes);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            e.printStackTrace();
         }
 
         List<TestActivationBean> activeTestList = createTestList(true, true);

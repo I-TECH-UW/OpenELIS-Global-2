@@ -45,7 +45,7 @@ public class TestOrderabilityFormValidator implements Validator {
                 }
             }
         } catch (ParseException e) {
-            LogEvent.logError("TestOrderabilityFormValidator", "validate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             errors.rejectValue("jsonChangeList", "error.field.format.json");
         }
     }

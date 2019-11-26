@@ -454,7 +454,7 @@ public class NonConformityController extends BaseController {
         worker.setWebData(data);
         try {
             worker.update();
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             saveErrors(worker.getErrors());
             return findForward(FWD_FAIL_INSERT, form);
         }

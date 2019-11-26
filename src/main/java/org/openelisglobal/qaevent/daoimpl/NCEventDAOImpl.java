@@ -34,7 +34,7 @@ public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEv
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("NCEventDAOImpl", "findByNCENumberOrLabOrderId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

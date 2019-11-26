@@ -64,7 +64,7 @@ public class FACSCantoReader extends AnalyzerLineInserter {
 
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }

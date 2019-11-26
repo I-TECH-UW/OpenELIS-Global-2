@@ -171,7 +171,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getData()", e);
         }
     }
@@ -188,7 +188,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getAllOrganizations()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizations()", e);
         }
 
@@ -214,7 +214,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getPageOfOrganizations()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getPageOfOrganizations()", e);
         }
 
@@ -267,7 +267,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "readOrganization()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization readOrganization()", e);
         }
 
@@ -289,7 +289,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getOrganizations()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizations(String filter)", e);
         }
 
@@ -328,7 +328,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getOrganizationByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByName()", e);
         }
     }
@@ -365,7 +365,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "getOrganizationByLocalAbbreviation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByLocalAbbreviation()", e);
         }
     }
@@ -420,7 +420,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDAOImpl", "duplicateOrganizationExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateOrganizationExists()", e);
         }
     }
@@ -502,7 +502,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             return orgs;
         } catch (Exception e) {
-            LogEvent.logError("OrganizationDAOImpl", "getOrganizationsByTypeName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

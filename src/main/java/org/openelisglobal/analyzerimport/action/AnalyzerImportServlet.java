@@ -96,15 +96,15 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 stream.close();
             }
-        } catch (Exception ex) {
-            LogEvent.logError(this.getClass().getName(), "doPost", ex.getMessage());
-            throw new ServletException(ex);
+        } catch (Exception e) {
+            LogEvent.logError(e.getMessage(), e);
+            throw new ServletException(e);
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    LogEvent.logError(this.getClass().getName(), "doPost", e.getMessage());
+                    LogEvent.logError(e.getMessage(), e);
                 }
             }
         }

@@ -62,7 +62,7 @@ public class ResourceLocator {
             propertyFilePairs.load(propertyStream);
         } catch (IOException e) {
             // bugzilla 2154
-            LogEvent.logError("ResourceLocator", "ResourceLocator()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new RuntimeException(e);
         } finally {
             if (null != propertyStream) {
@@ -71,7 +71,7 @@ public class ResourceLocator {
                     propertyStream = null;
                 } catch (Exception e) {
                     // bugzilla 2154
-                    LogEvent.logError("ResourceLocator", "ResourceLocator()", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }

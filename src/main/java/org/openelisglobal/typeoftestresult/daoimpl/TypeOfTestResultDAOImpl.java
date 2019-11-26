@@ -314,7 +314,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfTestResultDAOImpl", "duplicateTypeOfTestResultExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTypeOfTestResultExists()", e);
         }
     }
@@ -339,7 +339,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("TypeOfTestResultDAOImpl", "getTypeOfTestResultByType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getTypeOfTestResultByType()", e);
         }
 

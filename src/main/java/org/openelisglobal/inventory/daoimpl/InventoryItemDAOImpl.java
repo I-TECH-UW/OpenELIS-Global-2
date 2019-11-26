@@ -46,7 +46,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryItemDAOImpl", "getAllInventoryItems()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
         }
 
@@ -152,7 +152,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryItemDAOImpl", "readInventoryItem()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
         }
 

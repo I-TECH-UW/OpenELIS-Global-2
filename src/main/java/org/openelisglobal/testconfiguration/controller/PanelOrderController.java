@@ -60,7 +60,7 @@ public class PanelOrderController extends BaseController {
             PropertyUtils.setProperty(form, "existingSampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
         HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
@@ -92,7 +92,7 @@ public class PanelOrderController extends BaseController {
             PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
             PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 

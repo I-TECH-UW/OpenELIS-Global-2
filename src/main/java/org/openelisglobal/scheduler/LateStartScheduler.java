@@ -86,10 +86,10 @@ public class LateStartScheduler {
             }
 
             scheduler.start();
-        } catch (SchedulerException se) {
-            se.printStackTrace();
-        } catch (ParseException pe) {
-            pe.printStackTrace();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 

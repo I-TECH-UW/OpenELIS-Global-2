@@ -39,7 +39,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesForPatient()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientIdentitiesForPatient()", e);
         }
 
@@ -103,7 +103,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "readSampleHuman()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity getCurrentPatientIdentity()", e);
         }
 
@@ -140,7 +140,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "readPatientIdentity()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity readPatientIdentity()", e);
         }
 
@@ -166,7 +166,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
             return identities;
         } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesByValueAndType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity getPatientIdentitiesByValueAndType()", e);
         }
     }

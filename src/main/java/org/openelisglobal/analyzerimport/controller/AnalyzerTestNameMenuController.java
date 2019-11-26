@@ -158,8 +158,8 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
             testMappingList.add(testMapping);
             try {
                 analyzerTestMappingService.delete(testMapping);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                e.printStackTrace();
                 saveErrors(result);
                 return findForward(performMenuAction(form, request), form);
             }

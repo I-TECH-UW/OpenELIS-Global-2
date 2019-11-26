@@ -151,7 +151,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getData()", e);
         }
     }
@@ -168,7 +168,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getAllPersons()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
         }
 
@@ -193,7 +193,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "getPageOfPersons()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
         }
 
@@ -208,7 +208,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PersonDAOImpl", "readPerson()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person readPerson()", e);
         }
 
@@ -229,7 +229,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("PersonDAOImpl", "getPersonByLastName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
         }
 

@@ -170,7 +170,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getData()", e);
         }
     }
@@ -189,7 +189,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamples()", e);
         }
         return list;
@@ -207,7 +207,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamplesSortOrdered()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
         }
 
@@ -233,7 +233,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getPageOfTypeOfSamples()", e);
         }
 
@@ -248,7 +248,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample readTypeOfSample()", e);
         }
 
@@ -283,7 +283,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "getTypes()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
         }
         return list;
@@ -352,8 +352,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             TypeOfSample typeOfSample = (TypeOfSample) query.uniqueResult();
             // closeSession(); // CSL remove old
             return typeOfSample;
-        } catch (HibernateException he) {
-            handleException(he, "getTypeOfSampeByLocalAbbreviationAndDomain");
+        } catch (HibernateException e) {
+            handleException(e, "getTypeOfSampeByLocalAbbreviationAndDomain");
         }
         return null;
     }
@@ -434,7 +434,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "getTypeOfSampleByDescriptionAndDomain()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTypeOfSampleByDescriptionAndDomain()", e);
         }
     }
@@ -478,7 +478,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSampleDAOImpl", "duplicateTypeOfSampleExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTypeOfSampleExists()", e);
         }
     }

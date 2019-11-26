@@ -104,7 +104,7 @@ public class TestAddController extends BaseController {
                     DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
             PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "showTestAdd", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
         return findForward(FWD_SUCCESS, form);
@@ -127,8 +127,8 @@ public class TestAddController extends BaseController {
         JSONObject obj = null;
         try {
             obj = (JSONObject) parser.parse(jsonString);
-        } catch (ParseException e1) {
-            LogEvent.logError(this.getClass().getName(), "postTestAdd", e1.getMessage());
+        } catch (ParseException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
         List<TestSet> testSets = createTestSets(testAddParams);
@@ -137,8 +137,8 @@ public class TestAddController extends BaseController {
 
         try {
             testAddService.addTests(testSets, nameLocalization, reportingNameLocalization, currentUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         testService.refreshTestNames();

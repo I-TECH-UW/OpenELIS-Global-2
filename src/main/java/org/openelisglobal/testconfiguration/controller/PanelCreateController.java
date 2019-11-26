@@ -66,14 +66,14 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingSampleTypeList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         List<Panel> panels = panelService.getAllPanels();
         try {
             PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
         List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
@@ -92,7 +92,7 @@ public class PanelCreateController extends BaseController {
             PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
             PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -137,8 +137,8 @@ public class PanelCreateController extends BaseController {
         try {
             panelCreateService.insert(localization, panel, workplanModule, resultModule, validationModule,
                     workplanResultModule, resultResultModule, validationValidationModule, sampleTypeId, systemUserId);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);

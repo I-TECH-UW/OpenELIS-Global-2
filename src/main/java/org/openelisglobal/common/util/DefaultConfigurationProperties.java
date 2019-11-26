@@ -201,14 +201,14 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             properties.load(propertyStream);
 
         } catch (Exception e) {
-            LogEvent.logError("DefaultConfigurationProperties", "", e.toString());
+            LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                     propertyStream = null;
                 } catch (Exception e) {
-                    LogEvent.logError("DefaultConfigurationProperties", "", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
 

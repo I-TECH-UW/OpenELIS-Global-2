@@ -155,7 +155,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemModuleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getData()", e);
         }
     }
@@ -171,7 +171,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getAllSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
         }
 
@@ -195,7 +195,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "getPageOfSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
         }
 
@@ -209,7 +209,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "readSystemModule()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
         }
 
@@ -233,8 +233,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             SystemModule module = (SystemModule) query.uniqueResult();
             // closeSession(); // CSL remove old
             return module;
-        } catch (HibernateException he) {
-            handleException(he, "getSystemModuleByName");
+        } catch (HibernateException e) {
+            handleException(e, "getSystemModuleByName");
         }
         return null;
     }
@@ -261,7 +261,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             return list.size() > 0;
         } catch (Exception e) {
-            LogEvent.logError("SystemModuleDAOImpl", "duplicateSystemModuleExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
         }
     }

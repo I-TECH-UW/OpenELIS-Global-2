@@ -65,7 +65,7 @@ public class CobasTaqmanReader extends AnalyzerLineInserter {
 
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }

@@ -43,14 +43,14 @@ public class Versioning {
             properties.load(propertyStream);
 
         } catch (Exception e) {
-            LogEvent.logError("Versioning", "", e.toString());
+            LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                     propertyStream = null;
                 } catch (Exception e) {
-                    LogEvent.logError("Versioning", "static initializer", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }

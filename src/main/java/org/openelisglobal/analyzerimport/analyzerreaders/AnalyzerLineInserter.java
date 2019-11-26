@@ -44,8 +44,8 @@ public abstract class AnalyzerLineInserter {
 
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                e.printStackTrace();
                 return false;
             }
         }

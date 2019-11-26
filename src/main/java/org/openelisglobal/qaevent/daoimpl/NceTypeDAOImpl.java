@@ -31,7 +31,7 @@ public class NceTypeDAOImpl extends BaseDAOImpl<NceType, String> implements NceT
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("NceTypeDAOImpl", "getAllNceType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceType()", e);
         }
         return list;

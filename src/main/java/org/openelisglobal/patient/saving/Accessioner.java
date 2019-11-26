@@ -1291,7 +1291,7 @@ public abstract class Accessioner implements IAccessioner {
      */
     public void logAndAddMessage(String methodName, String messageKey, Exception e) {
         e.printStackTrace();
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, e.toString());
+        LogEvent.logError(e.toString(), e);
         if (!messages.hasErrors()) {
             messages.reject(messageKey);
         }

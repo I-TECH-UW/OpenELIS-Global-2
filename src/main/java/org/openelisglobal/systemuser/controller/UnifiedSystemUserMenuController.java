@@ -188,9 +188,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
         try {
             unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
 
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
                 result.reject("errors.DeleteException", "errors.DeleteException");

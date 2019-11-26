@@ -45,7 +45,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             list = query.list();
         } catch (Exception e) {
             e.printStackTrace();
-            LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
         }
 

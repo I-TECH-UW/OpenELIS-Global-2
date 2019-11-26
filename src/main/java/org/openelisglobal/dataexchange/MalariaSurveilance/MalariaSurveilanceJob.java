@@ -284,7 +284,7 @@ public class MalariaSurveilanceJob implements Job {
             try {
                 cronSchedulerService.update(gatherScheduler);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logError("AggregateGatherJob", "execute", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
         }
 

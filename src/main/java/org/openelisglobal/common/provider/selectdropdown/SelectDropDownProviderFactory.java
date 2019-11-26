@@ -66,7 +66,7 @@ public class SelectDropDownProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SelectDropDownProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(SelectDropDownProviderFactory.class));
         }
@@ -96,8 +96,7 @@ public class SelectDropDownProviderFactory {
                 validationProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
-                        e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
                         LogEvent.getLog(SelectDropDownProviderFactory.class));
             } finally {
@@ -107,8 +106,7 @@ public class SelectDropDownProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
-                                e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -116,8 +114,7 @@ public class SelectDropDownProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-            LogEvent.logError("SelectDropDownProviderFactory", "getSelectDropDownProviderClassName()",
-                    validationProvidername);
+            LogEvent.logError(this.getClass().getName(), "getSelectDropdownProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getSelectDropDownProviderClassName - Unable to find mapping for " + validationProvidername);
         }

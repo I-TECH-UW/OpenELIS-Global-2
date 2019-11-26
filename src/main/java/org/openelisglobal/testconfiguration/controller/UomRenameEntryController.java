@@ -79,8 +79,8 @@ public class UomRenameEntryController extends BaseController {
 
             try {
                 unitOfMeasureService.update(unitOfMeasure);
-            } catch (HibernateException lre) {
-                lre.printStackTrace();
+            } catch (HibernateException e) {
+                e.printStackTrace();
             }
 
         }

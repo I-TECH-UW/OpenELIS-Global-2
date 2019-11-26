@@ -60,7 +60,7 @@ public class SystemConfiguration {
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemConfiguration", "Constructor", e.toString());
+            LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
@@ -68,7 +68,7 @@ public class SystemConfiguration {
                     propertyStream = null;
                 } catch (Exception e) {
                     // bugzilla 2154
-                    LogEvent.logError("SystemConfiguration", "Constructor final", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
 
@@ -961,9 +961,8 @@ public class SystemConfiguration {
         if (!GenericValidator.isBlankOrNull(timeLimit)) {
             try {
                 limit = Long.parseLong(timeLimit);
-            } catch (NumberFormatException nfe) {
-                LogEvent.logError("SystemConfiguration", "getSearchTimeLimit()",
-                        "Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used");
+            } catch (NumberFormatException e) {
+                LogEvent.logError("Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used", e);
             }
         }
         return limit;

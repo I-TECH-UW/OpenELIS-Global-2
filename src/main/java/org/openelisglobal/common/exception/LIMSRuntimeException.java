@@ -38,9 +38,9 @@ public class LIMSRuntimeException extends RuntimeException {
      * @param String    the detailed message
      * @param Exception the wrapped exception
      */
-    public LIMSRuntimeException(String pMessage, Exception pException) {
+    public LIMSRuntimeException(String pMessage, Exception e) {
         super(pMessage);
-        exception = pException;
+        exception = e;
     }
 
     /**
@@ -73,8 +73,8 @@ public class LIMSRuntimeException extends RuntimeException {
      *
      * @param Exception the wrapped exception
      */
-    public LIMSRuntimeException(Exception pException) {
-        this(null, pException);
+    public LIMSRuntimeException(Exception e) {
+        this(null, e);
     }
 
     /**

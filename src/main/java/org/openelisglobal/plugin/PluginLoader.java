@@ -144,7 +144,7 @@ public class PluginLoader {
     private boolean checkJDKVersions(String fileName, JarFile jar) throws IOException {
         Manifest manifest = jar.getManifest();
         if (manifest == null) {
-            LogEvent.logError("PluginLoader", "check jdk version",
+            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
                     "Manifest file not in jar file, unable to check jdk versions");
             System.out.println("Manifest file not in jar file, unable to check jdk versions");
             return true;
@@ -152,7 +152,7 @@ public class PluginLoader {
 
         String buildJdk = manifest.getMainAttributes().getValue("Build-Jdk");
         if (buildJdk == null) {
-            LogEvent.logError("PluginLoader", "check jdk version",
+            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
                     "JDK version not found in manifest file, unable to check jdk versions");
             System.out.println("JDK version not found in manifest file, unable to check jdk versions");
             return true;
@@ -163,7 +163,7 @@ public class PluginLoader {
         int jarVersionMinor = Integer.parseInt(jarVersion[1]);
         if (jarVersionMajor > JDK_VERSION_MAJOR
                 || (jarVersionMajor == JDK_VERSION_MAJOR && jarVersionMinor > JDK_VERSION_MINOR)) {
-            LogEvent.logError("PluginLoader", "check jdk version",
+            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
                     "The plugin " + fileName + " was compiled with a higher JDK version ("
                             + getVersion(jarVersionMajor, jarVersionMinor) + ") than the runtime JDK ("
                             + getVersion(JDK_VERSION_MAJOR, JDK_VERSION_MINOR) + ")");
@@ -194,13 +194,13 @@ public class PluginLoader {
             Element versionElement = doc.getRootElement().element(VERSION);
 
             if (versionElement == null) {
-                LogEvent.logError("PluginLoader", "load", "Missing version number in plugin");
+                LogEvent.logError(this.getClass().getName(), "loadFromXml", "Missing version number in plugin");
                 System.out.println("Missing version number in plugin");
                 return false;
             }
             if (!SUPPORTED_VERSION.equals(versionElement.getData())) {
-                LogEvent.logError("PluginLoader", "load", "Unsupported version number.  Expected " + SUPPORTED_VERSION
-                        + " got " + versionElement.getData());
+                LogEvent.logError(this.getClass().getName(), "loadFromXml", "Unsupported version number.  Expected "
+                        + SUPPORTED_VERSION + " got " + versionElement.getData());
                 System.out.println("Unsupported version number.  Expected " + SUPPORTED_VERSION + " got "
                         + versionElement.getData());
                 return false;
@@ -244,7 +244,7 @@ public class PluginLoader {
             return false;
         } catch (LIMSException e) {
             if (description != null) {
-                LogEvent.logError("PluginLoader", "load", "Failed Loading: " + description.getValue());
+                LogEvent.logError("Failed Loading: " + description.getValue(), e);
                 System.out.println("Failed Loading: " + description.getValue());
             }
             return false;

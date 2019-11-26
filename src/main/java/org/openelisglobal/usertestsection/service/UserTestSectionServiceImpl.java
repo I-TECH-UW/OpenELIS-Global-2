@@ -59,7 +59,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getAllUserTestSectionsByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSectionsByName()", e);
         }
         return list;
@@ -107,7 +107,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getPageOfTestsBySysUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getPageOfTestsBySysUserId()", e);
         }
         return list;
@@ -133,7 +133,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getAllUserTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSections()", e);
         }
         return list;
@@ -161,7 +161,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getAllUserTests()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTests()", e);
         }
         return list;
@@ -241,7 +241,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getSamplePdfList()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getSamplePdfList()", e);
         }
         return samplePdfList;
@@ -276,7 +276,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("UserTestSectionServiceImpl", "getAnalyses()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAnalyses()", e);
         }
         return newAnalyses;

@@ -71,7 +71,7 @@ public class TestSectionTestAssignController extends BaseController {
             PropertyUtils.setProperty(form, "testSectionList", joinedList);
             PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
     }
@@ -140,8 +140,8 @@ public class TestSectionTestAssignController extends BaseController {
         try {
             testSectionTestAssignService.updateTestAndTestSections(test, testSection, deActivateTestSection,
                     updateTestSection);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

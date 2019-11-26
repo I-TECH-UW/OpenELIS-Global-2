@@ -96,7 +96,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
         if (results.size() > 0) {
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 error = "Cobas Taqman DBS analyzer: Unable to save to database";
                 successful = false;
             }

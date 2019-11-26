@@ -158,18 +158,18 @@ public class DictionaryController extends BaseController {
                 // INSERT
                 dictionaryService.insert(dictionary);
             }
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryUpdateAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
             // 1482
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
-            } else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
                 String messageKey = "dictionary.dictEntryByCategory";
                 String msg = MessageUtil.getMessage(messageKey);
                 result.reject("errors.DuplicateRecord.activate", new String[] { msg },
                         "errors.DuplicateRecord.activate");
-            } else if (lre.getException() instanceof LIMSFrozenRecordException) {
+            } else if (e.getException() instanceof LIMSFrozenRecordException) {
                 String messageKey = "dictionary.dictEntry";
                 String msg = MessageUtil.getMessage(messageKey);
                 result.reject("errors.FrozenRecord", new String[] { msg }, "errors.FrozenRecord");

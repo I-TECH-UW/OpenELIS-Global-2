@@ -172,7 +172,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getData()", e);
         }
     }
@@ -189,7 +189,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemModules()", e);
         }
 
@@ -207,7 +207,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             list = query.list();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemUserModulesBySystemUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemUserModulesBySystemUserId()", e);
         }
 
@@ -233,7 +233,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getPageOfSystemUserModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getPageOfSystemUserModules()", e);
         }
 
@@ -248,7 +248,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "readSystemUserModule()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Gender readSystemUserModule(idString)", e);
         }
 
@@ -290,7 +290,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "duplicateSystemUserModuleExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserModuleExists()", e);
         }
     }

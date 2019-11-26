@@ -177,7 +177,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getData()", e);
         }
     }
@@ -196,7 +196,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getAllTestReflexs()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getAllTestReflexs()", e);
         }
 
@@ -224,7 +224,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getPageOfTestReflexs()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getPageOfTestReflexs()", e);
         }
 
@@ -255,7 +255,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -287,7 +287,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -323,7 +323,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -350,7 +350,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
                 return list;
             } catch (Exception e) {
-                LogEvent.logError("TestReflexDAOImpl", "getTestReflexByTestResultAnalyteTest", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException(
                         "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
                         e);
@@ -367,7 +367,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "readTestReflex()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex readTestReflex()", e);
         }
         return tr;
@@ -419,7 +419,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
 
         } catch (Exception e) {
-            LogEvent.logError("TestReflexDAOImpl", "duplicateTestReflexExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestReflexExists()", e);
         }
     }

@@ -96,7 +96,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
         }
 
@@ -135,9 +135,9 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (HibernateException he) {
-            LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());
-            throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", e);
         }
 
         if (patientTypes.size() > 0) {

@@ -361,7 +361,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryCategoryDAOImpl", "duplicateDictionaryExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
     }

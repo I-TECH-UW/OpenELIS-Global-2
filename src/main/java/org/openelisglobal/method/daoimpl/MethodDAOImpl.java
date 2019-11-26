@@ -268,7 +268,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
         }
         return list;
@@ -380,7 +380,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "duplicateMethodExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
         }
     }

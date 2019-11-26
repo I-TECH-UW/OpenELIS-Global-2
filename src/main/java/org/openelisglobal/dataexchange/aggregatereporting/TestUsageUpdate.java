@@ -157,8 +157,8 @@ public class TestUsageUpdate implements IResultUpdate {
                 Long count = databaseTestCountList.get(test);
                 databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
             }
-        } catch (ParseException pe) {
-            System.out.println(pe);
+        } catch (ParseException e) {
+            System.out.println(e);
         }
 
         JSONObject json = new JSONObject();
@@ -188,7 +188,7 @@ public class TestUsageUpdate implements IResultUpdate {
 //				}
 //			}
         } catch (LIMSRuntimeException e) {
-            LogEvent.logError("TestUsageUpdate", "applyUpdatesToDB", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
     }
 }

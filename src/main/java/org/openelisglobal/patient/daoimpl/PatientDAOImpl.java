@@ -170,7 +170,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             }
 
         } catch (Exception e) {
-            LogEvent.logError("PatientDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getData()", e);
         }
     }
@@ -199,7 +199,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getAllPatients()", e);
         }
 
@@ -225,7 +225,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "getPageOfPatients()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getPageOfPatients()", e);
         }
 
@@ -241,7 +241,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 

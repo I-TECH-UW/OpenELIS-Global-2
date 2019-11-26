@@ -101,12 +101,12 @@ public class PatientManagementController extends BaseController {
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
 
-                if (lre.getException() instanceof StaleObjectStateException) {
+                if (e.getException() instanceof StaleObjectStateException) {
                     result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
                 } else {
-                    lre.printStackTrace();
+                    e.printStackTrace();
                     result.reject("errors.UpdateException", "errors.UpdateException");
                 }
                 request.setAttribute(ALLOW_EDITS_KEY, "false");

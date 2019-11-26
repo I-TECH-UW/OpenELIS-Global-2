@@ -85,8 +85,8 @@ public class PluginAnalyzerService {
         try {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
-        } catch (Exception lre) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", lre);
+        } catch (Exception e) {
+            LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", e);
         }
         return analyzer.getId();
     }
@@ -109,7 +109,7 @@ public class PluginAnalyzerService {
         if (test != null) {
             return test.getId();
         }
-        LogEvent.logError("PluginAnalyzerService", "createTestMappings",
+        LogEvent.logError(this.getClass().getName(), "getIdForTestName",
                 "Unable to find test " + dbbTestName + " in test catalog");
         return null;
     }

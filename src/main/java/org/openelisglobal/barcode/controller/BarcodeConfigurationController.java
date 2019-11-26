@@ -102,7 +102,7 @@ public class BarcodeConfigurationController extends BaseController {
         // ensure transaction block
         try {
             barcodeInformationService.updateBarcodeInfoFromForm(form, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             result.reject("barcode.config.error.insert");
         } finally {
             ConfigurationProperties.forceReload();

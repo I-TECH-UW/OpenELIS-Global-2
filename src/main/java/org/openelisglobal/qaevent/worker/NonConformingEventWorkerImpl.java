@@ -127,7 +127,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
             return new Date(format.parse(value).getTime());
-        } catch (ParseException pe) {}
+        } catch (ParseException e) {}
         return null;
     }
 
@@ -242,11 +242,11 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 nceActionLogList.add(actionLog);
             }*/
             return nceActionLogList;
-        } /*catch (JsonParseException jpe) {
+        } /*catch (JsonParseException e) {
             jpe.printStackTrace();
-        } catch (JsonMappingException jme) {
+        } catch (JsonMappingException e) {
             jme.printStackTrace();
-        } catch (IOException io) {
+        } catch (IOException e) {
             io.printStackTrace();
         }*/ catch (Exception e) {
             e.printStackTrace();

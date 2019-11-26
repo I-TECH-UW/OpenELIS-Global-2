@@ -87,25 +87,25 @@ abstract public class HttpSender implements IExternalSender {
                 setPossibleErrors();
             } catch (SocketTimeoutException e) {
                 returnStatus = HttpServletResponse.SC_REQUEST_TIMEOUT;
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             } catch (ConnectTimeoutException e) {
                 returnStatus = HttpServletResponse.SC_REQUEST_TIMEOUT;
                 errors.add(e.getMessage() + " " + url);
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             } catch (HttpException e) {
                 errors.add(MessageUtil.getMessage("http.error.unknown") + " " + url);
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             } catch (ConnectException e) {
                 returnStatus = HttpServletResponse.SC_BAD_REQUEST;
                 errors.add(MessageUtil.getMessage("http.error.noconnection") + " " + url);
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             } catch (UnknownHostException e) {
                 returnStatus = HttpServletResponse.SC_NOT_FOUND;
                 errors.add(MessageUtil.getMessage("http.error.unknownhost") + " " + url);
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             } catch (IOException e) {
                 errors.add(MessageUtil.getMessage("http.error.io") + " " + url);
-                LogEvent.logError("HttpSender", "sendPutMessage()", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
         } finally {
             httpPost.releaseConnection();

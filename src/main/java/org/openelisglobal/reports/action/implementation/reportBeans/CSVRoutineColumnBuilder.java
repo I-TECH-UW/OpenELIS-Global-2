@@ -435,7 +435,7 @@ abstract public class CSVRoutineColumnBuilder {
             try {
                 double d = Double.parseDouble(value);
                 return String.valueOf(Math.log10(d));
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return "";
             }
         }

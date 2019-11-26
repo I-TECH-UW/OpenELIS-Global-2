@@ -165,7 +165,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getData()", e);
         }
     }
@@ -182,7 +182,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("QaEventDAOImpl", "getAllQaEvents()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getAllQaEvents()", e);
         }
 
@@ -208,7 +208,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getPageOfQaEvents()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getPageOfQaEvents()", e);
         }
 
@@ -223,7 +223,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "readQaEvent()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent readQaEvent()", e);
         }
 
@@ -245,7 +245,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getQaEvents()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getQaEvents(String filter)", e);
         }
         return list;
@@ -272,7 +272,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "getQaEventByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getQaEventByName()", e);
         }
     }
@@ -320,7 +320,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("QaEventDAOImpl", "duplicateQaEventExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateQaEventExists()", e);
         }
     }

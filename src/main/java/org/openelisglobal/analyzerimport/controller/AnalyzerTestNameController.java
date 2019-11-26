@@ -155,9 +155,9 @@ public class AnalyzerTestNameController extends BaseController {
                 analyzerTestMappingService.update(analyzerTestNameMapping);
             }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg = null;
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.UpdateException";

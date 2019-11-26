@@ -430,10 +430,10 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
                     loggedOnUserId);
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
                 errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
             } else {
                 errors.reject("errors.UpdateException", "errors.UpdateException");
@@ -514,7 +514,7 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             int timeInMin = Integer.parseInt(timeout);
             return timeInMin > 0 && timeInMin < 601;
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }

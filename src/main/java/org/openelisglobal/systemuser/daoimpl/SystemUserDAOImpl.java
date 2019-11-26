@@ -178,7 +178,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getData()", e);
         }
     }
@@ -195,7 +195,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getAllSystemUsers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
         }
 
@@ -221,7 +221,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "getPageOfSystemUsers()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
         }
 
@@ -236,7 +236,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "readSystemUser()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
         }
 
@@ -283,7 +283,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SystemUserDAOImpl", "duplicateSystemUserExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
         }
     }
@@ -301,7 +301,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("SystemUserDAOImpl", "getDataForUser()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
         }
 

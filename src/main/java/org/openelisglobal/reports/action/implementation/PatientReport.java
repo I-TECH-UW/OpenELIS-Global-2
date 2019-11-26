@@ -248,8 +248,8 @@ public abstract class PatientReport extends Report {
 //					analysisService.update(analysis, true);
 //				}
 
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", e);
             }
         }
     }

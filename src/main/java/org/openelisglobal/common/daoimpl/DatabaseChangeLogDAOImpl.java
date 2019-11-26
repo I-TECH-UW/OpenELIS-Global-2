@@ -62,7 +62,7 @@ public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
             }
 
         } catch (Exception e) {
-            LogEvent.logError("DatabaseChangeLogDAOImpl", "getLastExecutedChange()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in DatabaseChangeLogDAOImpl getLastExecutedChange()", e);
         }
 

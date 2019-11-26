@@ -29,12 +29,38 @@ public class LogEvent {
     /**
      * Write to the log file (type error)
      *
-     * @param className    the class name
-     * @param methodName   the method name
      * @param errorMessage the error message
+     * @param throwable    the error to log
      */
     public static void logError(String className, String methodName, String errorMessage) {
         getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param errorMessage the error message
+     * @param throwable    the error to log
+     */
+    public static void logError(String errorMessage, Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param throwable the error to log
+     */
+    public static void logError(Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
     }
 
     /**
@@ -50,7 +76,7 @@ public class LogEvent {
             stackErrorMessage.append(throwable.getStackTrace()[i].toString());
             stackErrorMessage.append(System.lineSeparator());
         }
-        logError(className, methodName, stackErrorMessage.toString());
+        logError(stackErrorMessage.toString(), throwable);
         getLog().error("Class: " + className + ", Method: " + methodName, throwable);
     }
 
@@ -63,6 +89,33 @@ public class LogEvent {
      */
     public static void logDebug(String className, String methodName, String debugMessage) {
         getLog().debug("Class: " + className + ", Method: " + methodName + ", Debug: " + debugMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param errorMessage the error message
+     * @param throwable    the error to log
+     */
+    public static void logDebug(String debugMessage, Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + debugMessage);
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param throwable the error to log
+     */
+    public static void logDebug(Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
     }
 
     /**

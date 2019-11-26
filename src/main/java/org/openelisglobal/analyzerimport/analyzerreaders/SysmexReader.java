@@ -335,7 +335,7 @@ public class SysmexReader extends AnalyzerLineInserter {
         if (results.size() > 0) {
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }
@@ -374,8 +374,8 @@ public class SysmexReader extends AnalyzerLineInserter {
 
                 try {
                     result = Double.parseDouble(fields[testIndex]) / scaleIndex[testIndex];
-                } catch (NumberFormatException nfe) {
-                    LogEvent.logError(this.getClass().getName(), "addAnalyzerResultFromLine", nfe.getMessage());
+                } catch (NumberFormatException e) {
+                    LogEvent.logError(e.getMessage(), e);
                     // no-op -- defaults to NAN
                 }
 

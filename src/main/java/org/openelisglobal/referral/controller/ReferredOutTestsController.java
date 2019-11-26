@@ -458,12 +458,12 @@ public class ReferredOutTestsController extends BaseController {
         try {
             referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
                     removableReferralResults, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                e.printStackTrace();
                 errorMsg = "error.system";
             }
 

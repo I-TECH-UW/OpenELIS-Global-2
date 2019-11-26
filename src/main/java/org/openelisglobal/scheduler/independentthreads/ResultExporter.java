@@ -158,9 +158,9 @@ public class ResultExporter extends Thread implements IResultExporter {
                     }
                     reportExternalExportService.delete(report);
 
-                } catch (LIMSRuntimeException lre) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
-                    throw lre;
+                } catch (LIMSRuntimeException e) {
+                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", e);
+                    throw e;
                 }
 
             }

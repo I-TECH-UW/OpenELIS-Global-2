@@ -107,8 +107,8 @@ public class TestSectionOrderController extends BaseController {
 
         try {
             testSectionService.updateAll(testSections);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

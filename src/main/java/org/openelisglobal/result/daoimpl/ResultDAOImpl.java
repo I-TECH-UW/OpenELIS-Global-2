@@ -173,7 +173,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             }
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getData()", e);
         }
     }
@@ -209,7 +209,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "getResultByAnalysisAndAnalyte()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysisAndAnalyte()", e);
         }
     }
@@ -231,7 +231,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             return results;
 
         } catch (Exception e) {
-            LogEvent.logError("ResultDAOImpl", "getResultByAnalysis()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysis()", e);
         }
     }
@@ -270,7 +270,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "getResultByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByTestResult()", e);
         }
     }
@@ -287,7 +287,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "getAllResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getAllResults()", e);
         }
 
@@ -312,7 +312,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "getPageOfResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getPageOfResults()", e);
         }
 
@@ -327,7 +327,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
 
-            LogEvent.logError("ResultDAOImpl", "readResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result readResult()", e);
         }
 
@@ -373,7 +373,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             return results;
 
         } catch (Exception e) {
-            LogEvent.logError("ResultDAOImpl", "getReportableResultsByAnalysis()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getReportableResultsByAnalysis()", e);
         }
     }

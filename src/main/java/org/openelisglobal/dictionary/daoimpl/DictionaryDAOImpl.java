@@ -191,7 +191,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Dictionary getData()", e);
         }
     }
@@ -362,7 +362,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrys()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
         }
@@ -414,7 +414,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrysByCategoryAbbreviation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
         }
@@ -535,7 +535,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             return !query.list().isEmpty();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
     }
@@ -638,7 +638,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
             return !query.list().isEmpty();
         } catch (Exception e) {
-            LogEvent.logError("DictionaryDAOImpl", "dictionaryIsInUse()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
         }
     }

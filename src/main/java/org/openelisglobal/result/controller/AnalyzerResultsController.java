@@ -693,8 +693,8 @@ public class AnalyzerResultsController extends BaseController {
             analyzerResultsService.persistAnalyzerResults(deletableAnalyzerResults, sampleGroupList,
                     getSysUserId(request));
 
-        } catch (LIMSRuntimeException lre) {
-            LogEvent.logError(this.getClass().getSimpleName(), "showAnalyzerResultsSave", lre.getMessage());
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logError(e.getMessage(), e);
             String errorMsg = "errors.UpdateException";
             result.reject(errorMsg);
             saveErrors(result);

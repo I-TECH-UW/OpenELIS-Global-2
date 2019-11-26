@@ -148,7 +148,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getData()", e);
         }
     }
@@ -165,7 +165,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getAllProviders()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getAllProviders()", e);
         }
 
@@ -190,7 +190,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "getPageOfProviders()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getPageOfProviders()", e);
         }
 
@@ -205,7 +205,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ProviderDAOImpl", "readProvider()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider readProvider()", e);
         }
 
@@ -227,7 +227,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("ProviderDAOImpl", "getProviderByPerson()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Provider getProviderByPerson()", e);
         }
 

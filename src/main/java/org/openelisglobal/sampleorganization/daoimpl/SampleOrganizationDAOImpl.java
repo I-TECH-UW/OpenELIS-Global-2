@@ -156,7 +156,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
     }
@@ -169,7 +169,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
         }
 
@@ -194,7 +194,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
 

@@ -88,7 +88,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (ConstraintViolationException cve) {
+//		} catch (ConstraintViolationException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "insertData()-- duplicate record", cve.toString());
 //			throw new LIMSRuntimeException("Error in UserRole insertData()-- duplicate record");
 //		} catch (Exception e) {
@@ -219,7 +219,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             query.setInteger("userId", Integer.parseInt(userId));
             userRoles = query.list();
         } catch (Exception e) {
-            LogEvent.logError("UserRoleDAOImpl", "getUserRolesForUser()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
         }
         return userRoles;
@@ -237,9 +237,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             int result = ((BigInteger) query.uniqueResult()).intValue();
 
             inRole = result != 0;
-        } catch (HibernateException he) {
-            LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
-            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         }
 
         return inRole;
@@ -258,9 +258,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             int result = ((BigInteger) query.uniqueResult()).intValue();
 
             inRole = result != 0;
-        } catch (HibernateException he) {
-            LogEvent.logError("UserRoleDAOImpl", "userInRole()", he.toString());
-            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         }
 
         return inRole;

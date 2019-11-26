@@ -50,7 +50,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getAllInventoryReceipts()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
         }
 
@@ -145,7 +145,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
                 inventoryReceipt.setId(null);
             }
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getData()", e);
         }
     }
@@ -159,7 +159,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "readInventoryReceipt()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
         }
 
@@ -186,7 +186,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             }
 
         } catch (Exception e) {
-            LogEvent.logError("InventoryReceiptDAOImpl", "getInventoryReceiptByInventoryItemId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getInventoryReceiptByInventoryItemId()", e);
         }
 

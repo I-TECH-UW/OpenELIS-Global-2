@@ -80,7 +80,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             initProjectData(form);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "Constructor", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -411,7 +411,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "interviewDate");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getCollectionDate", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             e.printStackTrace();
         }
         return null;
@@ -422,7 +422,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "receivedDateForDisplay");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "doSearch", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -432,7 +432,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "interviewTime");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getCollectionTime", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -442,7 +442,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "receivedTimeForDisplay");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getReceivedTime", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -471,7 +471,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "siteSubjectNumber");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getSiteSubjectNumber", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -487,7 +487,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
                 try {
                     return PropertyUtils.getProperty(form, "centerCode").toString();
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    LogEvent.logError(this.getClass().getName(), "getOrganiationId", e.getMessage());
+                    LogEvent.logError(e.getMessage(), e);
                 }
                 return null;
             }
@@ -500,7 +500,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (ObservationData) (PropertyUtils.getProperty(getBaseForm(), "observations"));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getObservationData", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -516,7 +516,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "patientPK");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getPatientId", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }
@@ -532,7 +532,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         try {
             return (String) PropertyUtils.getProperty(form, "samplePK");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "getSampleId", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         return null;
     }

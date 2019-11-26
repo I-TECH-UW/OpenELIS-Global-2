@@ -183,31 +183,31 @@ public class ExternalPatientSearch implements Runnable {
             setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("Tinny time out" + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("you no talks? " + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             // System.out.println("all else failed " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (UnrecoverableKeyException e) {
             errors.add("Unrecoverable key error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (NoSuchAlgorithmException e) {
             errors.add("No such encyrption algorithm error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (KeyStoreException e) {
             errors.add("Keystore error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (RuntimeException e) {
             errors.add("Runtime error trying to retrieve patient information.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             httpget.abort();
             throw e;
         } finally {
@@ -215,7 +215,7 @@ public class ExternalPatientSearch implements Runnable {
             try {
                 httpclient.close();
             } catch (IOException e) {
-                LogEvent.logError(this.getClass().getName(), "doSearch", e.getMessage());
+                LogEvent.logError(e.getMessage(), e);
             }
         }
     }

@@ -31,7 +31,7 @@ public class NceCategoryDAOImpl extends BaseDAOImpl<NceCategory, String> impleme
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (Exception e) {
-            LogEvent.logError("NceCategoryDaoImpl", "getAllNceCategory()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

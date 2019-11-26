@@ -115,7 +115,7 @@ public class CobasReader extends AnalyzerLineInserter {
             // ensure transaction block
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }

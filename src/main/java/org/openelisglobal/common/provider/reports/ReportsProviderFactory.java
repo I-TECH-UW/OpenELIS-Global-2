@@ -65,7 +65,7 @@ public class ReportsProviderFactory {
             object = classDefinition.newInstance();
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("ReportsProviderFactory", "createObject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
                     LogEvent.getLog(ReportsProviderFactory.class));
         }
@@ -94,7 +94,7 @@ public class ReportsProviderFactory {
                 reportsProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e,
                         LogEvent.getLog(ReportsProviderFactory.class));
             } finally {
@@ -104,7 +104,7 @@ public class ReportsProviderFactory {
                         propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
-                        LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class ReportsProviderFactory {
         String mapping = reportsProviderClassMap.getProperty(reportsProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError("ReportsProviderFactory", "getReportsProviderClassName()", reportsProvidername);
+            LogEvent.logError(this.getClass().getName(), "getReportsProviderClassName", reportsProvidername);
             throw new LIMSRuntimeException(
                     "getReportsProviderClassName - Unable to find mapping for " + reportsProvidername);
         }

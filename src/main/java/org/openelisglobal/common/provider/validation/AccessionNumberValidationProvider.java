@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.validation;
@@ -42,6 +42,7 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
         this.ajaxServlet = ajaxServlet;
     }
 
+    @Override
     public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -56,7 +57,7 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
     // modified for efficiency bugzilla 1367
     /**
      * validate() - for AccessionNumberValidationProvider
-     * 
+     *
      * @param targetId - String
      * @return String - valid or invalid
      */
@@ -78,8 +79,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                         // bugzilla 1581 handle null status
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
                                 retVal = INVALID;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -87,8 +89,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                         // bugzilla 1581 handle null status
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
                                 retVal = INVALID;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -99,9 +102,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                             if (!sample.getStatus()
                                     .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())
                                     && !sample.getStatus()
-                                            .equals(SystemConfiguration.getInstance().getSampleStatusReleased()))
-
+                                            .equals(SystemConfiguration.getInstance().getSampleStatusReleased())) {
                                 retVal = INVALIDSTATUS;
+                            }
 
                         } else {
                             retVal = INVALID;
@@ -109,8 +112,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("testManagementForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -119,9 +123,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("resultsEntryForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted()))
-
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
                                 retVal = INVALIDSTATUS;
+                            }
 
                         } else {
                             retVal = INVALID;
@@ -134,16 +138,18 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                             // results verification
                             if (sample.getDomain() != null
                                     && sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
-                                    && !sample.getStatus()
-                                            .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete()))
+                                    && !sample.getStatus().equals(
+                                            SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
                                 retVal = INVALIDSTATUS;
+                            }
                             // for newborn (and possibly other domains) allow verification of sample results
                             // even after quick entry
                             if (sample.getDomain() != null
                                     && !sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
                                     && sample.getStatus()
-                                            .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted()))
+                                            .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -151,14 +157,16 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("qaEventsEntryForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
                                 retVal = INVALIDSTATUS;
-                            // bugzilla 2029
+                                // bugzilla 2029
+                            }
                         } else if (form.equalsIgnoreCase("batchQaEventsEntryForm")) {
                             if (!StringUtil.isNullorNill(sample.getStatus())) {
                                 if (sample.getStatus()
-                                        .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted()))
+                                        .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
                                     retVal = INVALIDSTATUS;
+                                }
 
                             }
                         } else {
@@ -168,8 +176,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("newbornSampleOneForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -177,8 +186,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("newbornSampleTwoForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -186,8 +196,9 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("newbornSampleFullForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
@@ -195,18 +206,20 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
                     } else if (form.equalsIgnoreCase("testManagementNewbornForm")) {
                         if (!StringUtil.isNullorNill(sample.getStatus())) {
                             if (!sample.getStatus()
-                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete()))
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
                                 retVal = INVALIDSTATUS;
+                            }
                         } else {
                             retVal = INVALID;
                         }
-                    } else
+                    } else {
                         retVal = VALID;
+                    }
                 }
 
-            } catch (NumberFormatException nFE) {
+            } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError("AccessionNumberValidationProvider", "validate()", nFE.toString());
+                LogEvent.logError(e.toString(), e);
                 retVal = INVALID;
             }
 

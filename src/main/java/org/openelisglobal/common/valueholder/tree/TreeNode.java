@@ -118,28 +118,27 @@ public class TreeNode {
             return (TreeNode) constructor.newInstance((Object[]) new String[] { name });
         } catch (IllegalArgumentException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw e;
         } catch (InstantiationException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new IllegalArgumentException(e.getMessage());
         } catch (IllegalAccessException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new IllegalArgumentException(e.getMessage());
         } catch (InvocationTargetException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new IllegalArgumentException(e.getMessage());
         } catch (SecurityException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new IllegalArgumentException(e.getMessage());
         } catch (NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("TreeNode", "createTreeNode()",
-                    "Your subclass should have a constructor which takes in a string argument: " + e.toString());
+            LogEvent.logError("Your subclass should have a constructor which takes in a string argument: " + e.toString(), e);
             throw new IllegalArgumentException(
                     "Your subclass should have a constructor which takes in a string argument.");
         }

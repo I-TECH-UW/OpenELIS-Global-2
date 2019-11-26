@@ -742,7 +742,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
         try {
             typeName = patientInfo.getPatientType();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
         }
 

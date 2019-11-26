@@ -47,14 +47,14 @@ public class UomCreateController extends BaseController {
             PropertyUtils.setProperty(form, "inactiveUomList",
                     DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
         List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
         try {
             PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, Locale.ENGLISH));
             PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, Locale.FRENCH));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
     }
 
@@ -89,8 +89,8 @@ public class UomCreateController extends BaseController {
 
         try {
             unitOfMeasureService.insert(unitOfMeasure);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            e.printStackTrace();
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);

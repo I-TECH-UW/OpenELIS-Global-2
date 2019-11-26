@@ -152,7 +152,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             }
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getData()", e);
         }
     }
@@ -169,7 +169,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "getAllTestResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getAllTestResults()", e);
         }
 
@@ -193,7 +193,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "getPageOfTestResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getPageOfTestResults()", e);
         }
 
@@ -208,7 +208,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "readTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult readTestResult()", e);
         }
 
@@ -226,7 +226,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "getTestResultById()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getTestResultById()", e);
         }
 
@@ -253,7 +253,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 
         } catch (Exception e) {
             // bugzilla 2154
-            LogEvent.logError("TestResultDAOImpl", "getTestResultByTestAndResultGroup()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getTestResultByTestAndResultGroup()", e);
         }
 
@@ -278,7 +278,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (Exception e) {
-            LogEvent.logError("TestResultDAOImpl", "getAllActiveTestResultsPerTest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()", e);
         }
 
@@ -304,7 +304,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
                 }
 
             } catch (Exception e) {
-                LogEvent.logError("TestResultDAOImpl", "getTestResultsByTestAndDictonaryResult", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException(
                         "Error in TestResult getTestResultsByTestAndDictonaryResult(String testId, String result)", e);
             }

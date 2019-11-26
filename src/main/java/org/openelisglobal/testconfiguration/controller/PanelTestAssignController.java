@@ -69,7 +69,7 @@ public class PanelTestAssignController extends BaseController {
         try {
             PropertyUtils.setProperty(form, "panelList", panels);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
         if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
@@ -95,7 +95,7 @@ public class PanelTestAssignController extends BaseController {
 
                 PropertyUtils.setProperty(form, "selectedPanel", panelTests);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                LogEvent.logError(this.getClass().getName(), "setupDisplayItems", e.getMessage());
+                LogEvent.logError(e.getMessage(), e);
             }
         }
     }
@@ -141,8 +141,8 @@ public class PanelTestAssignController extends BaseController {
 
             try {
                 panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                e.printStackTrace();
             }
         }
 
