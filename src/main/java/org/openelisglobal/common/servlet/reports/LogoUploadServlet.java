@@ -91,7 +91,11 @@ public class LogoUploadServlet extends HttpServlet {
 
     private void removeImage(String logoName, String uploadPreviewPath) {
         File previewFile = new File(uploadPreviewPath);
-        previewFile.delete();
+
+        boolean deleteSuccess = previewFile.delete();
+        if (!deleteSuccess) {
+            LogEvent.logError(this.getClass().getName(), "removeImage", "could not delete preview file");
+        }
 
         SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
@@ -165,14 +169,18 @@ public class LogoUploadServlet extends HttpServlet {
 
         boolean newImage = GenericValidator.isBlankOrNull(imageId);
 
-        byte[] imageData = new byte[(int) file.length()];
+        long fileSize = file.length();
+        byte[] imageData = new byte[(int) fileSize];
 
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);
-            fileInputStream.read(imageData);
+            int bytesRead = fileInputStream.read(imageData);
+            if (bytesRead != fileSize) {
+                throw new IOException("file size changed between array allocation and file read, suspected attack");
+            }
         } catch (Exception e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
         } finally {
             if (fileInputStream != null) {
                 try {
