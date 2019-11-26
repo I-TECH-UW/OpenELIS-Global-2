@@ -403,7 +403,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     @Override
     @Transactional(readOnly = true)
     public String getPatientId(Patient patient) {
-        return patient != null ? patient.getId() : null;
+        return patient == null ? null : patient.getId();
     }
 
     /*

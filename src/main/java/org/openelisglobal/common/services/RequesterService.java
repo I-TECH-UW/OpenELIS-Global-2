@@ -70,10 +70,10 @@ public class RequesterService {
 
     static {
         RequesterType requesterType = requesterTypeService.getRequesterTypeByName("organization");
-        Requester.ORGANIZATION.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
+        Requester.ORGANIZATION.setId(requesterType == null ? -1L : Long.parseLong(requesterType.getId()));
 
         requesterType = requesterTypeService.getRequesterTypeByName("provider");
-        Requester.PERSON.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
+        Requester.PERSON.setId(requesterType == null ? -1L : Long.parseLong(requesterType.getId()));
 
         OrganizationType orgType = organizationTypeService.getOrganizationTypeByName(REFERRAL_ORG_TYPE);
 

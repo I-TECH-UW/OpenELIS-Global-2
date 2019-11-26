@@ -121,9 +121,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         }
 
         if (testSampleMismatch) {
-            // TO DO add this back in spring
-            // messages.add(ActionErrors.GLOBAL_MESSAGE, new
-            // ActionError("errors.no.sample"));
+            messages.reject("errors.no.sample");
             throw new Exception("Mis-match between tests and sample types.");
         }
 

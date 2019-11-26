@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.reports;
@@ -51,8 +51,8 @@ public abstract class BaseReportsProvider implements IActionConstants {
      * @throws ServletException
      * @throws IOException      bugzilla 2274: return boolean successful
      */
-    public abstract boolean processRequest(Map parameters, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException;
+    public abstract boolean processRequest(Map<?, ?> parameters, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException;
 
     /**
      * @param rs
@@ -69,17 +69,17 @@ public abstract class BaseReportsProvider implements IActionConstants {
     }
 
     // bugzilla 1856
-    protected List sortTests(List reportTests) {
+    protected List<ResultsReportTest> sortTests(List<ResultsReportTest> reportTests) {
 
         // find root level nodes and fill in children for each Test_TestAnalyte
-        List rootLevelNodes = new ArrayList();
+        List<ResultsReportTest> rootLevelNodes = new ArrayList<>();
         for (int i = 0; i < reportTests.size(); i++) {
-            ResultsReportTest reportTest = (ResultsReportTest) reportTests.get(i);
+            ResultsReportTest reportTest = reportTests.get(i);
             String analysisId = reportTest.getAnalysis().getId();
 
-            List children = new ArrayList();
+            List<ResultsReportTest> children = new ArrayList<>();
             for (int j = 0; j < reportTests.size(); j++) {
-                ResultsReportTest test = (ResultsReportTest) reportTests.get(j);
+                ResultsReportTest test = reportTests.get(j);
                 if (test.getAnalysis().getParentAnalysis() != null
                         && test.getAnalysis().getParentAnalysis().getId().equals(analysisId)) {
                     children.add(test);
@@ -95,9 +95,9 @@ public abstract class BaseReportsProvider implements IActionConstants {
         // sort rootLevelNodes
         Collections.sort(rootLevelNodes, ResultsReportTestComparator.SORT_ORDER_COMPARATOR);
 
-        reportTests = new ArrayList();
+        reportTests = new ArrayList<>();
         for (int i = 0; i < rootLevelNodes.size(); i++) {
-            ResultsReportTest reportTest = (ResultsReportTest) rootLevelNodes.get(i);
+            ResultsReportTest reportTest = rootLevelNodes.get(i);
             reportTests.add(reportTest);
             recursiveSort(reportTest, reportTests);
         }
@@ -106,14 +106,13 @@ public abstract class BaseReportsProvider implements IActionConstants {
     }
 
     // bugzilla 1856 use recursion and sort children
-    private void recursiveSort(ResultsReportTest element, List reportTests) {
+    private void recursiveSort(ResultsReportTest element, List<ResultsReportTest> reportTests) {
         List<ResultsReportTest> children = element.getChildren();
         // sort children
         if (children != null && children.size() > 0) {
             Collections.sort(children, ResultsReportTestComparator.SORT_ORDER_COMPARATOR);
         }
-        for (Iterator<ResultsReportTest> it = children.iterator(); it.hasNext();) {
-            ResultsReportTest childElement = it.next();
+        for (ResultsReportTest childElement : children) {
             reportTests.add(childElement);
             recursiveSort(childElement, reportTests);
         }
@@ -122,15 +121,14 @@ public abstract class BaseReportsProvider implements IActionConstants {
     /**
      * Utility method to simplify the lookup of MessageResource Strings in the
      * ApplicationResources.properties file for this application.
-     * 
+     *
      * @param request    the HttpServletRequest
      * @param messageKey the message key to look up bugzilla 2264
      */
     protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
-        if (null == messageKey)
+        if (null == messageKey) {
             return null;
-        java.util.Locale locale = (java.util.Locale) request.getSession()
-                .getAttribute("org.apache.struts.action.LOCALE");
+        }
         // Return the message for the user's locale.
         return MessageUtil.getMessage(messageKey);
         // return ResourceLocator.getInstance().getMessageResources().getMessage(
@@ -139,10 +137,9 @@ public abstract class BaseReportsProvider implements IActionConstants {
 
     // bugzilla 2264
     protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
-        if (null == messageKey)
+        if (null == messageKey) {
             return null;
-        java.util.Locale locale = (java.util.Locale) request.getSession()
-                .getAttribute("org.apache.struts.action.LOCALE");
+        }
         // Return the message for the user's locale.
         return MessageUtil.getMessage(messageKey);
         // return ResourceLocator.getInstance().getMessageResources().getMessage(
@@ -150,32 +147,33 @@ public abstract class BaseReportsProvider implements IActionConstants {
     }
 
     // bugzilla 1856
-    protected void moveParentTestsOfCurrentTestsFromPreviouslyReportedTests(List currentTests,
-            List previouslyReportedTests) {
+    protected void moveParentTestsOfCurrentTestsFromPreviouslyReportedTests(List<ResultsReportTest> currentTests,
+            List<?> previouslyReportedTests) {
         // create temp list of previously and currently reported tests
-        List tempPreviouslyReportedTests = new ArrayList();
-        List tempCurrentTests = new ArrayList();
+        List<ResultsReportTest> tempPreviouslyReportedTests = new ArrayList<>();
+        List<ResultsReportTest> tempCurrentTests = new ArrayList<>();
         for (int i = 0; i < previouslyReportedTests.size(); i++) {
             ResultsReportTest test = (ResultsReportTest) previouslyReportedTests.get(i);
             tempPreviouslyReportedTests.add(test);
         }
         for (int i = 0; i < currentTests.size(); i++) {
-            ResultsReportTest test = (ResultsReportTest) currentTests.get(i);
+            ResultsReportTest test = currentTests.get(i);
             tempCurrentTests.add(test);
         }
         for (int i = 0; i < tempCurrentTests.size(); i++) {
-            ResultsReportTest test = (ResultsReportTest) tempCurrentTests.get(i);
+            ResultsReportTest test = tempCurrentTests.get(i);
             recursiveMoveParentTests(test, currentTests, tempCurrentTests, previouslyReportedTests,
                     tempPreviouslyReportedTests);
         }
     }
 
     // bugzilla 1856
-    private void recursiveMoveParentTests(ResultsReportTest test, List currentTests, List tempCurrentTests,
-            List previouslyReportedTests, List tempPreviouslyReportedTests) {
-        Iterator it = tempPreviouslyReportedTests.iterator();
+    private void recursiveMoveParentTests(ResultsReportTest test, List<ResultsReportTest> currentTests,
+            List<ResultsReportTest> tempCurrentTests, List<?> previouslyReportedTests,
+            List<ResultsReportTest> tempPreviouslyReportedTests) {
+        Iterator<ResultsReportTest> it = tempPreviouslyReportedTests.iterator();
         while (it.hasNext()) {
-            ResultsReportTest previousTest = (ResultsReportTest) it.next();
+            ResultsReportTest previousTest = it.next();
             if (test.getAnalysis().getParentAnalysis() != null
                     && test.getAnalysis().getParentAnalysis().getId().equals(previousTest.getAnalysis().getId())) {
                 // we are removing this one from previouslyReportedTests - it is a parent of a
@@ -192,8 +190,8 @@ public abstract class BaseReportsProvider implements IActionConstants {
 
     // bugzilla 1856 add in "phantom" tests to complete the hierarchy so we can sort
     // correctly (the phantom tests are removed after)
-    protected List completeHierarchyOfTestsForSorting(List tests) {
-        List newTests = new ArrayList();
+    protected List<ResultsReportTest> completeHierarchyOfTestsForSorting(List<?> tests) {
+        List<ResultsReportTest> newTests = new ArrayList<>();
         for (int i = 0; i < tests.size(); i++) {
             ResultsReportTest test = (ResultsReportTest) tests.get(i);
             newTests.add(test);
@@ -203,11 +201,11 @@ public abstract class BaseReportsProvider implements IActionConstants {
     }
 
     // bugzilla 1856
-    protected List removePhantomTests(List tests) {
-        Iterator it = tests.iterator();
-        tests = new ArrayList();
+    protected List<ResultsReportTest> removePhantomTests(List<ResultsReportTest> tests) {
+        Iterator<ResultsReportTest> it = tests.iterator();
+        tests = new ArrayList<>();
         while (it.hasNext()) {
-            ResultsReportTest test = (ResultsReportTest) it.next();
+            ResultsReportTest test = it.next();
             if (!test.isPhantom()) {
                 tests.add(test);
             }
@@ -219,7 +217,7 @@ public abstract class BaseReportsProvider implements IActionConstants {
     // hierarchy
     // this is so that tests that are part of parent/child relationships can be
     // taken into account for sorting
-    private void recursiveHierarchyBuild(ResultsReportTest element, List tests, List newTests) {
+    private void recursiveHierarchyBuild(ResultsReportTest element, List<?> tests, List<ResultsReportTest> newTests) {
         if (element != null && element.getAnalysis().getParentAnalysis() != null) {
             // find out if parent is already in the original list
             boolean alreadyInList = false;

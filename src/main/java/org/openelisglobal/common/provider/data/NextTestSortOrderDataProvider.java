@@ -72,7 +72,7 @@ public class NextTestSortOrderDataProvider extends BaseDataProvider {
             testSection.setId(testSectionId);
             testSectionService.getData(testSection);
 
-            if (testSection != null && !StringUtil.isNullorNill(testSection.getId())) {
+            if (!StringUtil.isNullorNill(testSection.getId())) {
                 test.setTestSection(testSection);
 
                 Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);

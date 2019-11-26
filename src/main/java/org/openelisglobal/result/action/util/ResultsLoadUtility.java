@@ -657,14 +657,12 @@ public class ResultsLoadUtility {
         String referralReasonId = null;
         boolean referralCanceled = false;
         if (supportReferrals) {
-            if (analysis != null) {
-                Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
-                if (referral != null) {
-                    referralCanceled = referral.isCanceled();
-                    referralId = referral.getId();
-                    if (!referral.isCanceled()) {
-                        referralReasonId = referral.getReferralReasonId();
-                    }
+            Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+            if (referral != null) {
+                referralCanceled = referral.isCanceled();
+                referralId = referral.getId();
+                if (!referral.isCanceled()) {
+                    referralReasonId = referral.getReferralReasonId();
                 }
             }
         }

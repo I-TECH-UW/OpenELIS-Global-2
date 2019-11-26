@@ -37,11 +37,8 @@ public class Versioning {
 
         try {
             propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
-
             properties = new Properties();
-
             properties.load(propertyStream);
-
         } catch (Exception e) {
             LogEvent.logError(e.toString(), e);
         } finally {

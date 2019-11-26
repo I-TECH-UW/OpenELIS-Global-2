@@ -184,7 +184,7 @@ public class ResultValidationController extends BaseResultValidationController {
         }
         String forward = FWD_SUCCESS_INSERT;
         List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
-        boolean areListeners = updaters != null && !updaters.isEmpty();
+        boolean areListeners = !updaters.isEmpty();
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 

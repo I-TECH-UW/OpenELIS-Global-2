@@ -196,9 +196,8 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
             i = lastUsedReportReferralResultValue(referralResults, i);
             ReferralResult referralResult = referralResults.get(i);
             ClinicalPatientData data = buildClinicalPatientData(false);
-            data.setReferralSentDate((referral != null && referral.getSentDate() != null)
-                    ? DateUtil.formatDateAsText(referral.getSentDate())
-                    : "");
+            data.setReferralSentDate(
+                    referral.getSentDate() != null ? DateUtil.formatDateAsText(referral.getSentDate()) : "");
             data.setReferralResult(reportReferralResultValue);
             data.setReferralNote(note);
             String testId = referralResult.getTestId();

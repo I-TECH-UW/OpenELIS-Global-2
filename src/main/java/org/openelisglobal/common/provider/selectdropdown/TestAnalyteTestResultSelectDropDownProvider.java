@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.selectdropdown;
@@ -47,7 +47,7 @@ import org.openelisglobal.testresult.valueholder.TestResultComparator;
  *   <item value="Item2">Second Item</item>
  *   <item value="Item3">Third Item</item>
  * </list>]]></code>
- * 
+ *
  * @author Darren L. Spurgeon
  */
 public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropDownProvider {
@@ -60,6 +60,7 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
      * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
      *      javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public List processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

@@ -82,7 +82,7 @@ public class TestReflexUtil {
         Scriptlet scriptlet = new Scriptlet();
         scriptlet.setScriptletName("Calculate CD4");
         scriptlet = scriptletService.getScriptletByName(scriptlet);
-        if (!(scriptlet == null || scriptlet.getId() == null)) {
+        if (!(scriptlet.getId() == null)) {
             CD4_SCRIPTLET_ID = scriptlet.getId();
         }
 

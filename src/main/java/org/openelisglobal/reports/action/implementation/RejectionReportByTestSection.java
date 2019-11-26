@@ -73,7 +73,7 @@ public class RejectionReportByTestSection extends RejectionReport implements IRe
         String noteText = null;
         for (Note note : testRejectionNotes) {
             Analysis analysis = SpringContext.getBean(AnalysisService.class).get(note.getReferenceId());
-            if (analysis != null && analysis.getTestSection() != null
+            if (analysis != null && analysis.getTestSection() != null && panelSelection.getSelection() != null
                     && panelSelection.getSelection().equals(analysis.getTestSection().getId())) {
                 if (analysis.getId().equals(currentAnalysis.getId())) {
                     noteText += (noteText != null ? "<br/>" : "") + note.getText();
