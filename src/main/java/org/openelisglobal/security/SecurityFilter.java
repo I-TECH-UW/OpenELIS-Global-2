@@ -67,7 +67,7 @@ public class SecurityFilter implements Filter {
             }
             // should log suspected attempt
             LogEvent.logWarn("SecurityFilter", "doFilter()", attackMessage.toString());
-            System.out.println(attackMessage.toString());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", attackMessage.toString());
             // send to safe page
             httpResponse.sendRedirect("Dashboard.do");
         } else {

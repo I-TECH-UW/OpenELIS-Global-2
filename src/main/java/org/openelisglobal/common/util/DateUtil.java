@@ -268,7 +268,7 @@ public class DateUtil {
     // since midnight.
     public static synchronized int decodeTime(String s) throws Exception {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // System.out.println("Passed in this time " +s);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);
         f.setLenient(false);

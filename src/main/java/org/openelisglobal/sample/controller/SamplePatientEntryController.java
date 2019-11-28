@@ -64,7 +64,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // System.out.println(((IdValuePair) program).getValue());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // program).getValue());
         // }
 
         addProjectList(form);
@@ -137,7 +138,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            System.out.println(result);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);

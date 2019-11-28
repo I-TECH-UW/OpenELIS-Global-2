@@ -28,13 +28,13 @@ public class ConnectionValidator {
             case HttpStatus.SC_OK:
                 return true;
             case HttpStatus.SC_NOT_FOUND:
-                System.out.println(StringLocalization.instance().getStringForKey("error.server.not.found"));
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.server.not.found"));
                 return false;
             case HttpStatus.SC_FORBIDDEN:
-                System.out.println(StringLocalization.instance().getStringForKey("error.credentials.invalid"));
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.credentials.invalid"));
                 return false;
             default:
-                System.out.println("error.unknown" + " " + statusCode);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "error.unknown" + " " + statusCode);
                 return false;
         }
 

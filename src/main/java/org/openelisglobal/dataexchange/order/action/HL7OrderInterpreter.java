@@ -102,7 +102,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
     public List<InterpreterResults> interpret(Message orderMessage) {
         this.orderMessage = (OML_O21) orderMessage;
 //		try{
-//			System.out.println(this.orderMessage.printStructure());
+//			LogEvent.logInfo(this.getClass().getName(), "method unkown", this.orderMessage.printStructure());
 //			LogEvent.logError( "Debugging", "hl7", this.orderMessage.printStructure());
 //		}catch(HL7Exception e1){
 //        LogEvent.logError(this.getClass().getName(), "interpret", e1.getMessage());

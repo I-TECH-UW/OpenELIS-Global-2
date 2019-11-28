@@ -110,7 +110,7 @@ public class TreeNode {
      */
     private TreeNode createTreeNode(String name) {
 
-        // System.out.println(">>> The class calling addChild is :"
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ">>> The class calling addChild is :"
         // +this.getClass().getName());
 
         try {

@@ -158,7 +158,7 @@ public class TestUsageUpdate implements IResultUpdate {
                 databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
             }
         } catch (ParseException e) {
-            System.out.println(e);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", e.toString());
         }
 
         JSONObject json = new JSONObject();

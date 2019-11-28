@@ -34,7 +34,7 @@ public class Main {
             PathManager.setFileShipper( shipper );
             connectionValid = new ConnectionValidator().validateConnection(shipper);
         }else if( !parseValid ){
-            System.out.println(StringLocalization.instance().getStringForKey("error.bad.configuration.file"));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.bad.configuration.file"));
             return;
         }else if( printConfig){
             printConfig(generalConfig, analyzerConfigs);
@@ -50,7 +50,7 @@ public class Main {
 
             for( AnalyzerHandler handler : analyzers){
                 if( !handler.validateSource()){
-                    System.out.println(handler.getAnalyzerName() + ": " + handler.getSourceDirName() + " -- " + StringLocalization.instance().getStringForKey("error.analyzer.dir"));
+                    LogEvent.logInfo(this.getClass().getName(), "method unkown", handler.getAnalyzerName() + ": " + handler.getSourceDirName() + " -- " + StringLocalization.instance().getStringForKey("error.analyzer.dir"));
                     return;
                 }
             }
@@ -60,36 +60,36 @@ public class Main {
             }
 
             PathManager.flushQueue(AnalyzerHandler.specialQueueFiles);
-            System.out.println(StringLocalization.instance().getStringForKey("connection.valid"));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("connection.valid"));
             new QuitHandler(analyzers);
 
         }
     }
 
     private static void printConfig(GeneralConfig generalConfig, ArrayList<AnalyzerConfig> analyzerConfigs) {
-        System.out.println("");
-        System.out.println("Configuration file name -- " + generalConfig.getFile().getName());
-        System.out.println("Language -- " + generalConfig.getLanguage().toString());
-        System.out.println( "URL -- " + generalConfig.getUrl());
-        System.out.println( "OpenELIS analyzer import account name -- " + generalConfig.getName());
-        System.out.println( "OpenELIS analyzer import account password -- " + generalConfig.getPassword());
-        System.out.println( "Log name -- " + generalConfig.getLog() );
-        System.out.println( "Keep log backlog in days -- " + generalConfig.getLogBacklog() );
-        System.out.println( "Test connection and then exit -- " + generalConfig.isTest() );
-        System.out.println( "Print configuration and then exit -- true" );
-        System.out.println( "Installed version of OpenELIS is pre 5.3 (note, not yet implemented ignore) -- " + generalConfig.isPre53());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Configuration file name -- " + generalConfig.getFile().getName());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Language -- " + generalConfig.getLanguage().toString());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "URL -- " + generalConfig.getUrl());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "OpenELIS analyzer import account name -- " + generalConfig.getName());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "OpenELIS analyzer import account password -- " + generalConfig.getPassword());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "Log name -- " + generalConfig.getLog() );
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "Keep log backlog in days -- " + generalConfig.getLogBacklog() );
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "Test connection and then exit -- " + generalConfig.isTest() );
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "Print configuration and then exit -- true" );
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",  "Installed version of OpenELIS is pre 5.3 (note, not yet implemented ignore) -- " + generalConfig.isPre53());
 
-        System.out.println("\n----- Analyzers ------");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "\n----- Analyzers ------");
         //private int period = 5;
 
         for( AnalyzerConfig analyzerConfig : analyzerConfigs){
 
-            System.out.println("analyzer name -- " + analyzerConfig.getName() );
-            System.out.println("source Directory -- " + analyzerConfig.getSourceDir() );
-            System.out.println("refresh period -- " + analyzerConfig.getPeriod() );
-            System.out.println("file rename prefix -- " + analyzerConfig.getPrefix() );
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "analyzer name -- " + analyzerConfig.getName() );
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "source Directory -- " + analyzerConfig.getSourceDir() );
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "refresh period -- " + analyzerConfig.getPeriod() );
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "file rename prefix -- " + analyzerConfig.getPrefix() );
 
-            System.out.println("\n-----------\n");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "\n-----------\n");
         }
     }
 }

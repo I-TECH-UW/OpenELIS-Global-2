@@ -80,7 +80,7 @@ public class CommandLineParser {
         }
 
         if( !confFile.exists() ){
-            System.out.println("Configuration file " + confFile.getAbsolutePath() + " does not exist");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Configuration file " + confFile.getAbsolutePath() + " does not exist");
             return null;
         }
 

@@ -191,7 +191,7 @@ public class StringUtil {
         if (!StringUtil.isNullorNill(ext)) {
             returnPhone = returnPhone + "." + ext;
         }
-        // System.out.println("This is phone " + returnPhone);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is phone " + returnPhone);
         return returnPhone;
     }
 

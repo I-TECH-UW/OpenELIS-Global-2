@@ -205,7 +205,7 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                 }
 
             } catch (ParseException e) {
-                System.out.println(e);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", e.toString());
             }
 
         }

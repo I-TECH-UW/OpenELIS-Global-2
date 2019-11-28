@@ -70,7 +70,7 @@ public class BatchTestReassignmentController extends BaseController {
 
         }
         String jsonString = form.getString("jsonWad");
-        // System.out.println(jsonString);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", jsonString);
 
         List<Analysis> newAnalysis = new ArrayList<>();
         List<Analysis> cancelAnalysis = new ArrayList<>();

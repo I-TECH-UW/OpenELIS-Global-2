@@ -168,7 +168,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     private boolean writeAble(String result) {
 
         String workingResult = result.split("\\(")[0].trim();
-        // System.out.println("result=" + result + " / workingResult= " +
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "result=" + result + " / workingResult= " +
         // workingResult);
         String[] splitLine = indicStr.split(":");
         String indic = splitLine[1];

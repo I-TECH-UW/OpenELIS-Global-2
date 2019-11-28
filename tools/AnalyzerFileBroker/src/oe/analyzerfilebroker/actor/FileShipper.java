@@ -60,7 +60,7 @@ public class FileShipper {
 
         try {
             response = httpclient.execute(httpPost);
-            //System.out.println(response.getStatusLine());
+            //LogEvent.logInfo(this.getClass().getName(), "method unkown", response.getStatusLine());
             returnStatus = response.getStatusLine().getStatusCode();
             HttpEntity httpEntity = response.getEntity();
             EntityUtils.consume(httpEntity);

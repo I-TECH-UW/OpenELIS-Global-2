@@ -71,7 +71,7 @@ public class AnalyzerHandler extends Thread {
              }
         }
 
-        System.out.println(name + StringLocalization.instance().getStringForKey("analyzer.stopped"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", name + StringLocalization.instance().getStringForKey("analyzer.stopped"));
     }
 
     public void kill() {

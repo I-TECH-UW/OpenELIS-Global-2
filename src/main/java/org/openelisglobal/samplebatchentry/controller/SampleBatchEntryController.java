@@ -184,7 +184,7 @@ public class SampleBatchEntryController extends BaseController {
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            System.out.println(result);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);

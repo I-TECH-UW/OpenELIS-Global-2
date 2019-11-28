@@ -241,10 +241,10 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
          * query.setSelectionCriteria(exp);
          * query.addAscendingOrdering("testAnalyteName");
          *
-         * System.out.println("This is query " + query.getSQLString()); List
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is query " + query.getSQLString()); List
          * testAnalytes = (Vector) aSession.executeQuery(query);
          *
-         * System.out.println("This is size of list retrieved " + testAnalytes.size() +
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is size of list retrieved " + testAnalytes.size() +
          * " " + testAnalytes.get(0)); return testAnalytes;
          *
          * } catch (Exception e) { throw new LIMSRuntimeException(

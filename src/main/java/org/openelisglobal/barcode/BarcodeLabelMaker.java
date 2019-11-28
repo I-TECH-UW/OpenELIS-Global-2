@@ -97,7 +97,7 @@ public class BarcodeLabelMaker {
     public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
 
         /*
-         * System.out.println( "labNo: " + labNo + "\n" + "patientId: " + patientId +
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown",  "labNo: " + labNo + "\n" + "patientId: " + patientId +
          * "\n" + "type: " + type + "\n" + "quantity: " + quantity + "\n" + "override: "
          * + override);
          */

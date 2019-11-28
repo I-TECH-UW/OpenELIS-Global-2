@@ -91,7 +91,7 @@ public class ReportTransmission {
             ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
         try {
             IExternalSender sender;
-            // System.out.println(contents );
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", contents );
             switch (httpType) {
             case GET:
                 sender = new HttpGetSender();

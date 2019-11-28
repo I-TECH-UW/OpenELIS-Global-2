@@ -49,7 +49,7 @@ public final class StartStopListener implements ServletContextListener {
             throw new IllegalStateException(e);
         }
 
-        System.out.println("\nShutting down context\n");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "\nShutting down context\n");
     }
 
     // This method is invoked when the Web Application
@@ -67,12 +67,12 @@ public final class StartStopListener implements ServletContextListener {
             throw new IllegalStateException(e);
         }
 
-        System.out.println("Scheduler started");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Scheduler started");
 
         threadStarter.startThreads();
 
-        System.out.println("Threads started");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Threads started");
         new PluginLoader(event).load();
-        System.out.println("Plugins loaded");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Plugins loaded");
     }
 }

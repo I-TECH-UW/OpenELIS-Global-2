@@ -47,13 +47,13 @@ public class PageIdentityUtil {
         actionName = (String) request.getAttribute(IActionConstants.ACTION_KEY);
 
         String localizedName = MessageUtil.getContextualMessage("dictionary.result.Positif_VIH_2");
-        // System.out.println("gnrTest: " + localizedName);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "gnrTest: " + localizedName);
 
         if (actionName == null) {
-            // System.out.println("actionName is null");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is null");
             actionName = "dummy";
         } else {
-            // System.out.println("actionName is " + Encode.forJava(actionName));
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is " + Encode.forJava(actionName));
         }
 
         if (actionName.equals("QuickEntryAddTestPopup")) {
