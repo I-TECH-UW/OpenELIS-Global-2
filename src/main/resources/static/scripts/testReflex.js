@@ -135,7 +135,7 @@ function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, ed
 	var wrapper = document.createElement('div');
 	
 	var tableRow = document.createElement('tr');
-	tableRow.setAttribute('id', 'reflexSelection_' + index '_' + targetIds);
+	tableRow.setAttribute('id', 'reflexSelection_' + index + '_' + targetIds);
 	tableRow.setAttribute('class', 'classValue + ' reflexSelection_' + index');
 	wrapper.appendChild(tableRow);
 	
