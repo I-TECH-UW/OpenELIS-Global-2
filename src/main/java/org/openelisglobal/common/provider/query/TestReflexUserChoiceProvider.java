@@ -242,6 +242,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
         }
     }
 
+    @SuppressWarnings("unused")
     private boolean areSibs(TestReflex testReflex, TestReflex sibTestReflex) {
         return !GenericValidator.isBlankOrNull(testReflex.getSiblingReflexId())
                 && !GenericValidator.isBlankOrNull(sibTestReflex.getSiblingReflexId())

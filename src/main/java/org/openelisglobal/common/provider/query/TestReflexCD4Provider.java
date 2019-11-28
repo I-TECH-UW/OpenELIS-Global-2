@@ -152,6 +152,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
         }
     }
 
+    @SuppressWarnings("unused")
     private void createChoiceElement(TestReflex testReflex, StringBuilder xml) {
 
         XMLUtil.appendKeyValue("conclusionText", testReflex.getActionScriptlet().getScriptletName(), xml);

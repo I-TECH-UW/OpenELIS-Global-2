@@ -18,7 +18,7 @@ package org.openelisglobal.common.exception;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import org.apache.commons.logging.Log;
+import org.openelisglobal.common.log.LogEvent;
 
 /**
  *
@@ -46,17 +46,20 @@ public class LIMSRuntimeException extends RuntimeException {
     /**
      * Creates a new LIMSException wrapping another exception including a detailed
      * message. Takes a Log object, and will log the same message as an error.
-     *
+     * 
+     * @param log       TODO
      * @param String    the detailed message
      * @param Exception the wrapped exception
      * @param Log       the Log to write a message to
      */
-    public LIMSRuntimeException(String pMessage, Exception pException, Log pLog) {
+    public LIMSRuntimeException(String pMessage, Exception pException, boolean log) {
         super(pMessage);
         exception = pException;
-        if (pLog != null) {
-            pLog.error(pMessage, pException);
-        }
+
+        LogEvent.logError(pMessage, pException);
+//        if (pLog != null) {
+//            pLog.error(pMessage, pException);
+//        }
     }
 
     /**

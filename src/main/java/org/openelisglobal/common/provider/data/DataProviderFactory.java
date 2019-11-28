@@ -66,7 +66,7 @@ public class DataProviderFactory {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    LogEvent.getLog(DataProviderFactory.class));
+                    true);
         }
         return object;
     }
@@ -95,7 +95,7 @@ public class DataProviderFactory {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load data provider class mappings.", e,
-                        LogEvent.getLog(DataProviderFactory.class));
+                        true);
             } finally {
                 if (null != propertyStream) {
                     try {

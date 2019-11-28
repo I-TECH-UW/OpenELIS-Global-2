@@ -108,6 +108,7 @@ public class DataSubmitter {
         return success;
     }
 
+    @SuppressWarnings("unused")
     private Map<String, String> getIdsBySearchKeys(DataResource resource, List<DataValue> searchKeys)
             throws ClientProtocolException, IOException, ParseException {
         Map<String, String> ids = new HashMap<>();

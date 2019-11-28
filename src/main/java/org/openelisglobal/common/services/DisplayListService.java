@@ -45,7 +45,6 @@ import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
-import org.openelisglobal.reportconfiguration.valueholder.ReportCategory;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
@@ -73,8 +72,8 @@ public class DisplayListService implements LocaleChangeListener {
         TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS, PANELS_ACTIVE, PANELS_INACTIVE,
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
-        UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST,
-        ACTION_TYPE_LIST, LABORATORY_COMPONENT
+        UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
+        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -564,7 +563,6 @@ public class DisplayListService implements LocaleChangeListener {
         return minutes;
     }
 
-    @SuppressWarnings("unchecked")
     private List<IdValuePair> createSortedQAEvents() {
         List<IdValuePair> qaEvents = new ArrayList<>();
         List<QaEvent> qaEventList = qaEventService.getAllQaEvents();
@@ -721,17 +719,22 @@ public class DisplayListService implements LocaleChangeListener {
 
         // N.B. If the order is to be changed just change the order but keep the
         // id:value pairing the same
-        recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.laboratoryComponent.facilitiesAndSafety")));
-        recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.laboratoryComponent.organization")));
+        recurrenceList.add(
+                new IdValuePair("1", MessageUtil.getMessage("label.select.laboratoryComponent.facilitiesAndSafety")));
+        recurrenceList
+                .add(new IdValuePair("2", MessageUtil.getMessage("label.select.laboratoryComponent.organization")));
         recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.laboratoryComponent.personnel")));
         recurrenceList.add(new IdValuePair("4", MessageUtil.getMessage("label.select.laboratoryComponent.equipment")));
         recurrenceList.add(new IdValuePair("5", MessageUtil.getMessage("label.select.laboratoryComponent.purchasing")));
         recurrenceList.add(new IdValuePair("6", MessageUtil.getMessage("label.select.laboratoryComponent.process")));
-        recurrenceList.add(new IdValuePair("7", MessageUtil.getMessage("label.select.laboratoryComponent.information")));
+        recurrenceList
+                .add(new IdValuePair("7", MessageUtil.getMessage("label.select.laboratoryComponent.information")));
         recurrenceList.add(new IdValuePair("8", MessageUtil.getMessage("label.select.laboratoryComponent.documents")));
         recurrenceList.add(new IdValuePair("9", MessageUtil.getMessage("label.select.laboratoryComponent.assessment")));
-        recurrenceList.add(new IdValuePair("10", MessageUtil.getMessage("label.select.laboratoryComponent.nceManagement")));
-        recurrenceList.add(new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
+        recurrenceList
+                .add(new IdValuePair("10", MessageUtil.getMessage("label.select.laboratoryComponent.nceManagement")));
+        recurrenceList.add(
+                new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
         return recurrenceList;
     }
 
