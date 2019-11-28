@@ -41,11 +41,11 @@
 			<column name="name_localization_id" precision="10" scale="0" />
 		</many-to-one>
 	</class>
-	<query name="dictionary.getNext">
-		from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry
-	</query>
-	<query name="dictionary.getPrevious">
-		from Dictionary d order by d.dictionaryCategory.categoryName desc,
-		d.dictEntry desc
-	</query>
+<!-- 	<query name="dictionary.getNext"> -->
+<!-- 		from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry -->
+<!-- 	</query> -->
+<!-- 	<query name="dictionary.getPrevious"> -->
+<!-- 		from Dictionary d order by d.dictionaryCategory.categoryName desc, -->
+<!-- 		d.dictEntry desc -->
+<!-- 	</query> -->
 </hibernate-mapping>

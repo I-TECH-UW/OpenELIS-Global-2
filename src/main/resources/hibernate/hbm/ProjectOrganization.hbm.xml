@@ -24,7 +24,7 @@
 			<column name="ORG_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="project"
-			class="org.openelisglobal.sample.valueholder.Project" fetch="select">
+			class="org.openelisglobal.project.valueholder.Project" fetch="select">
 			<column name="PROJECT_ID" precision="10" scale="0" />
 		</many-to-one>
 

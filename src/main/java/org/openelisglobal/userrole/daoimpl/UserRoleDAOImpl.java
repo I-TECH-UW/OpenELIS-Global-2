@@ -209,7 +209,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //	}
 
     @Override
-
+    @Transactional
     public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException {
         List<String> userRoles;
 
@@ -226,6 +226,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
     }
 
     @Override
+    @Transactional
     public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException {
         boolean inRole;
         try {
@@ -246,6 +247,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
     }
 
     @Override
+    @Transactional
     public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException {
         boolean inRole;
 

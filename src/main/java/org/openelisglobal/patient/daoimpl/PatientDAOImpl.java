@@ -17,7 +17,6 @@ package org.openelisglobal.patient.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -190,7 +189,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     @Override
     @Transactional(readOnly = true)
     public List<Patient> getAllPatients() throws LIMSRuntimeException {
-        List<Patient> list ;
+        List<Patient> list;
         try {
             String sql = "from Patient";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -209,7 +208,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     @Override
     @Transactional(readOnly = true)
     public List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
-        List<Patient> patients ;
+        List<Patient> patients;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -340,7 +339,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
             String project) throws LIMSRuntimeException {
 

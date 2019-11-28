@@ -306,6 +306,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //	}
 
     @Override
+    @Transactional
     public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
         try {
             String sql = "select count(*) from system_user_role where system_user_id = :userId";

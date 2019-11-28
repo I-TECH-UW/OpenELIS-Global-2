@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -441,14 +442,16 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
      * @return type integer the password expiration day
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
         int retVal = 0;
         try {
-            Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
+            String sql = "SELECT \n" + "                    floor(current_date-password_expired_dt)*-1 as cnt\n"
+                    + "                FROM Login_User l where l.LOGIN_NAME = :loginName ";
+            Object obj = entityManager.unwrap(Session.class).createSQLQuery(sql)
                     .setString("loginName", login.getLoginName()).uniqueResult();
             if (obj != null) {
-                retVal = Integer.parseInt(obj.toString());
+                retVal = (int) Float.parseFloat(obj.toString());
             }
         } catch (Exception e) {
             // bugzilla 2154
@@ -467,12 +470,16 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
      * @return type integer the system user id
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public int getSystemUserId(Login login) throws LIMSRuntimeException {
         int retVal = 0;
         try {
-            Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getSystemUserId")
-                    .setString("loginName", login.getLoginName()).uniqueResult();
+            String sql = "SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'";
+            Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+            query.setString("loginName", login.getLoginName());
+            Object obj = query.uniqueResult();
+//            Object obj = entityManager.unwrap(Session.class).getNamedQuery("login.getSystemUserId")
+//                    .setString("loginName", login.getLoginName()).uniqueResult();
 
             if (obj != null) {
                 retVal = Integer.parseInt(obj.toString());

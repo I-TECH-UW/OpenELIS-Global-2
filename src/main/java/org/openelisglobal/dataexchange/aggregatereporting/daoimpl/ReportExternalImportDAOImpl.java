@@ -107,7 +107,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getUniqueSites() throws LIMSRuntimeException {
         String sql = "select distinct sending_site from clinlims.report_external_import ";
         try {
