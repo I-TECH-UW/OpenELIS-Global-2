@@ -45,16 +45,16 @@ public class QaEventItem implements Serializable {
             Default.class })
     private String sampleType;
 
-    @SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformityForm.NonConformity.class, Default.class })
     private String section;
 
-    @SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformityForm.NonConformity.class, Default.class })
     private String authorizer;
 
-    @SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformityForm.NonConformity.class, Default.class })
     private String note;
 
-    @SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformityForm.NonConformity.class, Default.class })
     private String recordNumber;
 
     private boolean remove;

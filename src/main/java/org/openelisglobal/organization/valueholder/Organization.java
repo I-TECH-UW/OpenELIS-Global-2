@@ -31,9 +31,9 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String> {
     private static final long serialVersionUID = 1L;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String city;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String cliaNum;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String id;
@@ -41,32 +41,32 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     private String internetAddress;
     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
     private String isActive;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String mlsLabFlag;
     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
     private String mlsSentinelLabFlag;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String multipleUnit;
     private ValueHolderInterface organization;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String organizationName;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String orgMltOrgMltId;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String pwsId;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String shortName;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String state;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String streetAddress;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String zipCode;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String selectedOrgId;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String organizationLocalAbbreviation;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String code;
     private Set<OrganizationType> organizationTypes;
 

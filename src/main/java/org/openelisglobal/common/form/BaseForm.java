@@ -16,13 +16,13 @@ public class BaseForm implements Serializable {
      */
     private static final long serialVersionUID = 2614369858245937250L;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String formName;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String formAction;
     private RequestMethod formMethod = RequestMethod.POST;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String cancelAction = "Home.do";
     private boolean submitOnCancel = false;
     private RequestMethod cancelMethod = RequestMethod.POST;

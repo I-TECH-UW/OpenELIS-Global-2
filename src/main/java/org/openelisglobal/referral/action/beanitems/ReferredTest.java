@@ -36,16 +36,16 @@ public class ReferredTest implements IReferralResultTest {
     // the shadow is to track if the test has been changed by the user
     private String referredTestIdShadow;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResult = "";
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredDictionaryResult;
 
     // for display
     private List<IdValuePair> dictionaryResults = new ArrayList<>();
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResultType = "";
 
     @ValidDate(groups = { ReferredOutTestsForm.ReferredOut.class })
@@ -56,10 +56,10 @@ public class ReferredTest implements IReferralResultTest {
 
     private boolean remove = false;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredMultiDictionaryResult;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String multiSelectResultValues = "{}";
 
     @Override

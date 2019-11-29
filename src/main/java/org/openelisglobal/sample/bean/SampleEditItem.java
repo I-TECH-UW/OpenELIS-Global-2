@@ -16,10 +16,10 @@ public class SampleEditItem {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleEditForm.SampleEdit.class })
     private String analysisId;
 
-    @SafeHtml(groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String sampleType;
 
-    @SafeHtml(groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String testName;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleEditForm.SampleEdit.class })
@@ -34,10 +34,10 @@ public class SampleEditItem {
 
     private boolean add;
 
-    @SafeHtml(groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String status;
 
-    @SafeHtml(groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String sortOrder;
 
     private boolean canRemoveSample = false;

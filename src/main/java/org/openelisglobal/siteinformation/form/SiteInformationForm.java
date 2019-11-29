@@ -13,26 +13,26 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 public class SiteInformationForm extends BaseForm {
     @NotNull
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String paramName = "";
 
     @NotNull
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String description = "";
 
     @NotNull
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String value = "";
 
     // what about this is encrypted?
     private boolean encrypted;
 
     // in validator
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String valueType = "text";
 
     // in validator
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String siteInfoDomainName;
 
     // for display
@@ -42,7 +42,7 @@ public class SiteInformationForm extends BaseForm {
     private Boolean editable = Boolean.TRUE;
 
     // in validator
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String tag = "";
 
     @Pattern(regexp = ValidationHelper.MESSAGE_KEY_REGEX)
