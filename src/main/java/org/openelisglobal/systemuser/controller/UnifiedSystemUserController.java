@@ -470,7 +470,7 @@ public class UnifiedSystemUserController extends BaseController {
         } else if (checkForDuplicateName) {
             Login login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
             if (login != null) {
-                errors.reject("errors.loginName.duplicated", form.getUserLoginName());
+                errors.reject("errors.loginName.duplicated");
             }
         }
 
@@ -492,7 +492,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         // check expiration date
         if (!GenericValidator.isDate(form.getExpirationDate(), SystemConfiguration.getInstance().getDateLocale())) {
-            errors.reject("errors.date", form.getExpirationDate());
+            errors.reject("errors.date");
         }
 
         // check timeout

@@ -31,7 +31,7 @@ public class InventoryKitItem implements Serializable {
     private String type;
 
     @NotBlank(groups = { Default.class, InventoryForm.ManageInventory.class })
-    @SafeHtml(groups = { Default.class, InventoryForm.ManageInventory.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, InventoryForm.ManageInventory.class })
     private String kitName;
 
     @ValidDate(relative = DateRelation.ANY, groups = { Default.class, InventoryForm.ManageInventory.class })
@@ -43,7 +43,7 @@ public class InventoryKitItem implements Serializable {
     @Pattern(regexp = "^[0-9]*$", groups = { Default.class, InventoryForm.ManageInventory.class })
     private String lotNumber;
 
-    @SafeHtml(groups = { Default.class, InventoryForm.ManageInventory.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, InventoryForm.ManageInventory.class })
     private String source;
 
     private boolean isActive = false;

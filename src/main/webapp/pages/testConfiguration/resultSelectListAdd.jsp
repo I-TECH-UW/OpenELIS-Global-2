@@ -7,7 +7,7 @@
  --%>
 
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.common.action.IActionConstants,
           		java.util.List,
           		org.openelisglobal.panel.valueholder.Panel,

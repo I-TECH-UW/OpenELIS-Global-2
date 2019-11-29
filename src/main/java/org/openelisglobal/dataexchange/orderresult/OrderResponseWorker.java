@@ -75,7 +75,7 @@ public class OrderResponseWorker {
             }
         }
 
-        // System.out.println(hl7Message.encode());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", hl7Message.encode());
     }
 
     private void createMSHSegment() throws HL7Exception, IOException {

@@ -15,7 +15,7 @@ public class DataValue extends BaseObject<String> {
     @Pattern(regexp = "^[a-z0-9_]*$", groups = { Default.class, DataSubmissionForm.DataSubmission.class })
     private String columnName;
 
-    @SafeHtml(groups = { Default.class, DataSubmissionForm.DataSubmission.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, DataSubmissionForm.DataSubmission.class })
     private String value;
     private String displayKey;
     private boolean visible;

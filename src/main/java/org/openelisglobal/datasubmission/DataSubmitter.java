@@ -108,6 +108,7 @@ public class DataSubmitter {
         return success;
     }
 
+    @SuppressWarnings("unused")
     private Map<String, String> getIdsBySearchKeys(DataResource resource, List<DataValue> searchKeys)
             throws ClientProtocolException, IOException, ParseException {
         Map<String, String> ids = new HashMap<>();
@@ -159,7 +160,7 @@ public class DataSubmitter {
         try {
             HttpGet request = new HttpGet(url.toString());
             request.setHeader("Accept", "application/json");
-            System.out.println("GET: " + request.getURI());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "GET: " + request.getURI());
 
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -170,7 +171,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println("Server returned: " + body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Server returned: " + body);
                 return body;
             } finally {
                 response.close();
@@ -196,7 +197,7 @@ public class DataSubmitter {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
-            System.out.println("POST: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "POST: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -207,7 +208,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println("Server returned: " + body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Server returned: " + body);
                 return body;
             } finally {
                 response.close();
@@ -228,7 +229,7 @@ public class DataSubmitter {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
-            System.out.println("PUT: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "PUT: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -239,7 +240,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println("Server returned: " + body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Server returned: " + body);
 
                 return body;
             } finally {
@@ -280,7 +281,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println(body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", body);
                 return body;
             } finally {
                 response.close();
@@ -312,7 +313,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println(body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", body);
                 return body;
             } finally {
                 response.close();
@@ -341,7 +342,7 @@ public class DataSubmitter {
                             "Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
                 }
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println(body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", body);
                 return body;
             } finally {
                 response.close();
@@ -362,7 +363,7 @@ public class DataSubmitter {
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
 
-            System.out.println(getBaseURL() + "/" + table);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", getBaseURL() + "/" + table);
 
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -373,7 +374,7 @@ public class DataSubmitter {
                 }
 
                 String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                System.out.println(body);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", body);
                 return body;
             } finally {
                 response.close();

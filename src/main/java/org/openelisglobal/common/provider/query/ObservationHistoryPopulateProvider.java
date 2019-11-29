@@ -80,8 +80,8 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
     public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String patientKey = (String) request.getParameter("patientKey");
-        String sampleKey = (String) request.getParameter("sampleKey");
+        String patientKey = request.getParameter("patientKey");
+        String sampleKey = request.getParameter("sampleKey");
         patient.setId(patientKey);
         sample.setId(sampleKey);
         String s = (String) request.getSession().getAttribute("type");

@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants"%>
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="java.util.List, java.util.Locale,
                  org.openelisglobal.testconfiguration.beans.TestCatalogBean"%>
 <%@ page import="org.openelisglobal.common.util.IdValuePair"%>

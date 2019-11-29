@@ -43,7 +43,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
     @Override
     public void delete(Analyte analyte) {
-        System.out.println("selete dao");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "selete dao");
     }
 
 //	@Override

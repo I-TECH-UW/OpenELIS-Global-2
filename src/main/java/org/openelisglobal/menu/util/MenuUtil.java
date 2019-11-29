@@ -177,6 +177,7 @@ public class MenuUtil {
 
     }
 
+    @SuppressWarnings("unused")
     private static String getTooltip(Menu menu, String locale) {
         String key = menu.getToolTipKey();
         String value = pluginMenuService.getMenuLabel(locale, key);

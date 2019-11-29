@@ -34,7 +34,7 @@ public class WorkplanForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
     private String testTypeID = "";
 
-    @SafeHtml(groups = { PrintWorkplan.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { PrintWorkplan.class })
     private String testName = "";
 
     @NotNull(groups = { PrintWorkplan.class })

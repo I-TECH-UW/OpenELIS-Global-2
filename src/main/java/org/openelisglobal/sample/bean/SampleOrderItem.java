@@ -42,7 +42,7 @@ import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 public class SampleOrderItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
             SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String newRequesterName;
@@ -53,7 +53,7 @@ public class SampleOrderItem implements Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String orderType;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
     private String externalOrderNumber;
 
     @NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
@@ -84,11 +84,11 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String nextVisitDate;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String requesterSampleID;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String referringPatientNumber;
 
@@ -96,11 +96,11 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String referringSiteId;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String referringSiteCode;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String referringSiteName;
 
@@ -123,7 +123,7 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String providerWorkPhone;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String providerFax;
 
@@ -131,19 +131,19 @@ public class SampleOrderItem implements Serializable {
             SampleEditForm.SampleEdit.class })
     private String providerEmail;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String facilityAddressStreet;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String facilityAddressCommune;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String facilityPhone;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String facilityFax;
 
@@ -164,7 +164,7 @@ public class SampleOrderItem implements Serializable {
 
     private boolean readOnly = false;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String billingReferenceNumber;
 
@@ -172,7 +172,7 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String testLocationCode;
 
-    @SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String otherLocationCode;
 

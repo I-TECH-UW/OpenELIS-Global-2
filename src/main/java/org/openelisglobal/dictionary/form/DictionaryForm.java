@@ -30,10 +30,10 @@ public class DictionaryForm extends BaseForm {
     private String isActive = "";
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String dictEntry = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String localAbbreviation = "";
 
     // in validator

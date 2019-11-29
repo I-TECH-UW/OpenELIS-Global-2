@@ -107,7 +107,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
 //			}
 //
-//			// System.out.println("This is ID from insert referencetables " +
+//			// LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is ID from insert referencetables " +
 //			// referencetables.getId());
 //			String id = (String) entityManager.unwrap(Session.class).save(referenceTables);
 //			referenceTables.setId(id);
@@ -159,12 +159,12 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
 //		}
 //
-//		// System.out.println("This is name from updateData " +
+//		// LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is name from updateData " +
 //		// referencetables.getTableName());
 //		ReferenceTables oldData = readReferenceTables(referenceTables.getId());
 //		ReferenceTables newData = referenceTables;
 //
-//		// System.out.println("updateDate " + newData.getTableName() + " " +
+//		// LogEvent.logInfo(this.getClass().getName(), "method unkown", "updateDate " + newData.getTableName() + " " +
 //		// oldData.getTableName());
 //		// add to audit trail
 //		try {
@@ -300,9 +300,9 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
                 sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
             }
 
-            // System.out.println("Yi in duplicateReferencetables sql is " + sql);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in duplicateReferencetables sql is " + sql);
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            // System.out.println("duplicateReferencetables sql is " + sql);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "duplicateReferencetables sql is " + sql);
 
             query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
 

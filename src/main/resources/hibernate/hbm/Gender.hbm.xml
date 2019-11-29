@@ -27,10 +27,10 @@
 			<column name="NAME_KEY" length="60" />
 		</property>
 	</class>
-	<query name="gender.getNext">
-		from Gender g order by g.description, g.genderType
-	</query>
-	<query name="gender.getPrevious">
-		from Gender g order by g.description desc, g.genderType desc
-	</query>
+<!-- 	<query name="gender.getNext"> -->
+<!-- 		from Gender g order by g.description, g.genderType -->
+<!-- 	</query> -->
+<!-- 	<query name="gender.getPrevious"> -->
+<!-- 		from Gender g order by g.description desc, g.genderType desc -->
+<!-- 	</query> -->
 </hibernate-mapping>

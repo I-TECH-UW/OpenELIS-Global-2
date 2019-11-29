@@ -21,11 +21,11 @@ public class SampleTypeCreateForm extends BaseForm {
     private String existingFrenchNames;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String sampleTypeEnglishName;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String sampleTypeFrenchName;
 
     public SampleTypeCreateForm() {

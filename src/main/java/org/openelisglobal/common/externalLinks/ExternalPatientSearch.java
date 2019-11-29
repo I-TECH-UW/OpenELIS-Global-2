@@ -184,15 +184,15 @@ public class ExternalPatientSearch implements Runnable {
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
             LogEvent.logError(e.toString(), e);
-            // System.out.println("Tinny time out" + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out" + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
             LogEvent.logError(e.toString(), e);
-            // System.out.println("you no talks? " + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? " + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
             LogEvent.logError(e.toString(), e);
-            // System.out.println("all else failed " + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
             LogEvent.logError(e.toString(), e);

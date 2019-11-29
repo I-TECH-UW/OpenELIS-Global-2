@@ -100,15 +100,15 @@ public class PathManager {
             if( !isSpecial){
                     switch (fileShipper.sendFile(file)){
                         case HttpStatus.SC_NOT_FOUND:
-                            System.out.println(file.getName() + " " + StringLocalization.instance().getStringForKey("error.server.not.found"));
+                            LogEvent.logInfo(this.getClass().getName(), "method unkown", file.getName() + " " + StringLocalization.instance().getStringForKey("error.server.not.found"));
                             break;
                         case HttpStatus.SC_BAD_REQUEST:
-                            System.out.println(file.getName() + " "  + StringLocalization.instance().getStringForKey("error.file.confusing"));
+                            LogEvent.logInfo(this.getClass().getName(), "method unkown", file.getName() + " "  + StringLocalization.instance().getStringForKey("error.file.confusing"));
                             break;
                         case HttpStatus.SC_OK:
-                            System.out.println(file.getName() + " " + StringLocalization.instance().getStringForKey("success.file.sent"));
+                            LogEvent.logInfo(this.getClass().getName(), "method unkown", file.getName() + " " + StringLocalization.instance().getStringForKey("success.file.sent"));
                         case HttpStatus.SC_FORBIDDEN:
-                            System.out.println(StringLocalization.instance().getStringForKey("error.credentials.invalid"));
+                            LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.credentials.invalid"));
                     }
             }
         }

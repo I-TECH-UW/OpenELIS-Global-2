@@ -175,7 +175,7 @@ public class ExchangeConfigurationService {
 
                 ExchangeType exchangeType = dbNameToExchangeTypeMap.get(information.getName());
                 if (exchangeType != null) {
-                    // System.out.println(information.getName());
+                    // LogEvent.logInfo(this.getClass().getName(), "method unkown", information.getName());
                     configuration.setTitle(exchangeType.getTitle());
                     configuration.setConnectionTestIdentifier(exchangeType.getUrlTestToken());
                     if (exchangeType.isShowbacklog()) {

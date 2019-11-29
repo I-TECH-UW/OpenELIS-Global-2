@@ -77,7 +77,7 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
     private String createSampleXML(StringBuilder xml, Sample sample) {
 
         xml.append("<sample ");
-        XMLUtil.appendKeyValueAttribute("labOrderNumber", sample.getAccessionNumber(), xml);
+        XMLUtil.appendAttributeKeyValue("labOrderNumber", sample.getAccessionNumber(), xml);
         xml.append(">");
         List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
         for (SampleItem sampleItem : sampleItems) {

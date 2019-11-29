@@ -14,7 +14,7 @@ public class DictionaryMenuForm extends MenuForm {
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String searchString = "";
 
     public DictionaryMenuForm() {

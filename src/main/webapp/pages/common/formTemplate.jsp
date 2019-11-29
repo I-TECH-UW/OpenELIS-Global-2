@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.owasp.encoder.Encode,
@@ -51,6 +51,7 @@ if (form == null) {
 	<meta name="msapplication-TileColor" content="#2d89ef">
 	<meta name="msapplication-config" content="favicon/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 	
 <link rel="stylesheet" media="screen" type="text/css"
 	href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />

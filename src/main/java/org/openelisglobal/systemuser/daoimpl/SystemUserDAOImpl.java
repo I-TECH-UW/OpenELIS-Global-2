@@ -170,7 +170,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (sysUser != null) {
-                // System.out.println("Just read sysUser " + sysUser.getId() + " " +
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just read sysUser " + sysUser.getId() + " " +
                 // sysUser.getLastName());
                 PropertyUtils.copyProperties(systemUser, sysUser);
             } else {

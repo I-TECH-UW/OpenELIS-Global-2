@@ -40,6 +40,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     EntityManager entityManager;
 
     @Override
+    @Transactional
     public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
         try {
@@ -54,6 +55,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     @Override
+    @Transactional
     public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
         try {
@@ -70,8 +72,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     @Override
-    
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
         String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
@@ -88,9 +89,8 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
         return orgIdList;
     }
 
-    
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
         String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";

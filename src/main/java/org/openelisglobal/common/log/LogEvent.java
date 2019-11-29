@@ -18,6 +18,7 @@ package org.openelisglobal.common.log;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Category;
+import org.owasp.encoder.Encode;
 
 /**
  * @author Hung Nguyen
@@ -33,7 +34,8 @@ public class LogEvent {
      * @param throwable    the error to log
      */
     public static void logError(String className, String methodName, String errorMessage) {
-        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
+        getLog().error(
+                "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(errorMessage));
     }
 
     /**
@@ -47,7 +49,8 @@ public class LogEvent {
         String className = stackTrace[0].getClassName();
         String methodName = stackTrace[0].getMethodName();
 
-        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + errorMessage);
+        getLog().error(
+                "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(errorMessage));
     }
 
     /**
@@ -60,19 +63,20 @@ public class LogEvent {
         String className = stackTrace[0].getClassName();
         String methodName = stackTrace[0].getMethodName();
 
-        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
+        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: "
+                + sanitizeLogMessage(throwable.getMessage()));
     }
 
     /**
      * Write to the log file (type error)
-     * 
+     *
      * @param throwable -- exception which will be used to generate the stack trace
      */
     public static void logErrorStack(Throwable throwable) {
         StringBuilder stackErrorMessage = new StringBuilder();
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
-            stackErrorMessage.append(stackTrace[i].toString());
+            stackErrorMessage.append(sanitizeLogMessage(stackTrace[i].toString()));
             stackErrorMessage.append(System.lineSeparator());
         }
         logError(stackErrorMessage.toString(), throwable);
@@ -88,7 +92,8 @@ public class LogEvent {
      * @param debugMessage the debug message
      */
     public static void logDebug(String className, String methodName, String debugMessage) {
-        getLog().debug("Class: " + className + ", Method: " + methodName + ", Debug: " + debugMessage);
+        getLog().debug(
+                "Class: " + className + ", Method: " + methodName + ", Debug: " + sanitizeLogMessage(debugMessage));
     }
 
     /**
@@ -102,7 +107,8 @@ public class LogEvent {
         String className = stackTrace[0].getClassName();
         String methodName = stackTrace[0].getMethodName();
 
-        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + debugMessage);
+        getLog().debug(
+                "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(debugMessage));
     }
 
     /**
@@ -115,7 +121,8 @@ public class LogEvent {
         String className = stackTrace[0].getClassName();
         String methodName = stackTrace[0].getMethodName();
 
-        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: " + throwable.getMessage());
+        getLog().debug("Class: " + className + ", Method: " + methodName + ", Error: "
+                + sanitizeLogMessage(throwable.getMessage()));
     }
 
     /**
@@ -126,7 +133,7 @@ public class LogEvent {
      * @param infoMessage the info message
      */
     public static void logInfo(String className, String methodName, String infoMessage) {
-        getLog().info("Class: " + className + ", Method: " + methodName + ", Info: " + infoMessage);
+        getLog().info("Class: " + className + ", Method: " + methodName + ", Info: " + sanitizeLogMessage(infoMessage));
     }
 
     /**
@@ -137,7 +144,8 @@ public class LogEvent {
      * @param warnMessage the warning message
      */
     public static void logWarn(String className, String methodName, String warnMessage) {
-        getLog().warn("Class: " + className + ", Method: " + methodName + ", Warning:" + warnMessage);
+        getLog().warn(
+                "Class: " + className + ", Method: " + methodName + ", Warning:" + sanitizeLogMessage(warnMessage));
     }
 
     /**
@@ -148,7 +156,8 @@ public class LogEvent {
      * @param warnMessage the fatal message
      */
     public static void logFatal(String className, String methodName, String fatalMessage) {
-        getLog().fatal("Class: " + className + ", Method: " + methodName + ", Fatal:" + fatalMessage);
+        getLog().fatal(
+                "Class: " + className + ", Method: " + methodName + ", Fatal:" + sanitizeLogMessage(fatalMessage));
     }
 
     public static Log getLog(Class className) {
@@ -158,5 +167,11 @@ public class LogEvent {
 
     private static Category getLog() {
         return Category.getInstance(LogEvent.class);
+    }
+
+    // for preventing log forging
+    private static String sanitizeLogMessage(String logMessage) {
+        String sanitizedLogMessage = logMessage.replace('\n', '_').replace('\r', '_').replace('\t', '_');
+        return Encode.forHtml(sanitizedLogMessage);
     }
 }

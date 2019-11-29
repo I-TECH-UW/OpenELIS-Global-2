@@ -51,13 +51,13 @@ public class TestTrailerAutocompleteProvider extends BaseAutocompleteProvider {
     public List processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // System.out.println("I am in TestTrailerAutocompleteProvider "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in TestTrailerAutocompleteProvider "
         // + request.getParameter("testTrailerName"));
         String testTrailerName = request.getParameter("testTrailerName");
-        // System.out.println("TestTrailerAutocompleteProvider testTrailerName "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "TestTrailerAutocompleteProvider testTrailerName "
         // + testTrailerName);
         List list = testTrailerService.getTestTrailers(testTrailerName);
-        // System.out.println("TestTrailerAutocompleteProvider list "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "TestTrailerAutocompleteProvider list "
         // + list.size());
 
         return list;

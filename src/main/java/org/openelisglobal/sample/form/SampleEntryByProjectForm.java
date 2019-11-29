@@ -40,13 +40,13 @@ public class SampleEntryByProjectForm extends BaseForm {
     @ValidTime
     private String interviewTime = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String project = "";
 
     @ValidAccessionNumber(format = AccessionFormat.PROGRAM, dateValidate = true)
     private String labNo = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String doctor = "";
 
     @NotBlank
@@ -73,10 +73,10 @@ public class SampleEntryByProjectForm extends BaseForm {
 
     private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String patientLastUpdated = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String personLastUpdated = "";
 
     @Valid
@@ -100,7 +100,7 @@ public class SampleEntryByProjectForm extends BaseForm {
     // for display
     private PatientSearch patientSearch;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String domain = "";
 
     public SampleEntryByProjectForm() {

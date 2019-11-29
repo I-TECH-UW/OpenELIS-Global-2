@@ -21,7 +21,7 @@ public class AnalyzerResultsForm extends BaseForm {
     @Valid
     private List<AnalyzerResultItem> resultList;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String analyzerType = "";
 
     @NotNull

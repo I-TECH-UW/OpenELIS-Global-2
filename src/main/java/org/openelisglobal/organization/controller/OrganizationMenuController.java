@@ -56,7 +56,7 @@ public class OrganizationMenuController extends BaseMenuController {
     @Override
     protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
 
-        // System.out.println("I am in OrganizationMenuAction createMenuList()");
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in OrganizationMenuAction createMenuList()");
 
         List<Organization> organizations = new ArrayList<>();
 
@@ -144,9 +144,9 @@ public class OrganizationMenuController extends BaseMenuController {
         }
 
         try {
-            // System.out.println("Going to delete Organization");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete Organization");
             organizationService.deleteAll(organizations);
-            // System.out.println("Just deleted Organization");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted Organization");
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);

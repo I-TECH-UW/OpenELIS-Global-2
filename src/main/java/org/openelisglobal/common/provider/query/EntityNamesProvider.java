@@ -33,6 +33,7 @@ import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
+import org.owasp.encoder.Encode;
 
 public class EntityNamesProvider extends BaseQueryProvider {
 
@@ -77,7 +78,7 @@ public class EntityNamesProvider extends BaseQueryProvider {
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

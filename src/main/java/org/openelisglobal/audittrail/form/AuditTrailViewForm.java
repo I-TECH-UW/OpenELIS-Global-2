@@ -13,13 +13,13 @@ import org.openelisglobal.sample.bean.SampleOrderItem;
 // used for viewing only, does not need validation
 public class AuditTrailViewForm extends BaseForm {
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String accessionNumberSearch = "";
 
     @Valid
     private List<AuditTrailItem> log;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String accessionNumber = "";
 
     @Valid

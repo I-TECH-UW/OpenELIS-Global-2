@@ -336,7 +336,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                                 // over
                                 // the
                                 // limit
-                                // System.out.println("Error in Sample getNextAccessionNumber() max sequence
+                                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Error in Sample getNextAccessionNumber() max sequence
                                 // number reached");
                                 throw new LIMSRuntimeException(
                                         "Error in Sample getNextAccessionNumber() max sequence number reached");

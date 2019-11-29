@@ -31,6 +31,7 @@ import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.owasp.encoder.Encode;
 
 public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 
@@ -67,7 +68,7 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

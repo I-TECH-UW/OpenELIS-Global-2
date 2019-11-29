@@ -117,10 +117,10 @@
 			column="orderable" />
 		<property name="guid" type="java.lang.String" column="guid" />
 	</class>
-	<query name="test.getNext">
-		from Test t order by t.testSection.testSectionName, t.testName
-	</query>
-	<query name="test.getPrevious">
-		from Test t order by t.testSection.testSectionName desc, t.testName desc
-	</query>
+<!-- 	<query name="test.getNext"> -->
+<!-- 		from Test t order by t.testSection.testSectionName, t.testName -->
+<!-- 	</query> -->
+<!-- 	<query name="test.getPrevious"> -->
+<!-- 		from Test t order by t.testSection.testSectionName desc, t.testName desc -->
+<!-- 	</query> -->
 </hibernate-mapping>

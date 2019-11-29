@@ -41,7 +41,7 @@ public class AnalyzerResultItem implements Serializable {
     @ValidAccessionNumber(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String accessionNumber;
 
-    @SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String result;
 
     private boolean isControl = false;
@@ -56,7 +56,7 @@ public class AnalyzerResultItem implements Serializable {
 
     private String errorMessage;
 
-    @SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String note;
     private String statusId;
     private String sampleId;
@@ -77,13 +77,13 @@ public class AnalyzerResultItem implements Serializable {
 
     private boolean readOnly = false;
 
-    @SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String testResultType = "N";
     private boolean userChoiceReflex;
     private boolean userChoicePending;
     private String siblingReflexKey;
 
-    @SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String reflexSelectionId;
     private String selectionOneText = "";
     private String selectionOneValue = "";

@@ -67,8 +67,7 @@ public class SelectDropDownProviderFactory {
         } catch (Exception e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    LogEvent.getLog(SelectDropDownProviderFactory.class));
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
     }
@@ -97,8 +96,7 @@ public class SelectDropDownProviderFactory {
             } catch (IOException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
-                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
-                        LogEvent.getLog(SelectDropDownProviderFactory.class));
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e, true);
             } finally {
                 if (null != propertyStream) {
                     try {

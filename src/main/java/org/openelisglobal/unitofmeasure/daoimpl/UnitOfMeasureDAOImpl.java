@@ -80,7 +80,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
 //	@Override
 //	public boolean insertData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
-//		// System.out.println("insertData = " + unitOfMeasure.getUnitOfMeasureName());
+//		// LogEvent.logInfo(this.getClass().getName(), "method unkown", "insertData = " + unitOfMeasure.getUnitOfMeasureName());
 //		try {
 //			// bugzilla 1482 throw Exception if record already exists
 //			if (duplicateUnitOfMeasureExists(unitOfMeasure)) {

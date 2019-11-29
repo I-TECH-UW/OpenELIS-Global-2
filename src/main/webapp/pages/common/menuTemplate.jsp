@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.util.Versioning" %>
@@ -47,6 +47,7 @@ if (form == null) {
 	<meta name="msapplication-TileColor" content="#2d89ef">
 	<meta name="msapplication-config" content="favicon/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 	
 <link rel="stylesheet" type="text/css" href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
 <script type="text/javascript" src="<%=basePath%>scripts/jquery-1.8.0.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>

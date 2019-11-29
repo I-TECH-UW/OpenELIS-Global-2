@@ -79,12 +79,12 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
             listOfTestResults = testResultService.getTestResultsByTestAndResultGroup(testAnalyte);
         }
 
-        // System.out.println("Returning from Running getTestResultsByTestAndResultGr
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning from Running getTestResultsByTestAndResultGr
         // ");
-        // System.out.println("size ofo list " + listOfTestResults.size());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "size ofo list " + listOfTestResults.size());
         if (listOfTestResults != null && listOfTestResults.size() > 0) {
             for (int i = 0; i < listOfTestResults.size(); i++) {
-                // System.out.println("one elem " + listOfTestResults.get(i));
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "one elem " + listOfTestResults.get(i));
             }
         }
         // for testResults load the value field with dict entry if needed
@@ -97,7 +97,7 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
                 Dictionary dictionary = new Dictionary();
                 dictionary.setId(tr.getValue());
                 dictionaryService.getData(dictionary);
-                // System.out.println("setting dictEntry "
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "setting dictEntry "
                 // + dictionary.getDictEntry());
                 // bugzilla 1847: use dictEntryDisplayValue
                 tr.setValue(dictionary.getDictEntryDisplayValue());

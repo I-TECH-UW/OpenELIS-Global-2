@@ -550,8 +550,9 @@ public abstract class Accessioner implements IAccessioner {
         // had better be same one we found when we loading the sampleSet
         if (sample != null && !isNewSample()) {
             if (!sample.getId().equals(sampleId)) {
-                messages.reject("errors.may_not_reuse_accession_number", accessionNumber);
-                throw new RuntimeException("You can not re-use an existing accessionNumber " + accessionNumber);
+                messages.reject("errors.may_not_reuse_accession_number", sample.getAccessionNumber());
+                throw new RuntimeException(
+                        "You can not re-use an existing accessionNumber " + sample.getAccessionNumber());
             }
             return true;
         } else {
@@ -1196,7 +1197,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      */
     protected void persistObservationHistoryLists() {
-        System.out.println("FUNCTION NAME PROHIBITED !");
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "FUNCTION NAME PROHIBITED !");
     }
 
     protected void persistObservationHistoryLists2() {
@@ -1207,8 +1208,9 @@ public abstract class Accessioner implements IAccessioner {
         for (String listType : observationHistoryLists.keySet()) {
             // throw away the old list
             Map<String, ObservationHistory> oldOHes = findExistingObservationHistories(listType);
-            // System.out.println();
-            // System.out.println(listType + " oldOHes.size = "
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", );
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // oldOHes.size = "
             // +oldOHes.size());
             for (ObservationHistory oh : oldOHes.values()) {
                 oh.setSysUserId(sysUserId);
@@ -1217,7 +1219,8 @@ public abstract class Accessioner implements IAccessioner {
 
             // insert the new
             List<ObservationHistory> newOHes = observationHistoryLists.get(listType);
-            // System.out.println(listType + " newOHes.size = "
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // newOHes.size = "
             // +newOHes.size());
             for (ObservationHistory newOH : newOHes) {
                 newOH.setSysUserId(sysUserId);
@@ -1307,7 +1310,7 @@ public abstract class Accessioner implements IAccessioner {
 
         try {
             String xml = (String) PropertyUtils.getProperty(projectFormMapper.getBaseForm(), "sampleXML");
-            // System.out.println("AMANI:"+xml);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
             Document sampleDom = DocumentHelper.parseText(xml);
             for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
                 Element sampleItem = (Element) i.next();

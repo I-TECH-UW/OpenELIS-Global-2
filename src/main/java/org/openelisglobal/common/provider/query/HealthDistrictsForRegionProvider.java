@@ -56,8 +56,8 @@ public class HealthDistrictsForRegionProvider extends BaseQueryProvider {
         xml.append("<districts>");
         for (Organization org : districts) {
             xml.append("<district ");
-            XMLUtil.appendKeyValueAttribute("id", org.getId(), xml);
-            XMLUtil.appendKeyValueAttribute("value", org.getOrganizationName(), xml);
+            XMLUtil.appendAttributeKeyValue("id", org.getId(), xml);
+            XMLUtil.appendAttributeKeyValue("value", org.getOrganizationName(), xml);
             xml.append(" />");
         }
         xml.append("</districts>");

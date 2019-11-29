@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.formfields.FormFields,
 	        org.openelisglobal.common.formfields.FormFields.Field,
 	        org.openelisglobal.common.util.ConfigurationProperties,

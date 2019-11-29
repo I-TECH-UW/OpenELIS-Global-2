@@ -46,7 +46,7 @@ public class GeneralParser {
                 try {
                     generalConfig.setPeriod(parseInt(period.attributeValue("value")));
                 }catch(NumberFormatException e){
-                    System.out.println( StringLocalization.instance().getStringForKey("error.period.parse"));
+                    LogEvent.logInfo(this.getClass().getName(), "method unkown",  StringLocalization.instance().getStringForKey("error.period.parse"));
                 }
             }
 
@@ -73,7 +73,7 @@ public class GeneralParser {
         }
 
         if( generalConfig.getUrl() == null || generalConfig.getName() == null || generalConfig.getPassword() == null){
-            System.out.println( StringLocalization.instance().getStringForKey("error.connection.specification"));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",  StringLocalization.instance().getStringForKey("error.connection.specification"));
             return false;
         }
 
@@ -88,7 +88,7 @@ public class GeneralParser {
                 try {
                     generalConfig.setLogBacklog(parseInt(log.attributeValue("backlog")));
                 }catch (NumberFormatException e){
-                    System.out.println( StringLocalization.instance().getStringForKey("error.log.period"));
+                    LogEvent.logInfo(this.getClass().getName(), "method unkown",  StringLocalization.instance().getStringForKey("error.log.period"));
                 }
             }
 

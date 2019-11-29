@@ -36,6 +36,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -230,10 +231,12 @@ abstract public class CSVColumnBuilder {
     protected void buildResultSet() throws SQLException {
         makeSQL();
         String sql = query.toString();
-        // System.out.println("===1===\n" + sql.substring(0, 7000)); // the SQL is
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
+        // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // System.out.println("===2===\n" + sql.substring(7000));
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
@@ -284,7 +287,8 @@ abstract public class CSVColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            System.out.println("Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
 
@@ -292,7 +296,7 @@ abstract public class CSVColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            System.out.println("A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
         }
         return result;
     }
@@ -403,7 +407,8 @@ abstract public class CSVColumnBuilder {
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
-                System.out.println("Processing Column Value: " + csvName + " \"" + value + "\"");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                        "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
             default:

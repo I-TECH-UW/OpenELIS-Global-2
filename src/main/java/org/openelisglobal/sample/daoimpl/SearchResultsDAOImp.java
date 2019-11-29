@@ -22,21 +22,24 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class SearchResultsDAOImp implements SearchResultsDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     private static final String FIRST_NAME_PARAM = "firstName";
     private static final String LAST_NAME_PARAM = "lastName";
@@ -55,6 +58,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 
     @Override
     @SuppressWarnings("rawtypes")
+    @Transactional
     public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String externalID, String patientID, String guid)
             throws LIMSRuntimeException {
@@ -75,7 +79,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
                     queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid);
 
-            org.hibernate.Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 
             query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
             query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,

@@ -67,7 +67,7 @@ public class ReportsProviderFactory {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    LogEvent.getLog(ReportsProviderFactory.class));
+                    true);
         }
         return object;
     }
@@ -96,7 +96,7 @@ public class ReportsProviderFactory {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e,
-                        LogEvent.getLog(ReportsProviderFactory.class));
+                        true);
             } finally {
                 if (null != propertyStream) {
                     try {

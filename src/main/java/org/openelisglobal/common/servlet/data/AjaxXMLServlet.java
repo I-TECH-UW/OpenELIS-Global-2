@@ -51,7 +51,7 @@ public class AjaxXMLServlet extends AjaxServlet {
             response.getWriter().write("<message>" + message + "</message>");
             response.getWriter().write("</fieldmessage>");
         } else {
-            // System.out.println("Returning no content with field " + field + " message " +
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning no content with field " + field + " message " +
             // message);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

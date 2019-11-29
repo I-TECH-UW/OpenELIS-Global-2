@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="java.util.List,
          		 java.util.Locale,
                  org.openelisglobal.test.valueholder.TestSection,

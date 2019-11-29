@@ -193,6 +193,12 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         } catch (HL7Exception e) {
             LogEvent.logDebug(e);
+        } finally {
+            try {
+                context.close();
+            } catch (IOException e) {
+                LogEvent.logError(e);
+            }
         }
     }
 

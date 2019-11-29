@@ -104,7 +104,7 @@ public class LateStartScheduler {
         }
 
         String jobName = schedule.getJobName();
-        System.out.println("Adding cron job: " + jobName);
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Adding cron job: " + jobName);
 
         Class<? extends Job> targetJob = scheduleJobMap.get(jobName);
 
@@ -128,7 +128,7 @@ public class LateStartScheduler {
                 new ImmediateRunner(scheduler, jobName).start();
             }
         } catch (NumberFormatException e) {
-            System.out.println("Malformed cron statement." + schedule.getCronStatement());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Malformed cron statement." + schedule.getCronStatement());
         }
     }
 

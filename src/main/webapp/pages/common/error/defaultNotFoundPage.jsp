@@ -1,4 +1,5 @@
-<%@ page language="java" import="java.util.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.util.*"%>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
@@ -17,6 +18,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <base href="<%=basePath%>">
     <title><spring:message code="errors.unhandled.title" text="errors.unhandled.title" /> </title>   
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="0">    

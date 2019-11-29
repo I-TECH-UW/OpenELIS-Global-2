@@ -71,7 +71,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
             String validPrintersMessage = "";
             for (int i = 0; i < services.length; i++) {
                 printer = services[i].getName();
-                // System.out.println("This is one of the printers " + printer);
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is one of the printers " + printer);
                 // bugzilla 2380 this is for error message to list valid printers in ActionError
                 if (i == 0) {
                     validPrintersMessage = "\\n";
@@ -81,7 +81,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 // bugzilla 2380: name must match - not start with
                 if (printer.equalsIgnoreCase(SystemConfiguration.getInstance().getLabelPrinterName())) {
                     printerName = new PrinterName(printer, null);
-                    // System.out.println("This is the printer I will use "
+                    // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is the printer I will use "
                     // + printerName);
                     ps = services[i];
                     // bugzilla 2380: load all valid printer names for error message
@@ -89,7 +89,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 }
             }
 
-            // System.out.println("Printer is found " + printer);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Printer is found " + printer);
             if (printerName == null) {
                 throw new LIMSInvalidPrinterException(validPrintersMessage);
             }
@@ -142,17 +142,17 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
 
         @Override
         public void printJobCanceled(PrintJobEvent pje) {
-            // System.out.println("The print job was cancelled");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job was cancelled");
         }
 
         @Override
         public void printJobCompleted(PrintJobEvent pje) {
-            // System.out.println("The print job was completed");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job was completed");
         }
 
         @Override
         public void printJobFailed(PrintJobEvent pje) {
-            // System.out.println("The print job has failed");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job has failed");
         }
 
         @Override

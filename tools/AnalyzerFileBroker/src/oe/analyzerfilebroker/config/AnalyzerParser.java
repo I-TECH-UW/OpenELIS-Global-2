@@ -10,13 +10,13 @@ public class AnalyzerParser {
         Element analyzersRoot = xmlRoot.element("analyzers");
 
         if( analyzersRoot == null){
-            System.out.println(StringLocalization.instance().getStringForKey("error.missing.analyzers"));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.missing.analyzers"));
             return false;
         }
         List<Element> analyzerList = analyzersRoot.elements("analyzer");
 
         if( analyzerList.size() == 0){
-            System.out.println(StringLocalization.instance().getStringForKey("error.missing.analyzer"));
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.missing.analyzer"));
             return false;
         }
 
@@ -35,13 +35,13 @@ public class AnalyzerParser {
                 try{
                     Integer intPeriod = Integer.parseInt(customPeriod);
                     if( intPeriod < 1){
-                        System.out.println(config.getName() + ": " +StringLocalization.instance().getStringForKey("error.period.format"));
+                        LogEvent.logInfo(this.getClass().getName(), "method unkown", config.getName() + ": " +StringLocalization.instance().getStringForKey("error.period.format"));
                         return false;
                     }
 
                     config.setPeriod(intPeriod);
                 }catch(NumberFormatException e){
-                    System.out.println(config.getName() + ": " +StringLocalization.instance().getStringForKey("error.period.format"));
+                    LogEvent.logInfo(this.getClass().getName(), "method unkown", config.getName() + ": " +StringLocalization.instance().getStringForKey("error.period.format"));
                     return false;
                 }
             }else{
@@ -49,7 +49,7 @@ public class AnalyzerParser {
             }
 
             if( config.getName() == null || config.getSourceDir() == null){
-                System.out.println(StringLocalization.instance().getStringForKey("error.missing.required"));
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", StringLocalization.instance().getStringForKey("error.missing.required"));
                 return false;
             }
         }

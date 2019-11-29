@@ -624,14 +624,14 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             for (int i = 0; i < list.size(); i++) {
                 Test t = list.get(i);
                 /*
-                 * System.out.println("This is test " + t.getId() + " " + t.getTestName());
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is test " + t.getId() + " " + t.getTestName());
                  */
                 Method method = t.getMethod();
                 if (!methods.contains(method)) {
                     methods.add(method);
                 }
                 /*
-                 * System.out.println("Adding this method to list " + method.getId() + " " +
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "Adding this method to list " + method.getId() + " " +
                  * method.getMethodName());
                  */
             }
