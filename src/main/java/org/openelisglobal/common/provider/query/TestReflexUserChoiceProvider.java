@@ -49,6 +49,7 @@ import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.owasp.encoder.Encode;
 
 public class TestReflexUserChoiceProvider extends BaseQueryProvider {
 
@@ -99,7 +100,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

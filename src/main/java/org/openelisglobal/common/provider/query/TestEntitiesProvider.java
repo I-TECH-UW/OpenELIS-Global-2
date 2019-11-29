@@ -31,6 +31,7 @@ import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
+import org.owasp.encoder.Encode;
 
 public class TestEntitiesProvider extends BaseQueryProvider {
 
@@ -65,7 +66,7 @@ public class TestEntitiesProvider extends BaseQueryProvider {
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

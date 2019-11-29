@@ -34,6 +34,7 @@ import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 
 public class PendingAnalysisForTestProvider extends BaseQueryProvider {
 
@@ -90,7 +91,7 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

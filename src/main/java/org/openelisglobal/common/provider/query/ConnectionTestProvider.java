@@ -49,7 +49,7 @@ public class ConnectionTestProvider extends BaseQueryProvider {
 
     private void createXml(String testResult, StringBuilder xml) {
         xml.append("<testResult ");
-        XMLUtil.appendKeyValueAttribute("result", testResult, xml);
+        XMLUtil.appendAttributeKeyValue("result", testResult, xml);
         xml.append(" />");
     }
 

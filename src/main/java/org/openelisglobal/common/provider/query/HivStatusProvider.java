@@ -51,10 +51,11 @@ public class HivStatusProvider extends BaseQueryProvider {
         this.ajaxServlet = ajaxServlet;
     }
 
+    @Override
     public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String patientId = (String) request.getParameter("patientId");
+        String patientId = request.getParameter("patientId");
         StringBuilder xml = new StringBuilder();
         String result = findHivStatus(patientId, xml);
         ajaxServlet.sendData(xml.toString(), result, request, response);
