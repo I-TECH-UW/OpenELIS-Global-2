@@ -37,7 +37,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
@@ -60,6 +59,7 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.patient.form.PatientInfoForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -235,7 +235,7 @@ public class ResultsLoadUtility {
      * gender, st, nationalId
      */
     @Deprecated
-    public void addIdentifingPatientInfo(Patient patient, BaseForm form)
+    public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         if (patient == null) {
@@ -246,17 +246,16 @@ public class ResultsLoadUtility {
         List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient);
 
         if (!depersonalize) {
-            PropertyUtils.setProperty(form, "firstName", patient.getPerson().getFirstName());
-            PropertyUtils.setProperty(form, "lastName", patient.getPerson().getLastName());
-            PropertyUtils.setProperty(form, "dob", patient.getBirthDateForDisplay());
-            PropertyUtils.setProperty(form, "gender", patient.getGender());
+            form.setFirstName(patient.getPerson().getFirstName());
+            form.setLastName(patient.getPerson().getLastName());
+            form.setDob(patient.getBirthDateForDisplay());
+            form.setGender(patient.getGender());
         }
 
-        PropertyUtils.setProperty(form, "st", identityMap.getIdentityValue(identityList, "ST"));
-        PropertyUtils.setProperty(form, "nationalId",
-                GenericValidator.isBlankOrNull(patient.getNationalId()) ? patient.getExternalId()
-                        : patient.getNationalId());
-        PropertyUtils.setProperty(form, "subjectNumber", patientService.getSubjectNumber(patient));
+        form.setSt(identityMap.getIdentityValue(identityList, "ST"));
+        form.setNationalId(GenericValidator.isBlankOrNull(patient.getNationalId()) ? patient.getExternalId()
+                : patient.getNationalId());
+        form.setSubjectNumber(patientService.getSubjectNumber(patient));
     }
 
     public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {

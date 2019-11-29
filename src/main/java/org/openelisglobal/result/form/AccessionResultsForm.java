@@ -6,10 +6,11 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.patient.form.PatientInfoForm;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
 //no validation, inly used to send info from server to client
-public class AccessionResultsForm extends BaseForm {
+public class AccessionResultsForm extends BaseForm implements PatientInfoForm, ResultsPagingForm {
     private PagingBean paging;
 
     private Boolean singlePatient = true;
@@ -60,10 +61,12 @@ public class AccessionResultsForm extends BaseForm {
         setFormName("AccessionResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -76,58 +79,72 @@ public class AccessionResultsForm extends BaseForm {
         this.singlePatient = singlePatient;
     }
 
+    @Override
     public String getFirstName() {
         return firstName;
     }
 
+    @Override
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @Override
     public String getLastName() {
         return lastName;
     }
 
+    @Override
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @Override
     public String getDob() {
         return dob;
     }
 
+    @Override
     public void setDob(String dob) {
         this.dob = dob;
     }
 
+    @Override
     public String getGender() {
         return gender;
     }
 
+    @Override
     public void setGender(String gender) {
         this.gender = gender;
     }
 
+    @Override
     public String getSt() {
         return st;
     }
 
+    @Override
     public void setSt(String st) {
         this.st = st;
     }
 
+    @Override
     public String getSubjectNumber() {
         return subjectNumber;
     }
 
+    @Override
     public void setSubjectNumber(String subjectNumber) {
         this.subjectNumber = subjectNumber;
     }
 
+    @Override
     public String getNationalId() {
         return nationalId;
     }
 
+    @Override
     public void setNationalId(String nationalId) {
         this.nationalId = nationalId;
     }
@@ -148,10 +165,12 @@ public class AccessionResultsForm extends BaseForm {
         this.displayTestKit = displayTestKit;
     }
 
+    @Override
     public List<TestResultItem> getTestResult() {
         return testResult;
     }
 
+    @Override
     public void setTestResult(List<TestResultItem> testResult) {
         this.testResult = testResult;
     }
@@ -228,10 +247,12 @@ public class AccessionResultsForm extends BaseForm {
         this.testSectionsByName = testSectionsByName;
     }
 
+    @Override
     public String getTestSectionId() {
         return testSectionId;
     }
 
+    @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
@@ -243,4 +264,5 @@ public class AccessionResultsForm extends BaseForm {
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
     }
+
 }

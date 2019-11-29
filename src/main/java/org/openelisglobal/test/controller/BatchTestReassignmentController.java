@@ -50,8 +50,7 @@ public class BatchTestReassignmentController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         BatchTestReassignmentForm form = new BatchTestReassignmentForm();
 
-        PropertyUtils.setProperty(form, "sampleList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSampleList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -69,7 +68,7 @@ public class BatchTestReassignmentController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-        String jsonString = form.getString("jsonWad");
+        String jsonString = form.getJsonWad();
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", jsonString);
 
         List<Analysis> newAnalysis = new ArrayList<>();
@@ -89,12 +88,11 @@ public class BatchTestReassignmentController extends BaseController {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
-            PropertyUtils.setProperty(form, "sampleList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-            PropertyUtils.setProperty(form, "statusChangedList", changeBeans);
-            PropertyUtils.setProperty(form, "statusChangedSampleType", changedMetaInfo.sampleTypeName);
-            PropertyUtils.setProperty(form, "statusChangedCurrentTest", changedMetaInfo.currentTest);
-            PropertyUtils.setProperty(form, "statusChangedNextTest", changedMetaInfo.nextTest);
+            form.setSampleList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+            form.setStatusChangedList(changeBeans);
+            form.setStatusChangedSampleType(changedMetaInfo.sampleTypeName);
+            form.setStatusChangedCurrentTest(changedMetaInfo.currentTest);
+            form.setStatusChangedNextTest(changedMetaInfo.nextTest);
             return findForward("resubmit", form);
         }
     }

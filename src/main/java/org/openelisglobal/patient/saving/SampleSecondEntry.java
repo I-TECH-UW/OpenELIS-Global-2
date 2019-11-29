@@ -23,8 +23,8 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.Vali
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class SampleSecondEntry extends SampleEntry implements ISampleSecondEntry
      * @param dynaBean
      * @param sysUserId
      */
-    public SampleSecondEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+    public SampleSecondEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) throws Exception {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

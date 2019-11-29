@@ -55,10 +55,10 @@ public class DictionaryController extends BaseController {
     }
 
     @RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
-    public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
+    public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, DictionaryForm.class);
-        form.setCancelAction("CancelDictionary.do");
+        DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
+        newForm.setCancelAction("CancelDictionary.do");
 
         String id = request.getParameter(ID);
 
@@ -92,13 +92,13 @@ public class DictionaryController extends BaseController {
         }
 
         // populate form from valueholder
-        PropertyUtils.copyProperties(form, dictionary);
+        PropertyUtils.copyProperties(newForm, dictionary);
 
         List<DictionaryCategory> dictCats = dictionaryCategoryService.getAll();
 
-        PropertyUtils.setProperty(form, "categories", dictCats);
+        newForm.setCategories(dictCats);
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     private void setDefaultButtonAttributes(HttpServletRequest request) {
@@ -213,7 +213,7 @@ public class DictionaryController extends BaseController {
         // populate valueholder from form
         PropertyUtils.copyProperties(dictionary, form);
 
-        String selectedCategoryId = (String) form.get("selectedDictionaryCategoryId");
+        String selectedCategoryId = form.getSelectedDictionaryCategoryId();
         // bugzilla 2108
         DictionaryCategory dictionaryCategory = dictionaryCategoryService.get(selectedCategoryId);
         dictionary.setDictionaryCategory(dictionaryCategory);
@@ -230,8 +230,8 @@ public class DictionaryController extends BaseController {
         // OR
         // bugzilla 1847: also the local abbreviation can be deleted/updated/inserted at
         // anytime
-        String dirtyFormFields = form.getString("dirtyFormFields");
-        String isActiveValue = form.getString("isActive");
+        String dirtyFormFields = form.getDirtyFormFields();
+        String isActiveValue = form.getIsActive();
 
         String[] dirtyFields = dirtyFormFields.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
         List<String> listOfDirtyFields = new ArrayList<>();

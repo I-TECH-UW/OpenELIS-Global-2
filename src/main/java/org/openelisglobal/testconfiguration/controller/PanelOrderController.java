@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -54,14 +52,9 @@ public class PanelOrderController extends BaseController {
     }
 
     protected void setupDisplayItems(PanelOrderForm form) {
-        try {
-            PropertyUtils.setProperty(form, "panelList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-            PropertyUtils.setProperty(form, "existingSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+        form.setExistingSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
         HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
                 .createTypeOfSamplePanelMap(true);
@@ -88,12 +81,8 @@ public class PanelOrderController extends BaseController {
             sampleTypePanelsInactive.add(sampleTypePanelInactive);
         }
 
-        try {
-            PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
-            PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setExistingPanelList(sampleTypePanelsExists);
+        form.setInactivePanelList(sampleTypePanelsInactive);
     }
 
     @RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
@@ -106,7 +95,7 @@ public class PanelOrderController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String changeList = form.getString("jsonChangeList");
+        String changeList = form.getJsonChangeList();
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(changeList);

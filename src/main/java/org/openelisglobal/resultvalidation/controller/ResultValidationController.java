@@ -14,7 +14,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -127,14 +126,12 @@ public class ResultValidationController extends BaseResultValidationController {
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            PropertyUtils.setProperty(form, "testSections",
-                    DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-            PropertyUtils.setProperty(form, "testSectionsByName",
-                    DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+            form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+            form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
             if (!GenericValidator.isBlankOrNull(testSectionId)) {
                 ts = testSectionService.get(testSectionId);
-                PropertyUtils.setProperty(form, "testSectionId", "0");
+                form.setTestSectionId("0");
             }
 
             List<AnalysisItem> resultList;
@@ -192,8 +189,8 @@ public class ResultValidationController extends BaseResultValidationController {
         paging.updatePagedResults(request, form);
         List<AnalysisItem> resultItemList = paging.getResults(request);
 
-        String testSectionName = (String) form.get("testSection");
-        String testName = (String) form.get("testName");
+        String testSectionName = form.getTestSection();
+        String testName = form.getTestName();
         setRequestType(testSectionName);
         // ----------------------
         String url = request.getRequestURL().toString();

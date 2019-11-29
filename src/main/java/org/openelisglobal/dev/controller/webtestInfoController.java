@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.dev.form.WebTestInfoForm;
 import org.openelisglobal.login.service.LoginService;
@@ -30,7 +29,7 @@ public class webtestInfoController extends BaseController {
         WebTestInfoForm form = new WebTestInfoForm();
         String xmlWad = getWebTestXmlWad();
 
-        PropertyUtils.setProperty(form, "xmlWad", xmlWad);
+        form.setXmlWad(xmlWad);
 
         return findForward(FWD_SUCCESS, form);
     }

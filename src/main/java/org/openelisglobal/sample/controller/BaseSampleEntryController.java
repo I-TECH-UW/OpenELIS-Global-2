@@ -1,13 +1,10 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -16,17 +13,14 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
-import org.openelisglobal.patient.util.PatientUtil;
-import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 
@@ -59,12 +53,12 @@ public abstract class BaseSampleEntryController extends BaseController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
     }
 
-    protected void addGenderList(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        List genders = genderService.getAll();
-        PropertyUtils.setProperty(form, "genders", genders);
-    }
+//    protected void addGenderList(BaseForm form)
+//            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//
+//        List genders = genderService.getAll();
+//        form.setGenders(genders);
+//    }
 
     /**
      * various maps full of a various lists used by the entry form (typically for
@@ -72,23 +66,23 @@ public abstract class BaseSampleEntryController extends BaseController {
      *
      * @throws Exception all from setProperty problems caused by developer mistakes.
      */
-    protected void addProjectList(BaseForm form)
+    protected void addProjectList(SamplePatientEntryForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<Project> projects = projectService.getAll();
-        PropertyUtils.setProperty(form, "projects", projects);
+        form.setProjects(projects);
     }
 
-    public void addAllPatientFormLists(BaseForm form) throws Exception {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("GENDERS", PatientUtil.findGenders());
-
-        PropertyUtils.setProperty(form, "formLists", resultMap);
-        PropertyUtils.setProperty(form, "dictionaryLists", ObservationHistoryList.MAP);
-        PropertyUtils.setProperty(form, "organizationTypeLists", OrganizationTypeList.MAP);
-
-        return;
-    }
+//    public void addAllPatientFormLists(BaseForm form) throws Exception {
+//        Map<String, Object> resultMap = new HashMap<>();
+//        resultMap.put("GENDERS", PatientUtil.findGenders());
+//
+//        form.setFormLists(resultMap);
+//        form.setDictionaryLists(ObservationHistoryList.MAP);
+//        form.setOrganizationTypeLists(OrganizationTypeList.MAP);
+//
+//        return;
+//    }
 
     /**
      * @param requestTypeStr
@@ -123,10 +117,10 @@ public abstract class BaseSampleEntryController extends BaseController {
      * @throws Exception all from property utils if we've coded things wrong in the
      *                   form def or in this class.
      */
-    protected void setProjectFormName(BaseForm form, String projectFormName)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).setProjectFormName(projectFormName);
-    }
+//    protected void setProjectFormName(BaseForm form, String projectFormName)
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//        ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).setProjectFormName(projectFormName);
+//    }
 
     /**
      * This method captures how we deal with the curious accession objects I

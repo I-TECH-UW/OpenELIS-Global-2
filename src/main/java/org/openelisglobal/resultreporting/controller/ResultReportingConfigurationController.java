@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -58,9 +57,9 @@ public class ResultReportingConfigurationController extends BaseController {
 
         ExchangeConfigurationService configService = new ExchangeConfigurationService(ConfigurationDomain.REPORT);
 
-        PropertyUtils.setProperty(form, "reports", configService.getConfigurations());
-        PropertyUtils.setProperty(form, "hourList", DisplayListService.getInstance().getList(ListType.HOURS));
-        PropertyUtils.setProperty(form, "minList", DisplayListService.getInstance().getList(ListType.MINS));
+        form.setReports(configService.getConfigurations());
+        form.setHourList(DisplayListService.getInstance().getList(ListType.HOURS));
+        form.setMinList(DisplayListService.getInstance().getList(ListType.MINS));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -77,7 +76,7 @@ public class ResultReportingConfigurationController extends BaseController {
         List<SiteInformation> informationList = new ArrayList<>();
         List<CronScheduler> scheduleList = new ArrayList<>();
         @SuppressWarnings("unchecked")
-        List<ReportingConfiguration> reports = (List<ReportingConfiguration>) form.get("reports");
+        List<ReportingConfiguration> reports = form.getReports();
 
         for (ReportingConfiguration config : reports) {
             informationList.add(setSiteInformationFor(config.getUrl(), config.getUrlId()));

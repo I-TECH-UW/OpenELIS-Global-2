@@ -3,14 +3,14 @@
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
 * http://www.mozilla.org/MPL/
-* 
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.reports.form.ReportForm;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -37,7 +37,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  */
 public abstract class NonConformityBy extends Report implements IReportCreator {
 
-    protected List<CountReportItem> reportItems = new ArrayList<CountReportItem>();
+    protected List<CountReportItem> reportItems = new ArrayList<>();
 
     protected DateRange dateRange;
 
@@ -103,10 +103,10 @@ public abstract class NonConformityBy extends Report implements IReportCreator {
         }
     }
 
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
-        String lowDateStr = form.getString("lowerDateRange");
-        String highDateStr = form.getString("upperDateRange");
+        String lowDateStr = form.getLowerDateRange();
+        String highDateStr = form.getUpperDateRange();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
@@ -126,7 +126,7 @@ public abstract class NonConformityBy extends Report implements IReportCreator {
     }
 
     /**
-     * 
+     *
      */
     abstract void createReportItems();
 

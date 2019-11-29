@@ -96,7 +96,13 @@ public class SiteInformationMenuController extends BaseMenuController {
     protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
         List<SiteInformation> configurationList;
 
-        String domainName = form.getString("siteInfoDomainName");
+        if (!(form instanceof SiteInformationMenuForm)) {
+            throw new ClassCastException();
+        }
+
+        SiteInformationMenuForm siteInformationMenuForm = (SiteInformationMenuForm) form;
+
+        String domainName = siteInformationMenuForm.getSiteInfoDomainName();
         String dbDomainName = null;
         if ("SiteInformation".equals(domainName)) {
             dbDomainName = "siteIdentity";
@@ -174,7 +180,7 @@ public class SiteInformationMenuController extends BaseMenuController {
             return findForward(FWD_FAIL_DELETE, form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
         try {
             siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
             // for (String siteInformationId : selectedIDs) {

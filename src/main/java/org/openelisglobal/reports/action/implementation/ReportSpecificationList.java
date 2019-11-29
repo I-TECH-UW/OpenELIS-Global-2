@@ -17,17 +17,14 @@
 package org.openelisglobal.reports.action.implementation;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.reports.form.ReportForm;
 
 /**
  * Represents a list for report specification
@@ -50,16 +47,8 @@ public class ReportSpecificationList implements Serializable {
         this.list = list;
     }
 
-    public void setRequestParameters(BaseForm form) {
-        try {
-            PropertyUtils.setProperty(form, "selectList", this);
-        } catch (IllegalAccessException e) {
-            LogEvent.logDebug(e);
-        } catch (InvocationTargetException e) {
-            LogEvent.logDebug(e);
-        } catch (NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+    public void setRequestParameters(ReportForm form) {
+        form.setSelectList(this);
     }
 
     public String getLabel() {

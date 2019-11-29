@@ -47,4 +47,5 @@ public class SiteInformationMenuForm extends MenuForm {
     public void setSiteInfoDomainName(String siteInfoDomainName) {
         this.siteInfoDomainName = siteInfoDomainName;
     }
+
 }

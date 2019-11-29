@@ -104,11 +104,11 @@ public class OrganizationController extends BaseController {
     }
 
     @RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
-    public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
+    public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, OrganizationForm.class);
+        OrganizationForm newForm = resetSessionFormToType(oldForm, OrganizationForm.class);
 
-        form.setCancelAction("CancelOrganization.do");
+        newForm.setCancelAction("CancelOrganization.do");
 
         // The first job is to determine if we are coming to this action with an
         // ID parameter in the request. If there is no parameter, we are
@@ -129,7 +129,7 @@ public class OrganizationController extends BaseController {
         request.setAttribute(NEXT_DISABLED, "true");
 
         List<Dictionary> departmentList = getDepartmentList();
-        PropertyUtils.setProperty(form, "departmentList", departmentList);
+        newForm.setDepartmentList(departmentList);
 
         Organization organization;
 
@@ -177,11 +177,11 @@ public class OrganizationController extends BaseController {
 
                 for (OrganizationAddress orgAddress : orgAddressList) {
                     if (useCommune && COMMUNE_ID.equals(orgAddress.getAddressPartId())) {
-                        PropertyUtils.setProperty(form, "commune", orgAddress.getValue());
+                        newForm.setCommune(orgAddress.getValue());
                     } else if (useVillage && VILLAGE_ID.equals(orgAddress.getAddressPartId())) {
-                        PropertyUtils.setProperty(form, "village", orgAddress.getValue());
+                        newForm.setVillage(orgAddress.getValue());
                     } else if (useDepartment && DEPARTMENT_ID.equals(orgAddress.getAddressPartId())) {
-                        PropertyUtils.setProperty(form, "department", orgAddress.getValue());
+                        newForm.setDepartment(orgAddress.getValue());
                     }
                 }
             }
@@ -197,20 +197,20 @@ public class OrganizationController extends BaseController {
             request.setAttribute(ID, organization.getId());
         }
 
-        PropertyUtils.copyProperties(form, organization);
+        PropertyUtils.copyProperties(newForm, organization);
 
         if (useParentOrganization) {
-            setParentOrganiztionName(form, organization);
+            setParentOrganiztionName(newForm, organization);
         }
 
         if (useOrganizationState) {
-            setCityStateZipList(form);
+            setCityStateZipList(newForm);
         }
 
         if (useOrganizationTypeList) {
             List<OrganizationType> orgTypeList = getOrganizationTypeList();
             List<String> selectedList = new ArrayList<>();
-            PropertyUtils.setProperty(form, "orgTypes", orgTypeList);
+            newForm.setOrgTypes(orgTypeList);
 
             if (organization.getId() != null && orgTypeList != null) {
                 if (orgTypeList.size() > 0) {
@@ -221,13 +221,13 @@ public class OrganizationController extends BaseController {
                     }
                 }
             }
-            PropertyUtils.setProperty(form, "selectedTypes", selectedList);
+            newForm.setSelectedTypes(selectedList);
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
-    private void setParentOrganiztionName(BaseForm form, Organization organization)
+    private void setParentOrganiztionName(OrganizationForm form, Organization organization)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Organization parentOrg = new Organization();
         String parentOrgName = null;
@@ -237,15 +237,15 @@ public class OrganizationController extends BaseController {
             parentOrgName = parentOrg.getOrganizationName();
         }
 
-        PropertyUtils.setProperty(form, "parentOrgName", parentOrgName);
+        form.setParentOrgName(parentOrgName);
     }
 
-    private void setCityStateZipList(BaseForm form)
+    private void setCityStateZipList(OrganizationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (FormFields.getInstance().useField(FormFields.Field.OrgState)) {
             // bugzilla 1545
             List states = cityStateZipService.getAllStateCodes();
-            PropertyUtils.setProperty(form, "states", states);
+            form.setStates(states);
         }
     }
 
@@ -287,7 +287,7 @@ public class OrganizationController extends BaseController {
             request.setAttribute("key", "organization.edit.title");
         }
 
-        selectedOrgTypes = (List<String>) form.get("selectedTypes");
+        selectedOrgTypes = form.getSelectedTypes();
 
         organization.setSysUserId(getSysUserId(request));
 
@@ -295,7 +295,7 @@ public class OrganizationController extends BaseController {
         PropertyUtils.copyProperties(organization, form);
 
         if (FormFields.getInstance().useField(FormFields.Field.OrganizationParent)) {
-            String parentOrgName = (String) form.get("parentOrgName");
+            String parentOrgName = form.getParentOrgName();
             Organization o = new Organization();
             o.setOrganizationName(parentOrgName);
             Organization parentOrg = organizationService.getOrganizationByName(o, false);
@@ -342,7 +342,7 @@ public class OrganizationController extends BaseController {
         PropertyUtils.copyProperties(form, organization);
 
         if (states != null) {
-            PropertyUtils.setProperty(form, "states", states);
+            form.setStates(states);
         }
 
         if (organization.getId() != null && !organization.getId().equals("0")) {
@@ -391,7 +391,7 @@ public class OrganizationController extends BaseController {
         }
     }
 
-    private void createAddressParts(String id, BaseForm form, boolean isNew) {
+    private void createAddressParts(String id, OrganizationForm form, boolean isNew) {
         if (useDepartment || useCommune || useVillage) {
             updateDepartment = false;
             updateCommune = false;
@@ -421,7 +421,7 @@ public class OrganizationController extends BaseController {
                     departmentAddress.setType("D");
                 }
 
-                departmentAddress.setValue(form.getString("department"));
+                departmentAddress.setValue(form.getDepartment());
                 departmentAddress.setSysUserId(getSysUserId(request));
             }
 
@@ -432,7 +432,7 @@ public class OrganizationController extends BaseController {
                     communeAddress.setType("T");
                 }
 
-                communeAddress.setValue(form.getString("commune"));
+                communeAddress.setValue(form.getCommune());
                 communeAddress.setSysUserId(getSysUserId(request));
             }
 
@@ -443,7 +443,7 @@ public class OrganizationController extends BaseController {
                     villageAddress.setType("T");
                 }
 
-                villageAddress.setValue(form.getString("village"));
+                villageAddress.setValue(form.getVillage());
                 villageAddress.setSysUserId(getSysUserId(request));
             }
         }
@@ -457,11 +457,11 @@ public class OrganizationController extends BaseController {
         }
     }
 
-    private List getPossibleStates(BaseForm form) {
+    private List getPossibleStates(OrganizationForm form) {
         List states = null;
         if (useState) {
-            if (form.get("states") != null) {
-                states = (List) form.get("states");
+            if (form.getStates() != null) {
+                states = (List) form.getStates();
             } else {
                 states = cityStateZipService.getAllStateCodes();
             }

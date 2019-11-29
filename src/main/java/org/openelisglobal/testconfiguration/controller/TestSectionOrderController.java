@@ -1,13 +1,11 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -46,12 +44,7 @@ public class TestSectionOrderController extends BaseController {
     }
 
     private void setupDisplayItems(TestSectionOrderForm form) {
-        try {
-            PropertyUtils.setProperty(form, "testSectionList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setTestSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
     }
 
     @Override

@@ -145,7 +145,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
             return findForward(performMenuAction(form, request), form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
 
         // String sysUserId = getSysUserId(request);
         List<AnalyzerTestMapping> testMappingList = new ArrayList<>();

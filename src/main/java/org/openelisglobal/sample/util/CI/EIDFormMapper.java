@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.test.valueholder.Test;
 
 public class EIDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
@@ -30,7 +30,7 @@ public class EIDFormMapper extends BaseProjectFormMapper implements IProjectForm
     private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
     private final String projectName = "Early Infant Diagnosis for HIV Study";
 
-    public EIDFormMapper(String projectFormId, BaseForm form) {
+    public EIDFormMapper(String projectFormId, IProjectForm form) {
         super(projectFormId, form);
     }
 

@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +10,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
@@ -101,39 +99,24 @@ public class TestModifyEntryController extends BaseController {
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
 
-        try {
-            PropertyUtils.setProperty(form, "sampleTypeList", allSampleTypesList);
-            PropertyUtils.setProperty(form, "panelList", DisplayListService.getInstance().getList(ListType.PANELS));
-            PropertyUtils.setProperty(form, "resultTypeList",
-                    DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
-            PropertyUtils.setProperty(form, "uomList",
-                    DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
-            PropertyUtils.setProperty(form, "labUnitList",
-                    DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-            PropertyUtils.setProperty(form, "ageRangeList",
-                    SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
-            PropertyUtils.setProperty(form, "dictionaryList",
-                    DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
-            PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
-            PropertyUtils.setProperty(form, "testList",
-                    DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setSampleTypeList(allSampleTypesList);
+        form.setPanelList(DisplayListService.getInstance().getList(ListType.PANELS));
+        form.setResultTypeList(DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
+        form.setUomList(DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
+        form.setLabUnitList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
+        form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
+        form.setGroupedDictionaryList(createGroupedDictionaryList());
+        form.setTestList(DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
 
         // gnr: ALL_TESTS calls getActiveTests, this could be a way to enable
         // maintenance of inactive tests
-        // PropertyUtils.setProperty( form, "testListInactive",
-        // DisplayListService.getInstance().getList(
+        // form.setTestListInactive( DisplayListService.getInstance().getList(
         // DisplayListService.ListType.ALL_TESTS_INACTIVE )
         // );
 
         List<TestCatalogBean> testCatBeanList = createTestCatBeanList();
-        try {
-            PropertyUtils.setProperty(form, "testCatBeanList", testCatBeanList);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setTestCatBeanList(testCatBeanList);
     }
 
     private List<TestCatalogBean> createTestCatBeanList() {
@@ -435,7 +418,7 @@ public class TestModifyEntryController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
         String currentUserId = getSysUserId(request);
-        String changeList = form.getString("jsonWad");
+        String changeList = form.getJsonWad();
 
         JSONParser parser = new JSONParser();
         JSONObject obj = null;

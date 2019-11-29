@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
@@ -57,16 +56,14 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         String workplan = request.getParameter("type");
 
         // load testSections for drop down
-        PropertyUtils.setProperty(form, "testSections",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "testSectionsByName",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
         TestSection ts = null;
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
-            PropertyUtils.setProperty(form, "testSectionId", "0");
+            form.setTestSectionId("0");
         }
 
         List<TestResultItem> workplanTests = new ArrayList<>();
@@ -74,13 +71,13 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "testName", ts.getLocalizedName());
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
+            form.setTestName(ts.getLocalizedName());
 
         } else {
             // set workplanTests as empty
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
         ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
         resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
@@ -88,8 +85,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (isPatientNameAdded()) {
             addPatientNamesToList(workplanTests);
         }
-        PropertyUtils.setProperty(form, "workplanType", workplan);
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.unit.types"));
+        form.setWorkplanType(workplan);
+        form.setSearchLabel(MessageUtil.getMessage("workplan.unit.types"));
 
         return findForward(FWD_SUCCESS, form);
     }

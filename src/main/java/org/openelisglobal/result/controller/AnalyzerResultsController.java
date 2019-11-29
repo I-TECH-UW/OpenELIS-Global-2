@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -168,7 +167,7 @@ public class AnalyzerResultsController extends BaseController {
         String page = request.getParameter("page");
         String requestAnalyzerType = request.getParameter("type");
 
-        PropertyUtils.setProperty(form, "analyzerType", requestAnalyzerType);
+        form.setAnalyzerType(requestAnalyzerType);
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
         if (GenericValidator.isBlankOrNull(page)) {
@@ -176,8 +175,8 @@ public class AnalyzerResultsController extends BaseController {
             List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
 
             if (analyzerResultsList.isEmpty()) {
-                PropertyUtils.setProperty(form, "resultList", new ArrayList<AnalyzerResultItem>());
-                PropertyUtils.setProperty(form, "displayNotFoundMsg", true);
+                form.setResultList(new ArrayList<AnalyzerResultItem>());
+                form.setDisplayNotFoundMsg(true);
                 paging.setEmptyPageBean(request, form);
 
             } else {
@@ -229,7 +228,7 @@ public class AnalyzerResultsController extends BaseController {
                     }
                 }
 
-                PropertyUtils.setProperty(form, "displayMissingTestMsg", new Boolean(missingTest));
+                form.setDisplayMissingTestMsg(new Boolean(missingTest));
 
                 paging.setDatabaseResults(request, form, analyzerResultItemList);
             }
@@ -317,8 +316,8 @@ public class AnalyzerResultsController extends BaseController {
             }
 
             String analyzerTestName = analyzerResult.getTestName();
-            MappedTestName mappedTestName = AnalyzerTestNameCache.getInstance().getMappedTest(getAnalyzerNameFromRequest(),
-                    analyzerTestName);
+            MappedTestName mappedTestName = AnalyzerTestNameCache.getInstance()
+                    .getMappedTest(getAnalyzerNameFromRequest(), analyzerTestName);
             if (mappedTestName != null) {
                 analyzerResult.setTestName(mappedTestName.getOpenElisTestName());
                 analyzerResult.setTestId(mappedTestName.getTestId());
@@ -703,11 +702,11 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getString("analyzerType"))) {
+        if (GenericValidator.isBlankOrNull(form.getAnalyzerType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getString("analyzerType"));
+            params.put("type", form.getAnalyzerType());
             // params.put("forward", FWD_SUCCESS_INSERT);
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }

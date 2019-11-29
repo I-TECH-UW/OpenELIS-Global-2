@@ -49,7 +49,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
@@ -72,6 +71,7 @@ import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeS
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.ObservationData;
@@ -91,6 +91,7 @@ import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests
 import org.openelisglobal.sample.util.CI.IProjectFormMapper;
 import org.openelisglobal.sample.util.CI.ProjectForm;
 import org.openelisglobal.sample.util.CI.ProjectFormMapperFactory;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
@@ -182,9 +183,8 @@ public abstract class Accessioner implements IAccessioner {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public static String findProjectFormName(BaseForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        ObservationData observations = ((ObservationData) (PropertyUtils.getProperty(form, "observations")));
+    public static String findProjectFormName(IAccessionerForm form) {
+        ObservationData observations = form.getObservations();
         if (observations == null) {
             return null;
         } else {
@@ -201,8 +201,7 @@ public abstract class Accessioner implements IAccessioner {
      * @throws IllegalAccessException
      * @throws LIMSRuntimeException
      */
-    public static IProjectFormMapper getProjectFormMapper(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public static IProjectFormMapper getProjectFormMapper(IAccessionerForm form) throws LIMSRuntimeException {
         return new ProjectFormMapperFactory().getProjectInitializer(findProjectFormName(form), form);
     }
 
@@ -210,7 +209,7 @@ public abstract class Accessioner implements IAccessioner {
      * @param dynaBean
      * @return
      */
-    public static IProjectFormMapper getProjectFormMapper(String projectFormName, BaseForm form) {
+    public static IProjectFormMapper getProjectFormMapper(String projectFormName, IAccessionerForm form) {
         return new ProjectFormMapperFactory().getProjectInitializer(projectFormName, form);
     }
 
@@ -627,8 +626,8 @@ public abstract class Accessioner implements IAccessioner {
      */
     protected void populateObservationHistory()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        projectFormMapper.getBaseForm();
-        ObservationData observationData = (ObservationData) (PropertyUtils.getProperty(projectFormMapper.getBaseForm(),
+        projectFormMapper.getForm();
+        ObservationData observationData = (ObservationData) (PropertyUtils.getProperty(projectFormMapper.getForm(),
                 "observations"));
         observationHistories = projectFormMapper.readObservationHistories(observationData);
         observationHistoryLists = projectFormMapper.readObservationHistoryLists(observationData);
@@ -808,18 +807,18 @@ public abstract class Accessioner implements IAccessioner {
      */
     protected void populatePatientData()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        BaseForm form = projectFormMapper.getBaseForm();
+        IProjectForm form = projectFormMapper.getForm();
         Timestamp lastupdated1 = patientInDB.getLastupdated();
         PropertyUtils.copyProperties(patientInDB, form);
         patientInDB.setLastupdated(lastupdated1);
         Person person = patientInDB.getPerson();
         PropertyUtils.copyProperties(person, form);
 
-        patientInDB.setNationalId(convertEmptyToNull((String) PropertyUtils.getProperty(form, "subjectNumber")));
-        patientInDB.setExternalId(convertEmptyToNull((String) PropertyUtils.getProperty(form, "siteSubjectNumber")));
-        populatePatientBirthDate((String) PropertyUtils.getProperty(form, "birthDateForDisplay"));
+        patientInDB.setNationalId(convertEmptyToNull(form.getSubjectNumber()));
+        patientInDB.setExternalId(convertEmptyToNull(form.getSiteSubjectNumber()));
+        populatePatientBirthDate(form.getBirthDateForDisplay());
 
-        projectData = (ProjectData) PropertyUtils.getProperty(form, "projectData");
+        projectData = form.getProjectData();
         if (projectData != null) {
             person.setHomePhone(convertEmptyToNull(projectData.getPhoneNumber()));
             person.setFax(convertEmptyToNull(projectData.getFaxNumber()));
@@ -1309,7 +1308,7 @@ public abstract class Accessioner implements IAccessioner {
         }
 
         try {
-            String xml = (String) PropertyUtils.getProperty(projectFormMapper.getBaseForm(), "sampleXML");
+            String xml = (String) PropertyUtils.getProperty(projectFormMapper.getForm(), "sampleXML");
             // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
             Document sampleDom = DocumentHelper.parseText(xml);
             for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {

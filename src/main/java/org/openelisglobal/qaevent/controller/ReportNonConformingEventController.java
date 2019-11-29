@@ -112,8 +112,7 @@ public class ReportNonConformingEventController extends BaseController {
             form.setSpecimens(sampleItems);
         }
 
-        PropertyUtils.setProperty(form, "reportingUnits",
-                     DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         requesterService.setSampleId(sample.getId());
         form.setSite(requesterService.getReferringSiteName());
@@ -122,7 +121,7 @@ public class ReportNonConformingEventController extends BaseController {
         form.setNceCategories(nceCategoryService.getAllNceCategories());
 
         Date today = Calendar.getInstance().getTime();
-        PropertyUtils.setProperty(form, "reportDate", DateUtil.formatDateAsText(today));
+        form.setReportDate(DateUtil.formatDateAsText(today));
 
     }
 

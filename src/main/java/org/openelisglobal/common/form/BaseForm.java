@@ -1,11 +1,8 @@
 package org.openelisglobal.common.form;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.openelisglobal.common.log.LogEvent;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
@@ -73,40 +70,6 @@ public class BaseForm implements Serializable {
 
     public void setCancelMethod(RequestMethod cancelMethod) {
         this.cancelMethod = cancelMethod;
-    }
-
-    public Object get(String propertyName) {
-        Object obj = null;
-        try {
-            obj = PropertyUtils.getProperty(this, propertyName);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-            LogEvent.logDebug(e);
-        }
-        return obj;
-    }
-
-    public String getString(String propertyName) {
-        String obj = null;
-        try {
-            obj = (String) PropertyUtils.getProperty(this, propertyName);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-            LogEvent.logDebug(e);
-        }
-        return obj;
-    }
-
-    public String[] getStrings(String propertyName) {
-        String[] obj = null;
-        try {
-            obj = (String[]) PropertyUtils.getProperty(this, propertyName);
-
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-            LogEvent.logDebug(e);
-        }
-        return obj;
     }
 
 }

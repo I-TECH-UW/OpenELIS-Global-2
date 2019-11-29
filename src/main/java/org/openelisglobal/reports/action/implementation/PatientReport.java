@@ -16,7 +16,6 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.AddressPartService;
@@ -40,7 +38,6 @@ import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
@@ -73,6 +70,7 @@ import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
@@ -173,29 +171,21 @@ public abstract class PatientReport extends Report {
         return true;
     }
 
-    public void setRequestParameters(BaseForm form) {
-        try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+    public void setRequestParameters(ReportForm form) {
+        form.setReportName(getReportNameForParameterPage());
 
-            PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useHighAccessionDirect", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
-        } catch (IllegalAccessException e) {
-            LogEvent.logDebug(e);
-        } catch (InvocationTargetException e) {
-            LogEvent.logDebug(e);
-        } catch (NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setUseAccessionDirect(Boolean.TRUE);
+        form.setUseHighAccessionDirect(Boolean.TRUE);
+        form.setUsePatientNumberDirect(Boolean.TRUE);
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
-        lowerNumber = form.getString("accessionDirect");
-        upperNumber = form.getString("highAccessionDirect");
-        String patientNumber = form.getString("patientNumberDirect");
+        lowerNumber = form.getAccessionDirect();
+        upperNumber = form.getHighAccessionDirect();
+        String patientNumber = form.getPatientNumberDirect();
 
         handledOrders = new ArrayList<>();
 

@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -112,10 +111,9 @@ public class ReferredOutTestsController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<ReferralItem> referralItems = getReferralItems();
-        PropertyUtils.setProperty(form, "referralItems", referralItems);
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "referralOrganizations", DisplayListService.getInstance()
+        form.setReferralItems(referralItems);
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setReferralOrganizations(DisplayListService.getInstance()
                 .getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
 
         fillInDictionaryValuesForReferralItems(referralItems);
@@ -438,7 +436,7 @@ public class ReferredOutTestsController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        List<ReferralItem> referralItems = (List<ReferralItem>) PropertyUtils.getProperty(form, "referralItems");
+        List<ReferralItem> referralItems = form.getReferralItems();
         selectModifiedAndCanceledItems(referralItems, modifiedItems, canceledItems);
         validateModifedItems(result, modifiedItems);
 

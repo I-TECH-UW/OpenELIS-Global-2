@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -73,22 +72,22 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
-            PropertyUtils.setProperty(form, "testTypeID", testType);
-            PropertyUtils.setProperty(form, "testName", testName);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+            form.setTestTypeID(testType);
+            form.setTestName(testName);
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
 
         } else {
             // no search done, set workplanTests as empty
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "testName", null);
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setSearchFinished(Boolean.FALSE);
+            form.setTestName(null);
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        PropertyUtils.setProperty(form, "searchTypes", getTestDropdownList());
-        PropertyUtils.setProperty(form, "workplanType", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.test.types"));
-        PropertyUtils.setProperty(form, "searchAction", "WorkPlanByTest.do");
+        form.setSearchTypes(getTestDropdownList());
+        form.setWorkplanType(request.getParameter("type"));
+        form.setSearchLabel(MessageUtil.getMessage("workplan.test.types"));
+        form.setSearchAction("WorkPlanByTest.do");
 
         return findForward(FWD_SUCCESS, form);
     }

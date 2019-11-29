@@ -124,15 +124,15 @@ public class SampleEditController extends BaseController {
                 || userRoleService.userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
         boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
                 || "readwrite".equals(request.getParameter("type"));
-        PropertyUtils.setProperty(form, "isEditable", isEditable);
+        form.setIsEditable(isEditable);
 
         String accessionNumber = request.getParameter("accessionNumber");
         if (GenericValidator.isBlankOrNull(accessionNumber)) {
             accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
         }
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-            PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+            form.setAccessionNumber(accessionNumber);
+            form.setSearchFinished(Boolean.TRUE);
 
             Sample sample = getSample(accessionNumber);
 
@@ -142,12 +142,11 @@ public class SampleEditController extends BaseController {
                 setPatientInfo(form, sample);
                 List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber,
                         allowedToCancelResults);
-                PropertyUtils.setProperty(form, "existingTests", currentTestList);
+                form.setExistingTests(currentTestList);
                 setAddableTestInfo(form, sampleItemList, accessionNumber);
                 setAddableSampleTypes(form);
                 setSampleOrderInfo(form, sample);
-                PropertyUtils.setProperty(form, "ableToCancelResults",
-                        hasResults(currentTestList, allowedToCancelResults));
+                form.setAbleToCancelResults(hasResults(currentTestList, allowedToCancelResults));
                 String maxAccessionNumber;
                 if (sampleItemList.size() > 0) {
                     maxAccessionNumber = accessionNumber + "-"
@@ -155,27 +154,26 @@ public class SampleEditController extends BaseController {
                 } else {
                     maxAccessionNumber = accessionNumber + "-0";
                 }
-                PropertyUtils.setProperty(form, "maxAccessionNumber", maxAccessionNumber);
-                PropertyUtils.setProperty(form, "isConfirmationSample", sampleService.isConfirmationSample(sample));
+                form.setMaxAccessionNumber(maxAccessionNumber);
+                form.setIsConfirmationSample(sampleService.isConfirmationSample(sample));
             } else {
-                PropertyUtils.setProperty(form, "noSampleFound", Boolean.TRUE);
+                form.setNoSampleFound(Boolean.TRUE);
             }
         } else {
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
+            form.setSearchFinished(Boolean.FALSE);
             request.getSession().setAttribute(SAMPLE_EDIT_WRITABLE, request.getParameter("type"));
         }
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            PropertyUtils.setProperty(form, "initialSampleConditionList",
-                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+            form.setInitialSampleConditionList(DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
 
-        PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
         patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
-        PropertyUtils.setProperty(form, "patientSearch", patientSearch);
-        PropertyUtils.setProperty(form, "warning", true);
+        form.setPatientSearch(patientSearch);
+        form.setWarning(true);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -198,7 +196,7 @@ public class SampleEditController extends BaseController {
     private void setSampleOrderInfo(SampleEditForm form, Sample sample)
             throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         SampleOrderService sampleOrderService = new SampleOrderService(sample);
-        PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
     }
 
     private String getMostRecentAccessionNumberForPaitient(String patientID) {
@@ -235,10 +233,10 @@ public class SampleEditController extends BaseController {
         PersonService personService = SpringContext.getBean(PersonService.class);
         personService.getData(patient.getPerson());
 
-        PropertyUtils.setProperty(form, "patientName", patientPatientService.getLastFirstName(patient));
-        PropertyUtils.setProperty(form, "dob", patientPatientService.getEnteredDOB(patient));
-        PropertyUtils.setProperty(form, "gender", patientPatientService.getGender(patient));
-        PropertyUtils.setProperty(form, "nationalId", patientPatientService.getNationalId(patient));
+        form.setPatientName(patientPatientService.getLastFirstName(patient));
+        form.setDob(patientPatientService.getEnteredDOB(patient));
+        form.setGender(patientPatientService.getGender(patient));
+        form.setNationalId(patientPatientService.getNationalId(patient));
     }
 
     private List<SampleEditItem> getCurrentTestInfo(List<SampleItem> sampleItemList, String accessionNumber,
@@ -310,15 +308,13 @@ public class SampleEditController extends BaseController {
             addPossibleTestsToList(sampleItem, possibleTestList, accessionNumber);
         }
 
-        PropertyUtils.setProperty(form, "possibleTests", possibleTestList);
-        PropertyUtils.setProperty(form, "testSectionList",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setPossibleTests(possibleTestList);
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
     }
 
     private void setAddableSampleTypes(SampleEditForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "sampleTypes",
-                DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
     }
 
     private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,

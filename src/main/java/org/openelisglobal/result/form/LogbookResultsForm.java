@@ -15,7 +15,7 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
-public class LogbookResultsForm extends BaseForm {
+public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public interface LogbookResults {
     }
@@ -72,10 +72,12 @@ public class LogbookResultsForm extends BaseForm {
         setFormName("LogbookResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -112,10 +114,12 @@ public class LogbookResultsForm extends BaseForm {
         this.displayTestKit = displayTestKit;
     }
 
+    @Override
     public List<TestResultItem> getTestResult() {
         return testResult;
     }
 
+    @Override
     public void setTestResult(List<TestResultItem> testResult) {
         this.testResult = testResult;
     }
@@ -184,10 +188,12 @@ public class LogbookResultsForm extends BaseForm {
         this.testSectionsByName = testSectionsByName;
     }
 
+    @Override
     public String getTestSectionId() {
         return testSectionId;
     }
 
+    @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
@@ -199,4 +205,5 @@ public class LogbookResultsForm extends BaseForm {
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
     }
+
 }

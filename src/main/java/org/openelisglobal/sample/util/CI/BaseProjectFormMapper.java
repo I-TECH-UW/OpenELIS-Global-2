@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -37,6 +36,7 @@ import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.AdverseEffect;
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.sample.form.ProjectData;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -60,7 +60,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
     protected String organizationId;
 
-    protected BaseForm form;
+    protected IProjectForm form;
 
     protected String projectFormId;
 
@@ -74,14 +74,10 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         return ProjectForm.findProjectFormByFormId(projectFormId);
     }
 
-    public BaseProjectFormMapper(String projectFormId, BaseForm form) {
+    public BaseProjectFormMapper(String projectFormId, IProjectForm form) {
         this.form = form;
         this.projectFormId = projectFormId;
-        try {
-            initProjectData(form);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        initProjectData(form);
     }
 
     protected Test createTest(String testName, boolean orderableOnly) {
@@ -119,10 +115,9 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         return typeofsample;
     }
 
-    private void initProjectData(BaseForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void initProjectData(IProjectForm form) {
         if (form != null) {
-            projectData = (ProjectData) PropertyUtils.getProperty(form, "projectData");
+            projectData = form.getProjectData();
         }
     }
 
@@ -498,7 +493,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
     public ObservationData getObservationData() {
         try {
-            return (ObservationData) (PropertyUtils.getProperty(getBaseForm(), "observations"));
+            return (ObservationData) (PropertyUtils.getProperty(getForm(), "observations"));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.getMessage(), e);
         }
@@ -543,7 +538,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     public abstract String getSampleCenterCode();
 
     @Override
-    public BaseForm getBaseForm() {
+    public IProjectForm getForm() {
         return form;
     }
 }

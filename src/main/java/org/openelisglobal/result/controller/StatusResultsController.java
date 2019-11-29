@@ -11,7 +11,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -80,9 +79,8 @@ public class StatusResultsController extends BaseController {
 
         String newRequest = request.getParameter("blank");
 
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
         ResultsPaging paging = new ResultsPaging();
@@ -116,14 +114,14 @@ public class StatusResultsController extends BaseController {
     private List<TestResultItem> setSearchResults(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         List<TestResultItem> tests = getSelectedTests(form);
-        PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+        form.setSearchFinished(Boolean.TRUE);
 
         if (resultsUtility.inventoryNeeded()) {
             addInventory(form);
-            PropertyUtils.setProperty(form, "displayTestKit", true);
+            form.setDisplayTestKit(true);
         } else {
             addEmptyInventoryList(form);
-            PropertyUtils.setProperty(form, "displayTestKit", false);
+            form.setDisplayTestKit(false);
         }
 
         return tests;
@@ -131,25 +129,25 @@ public class StatusResultsController extends BaseController {
 
     private void setEmptyResults(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "testResult", new ArrayList<TestResultItem>());
-        PropertyUtils.setProperty(form, "displayTestKit", false);
-        PropertyUtils.setProperty(form, "collectionDate", "");
-        PropertyUtils.setProperty(form, "recievedDate", "");
-        PropertyUtils.setProperty(form, "selectedAnalysisStatus", "");
-        PropertyUtils.setProperty(form, "selectedTest", "");
-        PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
+        form.setTestResult(new ArrayList<TestResultItem>());
+        form.setDisplayTestKit(false);
+        form.setCollectionDate("");
+        form.setRecievedDate("");
+        form.setSelectedAnalysisStatus("");
+        form.setSelectedTest("");
+        form.setSearchFinished(Boolean.FALSE);
     }
 
     private void addInventory(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
-        PropertyUtils.setProperty(form, "inventoryItems", list);
+        form.setInventoryItems(list);
     }
 
     private void addEmptyInventoryList(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "inventoryItems", new ArrayList<InventoryKitItem>());
+        form.setInventoryItems(new ArrayList<InventoryKitItem>());
     }
 
     private void setSelectionLists(StatusResultsForm form)
@@ -157,21 +155,21 @@ public class StatusResultsController extends BaseController {
 
         List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
-        PropertyUtils.setProperty(form, "analysisStatusSelections", analysisStatusList);
-        PropertyUtils.setProperty(form, "testSelections",
+        form.setAnalysisStatusSelections(analysisStatusList);
+        form.setTestSelections(
                 DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
-        PropertyUtils.setProperty(form, "sampleStatusSelections", sampleStatusList);
+        form.setSampleStatusSelections(sampleStatusList);
 
     }
 
     private List<TestResultItem> getSelectedTests(StatusResultsForm form) {
-        String collectionDate = form.getString("collectionDate");
-        String receivedDate = form.getString("recievedDate");
-        String analysisStatus = form.getString("selectedAnalysisStatus");
-        String sampleStatus = form.getString("selectedSampleStatus");
-        String test = form.getString("selectedTest");
+        String collectionDate = form.getCollectionDate();
+        String receivedDate = form.getRecievedDate();
+        String analysisStatus = form.getSelectedAnalysisStatus();
+        String sampleStatus = form.getSelectedSampleStatus();
+        String test = form.getSelectedTest();
 
         List<Analysis> analysisList = new ArrayList<>();
 

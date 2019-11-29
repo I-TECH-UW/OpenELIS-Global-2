@@ -1,13 +1,11 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -52,18 +50,13 @@ public class SampleTypeCreateController extends BaseController {
     }
 
     private void setupDisplayItems(SampleTypeCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-            PropertyUtils.setProperty(form, "inactiveSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-            List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
-            PropertyUtils.setProperty(form, "existingEnglishNames",
-                    getExistingTestNames(typeOfSamples, Locale.ENGLISH));
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setExistingSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        form.setInactiveSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+        List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
+        form.setExistingEnglishNames(getExistingTestNames(typeOfSamples, Locale.ENGLISH));
+        form.setExistingFrenchNames(getExistingTestNames(typeOfSamples, Locale.FRENCH));
     }
 
     private String getExistingTestNames(List<TypeOfSample> typeOfSamples, Locale locale) {
@@ -85,10 +78,10 @@ public class SampleTypeCreateController extends BaseController {
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        String identifyingName = form.getString("sampleTypeEnglishName");
+        String identifyingName = form.getSampleTypeEnglishName();
         String userId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getString("sampleTypeFrenchName"), identifyingName, userId);
+        Localization localization = createLocalization(form.getSampleTypeFrenchName(), identifyingName, userId);
 
         TypeOfSample typeOfSample = createTypeOfSample(identifyingName, userId);
 

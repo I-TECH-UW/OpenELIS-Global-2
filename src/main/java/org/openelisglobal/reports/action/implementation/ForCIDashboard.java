@@ -24,15 +24,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.ForCIDashboardColumnBuilder;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -54,14 +53,14 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-            // PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useDashboard", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+            // form.setUseProjectCode(Boolean.TRUE);
+            form.setUseDashboard(Boolean.TRUE);
+            form.setProjectCodeList(getProjectList());
         } catch (Exception e) {
             Log.error("Error in CIDashboard.setRequestParemeters: ", e);
         }
@@ -79,17 +78,17 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        indicStr = form.getString("projectCode");
+        indicStr = form.getProjectCode();
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        projectStr = form.getString("projectCode");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        projectStr = form.getProjectCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
-        String[] splitline = form.getString("projectCode").split(":");
+        String[] splitline = form.getProjectCode().split(":");
 
         projectStr = splitline[0];
         // indicLabel = splitline[1];
@@ -168,7 +167,8 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     private boolean writeAble(String result) {
 
         String workingResult = result.split("\\(")[0].trim();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "result=" + result + " / workingResult= " +
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "result=" +
+        // result + " / workingResult= " +
         // workingResult);
         String[] splitLine = indicStr.split(":");
         String indic = splitLine[1];

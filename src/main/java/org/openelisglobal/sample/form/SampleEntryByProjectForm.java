@@ -18,12 +18,13 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
 
-public class SampleEntryByProjectForm extends BaseForm {
+public class SampleEntryByProjectForm extends BaseForm implements IAccessionerForm {
 
     @ValidDate(relative = DateRelation.TODAY)
     private String currentDate = "";
@@ -163,10 +164,12 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.project = project;
     }
 
+    @Override
     public String getLabNo() {
         return labNo;
     }
 
+    @Override
     public void setLabNo(String labNo) {
         this.labNo = labNo;
     }
@@ -179,18 +182,22 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.doctor = doctor;
     }
 
+    @Override
     public String getSubjectNumber() {
         return subjectNumber;
     }
 
+    @Override
     public void setSubjectNumber(String subjectNumber) {
         this.subjectNumber = subjectNumber;
     }
 
+    @Override
     public String getSiteSubjectNumber() {
         return siteSubjectNumber;
     }
 
+    @Override
     public void setSiteSubjectNumber(String siteSubjectNumber) {
         this.siteSubjectNumber = siteSubjectNumber;
     }
@@ -211,10 +218,12 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.genders = genders;
     }
 
+    @Override
     public String getBirthDateForDisplay() {
         return birthDateForDisplay;
     }
 
+    @Override
     public void setBirthDateForDisplay(String birthDateForDisplay) {
         this.birthDateForDisplay = birthDateForDisplay;
     }
@@ -259,18 +268,22 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.personLastUpdated = personLastUpdated;
     }
 
+    @Override
     public ProjectData getProjectData() {
         return ProjectData;
     }
 
+    @Override
     public void setProjectData(ProjectData projectData) {
         ProjectData = projectData;
     }
 
+    @Override
     public ObservationData getObservations() {
         return observations;
     }
 
+    @Override
     public void setObservations(ObservationData observations) {
         this.observations = observations;
     }

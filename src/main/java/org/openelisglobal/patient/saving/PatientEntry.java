@@ -23,7 +23,6 @@
  */
 package org.openelisglobal.patient.saving;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +44,7 @@ public class PatientEntry extends Accessioner implements IPatientEntry {
     protected HttpServletRequest request;
 
     public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws LIMSRuntimeException {
         this();
         setFieldsFromForm(form);
         this.request = request;
@@ -64,16 +63,14 @@ public class PatientEntry extends Accessioner implements IPatientEntry {
     }
 
     @Override
-    public final void setFieldsFromForm(PatientEntryByProjectForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        setAccessionNumber((String) form.get("labNo"));
-        setPatientSiteSubjectNo((String) form.get("siteSubjectNumber"));
-        setPatientIdentifier((String) form.get("subjectNumber"));
+    public final void setFieldsFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
+        setAccessionNumber(form.getLabNo());
+        setPatientSiteSubjectNo(form.getSiteSubjectNumber());
+        setPatientIdentifier(form.getSubjectNumber());
         setProjectFormMapperFromForm(form);
     }
 
-    public void setProjectFormMapperFromForm(PatientEntryByProjectForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public void setProjectFormMapperFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
         projectFormMapper = getProjectFormMapper(form);
         projectFormMapper.setPatientForm(true);
         projectForm = projectFormMapper.getProjectForm();

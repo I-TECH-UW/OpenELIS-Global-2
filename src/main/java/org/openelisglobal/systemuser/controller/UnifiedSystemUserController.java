@@ -15,12 +15,10 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -120,11 +118,7 @@ public class UnifiedSystemUserController extends BaseController {
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
 
-        try {
-            PropertyUtils.setProperty(form, "roles", displayRoles);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setRoles(displayRoles);
     }
 
     private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {
@@ -280,9 +274,9 @@ public class UnifiedSystemUserController extends BaseController {
     private void setDefaultProperties(UnifiedSystemUserForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String expireDate = getYearsFromNow(10);
-        PropertyUtils.setProperty(form, "expirationDate", expireDate);
-        PropertyUtils.setProperty(form, "timeout", "480");
-        PropertyUtils.setProperty(form, "systemUserLastupdated", new Timestamp(System.currentTimeMillis()));
+        form.setExpirationDate(expireDate);
+        form.setTimeout("480");
+        form.setSystemUserLastupdated(new Timestamp(System.currentTimeMillis()));
     }
 
     private void setPropertiesForExistingUser(UnifiedSystemUserForm form, String id, boolean doFiltering)
@@ -293,25 +287,25 @@ public class UnifiedSystemUserController extends BaseController {
 
         if (login != null) {
             String proxyPassword = getProxyPassword(login);
-            PropertyUtils.setProperty(form, "loginUserId", login.getId());
-            PropertyUtils.setProperty(form, "accountDisabled", login.getAccountDisabled());
-            PropertyUtils.setProperty(form, "accountLocked", login.getAccountLocked());
-            PropertyUtils.setProperty(form, "userLoginName", login.getLoginName());
-            PropertyUtils.setProperty(form, "userPassword", proxyPassword);
-            PropertyUtils.setProperty(form, "confirmPassword", proxyPassword);
-            PropertyUtils.setProperty(form, "expirationDate", login.getPasswordExpiredDateForDisplay());
-            PropertyUtils.setProperty(form, "timeout", login.getUserTimeOut());
+            form.setLoginUserId(login.getId());
+            form.setAccountDisabled(login.getAccountDisabled());
+            form.setAccountLocked(login.getAccountLocked());
+            form.setUserLoginName(login.getLoginName());
+            form.setUserPassword(proxyPassword);
+            form.setConfirmPassword(proxyPassword);
+            form.setExpirationDate(login.getPasswordExpiredDateForDisplay());
+            form.setTimeout(login.getUserTimeOut());
         }
 
         if (systemUser != null) {
-            PropertyUtils.setProperty(form, "systemUserId", systemUser.getId());
-            PropertyUtils.setProperty(form, "userFirstName", systemUser.getFirstName());
-            PropertyUtils.setProperty(form, "userLastName", systemUser.getLastName());
-            PropertyUtils.setProperty(form, "accountActive", systemUser.getIsActive());
-            PropertyUtils.setProperty(form, "systemUserLastupdated", systemUser.getLastupdated());
+            form.setSystemUserId(systemUser.getId());
+            form.setUserFirstName(systemUser.getFirstName());
+            form.setUserLastName(systemUser.getLastName());
+            form.setAccountActive(systemUser.getIsActive());
+            form.setSystemUserLastupdated(systemUser.getLastupdated());
 
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
-            PropertyUtils.setProperty(form, "selectedRoles", roleIds);
+            form.setSelectedRoles(roleIds);
 
             doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
         }

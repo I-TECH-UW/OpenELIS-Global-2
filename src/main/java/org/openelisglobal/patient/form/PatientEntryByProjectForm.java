@@ -13,6 +13,7 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
@@ -21,7 +22,7 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.annotations.ValidTime;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
-public class PatientEntryByProjectForm extends BaseForm {
+public class PatientEntryByProjectForm extends BaseForm implements IAccessionerForm {
     // for display
     private Map<String, Object> formLists;
 
@@ -251,18 +252,22 @@ public class PatientEntryByProjectForm extends BaseForm {
         this.birthDateForDisplay = birthDateForDisplay;
     }
 
+    @Override
     public ObservationData getObservations() {
         return observations;
     }
 
+    @Override
     public void setObservations(ObservationData observations) {
         this.observations = observations;
     }
 
+    @Override
     public ProjectData getProjectData() {
         return projectData;
     }
 
+    @Override
     public void setProjectData(ProjectData projectData) {
         this.projectData = projectData;
     }

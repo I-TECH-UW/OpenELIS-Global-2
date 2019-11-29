@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
@@ -88,12 +87,12 @@ public class SiteInformationController extends BaseController {
             "/NextPreviousSiteInformation" }, method = RequestMethod.GET)
     // TODO decide if still needing NextPrevious (functionality is not implemented)
     public ModelAndView showSiteInformation(HttpServletRequest request,
-            @ModelAttribute("form") SiteInformationForm form)
+            @ModelAttribute("form") SiteInformationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // protect form from injection arbitrary values on the get step (since csrf is
         // not checked at this stage)
-        form = resetFormToType(form, SiteInformationForm.class);
-        setupFormForRequest(form, request);
+        SiteInformationForm newForm = resetSessionFormToType(oldForm, SiteInformationForm.class);
+        setupFormForRequest(newForm, request);
 
         String id = request.getParameter(ID);
 
@@ -108,14 +107,14 @@ public class SiteInformationController extends BaseController {
 
             request.setAttribute(ID, siteInformation.getId());
 
-            PropertyUtils.setProperty(form, "paramName", siteInformation.getName());
-            PropertyUtils.setProperty(form, "description", getInstruction(siteInformation));
-            PropertyUtils.setProperty(form, "value", siteInformation.getValue());
-            setLocalizationValues(form, siteInformation);
-            PropertyUtils.setProperty(form, "encrypted", siteInformation.isEncrypted());
-            PropertyUtils.setProperty(form, "valueType", siteInformation.getValueType());
-            PropertyUtils.setProperty(form, "editable", isEditable(siteInformation));
-            PropertyUtils.setProperty(form, "tag", siteInformation.getTag());
+            newForm.setParamName(siteInformation.getName());
+            newForm.setDescription(getInstruction(siteInformation));
+            newForm.setValue(siteInformation.getValue());
+            setLocalizationValues(newForm, siteInformation);
+            newForm.setEncrypted(siteInformation.isEncrypted());
+            newForm.setValueType(siteInformation.getValueType());
+            newForm.setEditable(isEditable(siteInformation));
+            newForm.setTag(siteInformation.getTag());
 
             if ("dictionary".equals(siteInformation.getValueType())) {
                 List<String> dictionaryValues = new ArrayList<>();
@@ -127,11 +126,11 @@ public class SiteInformationController extends BaseController {
                     dictionaryValues.add(dictionary.getDictEntry());
                 }
 
-                PropertyUtils.setProperty(form, "dictionaryValues", dictionaryValues);
+                newForm.setDictionaryValues(dictionaryValues);
             }
         }
 
-        String domainName = form.getString("siteInfoDomainName");
+        String domainName = newForm.getSiteInfoDomainName();
         if ("SiteInformation".equals(domainName)) {
             if (isNew) {
                 request.setAttribute("key", "siteInformation.add.title");
@@ -146,7 +145,7 @@ public class SiteInformationController extends BaseController {
             }
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
@@ -240,8 +239,8 @@ public class SiteInformationController extends BaseController {
         // N.B. The reason for this branch is that localization does not actually update
         // site information, it updates the
         // localization table
-        if ("localization".equals(form.getString("tag"))) {
-            String localizationId = form.getString("value");
+        if ("localization".equals(form.getTag())) {
+            String localizationId = form.getValue();
             forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
         } else {
             forward = validateAndUpdateSiteInformation(request, response, form, isNew);
@@ -281,8 +280,8 @@ public class SiteInformationController extends BaseController {
     public String validateAndUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
             SiteInformationForm form, boolean newSiteInformation) {
 
-        String name = form.getString("paramName");
-        String value = form.getString("value");
+        String name = form.getParamName();
+        String value = form.getValue();
         Errors errors = new BaseErrors();
 
         if (!isValid(request, name, value, errors)) {
@@ -294,9 +293,9 @@ public class SiteInformationController extends BaseController {
 
         if (newSiteInformation) {
             siteInformation.setName(name);
-            siteInformation.setDescription(form.getString("description"));
+            siteInformation.setDescription(form.getDescription());
             siteInformation.setValueType("text");
-            siteInformation.setEncrypted((Boolean) form.get("encrypted"));
+            siteInformation.setEncrypted(form.isEncrypted());
             siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
         } else {
             siteInformation = siteInformationService.get(request.getParameter(ID));
@@ -305,7 +304,7 @@ public class SiteInformationController extends BaseController {
         siteInformation.setValue(value);
         siteInformation.setSysUserId(getSysUserId(request));
 
-        String domainName = form.getString("siteInfoDomainName");
+        String domainName = form.getSiteInfoDomainName();
 
         if ("SiteInformation".equals(domainName)) {
             siteInformation.setDomain(SITE_IDENTITY_DOMAIN);

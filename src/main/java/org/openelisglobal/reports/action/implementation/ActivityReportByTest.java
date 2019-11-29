@@ -19,10 +19,10 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ActivityReportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 
@@ -37,7 +37,7 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage("report.activity.report.base") + " " + MessageUtil.getMessage("report.by.test"),
                 MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
@@ -56,7 +56,7 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
 
         List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodWithTest(dateRange.getLowDate(),
                 dateRange.getHighDate(), testSelection.getSelection());
-        testsResults = new ArrayList<ActivityReportBean>(resultList.size());
+        testsResults = new ArrayList<>(resultList.size());
 
         String currentAnalysisId = "-1";
         for (Result result : resultList) {

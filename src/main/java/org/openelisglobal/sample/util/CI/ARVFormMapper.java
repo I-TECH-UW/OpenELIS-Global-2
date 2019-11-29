@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.test.valueholder.Test;
 
 public class ARVFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
     private final String projectCode = MessageUtil.getMessage("sample.entry.project.LART");
 
-    public ARVFormMapper(String projectFormId, BaseForm form) {
+    public ARVFormMapper(String projectFormId, IProjectForm form) {
         super(projectFormId, form);
     }
 
@@ -60,7 +60,7 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         return testList;
     }
 
-    public List<Test> getEDTATubeTests(BaseForm form) {
+    public List<Test> getEDTATubeTests(IProjectForm form) {
         List<Test> testList = new ArrayList<>();
 
         if (projectData.getNfsTest()) {

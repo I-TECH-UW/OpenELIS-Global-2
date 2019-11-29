@@ -27,7 +27,6 @@ import org.openelisglobal.reports.action.implementation.IReportParameterSetter;
 import org.openelisglobal.reports.action.implementation.ReportImplementationFactory;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
-import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,20 +57,20 @@ public class ReportController extends BaseController {
     }
 
     @RequestMapping(value = "/Report", method = RequestMethod.GET)
-    public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
+    public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, ReportForm.class);
-        form.setFormMethod(RequestMethod.GET);
+        ReportForm newForm = resetSessionFormToType(oldForm, ReportForm.class);
+        newForm.setFormMethod(RequestMethod.GET);
 
-        PropertyUtils.setProperty(form, "type", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "report", request.getParameter("report"));
+        newForm.setType(request.getParameter("type"));
+        newForm.setReport(request.getParameter("report"));
         IReportParameterSetter setter = ReportImplementationFactory.getParameterSetter(request.getParameter("report"));
 
         if (setter != null) {
-            setter.setRequestParameters(form);
+            setter.setRequestParameters(newForm);
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     @RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
@@ -135,14 +134,24 @@ public class ReportController extends BaseController {
         SpringContext.getBean(IReportTrackingService.class).addReports(refIds, type, reportName, getSysUserId(request));
     }
 
-    public String getReportPath() {
+    private String getReportPath() {
+        String reportPath = getReportPathValue();
+        if (reportPath.endsWith(File.separator)) {
+            return reportPath;
+        } else {
+            return reportPath + File.separator;
+        }
+    }
+
+    private String getReportPathValue() {
 
         if (reportPath == null) {
-            SiteInformation reportsPath = siteInformationService.getSiteInformationByName("reportsDirectory");
-            if (reportsPath != null) {
-                reportPath = reportsPath.getValue();
-                return reportPath;
-            }
+            // TODO csl this was added by external developer but it breaks the other reports
+//            SiteInformation reportsPath = siteInformationService.getSiteInformationByName("reportsDirectory");
+//            if (reportsPath != null) {
+//                reportPath = reportsPath.getValue();
+//                return reportPath;
+//            }
             ClassLoader classLoader = getClass().getClassLoader();
             reportPath = classLoader.getResource("reports").getPath();
             try {

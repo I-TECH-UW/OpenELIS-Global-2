@@ -137,14 +137,10 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         form.setNceCategories(nceCategoryService.getAllNceCategories());
         form.setNceTypes(nceTypeService.getAllNceTypes());
-        PropertyUtils.setProperty(form, "labComponentList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.LABORATORY_COMPONENT));
-        PropertyUtils.setProperty(form, "severityConsequencesList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
-        PropertyUtils.setProperty(form, "severityRecurrenceList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
-        PropertyUtils.setProperty(form, "reportingUnits",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setLabComponentList(DisplayListService.getInstance().getList(DisplayListService.ListType.LABORATORY_COMPONENT));
+        form.setSeverityConsequencesList(DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
+        form.setSeverityRecurrenceList(DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+        form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
         form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
@@ -182,8 +178,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         this.initFormForFollowUp(nceNumber, form);
         NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
         if (event != null) {
-            PropertyUtils.setProperty(form, "actionTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.ACTION_TYPE_LIST));
+            form.setActionTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.ACTION_TYPE_LIST));
             form.setLaboratoryComponent(event.getLaboratoryComponent());
             form.setNceCategory(event.getNceCategoryId() + "");
             form.setNceType(event.getNceTypeId() + "");

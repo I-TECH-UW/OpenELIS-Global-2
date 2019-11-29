@@ -16,7 +16,6 @@
 */
 package org.openelisglobal.patient.saving;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.provider.query.SampleItemTestProvider;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
@@ -49,10 +48,10 @@ import org.springframework.stereotype.Service;
 @Primary
 public class SampleEntry extends Accessioner implements ISampleEntry {
 
-    protected BaseForm form;
+    protected IAccessionerForm form;
     protected HttpServletRequest request;
 
-    public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+    public SampleEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) throws Exception {
         this();
         setFieldsFromForm(form);
         this.request = request;
@@ -71,16 +70,14 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    public final void setFieldsFromForm(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        setAccessionNumber((String) form.get("labNo"));
-        setPatientIdentifier((String) form.get("subjectNumber"));
+    public final void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException {
+        setAccessionNumber(form.getLabNo());
+        setPatientIdentifier(form.getSubjectNumber());
         setProjectFormMapperFromForm(form);
         this.form = form;
     }
 
-    public void setProjectFormMapperFromForm(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public void setProjectFormMapperFromForm(IAccessionerForm form) throws LIMSRuntimeException {
         projectFormMapper = getProjectFormMapper(form);
         projectFormMapper.setPatientForm(false);
         projectForm = projectFormMapper.getProjectForm();

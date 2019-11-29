@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -54,24 +53,23 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
-        PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
-        PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
-        PropertyUtils.setProperty(form, "patientSearch", new PatientSearch());
-        PropertyUtils.setProperty(form, "sampleTypes",
-                DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-        PropertyUtils.setProperty(form, "testSectionList",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.setPatientProperties(new PatientManagementInfo());
+        form.setPatientSearch(new PatientSearch());
+        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
 
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair) program).getValue());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // program).getValue());
         // }
 
         addProjectList(form);
         addBillingLabel();
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            PropertyUtils.setProperty(form, "initialSampleConditionList",
+            form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
 
@@ -92,9 +90,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
-        PatientManagementInfo patientInfo = (PatientManagementInfo) PropertyUtils.getProperty(form,
-                "patientProperties");
-        SampleOrderItem sampleOrder = (SampleOrderItem) PropertyUtils.getProperty(form, "sampleOrderItems");
+        PatientManagementInfo patientInfo = form.getPatientProperties();
+        SampleOrderItem sampleOrder = form.getSampleOrderItems();
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");

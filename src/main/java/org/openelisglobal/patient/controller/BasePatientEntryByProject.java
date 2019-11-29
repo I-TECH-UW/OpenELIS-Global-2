@@ -6,13 +6,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.organization.util.OrganizationTypeList;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -55,12 +54,12 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * @throws Exception all from property utils if we've coded things wrong in the
      *                   form def or in this class.
      */
-    protected void setProjectFormName(BaseForm form, String projectFormName)
+    protected void setProjectFormName(PatientEntryByProjectForm form, String projectFormName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        ObservationData observations = ((ObservationData) (PropertyUtils.getProperty(form, "observations")));
+        ObservationData observations = form.getObservations();
         if (observations == null) {
             observations = new ObservationData();
-            PropertyUtils.setProperty(form, "observations", observations);
+            form.setObservations(observations);
         }
         observations.setProjectFormName(projectFormName);
     }
@@ -111,14 +110,14 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * @throws IllegalAccessException
      *
      */
-    public static Map<String, Object> addAllPatientFormLists(BaseForm form)
+    public static Map<String, Object> addAllPatientFormLists(PatientEntryByProjectForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("GENDERS", PatientUtil.findGenders());
 
-        PropertyUtils.setProperty(form, "formLists", resultMap);
-        PropertyUtils.setProperty(form, "dictionaryLists", ObservationHistoryList.MAP);
-        PropertyUtils.setProperty(form, "organizationTypeLists", OrganizationTypeList.MAP);
+        form.setFormLists(resultMap);
+        form.setDictionaryLists(ObservationHistoryList.MAP);
+        form.setOrganizationTypeLists(OrganizationTypeList.MAP);
 
         return resultMap;
     }

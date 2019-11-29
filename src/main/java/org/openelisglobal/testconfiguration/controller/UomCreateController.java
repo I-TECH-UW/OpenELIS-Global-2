@@ -1,13 +1,11 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -41,21 +39,12 @@ public class UomCreateController extends BaseController {
     }
 
     private void setupDisplayItems(UomCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingUomList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
-            PropertyUtils.setProperty(form, "inactiveUomList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setExistingUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+        form.setInactiveUomList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
         List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
-        try {
-            PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, Locale.ENGLISH));
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setExistingEnglishNames(getExistingUomNames(uoms, Locale.ENGLISH));
+        form.setExistingFrenchNames(getExistingUomNames(uoms, Locale.FRENCH));
     }
 
     private String getExistingUomNames(List<UnitOfMeasure> uoms, Locale locale) {
@@ -82,7 +71,7 @@ public class UomCreateController extends BaseController {
         String userId = getSysUserId(request);
 
         // Localization localization =
-        // createLocalization(dynaForm.getString("uomFrenchName"), identifyingName,
+        // createLocalization(dynaform.getUomFrenchName(), identifyingName,
         // userId);
 
         UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);

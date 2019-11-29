@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.reports.form.ReportForm;
 
 public interface IReportCreator {
     String INCOMPLETE_PARAMS = "Incompleate parameters";
     String INVALID_PARAMS = "Invalid parameters";
     String SUCCESS = IActionConstants.FWD_SUCCESS;
 
-    void initializeReport(BaseForm form);
+    void initializeReport(ReportForm form);
 
     String getResponseHeaderName();
 

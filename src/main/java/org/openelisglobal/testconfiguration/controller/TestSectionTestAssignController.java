@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
@@ -67,13 +65,9 @@ public class TestSectionTestAssignController extends BaseController {
         // we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<>(testSections);
         joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-        try {
-            PropertyUtils.setProperty(form, "testSectionList", joinedList);
-            PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
 
+        form.setTestSectionList(joinedList);
+        form.setSectionTestList(testSectionTestsMap);
     }
 
     @Override
@@ -108,9 +102,9 @@ public class TestSectionTestAssignController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String testId = form.getString("testId");
-        String testSectionId = form.getString("testSectionId");
-        String deactivateTestSectionId = form.getString("deactivateTestSectionId");
+        String testId = form.getTestId();
+        String testSectionId = form.getTestSectionId();
+        String deactivateTestSectionId = form.getDeactivateTestSectionId();
         boolean updateTestSection = false;
         String currentUser = getSysUserId(request);
         Test test = SpringContext.getBean(TestService.class).get(testId);
