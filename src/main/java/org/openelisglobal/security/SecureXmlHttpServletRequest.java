@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.owasp.encoder.Encode;
 
+//The parameters fetched by this class are able to be used securely in an xml
+//context as they are escaped
 public class SecureXmlHttpServletRequest extends HttpServletRequestWrapper {
 
     public SecureXmlHttpServletRequest(HttpServletRequest request) {
@@ -14,10 +16,11 @@ public class SecureXmlHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public String getParameter(String name) {
         String param = super.getParameter(name);
-        if (param == null)
+        if (param == null) {
             return null;
-        else
+        } else {
             return Encode.forXml(param);
+        }
     }
 
 }

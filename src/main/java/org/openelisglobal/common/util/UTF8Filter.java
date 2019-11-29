@@ -18,6 +18,7 @@
 package org.openelisglobal.common.util;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,7 +34,7 @@ public class UTF8Filter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        request.setCharacterEncoding("UTF8");
+        request.setCharacterEncoding(StandardCharsets.UTF_8.toString());
         chain.doFilter(request, response);
     }
 

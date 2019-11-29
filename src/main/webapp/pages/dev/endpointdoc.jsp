@@ -19,6 +19,7 @@
 	<meta name="msapplication-TileColor" content="#2d89ef">
 	<meta name="msapplication-config" content="favicon/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 </head>
 <body>
 

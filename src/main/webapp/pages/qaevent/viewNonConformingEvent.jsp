@@ -5,7 +5,7 @@
   Time: 12:48
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>

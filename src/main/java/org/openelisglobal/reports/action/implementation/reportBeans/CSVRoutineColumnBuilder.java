@@ -214,12 +214,10 @@ abstract public class CSVRoutineColumnBuilder {
         // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
-        // sql.substring(0, 7000)); // the SQL is
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" + sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
-        // sql.substring(7000));
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" + sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
@@ -288,8 +286,7 @@ abstract public class CSVRoutineColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
-                    "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
 
@@ -411,8 +408,7 @@ abstract public class CSVRoutineColumnBuilder {
                 }
 
             case DEBUG:
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
-                        "Processing Column Value: " + csvName + " \"" + value + "\"");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
             default:

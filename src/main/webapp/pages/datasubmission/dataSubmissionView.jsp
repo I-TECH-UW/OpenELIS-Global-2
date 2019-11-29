@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 					org.openelisglobal.datasubmission.valueholder.DataIndicator,
 					org.openelisglobal.common.util.DateUtil" %>

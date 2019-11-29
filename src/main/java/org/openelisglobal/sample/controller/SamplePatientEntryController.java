@@ -64,8 +64,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
-        // program).getValue());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair) program).getValue());
         // }
 
         addProjectList(form);
