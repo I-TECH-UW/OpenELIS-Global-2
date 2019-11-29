@@ -1,12 +1,12 @@
 package org.openelisglobal.reportconfiguration.form;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.reportconfiguration.valueholder.Report;
 import org.openelisglobal.reportconfiguration.valueholder.ReportCategory;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.Serializable;
-import java.util.List;
 
 public class ReportConfigurationForm extends BaseForm implements Serializable {
 

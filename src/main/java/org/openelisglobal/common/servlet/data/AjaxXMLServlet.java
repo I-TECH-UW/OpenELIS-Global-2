@@ -27,7 +27,6 @@ import org.openelisglobal.common.provider.data.DataProviderFactory;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -72,7 +71,7 @@ public class AjaxXMLServlet extends AjaxServlet {
         String dataProvider = request.getParameter("provider");
         BaseDataProvider provider = DataProviderFactory.getInstance().getDataProvider(dataProvider);
         provider.setServlet(this);
-        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+        provider.processRequest(request, response);
     }
 
 }

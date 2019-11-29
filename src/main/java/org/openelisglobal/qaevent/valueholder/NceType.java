@@ -1,10 +1,9 @@
 package org.openelisglobal.qaevent.valueholder;
 
-import org.openelisglobal.common.valueholder.BaseObject;
-
-import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
+
+import org.openelisglobal.common.valueholder.BaseObject;
 
 public class NceType extends BaseObject<String> {
     private String id;

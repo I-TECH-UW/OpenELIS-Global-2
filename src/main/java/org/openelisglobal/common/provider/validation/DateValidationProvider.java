@@ -21,13 +21,14 @@ import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
+import org.owasp.encoder.Encode;
 
 public class DateValidationProvider extends BaseValidationProvider {
 
@@ -40,7 +41,7 @@ public class DateValidationProvider extends BaseValidationProvider {
     }
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         // get id from request
@@ -55,7 +56,7 @@ public class DateValidationProvider extends BaseValidationProvider {
             Date date = getDate(dateString);
             result = validateDate(date, relative);
         }
-        ajaxServlet.sendData(formField, result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
     }
 
     public Date getDate(String date) {

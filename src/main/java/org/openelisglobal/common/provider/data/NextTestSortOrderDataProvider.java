@@ -18,17 +18,18 @@ package org.openelisglobal.common.provider.data;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.data.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.owasp.encoder.Encode;
 
 /**
  *
@@ -48,12 +49,12 @@ public class NextTestSortOrderDataProvider extends BaseDataProvider {
     }
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String testSectionId = request.getParameter("tsid");
         String formField = request.getParameter("field");
         String result = getData(testSectionId);
-        ajaxServlet.sendData(formField, result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
     }
 
     // modified for efficiency bugzilla 1367

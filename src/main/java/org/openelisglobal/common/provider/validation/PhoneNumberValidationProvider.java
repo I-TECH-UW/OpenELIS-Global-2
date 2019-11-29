@@ -19,17 +19,18 @@ package org.openelisglobal.common.provider.validation;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
  * via AJAX.
- * 
+ *
  */
 public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
@@ -42,7 +43,7 @@ public class PhoneNumberValidationProvider extends BaseValidationProvider {
     }
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String field = request.getParameter("fieldId");
@@ -57,6 +58,6 @@ public class PhoneNumberValidationProvider extends BaseValidationProvider {
         }
 
         response.setCharacterEncoding("UTF-8");
-        ajaxServlet.sendData(field, returnData, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
     }
 }

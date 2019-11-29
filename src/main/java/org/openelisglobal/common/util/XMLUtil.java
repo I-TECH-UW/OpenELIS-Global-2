@@ -59,11 +59,11 @@ public class XMLUtil {
         return xml.toString();
     }
 
-    private static String makeStartTag(String tagName) {
+    public static String makeStartTag(String tagName) {
         return "<" + makeTagName(tagName) + ">";
     }
 
-    private static String makeEndTag(String tagName) {
+    public static String makeEndTag(String tagName) {
         return "</" + makeTagName(tagName) + ">";
     }
 
@@ -73,7 +73,7 @@ public class XMLUtil {
         return tagName;
     }
 
-    private static String makeAttributeName(String attributeName) {
+    public static String makeAttributeName(String attributeName) {
         attributeName = attributeName.replaceAll("[\\t\\n\\f \\/>\"'=]", "");
         return attributeName;
     }

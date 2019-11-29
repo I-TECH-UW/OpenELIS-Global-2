@@ -27,7 +27,6 @@ import org.openelisglobal.common.provider.validation.ValidationProviderFactory;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxXMLServlet extends AjaxServlet {
@@ -68,7 +67,7 @@ public class AjaxXMLServlet extends AjaxServlet {
         String valProvider = request.getParameter("provider");
         BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
         provider.setServlet(this);
-        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+        provider.processRequest(request, response);
     }
 
 }

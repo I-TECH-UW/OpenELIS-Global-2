@@ -1,10 +1,9 @@
 package org.openelisglobal.qaevent.valueholder;
 
-import org.openelisglobal.common.valueholder.BaseObject;
-
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
+
+import org.openelisglobal.common.valueholder.BaseObject;
 
 public class NceActionLog extends BaseObject<String> {
 

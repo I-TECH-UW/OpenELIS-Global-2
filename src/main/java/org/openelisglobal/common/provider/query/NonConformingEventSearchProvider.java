@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -23,7 +24,7 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
     private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String labNumber = request.getParameter("labNumber");
@@ -59,10 +60,16 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
                 TestSection testSection = testSectionService.getTestSectionById(nce.getReportingUnitId());
                 reportingUnit = testSection.getTestSectionName();
             }
-            xml.append("<nce><date>").append(nce.getDateOfEvent()).append("</date><ncenumber>");
-            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>").append(reportingUnit)
-                    .append("</unit>");
-            xml.append("<color>").append(nce.getColorCode()).append("</color></nce>");
+            xml.append("<nce>");
+            XMLUtil.appendKeyValue("date", nce.getDateOfEvent().toString(), xml);
+            XMLUtil.appendKeyValue("ncenumber", nce.getNceNumber(), xml);
+            XMLUtil.appendKeyValue("unit", reportingUnit, xml);
+            XMLUtil.appendKeyValue("color", nce.getColorCode(), xml);
+            xml.append("</nce>");
+//            xml.append("<nce><date>").append(nce.getDateOfEvent()).append("</date><ncenumber>");
+//            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>").append(reportingUnit)
+//                    .append("</unit>");
+//            xml.append("<color>").append(nce.getColorCode()).append("</color></nce>");
         }
     }
 

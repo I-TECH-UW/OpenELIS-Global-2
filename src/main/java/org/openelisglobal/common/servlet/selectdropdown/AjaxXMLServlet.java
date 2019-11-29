@@ -26,7 +26,6 @@ import org.openelisglobal.common.provider.selectdropdown.BaseSelectDropDownProvi
 import org.openelisglobal.common.provider.selectdropdown.SelectDropDownProviderFactory;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
@@ -65,7 +64,7 @@ public class AjaxXMLServlet extends BaseAjaxServlet {
                 .getSelectDropDownProvider(selectDropDownProvider);
 
         provider.setServlet(this);
-        List list = provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+        List list = provider.processRequest(request, response);
 
         // bugzilla 1844 adding toggle sort and toggle label values
         if (sortable) {
