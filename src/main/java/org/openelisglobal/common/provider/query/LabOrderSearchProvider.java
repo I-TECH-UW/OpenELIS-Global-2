@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -40,7 +41,6 @@ import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -84,7 +84,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private static final String PROVIDER_PHONE = "phone";
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String orderNumber = request.getParameter("orderNumber");
@@ -362,18 +362,15 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     }
 
     private void addTests(StringBuilder xml, String parent, List<Test> tests) {
-        xml.append("<");
-        xml.append(parent);
-        xml.append(">");
+
+        xml.append(XMLUtil.makeStartTag(parent));
         for (Test test : tests) {
             xml.append("<test>");
             XMLUtil.appendKeyValue("id", test.getId(), xml);
             XMLUtil.appendKeyValue("name", test.getLocalizedName(), xml);
             xml.append("</test>");
         }
-        xml.append("</");
-        xml.append(parent);
-        xml.append(">");
+        xml.append(XMLUtil.makeEndTag(parent));
     }
 
     private void addCrossPanels(StringBuilder xml) {

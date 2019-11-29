@@ -17,7 +17,6 @@ package org.openelisglobal.scriptlet.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;

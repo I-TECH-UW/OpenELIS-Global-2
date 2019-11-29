@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
@@ -29,7 +30,6 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.renametestsection.service.RenameTestSectionService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
@@ -49,7 +49,7 @@ public class EntityNamesProvider extends BaseQueryProvider {
     protected AjaxServlet ajaxServlet = null;
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String id = request.getParameter("entityId");

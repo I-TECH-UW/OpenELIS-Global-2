@@ -1,9 +1,9 @@
 package org.openelisglobal.qaevent.service;
 
+import java.util.List;
+
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
-
-import java.util.List;
 
 public interface NCEventService extends BaseObjectService<NcEvent, String> {
 

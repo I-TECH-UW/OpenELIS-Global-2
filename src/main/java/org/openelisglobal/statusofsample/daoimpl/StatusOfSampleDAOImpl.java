@@ -16,7 +16,6 @@
 package org.openelisglobal.statusofsample.daoimpl;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;

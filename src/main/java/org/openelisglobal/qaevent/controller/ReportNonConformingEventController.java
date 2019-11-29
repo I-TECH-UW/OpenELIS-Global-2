@@ -1,5 +1,14 @@
 package org.openelisglobal.qaevent.controller;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
@@ -7,17 +16,12 @@ import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
-import org.openelisglobal.qaevent.form.NonConformityForm;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
-import org.openelisglobal.qaevent.valueholder.NceCategory;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
 import org.openelisglobal.requester.service.SampleRequesterService;
-import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -27,16 +31,11 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 @Controller
 public class ReportNonConformingEventController extends BaseController {

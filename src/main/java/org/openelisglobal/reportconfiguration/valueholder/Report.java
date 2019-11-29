@@ -1,12 +1,13 @@
 package org.openelisglobal.reportconfiguration.valueholder;
 
-import org.openelisglobal.common.valueholder.BaseObject;
+import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Objects;
+
+import org.openelisglobal.common.valueholder.BaseObject;
 
 @Entity
 public class Report extends BaseObject<String> {

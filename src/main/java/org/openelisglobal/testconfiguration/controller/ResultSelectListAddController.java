@@ -1,5 +1,7 @@
 package org.openelisglobal.testconfiguration.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.testconfiguration.form.ResultSelectListForm;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ResultSelectListAddController extends BaseController {

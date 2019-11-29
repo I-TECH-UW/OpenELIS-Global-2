@@ -28,6 +28,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.LabelValuePair;
+import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.history.service.HistoryService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
@@ -1198,9 +1199,8 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 
         for (int i = 0; i < list.size(); i++) {
             LabelValuePair lvp = (LabelValuePair) list.elementAt(i);
-            xml.append("<").append(lvp.getLabel()).append(">");
-            xml.append(lvp.getValue());
-            xml.append("</").append(lvp.getLabel()).append(">\n");
+            XMLUtil.appendKeyValue(lvp.getLabel(), lvp.getValue(), xml);
+            xml.append("\n");
         }
 
         return xml.toString();

@@ -13,7 +13,6 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class AjaxQueryXMLServlet extends AjaxServlet {
@@ -56,7 +55,7 @@ public class AjaxQueryXMLServlet extends AjaxServlet {
         String queryProvider = request.getParameter("provider");
         BaseQueryProvider provider = QueryProviderFactory.getInstance().getQueryProvider(queryProvider);
         provider.setServlet(this);
-        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+        provider.processRequest(request, response);
     }
 
 }

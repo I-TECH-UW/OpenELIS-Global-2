@@ -1,26 +1,21 @@
 package org.openelisglobal.qaevent.controller;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
-import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.service.NceSpecimenService;
 import org.openelisglobal.qaevent.service.NceTypeService;
-import org.openelisglobal.qaevent.valueholder.NcEvent;
-import org.openelisglobal.qaevent.valueholder.NceCategory;
-import org.openelisglobal.qaevent.valueholder.NceSpecimen;
-import org.openelisglobal.qaevent.valueholder.NceType;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
 import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -29,11 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class ViewNonConformingEventController extends BaseController {

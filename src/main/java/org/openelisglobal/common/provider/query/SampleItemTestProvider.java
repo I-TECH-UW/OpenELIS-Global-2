@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -37,7 +38,6 @@ import org.openelisglobal.sample.util.CI.IProjectFormMapper;
 import org.openelisglobal.sample.util.CI.ProjectFormMapperFactory;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -58,7 +58,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         /**
          * The primary Key for a sample

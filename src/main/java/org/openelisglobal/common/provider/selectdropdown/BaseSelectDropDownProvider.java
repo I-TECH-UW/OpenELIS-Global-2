@@ -19,16 +19,16 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ajaxtags.servlets.BaseAjaxServlet;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 
 public abstract class BaseSelectDropDownProvider {
 
     protected BaseAjaxServlet ajaxServlet = null;
 
-    public abstract List processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public abstract List processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException;
 
     public void setServlet(BaseAjaxServlet as) {

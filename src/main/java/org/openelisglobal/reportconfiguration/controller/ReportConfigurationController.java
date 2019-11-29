@@ -1,7 +1,12 @@
 package org.openelisglobal.reportconfiguration.controller;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reportconfiguration.form.ReportConfigurationForm;
 import org.openelisglobal.reportconfiguration.service.ReportService;
@@ -15,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class ReportConfigurationController extends BaseController {

@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.util.XMLUtil;
@@ -37,7 +38,6 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.valueholder.Sample;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
@@ -77,7 +77,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 //    private RequestType requestType = RequestType.UNKNOWN;
 
     @Override
-    public void processRequest(SecureXmlHttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String patientKey = request.getParameter("patientKey");

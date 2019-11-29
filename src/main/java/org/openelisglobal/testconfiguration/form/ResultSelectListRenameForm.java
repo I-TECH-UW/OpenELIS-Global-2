@@ -1,8 +1,8 @@
 package org.openelisglobal.testconfiguration.form;
 
-import org.openelisglobal.common.form.BaseForm;
-
 import java.util.List;
+
+import org.openelisglobal.common.form.BaseForm;
 
 public class ResultSelectListRenameForm extends BaseForm {
 

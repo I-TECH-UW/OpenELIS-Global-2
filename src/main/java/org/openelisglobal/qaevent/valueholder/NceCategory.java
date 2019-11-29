@@ -1,7 +1,8 @@
 package org.openelisglobal.qaevent.valueholder;
 
-import org.openelisglobal.common.valueholder.BaseObject;
 import java.sql.Timestamp;
+
+import org.openelisglobal.common.valueholder.BaseObject;
 
 public class NceCategory extends BaseObject<String> {
 
