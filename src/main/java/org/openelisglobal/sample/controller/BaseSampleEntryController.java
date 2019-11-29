@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -18,6 +17,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -134,7 +134,8 @@ public abstract class BaseSampleEntryController extends BaseController {
      *                   internally an appropriate message is added and a forward
      *                   fail is returned.
      */
-    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, BaseForm form) throws Exception {
+    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, IAccessionerForm form)
+            throws Exception {
         String forward;
         try {
             forward = accessioner.save();

@@ -17,7 +17,6 @@
 */
 package org.openelisglobal.sample.util.CI;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,9 +25,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
@@ -403,43 +400,22 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
     @Override
     public String getCollectionDate() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "interviewDate");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-            LogEvent.logDebug(e);
-        }
-        return null;
+        return form.getInterviewDate();
     }
 
     @Override
     public String getReceivedDate() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "receivedDateForDisplay");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getReceivedDateForDisplay();
     }
 
     @Override
     public String getCollectionTime() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "interviewTime");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getInterviewTime();
     }
 
     @Override
     public String getReceivedTime() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "receivedTimeForDisplay");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getReceivedTimeForDisplay();
     }
 
     /**
@@ -463,12 +439,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
     @Override
     public String getSiteSubjectNumber() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "siteSubjectNumber");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getSiteSubjectNumber();
     }
 
     // the forms have the organization ID in "centerCode", but sample forms have
@@ -479,12 +450,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
             if (getProjectForm().equals(ProjectForm.VL)) {
                 return getSampleCenterCode();
             } else {
-                try {
-                    return PropertyUtils.getProperty(form, "centerCode").toString();
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    LogEvent.logError(e.getMessage(), e);
-                }
-                return null;
+                return form.getCenterCode().toString();
             }
         } else {
             return getSampleCenterCode();
@@ -492,12 +458,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     }
 
     public ObservationData getObservationData() {
-        try {
-            return (ObservationData) (PropertyUtils.getProperty(getForm(), "observations"));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getObservations();
     }
 
     /**
@@ -508,12 +469,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
      */
     @Override
     public String getPatientId() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "patientPK");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getPatientPK();
     }
 
     /**
@@ -524,12 +480,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
      */
     @Override
     public String getSampleId() {
-        try {
-            return (String) PropertyUtils.getProperty(form, "samplePK");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
-        return null;
+        return form.getSamplePK();
     }
 
     /**

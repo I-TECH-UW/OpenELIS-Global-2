@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -86,6 +87,9 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     @Valid
     private ObservationData observations;
 
+    @Min(0)
+    private Integer centerCode;
+
     // for display
     private Map<String, List<Organization>> organizationTypeLists;
 
@@ -124,6 +128,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.currentDate = currentDate;
     }
 
+    @Override
     public String getReceivedDateForDisplay() {
         return receivedDateForDisplay;
     }
@@ -132,6 +137,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.receivedDateForDisplay = receivedDateForDisplay;
     }
 
+    @Override
     public String getReceivedTimeForDisplay() {
         return receivedTimeForDisplay;
     }
@@ -140,6 +146,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.receivedTimeForDisplay = receivedTimeForDisplay;
     }
 
+    @Override
     public String getInterviewDate() {
         return interviewDate;
     }
@@ -148,6 +155,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.interviewDate = interviewDate;
     }
 
+    @Override
     public String getInterviewTime() {
         return interviewTime;
     }
@@ -228,6 +236,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.birthDateForDisplay = birthDateForDisplay;
     }
 
+    @Override
     public String getSamplePK() {
         return samplePK;
     }
@@ -236,6 +245,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
         this.samplePK = samplePK;
     }
 
+    @Override
     public String getPatientPK() {
         return patientPK;
     }
@@ -318,6 +328,15 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
 
     public void setPatientSearch(PatientSearch patientSearch) {
         this.patientSearch = patientSearch;
+    }
+
+    @Override
+    public Integer getCenterCode() {
+        return centerCode;
+    }
+
+    public void setCenterCode(Integer centerCode) {
+        this.centerCode = centerCode;
     }
 
 }

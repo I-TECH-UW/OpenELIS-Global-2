@@ -396,9 +396,9 @@ abstract public class CSVColumnBuilder {
                 }
                 switch (orderStatus) {
                 case Entered:
-                    return "E"; // entered, entr�e
+                    return "E"; // entered, entree
                 case Started:
-                    return "C"; // commenced, commenc�
+                    return "C"; // commenced, commence
                 case Finished:
                     return "F"; // Finished, Finale
                 case NonConforming_depricated:
@@ -543,7 +543,7 @@ abstract public class CSVColumnBuilder {
         // resource name, because some tests have fancy characters in them and
         // somewhere
         // between iReport, Java and postgres a complex name (e.g. one including
-        // a beta, "�HCG Quant") get messed up and isn't found.
+        // a beta, " HCG Quant") get messed up and isn't found.
         query.append("\n as " + listName + " ( " // inner use of the list name
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {

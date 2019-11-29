@@ -17,7 +17,7 @@
  */
 
 /**
- * C�te d'Ivoire
+ * Cote d'Ivoire
  * @author pahill
  * @since 2010-06-15
  **/
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,17 +39,11 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.formfields.FormFields;
-import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -1301,46 +1294,47 @@ public abstract class Accessioner implements IAccessioner {
 
     protected abstract String getActionLabel();
 
-    protected void persistInitialSampleConditions()
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if (!FormFields.getInstance().useField(Field.InitialSampleCondition)) {
-            return;
-        }
-
-        try {
-            String xml = (String) PropertyUtils.getProperty(projectFormMapper.getForm(), "sampleXML");
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
-            Document sampleDom = DocumentHelper.parseText(xml);
-            for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
-                Element sampleItem = (Element) i.next();
-                String initialSampleConditionIdString = sampleItem.attributeValue("initialConditionIds");
-                String sampleItemId = sampleItem.attributeValue("sampleID");
-
-                ObservationHistory observation = new ObservationHistory();
-
-                if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
-                    String[] initialSampleConditionIds = initialSampleConditionIdString.split(",");
-                    for (int j = 0; j < initialSampleConditionIds.length; j++) {
-                        observation = new ObservationHistory();
-                        observation.setValue(initialSampleConditionIds[j]);
-                        observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
-                        observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
-                                SpringContext.getBean(ObservationHistoryTypeService.class), "initialSampleCondition"));
-                        observation.setSampleId(sample.getId());
-                        observation.setSampleItemId(sampleItemId);
-                        observation.setPatientId(patientInDB.getId());
-                        observation.setSysUserId(sysUserId);
-                        observationHistoryService.insert(observation);
-                    }
-                }
-            }
-
-        } catch (DocumentException e) {
-            LogEvent.logDebug(e);
-        }
-        // dynaForm.set("orbservations", observations);
-
-    }
+//    protected void persistInitialSampleConditions()
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//        if (!FormFields.getInstance().useField(Field.InitialSampleCondition)) {
+//            return;
+//        }
+//
+//        try {
+//
+//            String xml = projectFormMapper.getForm().getSampleXML();
+//            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
+//            Document sampleDom = DocumentHelper.parseText(xml);
+//            for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
+//                Element sampleItem = (Element) i.next();
+//                String initialSampleConditionIdString = sampleItem.attributeValue("initialConditionIds");
+//                String sampleItemId = sampleItem.attributeValue("sampleID");
+//
+//                ObservationHistory observation = new ObservationHistory();
+//
+//                if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
+//                    String[] initialSampleConditionIds = initialSampleConditionIdString.split(",");
+//                    for (int j = 0; j < initialSampleConditionIds.length; j++) {
+//                        observation = new ObservationHistory();
+//                        observation.setValue(initialSampleConditionIds[j]);
+//                        observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
+//                        observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
+//                                SpringContext.getBean(ObservationHistoryTypeService.class), "initialSampleCondition"));
+//                        observation.setSampleId(sample.getId());
+//                        observation.setSampleItemId(sampleItemId);
+//                        observation.setPatientId(patientInDB.getId());
+//                        observation.setSysUserId(sysUserId);
+//                        observationHistoryService.insert(observation);
+//                    }
+//                }
+//            }
+//
+//        } catch (DocumentException e) {
+//            LogEvent.logDebug(e);
+//        }
+//        // dynaForm.set("orbservations", observations);
+//
+//    }
 
     private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
         ObservationHistoryType oht;

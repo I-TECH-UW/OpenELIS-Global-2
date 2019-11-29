@@ -24,4 +24,22 @@ public interface IProjectForm {
     String getSubjectNumber();
 
     void setSubjectNumber(String subjectNumber);
+
+    String getInterviewDate();
+
+    String getReceivedDateForDisplay();
+
+    String getInterviewTime();
+
+    String getReceivedTimeForDisplay();
+
+    Integer getCenterCode();
+
+    String getPatientPK();
+
+    String getSamplePK();
+
+    String getLabNo();
+
+    void setLabNo(String labNo);
 }
