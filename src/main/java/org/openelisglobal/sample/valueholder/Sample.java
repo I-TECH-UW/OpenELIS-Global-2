@@ -355,15 +355,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         receivedTimeForDisplay = DateUtil.convertTimestampToStringTime(receivedTimestamp);
     }
 
-    /**
-     * @deprecated use DateUtil methods instead
-     * @param receivedTimeForDisplay -- the time for display
-     */
-    @Deprecated
-    public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
-        this.receivedTimeForDisplay = receivedTimeForDisplay;
-    }
-
     public String getReferringId() {
         return referringId;
     }
