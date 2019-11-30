@@ -291,7 +291,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             // bugzilla 1399
-            String sql = "from Test t order by t.testSection.testSectionName, t.testName";
+            String sql = "from Test t order by t.testSection.testSectionName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
@@ -324,10 +324,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             if (wCdPosition == -1) // no wild card looking for exact match
             {
                 newSearchStr = searchString.toLowerCase().trim();
-                sql = "from Test t  where trim(lower (t.description)) = :param  order by t.testSection.testSectionName, t.testName";
+                sql = "from Test t  where trim(lower (t.description)) = :param  order by t.testSection.testSectionName";
             } else {
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-                sql = "from Test t where trim(lower (t.description)) like :param  order by t.testSection.testSectionName, t.testName";
+                sql = "from Test t where trim(lower (t.description)) like :param  order by t.testSection.testSectionName";
             }
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", newSearchStr);
@@ -478,7 +478,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
         List<Test> list;
         try {
-            String sql = "from Test t where upper(t.testName) like upper(:param) and t.isActive='Y' order by upper(t.testName)";
+            String sql = "from Test t where (upper(t.localizedTestName.english) like upper(:param) or upper(t.localizedTestName.french) like upper(:param)) and t.isActive='Y'";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter + "%");
             list = query.list();

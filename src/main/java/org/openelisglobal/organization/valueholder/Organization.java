@@ -68,6 +68,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     private String organizationLocalAbbreviation;
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String code;
+    private Set<OrganizationType> organizationTypes;
 
     public Organization() {
         super();
@@ -252,5 +253,13 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<OrganizationType> getOrganizationTypes() {
+        return organizationTypes;
+    }
+
+    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
+        this.organizationTypes = organizationTypes;
     }
 }

@@ -10,7 +10,6 @@ import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.dao.PanelItemDAO;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
-import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +21,6 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
     protected PanelItemDAO baseObjectDAO;
     @Autowired
     private PanelService panelService;
-    @Autowired
-    private TestService testService;
 
     PanelItemServiceImpl() {
         super(PanelItem.class);

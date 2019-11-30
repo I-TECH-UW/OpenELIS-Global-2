@@ -186,7 +186,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     public List<TestReflex> getAllTestReflexs() throws LIMSRuntimeException {
         List<TestReflex> list = null;
         try {
-            String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
+            String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
@@ -205,7 +205,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     @Override
     @Transactional(readOnly = true)
     public List<TestReflex> getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException {
-        List<TestReflex> list ;
+        List<TestReflex> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -213,7 +213,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // bugzilla 1399 - still need to figure out how to sort (3rd sort
             // column) for dictionary values - requires further step of getting
             // value from dictionary table before sorting
-            String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
+            String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
