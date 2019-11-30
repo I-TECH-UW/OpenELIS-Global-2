@@ -111,7 +111,7 @@ public class EIDColumnBuilder extends CIColumnBuilder {
     @Override
     public void makeSQL() {
         String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
-        Test test = testService.getActiveTestByName("DNA PCR").get(0);
+        Test test = testService.getActiveTestsByName("DNA PCR").get(0);
         query = new StringBuilder();
         Date lowDate = dateRange.getLowDate();
         Date highDate = dateRange.getHighDate();

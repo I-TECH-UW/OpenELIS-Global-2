@@ -530,7 +530,6 @@ public class TestModifyEntryController extends BaseController {
 
             test.setUnitOfMeasure(uom);
             test.setDescription(testAddParams.testNameEnglish + "(" + typeOfSample.getDescription() + ")");
-            test.setTestName(testAddParams.testNameEnglish);
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));

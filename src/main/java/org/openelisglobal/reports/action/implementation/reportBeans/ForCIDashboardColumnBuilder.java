@@ -93,7 +93,7 @@ public class ForCIDashboardColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
+        Test test = SpringContext.getBean(TestService.class).getActiveTestsByName("Viral Load").get(0);
         query = new StringBuilder();
         Date lowDate = dateRange.getLowDate();
         Date highDate = dateRange.getHighDate();
@@ -130,7 +130,8 @@ public class ForCIDashboardColumnBuilder extends CIColumnBuilder {
         /////////
         // no don't insert another crosstab or table here, go up before the main WHERE
         ///////// clause
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", query.toString());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        ///////// query.toString());
         return;
     }
 

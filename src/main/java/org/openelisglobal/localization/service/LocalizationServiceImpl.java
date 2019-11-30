@@ -55,8 +55,13 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
     }
 
     @Override
-    public String getCurrentLocale() {
+    public String getCurrentLocaleLanguage() {
         return LocaleContextHolder.getLocale().getLanguage();
+    }
+
+    @Override
+    public Locale getCurrentLocale() {
+        return LocaleContextHolder.getLocale();
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
@@ -55,9 +56,8 @@ public class EvolisReader extends AnalyzerLineInserter {
     private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
     public EvolisReader() {
-        Test test = new Test();
-        test.setTestName("Integral"); // integral and murex use the same dictionary values
-        test = testService.getTestByName(test);
+        Test test = testService.getTestByLocalizedName("Integral", Locale.ENGLISH);// integral and murex use the same
+                                                                                   // dictionary values
 
         List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 

@@ -236,7 +236,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                     concatSection_TestToBucketMap.put(concatedName, testBucket);
                 }
             } else if (test.getLocalizedTestName() == null) {
-                testBucket = testNameToBucketList.get(test.getTestName());
+                testBucket = testNameToBucketList.get(test.getLocalizedName());
             } else {
                 testBucket = testNameToBucketList.get(TestServiceImpl.getUserLocalizedReportingTestName(test));
             }
@@ -280,7 +280,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
         proxyTestSection.setId(templateAnalysis.getTestSection().getId());
 
         proxyTest.setTestSection(proxyTestSection);
-        proxyTest.setTestName(panelName);
+//        proxyTest.setTestName(panelName);
 
         return proxyAnalysis;
     }

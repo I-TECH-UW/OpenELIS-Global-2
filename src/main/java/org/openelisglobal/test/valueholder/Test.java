@@ -60,13 +60,9 @@ public class Test extends EnumValueItemImpl {
 
     private ValueHolderInterface scriptlet;
 
-    private String testName;
-
     private String description;
 
     private String loinc;
-
-    private String reportingDescription;
 
     private String stickerRequiredFlag;
 
@@ -135,11 +131,13 @@ public class Test extends EnumValueItemImpl {
         localizedReportingTestSectionName = new ValueHolder();
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
         this.key = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -150,8 +148,9 @@ public class Test extends EnumValueItemImpl {
 
     public void setActiveBeginDate(Date activeBeginDate) {
         this.activeBeginDate = activeBeginDate;
-        if (activeBeginDate != null)
+        if (activeBeginDate != null) {
             this.activeBeginDateForDisplay = DateUtil.convertSqlDateToStringDate(activeBeginDate);
+        }
     }
 
     public String getActiveBeginDateForDisplay() {
@@ -171,8 +170,9 @@ public class Test extends EnumValueItemImpl {
 
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
-        if (activeEndDate != null)
+        if (activeEndDate != null) {
             this.activeEndDateForDisplay = DateUtil.convertSqlDateToStringDate(activeEndDate);
+        }
     }
 
     public String getActiveEndDateForDisplay() {
@@ -188,7 +188,7 @@ public class Test extends EnumValueItemImpl {
 
     /**
      * This is descriptive only and should not be displayed to the end user
-     * 
+     *
      * @return the description
      */
     public String getDescription() {
@@ -197,7 +197,7 @@ public class Test extends EnumValueItemImpl {
 
     /**
      * Description of this test
-     * 
+     *
      * @param description the description
      */
     public void setDescription(String description) {
@@ -240,24 +240,6 @@ public class Test extends EnumValueItemImpl {
 
     public void setLoinc(String loinc) {
         this.loinc = loinc;
-    }
-
-    /**
-     * @deprecated reporting descriptions are now in localization table
-     * @return do not use
-     */
-    @Deprecated
-    public String getReportingDescription() {
-        return reportingDescription;
-    }
-
-    /**
-     * @deprecated reporting descriptions are now in localization table
-     * @param reportingDescription ignored
-     */
-    @Deprecated
-    public void setReportingDescription(String reportingDescription) {
-        this.reportingDescription = reportingDescription;
     }
 
     public String getStickerRequiredFlag() {
@@ -306,25 +288,6 @@ public class Test extends EnumValueItemImpl {
 
     public void setTimeWarning(String timeWarning) {
         this.timeWarning = timeWarning;
-    }
-
-    /**
-     * @deprecated names are now in localization table
-     * @return Do not use
-     */
-    @Deprecated
-    public String getTestName() {
-        return testName;
-    }
-
-    /**
-     * @deprecated names are now in localization table
-     * @param testName ignored
-     */
-    @Deprecated
-    public void setTestName(String testName) {
-        this.testName = testName;
-        this.name = testName;
     }
 
     public String getMethodName() {
@@ -432,8 +395,8 @@ public class Test extends EnumValueItemImpl {
     }
 
     public String getTestDisplayValue() {
-        if (!StringUtil.isNullorNill(this.testName)) {
-            return testName + "-" + description;
+        if (!StringUtil.isNullorNill(getLocalizedName())) {
+            return getLocalizedName() + "-" + description;
         } else {
             return description;
         }
@@ -441,9 +404,9 @@ public class Test extends EnumValueItemImpl {
 
     public String getAlternateTestDisplayValue() {
         if (!StringUtil.isNullorNill(this.description)) {
-            alternateTestDisplayValue = description + "-" + testName;
+            alternateTestDisplayValue = description + "-" + getLocalizedName();
         } else {
-            alternateTestDisplayValue = testName;
+            alternateTestDisplayValue = getLocalizedName();
         }
         return alternateTestDisplayValue;
     }

@@ -57,9 +57,6 @@
 		<property name="localCode" type="java.lang.String">
 			<column name="LOCAL_CODE" length="10" unique="true" />
 		</property>
-		<property name="testName" type="java.lang.String">
-			<column name="name" length="60" unique="false" />
-		</property>
 		<property name="description" type="java.lang.String">
 			<column name="DESCRIPTION" length="60" not-null="true"
 				unique="true" />

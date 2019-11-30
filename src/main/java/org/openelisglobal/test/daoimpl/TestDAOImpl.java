@@ -19,6 +19,7 @@ package org.openelisglobal.test.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -495,30 +496,15 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Test getTestByName(Test test) throws LIMSRuntimeException {
-        return getTestByName(test.getTestName());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Test getTestByName(String testName) throws LIMSRuntimeException {
+    public List<Test> getTestsByName(String testName) throws LIMSRuntimeException {
+        String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName)";
         try {
-            String sql = "from Test t where t.testName = :testName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
-            List<Test> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            Test t = null;
-
-            if (!list.isEmpty()) {
-                t = list.get(0);
-            }
-
-            return t;
-
+            return query.list();
         } catch (Exception e) {
+            // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
@@ -526,15 +512,34 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException {
+    public List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException {
+        String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
         try {
-            String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("testName", testName);
+
+            return query.list();
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException {
+        String sql;
+        if (Locale.ENGLISH.equals(locale)) {
+            sql = "from Test t where t.localizedTestName.english = :testName and t.isActive='Y'";
+        } else {
+            sql = "from Test t where t.localizedTestName.french = :testName and t.isActive='Y'";
+        }
+        try {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
             List<Test> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             Test t = null;
 
             if (!list.isEmpty()) {
@@ -551,22 +556,32 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     }
 
     @Override
-
     @Transactional(readOnly = true)
-    public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException {
+    public Test getTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException {
+        String sql;
+        if (Locale.ENGLISH.equals(locale)) {
+            sql = "from Test t where t.localizedTestName.english = :testName";
+        } else {
+            sql = "from Test t where t.localizedTestName.french = :testName";
+        }
         try {
-            String sql = "from Test t where t.testName = :testName and t.isActive='Y'";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
             List<Test> list = query.list();
-            // closeSession(); // CSL remove old
-            return list;
-        } catch (HibernateException e) {
-            handleException(e, "getActiveTestByName");
-        }
+            Test t = null;
 
-        return new ArrayList<>();
+            if (!list.isEmpty()) {
+                t = list.get(0);
+            }
+
+            return t;
+
+        } catch (Exception e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
+        }
     }
 
     @Override
@@ -624,14 +639,16 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             for (int i = 0; i < list.size(); i++) {
                 Test t = list.get(i);
                 /*
-                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is test " + t.getId() + " " + t.getTestName());
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is test "
+                 * + t.getId() + " " + t.getTestName());
                  */
                 Method method = t.getMethod();
                 if (!methods.contains(method)) {
                     methods.add(method);
                 }
                 /*
-                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "Adding this method to list " + method.getId() + " " +
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                 * "Adding this method to list " + method.getId() + " " +
                  * method.getMethodName());
                  */
             }

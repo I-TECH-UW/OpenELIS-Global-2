@@ -613,7 +613,7 @@ public class AnalyzerResultsController extends BaseController {
     protected String getActualMessage(String messageKey) {
         String actualMessage = null;
         if (messageKey != null) {
-            actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocale(),
+            actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocaleLanguage(),
                     messageKey);
         }
         return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;

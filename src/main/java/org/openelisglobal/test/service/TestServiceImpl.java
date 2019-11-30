@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -18,6 +19,7 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.panel.service.PanelService;
@@ -68,6 +70,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     private PanelService panelService = SpringContext.getBean(PanelService.class);
     private TestAnalyteService testAnalyteService = SpringContext.getBean(TestAnalyteService.class);
     private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+    private LocalizationService localizationService = SpringContext.getBean(LocalizationService.class);
 
     @PostConstruct
     private void initialize() {
@@ -407,8 +410,8 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public Test getTestByUserLocalizedName(String testName) {
-        return getBaseObjectDAO().getTestByUserLocalizedName(testName);
+    public Test getTestByLocalizedName(String testName, Locale locale) {
+        return getBaseObjectDAO().getTestByLocalizedName(testName, locale);
     }
 
     @Override
@@ -440,12 +443,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     @Transactional(readOnly = true)
     public Integer getTotalSearchedTestCount(String searchString) {
         return getBaseObjectDAO().getTotalSearchedTestCount(searchString);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Test> getActiveTestByName(String testName) {
-        return getBaseObjectDAO().getActiveTestByName(testName);
     }
 
     @Override
@@ -566,18 +563,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public Test getTestByName(Test test) {
-        return getBaseObjectDAO().getTestByName(test);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Test getTestByName(String testName) {
-        return getBaseObjectDAO().getTestByName(testName);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Test getTestByGUID(String guid) {
         return getBaseObjectDAO().getTestByGUID(guid);
     }
@@ -657,6 +642,26 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException {
+        return getBaseObjectDAO().getActiveTestsByName(testName);
+    }
+
+    @Override
+    public Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException {
+        return getBaseObjectDAO().getActiveTestByLocalizedName(testName, locale);
+    }
+
+    @Override
+    public List<Test> getTestsByName(String testName) throws LIMSRuntimeException {
+        return getBaseObjectDAO().getTestsByName(testName);
+    }
+
+    @Override
+    public Test getTestByLocalizedName(String testName) {
+        return getBaseObjectDAO().getTestByLocalizedName(testName, localizationService.getCurrentLocale());
     }
 
 }

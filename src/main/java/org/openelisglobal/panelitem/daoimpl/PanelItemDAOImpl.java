@@ -260,37 +260,37 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         return getCount();
     }
 
-    @Override
-    public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
-        try {
-            List<PanelItem> list;
-
-            // not case sensitive hemolysis and Hemolysis are considered
-            // duplicates
-            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :panelName and trim(lower(t.testName)) = :testName and t.id != :panelItemId";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setParameter("panelName", panelItem.getPanel().getPanelName().toLowerCase().trim());
-            query.setParameter("testName", panelItem.getTest().getTestName().toLowerCase().trim());
-
-            // initialize with 0 (for new records where no id has been generated
-            // yet
-            String panelItemId = "0";
-            if (!StringUtil.isNullorNill(panelItem.getId())) {
-                panelItemId = panelItem.getId();
-            }
-            query.setInteger("panelItemId", Integer.parseInt(panelItemId));
-
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-
-            return !list.isEmpty();
-
-        } catch (Exception e) {
-            LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in duplicatePanelItemExists()", e);
-        }
-    }
+//    @Override
+//    public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
+//        try {
+//            List<PanelItem> list;
+//
+//            // not case sensitive hemolysis and Hemolysis are considered
+//            // duplicates
+//            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :panelName and trim(lower(t.testName)) = :testName and t.id != :panelItemId";
+//            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//            query.setParameter("panelName", panelItem.getPanel().getPanelName().toLowerCase().trim());
+//            query.setParameter("testName", panelItem.getTest().getTestName().toLowerCase().trim());
+//
+//            // initialize with 0 (for new records where no id has been generated
+//            // yet
+//            String panelItemId = "0";
+//            if (!StringUtil.isNullorNill(panelItem.getId())) {
+//                panelItemId = panelItem.getId();
+//            }
+//            query.setInteger("panelItemId", Integer.parseInt(panelItemId));
+//
+//            list = query.list();
+//            // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//
+//            return !list.isEmpty();
+//
+//        } catch (Exception e) {
+//            LogEvent.logError(e.toString(), e);
+//            throw new LIMSRuntimeException("Error in duplicatePanelItemExists()", e);
+//        }
+//    }
 
     @Override
     @Transactional(readOnly = true)

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     }
 
     protected Test createTest(String testName, boolean orderableOnly) {
-        Test test = testService.getTestByName(testName);
+        Test test = testService.getTestByLocalizedName(testName, Locale.FRENCH);
         if (test == null) {
             throw new LIMSRuntimeException("Unable to find test '" + testName + "'");
         }

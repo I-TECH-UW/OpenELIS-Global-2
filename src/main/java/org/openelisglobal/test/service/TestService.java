@@ -1,9 +1,11 @@
 package org.openelisglobal.test.service;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -18,8 +20,6 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Test getActiveTestById(Integer id);
 
-    Test getTestByUserLocalizedName(String testName);
-
     Integer getTotalTestCount();
 
     List<Test> getAllActiveTests(boolean onlyTestsFullySetup);
@@ -33,8 +33,6 @@ public interface TestService extends BaseObjectService<Test, String> {
     Integer getTotalSearchedTestCount(String searchString);
 
     Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString);
-
-    List<Test> getActiveTestByName(String testName);
 
     List<Test> getTestsByTestSection(String filter);
 
@@ -67,10 +65,6 @@ public interface TestService extends BaseObjectService<Test, String> {
     List<Test> getTests(String filter, boolean onlyTestsFullySetup);
 
     List<Test> getAllTests(boolean onlyTestsFullySetup);
-
-    Test getTestByName(Test test);
-
-    Test getTestByName(String testName);
 
     Test getTestByGUID(String guid);
 
@@ -105,5 +99,15 @@ public interface TestService extends BaseObjectService<Test, String> {
     String getResultType(Test test);
 
     List<Test> getAllTestsByDictionaryResult();
+
+    Test getTestByLocalizedName(String testName, Locale locale);
+
+    List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException;
+
+    Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException;
+
+    List<Test> getTestsByName(String testName) throws LIMSRuntimeException;
+
+    Test getTestByLocalizedName(String testName);
 
 }

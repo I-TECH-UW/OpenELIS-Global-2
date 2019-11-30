@@ -19,6 +19,7 @@ package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,15 +52,15 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
     private static int MAX_DOUBLE_LENGTH = 20;
 
     private TestReflexCD4Provider() {
-        Test test = testService.getTestByName("CD4 percentage count");
+        Test test = testService.getTestByLocalizedName("CD4 percentage count", Locale.ENGLISH);
         if (test != null) {
             CD4_TEST_ID = test.getId();
         }
-        test = testService.getTestByName("Lymph %");
+        test = testService.getTestByLocalizedName("Lymph %", Locale.ENGLISH);
         if (test != null) {
             LYMPH_TEST_ID = test.getId();
         }
-        test = testService.getTestByName("GB");
+        test = testService.getTestByLocalizedName("GB", Locale.ENGLISH);
         if (test != null) {
             GB_TEST_ID = test.getId();
         }
