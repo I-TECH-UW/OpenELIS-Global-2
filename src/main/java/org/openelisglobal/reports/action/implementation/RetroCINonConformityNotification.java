@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
@@ -38,6 +37,7 @@ import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.qaevent.service.NonConformityHelper;
 import org.openelisglobal.reports.action.implementation.reportBeans.NonConformityReportData;
 import org.openelisglobal.reports.action.util.ReportUtil;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
@@ -65,15 +65,12 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName",
-                    MessageUtil.getMessage("reports.nonConformity.notification.report"));
-            PropertyUtils.setProperty(form, "selectList",
-                    new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
-            PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "instructions",
-                    MessageUtil.getMessage("reports.nonConformity.notification.report.instructions"));
+            form.setReportName(MessageUtil.getMessage("reports.nonConformity.notification.report"));
+            form.setSelectList(new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
+            form.setUseAccessionDirect(Boolean.TRUE);
+            form.setInstructions(MessageUtil.getMessage("reports.nonConformity.notification.report.instructions"));
         } catch (Exception e) {
             LogEvent.logDebug(e);
         }
@@ -126,13 +123,13 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         sampleQaEventIds = new ArrayList<>();
         checkIdsForPriorPrintRecord = new HashSet<>();
         errorFound = false;
-        requestedAccessionNumber = form.getString("accessionDirect");
-        ReportSpecificationList specificationList = (ReportSpecificationList) form.get("selectList");
+        requestedAccessionNumber = form.getAccessionDirect();
+        ReportSpecificationList specificationList = form.getSelectList();
 
         createReportParameters();
 

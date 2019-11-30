@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.json.simple.JSONArray;
@@ -145,22 +144,20 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         TestSection ts = null;
 
         String currentDate = getCurrentDate();
-        PropertyUtils.setProperty(form, "currentDate", currentDate);
-        PropertyUtils.setProperty(form, "logbookType", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setCurrentDate(currentDate);
+        form.setLogbookType(request.getParameter("type"));
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
         // load testSections for drop down
         List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
-        PropertyUtils.setProperty(form, "testSections", testSections);
-        PropertyUtils.setProperty(form, "testSectionsByName",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setTestSections(testSections);
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
-            PropertyUtils.setProperty(form, "testSectionId", "0");
+            form.setTestSectionId("0");
         }
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
@@ -195,7 +192,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         } else {
             paging.page(request, form, requestedPage);
         }
-        PropertyUtils.setProperty(form, "displayTestKit", false);
+        form.setDisplayTestKit(false);
         if (ts != null) {
             // this does not look right what happens after a new page!!!
             boolean isHaitiClinical = ConfigurationProperties.getInstance()
@@ -204,7 +201,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
                 inventoryList = inventoryUtility.getExistingActiveInventory();
 
-                PropertyUtils.setProperty(form, "displayTestKit", true);
+                form.setDisplayTestKit(true);
             }
         }
         List<String> hivKits = new ArrayList<>();
@@ -217,9 +214,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 syphilisKits.add(item.getInventoryLocationId());
             }
         }
-        PropertyUtils.setProperty(form, "hivKits", hivKits);
-        PropertyUtils.setProperty(form, "syphilisKits", syphilisKits);
-        PropertyUtils.setProperty(form, "inventoryItems", inventoryList);
+        form.setHivKits(hivKits);
+        form.setSyphilisKits(syphilisKits);
+        form.setInventoryItems(inventoryList);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -288,11 +285,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getString("logbookType"))) {
+        if (GenericValidator.isBlankOrNull(form.getLogbookType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getString("logbookType"));
+            params.put("type", form.getLogbookType());
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
     }

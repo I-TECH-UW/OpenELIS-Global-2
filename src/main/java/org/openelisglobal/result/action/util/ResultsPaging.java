@@ -22,15 +22,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.result.form.ResultsPagingForm;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
 public class ResultsPaging {
@@ -38,25 +37,24 @@ public class ResultsPaging {
 
     private static TestItemPageHelper pagingHelper = new TestItemPageHelper();
 
-    public void setDatabaseResults(HttpServletRequest request, BaseForm form, List<TestResultItem> tests)
+    public void setDatabaseResults(HttpServletRequest request, ResultsPagingForm form, List<TestResultItem> tests)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         paging.setDatabaseResults(request.getSession(), tests, pagingHelper);
 
         List<TestResultItem> resultPage = paging.getPage(1, request.getSession());
         if (resultPage != null) {
-            PropertyUtils.setProperty(form, "testResult", resultPage);
-            PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
+            form.setTestResult(resultPage);
+            form.setPaging(paging.getPagingBeanWithSearchMapping(1, request.getSession()));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void page(HttpServletRequest request, BaseForm form, String newPage)
+    public void page(HttpServletRequest request, ResultsPagingForm form, String newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-        List<TestResultItem> clientTests = (List<TestResultItem>) form.get("testResult");
-        PagingBean bean = (PagingBean) form.get("paging");
+        List<TestResultItem> clientTests = form.getTestResult();
+        PagingBean bean = form.getPaging();
         String testSectionId = (request.getParameter("testSectionId"));
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
@@ -64,18 +62,17 @@ public class ResultsPaging {
 
         List<TestResultItem> resultPage = paging.getPage(page, request.getSession());
         if (resultPage != null) {
-            PropertyUtils.setProperty(form, "testResult", resultPage);
-            PropertyUtils.setProperty(form, "testSectionId", "0");
-            PropertyUtils.setProperty(form, "paging",
-                    paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+            form.setTestResult(resultPage);
+            form.setTestSectionId("0");
+            form.setPaging(paging.getPagingBeanWithSearchMapping(page, request.getSession()));
         }
 
     }
 
     @SuppressWarnings("unchecked")
-    public void updatePagedResults(HttpServletRequest request, BaseForm form) {
-        List<TestResultItem> clientTests = (List<TestResultItem>) form.get("testResult");
-        PagingBean bean = (PagingBean) form.get("paging");
+    public void updatePagedResults(HttpServletRequest request, ResultsPagingForm form) {
+        List<TestResultItem> clientTests = form.getTestResult();
+        PagingBean bean = form.getPaging();
 
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
     }

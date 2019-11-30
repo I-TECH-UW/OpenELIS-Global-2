@@ -126,7 +126,7 @@ public class DictionaryMenuController extends BaseMenuController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
 
         List<Dictionary> dictionaries = new ArrayList<>();
         for (int i = 0; i < selectedIDs.size(); i++) {

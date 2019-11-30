@@ -257,7 +257,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPatientTypeCount() throws LIMSRuntimeException {
-        return getTotalCount("PatientType", PatientType.class);
+        return getCount();
     }
 
     // Check duplicate with fild Description .

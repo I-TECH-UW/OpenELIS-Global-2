@@ -20,15 +20,12 @@ package org.openelisglobal.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.owasp.encoder.Encode;
 
 /**
@@ -191,7 +188,8 @@ public class StringUtil {
         if (!StringUtil.isNullorNill(ext)) {
             returnPhone = returnPhone + "." + ext;
         }
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is phone " + returnPhone);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is phone "
+        // + returnPhone);
         return returnPhone;
     }
 
@@ -306,108 +304,6 @@ public class StringUtil {
             }
         }
         return list;
-    }
-
-    // MessageUtil is to be used instead for all things involving fetching messages
-    @Deprecated
-    public static String getMessageForKey(String messageKey) {
-        if (null == messageKey) {
-            return null;
-        }
-        return MessageUtil.getMessage(messageKey);
-    }
-
-    @Deprecated
-    public static String getMessageForKeyAndLocale(String messageKey, Locale locale) {
-        if (null == messageKey) {
-            return null;
-        }
-
-        return MessageUtil.getMessage(messageKey, locale);
-    }
-
-    @Deprecated
-    public static String getMessageForKeyAndLocale(String messageKey, String arg0, String arg1, Locale locale) {
-        if (null == messageKey) {
-            return null;
-        }
-
-        return MessageUtil.getMessage(messageKey, new String[] { arg0, arg1 }, locale);
-    }
-
-    @Deprecated
-    public static String getMessageForKey(String messageKey, String arg) {
-        if (null == messageKey) {
-            return null;
-        }
-
-        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-
-        return MessageUtil.getMessage(messageKey, new String[] { arg });
-    }
-
-    @Deprecated
-    public static String getMessageForKey(String messageKey, String arg0, String arg1) {
-        if (null == messageKey) {
-            return null;
-        }
-
-        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-
-        return MessageUtil.getMessage(messageKey, new String[] { arg0, arg1 });
-    }
-
-    @Deprecated
-    public static String getContextualMessageForKey(String messageKey) {
-        if (null == messageKey) {
-            return null;
-        }
-
-        // Note that if there is no suffix then the suffix key will be the same
-        // as the message key
-        // and the first search will be successful, there is no reason to test
-        // for the suffix
-        String suffixedKey = messageKey + getSuffix();
-
-        String suffixedValue = getMessageForKey(suffixedKey);
-
-        if (!GenericValidator.isBlankOrNull(suffixedValue) && !suffixedKey.equals(suffixedValue)) {
-            return suffixedValue;
-        } else {
-            return getMessageForKey(messageKey);
-        }
-    }
-
-    @Deprecated
-    private static String getSuffix() {
-        if (STRING_KEY_SUFFIX == null) {
-            STRING_KEY_SUFFIX = ConfigurationProperties.getInstance().getPropertyValue(Property.StringContext);
-            if (!GenericValidator.isBlankOrNull(STRING_KEY_SUFFIX)) {
-                STRING_KEY_SUFFIX = "." + STRING_KEY_SUFFIX.trim();
-            }
-        }
-
-        return STRING_KEY_SUFFIX;
-    }
-
-    @Deprecated
-    public static String getContextualKeyForKey(String key) {
-        if (null == key) {
-            return null;
-        }
-
-        // Note that if there is no suffix then the suffix key will be the same
-        // as the message key
-        // and the first search will be successful, there is no reason to test
-        // for the suffix
-        String suffixedKey = key + getSuffix();
-
-        String suffixedValue = getMessageForKey(suffixedKey);
-
-        if (GenericValidator.isBlankOrNull(suffixedValue) || suffixedKey.equals(suffixedValue)) {
-            return key;
-        }
-        return suffixedKey;
     }
 
     /*

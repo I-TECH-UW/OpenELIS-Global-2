@@ -5,12 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
 import org.openelisglobal.barcode.service.BarcodeInformationService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +49,7 @@ public class BarcodeConfigurationController extends BaseController {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    private void setFields(BaseForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void setFields(BarcodeConfigurationForm form) {
 
         // get the dimension values
         String heightOrderLabels = ConfigurationProperties.getInstance()
@@ -63,10 +60,10 @@ public class BarcodeConfigurationController extends BaseController {
         String widthSpecimenLabels = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH);
         // set the dimension values
-        PropertyUtils.setProperty(form, "heightOrderLabels", Float.parseFloat(heightOrderLabels));
-        PropertyUtils.setProperty(form, "widthOrderLabels", Float.parseFloat(widthOrderLabels));
-        PropertyUtils.setProperty(form, "heightSpecimenLabels", Float.parseFloat(heightSpecimenLabels));
-        PropertyUtils.setProperty(form, "widthSpecimenLabels", Float.parseFloat(widthSpecimenLabels));
+        form.setHeightOrderLabels(Float.parseFloat(heightOrderLabels));
+        form.setWidthOrderLabels(Float.parseFloat(widthOrderLabels));
+        form.setHeightSpecimenLabels(Float.parseFloat(heightSpecimenLabels));
+        form.setWidthSpecimenLabels(Float.parseFloat(widthSpecimenLabels));
 
         // get the maximum print values
         String numOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
@@ -74,9 +71,9 @@ public class BarcodeConfigurationController extends BaseController {
                 .getPropertyValue(Property.MAX_SPECIMEN_PRINTED);
         String numAliquotLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
         // set the maximum print values
-        PropertyUtils.setProperty(form, "numOrderLabels", Integer.parseInt(numOrderLabels));
-        PropertyUtils.setProperty(form, "numSpecimenLabels", Integer.parseInt(numSpecimenLabels));
-        PropertyUtils.setProperty(form, "numAliquotLabels", Integer.parseInt(numAliquotLabels));
+        form.setNumOrderLabels(Integer.parseInt(numOrderLabels));
+        form.setNumSpecimenLabels(Integer.parseInt(numSpecimenLabels));
+        form.setNumAliquotLabels(Integer.parseInt(numAliquotLabels));
 
         // get the optional specimen values
         String collectionDateCheck = ConfigurationProperties.getInstance()
@@ -84,9 +81,9 @@ public class BarcodeConfigurationController extends BaseController {
         String testsCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
         String patientSexCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
         // set the optional specimen values
-        PropertyUtils.setProperty(form, "collectionDateCheck", Boolean.valueOf(collectionDateCheck));
-        PropertyUtils.setProperty(form, "testsCheck", Boolean.valueOf(testsCheck));
-        PropertyUtils.setProperty(form, "patientSexCheck", Boolean.valueOf(patientSexCheck));
+        form.setCollectionDateCheck(Boolean.valueOf(collectionDateCheck));
+        form.setTestsCheck(Boolean.valueOf(testsCheck));
+        form.setPatientSexCheck(Boolean.valueOf(patientSexCheck));
     }
 
     @RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)

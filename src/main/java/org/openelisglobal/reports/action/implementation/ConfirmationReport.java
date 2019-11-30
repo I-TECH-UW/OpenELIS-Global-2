@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -39,6 +38,7 @@ import org.openelisglobal.referral.service.ReferringTestResultService;
 import org.openelisglobal.referral.valueholder.ReferringTestResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ConfirmationData;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
@@ -91,7 +91,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         setDateRange(form);
 

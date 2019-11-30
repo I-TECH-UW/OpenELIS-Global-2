@@ -82,7 +82,10 @@ public abstract class BaseWorkplanController extends BaseController {
     }
 
     protected String getTestId(String testName) {
-        Test test = testService.getMatch("testName", testName).orElse(new Test());
+        Test test = testService.getTestByLocalizedName(testName);
+        if (test == null) {
+            test = new Test();
+        }
         return test.getId();
 
     }

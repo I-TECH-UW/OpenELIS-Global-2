@@ -315,7 +315,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
 //	@Override
 //	public Integer getTotalUnitOfMeasureCount() throws LIMSRuntimeException {
-//		return getTotalCount("UnitOfMeasure", UnitOfMeasure.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id

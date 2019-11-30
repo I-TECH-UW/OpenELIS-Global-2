@@ -163,7 +163,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
-        return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
+        return getCount();
     }
 
     @Override

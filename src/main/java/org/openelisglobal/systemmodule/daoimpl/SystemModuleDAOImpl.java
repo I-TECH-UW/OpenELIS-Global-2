@@ -219,7 +219,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalSystemModuleCount() throws LIMSRuntimeException {
-        return getTotalCount("SystemModule", SystemModule.class);
+        return getCount();
     }
 
     @Override

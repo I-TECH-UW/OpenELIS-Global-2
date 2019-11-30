@@ -246,7 +246,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalSystemUserCount() throws LIMSRuntimeException {
-        return getTotalCount("SystemUser", SystemUser.class);
+        return getCount();
     }
 
     // bugzilla 1482

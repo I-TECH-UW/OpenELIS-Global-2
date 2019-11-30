@@ -8,9 +8,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.analyzerresults.action.beanitems.AnalyzerResultItem;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.PagingBean;
 
-public class AnalyzerResultsForm extends BaseForm {
+public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
 
     public interface AnalyzerResuts {
     }
@@ -34,10 +35,12 @@ public class AnalyzerResultsForm extends BaseForm {
         setFormName("AnalyzerResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }

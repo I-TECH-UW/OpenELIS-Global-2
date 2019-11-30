@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.log.LogEvent;
@@ -53,7 +52,7 @@ public abstract class BaseMenuController extends BaseController {
             forward = FWD_FAIL;
         }
 
-        PropertyUtils.setProperty(form, "menuList", menuList);
+        form.setMenuList(menuList);
 
         request.setAttribute(DEACTIVATE_DISABLED, getDeactivateDisabled());
         request.setAttribute(ADD_DISABLED, getAddDisabled());
@@ -61,7 +60,7 @@ public abstract class BaseMenuController extends BaseController {
 
         List<String> selectedIDs = new ArrayList<>();
 
-        PropertyUtils.setProperty(form, "selectedIDs", selectedIDs);
+        form.setSelectedIDs(selectedIDs);
 
         return forward;
     }

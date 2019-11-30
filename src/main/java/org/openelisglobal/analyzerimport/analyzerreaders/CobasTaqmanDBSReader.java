@@ -54,7 +54,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
     private String error;
 
     public CobasTaqmanDBSReader() {
-        Test test = testService.getActiveTestByName("DNA PCR").get(0);
+        Test test = testService.getActiveTestsByName("DNA PCR").get(0);
         List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 
         for (TestResult testResult : testResults) {

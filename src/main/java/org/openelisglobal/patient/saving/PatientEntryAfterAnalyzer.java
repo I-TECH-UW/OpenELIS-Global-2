@@ -18,7 +18,7 @@
 */
 
 /**
- * C�te d'Ivoire
+ * Cote d'Ivoire
  * @author pahill
  * @since 2010-06-25
  */

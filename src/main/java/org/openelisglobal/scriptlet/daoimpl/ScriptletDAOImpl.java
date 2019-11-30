@@ -280,7 +280,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalScriptletCount() throws LIMSRuntimeException {
-        return getTotalCount("Scriptlet", Scriptlet.class);
+        return getCount();
     }
 
     @Override

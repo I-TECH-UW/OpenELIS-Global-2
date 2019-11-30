@@ -295,7 +295,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
-        return getTotalCount("TestSection", RenameTestSection.class);
+        return getCount();
     }
 
     // bugzilla 1482

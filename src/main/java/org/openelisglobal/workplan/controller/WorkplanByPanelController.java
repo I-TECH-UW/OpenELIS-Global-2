@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -65,22 +64,21 @@ public class WorkplanByPanelController extends BaseWorkplanController {
             workplanTests = getWorkplanByPanel(panelID);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
-            PropertyUtils.setProperty(form, "testTypeID", panelID);
-            PropertyUtils.setProperty(form, "testName", panelName);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+            form.setTestTypeID(panelID);
+            form.setTestName(panelName);
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
         } else {
             // no search done, set workplanTests as empty
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "testName", null);
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setSearchFinished(Boolean.FALSE);
+            form.setTestName(null);
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        PropertyUtils.setProperty(form, "workplanType", "panel");
-        PropertyUtils.setProperty(form, "searchTypes",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
-        PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
+        form.setWorkplanType("panel");
+        form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+        form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
+        form.setSearchAction("WorkPlanByPanel.do");
 
         return findForward(FWD_SUCCESS, form);
     }

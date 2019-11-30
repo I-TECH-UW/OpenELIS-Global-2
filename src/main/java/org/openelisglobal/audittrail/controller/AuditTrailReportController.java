@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.action.workers.AuditTrailViewWorker;
@@ -27,14 +26,14 @@ public class AuditTrailReportController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         form.setFormMethod(RequestMethod.GET);
 
-        String accessionNumber = form.getString("accessionNumberSearch");
+        String accessionNumber = form.getAccessionNumberSearch();
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
             List<AuditTrailItem> items = worker.getAuditTrail();
-            PropertyUtils.setProperty(form, "log", items);
-            PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
-            PropertyUtils.setProperty(form, "sampleOrderItems", worker.getSampleOrderSnapshot());
-            PropertyUtils.setProperty(form, "patientProperties", worker.getPatientSnapshot());
+            form.setLog(items);
+            form.setAccessionNumber(accessionNumber);
+            form.setSampleOrderItems(worker.getSampleOrderSnapshot());
+            form.setPatientProperties(worker.getPatientSnapshot());
         }
 
         return findForward(FWD_SUCCESS, form);

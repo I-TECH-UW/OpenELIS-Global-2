@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -35,6 +34,7 @@ import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryT
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVReportData;
 import org.openelisglobal.reports.action.util.ReportUtil;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
@@ -93,10 +93,10 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
-        lowerNumber = form.getString("accessionDirect");
-        upperNumber = form.getString("highAccessionDirect");
+        lowerNumber = form.getAccessionDirect();
+        upperNumber = form.getHighAccessionDirect();
 //        dateRange = new DateRange(lowDateStr, highDateStr);
         createReportParameters();
         errorFound = !validateAccessionNumbers();

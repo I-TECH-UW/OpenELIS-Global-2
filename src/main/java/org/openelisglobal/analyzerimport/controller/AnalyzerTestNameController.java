@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzerimport.form.AnalyzerTestNameForm;
@@ -17,7 +16,6 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -52,11 +50,11 @@ public class AnalyzerTestNameController extends BaseController {
     }
 
     @RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.GET)
-    public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+    public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm,
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, AnalyzerTestNameForm.class);
-        form.setCancelAction("CancelAnalyzerTestName.do");
+        AnalyzerTestNameForm newForm = resetSessionFormToType(oldForm, AnalyzerTestNameForm.class);
+        newForm.setCancelAction("CancelAnalyzerTestName.do");
 
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -65,25 +63,25 @@ public class AnalyzerTestNameController extends BaseController {
         List<Analyzer> analyzerList = getAllAnalyzers();
         List<Test> testList = getAllTests();
 
-        PropertyUtils.setProperty(form, "analyzerList", analyzerList);
-        PropertyUtils.setProperty(form, "testList", testList);
+        newForm.setAnalyzerList(analyzerList);
+        newForm.setTestList(testList);
 
         String id = request.getParameter("ID");
 
         if (id != null) {
             String[] splitId = id.split("#");
-            PropertyUtils.setProperty(form, "analyzerTestName", splitId[1]);
-            PropertyUtils.setProperty(form, "testId", splitId[2]);
-            PropertyUtils.setProperty(form, "analyzerId", splitId[0]);
+            newForm.setAnalyzerTestName(splitId[1]);
+            newForm.setTestId(splitId[2]);
+            newForm.setAnalyzerId(splitId[0]);
         }
 
-        if (GenericValidator.isBlankOrNull((String) PropertyUtils.getProperty(form, "analyzerId"))) {
-            PropertyUtils.setProperty(form, "newMapping", true);
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(newForm.getAnalyzerId())) {
+            newForm.setNewMapping(true);
         } else {
-            PropertyUtils.setProperty(form, "newMapping", false);
+            newForm.setNewMapping(false);
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     private List<Analyzer> getAllAnalyzers() {
@@ -121,10 +119,10 @@ public class AnalyzerTestNameController extends BaseController {
 
     public String updateAnalyzerTestName(HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
         String forward = FWD_SUCCESS_INSERT;
-        String analyzerId = form.getString("analyzerId");
-        String analyzerTestName = form.getString("analyzerTestName");
-        String testId = form.getString("testId");
-        boolean newMapping = (boolean) form.get("newMapping");
+        String analyzerId = form.getAnalyzerId();
+        String analyzerTestName = form.getAnalyzerTestName();
+        String testId = form.getTestId();
+        boolean newMapping = form.isNewMapping();
 
         AnalyzerTestMapping analyzerTestNameMapping;
         if (newMapping) {

@@ -22,41 +22,40 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.analyzerresults.action.beanitems.AnalyzerResultItem;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.result.form.AnalyzerResultsForm;
 
 public class AnalyzerResultsPaging {
 
     private PagingUtility<List<AnalyzerResultItem>> paging = new PagingUtility<>();
     private static TestItemPageHelper pagingHelper = new TestItemPageHelper();
 
-    public void setDatabaseResults(HttpServletRequest request, BaseForm form, List<AnalyzerResultItem> tests)
+    public void setDatabaseResults(HttpServletRequest request, AnalyzerResultsForm form, List<AnalyzerResultItem> tests)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         paging.setDatabaseResults(request.getSession(), tests, pagingHelper);
 
         List<AnalyzerResultItem> resultPage = paging.getPage(1, request.getSession());
         if (resultPage != null) {
-            PropertyUtils.setProperty(form, "resultList", resultPage);
-            PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
+            form.setResultList(resultPage);
+            form.setPaging(paging.getPagingBeanWithSearchMapping(1, request.getSession()));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void page(HttpServletRequest request, BaseForm form, String newPage)
+    public void page(HttpServletRequest request, AnalyzerResultsForm form, String newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-        List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) form.get("resultList");
-        PagingBean bean = (PagingBean) form.get("paging");
+        List<AnalyzerResultItem> clientTests = form.getResultList();
+        PagingBean bean = form.getPaging();
 
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
@@ -64,16 +63,14 @@ public class AnalyzerResultsPaging {
 
         List<AnalyzerResultItem> resultPage = paging.getPage(page, request.getSession());
         if (resultPage != null) {
-            PropertyUtils.setProperty(form, "resultList", resultPage);
-            PropertyUtils.setProperty(form, "paging",
-                    paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+            form.setResultList(resultPage);
+            form.setPaging(paging.getPagingBeanWithSearchMapping(page, request.getSession()));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void updatePagedResults(HttpServletRequest request, BaseForm form) {
-        List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) form.get("resultList");
-        PagingBean bean = (PagingBean) form.get("paging");
+    public void updatePagedResults(HttpServletRequest request, AnalyzerResultsForm form) {
+        List<AnalyzerResultItem> clientTests = form.getResultList();
+        PagingBean bean = form.getPaging();
 
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
     }
@@ -82,9 +79,9 @@ public class AnalyzerResultsPaging {
         return paging.getAllResults(request.getSession(), pagingHelper);
     }
 
-    public void setEmptyPageBean(HttpServletRequest request, BaseForm form)
+    public void setEmptyPageBean(HttpServletRequest request, IPagingForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(0, request.getSession()));
+        form.setPaging(paging.getPagingBeanWithSearchMapping(0, request.getSession()));
     }
 
     private static class TestItemPageHelper implements IPageDivider<List<AnalyzerResultItem>>,

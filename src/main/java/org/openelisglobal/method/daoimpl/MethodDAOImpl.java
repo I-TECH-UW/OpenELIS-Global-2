@@ -302,7 +302,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalMethodCount() throws LIMSRuntimeException {
-//		return getTotalCount("Method", Method.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id

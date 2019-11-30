@@ -322,7 +322,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalProjectCount() throws LIMSRuntimeException {
-        return getTotalCount("Project", Project.class);
+        return getCount();
     }
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id

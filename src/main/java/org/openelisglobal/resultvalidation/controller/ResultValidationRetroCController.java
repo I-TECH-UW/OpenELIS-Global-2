@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -43,8 +42,8 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
         String newPage = request.getParameter("page");
 
         if (GenericValidator.isBlankOrNull(newPage)) {
-            PropertyUtils.setProperty(form, "testSectionsByName", new ArrayList<IdValuePair>()); // required on jsp page
-            PropertyUtils.setProperty(form, "displayTestSections", false);
+            form.setTestSectionsByName(new ArrayList<IdValuePair>()); // required on jsp page
+            form.setDisplayTestSections(false);
 
             setRequestType(testSectionName);
 

@@ -20,13 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.reports.action.implementation.reportBeans.RoutineColumnBuilder;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -45,13 +44,13 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-            // PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
-            // PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+            // form.setUseProjectCode(Boolean.TRUE);
+            // form.setProjectCodeList(getProjectList());
         } catch (Exception e) {
             Log.error("Error in ExportRoutineByDate.setRequestParemeters: ", e);
         }
@@ -68,13 +67,13 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
      */
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        // projectStr = form.getString("projectCode");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        // projectStr = form.getProjectCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();

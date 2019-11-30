@@ -1,13 +1,11 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -46,12 +44,7 @@ public class SampleTypeOrderController extends BaseController {
     }
 
     private void setupDisplayItems(SampleTypeOrderForm form) {
-        try {
-            PropertyUtils.setProperty(form, "sampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE));
     }
 
     private class ActivateSet {

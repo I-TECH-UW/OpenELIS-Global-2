@@ -384,7 +384,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException {
-        return getTotalCount("TypeOfSample", TypeOfSample.class);
+        return getCount();
     }
 
     // bugzilla 1367 also handles NO domain (then all domains are retrieved)

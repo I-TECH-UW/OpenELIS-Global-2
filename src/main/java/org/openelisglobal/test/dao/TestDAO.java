@@ -16,6 +16,7 @@
 package org.openelisglobal.test.dao;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -55,14 +56,6 @@ public interface TestDAO extends BaseDAO<Test, String> {
 //	public void updateData(Test test) throws LIMSRuntimeException;
 
     List<Test> getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
-
-    Test getTestByName(Test test) throws LIMSRuntimeException;
-
-    Test getTestByName(String testName) throws LIMSRuntimeException;
-
-    Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException;
-
-    List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException;
 
     Test getTestById(Test test) throws LIMSRuntimeException;
 
@@ -109,4 +102,12 @@ public interface TestDAO extends BaseDAO<Test, String> {
     boolean duplicateTestExists(Test test) throws LIMSRuntimeException;
 
     List<Test> getAllTestsByDictionaryResult();
+
+    Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException;
+
+    Test getTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException;
+
+    List<Test> getTestsByName(String testName) throws LIMSRuntimeException;
+
+    List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException;
 }

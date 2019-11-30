@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.Accessioner;
@@ -51,9 +50,9 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
         addAllPatientFormLists(form);
 
-        PropertyUtils.setProperty(form, "currentDate", todayAsText);
-        PropertyUtils.setProperty(form, "receivedDateForDisplay", todayAsText);
-        PropertyUtils.setProperty(form, "interviewDate", todayAsText);
+        form.setCurrentDate(todayAsText);
+        form.setReceivedDateForDisplay(todayAsText);
+        form.setInterviewDate(todayAsText);
         // put the projectFormName back in.
         setProjectFormName(form, projectFormName);
 

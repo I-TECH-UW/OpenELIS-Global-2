@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
@@ -70,12 +68,8 @@ public class SampleTypeTestAssignController extends BaseController {
         // we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<>(typeOfSamples);
         joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-        try {
-            PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
-            PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setSampleTypeList(joinedList);
+        form.setSampleTypeTestList(sampleTypesTestsMap);
     }
 
     @Override
@@ -109,9 +103,9 @@ public class SampleTypeTestAssignController extends BaseController {
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        String testId = form.getString("testId");
-        String sampleTypeId = form.getString("sampleTypeId");
-        String deactivateSampleTypeId = form.getString("deactivateSampleTypeId");
+        String testId = form.getTestId();
+        String sampleTypeId = form.getSampleTypeId();
+        String deactivateSampleTypeId = form.getDeactivateSampleTypeId();
         boolean updateTypeOfSample = false;
         String systemUserId = getSysUserId(request);
 

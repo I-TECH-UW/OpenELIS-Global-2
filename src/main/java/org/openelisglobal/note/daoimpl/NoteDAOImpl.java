@@ -234,7 +234,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
 //	@Override
 //	public Integer getTotalNoteCount() throws LIMSRuntimeException {
-//		return getTotalCount("Note", Note.class);
+//		return getCount();
 //	}
 //
 //	@Override

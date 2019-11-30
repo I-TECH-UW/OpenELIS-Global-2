@@ -20,12 +20,12 @@ import java.sql.Date;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.reports.form.ReportForm;
 
 public abstract class IndicatorReport extends Report {
 
@@ -34,11 +34,12 @@ public abstract class IndicatorReport extends Report {
     protected Date lowDate;
     protected Date highDate;
 
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(),
                 null).setRequestParameters(form);
     }
 
+    @Override
     protected void createReportParameters() {
         super.createReportParameters();
 
@@ -57,10 +58,10 @@ public abstract class IndicatorReport extends Report {
         }
     }
 
-    protected void setDateRange(BaseForm form) {
+    protected void setDateRange(ReportForm form) {
         errorFound = false;
-        lowerDateRange = form.getString("lowerDateRange");
-        upperDateRange = form.getString("upperDateRange");
+        lowerDateRange = form.getLowerDateRange();
+        upperDateRange = form.getUpperDateRange();
 
         if (GenericValidator.isBlankOrNull(lowerDateRange)) {
             errorFound = true;

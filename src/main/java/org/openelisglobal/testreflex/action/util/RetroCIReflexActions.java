@@ -19,6 +19,7 @@ package org.openelisglobal.testreflex.action.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
@@ -115,15 +116,14 @@ public class RetroCIReflexActions extends ReflexAction {
 
         CD4_RESULT_TEST_DEPENDANCIES = new ArrayList<>();
 
-        Test test = testService.getTestByName("GB");
+        Test test = testService.getTestByLocalizedName("GB");
         CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-        test = testService.getTestByName("Lymph %");
+        test = testService.getTestByLocalizedName("Lymph %", Locale.ENGLISH);
         CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-        test = testService.getTestByName("CD4 percentage count");
+        test = testService.getTestByLocalizedName("CD4 percentage count", Locale.ENGLISH);
         CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
-        test = testService.getTestByName("CD4 absolute count");
+        test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
 
-        @SuppressWarnings("unchecked")
         List<TestResult> resultList = testResultService.getAllActiveTestResultsPerTest(test);
         TEST_RESULT_CD4_CALCULATED = resultList.get(0);
     }
@@ -144,9 +144,9 @@ public class RetroCIReflexActions extends ReflexAction {
             } else if (action.equals("Calc CD4")) {
                 finalResult = getCD4CalculationResult(result.getAnalysis().getSampleItem().getSample());
             } else if (action.equals(VIRONOSTIKA_OR_INNOLIA)) {
-                Test test = testService.getTestByName(VIRONOSTIKA);
+                Test test = testService.getTestByLocalizedName(VIRONOSTIKA, Locale.ENGLISH);
                 if (!test.isActive()) {
-                    test = testService.getTestByName(INNOLIA);
+                    test = testService.getTestByLocalizedName(INNOLIA, Locale.ENGLISH);
                 }
                 createReflexedAnalysis(test);
             }

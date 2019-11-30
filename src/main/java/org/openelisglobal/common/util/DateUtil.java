@@ -145,8 +145,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(),
-                        e);
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -268,7 +267,8 @@ public class DateUtil {
     // since midnight.
     public static synchronized int decodeTime(String s) throws Exception {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this time " +s);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
+        // time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);
         f.setLenient(false);
@@ -584,7 +584,7 @@ public class DateUtil {
         return new Timestamp(date.getTime());
     }
 
-    public static Object nowTimeAsText() {
+    public static String nowTimeAsText() {
         return convertTimestampToStringTime(getNowAsTimestamp());
     }
 
@@ -604,7 +604,7 @@ public class DateUtil {
      * The purpose of this is to not overwrite an old value with a less specified
      * new value If the new time is empty but the dates are the same then return the
      * timestamp of the old date/time If the dates differ use the new date/time
-     * 
+     *
      * @param oldDate
      * @param oldTime
      * @param newDate

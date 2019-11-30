@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.test.valueholder.Test;
 
 public class ARVFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
     private final String projectCode = MessageUtil.getMessage("sample.entry.project.LART");
 
-    public ARVFormMapper(String projectFormId, BaseForm form) {
+    public ARVFormMapper(String projectFormId, IProjectForm form) {
         super(projectFormId, form);
     }
 
@@ -47,10 +47,10 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
             CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
         }
         if (projectData.getCreatinineTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Cr�atinin�mie", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Cr\u0065atinin\u0065mie", true));
         }
         if (projectData.getGlycemiaTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Glyc�mie", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Glyc\u0065mie", true));
         }
 
         if (projectData.getTransaminaseTest()) {
@@ -60,7 +60,7 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         return testList;
     }
 
-    public List<Test> getEDTATubeTests(BaseForm form) {
+    public List<Test> getEDTATubeTests(IProjectForm form) {
         List<Test> testList = new ArrayList<>();
 
         if (projectData.getNfsTest()) {
@@ -87,7 +87,7 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         }
 
         if (projectData.getGenotypingTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("G�notypage", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("G\u0065notypage", true));
         }
 
         return testList;

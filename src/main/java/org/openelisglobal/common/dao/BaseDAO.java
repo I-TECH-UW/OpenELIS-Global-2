@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
@@ -304,7 +303,6 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
     String getTableName();
 
     // bugzilla 1411
-    Integer getTotalCount(String table, Class<T> clazz) throws LIMSRuntimeException;
 
     List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo);
 

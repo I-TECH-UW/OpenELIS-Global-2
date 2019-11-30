@@ -352,7 +352,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalAnalyteCount() throws LIMSRuntimeException {
-//		return getTotalCount("Analyte", Analyte.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id

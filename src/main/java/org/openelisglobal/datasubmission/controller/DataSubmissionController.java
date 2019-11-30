@@ -11,7 +11,6 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.datasubmission.DataIndicatorFactory;
 import org.openelisglobal.datasubmission.DataSubmitter;
 import org.openelisglobal.datasubmission.form.DataSubmissionForm;
@@ -51,9 +50,11 @@ public class DataSubmissionController extends BaseController {
     public ModelAndView showDataSubmission(HttpServletRequest request) {
         DataSubmissionForm form = new DataSubmissionForm();
 
-        int month = GenericValidator.isBlankOrNull(request.getParameter("month")) ? DateUtil.getCurrentMonth() + 1
+        int month = org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("month"))
+                ? DateUtil.getCurrentMonth() + 1
                 : Integer.parseInt(request.getParameter("month"));
-        int year = GenericValidator.isBlankOrNull(request.getParameter("year")) ? DateUtil.getCurrentYear()
+        int year = org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("year"))
+                ? DateUtil.getCurrentYear()
                 : Integer.parseInt(request.getParameter("year"));
 
         List<DataIndicator> indicators = new ArrayList<>();
@@ -90,10 +91,9 @@ public class DataSubmissionController extends BaseController {
 
         int month = form.getMonth();
         int year = form.getYear();
-        @SuppressWarnings("unchecked")
-        List<DataIndicator> indicators = (List<DataIndicator>) form.get("indicators");
+        List<DataIndicator> indicators = form.getIndicators();
         boolean submit = "true".equalsIgnoreCase(request.getParameter("submit"));
-        SiteInformation dataSubUrl = (SiteInformation) form.get("dataSubUrl");
+        SiteInformation dataSubUrl = form.getDataSubUrl();
         dataSubUrl = (SiteInformation) siteInformationService.getSiteInformationByDomainName("Data Sub URL");
         dataSubUrl.setValue(form.getDataSubUrl().getValue());
         dataSubUrl.setSysUserId(getSysUserId(request));

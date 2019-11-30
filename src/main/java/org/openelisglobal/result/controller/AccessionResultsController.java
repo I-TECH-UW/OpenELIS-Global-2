@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
@@ -68,9 +67,8 @@ public class AccessionResultsController extends BaseController {
         AccessionResultsForm form = new AccessionResultsForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
         ResultsPaging paging = new ResultsPaging();
@@ -78,7 +76,7 @@ public class AccessionResultsController extends BaseController {
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             accessionNumber = request.getParameter("accessionNumber");
-            PropertyUtils.setProperty(form, "displayTestKit", false);
+            form.setDisplayTestKit(false);
 
             if (!GenericValidator.isBlankOrNull(accessionNumber)) {
                 Errors errors = new BeanPropertyBindingResult(form, "form");
@@ -99,7 +97,7 @@ public class AccessionResultsController extends BaseController {
                     return findForward(FWD_FAIL, form);
                 }
 
-                PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+                form.setSearchFinished(Boolean.TRUE);
 
                 getSample();
 
@@ -111,7 +109,7 @@ public class AccessionResultsController extends BaseController {
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);
-                        PropertyUtils.setProperty(form, "displayTestKit", true);
+                        form.setDisplayTestKit(true);
                     } else {
                         addEmptyInventoryList(form);
                     }
@@ -121,8 +119,8 @@ public class AccessionResultsController extends BaseController {
                     setEmptyResults(form);
                 }
             } else {
-                PropertyUtils.setProperty(form, "testResult", new ArrayList<TestResultItem>());
-                PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
+                form.setTestResult(new ArrayList<TestResultItem>());
+                form.setSearchFinished(Boolean.FALSE);
             }
         } else {
             paging.page(request, form, newPage);
@@ -148,8 +146,8 @@ public class AccessionResultsController extends BaseController {
 
     private void setEmptyResults(AccessionResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "testResult", new ArrayList<TestResultItem>());
-        PropertyUtils.setProperty(form, "displayTestKit", false);
+        form.setTestResult(new ArrayList<TestResultItem>());
+        form.setDisplayTestKit(false);
         addEmptyInventoryList(form);
     }
 
@@ -166,16 +164,16 @@ public class AccessionResultsController extends BaseController {
                 syphilisKits.add(item.getInventoryLocationId());
             }
         }
-        PropertyUtils.setProperty(form, "hivKits", hivKits);
-        PropertyUtils.setProperty(form, "syphilisKits", syphilisKits);
-        PropertyUtils.setProperty(form, "inventoryItems", list);
+        form.setHivKits(hivKits);
+        form.setSyphilisKits(syphilisKits);
+        form.setInventoryItems(list);
     }
 
     private void addEmptyInventoryList(AccessionResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "inventoryItems", new ArrayList<InventoryKitItem>());
-        PropertyUtils.setProperty(form, "hivKits", new ArrayList<String>());
-        PropertyUtils.setProperty(form, "syphilisKits", new ArrayList<String>());
+        form.setInventoryItems(new ArrayList<InventoryKitItem>());
+        form.setHivKits(new ArrayList<String>());
+        form.setSyphilisKits(new ArrayList<String>());
     }
 
     private Errors validateAll(HttpServletRequest request, Errors errors, AccessionResultsForm form) {

@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -62,19 +60,12 @@ public class PanelCreateController extends BaseController {
                 .createTypeOfSamplePanelMap(true);
         HashMap<String, List<Panel>> inactiveSampleTypePanelMap = panelTestConfigurationUtil
                 .createTypeOfSamplePanelMap(false);
-        try {
-            PropertyUtils.setProperty(form, "existingSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setExistingSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+
         List<Panel> panels = panelService.getAllPanels();
-        try {
-            PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, Locale.ENGLISH));
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setExistingEnglishNames(getExistingTestNames(panels, Locale.ENGLISH));
+        form.setExistingFrenchNames(getExistingTestNames(panels, Locale.FRENCH));
 
         List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
         List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
@@ -88,12 +79,9 @@ public class PanelCreateController extends BaseController {
             sampleTypePanelInactive.setPanels(inactiveSampleTypePanelMap.get(typeOfSample.getValue()));
             sampleTypePanelsInactive.add(sampleTypePanelInactive);
         }
-        try {
-            PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
-            PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+
+        form.setExistingPanelList(sampleTypePanelsExists);
+        form.setInactivePanelList(sampleTypePanelsInactive);
     }
 
     private String getExistingTestNames(List<Panel> panels, Locale locale) {
@@ -115,11 +103,11 @@ public class PanelCreateController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String identifyingName = form.getString("panelEnglishName");
-        String sampleTypeId = form.getString("sampleTypeId");
+        String identifyingName = form.getPanelEnglishName();
+        String sampleTypeId = form.getSampleTypeId();
         String systemUserId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getString("panelFrenchName"), identifyingName,
+        Localization localization = createLocalization(form.getPanelFrenchName(), identifyingName,
                 systemUserId);
 
         Panel panel = createPanel(identifyingName, systemUserId);

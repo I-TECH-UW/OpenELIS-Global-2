@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -35,6 +34,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.reports.form.ReportForm;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -57,7 +57,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     protected String reportPath;
-    protected BaseForm form;
+    protected ReportForm form;
     protected Set<String> handledOrders;
 
     @Override
@@ -71,7 +71,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         handledOrders = new HashSet<>();
         this.form = form;
     }
@@ -176,7 +176,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     protected Patient getPatient() {
-        String patientId = form.getString("patientNumberDirect");
+        String patientId = form.getPatientNumberDirect();
         return PatientUtil.getPatientByIdentificationNumber(patientId);
     }
 

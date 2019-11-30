@@ -247,27 +247,19 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
                 + ", organizationLocalAbbreviation=" + organizationLocalAbbreviation + ", shortName=" + shortName + "]";
     }
 
-    /**
-     *
-     * @param organizationTypes
-     *
-     * @deprecated this seem to be bogus and will cause a null pointer exception in
-     *             session flush. Use the Organization_organization_type link method
-     */
-    @Deprecated
-    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
-        this.organizationTypes = organizationTypes;
-    }
-
-    public Set<OrganizationType> getOrganizationTypes() {
-        return organizationTypes;
-    }
-
     public String getCode() {
         return code;
     }
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<OrganizationType> getOrganizationTypes() {
+        return organizationTypes;
+    }
+
+    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
+        this.organizationTypes = organizationTypes;
     }
 }

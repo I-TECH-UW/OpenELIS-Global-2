@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -136,7 +137,7 @@ public class ResultsValidationRetroCIUtility {
         analyte = analyteService.getAnalyteByName(analyte, false);
         ANALYTE_CD4_CT_GENERATED_ID = analyte == null ? "" : analyte.getId();
 
-        Test test = testService.getTestByName("CD4 absolute count");
+        Test test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
         if (test != null) {
             CD4_COUNT_SORT_NUMBER = test.getSortOrder();
         }
@@ -918,7 +919,7 @@ public class ResultsValidationRetroCIUtility {
     }
 
     private String getTestId(String testName) {
-        Test test = testService.getTestByName(testName);
+        Test test = testService.getTestByLocalizedName(testName, Locale.FRENCH);
         return test.getId();
     }
 

@@ -87,7 +87,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public String insert(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.insert(panelItem);
@@ -95,7 +95,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public PanelItem save(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.save(panelItem);
@@ -103,7 +103,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public PanelItem update(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.update(panelItem);
@@ -149,5 +149,18 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
             panel.setSysUserId(currentUser);
             panelService.update(panel);
         }
+    }
+
+    @Override
+    public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
+        List<PanelItem> existingPanelItems = getPanelItemsForPanel(
+                panelService.getIdForPanelName(panelItem.getPanelName()));
+        for (PanelItem existingPanelItem : existingPanelItems) {
+            if ((panelItem.getTest().getId().equals(existingPanelItem.getTest().getId()))
+                    || (panelItem.getTestName().equals(existingPanelItem.getTestName()))) {
+                return !panelItem.getId().equals(existingPanelItem.getId());
+            }
+        }
+        return false;
     }
 }

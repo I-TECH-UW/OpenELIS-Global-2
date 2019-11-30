@@ -335,7 +335,7 @@ public abstract class BaseController implements IActionConstants {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends BaseForm> T resetFormToType(BaseForm form, Class<T> classType) {
+    public <T extends BaseForm> T resetSessionFormToType(BaseForm form, Class<T> classType) {
         try {
             T newForm = classType.newInstance();
             request.getSession().setAttribute("form", newForm);

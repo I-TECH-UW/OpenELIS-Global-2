@@ -74,7 +74,7 @@ public class NoteHistoryService extends AbstractHistoryService {
 
             for (Note note : notes) {
                 searchHistory.setReferenceId(note.getId());
-                noteIdToIndicatorMap.put(note.getId(), analysis.getTest().getTestName());
+                noteIdToIndicatorMap.put(note.getId(), analysis.getTest().getLocalizedName());
                 historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
             }
         }

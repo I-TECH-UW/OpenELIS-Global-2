@@ -3,7 +3,6 @@ package org.openelisglobal.patient.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
@@ -39,10 +38,10 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
         updateRequestType(request);
 
         // Set current date and entered date to today's date
-        PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText()); // TODO Needed?
+        form.setCurrentDate(DateUtil.getCurrentDateAsText()); // TODO Needed?
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(false);
-        PropertyUtils.setProperty(form, "patientSearch", patientSearch);
+        form.setPatientSearch(patientSearch);
 
         addAllPatientFormLists(form);
 

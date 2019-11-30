@@ -45,15 +45,15 @@ public class PrintWorkplanReportController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String workplanType = form.getString("workplanType");
+        String workplanType = form.getWorkplanType();
         String workplanName;
 
         if (workplanType.equals("test")) {
-            String testID = (String) form.get("testTypeID");
+            String testID = form.getTestTypeID();
             workplanName = getTestTypeName(testID);
         } else {
             workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
-            workplanName = form.getString("testName");
+            workplanName = form.getTestName();
         }
 
         // get workplan report based on testName

@@ -1,13 +1,11 @@
 package org.openelisglobal.inventory.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -21,10 +19,8 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
-import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryForm;
@@ -45,12 +41,10 @@ import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.rolemodule.service.RoleModuleService;
 import org.openelisglobal.scriptlet.service.ScriptletService;
-import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemmodule.service.SystemModuleService;
 import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
 import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
@@ -129,16 +123,16 @@ public class InventoryController extends BaseController {
     }
 
     @RequestMapping(value = "/ManageInventory", method = RequestMethod.GET)
-    public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm form) {
-        form = resetFormToType(form, InventoryForm.class);
+    public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm) {
+        InventoryForm newForm = resetSessionFormToType(oldForm, InventoryForm.class);
 
-        setupDisplayItems(form);
+        setupDisplayItems(newForm);
 
         addFlashMsgsToRequest(request);
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
-    private void setupDisplayItems(BaseForm form) {
+    private void setupDisplayItems(InventoryForm form) {
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
         request.setAttribute(NEXT_DISABLED, "true");
@@ -149,13 +143,9 @@ public class InventoryController extends BaseController {
         List<String> kitTypes = getTestKitTypes();
         List<IdValuePair> sources = getSources();
 
-        try {
-            PropertyUtils.setProperty(form, "inventoryItems", list);
-            PropertyUtils.setProperty(form, "kitTypes", kitTypes);
-            PropertyUtils.setProperty(form, "sources", sources);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setInventoryItems(list);
+        form.setKitTypes(kitTypes);
+        form.setSources(sources);
     }
 
     private List<String> getTestKitTypes() {
@@ -301,7 +291,7 @@ public class InventoryController extends BaseController {
     private void createNewInventory(InventoryForm form) {
         newInventory = new ArrayList<>();
 
-        String newInventoryXml = form.getString("newKitsXML");
+        String newInventoryXml = form.getNewKitsXML();
 
         try {
             Document inventoryDom = DocumentHelper.parseText(newInventoryXml);
@@ -357,7 +347,7 @@ public class InventoryController extends BaseController {
 
     @SuppressWarnings("unchecked")
     private void setModifiedItems(InventoryForm form) {
-        List<InventoryKitItem> allItems = (List<InventoryKitItem>) form.get("inventoryItems");
+        List<InventoryKitItem> allItems = form.getInventoryItems();
         modifiedItems = new ArrayList<>();
 
         if (allItems != null) {
@@ -369,71 +359,71 @@ public class InventoryController extends BaseController {
         }
     }
 
-    protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form) throws Exception {
-
-        // test validation against database
-        String testNameSelected = (String) form.get("testName");
-
-        if (!StringUtil.isNullorNill(testNameSelected)) {
-            Test test = new Test();
-            test.setTestName(testNameSelected);
-            test = testService.getTestByName(test);
-
-            String messageKey = "testresult.testName";
-
-            if (test == null) {
-                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
-            }
-        }
-
-        // scriptlet validation against database
-        String scriptletSelected = (String) form.get("scriptletName");
-
-        if (!StringUtil.isNullorNill(scriptletSelected)) {
-            Scriptlet scriptlet = new Scriptlet();
-            scriptlet.setScriptletName(scriptletSelected);
-            scriptlet = scriptletService.getScriptletByName(scriptlet);
-
-            String messageKey = "testresult.scriptletName";
-
-            if (scriptlet == null) {
-                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
-            }
-        }
-
-        // validate for testResult D -> value must be dictionary ID
-        String testResultType = (String) form.get("testResultType");
-
-        if (testResultType.equals("D")) {
-            String val = (String) form.get("value");
-            String messageKey = "testresult.value";
-            try {
-                Integer.parseInt(val);
-
-                Dictionary dictionary = new Dictionary();
-                dictionary.setId(val);
-                List dictionarys = dictionaryService.getAll();
-
-                boolean found = false;
-                for (int i = 0; i < dictionarys.size(); i++) {
-                    Dictionary d = (Dictionary) dictionarys.get(i);
-                    if (dictionary.getId().equals(d.getId())) {
-                        found = true;
-                    }
-                }
-
-                if (!found) {
-                    errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) },
-                            "errors.invalid");
-                }
-            } catch (NumberFormatException e) {
-                // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
-                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
-            }
-        }
-        return errors;
-    }
+//    protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form) throws Exception {
+//
+//        // test validation against database
+//        String testNameSelected = (String) form.get("testName");
+//
+//        if (!StringUtil.isNullorNill(testNameSelected)) {
+//            Test test = new Test();
+//            test.setTestName(testNameSelected);
+//            test = testService.getTestByName(test);
+//
+//            String messageKey = "testresult.testName";
+//
+//            if (test == null) {
+//                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
+//            }
+//        }
+//
+//        // scriptlet validation against database
+//        String scriptletSelected = (String) form.get("scriptletName");
+//
+//        if (!StringUtil.isNullorNill(scriptletSelected)) {
+//            Scriptlet scriptlet = new Scriptlet();
+//            scriptlet.setScriptletName(scriptletSelected);
+//            scriptlet = scriptletService.getScriptletByName(scriptlet);
+//
+//            String messageKey = "testresult.scriptletName";
+//
+//            if (scriptlet == null) {
+//                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
+//            }
+//        }
+//
+//        // validate for testResult D -> value must be dictionary ID
+//        String testResultType = (String) form.get("testResultType");
+//
+//        if (testResultType.equals("D")) {
+//            String val = (String) form.get("value");
+//            String messageKey = "testresult.value";
+//            try {
+//                Integer.parseInt(val);
+//
+//                Dictionary dictionary = new Dictionary();
+//                dictionary.setId(val);
+//                List dictionarys = dictionaryService.getAll();
+//
+//                boolean found = false;
+//                for (int i = 0; i < dictionarys.size(); i++) {
+//                    Dictionary d = (Dictionary) dictionarys.get(i);
+//                    if (dictionary.getId().equals(d.getId())) {
+//                        found = true;
+//                    }
+//                }
+//
+//                if (!found) {
+//                    errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) },
+//                            "errors.invalid");
+//                }
+//            } catch (NumberFormatException e) {
+//                // bugzilla 2154
+//                LogEvent.logError(e.toString(), e);
+//                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
+//            }
+//        }
+//        return errors;
+//    }
 
     @Override
     protected String findLocalForward(String forward) {

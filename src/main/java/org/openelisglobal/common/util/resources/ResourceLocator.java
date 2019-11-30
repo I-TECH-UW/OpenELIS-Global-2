@@ -117,32 +117,6 @@ public class ResourceLocator {
         return resourceFileName;
     }
 
-    /*
-     */
-    // @Deprecated
-    // private void initializeMessageResources() {
-    // MessageResourcesConfig config = new MessageResourcesConfig();
-    // config.setParameter(propertyFilePairs
-    // .getProperty("ApplicationResources.classpath"));
-    // String factory = config.getFactory();
-    // MessageResourcesFactory.setFactoryClass(factory);
-    // MessageResourcesFactory factoryObject = MessageResourcesFactory
-    // .createFactory();
-//
-    // messageResources = factoryObject.createResources(config.getParameter());
-    // messageResources.setReturnNull(config.getNull());
-    // }
-
-    /**
-     * Returns the messageResources.
-     *
-     * @return MessageResources
-     */
-    // @Deprecated //use MessageUtils for interacting with message resources
-    // public MessageResources getMessageResources() {
-    // return messageResources;
-    // }
-
     /**
      * Returns the path for a resource filename.
      *

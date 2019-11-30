@@ -56,7 +56,8 @@ public class OrganizationMenuController extends BaseMenuController {
     @Override
     protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in OrganizationMenuAction createMenuList()");
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // OrganizationMenuAction createMenuList()");
 
         List<Organization> organizations = new ArrayList<>();
 
@@ -134,7 +135,7 @@ public class OrganizationMenuController extends BaseMenuController {
             findForward(FWD_FAIL_DELETE, form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
         List<Organization> organizations = new ArrayList<>();
         for (int i = 0; i < selectedIDs.size(); i++) {
             Organization organization = new Organization();
@@ -144,9 +145,11 @@ public class OrganizationMenuController extends BaseMenuController {
         }
 
         try {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete Organization");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete
+            // Organization");
             organizationService.deleteAll(organizations);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted Organization");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted
+            // Organization");
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);

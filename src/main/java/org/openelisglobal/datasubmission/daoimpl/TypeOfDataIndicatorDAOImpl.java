@@ -127,11 +127,4 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //		}
 //	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

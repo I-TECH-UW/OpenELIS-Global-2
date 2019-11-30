@@ -101,8 +101,19 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
                     return result;
                 }
 
-                return org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
-                        : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                String so1 = o1.getSortOrder();
+                String so2 = o2.getSortOrder();
+
+                if (so1 == so2) {
+                    return 0;
+                } else if (so1 == null) {
+                    return -1;
+                } else if (so2 == null) {
+                    return 1;
+                } else {
+                    return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                }
+
             }
         });
         return testResults;

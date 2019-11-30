@@ -1,13 +1,11 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -51,18 +49,14 @@ public class TestSectionCreateController extends BaseController {
     }
 
     private void setupDisplayItems(TestSectionCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingTestUnitList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
-            PropertyUtils.setProperty(form, "inactiveTestUnitList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-            List<TestSection> testSections = testSectionService.getAllTestSections();
-            PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(testSections, Locale.ENGLISH));
+        form.setExistingTestUnitList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setInactiveTestUnitList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+        List<TestSection> testSections = testSectionService.getAllTestSections();
+        form.setExistingEnglishNames(getExistingTestNames(testSections, Locale.ENGLISH));
 
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(testSections, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
-        }
+        form.setExistingFrenchNames(getExistingTestNames(testSections, Locale.FRENCH));
     }
 
     private String getExistingTestNames(List<TestSection> testSections, Locale locale) {
@@ -85,10 +79,10 @@ public class TestSectionCreateController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String identifyingName = form.getString("testUnitEnglishName");
+        String identifyingName = form.getTestUnitEnglishName();
         String userId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getString("testUnitFrenchName"), identifyingName, userId);
+        Localization localization = createLocalization(form.getTestUnitFrenchName(), identifyingName, userId);
 
         TestSection testSection = createTestSection(identifyingName, userId);
 

@@ -103,23 +103,14 @@ public abstract class Report implements IReportCreator {
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }
 
-    // @Deprecated
-    // private Object getImage(String siteName) {
-    // SiteInformation siteInformation =
-    // siteInformationService.getSiteInformationByName(siteName);
-    // return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-    // : imageService.retrieveImageInputStream(siteInformation.getValue());
-    // }
-
     /**
      *
-     * @return map
-     * @deprecated The correct way to localize JasperReports is to us $R{key}. This
-     *             was put in before the correct way was understood. Do not add to
-     *             this list. It will eventually be moved to the correct way.
+     * @return map The correct way to localize JasperReports is to us $R{key}. This
+     *         was put in before the correct way was understood. Do not add to this
+     *         list. It will eventually be moved to the correct way although this
+     *         way is functional
      */
     // TODO csl see above note
-    @Deprecated
     protected Map<String, String> createLocalizationMap() {
         HashMap<String, String> localizationMap = new HashMap<>();
         localizationMap.put("requestOrderNumber", MessageUtil.getMessage("report.requestOrderNumber"));

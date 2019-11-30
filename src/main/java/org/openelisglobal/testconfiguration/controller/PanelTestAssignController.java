@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -66,11 +64,7 @@ public class PanelTestAssignController extends BaseController {
     private void setupDisplayItems(PanelTestAssignForm form) {
         List<IdValuePair> panels = DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
 
-        try {
-            PropertyUtils.setProperty(form, "panelList", panels);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.getMessage(), e);
-        }
+        form.setPanelList(panels);
 
         if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
             Panel panel = panelService.getPanelById(form.getPanelId());
@@ -91,12 +85,7 @@ public class PanelTestAssignController extends BaseController {
             }
             panelTests.setTests(tests, testIdSet);
 
-            try {
-
-                PropertyUtils.setProperty(form, "selectedPanel", panelTests);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                LogEvent.logError(e.getMessage(), e);
-            }
+            form.setSelectedPanel(panelTests);
         }
     }
 
@@ -124,7 +113,7 @@ public class PanelTestAssignController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String panelId = form.getString("panelId");
+        String panelId = form.getPanelId();
         String currentUser = getSysUserId(request);
         boolean updatePanel = false;
 
@@ -133,7 +122,7 @@ public class PanelTestAssignController extends BaseController {
         if (!GenericValidator.isBlankOrNull(panelId)) {
             List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
-            List<String> newTestIds = (List<String>) form.get("currentTests");
+            List<String> newTestIds = form.getCurrentTests();
             List<Test> newTests = new ArrayList<>();
             for (String testId : newTestIds) {
                 newTests.add(testService.get(testId));

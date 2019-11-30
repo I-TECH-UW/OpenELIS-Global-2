@@ -253,7 +253,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //	// bugzilla 1411
 //	@Override
 //	public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException {
-//		return getTotalCount("DictionaryCategory", DictionaryCategory.class);
+//		return getCount();
 //	}
 
 //	bugzilla 1427

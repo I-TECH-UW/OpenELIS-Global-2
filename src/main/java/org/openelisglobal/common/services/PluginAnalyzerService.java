@@ -105,9 +105,13 @@ public class PluginAnalyzerService {
     }
 
     private String getIdForTestName(String dbbTestName) {
-        Test test = testService.getTestByName(dbbTestName);
-        if (test != null) {
-            return test.getId();
+        List<Test> tests = testService.getTestsByName(dbbTestName);
+        Test test;
+        if (tests != null && !tests.isEmpty()) {
+            test = tests.get(0);
+            if (test != null) {
+                return test.getId();
+            }
         }
         LogEvent.logError(this.getClass().getName(), "getIdForTestName",
                 "Unable to find test " + dbbTestName + " in test catalog");

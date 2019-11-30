@@ -274,7 +274,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         List<Integer> sampIDList = new ArrayList<>();
         List<Integer> testIDList = new ArrayList<>();
 
-        testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
+        testIDList.add(Integer.parseInt(testService.getTestByLocalizedName(testName).getId()));
 
         if (patientSampleList.isEmpty()) {
             return previousSample;
