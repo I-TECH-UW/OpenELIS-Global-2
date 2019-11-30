@@ -282,7 +282,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestTrailerCount() throws LIMSRuntimeException {
-        return getTotalCount("TestTrailer", TestTrailer.class);
+        return getCount();
     }
 
     // bugzilla 1482

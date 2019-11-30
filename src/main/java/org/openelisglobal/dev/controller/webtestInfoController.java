@@ -69,7 +69,7 @@ public class webtestInfoController extends BaseController {
     }
 
 //	private void addNumberOfPatients(StringBuilder xmlBuilder) {
-//		int count = new PatientDAOImpl().getTotalCount("Patient", Patient.class);
+//		int count = new PatientDAOImpl().getCount();
 //
 //		xmlBuilder.append("<patient-count>");
 //		xmlBuilder.append(String.valueOf(count));
@@ -78,7 +78,7 @@ public class webtestInfoController extends BaseController {
 //	}
 
 //	private void addNumberOfSamples(StringBuilder xmlBuilder) {
-//		int count = new PatientDAOImpl().getTotalCount("Sample", Sample.class);
+//		int count = new PatientDAOImpl().getCount();
 //
 //		xmlBuilder.append("<sample-count>");
 //		xmlBuilder.append(String.valueOf(count));

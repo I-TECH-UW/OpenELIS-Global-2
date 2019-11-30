@@ -423,7 +423,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalDictionaryCount() throws LIMSRuntimeException {
-//		return getTotalCount("Dictionary", Dictionary.class);
+//		return getCount();
 //	}
 
     // bugzilla 1427

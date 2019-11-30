@@ -332,7 +332,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPanelCount() throws LIMSRuntimeException {
-        return getTotalCount("Panel", Panel.class);
+        return getCount();
     }
 
     @Override

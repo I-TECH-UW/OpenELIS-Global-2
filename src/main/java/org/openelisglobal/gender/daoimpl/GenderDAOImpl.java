@@ -249,7 +249,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 
 //	@Override
 //	public Integer getTotalGenderCount() throws LIMSRuntimeException {
-//		return getTotalCount("Gender", Gender.class);
+//		return getCount();
 //	}
 
 //	@Override

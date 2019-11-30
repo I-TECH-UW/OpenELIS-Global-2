@@ -254,7 +254,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
 //	@Override
 //	public Integer getTotalLoginUserCount() throws LIMSRuntimeException {
-//		return getTotalCount("Login", Login.class);
+//		return getCount();
 //	}
 
 //	@Override

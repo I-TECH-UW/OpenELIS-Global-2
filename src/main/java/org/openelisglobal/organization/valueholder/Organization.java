@@ -68,7 +68,6 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     private String organizationLocalAbbreviation;
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String code;
-    private Set<OrganizationType> organizationTypes;
 
     public Organization() {
         super();
@@ -245,22 +244,6 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     public String toString() {
         return "Organization [id=" + id + ", isActive=" + isActive + ", organizationName=" + organizationName
                 + ", organizationLocalAbbreviation=" + organizationLocalAbbreviation + ", shortName=" + shortName + "]";
-    }
-
-    /**
-     *
-     * @param organizationTypes
-     *
-     * @deprecated this seem to be bogus and will cause a null pointer exception in
-     *             session flush. Use the Organization_organization_type link method
-     */
-    @Deprecated
-    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
-        this.organizationTypes = organizationTypes;
-    }
-
-    public Set<OrganizationType> getOrganizationTypes() {
-        return organizationTypes;
     }
 
     public String getCode() {

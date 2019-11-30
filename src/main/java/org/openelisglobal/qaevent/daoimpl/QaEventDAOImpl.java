@@ -280,7 +280,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalQaEventCount() throws LIMSRuntimeException {
-        return getTotalCount("QaEvent", QaEvent.class);
+        return getCount();
     }
 
     @Override

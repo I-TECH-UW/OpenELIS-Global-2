@@ -267,7 +267,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
-        return getTotalCount("RoleModule", RoleModule.class);
+        return getCount();
     }
 
     @Override

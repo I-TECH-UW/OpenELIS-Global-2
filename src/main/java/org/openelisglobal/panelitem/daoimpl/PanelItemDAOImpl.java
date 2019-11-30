@@ -257,7 +257,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPanelItemCount() throws LIMSRuntimeException {
-        return getTotalCount("PanelItem", PanelItem.class);
+        return getCount();
     }
 
     @Override

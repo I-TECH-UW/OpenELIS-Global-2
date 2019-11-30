@@ -162,12 +162,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         receivedTimestamp = DateUtil.convertSqlDateToTimestamp(receivedDate);
     }
 
-    /**
-     * @deprecated Use DateUtil methods
-     * @return The received time in either 12 hour or 24 hour notation depending on
-     *         configuration
-     */
-    @Deprecated
     public String getReceivedTimeForDisplay() {
         return receivedTimestamp != null ? DateUtil.convertTimestampToStringConfiguredHourTime(receivedTimestamp)
                 : null;

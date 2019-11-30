@@ -103,14 +103,6 @@ public abstract class Report implements IReportCreator {
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }
 
-    // @Deprecated
-    // private Object getImage(String siteName) {
-    // SiteInformation siteInformation =
-    // siteInformationService.getSiteInformationByName(siteName);
-    // return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-    // : imageService.retrieveImageInputStream(siteInformation.getValue());
-    // }
-
     /**
      *
      * @return map

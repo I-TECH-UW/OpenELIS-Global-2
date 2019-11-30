@@ -292,7 +292,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException {
-        return getTotalCount("StatusOfSample", StatusOfSample.class);
+        return getCount();
     }
 
 //	 bugzilla 1482

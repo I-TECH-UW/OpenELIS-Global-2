@@ -238,7 +238,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException {
-//		return getTotalCount("TypeOfTestResult", TypeOfTestResult.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id

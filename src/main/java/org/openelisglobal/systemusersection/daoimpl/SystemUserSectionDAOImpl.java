@@ -256,7 +256,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException {
-        return getTotalCount("SystemUserSection", SystemUserSection.class);
+        return getCount();
     }
 
     @Override

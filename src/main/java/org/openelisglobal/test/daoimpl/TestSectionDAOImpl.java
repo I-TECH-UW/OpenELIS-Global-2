@@ -352,7 +352,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
-        return getTotalCount("TestSection", TestSection.class);
+        return getCount();
     }
 
     @Override

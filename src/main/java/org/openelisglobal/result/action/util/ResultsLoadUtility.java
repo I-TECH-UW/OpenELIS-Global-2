@@ -17,7 +17,6 @@
  */
 package org.openelisglobal.result.action.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -230,13 +228,7 @@ public class ResultsLoadUtility {
         return getGroupedTestsForSamples();
     }
 
-    /*
-     * @deprecated -- unsafe to use outside of beans with firstName, lastName, dob,
-     * gender, st, nationalId
-     */
-    @Deprecated
-    public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form) {
 
         if (patient == null) {
             return;

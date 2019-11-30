@@ -732,7 +732,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestCount() throws LIMSRuntimeException {
-        return getTotalCount("Test", Test.class);
+        return getCount();
     }
 
     // bugzilla 2371

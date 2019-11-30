@@ -257,7 +257,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
-        return getTotalCount("SystemUserModule", SystemUserModule.class);
+        return getCount();
     }
 
     @Override

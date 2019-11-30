@@ -376,7 +376,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestReflexCount() throws LIMSRuntimeException {
-        return getTotalCount("TestReflex", TestReflex.class);
+        return getCount();
     }
 
     // bugzilla 1482

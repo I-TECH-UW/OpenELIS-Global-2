@@ -720,14 +720,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
     // end of new methods, below this point are legacy methods
 
-    // bugzilla 1411
-    @Override
-    @Deprecated
-    @Transactional(readOnly = true)
-    public Integer getTotalCount(String table, Class<T> clazz) throws LIMSRuntimeException {
-        return getCount();
-    }
-
     // bugzilla 1427
     public String enquote(String sql) {
 
@@ -736,13 +728,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             sql = sql.replaceAll("'", "''");
         }
         return "'" + sql + "'";
-    }
-
-    // bugzilla 1427
-    @Deprecated
-    @Transactional(readOnly = true)
-    public String getTablePrefix(String table) {
-        return table.toLowerCase() + ".";
     }
 
     protected void handleException(Exception e, String method) throws LIMSRuntimeException {

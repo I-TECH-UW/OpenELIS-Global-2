@@ -82,7 +82,8 @@ public class TestResultItem implements ResultItem, Serializable {
      * N.B. test method is the type of test it is (HIV etc). analysisMethod is the
      * way the analysis is done automatic or manual
      */
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class, LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class,
+            LogbookResultsForm.LogbookResults.class })
     private String testMethod;
 
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
@@ -141,7 +142,6 @@ public class TestResultItem implements ResultItem, Serializable {
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String technicianSignatureId;
-    private String supervisorSignatureId;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultLimitId;
@@ -319,16 +319,6 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public void setTechnicianSignatureId(String technicianId) {
         technicianSignatureId = technicianId;
-    }
-
-    @Deprecated
-    public String getSupervisorSignatureId() {
-        return supervisorSignatureId;
-    }
-
-    @Deprecated
-    public void setSupervisorSignatureId(String superviserId) {
-        supervisorSignatureId = superviserId;
     }
 
     public String getTestKitInventoryId() {

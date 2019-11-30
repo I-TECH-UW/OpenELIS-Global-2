@@ -374,7 +374,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalOrganizationCount() throws LIMSRuntimeException {
-        return getTotalCount("Organization", Organization.class);
+        return getCount();
     }
 
     @Override

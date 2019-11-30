@@ -280,7 +280,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalReferenceTablesCount() throws LIMSRuntimeException {
-        return getTotalCount("ReferenceTables", ReferenceTables.class);
+        return getCount();
     }
 
     // bugzilla 1482
@@ -364,7 +364,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalReferenceTableCount() throws LIMSRuntimeException {
-        return getTotalCount("ReferenceTables", ReferenceTables.class);
+        return getCount();
     }
 
     @Override
