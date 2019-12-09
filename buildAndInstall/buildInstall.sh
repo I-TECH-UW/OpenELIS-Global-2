@@ -2,15 +2,14 @@
 PROGNAME=$0
 callDirectory=$PWD
 
-installerDir="OEInstaller"
-stagingDir="OEInstaller_stagingDir"
+installerDir="~/OEInstaller"
+stagingDir="~/OEInstaller_stagingDir"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-b <branch>] [-d] [-l] [-i]
+Usage: $PROGNAME [-b <branch>] [-l] [-i]
 
 -b <branch>: git branch to build from
-         -d: build docker images on machine
          -l: run liquibase
          -i: create installer
 EOF
@@ -47,13 +46,7 @@ if [ $runLiquibase == true ]
 then
 	cd ${liquibaseDir}
 	#                                    context     dbname
-	bash runLiquibase.sh CDIRetroCI  cdielis
-	bash runLiquibase.sh haiti       clinlims
-	bash runLiquibase.sh haitiLNSP   lnsphaiti
-	bash runLiquibase.sh ciLNSP      cilnsp
-	bash runLiquibase.sh CI_IPCI     ci_ipci
-	bash runLiquibase.sh ci_regional ci_reg_lab
-	bash runLiquibase.sh Kenya       kenya
+	bash runLiquibase.sh ci_regional       clinlims
 	cd ${callDirectory}
 fi
 
@@ -117,21 +110,21 @@ then
 		    esac
 		done
 	fi
-	rm -rf ${installerDir}
+	rm -r ${installerDir}
 	mkdir -p ${installerDir}
 	
 	mkdir ${stagingDir}
 	curl -fsSL https://get.docker.com -o ${stagingDir}/get-docker.sh
 	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${stagingDir}/docker-compose
 	
-	createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
 	createLinuxInstaller CDI_RegLabOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller haitiOpenElis HaitiBackup.pl 
-	createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
-	createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller haitiOpenElis HaitiBackup.pl 
+	#createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
+	#createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
 	
 	rm OpenELIS_DockerImage*.tar.gz
 	rm -r ${stagingDir}
