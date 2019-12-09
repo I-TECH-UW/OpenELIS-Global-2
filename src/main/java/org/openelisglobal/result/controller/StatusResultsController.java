@@ -36,12 +36,16 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class StatusResultsController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
     private static final boolean REVERSE_SORT_ORDER = false;
     @Autowired
@@ -61,6 +65,11 @@ public class StatusResultsController extends BaseController {
         // gets more complicate use the status sets
         excludedStatusIds = new HashSet<>();
         excludedStatusIds.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/StatusResults", method = RequestMethod.GET)

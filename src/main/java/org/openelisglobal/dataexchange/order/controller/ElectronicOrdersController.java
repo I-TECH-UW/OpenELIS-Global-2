@@ -24,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
     StatusOfSampleService statusOfSampleService;
     @Autowired
@@ -33,6 +35,7 @@ public class ElectronicOrdersController extends BaseController {
     public void initBinder(final WebDataBinder webdataBinder) {
         webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
                 new ElectronicOrderSortOrderCategoryConvertor());
+        webdataBinder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)

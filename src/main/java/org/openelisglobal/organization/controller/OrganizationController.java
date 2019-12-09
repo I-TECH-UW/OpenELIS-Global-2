@@ -36,6 +36,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,18 +50,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "id", "parentOrgName",
+            "organizationLocalAbbreviation", "organizationName", "shortName", "isActive", "multipleUnit",
+            "streetAddress", "city", "department", "commune", "village", "state", "zipCode", "internetAddress",
+            "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes[*]" };
+
     @Autowired
-    OrganizationService organizationService;
+    private OrganizationService organizationService;
     @Autowired
-    OrganizationAddressService organizationAddressService;
+    private OrganizationAddressService organizationAddressService;
     @Autowired
-    AddressPartService addressPartService;
+    private AddressPartService addressPartService;
     @Autowired
-    CityStateZipService cityStateZipService;
+    private CityStateZipService cityStateZipService;
     @Autowired
-    OrganizationTypeService organizationTypeService;
+    private OrganizationTypeService organizationTypeService;
     @Autowired
-    DictionaryService dictionaryService;
+    private DictionaryService dictionaryService;
 
     @ModelAttribute("form")
     public OrganizationForm form() {
@@ -101,6 +108,11 @@ public class OrganizationController extends BaseController {
                 VILLAGE_ID = addressPart.getId();
             }
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)

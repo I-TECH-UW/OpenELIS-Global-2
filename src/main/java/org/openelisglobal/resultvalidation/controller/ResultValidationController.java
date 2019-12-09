@@ -63,6 +63,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +73,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
+            "testName", "resultList[*].accessionNumber", "resultList[*].analysisId", "resultList[*].testId",
+            "resultList[*].sampleId", "resultList[*].resultType", "resultList[*].sampleGroupingNumber",
+            "resultList[*].noteId", "resultList[*].resultId", "resultList[*].hasQualifiedResult",
+            "resultList[*].sampleIsAccepted", "resultList[*].sampleIsRejected", "resultList[*].result",
+            "resultList[*].qualifiedResultValue", "resultList[*].multiSelectResultValues", "resultList[*].isAccepted",
+            "resultList[*].isRejected", "resultList[*].note" };
 
     // autowiring not needed, using constructor injection
     private AnalysisService analysisService;
@@ -103,6 +113,11 @@ public class ResultValidationController extends BaseResultValidationController {
 
         RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
         RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)

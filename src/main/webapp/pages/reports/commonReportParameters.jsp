@@ -176,9 +176,7 @@ function onPrint(){
 
 	  <c:if test="${form.useAccessionDirect}">
 		<span style="padding-left: 10px">
-		<c:if test="${form.useAccessionDirect}">
 			<%= MessageUtil.getContextualMessage("report.from") %>
-		</c:if>
 		</span>
 		<form:input path="accessionDirect"
 				   cssClass="input-medium" 

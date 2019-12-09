@@ -16,6 +16,8 @@ import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.resultvalidation.util.ResultsValidationRetroCIUtility;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,10 +25,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ResultValidationRetroCController extends BaseResultValidationRetroCIController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     private ResultsValidationRetroCIUtility resultsValidationUtility;
 
     public ResultValidationRetroCController(ResultsValidationRetroCIUtility resultsValidationUtility) {
         this.resultsValidationUtility = resultsValidationUtility;
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/ResultValidationRetroC", method = RequestMethod.GET)

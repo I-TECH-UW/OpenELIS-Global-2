@@ -20,6 +20,8 @@ import org.openelisglobal.workplan.reports.TestWorkplanReport;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,8 +34,17 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "workplanType", "testTypeID",
+            "testSectionId", "testName", "workplanTests[*].accessionNumber", "workplanTests[*].patientInfo",
+            "workplanTests[*].receivedDate", "workplanTests[*].testName", "workplanTests[*].notIncludedInWorkplan" };
+
     private static IWorkplanReport workplanReport;
     private String reportPath;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
     public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,

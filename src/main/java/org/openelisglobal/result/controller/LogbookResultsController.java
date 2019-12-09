@@ -74,6 +74,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -82,6 +84,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
+            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "logbookType", "currentPageID",
+            "testResult[*].accessionNumber", "testResult[*].isModified", "testResult[*].analysisId",
+            "testResult[*].resultId", "testResult[*].testId", "testResult[*].technicianSignatureId",
+            "testResult[*].testKitId", "testResult[*].resultLimitId", "testResult[*].resultType", "testResult[*].valid",
+            "testResult[*].referralId", "testResult[*].referralCanceled", "testResult[*].considerRejectReason",
+            "testResult[*].hasQualifiedResult", "testResult[*].shadowResultValue", "testResult[*].reflexJSONResult",
+            "testResult[*].testDate", "testResult[*].analysisMethod", "testResult[*].testMethod",
+            "testResult[*].testKitInventoryId", "testResult[*].forceTechApproval", "testResult[*].lowerNormalRange",
+            "testResult[*].upperNormalRange", "testResult[*].significantDigits", "testResult[*].resultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].multiSelectResultValues",
+            "testResult[*].multiSelectResultValues", "testResult[*].qualifiedResultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].shadowReferredOut", "testResult[*].referredOut",
+            "testResult[*].referralReasonId", "testResult[*].technician", "testResult[*].shadowRejected",
+            "testResult[*].rejected", "testResult[*].rejectReasonId", "testResult[*].note",
+
+    };
 
     @Autowired
     private ResultSignatureService resultSigService;
@@ -116,6 +136,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (referralType != null) {
             REFERRAL_CONFORMATION_ID = referralType.getId();
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     private void refreshValues() {

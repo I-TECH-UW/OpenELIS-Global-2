@@ -726,7 +726,7 @@ farv = new ArvFollowupProjectChecker();
 			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+			<form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
 				onchange="makeDirty();" id="farv.underInvestigationComment" />
 		</td>
     </tr>

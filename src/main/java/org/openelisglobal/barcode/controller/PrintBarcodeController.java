@@ -42,6 +42,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,6 +51,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PrintBarcodeController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
     private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
     private static final Set<Integer> excludedAnalysisStatusList = new HashSet<>();
@@ -75,6 +79,11 @@ public class PrintBarcodeController extends BaseController {
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)

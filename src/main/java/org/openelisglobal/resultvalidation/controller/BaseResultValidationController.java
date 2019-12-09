@@ -6,6 +6,9 @@ import org.openelisglobal.internationalization.MessageUtil;
 
 public abstract class BaseResultValidationController extends BaseController {
 
+	private static final String[] ALLOWED_FIELDS = new String[] {};
+
+
     private String titleKey = "";
 
     @Override

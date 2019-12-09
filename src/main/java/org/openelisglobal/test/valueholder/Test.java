@@ -459,4 +459,9 @@ public class Test extends EnumValueItemImpl {
     public void setGuid(String guid) {
         this.guid = guid;
     }
+
+    @Override
+    public String getName() {
+        return getLocalizedTestName().getLocalizedValue();
+    }
 }

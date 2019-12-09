@@ -27,6 +27,8 @@ import org.openelisglobal.testconfiguration.service.PanelCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +36,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PanelCreateController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelEnglishName", "panelFrenchName",
+            "sampleTypeId", };
 
     @Autowired
     private PanelService panelService;
@@ -45,6 +50,11 @@ public class PanelCreateController extends BaseController {
     private PanelCreateService panelCreateService;
 
     public static final String NAME_SEPARATOR = "$";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PanelCreate", method = RequestMethod.GET)
     public ModelAndView showPanelCreate(HttpServletRequest request) {
@@ -107,8 +117,7 @@ public class PanelCreateController extends BaseController {
         String sampleTypeId = form.getSampleTypeId();
         String systemUserId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getPanelFrenchName(), identifyingName,
-                systemUserId);
+        Localization localization = createLocalization(form.getPanelFrenchName(), identifyingName, systemUserId);
 
         Panel panel = createPanel(identifyingName, systemUserId);
         SystemModule workplanModule = createSystemModule("Workplan", identifyingName, systemUserId);

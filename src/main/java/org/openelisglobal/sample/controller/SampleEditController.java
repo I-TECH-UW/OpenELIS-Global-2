@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -60,6 +59,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,6 +69,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SampleEditController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "initialSampleConditionList", "sampleXML",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.modified", "sampleOrderItems.sampleId",
+            "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
+            "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
+            "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
+            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
+            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
+            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
+            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
+            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
+            "sampleOrderItems.otherLocationCode",
+            //
+            "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
+            "existingTests[*].sampleItemChanged", "existingTests[*].sampleItemId", "existingTests[*].analysisId",
+            "existingTests[*].collectionDate", "existingTests[*].collectionTime", "existingTests[*].removeSample",
+            "existingTests[*].canceled", "possibleTests[*].testId", "possibleTests[*].sampleItemId",
+            "possibleTests[*].add" };
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -111,6 +132,11 @@ public class SampleEditController extends BaseController {
     UserRoleService userRoleService;
     @Autowired
     private SampleEditService sampleEditService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
     public ModelAndView showSampleEdit(HttpServletRequest request)
@@ -165,7 +191,8 @@ public class SampleEditController extends BaseController {
         }
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            form.setInitialSampleConditionList(DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+            form.setInitialSampleConditionList(
+                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
 
         form.setCurrentDate(DateUtil.getCurrentDateAsText());

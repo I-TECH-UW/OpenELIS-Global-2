@@ -52,7 +52,7 @@
 <form:hidden path="paramName" id="siteInfoName"/>
 <c:if test="${form.valueType == 'text'}">
     <c:if test="${form.encrypted}">
-        <form:password path="${form.value}" size="60" maxlength="120"/>
+        <form:password path="value" size="60" maxlength="120"/>
     </c:if>
     <c:if test="${not form.encrypted}">
         <c:if test="${form.tag == 'localization'}" >

@@ -307,9 +307,9 @@ jQuery('body').on('change', 'input', function() {
 	</div>
 </c:if>
     <div id="sampleOrder" class="colorFill" >
-    	<c:if test="${form.isConfirmationSample}">
-        	<tiles:insertAttribute name="sampleConfirmationOrder" />
-        </c:if>
+<%--     	<c:if test="${form.isConfirmationSample}"> --%>
+<%--         	<tiles:insertAttribute name="sampleConfirmationOrder" /> --%>
+<%--         </c:if> --%>
     	<c:if test="${not form.isConfirmationSample}">
         	<tiles:insertAttribute name="sampleOrder" />
         </c:if>

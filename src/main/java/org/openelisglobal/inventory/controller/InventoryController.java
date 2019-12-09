@@ -10,9 +10,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.openelisglobal.address.service.AddressPartService;
-import org.openelisglobal.address.service.PersonAddressService;
-import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
@@ -20,7 +17,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryForm;
@@ -32,28 +28,16 @@ import org.openelisglobal.inventory.validation.InventoryFormValidator;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
 import org.openelisglobal.inventory.valueholder.InventoryLocation;
 import org.openelisglobal.inventory.valueholder.InventoryReceipt;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
-import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.panelitem.service.PanelItemService;
-import org.openelisglobal.resultlimit.service.ResultLimitService;
-import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.rolemodule.service.RoleModuleService;
-import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.systemmodule.service.SystemModuleService;
-import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testresult.service.TestResultService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
-import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,52 +50,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class InventoryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "newKitsXML", "inventoryItems[*].isActive",
+            "inventoryItems[*].isModified", "inventoryItems[*].inventoryLocationId", "inventoryItems[*].kitName",
+            "inventoryItems[*].type", "inventoryItems[*].receiveDate", "inventoryItems[*].expirationDate",
+            "inventoryItems[*].lotNumber", "inventoryItems[*].organizationId", "inventoryItems[*].source" };
+
     @Autowired
-    InventoryFormValidator formValidator;
+    private InventoryFormValidator formValidator;
     @Autowired
-    AddressPartService addressPartService;
+    private InventoryItemService inventoryItemService;
     @Autowired
-    AnalyzerTestMappingService analyzerTestMappingService;
+    private InventoryLocationService inventoryLocationService;
     @Autowired
-    DictionaryService dictionaryService;
+    private InventoryReceiptService inventoryReceiptService;
     @Autowired
-    InventoryItemService inventoryItemService;
-    @Autowired
-    InventoryLocationService inventoryLocationService;
-    @Autowired
-    InventoryReceiptService inventoryReceiptService;
-    @Autowired
-    PanelService panelService;
-    @Autowired
-    RoleService roleService;
-    @Autowired
-    RoleModuleService roleModuleService;
-    @Autowired
-    SystemModuleService systemModuleService;
-    @Autowired
-    SystemUserModuleService systemUserModuleService;
-    @Autowired
-    TypeOfSampleService typeOfSampleService;
-    @Autowired
-    TypeOfSampleTestService typeOfSampleTestService;
-    @Autowired
-    LocalizationService localizationService;
-    @Autowired
-    OrganizationService organizationService;
-    @Autowired
-    PersonAddressService personAddressService;
-    @Autowired
-    PanelItemService panelItemService;
-    @Autowired
-    TestService testService;
-    @Autowired
-    ResultLimitService resultLimitService;
-    @Autowired
-    ScriptletService scriptletService;
-    @Autowired
-    TestResultService testResultService;
-    @Autowired
-    UnitOfMeasureService unitOfMeasureService;
+    private OrganizationService organizationService;
 
     private List<InventoryKitItem> modifiedItems;
     private List<InventorySet> newInventory;
@@ -120,6 +73,11 @@ public class InventoryController extends BaseController {
     @ModelAttribute("form")
     public InventoryForm initForm() {
         return new InventoryForm();
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/ManageInventory", method = RequestMethod.GET)
