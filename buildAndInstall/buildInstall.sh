@@ -2,8 +2,8 @@
 PROGNAME=$0
 callDirectory=$PWD
 
-installerDir="~/OEInstaller"
-stagingDir="~/OEInstaller_stagingDir"
+installerDir="OEInstaller"
+stagingDir="OEInstaller_stagingDir"
 
 usage() {
   cat << EOF >&2
