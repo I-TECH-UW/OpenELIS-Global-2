@@ -30,17 +30,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-	
-
-<%!
-	IAccessionNumberValidator accessionNumberValidator;
- %>
-<%
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	String accessionFormat = ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat);
-%>
-
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js" ></script>
 
 <script type="text/javascript">
 
@@ -78,7 +68,7 @@ function /*void*/ handleEnterEvent(  ){
 			<input name="accessionNumber"
 			       size="20"
 			       id="searchAccessionID"
-			       maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
+			       maxlength="<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength()) %>"
 			       onkeyup="validateEntrySize( this.value );"
 			       onblur="validateEntrySize( this.value );"
 			       class="text"

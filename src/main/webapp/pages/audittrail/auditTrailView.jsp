@@ -15,18 +15,10 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
-<%!
-	IAccessionNumberValidator accessionValidator;
- %>
+<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.css?" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?" />
 
-<%
-	accessionValidator = new AccessionNumberValidatorFactory().getValidator();
-%>
-
-<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.css?ver=<%= Versioning.getBuildNumber() %>" />
-<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
-
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <script type="text/javascript">
 
@@ -52,7 +44,7 @@ function search(){
 		<form:input path="accessionNumberSearch"
 					id="accessionNumberSearch"
 				   cssClass="input-medium" 
-	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
+	        	   maxlength="<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength()) %>" />
 		<input class="btn" type="button" onclick="search();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
 		</div>
 	</div>
@@ -141,7 +133,7 @@ function search(){
         function getAuditEntriesDisplayed(){  return '<spring:message code="audit.entries.displayed" />';  }
         function getAuditNoRecords(){  return '<spring:message code="audit.no.records" />';  }
     </script>
-<script type="text/javascript" src="scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/oe.datatables.functions.js?"></script>
 </c:if>
 
 <script type="text/javascript">

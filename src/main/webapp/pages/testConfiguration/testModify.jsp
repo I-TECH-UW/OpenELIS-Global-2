@@ -37,30 +37,28 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<%!
-	String locale = "en_US";%>
 <%
-	locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+	String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript"
-	src="scripts/jquery.asmselect.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript"
-	src="scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/ajaxCalls.js?"></script>
 <script type="text/javascript"
-	src="scripts/multiselectUtils.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/multiselectUtils.js?"></script>
 <script type="text/javascript"
-	src="scripts/jquery-ui.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/jquery-ui.js?"></script>
 <link rel="stylesheet" type="text/css"
-	href="css/jquery.asmselect.css?ver=<%=Versioning.getBuildNumber()%>" />
+	href="css/jquery.asmselect.css?" />
 <link rel="stylesheet" media="screen" type="text/css"
-	href="css/jquery_ui/jquery.ui.theme.css?ver=<%=Versioning.getBuildNumber()%>" />
+	href="css/jquery_ui/jquery.ui.theme.css?" />
 <link rel="stylesheet" type="text/css"
-	href="css/openElisCore.css?ver=<%=Versioning.getBuildNumber()%>" />
+	href="css/openElisCore.css?" />
 
 
 <script type="text/javascript"
-	src="scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/ajaxCalls.js?"></script>
 
 
 <%--
@@ -99,14 +97,10 @@
 <c:set var="groupedDictionaryList" value="${form.groupedDictionaryList}" />
 <c:set var="testCatBeanList" value="${form.testCatBeanList}" />
 
-<%!int testCount = 0;
+<%
+	int testCount = 0;
 	int columnCount = 0;
 	int columns = 3;
-%>
-
-<%
-	columnCount = 0;
-	testCount = 0;
 %>
 
 	<script type="text/javascript">

@@ -13,7 +13,7 @@
 <c:set var="workplanType" value="${form.workplanType}"/>
 <c:set var="responseAction" value="${form.searchAction}"/>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 <script type="text/javascript">
 
 function doShowTests(element){

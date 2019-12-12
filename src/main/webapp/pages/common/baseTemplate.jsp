@@ -8,29 +8,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <html>
-<%
-String form = (String)request.getAttribute(IActionConstants.FORM_NAME);
-
-if (form == null) {
-	form = "n/a";
-}
-
-  int startingRecNo = 1;
-
-  if (request.getAttribute("startingRecNo") != null) {
-       startingRecNo = Integer.parseInt((String)request.getAttribute("startingRecNo"));
-  }
-
-   request.setAttribute("ctx", request.getContextPath());
-
-%>
-
 <head>
 	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
@@ -46,30 +27,30 @@ if (form == null) {
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 
 <link rel="stylesheet" media="screen" type="text/css"
-	href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
+	href="css/openElisCore.css?" />
 <script type="text/javascript"
-	src="scripts/jquery-1.8.0.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/jquery-1.8.0.min.js?"></script>
 <script type="text/javascript"
-	src="scripts/jquery.dataTables.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/jquery.dataTables.min.js?"></script>
 <script type="text/javascript"
-	src="scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/bootstrap.min.js?"></script>
 <script type="text/javascript">
 var  jQuery = jQuery.noConflict();
 </script>
 <script
 	src="scripts/additional_utilities.js"></script>
 <script type="text/javascript"
-	src="scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/prototype-1.5.1.js?"></script>
 <script type="text/javascript"
-	src="scripts/scriptaculous.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/scriptaculous.js?"></script>
 <script type="text/javascript"
-	src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/overlibmws.js?"></script>
 <script type="text/javascript"
-	src="scripts/ajaxtags-1.2.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/ajaxtags-1.2.js?"></script>
 <script type="text/javascript"
-	src="scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/Tooltip-0.6.0.js?"></script>
 <script type="text/javascript"
-	src="scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/lightbox.js?"></script>
 	
 <script>
 

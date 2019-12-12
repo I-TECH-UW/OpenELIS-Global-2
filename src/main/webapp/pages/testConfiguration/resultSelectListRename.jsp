@@ -22,16 +22,8 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-    String locale = "en_US";
-%>
-<%
-    locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-
-%>
-
 <link rel="stylesheet" media="screen" type="text/css"
-      href="css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 <input 	type="button"
           class="textButton"
           value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"

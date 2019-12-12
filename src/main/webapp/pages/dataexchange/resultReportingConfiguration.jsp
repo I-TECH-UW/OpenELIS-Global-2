@@ -10,18 +10,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
- 
-
-<%!String allowEdits = "true";%>
-
-<%
-	if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-		allowEdits = (String) request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-	}
-%>
-
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 
 
 <script type="text/javascript" >

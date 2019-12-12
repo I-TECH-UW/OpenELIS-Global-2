@@ -16,25 +16,19 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%! 
-	boolean useCollectionDate = true;
-	boolean useInitialSampleCondition = false;
-	boolean useCollector = false;
-	boolean autofillCollectionDate = true;
-%>
 <%
-	useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
-	useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
-	autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
+	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
+	boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
+	boolean autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/laborder.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/laborder.js?"></script>
 
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 
 

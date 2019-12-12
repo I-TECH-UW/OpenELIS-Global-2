@@ -16,48 +16,22 @@
 <div id="sound"></div>
 
  
-<%--bugzilla 2069--%>
-
-<%!
-
-String allowEdits = "true";
-
-boolean useOrgLocalAbbrev = true;
-boolean useState = true;
-boolean useZip = true;
-boolean useMLS = true;
-boolean useInlineOrganizationTypes = false;
-boolean useAddressInfo = true;
-boolean useCLIA = true;
-boolean useParent = true;
-boolean useShortName = true;
-boolean useMultiUnit = true;
-boolean showId = true;
-boolean showCity = true;
-boolean showDepartment = false;
-boolean showCommune = false;
-boolean showVillage = false;
-%>
 <%
-if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
- allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-}
-
-useOrgLocalAbbrev = FormFields.getInstance().useField( Field.OrgLocalAbrev);
-useState = FormFields.getInstance().useField( Field.OrgState);
-useZip = FormFields.getInstance().useField( Field.ZipCode);
-useMLS = FormFields.getInstance().useField( Field.MLS);
-useInlineOrganizationTypes = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
-useAddressInfo = FormFields.getInstance().useField(Field.OrganizationAddressInfo);
-useCLIA = FormFields.getInstance().useField(Field.OrganizationCLIA);
-useParent = FormFields.getInstance().useField(Field.OrganizationParent);
-useShortName = FormFields.getInstance().useField(Field.OrganizationShortName);
-useMultiUnit = FormFields.getInstance().useField(Field.OrganizationMultiUnit);
-showId = FormFields.getInstance().useField(Field.OrganizationOrgId);
-showCity = FormFields.getInstance().useField(Field.ADDRESS_CITY );
-showDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT );
-showCommune= FormFields.getInstance().useField(Field.ADDRESS_COMMUNE );
-showVillage = FormFields.getInstance().useField(Field.ADDRESS_VILLAGE );
+	boolean useOrgLocalAbbrev = FormFields.getInstance().useField( Field.OrgLocalAbrev);
+	boolean useState = FormFields.getInstance().useField( Field.OrgState);
+	boolean useZip = FormFields.getInstance().useField( Field.ZipCode);
+	boolean useMLS = FormFields.getInstance().useField( Field.MLS);
+	boolean useInlineOrganizationTypes = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
+	boolean useAddressInfo = FormFields.getInstance().useField(Field.OrganizationAddressInfo);
+	boolean useCLIA = FormFields.getInstance().useField(Field.OrganizationCLIA);
+	boolean useParent = FormFields.getInstance().useField(Field.OrganizationParent);
+	boolean useShortName = FormFields.getInstance().useField(Field.OrganizationShortName);
+	boolean useMultiUnit = FormFields.getInstance().useField(Field.OrganizationMultiUnit);
+	boolean showId = FormFields.getInstance().useField(Field.OrganizationOrgId);
+	boolean showCity = FormFields.getInstance().useField(Field.ADDRESS_CITY );
+	boolean showDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT );
+	boolean showCommune= FormFields.getInstance().useField(Field.ADDRESS_COMMUNE );
+	boolean showVillage = FormFields.getInstance().useField(Field.ADDRESS_VILLAGE );
 
 %>
 

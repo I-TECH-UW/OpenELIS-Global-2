@@ -42,19 +42,19 @@ if (form == null) {
 	<meta name="theme-color" content="#ffffff">
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 	
-<link rel="stylesheet" type="text/css" href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="scripts/jquery-1.8.0.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.dataTables.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<link rel="stylesheet" type="text/css" href="css/openElisCore.css?" />
+<script type="text/javascript" src="scripts/jquery-1.8.0.min.js?"></script>
+<script type="text/javascript" src="scripts/jquery.dataTables.min.js?"></script>
+<script type="text/javascript" src="scripts/bootstrap.min.js?"></script>
 <script type="text/javascript" src="scripts/tabs.js"></script> 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script> 
-<script type="text/javascript" src="scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/scriptaculous.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ajaxtags-1.2.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/treeScript.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/prototype-1.5.1.js?"></script>
+<script type="text/javascript" src="scripts/scriptaculous.js?"></script>
+<script type="text/javascript" src="scripts/overlibmws.js?"></script>
+<script type="text/javascript" src="scripts/ajaxtags-1.2.js?"></script>
+<script type="text/javascript" src="scripts/treeScript.js?"></script>
+<script type="text/javascript" src="scripts/Tooltip-0.6.0.js?"></script>
+<script type="text/javascript" src="scripts/lightbox.js?"></script>
 
 
 

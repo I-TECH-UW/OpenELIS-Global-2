@@ -46,30 +46,30 @@ if (form == null) {
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 	
 <link rel="stylesheet" media="screen" type="text/css"
-	href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
+	href="css/openElisCore.css?" />
 <script type="text/javascript"
-	src="scripts/jquery-1.8.0.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/jquery-1.8.0.min.js?"></script>
 <script type="text/javascript"
-	src="scripts/jquery.dataTables.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/jquery.dataTables.min.js?"></script>
 <script type="text/javascript"
-	src="scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/bootstrap.min.js?"></script>
 <script type="text/javascript">
 var  jQuery = jQuery.noConflict();
 </script>
 <script
 	src="scripts/additional_utilities.js"></script>
 <script type="text/javascript"
-	src="scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/prototype-1.5.1.js?"></script>
 <script type="text/javascript"
-	src="scripts/scriptaculous.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/scriptaculous.js?"></script>
 <script type="text/javascript"
-	src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/overlibmws.js?"></script>
 <script type="text/javascript"
-	src="scripts/ajaxtags-1.2.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/ajaxtags-1.2.js?"></script>
 <script type="text/javascript"
-	src="scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/Tooltip-0.6.0.js?"></script>
 <script type="text/javascript"
-	src="scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	src="scripts/lightbox.js?"></script>
 	
 <script>
 

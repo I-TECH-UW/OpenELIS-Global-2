@@ -25,20 +25,13 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-    String locale = "en_US";
-%>
-<%
-    locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-
-%>
 <script>
     var normalConfirmAlert = '<spring:message code="configuration.selectList.confirmChange" />';
     var validating = false;
 </script>
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <link rel="stylesheet" media="screen" type="text/css"
-      href="css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 <input 	type="button"
           class="textButton"
           value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"

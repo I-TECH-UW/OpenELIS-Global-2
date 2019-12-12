@@ -13,23 +13,7 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-
-<%!
-
-String allowEdits = "true";
-String currentTab = "";
-%>
-
-<%
-if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
- allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-
-}
-
-%>
-
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 
 <script>

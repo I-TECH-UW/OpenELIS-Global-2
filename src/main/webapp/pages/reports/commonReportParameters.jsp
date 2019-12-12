@@ -16,19 +16,19 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
-	IAccessionNumberValidator accessionValidator;
+	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
  %>
 
 <%
-	accessionValidator = new AccessionNumberValidatorFactory().getValidator();
+	IAccessionNumberValidator accessionValidator = accessionValidatorFactory.getValidator();
 %>
 
 <%-- Creates updated UI. Removing for current release 
-<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.min.css?ver=<%= Versioning.getBuildNumber() %>" />
-<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.min.css?" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?" />
 --%>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <script type="text/javascript">
 

@@ -13,15 +13,13 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-  String paginationMessage = "";
-  String totalCount = "0";
-  String fromCount = "0";
-  String toCount = "0";
-  boolean allowDeactivate = false;
-%>
-
 <%
+	String paginationMessage = "";
+	String totalCount = "0";
+	String fromCount = "0";
+	String toCount = "0";
+	boolean allowDeactivate = false;
+
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
        } 

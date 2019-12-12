@@ -33,8 +33,8 @@
   --%>
 
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 
  <%-- 
 <bean:define id="panelList" name='${form.formName}' property="panelList" type="java.util.List"/>
@@ -57,20 +57,18 @@
 <c:set var="existingSampleTypes" value="${form.existingSampleTypeList}" />
 
 <%!
-	public static final String NAME_SEPARATOR = "$";
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 4;
-    int sampleTypeCount = 0;
+	final String NAME_SEPARATOR = "$";
 %>
 
 <%
-    columnCount = 0;
-    testCount = 0;
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 4;
+	int sampleTypeCount = 0;
 %>
 
 <link rel="stylesheet" media="screen" type="text/css"
-      href="css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 
 <script type="text/javascript">
     if (!jQuery) {

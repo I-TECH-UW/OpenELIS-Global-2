@@ -12,15 +12,6 @@
  
 <c:set var="valueEditable" value="${form.editable}"/>
 
-<%!String allowEdits = "true";%>
-
-<%
-    if( request.getAttribute( IActionConstants.ALLOW_EDITS_KEY ) != null ){
-        allowEdits = ( String ) request.getAttribute( IActionConstants.ALLOW_EDITS_KEY );
-    }
-%>
-
-<script type="text/javascript">
     jQuery(document).ready(function () {
     	<c:if test='${not form.editable}'>
             jQuery(".inputWidget").prop('disabled', true);

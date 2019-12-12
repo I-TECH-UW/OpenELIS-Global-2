@@ -17,15 +17,6 @@
 <c:set var="testList" value="${form.testList}" />
 <c:set var="testNameOrId" value="${form.testId}" />
 
-<%!String allowEdits = "true";%>
-
-<%
-	if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-		allowEdits = (String) request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-	}
-%>
-
-
 <script>
 
 	jQuery(document).ready( function() {

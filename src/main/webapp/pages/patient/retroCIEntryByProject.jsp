@@ -20,7 +20,7 @@
 	boolean canEditAccessionNo = isAdmin || accessMap.contains(IActionConstants.MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT);
 %>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/utilities.js?"></script>
 <script type="text/javascript" src="scripts/neon2/retroCIUtilities.js"></script>
 <script type="text/javascript" src="scripts/neon/entryByProjectUtils.js"></script>
 <script type="text/javascript">

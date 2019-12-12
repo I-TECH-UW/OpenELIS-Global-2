@@ -49,58 +49,42 @@
 </c:if>
 	
 <%!
-	String searchTerm = null;
-	IAccessionNumberValidator accessionNumberValidator;
-	boolean useSTNumber = true;
-	boolean useNationalID = true;
-	boolean useSubjectNumber = true;
-	boolean useTechnicianName = true;
-	boolean depersonalize = false;
-	boolean ableToRefer = false;
-	boolean compactHozSpace = false;
-	boolean useInitialCondition = false;
-	boolean failedValidationMarks = false;
-	boolean noteRequired = false;
-	boolean autofillTechBox = false;
-    boolean useRejected = false;
+	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
  %>
 <%
-	searchTerm = request.getParameter("searchTerm");
+	String searchTerm = request.getParameter("searchTerm");
 
-    try{
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-    }catch( LIMSInvalidConfigurationException e ){
-        //no-op
-    }
-	useSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	useNationalID = FormFields.getInstance().useField(Field.NationalID);
-	useSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-	useTechnicianName =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName, "true");
-	useRejected =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
+	IAccessionNumberValidator accessionNumberValidator = accessionValidatorFactory.getValidator();
+	
+	boolean useSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean useSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	boolean useTechnicianName =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName, "true");
+	boolean useRejected =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
 
-	depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
-	ableToRefer = FormFields.getInstance().useField(Field.ResultsReferral);
-	compactHozSpace = FormFields.getInstance().useField(Field.ValueHozSpaceOnResults);
-	useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
-	noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
+	boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
+	boolean ableToRefer = FormFields.getInstance().useField(Field.ResultsReferral);
+	boolean compactHozSpace = FormFields.getInstance().useField(Field.ValueHozSpaceOnResults);
+	boolean useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
+	boolean noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
 	pageContext.setAttribute("noteRequired", noteRequired);
-	autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
+	boolean autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 
 %>
 
-<link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/testResults.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?" />
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
+<script type="text/javascript" src="scripts/testResults.js?" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/overlibmws.js?"></script>
+<script type="text/javascript" src="scripts/jquery.ui.js?"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
+<script type="text/javascript" src="scripts/math-extend.js?" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?" ></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 
 

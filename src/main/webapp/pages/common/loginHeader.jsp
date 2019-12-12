@@ -5,10 +5,8 @@
 			org.openelisglobal.login.valueholder.UserSessionData,
 			org.openelisglobal.internationalization.MessageUtil"%>
 
-<%!
-      UserSessionData usd = null;
-%>
 <%
+	UserSessionData usd = null;
 	  if ( request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null ){
           usd = ( UserSessionData ) request.getSession().getAttribute( IActionConstants.USER_SESSION_DATA );
       }

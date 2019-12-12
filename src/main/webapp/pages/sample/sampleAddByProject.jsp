@@ -23,10 +23,8 @@
 <bean:define id="genericDomain" value='' /> --%>
 
 
-<%!
-    String requestType;%>
 <%
-	requestType = (String) request.getParameter("type");
+	String requestType = (String) request.getParameter("type");
     HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 	boolean isAdmin = ((UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA)).isAdmin();
     // no one should edit patient numbers at this time.  PAH 11/05/2010
@@ -34,9 +32,9 @@
     boolean canEditAccessionNo = isAdmin || accessMap.contains(IActionConstants.MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT);
 %>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/retroCIUtilities.js?" ></script>
+<script type="text/javascript" src="scripts/entryByProjectUtils.js?"></script>
 
 
 

@@ -30,14 +30,14 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/utilities.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/jquery.ui.js?"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript"
-        src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+        src="scripts/multiselectUtils.js?"></script>
 
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 <script type="text/javascript">
     var currentSampleType = "";

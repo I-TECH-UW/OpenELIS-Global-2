@@ -14,11 +14,12 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
-String recordFrozenDisableEdits = "false";
-String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
+	String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
 %>
 <%--bugzilla 2061-2063--%>
 <%
+	String recordFrozenDisableEdits = "false";
+
          if (request.getAttribute(IActionConstants.RECORD_FROZEN_EDIT_DISABLED_KEY) != null) {
             recordFrozenDisableEdits = (String)request.getAttribute(IActionConstants.RECORD_FROZEN_EDIT_DISABLED_KEY);
          }
@@ -65,7 +66,7 @@ function confirmSaveForwardPopup(direction)
      
  %> 
 
-    var href = "css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
+    var href = "css/openElisCore.css?";
  
     var strHTML = ""; 
  

@@ -17,12 +17,8 @@
 				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
 
-<%!
-	String menuItems[];
-	boolean languageSwitch = false;
-%>
 <%
-	languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
+	boolean languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
 %>
 
 <c:set var="formName" value="${form.formName}"/>
@@ -57,14 +53,14 @@ function displayHelp(){
 </script>
 
 <%-- New additions below by mark47 --%>
-<link rel="stylesheet" type="text/css" href="css/menu.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/menu.css?" />
 
 <%-- Begin new menu --%>
 
-<script type="text/javascript" src="scripts/menu/hoverIntent.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/menu/superfish.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/menu/supersubs.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/menu/supposition.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/hoverIntent.js?"></script>
+<script type="text/javascript" src="scripts/menu/superfish.js?"></script>
+<script type="text/javascript" src="scripts/menu/supersubs.js?"></script>
+<script type="text/javascript" src="scripts/menu/supposition.js?"></script>
 <script type="text/javascript">
 	// initialize superfish menu plugin. supposition added to allow sub-menus on left when window size is too small.
 	jQuery(function(){

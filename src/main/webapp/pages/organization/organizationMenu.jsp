@@ -12,22 +12,12 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-	boolean useOrgLocalAbbrev = true;
-	boolean useOrgState = true;
-	boolean useZipCode = true;
-	boolean useMLS = true;
- %>
-
- <%
- 	useOrgLocalAbbrev = FormFields.getInstance().useField(FormFields.Field.OrgLocalAbrev);
- 	useOrgState = FormFields.getInstance().useField(FormFields.Field.OrgState);
- 	useZipCode = FormFields.getInstance().useField(FormFields.Field.ZipCode);
- 	useMLS = FormFields.getInstance().useField(FormFields.Field.MLS);
-  %>
-
- 
-
+<%
+	boolean useOrgLocalAbbrev = FormFields.getInstance().useField(FormFields.Field.OrgLocalAbrev);
+	boolean useOrgState = FormFields.getInstance().useField(FormFields.Field.OrgState);
+	boolean useZipCode = FormFields.getInstance().useField(FormFields.Field.ZipCode);
+	boolean useMLS = FormFields.getInstance().useField(FormFields.Field.MLS);
+%>
 
 <table width="100%" border=2">
 	<tr>

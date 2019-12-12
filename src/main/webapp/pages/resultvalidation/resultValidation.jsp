@@ -31,30 +31,25 @@
 <c:set var="rowColorIndex" value="${2}" />
 
 <%!
-	boolean showAccessionNumber = false;
-	String currentAccessionNumber = "";
-	int rowColorIndex = 2;
-	IAccessionNumberValidator accessionNumberValidator;
-	String searchTerm = null;
-	//boolean showTestSectionSelect = false;
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 <%
-	currentAccessionNumber="";
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	searchTerm = request.getParameter("searchTerm");
+	int rowColorIndex = 2;
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
+	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
-	//showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
+	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
 %>
 
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/math-extend.js?" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?" ></script>
 <script src="scripts/ajaxCalls.js" />
 
 <script type="text/javascript" >

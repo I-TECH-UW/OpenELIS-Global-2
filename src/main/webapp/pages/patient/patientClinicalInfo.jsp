@@ -18,7 +18,7 @@
 <c:set var="formName" value="${form.formName}" />
 
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <script type="text/javascript" >
 

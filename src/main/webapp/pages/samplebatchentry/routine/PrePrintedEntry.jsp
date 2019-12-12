@@ -13,11 +13,11 @@
       
 
 <%!
-IAccessionNumberValidator accessionNumberValidator;
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 
 <%
-accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 
 <script type="text/javascript">

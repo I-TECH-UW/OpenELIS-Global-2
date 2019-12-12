@@ -13,34 +13,23 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
-<%!
-	boolean supportSTNumber = true;
-	boolean supportAKA = true;
-	boolean supportSubjectNumber = true;
-    boolean subjectNumberRequired = true;
-	boolean supportNationalID = true;
-	boolean patientRequired = true;
-	boolean patientIDRequired = true;
-	boolean patientNamesRequired = true;
-	boolean patientAgeRequired = true;
-	boolean patientGenderRequired = true;
-	String ambiguousDateReplacement = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
- %>
 <%
-	supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	supportAKA = FormFields.getInstance().useField(Field.AKA);
-	supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-    subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
-	supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	boolean supportAKA = FormFields.getInstance().useField(Field.AKA);
+	boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	boolean subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
+	boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+		
+	boolean patientIDRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_ID_REQUIRED, "true");
+	boolean patientRequired = FormFields.getInstance().useField(Field.PatientRequired);
+	boolean patientAgeRequired = false;
+	boolean patientGenderRequired = false;
+	boolean patientNamesRequired = FormFields.getInstance().useField(Field.PatientNameRequired);
 	
-	patientIDRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_ID_REQUIRED, "true");
-	patientRequired = FormFields.getInstance().useField(Field.PatientRequired);
-	patientAgeRequired = false;
-	patientGenderRequired = false;
-	patientNamesRequired = FormFields.getInstance().useField(Field.PatientNameRequired);
+	String ambiguousDateReplacement = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
 %>
 
 <script type="text/javascript" >

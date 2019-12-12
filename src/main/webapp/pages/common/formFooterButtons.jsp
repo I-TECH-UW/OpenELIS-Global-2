@@ -54,7 +54,7 @@ function confirmSaveForwardPopup(direction)
 
  %>
 
-    var href = "css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
+    var href = "css/openElisCore.css?";
 
     var strHTML = "";
 

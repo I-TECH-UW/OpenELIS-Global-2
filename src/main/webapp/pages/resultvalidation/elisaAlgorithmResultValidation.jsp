@@ -25,22 +25,18 @@
 <c:set var="pageSearchList" value='${form.paging.searchTermToPage}'/>	
 
 <%!
-	boolean showAccessionNumber = false;
-	String currentAccessionNumber = "";
-	int rowColorIndex = 1;
-	IAccessionNumberValidator accessionNumberValidator;
-	String searchTerm = null;
-
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 
 <%
 	boolean dirty = false;
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	searchTerm = request.getParameter("searchTerm");
+	int rowColorIndex = 1;
 
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
+	String searchTerm = request.getParameter("searchTerm");
 %>
 	
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
 
 <script type="text/javascript">
 

@@ -20,24 +20,20 @@
 <c:set var="patientSearch" value="${form.patientSearch}"/>
 
 <%!
-	IAccessionNumberValidator accessionNumberValidator;
-	boolean supportSTNumber = true;
-	boolean supportMothersName = true;
-	boolean supportSubjectNumber = true;
-	boolean supportNationalID = true;
-	boolean supportLabNumber = false;
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
  %>
 
  <%
- 	supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-  	supportMothersName = FormFields.getInstance().useField(Field.MothersName);
-  	supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-  	supportNationalID = FormFields.getInstance().useField(Field.NationalID);
-  	supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
- 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+	 boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
+	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
+  	
+  	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
  %>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
 <script type="text/javascript">
 
 var supportSTNumber = <%= supportSTNumber %>;
