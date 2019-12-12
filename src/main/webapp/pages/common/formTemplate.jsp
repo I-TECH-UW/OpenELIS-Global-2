@@ -14,23 +14,6 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <html>
-<%
-String form = (String)request.getAttribute(IActionConstants.FORM_NAME);
-
-if (form == null) {
-	form = "n/a";
-}
-
-  int startingRecNo = 1;
-
-  if (request.getAttribute("startingRecNo") != null) {
-       startingRecNo = Integer.parseInt((String)request.getAttribute("startingRecNo"));
-  }
-
-   request.setAttribute("ctx", request.getContextPath());
-
-%>
-
 <head>
 	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
@@ -72,14 +55,6 @@ var  jQuery = jQuery.noConflict();
 	src="scripts/lightbox.js?"></script>
 	
 <script>
-
-function getCsrfToken() {
-	if (typeof customGetCsrfToken === "function") {
-		return customGetCsrfToken();
-	} else {
-		return document.getElementById("mainForm").elements["_csrf"].value;
-	}
-}
 
 // works with values set in BaseForm.java
 function cancelAction() {

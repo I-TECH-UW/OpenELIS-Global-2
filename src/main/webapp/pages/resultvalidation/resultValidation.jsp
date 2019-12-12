@@ -50,9 +50,9 @@
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 <script type="text/javascript" src="scripts/testReflex.js?" ></script>
 <script type="text/javascript" src="scripts/multiselectUtils.js?" ></script>
-<script src="scripts/ajaxCalls.js" />
+<script src="scripts/ajaxCalls.js" ></script>
 
-<script type="text/javascript" >
+<script>
 var dirty = false;
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(testSection == "") ? "" : "&type=" += testSection}</spring:escapeBody>' + '&test= <spring:escapeBody javaScriptEscape="true">testName</spring:escapeBody>');
@@ -425,7 +425,7 @@ function /*boolean*/ handleEnterEvent(){
 			<c:if test="${resultList.multipleResultForSample && showAccessionNumber}">
 				<c:set var="showAccessionNumber" value="${false}"/>
 			<tr  class='${(rowColorIndex % 2 == 0) ? "evenRow" : "oddRow"}' >
-				<td colspan="3" class='<%= currentAccessionNumber %>'>
+				<td colspan="3" class='${currentAccessionNumber}'>
 	      			<c:out value="${resultList.accessionNumber}"/>
 	    		</td>
 	    		<td style="text-align:center">

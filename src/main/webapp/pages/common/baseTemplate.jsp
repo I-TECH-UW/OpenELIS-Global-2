@@ -53,15 +53,6 @@ var  jQuery = jQuery.noConflict();
 	src="scripts/lightbox.js?"></script>
 	
 <script>
-
-function getCsrfToken() {
-	if (typeof customGetCsrfToken === "function") {
-		return customGetCsrfToken();
-	} else {
-		return document.getElementById("mainForm").elements["_csrf"].value;
-	}
-}
-
 // works with values set in BaseForm.java
 function cancelAction() {
 	// if page has its own cancel function, call it instead 

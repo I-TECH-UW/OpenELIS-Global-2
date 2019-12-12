@@ -122,7 +122,7 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
         this.sampleId = sampleId;
     }
 
-    public final void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -130,7 +130,7 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
         return value;
     }
 
-    public final void setValueType(String valueType) {
+    public void setValueType(String valueType) {
         this.valueType = valueType;
     }
 

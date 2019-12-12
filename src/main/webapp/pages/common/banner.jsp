@@ -50,6 +50,14 @@ function displayHelp(){
 	if (window.focus) {newwindow.focus()}
 }
 
+function getCsrfToken() {
+	if (typeof customGetCsrfToken === "function") {
+		return customGetCsrfToken();
+	} else {
+		return document.getElementById("logout-form").elements["_csrf"].value;
+	}
+}
+
 </script>
 
 <%-- New additions below by mark47 --%>
@@ -62,6 +70,7 @@ function displayHelp(){
 <script type="text/javascript" src="scripts/menu/supersubs.js?"></script>
 <script type="text/javascript" src="scripts/menu/supposition.js?"></script>
 <script type="text/javascript">
+
 	// initialize superfish menu plugin. supposition added to allow sub-menus on left when window size is too small.
 	jQuery(function(){
 		jQuery('ul.nav-menu').supersubs({
@@ -111,7 +120,7 @@ function displayHelp(){
 	if (usd != null) {
 %>
 
-<%= MenuUtil.getMenuAsHTML(path) %>
+<%= MenuUtil.getMenuAsHTML() %>
 
 <%
 		}

@@ -107,16 +107,15 @@ public class MenuUtil {
         menuToMenuItemMap.put(menu, menuItem);
     }
 
-    public static String getMenuAsHTML(String contextPath) {
+    public static String getMenuAsHTML() {
         StringBuffer html = new StringBuffer();
         html.append("<ul class=\"nav-menu\" id=\"main-nav\" >\n");
-        addChildMenuItems(html, getMenuTree(), contextPath, true);
+        addChildMenuItems(html, getMenuTree(), true);
         html.append("</ul>");
         return html.toString();
     }
 
-    private static void addChildMenuItems(StringBuffer html, List<MenuItem> menuTree, String contextPath,
-            boolean topLevel) {
+    private static void addChildMenuItems(StringBuffer html, List<MenuItem> menuTree, boolean topLevel) {
         String locale = ConfigurationProperties.getInstance()
                 .getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
         int topLevelCount = 0;
@@ -158,8 +157,10 @@ public class MenuUtil {
                 html.append(" class=\"no-link\" >");
             } else {
                 html.append(" href=\"");
-                html.append(contextPath);
-                html.append(menu.getActionURL());
+                String url = menu.getActionURL().startsWith("/")
+                        ? menu.getActionURL().substring(1, menu.getActionURL().length())
+                        : menu.getActionURL();
+                html.append(url);
                 html.append("\" >");
             }
 
@@ -168,7 +169,7 @@ public class MenuUtil {
 
             if (!menuItem.getChildMenus().isEmpty()) {
                 html.append("<ul>\n");
-                addChildMenuItems(html, menuItem.getChildMenus(), contextPath, false);
+                addChildMenuItems(html, menuItem.getChildMenus(), false);
                 html.append("</ul>\n");
             }
 

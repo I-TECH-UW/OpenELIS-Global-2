@@ -60,14 +60,6 @@ if (form == null) {
 
 <script>
 
-function getCsrfToken() {
-	if (typeof customGetCsrfToken === "function") {
-		return customGetCsrfToken();
-	} else {
-		return document.getElementById("mainForm").elements["_csrf"].value;
-	}
-}
-
 function init() {
     check_width();
     initMenu();

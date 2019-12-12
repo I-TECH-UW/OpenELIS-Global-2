@@ -65,7 +65,9 @@ public class SampleBatchEntryController extends BaseController {
             "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
             "form.sampleOrderItems.referringSiteName", "patientProperties.patientUpdateStatus", "currentDate",
             "currentTime", "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
-            "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId" };
+            "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId",
+            //
+            "method", "facilityIDCheck", "facilityID", "patientInfoCheck" };
 
     @Autowired
     SampleBatchEntryFormValidator formValidator;

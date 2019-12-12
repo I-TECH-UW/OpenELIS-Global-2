@@ -324,7 +324,7 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -342,14 +342,14 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
 	</c:forEach>
 		<%--
 	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_DISEASES.list" >
-		<tr id='rtn.priorDiseasesRow" + i %>' > <%-- CLI 09.<%= i %> --%>
+		<tr id='rtn.priorDiseasesRow" + i %>' > 
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>
@@ -361,7 +361,7 @@ rtn = new RtnProjectChecker();
 		</tr>
 	</c:forEach>
 	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_EXAM_DISEASES.list" >
-		<tr id='rtn.currDiseasesRow" + i %>' > <%-- CLI 09.n --%>
+		<tr id='rtn.currDiseasesRow" + i %>' > 
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>

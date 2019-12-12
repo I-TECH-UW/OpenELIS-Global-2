@@ -22,10 +22,10 @@
 <c:set var="entryDate" value="${form.currentDate}" />
 
 <%
-	boolean uuseCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
-	boolean uuseInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	boolean uuseCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
-	boolean uautofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
+	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
+	boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
+	boolean autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
