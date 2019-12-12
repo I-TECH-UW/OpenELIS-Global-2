@@ -16,7 +16,7 @@
 
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
 <c:set var="formName" value="${form.formName}" />
 <c:set var="patientProperties" value="${form.patientProperties}" />
@@ -29,7 +29,6 @@
 PatientManagementInfo patientProperties;
 String formName;
 
-	String basePath = "";
 	boolean supportSTNumber = true;
 	boolean supportAKA = true;
 	boolean supportMothersName = true;
@@ -53,9 +52,6 @@ String formName;
 	formName = (String) request.getAttribute("formName");
 	patientProperties = (PatientManagementInfo) request.getAttribute("patientProperties");
 
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
 	supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
 	supportAKA = FormFields.getInstance().useField(Field.AKA);
 	supportMothersName = FormFields.getInstance().useField(Field.MothersName);

@@ -49,7 +49,6 @@
 </c:if>
 	
 <%!
-	String basePath = "";
 	String searchTerm = null;
 	IAccessionNumberValidator accessionNumberValidator;
 	boolean useSTNumber = true;
@@ -66,11 +65,6 @@
     boolean useRejected = false;
  %>
 <%
-
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
-
 	searchTerm = request.getParameter("searchTerm");
 
     try{
@@ -96,16 +90,16 @@
 %>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testResults.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/testResults.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
 
 

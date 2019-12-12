@@ -21,7 +21,6 @@
 	boolean supportSubjectNumber = true;
 	boolean supportNationalID = true;
 	boolean supportLabNumber = false;
-	String basePath = "";
  %>
 
  <%
@@ -31,11 +30,9 @@
   	supportNationalID = FormFields.getInstance().useField(Field.NationalID);
   	supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
  	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
- 	String path = request.getContextPath();
- 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
  %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript">
 
 var supportSTNumber = <%= supportSTNumber %>;

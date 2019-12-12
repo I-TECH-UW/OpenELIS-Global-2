@@ -17,26 +17,16 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<%!
-    String basePath = "";
-%>
-<%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"
-            + request.getServerPort() + path + "/";
-%>
- 
-
-<script type="text/javascript" src="<%=basePath%>scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"
-        src="<%=basePath%>scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+        src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript"
-        src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+        src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
 <link rel="stylesheet" type="text/css"
-      href="<%=basePath%>css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
 <script type="text/javascript">
 
 jQuery(document).ready(function () {

@@ -21,23 +21,18 @@
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}" />
 
 <%!
-	String basePath = "";
 	IAccessionNumberValidator accessionNumberValidator;
 	String searchTerm = null;
 %>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 	searchTerm = request.getParameter("searchTerm");
 %>
 
 <%-- N.B. testReflex.js is dependent on utilities.js so order is important  --%>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" >
 

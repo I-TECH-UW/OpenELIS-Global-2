@@ -18,13 +18,10 @@
 <c:set var="cancelableResults" value="${form.ableToCancelResults}"/>
 
 <%!
-	String basePath = "";
 	String accessionNumber = "";
     boolean useCollectionDate = true;
 %>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
     useCollectionDate = FormFields.getInstance().useField( FormFields.Field.CollectionDate);
 %>
 
@@ -35,8 +32,8 @@
 <script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
 <link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
 

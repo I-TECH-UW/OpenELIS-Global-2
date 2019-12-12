@@ -23,8 +23,6 @@
 
 
 <%!
-    String path = "";
-    String basePath = "";
     boolean useCollectionDate = true;
     boolean useInitialSampleCondition = false;
     boolean useCollector = false;
@@ -40,8 +38,6 @@
     IAccessionNumberValidator accessionNumberValidator;
 %>
 <%
-    path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
     useCollectionDate = FormFields.getInstance().useField( Field.CollectionDate );
     useInitialSampleCondition = FormFields.getInstance().useField( Field.InitialSampleCondition );
     useCollector = FormFields.getInstance().useField( Field.SampleEntrySampleCollector );
@@ -58,7 +54,7 @@
 
 %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/additional_utilities.js"></script>
+<script type="text/javascript" src="scripts/additional_utilities.js"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/laborder.js?ver=<%= Versioning.getBuildNumber() %>"></script>

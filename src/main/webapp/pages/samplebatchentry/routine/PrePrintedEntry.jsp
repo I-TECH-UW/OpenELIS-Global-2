@@ -13,14 +13,10 @@
       
 
 <%!
-String path = "";
-String basePath = "";
 IAccessionNumberValidator accessionNumberValidator;
 %>
 
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 %>
 

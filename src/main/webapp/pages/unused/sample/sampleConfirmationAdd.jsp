@@ -22,8 +22,7 @@
 
 
 
-<%!String path = "";
-	String basePath = "";
+<%! 
 	IAccessionNumberValidator accessionNumberValidator;
 	boolean useSTNumber = true;
 	boolean useMothersName = true;
@@ -33,9 +32,6 @@
 	boolean patientRequired = true;
 %>
 <%
-	path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 
 	useSTNumber =  FormFields.getInstance().useField(Field.StNumber);
@@ -50,8 +46,8 @@
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
 <link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
 
-<script type="text/javascript" src="<%=basePath%>scripts/additional_utilities.js"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/additional_utilities.js"></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>

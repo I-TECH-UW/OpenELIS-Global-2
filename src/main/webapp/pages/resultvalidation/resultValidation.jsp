@@ -39,29 +39,22 @@
 	//boolean showTestSectionSelect = false;
 %>
 <%
-
-	String basePath;
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
 	currentAccessionNumber="";
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 	searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
-	
-		
 %>
 
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script src="scripts/ajaxCalls.js" />
 
 <script type="text/javascript" >

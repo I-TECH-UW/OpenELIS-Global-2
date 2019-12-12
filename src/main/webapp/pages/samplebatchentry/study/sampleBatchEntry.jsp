@@ -15,13 +15,9 @@
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%!
-String path = "";
-String basePath = "";
 boolean restrictNewReferringSiteEntries = false;
 %>
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
 %>
 
@@ -30,8 +26,8 @@ restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isProper
 
 <script type="text/javascript" src="scripts/utilities.js"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>

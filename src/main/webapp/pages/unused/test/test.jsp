@@ -12,21 +12,12 @@
 
  
 <%!
-
-
 String allowEdits = "true";
-
-String path = "";
-String basePath = "";
 %>
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
 if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
  allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
 }
-
 %>
 
 <script>
@@ -90,7 +81,7 @@ function getNextSortOrder() {
 						</td>	
 						<td> 
 							<html:text id="testSectionName" size="30" name="${form.formName}" property="testSectionName" /> 
-							<span id="indicator3" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
+							<span id="indicator3" style="display:none;"><img src="images/indicator.gif"/></span>
 	   			              <input id="selectedTestSectionName" name="selectedTestSectionName" type="hidden" size="30" />
 						</td>
 		 </tr>

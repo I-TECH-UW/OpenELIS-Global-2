@@ -17,19 +17,14 @@
 
 <%!
 	IAccessionNumberValidator accessionValidator;
-	String basePath = "";
-	String formName;
  %>
 
 <%
 	accessionValidator = new AccessionNumberValidatorFactory().getValidator();
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
-	formName = (String)request.getAttribute(IActionConstants.FORM_NAME);
 %>
 
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/bootstrap.css?ver=<%= Versioning.getBuildNumber() %>" />
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
 
 <script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
@@ -91,7 +86,7 @@ function search(){
         </div>
 		<div class="row-fluid">
 			<div class="span12">		
-				<div id="loading" class="loading-note"><img src="<%=basePath%>images/indicator.gif" /><spring:message code="loading" /></div>
+				<div id="loading" class="loading-note"><img src="images/indicator.gif" /><spring:message code="loading" /></div>
 				<table class="table table-small table-hover table-bordered table-striped" id="advancedTable">
 					<thead>
 				    	<tr id="rowHeader">
@@ -146,7 +141,7 @@ function search(){
         function getAuditEntriesDisplayed(){  return '<spring:message code="audit.entries.displayed" />';  }
         function getAuditNoRecords(){  return '<spring:message code="audit.no.records" />';  }
     </script>
-<script type="text/javascript" src="<%=basePath%>scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 </c:if>
 
 <script type="text/javascript">

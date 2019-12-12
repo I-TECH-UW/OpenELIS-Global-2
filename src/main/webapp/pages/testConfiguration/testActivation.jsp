@@ -35,7 +35,7 @@
 
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <link rel="stylesheet" media="screen" type="text/css"
-      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
 <script type="text/javascript">
     var backFunction = selectBack;
@@ -521,14 +521,12 @@ td {
 <hr/>
 
 <%!
-    String basePath = "";
     int testCount = 0;
     int columnCount = 0;
     int columns = 4;
 %>
 
 <%
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
     columnCount = 0;
     testCount = 0;
 %>

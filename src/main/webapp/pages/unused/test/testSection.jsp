@@ -16,19 +16,12 @@
 
 
 <%!
-
 String allowEdits = "true";
-String path = "";
-String basePath = "";
 %>
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
 if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
  allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
 }
-
 %>
 
 <script>
@@ -54,7 +47,7 @@ function validateForm(form) {
 		                </td>
 		              <td>
 		                    <html:text id="parentTestSectionName" size="20" name="${form.formName}" property="parentTestSectionName" />
-		                    <span id="indicator2" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span> 
+		                    <span id="indicator2" style="display:none;"><img src="images/indicator.gif"/></span> 
 		                    <input id="selectedParentTestSectionName" name="selectParentTestSectionName" type="hidden" size="20" />
 		               </td>  
 		</tr>                   
@@ -75,7 +68,7 @@ function validateForm(form) {
 						<td>
 						
 					   	  <html:text id="organizationName" size="30" name="${form.formName}" property="organizationName" /> 
-					   	  <span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
+					   	  <span id="indicator1" style="display:none;"><img src="images/indicator.gif"/></span>
 	   			          <input id="selectedOrganizationId" name="selectedOrganizationId" type="hidden" size="30" />
 						<%--html:select name="${form.formName}" property="selectedOrganizationId">
 					   	  <app:optionsCollection 

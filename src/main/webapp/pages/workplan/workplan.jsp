@@ -33,15 +33,6 @@
 	</script>
 </c:if>
 
-<%
-
-	String basePath = "";
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
-
-%>
-
 <script type="text/javascript" >
 
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)

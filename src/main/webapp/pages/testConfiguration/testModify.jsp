@@ -37,27 +37,24 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<%!String basePath = "";
+<%!
 	String locale = "en_US";%>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-			+ "/";
 	locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript"
 	src="scripts/jquery.asmselect.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 <script type="text/javascript"
-	src="<%=basePath%>scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 <script type="text/javascript"
-	src="<%=basePath%>scripts/multiselectUtils.js?ver=<%=Versioning.getBuildNumber()%>"></script>
+	src="scripts/multiselectUtils.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 <script type="text/javascript"
 	src="scripts/jquery-ui.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 <link rel="stylesheet" type="text/css"
 	href="css/jquery.asmselect.css?ver=<%=Versioning.getBuildNumber()%>" />
 <link rel="stylesheet" media="screen" type="text/css"
-	href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%=Versioning.getBuildNumber()%>" />
+	href="css/jquery_ui/jquery.ui.theme.css?ver=<%=Versioning.getBuildNumber()%>" />
 <link rel="stylesheet" type="text/css"
 	href="css/openElisCore.css?ver=<%=Versioning.getBuildNumber()%>" />
 

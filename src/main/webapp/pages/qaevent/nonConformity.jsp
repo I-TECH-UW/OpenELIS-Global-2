@@ -19,7 +19,7 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%! String basePath = "";
+<%! 
     IAccessionNumberValidator accessionNumberValidator;
     boolean useProject = FormFields.getInstance().useField(Field.Project);
     boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
@@ -27,9 +27,6 @@
     boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
 %>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-                    + "/";
     accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
     
 %>

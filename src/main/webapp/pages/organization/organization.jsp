@@ -21,8 +21,6 @@
 <%!
 
 String allowEdits = "true";
-String path = "";
-String basePath = "";
 
 boolean useOrgLocalAbbrev = true;
 boolean useState = true;
@@ -41,9 +39,6 @@ boolean showCommune = false;
 boolean showVillage = false;
 %>
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
 if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
  allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
 }
@@ -107,7 +102,7 @@ function validateForm(form) {
 			</td>
 			<td>
 	   			<form:input path="parentOrgName" id="parentOrgName" size="30" />
-	   			<span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
+	   			<span id="indicator1" style="display:none;"><img src="images/indicator.gif"/></span>
 
 	   			<input id="selectedOrgId" name="selectedOrgId" type="hidden" size="30" />
 <%-- 	   			<form:select path="selectedOrgId"> --%>
@@ -180,7 +175,7 @@ function validateForm(form) {
 						</td>
 						<td>
 							<form:input path="city" id="city" size="30" />
-				   			<span id="indicator2" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
+				   			<span id="indicator2" style="display:none;"><img src="images/indicator.gif"/></span>
 							<input id="cityID" name="cityID" type="hidden" size="30" />
 						</td>
 		</tr>

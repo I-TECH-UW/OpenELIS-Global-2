@@ -23,8 +23,6 @@
 
 <%!UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
 	HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 	boolean isAdmin = userModuleDAO.isUserAdmin(request);
 	// no one should edit patient numbers at this time.  PAH 11/05/2010
@@ -45,10 +43,8 @@
 
 
 <%!
-    String basePath = "";
     boolean useSTNumber = true;
     boolean useMothersName = true;
-
     boolean useProviderInfo = false;
     boolean patientRequired = false;
     boolean trackPayment = false;
@@ -58,7 +54,6 @@
 
 %>
 <%
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
     useSTNumber =  FormFields.getInstance().useField(FormFields.Field.StNumber);
     useMothersName = FormFields.getInstance().useField(FormFields.Field.MothersName);
     useProviderInfo = FormFields.getInstance().useField(FormFields.Field.ProviderInfo);
@@ -69,9 +64,9 @@
     acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
 %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
 <link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
 

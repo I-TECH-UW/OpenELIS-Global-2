@@ -26,7 +26,6 @@
 
 
 <%!
-    String basePath = "";
     boolean useSTNumber = true;
     boolean useMothersName = true;
 
@@ -39,8 +38,6 @@
 
 %>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
     useSTNumber =  FormFields.getInstance().useField(FormFields.Field.StNumber);
     useMothersName = FormFields.getInstance().useField(FormFields.Field.MothersName);
     useProviderInfo = FormFields.getInstance().useField(FormFields.Field.ProviderInfo);
@@ -52,7 +49,7 @@
 %>
 
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
 <link type="text/css" rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
 <link type="text/css" rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">

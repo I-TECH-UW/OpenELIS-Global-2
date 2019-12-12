@@ -13,13 +13,9 @@
 
 
 <%!
-String path = "";
-String basePath = "";
 boolean restrictNewReferringSiteEntries = false;
 %>
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
 %>
 

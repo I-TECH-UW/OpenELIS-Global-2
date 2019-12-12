@@ -22,15 +22,12 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%! String basePath = "";
+<%! 
     IAccessionNumberValidator accessionNumberValidator;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     String maxDate = df.format(Calendar.getInstance().getTime());
 %>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-            + "/";
     accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 
 %>

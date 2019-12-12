@@ -33,19 +33,14 @@
 	
 
 <%!
-	String basePath = "";
 	IAccessionNumberValidator accessionNumberValidator;
  %>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 	String accessionFormat = ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat);
 %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
 <script type="text/javascript">
 

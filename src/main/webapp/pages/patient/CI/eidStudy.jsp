@@ -10,11 +10,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
   
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <script type="text/javascript">
 function EidProjectChecker() {
     this.idPre = "eid.";

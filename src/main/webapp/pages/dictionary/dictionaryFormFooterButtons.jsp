@@ -14,8 +14,6 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
-String path = "";
-String basePath = "";
 String recordFrozenDisableEdits = "false";
 String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
 %>
@@ -25,12 +23,6 @@ String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
             recordFrozenDisableEdits = (String)request.getAttribute(IActionConstants.RECORD_FROZEN_EDIT_DISABLED_KEY);
          }
 
-
-
-
-	       path = request.getContextPath();
-           basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-	
 		    String previousDisabled = "false";
             String nextDisabled = "false"; 
             if (request.getAttribute(IActionConstants.PREVIOUS_DISABLED) != null) {
@@ -73,7 +65,7 @@ function confirmSaveForwardPopup(direction)
      
  %> 
 
-    var href = "<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
+    var href = "css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
  
     var strHTML = ""; 
  

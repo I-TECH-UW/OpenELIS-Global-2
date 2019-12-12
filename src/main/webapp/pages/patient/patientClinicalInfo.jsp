@@ -18,18 +18,7 @@
 <c:set var="formName" value="${form.formName}" />
 
 
-<%!
-	String basePath = "";
-
- %>
-<%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
-%>
-
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
 <script type="text/javascript" >
 

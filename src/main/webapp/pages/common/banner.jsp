@@ -17,16 +17,11 @@
 				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
 
-<%!String path = "";
-	String basePath = "";
+<%!
 	String menuItems[];
 	boolean languageSwitch = false;
 %>
 <%
-	path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-	+ "/";
-
 	languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
 %>
 
@@ -52,7 +47,7 @@ function /*void*/ setLanguage( language ){
 //Note this is hardcoded for haiti clinical.  Message resources would be a good way to get both language and context
 function displayHelp(){
 
-    var url = '<%=basePath%>' + 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
+    var url = 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
 
 	var	newwindow=window.open( url,'name','height=1000,width=850, menuBar=yes');
 
@@ -62,14 +57,14 @@ function displayHelp(){
 </script>
 
 <%-- New additions below by mark47 --%>
-<link rel="stylesheet" type="text/css" href="<%=basePath%>css/menu.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/menu.css?ver=<%= Versioning.getBuildNumber() %>" />
 
 <%-- Begin new menu --%>
 
-<script type="text/javascript" src="<%=basePath%>scripts/menu/hoverIntent.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/superfish.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/supersubs.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/supposition.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/hoverIntent.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/superfish.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/supersubs.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/supposition.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript">
 	// initialize superfish menu plugin. supposition added to allow sub-menus on left when window size is too small.
 	jQuery(function(){
