@@ -48,7 +48,7 @@ public class ReportController extends BaseController {
             "upperYear", "selectList.selection", };
 
     @Autowired
-    ServletContext context;
+    private ServletContext context;
 
     private static String reportPath = null;
     private static String imagesPath = null;

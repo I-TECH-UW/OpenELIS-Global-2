@@ -25,12 +25,7 @@ import org.springframework.validation.Errors;
 
 public abstract class BaseSampleEntryController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] {};
-
     protected RequestType requestType = RequestType.UNKNOWN;
-
-    public static final String FWD_EID_ENTRY = "eid_entry";
-    public static final String FWD_VL_ENTRY = "vl_entry";
 
     @Autowired
     private ProjectService projectService;

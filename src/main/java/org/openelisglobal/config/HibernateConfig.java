@@ -2,8 +2,6 @@ package org.openelisglobal.config;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,9 +14,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 //	@ComponentScans(value = { @ComponentScan("com.howtodoinjava.demo.spring")})
 public class HibernateConfig {
-
-    @Autowired
-    private ApplicationContext context;
 
     static JpaTransactionManager transactionManager;
     static LocalContainerEntityManagerFactoryBean emf;
