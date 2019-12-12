@@ -279,6 +279,9 @@
                     "&labNumber=" + labNumber +
                     "&guid=" + guid +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+    			requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    			},
                 onSuccess:  success,
                 onFailure:  failure
             }

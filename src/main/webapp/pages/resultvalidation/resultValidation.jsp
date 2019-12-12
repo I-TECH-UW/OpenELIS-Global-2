@@ -62,7 +62,7 @@
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
 <script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-
+<script src="scripts/ajaxCalls.js" />
 
 <script type="text/javascript" >
 var dirty = false;
@@ -264,6 +264,9 @@ function updateReflexChild( group){
                       method: 'get', //http method
                       parameters: 'provider=TestReflexCD4Provider&' + requestString,
                       indicator: 'throbbing',
+      				  requestHeaders : {
+    					  "X-CSRF-Token" : getCsrfToken()
+    				  },
                       onSuccess:  processTestReflexCD4Success,
                       onFailure:  processTestReflexCD4Failure
                            }
@@ -497,7 +500,7 @@ function /*boolean*/ handleEnterEvent(){
 					   			/>
                     <c:out value="${resultList.units}"/>
 					</c:when><c:when test="${'M' == resultList.resultType}">
-                    <!-- multiple results -->
+                    <%-- multiple results --%>
                     <form:select path="resultList[${iter.index}].multiSelectResultValues"
                             id='resultId_${iter.index}_0'
                             multiple="multiple"
@@ -517,7 +520,7 @@ function /*boolean*/ handleEnterEvent(){
                             />
                     <c:out value="${resultList.units}"/>
                     </c:when><c:when test="${'C' == resultList.resultType}">
-                    <!-- cascading multiple results -->
+                    <%-- cascading multiple results --%>
                     <div id='cascadingMulti_${iter.index}_0' class='cascadingMulti_${iter.index}' >
                     <input type="hidden" id='divCount_${iter.index}' value="0" >
                     <form:select path="resultList[${iter.index}].multiSelectResultValues"

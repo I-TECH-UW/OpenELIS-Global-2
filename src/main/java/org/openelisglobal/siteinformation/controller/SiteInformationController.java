@@ -17,6 +17,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.URLUtil;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -449,21 +450,20 @@ public class SiteInformationController extends BaseController {
 
     @Override
     protected String findLocalForward(String forward) {
-        String path = request.getRequestURI().substring(request.getContextPath().length());
-        String pathWithoutSuffix = path.substring(0, path.lastIndexOf('.'));
+        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
         if (FWD_SUCCESS.equals(forward)) {
             return "siteInformationDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage.do";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = pathWithoutSuffix + "Menu.do";
+            String url = pathNoSuffix + "Menu.do";
             return "redirect:" + url;
         } else if (FWD_FAIL_INSERT.equals(forward)) {
-            String url = pathWithoutSuffix + ".do";
+            String url = pathNoSuffix + ".do";
             return "redirect:" + url;
         } else if (FWD_CANCEL.equals(forward)) {
             String prefix = "Cancel";
-            String url = pathWithoutSuffix.substring(pathWithoutSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
+            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
             return "redirect:" + url;
         } else {
             return "PageNotFound";

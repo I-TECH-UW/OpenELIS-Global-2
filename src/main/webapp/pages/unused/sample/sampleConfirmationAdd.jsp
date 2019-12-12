@@ -664,7 +664,7 @@ jQuery(document).ready( function() {
 });
 
 </script>
-<!--
+<%--
  <ajax:autocomplete
   source="requestingOrg"
   target="selectedOrganizationId"
@@ -673,4 +673,4 @@ jQuery(document).ready( function() {
   parameters="organizationName={requestingOrg},orgType=Refering lab,provider=OrganizationAutocompleteProvider,fieldName=organizationName,idName=id"
   indicator="indicator1"
   minimumCharacters="1" />
- -->
+ --%>

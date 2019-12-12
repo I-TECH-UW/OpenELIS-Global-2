@@ -516,6 +516,9 @@ function  /*void*/ getDetailedPatientInfo()
                         {//options
                           method: 'get', //http method
                           parameters: "provider=PatientSearchPopulateProvider&personKey=" + patientSelectID,
+          				requestHeaders : {
+        					"X-CSRF-Token" : getCsrfToken()
+        				},
                           onSuccess:  processSearchPopulateSuccess,
                           onFailure:  processSearchPopulateFailure
                          }
@@ -779,7 +782,7 @@ function healthDistrictSuccess( xhr ){
 		healthDistrict.options.length = 0;
 		healthDistrict.options[0] = new Option('', '');
 		for( ;i < districts.length; ++i){
-			<!-- 			is this supposed to be value value or value id? -->
+			<%-- 			is this supposed to be value value or value id? --%>
 			healthDistrict.options[i + 1] = new Option(districts[i].attributes.getNamedItem("value").value, districts[i].attributes.getNamedItem("value").value);
 		}
 	}
@@ -1167,7 +1170,7 @@ function  processSubjectNumberSuccess(xhr){
 			
 			<form:select path="patientProperties.healthDistrict" id="healthDistrictID" disabled="true">
 			<option value="0" ></option>
-<!-- 			is this supposed to be value value or value id? -->
+<%-- 			is this supposed to be value value or value id? --%>
 			<form:options items="${patientProperties.healthDistricts}" itemLabel="value" itemValue="value"/>
 			</form:select>
 		</td>	

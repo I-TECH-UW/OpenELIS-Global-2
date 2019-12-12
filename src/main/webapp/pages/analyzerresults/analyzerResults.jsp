@@ -34,7 +34,7 @@
 	searchTerm = request.getParameter("searchTerm");
 %>
 
-<!-- N.B. testReflex.js is dependent on utilities.js so order is important  -->
+<%-- N.B. testReflex.js is dependent on utilities.js so order is important  --%>
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
@@ -105,6 +105,9 @@ function validateAccessionNumberOnServer(field )
                       method: 'get', //http method
                       parameters: 'provider=SampleEntryAccessionNumberValidationProvider&field=' + field.id + '&accessionNumber=' + field.value,
                       indicator: 'throbbing',
+      				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				},
                       onSuccess:  processAccessionSuccess,
                       onFailure:  processAccessionFailure
                            }

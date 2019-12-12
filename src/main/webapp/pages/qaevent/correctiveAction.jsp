@@ -401,6 +401,9 @@
                 parameters: "provider=NonConformingEventSearchProvider&nceNumber=" + nceNumber +
                     "&labNumber=" + labNumber + "&status=CAPA" +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    			},
                 onSuccess:  success,
                 onFailure:  failure
             }

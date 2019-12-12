@@ -81,6 +81,14 @@ var  jQuery = jQuery.noConflict();
 	
 <script>
 
+function getCsrfToken() {
+	if (typeof customGetCsrfToken === "function") {
+		return customGetCsrfToken();
+	} else {
+		return document.getElementById("mainForm").elements["_csrf"].value;
+	}
+}
+
 // works with values set in BaseForm.java
 function cancelAction() {
 	// if page has its own cancel function, call it instead 
@@ -224,7 +232,7 @@ if (document.layers) {
 <%-- check_width()--%>
 <body onLoad="focusOnFirstInputField();check_width();onLoad()">
 
-	<!-- for optimistic locking-->
+	<%-- for optimistic locking--%>
 	<table cellpadding="0" cellspacing="1" width="100%">
 		<tr>
 			<td><tiles:insertAttribute name="error" /></td>

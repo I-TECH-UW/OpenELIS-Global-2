@@ -21,7 +21,7 @@
 <bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
 <bean:define id="genericDomain" value='' />
 
-<!-- sampleAddVLProject -->
+<%-- sampleAddVLProject --%>
 <%!String basePath = "";%>
 <%
 	String path = request.getContextPath();
@@ -240,7 +240,7 @@ function clearFormElements(fieldIds) {
 
 <form:hidden path="currentDate" id="currentDate"/>
 <form:hidden path="domain" value="<%=genericDomain%>" id="domain"/>
-<!--   html:hidden name="${form.formName}" property="project" id="project"/>  -->
+<%--   html:hidden name="${form.formName}" property="project" id="project"/>  --%>
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
 <form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />

@@ -151,7 +151,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             }
             return true;
         } catch (ParseException e) {
-
+            LogEvent.logError(e);
         }
         return false;
     }

@@ -69,11 +69,10 @@ public class XMLUtil {
 
     private static String makeTagName(String tagName) {
         tagName = tagName.replaceAll("[^a-zA-Z0-9._-]", "");
-        tagName.replaceFirst("^[xX][mM][lL]", "");
-        return tagName;
+        return tagName.replaceFirst("^[xX][mM][lL]", "");
     }
 
-    public static String makeAttributeName(String attributeName) {
+    private static String makeAttributeName(String attributeName) {
         attributeName = attributeName.replaceAll("[\\t\\n\\f \\/>\"'=]", "");
         return attributeName;
     }

@@ -157,7 +157,7 @@ function submitSearchForClick(button){
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
+		<%-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   --%>
 			<td><button type="button" id="edit"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=');return false;"
 					name="edit"

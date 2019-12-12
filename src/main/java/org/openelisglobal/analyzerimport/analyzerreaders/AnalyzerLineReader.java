@@ -57,13 +57,9 @@ public class AnalyzerLineReader extends AnalyzerReader {
 
         BufferedReader bufferedReader = new BufferedReader(reader);
 
-        String line;
         try {
-            line = bufferedReader.readLine();
-
-            while (line != null) {
+            for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 lines.add(line);
-                line = bufferedReader.readLine();
             }
         } catch (IOException e) {
             error = "Unable to read file";

@@ -43,7 +43,7 @@ public class HaitiColumnBuilder extends CSVColumnBuilder {
      * have to rerun generateJasperXML (see commented out call in c'tor above) and
      * paste each chunk into the JasperReports XML.
      */
-    protected void defineAllColumns() {
+    private void defineAllColumns() {
         add("accession_number", "LABNO", NONE);
         add("status_id", "ECHSTAT", SAMPLE_STATUS);
         add("national_id", "SUJETNO", NONE);

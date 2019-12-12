@@ -41,7 +41,6 @@ restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isProper
 <script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript">
 var inPrintState = true;	//is entryMethod in a print state 
-var study = "<%= request.getParameter("study") %>";
 
 function finish() {
 	window.onbeforeunload = function(){};

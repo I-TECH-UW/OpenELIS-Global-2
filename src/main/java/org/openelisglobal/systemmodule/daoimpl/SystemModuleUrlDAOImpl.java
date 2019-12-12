@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.URLUtil;
 import org.openelisglobal.systemmodule.dao.SystemModuleUrlDAO;
 import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,9 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
     @Override
     @Transactional(readOnly = true)
     public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
-        String urlPath = request.getRequestURI();
-        urlPath = urlPath.substring(request.getContextPath().length());
-        urlPath = urlPath.indexOf('.') < 0 ? urlPath : urlPath.substring(0, urlPath.indexOf('.'));
+        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
 
-        List<SystemModuleUrl> sysModUrls = getByUrlPath(urlPath);
+        List<SystemModuleUrl> sysModUrls = getByUrlPath(pathNoSuffix);
 
         return sysModUrls;
     }

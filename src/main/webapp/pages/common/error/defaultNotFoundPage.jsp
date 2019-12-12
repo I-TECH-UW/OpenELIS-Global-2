@@ -26,7 +26,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link rel="stylesheet" type="text/css" href="<%=basePath%>css/bootstrap.css" />
     <script type="text/javascript" src="<%=basePath%>scripts/jquery-1.8.0.min.js"></script>
         
-    <!-- Inline css --> 
+    <%-- Inline css --%> 
     <style type="text/css">
     #header {
         margin-bottom: 1em;

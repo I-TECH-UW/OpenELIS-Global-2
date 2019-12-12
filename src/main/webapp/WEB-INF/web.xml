@@ -51,12 +51,10 @@
 	<!--tomcat disallowed Http method configuration -->
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Forbidden</web-resource-name>
+			<web-resource-name>Allowed methods</web-resource-name>
 			<url-pattern>/*</url-pattern>
-			<http-method>PUT</http-method>
-			<http-method>DELETE</http-method>
-			<http-method>OPTIONS</http-method>
-			<http-method>TRACE</http-method>
+			<http-method-omission>GET</http-method-omission>
+			<http-method-omission>POST</http-method-omission>
 		</web-resource-collection>
 		<auth-constraint />
 	</security-constraint>

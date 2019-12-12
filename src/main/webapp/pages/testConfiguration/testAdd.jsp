@@ -41,7 +41,7 @@
             + request.getServerPort() + path + "/";
     locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 %>
-<!--Do not add jquery.ui.js, it will break the sorting -->
+<%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"

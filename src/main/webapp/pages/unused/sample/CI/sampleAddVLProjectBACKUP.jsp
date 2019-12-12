@@ -619,7 +619,7 @@ registerSampleChangedForSampleEntry();
 
 <form:hidden path="currentDate" id="currentDate"/>
 <form:hidden path="domain" value="<%=genericDomain%>" id="domain"/>
-<!--   html:hidden name="${form.formName}" property="project" id="project"/>  -->
+<%--   html:hidden name="${form.formName}" property="project" id="project"/>  --%>
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
 <form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />

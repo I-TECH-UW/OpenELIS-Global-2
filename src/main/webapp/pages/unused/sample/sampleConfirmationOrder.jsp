@@ -341,7 +341,7 @@
             <spring:message code="organization.site"/>
         </td>
         <td colspan="5">
-            <!-- N.B. this is replaced by auto complete -->
+            <%-- N.B. this is replaced by auto complete --%>
             <html:select id="orgRequesterId"
                          name="${form.formName}"
                          property="sampleOrderItems.referringSiteId"

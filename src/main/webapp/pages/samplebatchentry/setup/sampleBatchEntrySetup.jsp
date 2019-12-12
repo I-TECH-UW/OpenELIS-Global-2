@@ -153,19 +153,19 @@ function /*void*/ setNext(valid) {
 </script>
 
 
-<!-- Order -->    
+<%-- Order --%>    
 <div id=orderEntryPage >
 	<h2><%= MessageUtil.getContextualMessage("sample.entry.order.label") %></h2>	
 	<tiles:insertAttribute name="sampleOrder"/>
 </div>
 
-<!-- Sample -->  
+<%-- Sample --%>  
 <div id=sampleEntryPage >
 	<h2><%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %></h2>
 	<tiles:insertAttribute name="addSample"/>
 </div>
 
-<!-- Barcode Configuration -->
+<%-- Barcode Configuration --%>
 <div id=configureBarcodePage >
 	<h2><%= MessageUtil.getContextualMessage("sample.batchentry.configureBarcode") %></h2>
 	<tiles:insertAttribute name="configureLabels" />

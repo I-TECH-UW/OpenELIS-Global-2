@@ -294,6 +294,9 @@
                 parameters: "provider=NonConformingEventSearchProvider&nceNumber=" + nceNumber +
                     "&labNumber=" + labNumber + "&status=Pending" +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+    			requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    	     	},
                 onSuccess:  success,
                 onFailure:  failure
             }

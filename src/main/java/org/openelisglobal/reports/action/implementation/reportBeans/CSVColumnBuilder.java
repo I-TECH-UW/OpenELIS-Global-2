@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -253,8 +254,24 @@ abstract public class CSVColumnBuilder {
         });
     }
 
-    protected String formatDateForDatabaseSql(Date date) {
+    protected synchronized String formatDateForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
         return postgresDateFormat.format(date);
+    }
+
+    private synchronized String formatDateTimeForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.format(date);
+    }
+
+    protected synchronized java.util.Date parseDateForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.parse(date);
+    }
+
+    private synchronized java.util.Date parseDateTimeForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.parse(date);
     }
 
     /**
@@ -263,7 +280,7 @@ abstract public class CSVColumnBuilder {
      */
     protected String datetimeToLocalDate(String value) {
         try {
-            Date date = new java.sql.Date(postgresDateTime.parse(value).getTime());
+            Date date = new java.sql.Date(parseDateTimeForDatabaseSql(value).getTime());
             return DateUtil.convertSqlDateToStringDate(date);
         } catch (Exception e) {
             return value;
@@ -272,7 +289,7 @@ abstract public class CSVColumnBuilder {
 
     protected String datetimeToLocalDateTime(String value) {
         try {
-            return DateUtil.formatDateTimeAsText(postgresDateTime.parse(value));
+            return DateUtil.formatDateTimeAsText(parseDateTimeForDatabaseSql(value));
         } catch (Exception e) {
             return value;
         }
@@ -443,7 +460,7 @@ abstract public class CSVColumnBuilder {
 
         public String translateAge(Strategy strategy, String end) throws Exception {
             java.util.Date birthday = resultSet.getDate("birth_date");
-            java.util.Date endDate = postgresDateTime.parse(end);
+            java.util.Date endDate = parseDateTimeForDatabaseSql(end);
             switch (strategy) {
             case AGE_YEARS:
                 return String.valueOf(DateUtil.getAgeInYears(birthday, endDate));

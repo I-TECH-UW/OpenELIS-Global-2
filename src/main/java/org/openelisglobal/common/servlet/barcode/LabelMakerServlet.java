@@ -39,10 +39,13 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        boolean unauthorized = false;
 
-        // check for authentication
+        // check for module authentication
         UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-        if (userModuleService.isSessionExpired(request)) {
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        if (unauthorized) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("text/html; charset=utf-8");
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

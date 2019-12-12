@@ -584,7 +584,7 @@ function  processPhoneSuccess(xhr){
 }
 </script>
 
-<!-- This define may not be needed, look at usages (not in any other jsp or js page-->
+<%-- This define may not be needed, look at usages (not in any other jsp or js page--%>
 
 <form:hidden path="currentDate"/>
 <form:hidden path="sampleOrderItems.newRequesterName" />

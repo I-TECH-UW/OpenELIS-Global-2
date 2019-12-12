@@ -403,20 +403,6 @@ function /*void*/ pt_updateDOB(age) {
 	}
 }
 
-function /*void*/ getDetailedPatientInfo() {
-	$("patientPK_ID").value = patientSelectID;
-
-	new Ajax.Request (
-    	'ajaxQueryXML',  //url
-        {//options
-        	method: 'get', //http method
-            parameters: "provider=PatientSearchPopulateProvider&personKey=" + patientSelectID,
-            onSuccess:  processSearchPopulateSuccess,
-            onFailure:  processSearchPopulateFailure
-        }
-	);
-}
-
 function /*void*/ setUpdateStatus(newStatus) {
 	if (updateStatus != newStatus) {
 		updateStatus = newStatus;

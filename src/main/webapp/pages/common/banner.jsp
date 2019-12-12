@@ -61,10 +61,10 @@ function displayHelp(){
 
 </script>
 
-<!-- New additions below by mark47 -->
+<%-- New additions below by mark47 --%>
 <link rel="stylesheet" type="text/css" href="<%=basePath%>css/menu.css?ver=<%= Versioning.getBuildNumber() %>" />
 
-<!-- Begin new menu -->
+<%-- Begin new menu --%>
 
 <script type="text/javascript" src="<%=basePath%>scripts/menu/hoverIntent.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/menu/superfish.js?ver=<%= Versioning.getBuildNumber() %>"></script>
@@ -127,7 +127,7 @@ function displayHelp(){
 %>
 
 	</div>
-</div> <!-- Closes id=header -->
+</div> <%-- Closes id=header --%>
 
 
 <% if( languageSwitch && "loginForm".equals((String) pageContext.getAttribute("formName")) ){ %>

@@ -55,7 +55,7 @@ public class QuickEntrySampleTypeValidationProvider extends BaseValidationProvid
         String targetId = request.getParameter("id");
         String formField = request.getParameter("field");
         String result = validate(targetId);
-        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
     }
     // ==============================================================
 

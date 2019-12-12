@@ -125,7 +125,7 @@ function search(){
 					<button class="reset-sort btn btn-mini" disabled="disabled"><i class="icon-refresh"></i> Reset</button>
 					<label> <spring:message code="audit.show" /> :
 				        <select id="filterByType">
-				        <!--  Options for filter are added via filterByType jquery function -->
+				        <%--  Options for filter are added via filterByType jquery function --%>
 				            <option value=""><spring:message code="audit.show.all"/></option>
 				        </select>
 				    </label>

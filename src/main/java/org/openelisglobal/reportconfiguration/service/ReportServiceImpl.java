@@ -123,12 +123,15 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
 
                 if (form.getReportDataFile() != null && form.getReportTemplateFile() != null) {
                     try {
-                        File dataFile = new File(reportPath, form.getReportDataFile().getOriginalFilename());
-                        form.getReportDataFile().transferTo(dataFile);
+                        if (form.getReportDataFile().getOriginalFilename().matches("[a-zA-Z1-9_]+\\.jasper") && form
+                                .getReportTemplateFile().getOriginalFilename().matches("[a-zA-Z1-9_]+\\.jrxml")) {
+                            File dataFile = new File(reportPath, form.getReportDataFile().getOriginalFilename());
+                            form.getReportDataFile().transferTo(dataFile);
 
-                        File templateFile = new File(reportPath, form.getReportTemplateFile().getOriginalFilename());
-                        form.getReportTemplateFile().transferTo(templateFile);
-
+                            File templateFile = new File(reportPath,
+                                    form.getReportTemplateFile().getOriginalFilename());
+                            form.getReportTemplateFile().transferTo(templateFile);
+                        }
                     } catch (IOException e) {
                         LogEvent.logDebug(e);
                     }

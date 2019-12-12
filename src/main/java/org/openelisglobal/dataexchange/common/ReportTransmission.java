@@ -83,6 +83,12 @@ public class ReportTransmission {
             responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
         } catch (Exception e) {
             LogEvent.logError(e.toString(), e);
+        } finally {
+            try {
+                source.getByteStream().close();
+            } catch (IOException e) {
+                LogEvent.logError(e);
+            }
         }
 
     }

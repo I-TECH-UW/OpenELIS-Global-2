@@ -286,6 +286,9 @@ function updateReflexChild( group){
                       method: 'get', //http method
                       parameters: 'provider=TestReflexCD4Provider&' + requestString,
                       indicator: 'throbbing',
+      				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				},
                       onSuccess:  processTestReflexCD4Success,
                       onFailure:  processTestReflexCD4Failure
                            }
@@ -392,7 +395,7 @@ function setField(id, value) {
 </div>
 </c:if>
 
-<!-- Modal popup-->
+<%-- Modal popup--%>
 <div id="reflexSelect" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -528,7 +531,7 @@ function setField(id, value) {
 </div>
 
 <Table style="width:100%" border="0" cellspacing="0" >
-	<!-- header -->
+	<%-- header --%>
 	<tr >
 		<% if( !compactHozSpace ){ %>
 		<th style="text-align: left">
@@ -581,7 +584,7 @@ function setField(id, value) {
 			<spring:message code="result.notes"/>
 		</th>
 	</tr>
-	<!-- body -->
+	<%-- body --%>
 	<c:forEach items="${form.testResult}" var="testResult" varStatus="iter">
 	<form:hidden path="testResult[${iter.index}].accessionNumber"/>
 	<c:if test="${testResult.isGroupSeparator}">
@@ -675,7 +678,7 @@ function setField(id, value) {
 			</td>
 		</c:if>
 		<% } %>
-		<!-- date cell -->
+		<%-- date cell --%>
 		<td class="ruled">
 			<form:input path="testResult[${iter.index}].testDate"
                        size="10"
@@ -693,7 +696,7 @@ function setField(id, value) {
 					 onchange='markUpdated(${iter.index});' />
 			</td>
 		</c:if>
-		<!-- results -->
+		<%-- results --%>
 		<c:if test="${testResult.resultDisplayType == 'HIV'}">
 			<td style="vertical-align:top" class="ruled">
 				<form:hidden path="testResult[${iter.index}].testMethod" />
@@ -750,7 +753,7 @@ function setField(id, value) {
 			<img src="./images/nonconforming.gif" />
 		</c:if>
 		</td>
-		<!-- force acceptance -->
+		<%-- force acceptance --%>
 		<td class="ruled" style='text-align: center'>
 			<form:checkbox path="testResult[${iter.index}].forceTechApproval"
 							value="on"
@@ -758,7 +761,7 @@ function setField(id, value) {
 							onchange='markUpdated(${iter.index}); forceTechApproval(this, ${iter.index});' 
 							/>
 		</td>
-		<!-- result cell -->
+		<%-- result cell --%>
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
 				<form:hidden path="testResult[${iter.index}].lowerNormalRange"/>
@@ -788,7 +791,7 @@ function setField(id, value) {
 					   			 	updateShadowResult(this, ${iter.index});"
 						/>
 			</c:if><c:if test="${testResult.resultType == 'R'}">
-				<!-- text results -->
+				<%-- text results --%>
 				<form:textarea path="testResult[${iter.index}].resultValue"
 						  rows="2"
 						  disabled='${testResult.readOnly}'
@@ -800,7 +803,7 @@ function setField(id, value) {
 					   			   updateShadowResult(this, ${iter.index}); "
 						  />
 			</c:if><c:if test="${testResult.resultType == 'D'}">
-			<!-- dictionary results -->
+			<%-- dictionary results --%>
 			<form:select path="testResult[${iter.index}].resultValue"
 			        id="resultId_${iter.index}"
 			        onchange="markUpdated(${iter.index}, ${testResult.userChoiceReflex}, '${testResult.siblingReflexKey}');
@@ -819,7 +822,7 @@ function setField(id, value) {
 					   onchange='markUpdated(${iter.index});'
 					    />
 			</c:if><c:if test="${testResult.resultType == 'M'}">
-			<!-- multiple results -->
+			<%-- multiple results --%>
 			<form:select path="testResult[${iter.index}].multiSelectResultValues"
 					id="resultId_${iter.index}_0"
                     multiple="multiple"
@@ -838,7 +841,7 @@ function setField(id, value) {
                    onchange='markUpdated(${iter.index});'
                 />
 			</c:if><c:if test="${testResult.resultType == 'C'}">
-                <!-- cascading multiple results -->
+                <%-- cascading multiple results --%>
                 <div id="cascadingMulti_${iter.index}_0" class="cascadingMulti_${iter.index}" >
                 <input type="hidden" id="divCount_${iter.index}" value="0" >
                 <form:select path="testResult[${iter.index}].multiSelectResultValues"

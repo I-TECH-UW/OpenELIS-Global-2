@@ -179,7 +179,7 @@
 </script>
 
 
-<!-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP-->
+<%-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP--%>
 <c:set var="sampleOrderItem" value="${sampleOrderItems}"/>
 
 <form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterId" />

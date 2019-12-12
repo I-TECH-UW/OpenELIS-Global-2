@@ -184,9 +184,9 @@
             <input type="checkbox" name="currentReport.isVisible" />
         </div>
 
-        <!--<ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
+        <%--<ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
 
-        </ul>-->
+        </ul>--%>
         <input name="idOrder" type="hidden" />
         <input name="currentReport.id" type="hidden" />
         <div class="form-div">

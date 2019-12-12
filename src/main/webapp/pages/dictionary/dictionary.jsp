@@ -106,6 +106,6 @@ function validateForm(form) {
 </table>
 
  
-<!-- <html:javascript formName="dictionaryForm"/> -->
+<%-- <html:javascript formName="dictionaryForm"/> --%>
 
 
