@@ -409,7 +409,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                 } catch (NoSuchMethodException e) {
                     LogEvent.logInfo(this.getClass().getName(), "processLabelValueFixes",
                             "ignoring NoSuchMethodException getCollectionDate() for object of type: "
-                                    + o1.getClass().getName());
+                                    + existingObject.getClass().getName());
                     // ignore for SampleItem (which does not have getCollectionDate method
                 }
             }

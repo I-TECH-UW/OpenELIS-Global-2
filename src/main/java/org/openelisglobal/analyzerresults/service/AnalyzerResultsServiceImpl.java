@@ -90,7 +90,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     }
                 }
 
-                if (duplicateByAccessionAndTestOnly) {
+                if (duplicateByAccessionAndTestOnly && previousResult != null) {
                     result.setDuplicateAnalyzerResultId(previousResult.getId());
                     result.setReadOnly(true);
                 }
@@ -100,7 +100,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     String id = insert(result);
                     result.setId(id);
 
-                    if (duplicateByAccessionAndTestOnly) {
+                    if (duplicateByAccessionAndTestOnly && previousResult != null) {
                         previousResult.setDuplicateAnalyzerResultId(id);
                         previousResult.setSysUserId(sysUserId);
                     }

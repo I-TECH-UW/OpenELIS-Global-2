@@ -743,7 +743,7 @@ public class AnalyzerResultsController extends BaseController {
     private void createResultsFromItems(List<AnalyzerResultItem> actionableResults,
             List<SampleGrouping> sampleGroupList) {
         int groupingNumber = -1;
-        List<AnalyzerResultItem> groupedResultList = null;
+        List<AnalyzerResultItem> groupedResultList = new ArrayList<>();
 
         /*
          * Basic idea is that analyzerResultItems are put into a groupedResultList if
@@ -1042,7 +1042,7 @@ public class AnalyzerResultsController extends BaseController {
         sampleGrouping.addSample = false;
         sampleGrouping.updateSample = true;
         sampleGrouping.statusSet = statusSet;
-        sampleGrouping.addSampleItem = sampleItem.getId() == null;
+        sampleGrouping.addSampleItem = (sampleItem == null || sampleItem.getId() == null);
         sampleGrouping.accepted = groupedAnalyzerResultItems.get(0).getIsAccepted();
         sampleGrouping.patient = patient;
         sampleGrouping.resultToUserserSelectionMap = resultToUserSelectionMap;

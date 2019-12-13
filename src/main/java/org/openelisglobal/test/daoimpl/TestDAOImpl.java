@@ -602,7 +602,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             handleException(e, "getActiveTestById");
         }
 
-        return list.size() > 0 ? list.get(0) : null;
+        return (list != null && list.size() > 0) ? list.get(0) : null;
     }
 
     @Override

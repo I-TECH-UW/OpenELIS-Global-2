@@ -175,6 +175,9 @@ public class ResultsValidationUtility {
                 headItem = analysisResultItem;
                 groupingCount++;
             } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be able to be null here");
+                }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
             }
@@ -361,7 +364,6 @@ public class ResultsValidationUtility {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     protected final List<TestResult> getPossibleResultsForTest(Test test) {
         return testResultService.getAllActiveTestResultsPerTest(test);
     }

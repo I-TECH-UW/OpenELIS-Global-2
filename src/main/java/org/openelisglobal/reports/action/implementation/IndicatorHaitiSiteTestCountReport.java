@@ -183,8 +183,12 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                 currentSite = report.getSendingSite();
             }
 
-            Map<String, Integer> targetMonthTestCount = monthlyTestCount[DateUtil
-                    .getMonthForTimestamp(report.getEventDate())];
+            Map<String, Integer> targetMonthTestCount;
+            if (monthlyTestCount != null) {
+                targetMonthTestCount = monthlyTestCount[DateUtil.getMonthForTimestamp(report.getEventDate())];
+            } else {
+                targetMonthTestCount = new HashMap<>();
+            }
 
             JSONParser parser = new JSONParser();
 

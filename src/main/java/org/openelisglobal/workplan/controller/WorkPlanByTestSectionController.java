@@ -68,16 +68,13 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
+        List<TestResultItem> workplanTests = new ArrayList<>();
         TestSection ts = null;
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
             form.setTestSectionId("0");
-        }
 
-        List<TestResultItem> workplanTests = new ArrayList<>();
-
-        if (!GenericValidator.isBlankOrNull(testSectionId)) {
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
             form.setWorkplanTests(workplanTests);

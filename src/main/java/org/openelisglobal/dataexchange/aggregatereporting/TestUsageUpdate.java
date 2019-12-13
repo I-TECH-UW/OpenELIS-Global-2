@@ -149,6 +149,7 @@ public class TestUsageUpdate implements IResultUpdate {
 
         export.setSend(true);
 
+        JSONObject json = new JSONObject();
         try {
             databaseTestCountList = (Map<String, Long>) parser.parse(export.getData().replace("\n", ""),
                     CONTAINER_FACTORY);
@@ -157,13 +158,12 @@ public class TestUsageUpdate implements IResultUpdate {
                 Long count = databaseTestCountList.get(test);
                 databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
             }
+
+            for (String name : databaseTestCountList.keySet()) {
+                json.put(name, databaseTestCountList.get(name));
+            }
         } catch (ParseException e) {
             LogEvent.logInfo(this.getClass().getName(), "method unkown", e.toString());
-        }
-
-        JSONObject json = new JSONObject();
-        for (String name : databaseTestCountList.keySet()) {
-            json.put(name, databaseTestCountList.get(name));
         }
 
         StringWriter buffer = new StringWriter();

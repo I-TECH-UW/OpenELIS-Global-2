@@ -87,7 +87,6 @@ public class ResultReportingConfigurationController extends BaseController {
         }
         List<SiteInformation> informationList = new ArrayList<>();
         List<CronScheduler> scheduleList = new ArrayList<>();
-        @SuppressWarnings("unchecked")
         List<ReportingConfiguration> reports = form.getReports();
 
         for (ReportingConfiguration config : reports) {
