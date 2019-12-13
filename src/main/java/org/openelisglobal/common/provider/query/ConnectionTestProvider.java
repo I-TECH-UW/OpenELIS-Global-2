@@ -26,12 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.services.ExchangeConfigurationService;
 import org.openelisglobal.common.util.XMLUtil;
-import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.spring.util.SpringContext;
 
 public class ConnectionTestProvider extends BaseQueryProvider {
-
-    private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
 
     /**
      * @throws LIMSInvalidConfigurationException
@@ -41,7 +37,6 @@ public class ConnectionTestProvider extends BaseQueryProvider {
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         ExchangeConfigurationService service = new ExchangeConfigurationService(request.getParameter("connectionId"));
         String testResult = service.testConnection(request.getParameter("url"));
 
