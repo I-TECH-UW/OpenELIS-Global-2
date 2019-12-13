@@ -83,9 +83,7 @@ public abstract class RejectionReport extends Report implements IReportCreator {
     public void initializeReport(ReportForm form) {
         initialized = true;
         ReportSpecificationList selection = form.getSelectList();
-        String lowDateStr = form.getLowerDateRange();
-        String highDateStr = form.getUpperDateRange();
-        dateRange = new DateRange(lowDateStr, highDateStr);
+        dateRange = new DateRange(form.getLowerDateRange(), form.getUpperDateRange());
 
         errorFound = !validateSubmitParameters(selection);
         if (errorFound) {

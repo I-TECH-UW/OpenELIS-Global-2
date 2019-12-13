@@ -66,8 +66,7 @@ public class ValidationProviderFactory {
         } catch (Exception e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    true);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
     }
@@ -96,13 +95,11 @@ public class ValidationProviderFactory {
             } catch (IOException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
-                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e,
-                        true);
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e, true);
             } finally {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                        propertyStream = null;
                     } catch (Exception e) {
                         // bugzilla 2154
                         LogEvent.logError(e.toString(), e);

@@ -86,7 +86,6 @@ public class QueryProviderFactory {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                        propertyStream = null;
                     } catch (Exception e) {
                         LogEvent.logError(e.getMessage(), e);
                     }

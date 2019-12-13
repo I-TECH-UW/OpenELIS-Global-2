@@ -45,7 +45,6 @@ public class Versioning {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
                 } catch (Exception e) {
                     LogEvent.logError(e.toString(), e);
                 }

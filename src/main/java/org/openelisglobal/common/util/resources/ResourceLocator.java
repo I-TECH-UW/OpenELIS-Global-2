@@ -68,7 +68,6 @@ public class ResourceLocator {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
                 } catch (Exception e) {
                     // bugzilla 2154
                     LogEvent.logError(e.toString(), e);

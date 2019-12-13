@@ -318,7 +318,8 @@ public class UnifiedSystemUserController extends BaseController {
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
             form.setSelectedRoles(roleIds);
 
-            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
+            // is this meant to be returned?
+//            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
         }
 
     }
@@ -407,7 +408,7 @@ public class UnifiedSystemUserController extends BaseController {
         }
     }
 
-    public String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
+    private String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
         String forward = FWD_SUCCESS_INSERT;
         String loginUserId = form.getLoginUserId();
         String systemUserId = form.getSystemUserId();
@@ -431,10 +432,8 @@ public class UnifiedSystemUserController extends BaseController {
         Login loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
 
-        List<String> selectedRoles = form.getSelectedRoles();
-
         try {
-            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
+            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
         } catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -449,8 +448,6 @@ public class UnifiedSystemUserController extends BaseController {
             disableNavigationButtons(request);
             forward = FWD_FAIL_INSERT;
         }
-
-        selectedRoles = new ArrayList<>();
 
         return forward;
     }

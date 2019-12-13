@@ -137,7 +137,6 @@ public class ReportTransmission {
         Properties transmissionMap = new Properties();
         try {
             propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
-
             transmissionMap.load(propertyStream);
         } catch (IOException e) {
             LogEvent.logError(e.toString(), e);
@@ -146,7 +145,6 @@ public class ReportTransmission {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
                 } catch (Exception e) {
                     LogEvent.logError(e.toString(), e);
                 }

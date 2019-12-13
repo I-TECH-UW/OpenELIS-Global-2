@@ -55,7 +55,6 @@ public class ResultsPaging {
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
         List<TestResultItem> clientTests = form.getTestResult();
         PagingBean bean = form.getPaging();
-        String testSectionId = (request.getParameter("testSectionId"));
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
         int page = Integer.parseInt(newPage);
@@ -69,7 +68,6 @@ public class ResultsPaging {
 
     }
 
-    @SuppressWarnings("unchecked")
     public void updatePagedResults(HttpServletRequest request, ResultsPagingForm form) {
         List<TestResultItem> clientTests = form.getTestResult();
         PagingBean bean = form.getPaging();

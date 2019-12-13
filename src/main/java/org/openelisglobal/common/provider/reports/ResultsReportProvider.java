@@ -243,11 +243,11 @@ public class ResultsReportProvider extends BaseReportsProvider {
                     HashMap samples = new HashMap();
                     ResultsReportSample reportSample = new ResultsReportSample();
                     List currentTests = new ArrayList();
-                    List previousTests = new ArrayList();
+//                    List previousTests = new ArrayList();
                     List currentTestsToReport = new ArrayList();
-                    List previousTestsToReport = new ArrayList();
-                    List currentAnalyteResults = new ArrayList();
-                    List previousAnalyteResults = new ArrayList();
+//                    List previousTestsToReport = new ArrayList();
+//                    List currentAnalyteResults = new ArrayList();
+//                    List previousAnalyteResults = new ArrayList();
                     reportAnalyteResult = new ResultsReportAnalyteResult();
 
                     amendedMessage = getMessageForKey(request, "label.jasper.results.report.amended");
@@ -605,7 +605,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
     // this is for current and previous tests
     private List populateTests(List listOfTests, int section) {
-        Dictionary dictionary = new Dictionary();
         // filter list of analyses to report (depending on whether amended/original
         // report
         // preload list of resultsReportTests - then process those in a later loop
@@ -718,8 +717,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
             Analysis analysis = new Analysis();
             analysis.setId(id);
             analysisService.getData(analysis);
-
-            String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
 
             // get reportable results for test, and corresponding analyte information
             List results = resultService.getReportableResultsByAnalysis(analysis);

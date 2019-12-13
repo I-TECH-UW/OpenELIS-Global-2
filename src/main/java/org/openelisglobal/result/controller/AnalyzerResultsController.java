@@ -469,8 +469,7 @@ public class AnalyzerResultsController extends BaseController {
                     } else {
                         // find if the sibling reflex is satisfied
                         TestReflex sibTestReflex = testReflexService.get(possibleTestReflex.getSiblingReflexId());
-
-                        TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
+//                        TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
 
                         for (Analysis analysis : analysisList) {
                             List<Result> resultList = resultService.getResultsByAnalysis(analysis);
