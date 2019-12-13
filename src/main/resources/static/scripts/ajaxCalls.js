@@ -434,18 +434,4 @@ function postBatchSampleByProject(projectUrl, success, failure) {
     	);
 }
 
-function /*void*/ getDetailedPatientInfo() {
-	$("patientPK_ID").value = patientSelectID;
-
-	new Ajax.Request (
-    	'ajaxQueryXML',  //url
-        {//options
-        	method: 'get', //http method
-            parameters: "provider=PatientSearchPopulateProvider&personKey=" + patientSelectID,
-            onSuccess:  processSearchPopulateSuccess,
-            onFailure:  processSearchPopulateFailure
-        }
-	);
-}
-
 

@@ -495,9 +495,9 @@ function  /*void*/ getDetailedPatientInfo()
                         {//options
                           method: 'get', //http method
                           parameters: "provider=PatientSearchPopulateProvider&personKey=" + patientSelectID,
-          				requestHeaders : {
-        					"X-CSRF-Token" : getCsrfToken()
-        				},
+          				  requestHeaders : {
+        					 "X-CSRF-Token" : getCsrfToken()
+        				  },
                           onSuccess:  processSearchPopulateSuccess,
                           onFailure:  processSearchPopulateFailure
                          }
