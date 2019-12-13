@@ -70,8 +70,6 @@ public class TestReflexUtil {
 
     private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
-    private String currentUserId;
-
     static {
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
@@ -90,7 +88,6 @@ public class TestReflexUtil {
         TRIGGERING_UC_REFLEX_TEST_IDS = new HashSet<>();
         TEST_TO_REFLEX_MAP = new HashMap<>();
 
-        @SuppressWarnings("unchecked")
         List<TestReflex> reflexes = SpringContext.getBean(TestReflexService.class).getAllTestReflexs();
 
         for (TestReflex testReflex : reflexes) {
@@ -195,7 +192,6 @@ public class TestReflexUtil {
     /*
      * Gets the test reflex associated with this test and result.
      */
-    @SuppressWarnings("unchecked")
     public List<TestReflex> getTestReflexsForDictioanryResultTestId(String dictionaryId, String testId,
             boolean userChoiceOnly) {
         if (GenericValidator.isBlankOrNull(dictionaryId) || GenericValidator.isBlankOrNull(testId)) {
@@ -212,13 +208,10 @@ public class TestReflexUtil {
                 : testReflexService.getTestReflexesByTestResult(testResult);
     }
 
-    public void setCurrentUserId(String currentUserId) {
-        this.currentUserId = currentUserId;
-    }
-
-    public void addNewTestsToDBForReflexTests(List<TestReflexBean> newResults) throws IllegalStateException {
-        if (currentUserId == null) {
-            throw new IllegalStateException("currentUserId not set");
+    public void addNewTestsToDBForReflexTests(List<TestReflexBean> newResults, String sysUserId)
+            throws IllegalStateException {
+        if (sysUserId == null) {
+            throw new IllegalStateException("sysUserId not set");
         }
 
         /*
@@ -264,15 +257,16 @@ public class TestReflexUtil {
 
             // use cases 1-6, 10
             if (reflexBean.getTriggersToSelectedReflexesMap().isEmpty()) {
-                handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList);
+                handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList, sysUserId);
             } else { // use cases 7,8,9
-                handleUserSelectedReflexes(parentAnalysisList, reflexBean);
+                handleUserSelectedReflexes(parentAnalysisList, reflexBean, sysUserId);
 
             }
         }
     }
 
-    private void handleUserSelectedReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean) {
+    private void handleUserSelectedReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
+            String sysUserId) {
         // The reflexes and the triggering tests have already been identified by
         // TestReflexUserChoiceProvider, if all of the parents are not being
         // picked up fix it there
@@ -294,7 +288,7 @@ public class TestReflexUtil {
                 }
 
                 addReflexTest(reflex, reflexBean.getResult(), reflexBean.getPatient().getId(), reflexBean.getSample(),
-                        true, true, addedActionId, false);
+                        true, true, addedActionId, false, sysUserId);
 
             }
 
@@ -302,12 +296,12 @@ public class TestReflexUtil {
                 parentAnalysisList.add(reflexBean.getResult().getAnalysis());
             }
 
-            markSibAnalysisAsParent(parentAnalysisList);
+            markSibAnalysisAsParent(parentAnalysisList, sysUserId);
         }
     }
 
     private void handleAutomaticReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
-            List<String> handledReflexIdList) {
+            List<String> handledReflexIdList, String sysUserId) {
         // More than one reflex may be returned if more than one action
         // should be taken by the result
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
@@ -337,7 +331,7 @@ public class TestReflexUtil {
                 boolean allSibAnalysisCausedReflex = doAllAnalysisHaveReflex(parentAnalysisList, reflexBean);
 
                 addReflexTest(reflexForResult, reflexBean.getResult(), reflexBean.getPatient().getId(),
-                        reflexBean.getSample(), true, true, null, allSibAnalysisCausedReflex);
+                        reflexBean.getSample(), true, true, null, allSibAnalysisCausedReflex, sysUserId);
                 // there may be multiple reflexes
                 for (TestReflex siblingReflex : siblingsOfResultReflex) {
                     // we want to make sure we don't add the same test
@@ -348,7 +342,7 @@ public class TestReflexUtil {
                             && !siblingReflex.getActionScriptletId().equals(reflexForResult.getActionScriptletId());
 
                     addReflexTest(siblingReflex, reflexBean.getResult(), reflexBean.getPatient().getId(),
-                            reflexBean.getSample(), addTest, handleAction, null, allSibAnalysisCausedReflex);
+                            reflexBean.getSample(), addTest, handleAction, null, allSibAnalysisCausedReflex, sysUserId);
 
                 }
 
@@ -356,7 +350,7 @@ public class TestReflexUtil {
                     parentAnalysisList.add(reflexBean.getResult().getAnalysis());
                 }
 
-                markSibAnalysisAsParent(parentAnalysisList);
+                markSibAnalysisAsParent(parentAnalysisList, sysUserId);
             }
         }
     }
@@ -410,7 +404,7 @@ public class TestReflexUtil {
     }
 
     private void addReflexTest(TestReflex reflex, Result result, String patientId, Sample sample, boolean addTest,
-            boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest) {
+            boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest, String sysUserId) {
 
         if (addTest || handleAction) {
 
@@ -422,7 +416,7 @@ public class TestReflexUtil {
             if (observation != null && handleAction) {
                 observation.setPatientId(patientId);
                 observation.setSampleId(sample.getId());
-                observation.setSysUserId(currentUserId);
+                observation.setSysUserId(sysUserId);
                 observationService.insert(observation);
             }
 
@@ -440,7 +434,7 @@ public class TestReflexUtil {
 
             if (finalResult != null) {
                 finalResult.setAnalysis(result.getAnalysis());
-                finalResult.setSysUserId(currentUserId);
+                finalResult.setSysUserId(sysUserId);
                 if (finalResult.getId() == null) {
                     resultService.insert(finalResult);
                 } else {
@@ -451,8 +445,8 @@ public class TestReflexUtil {
             if (newAnalysis != null && addTest) {
                 Analysis currentAnalysis = result.getAnalysis();
 
-                newAnalysis.setSysUserId(currentUserId);
-                currentAnalysis.setSysUserId(currentUserId);
+                newAnalysis.setSysUserId(sysUserId);
+                currentAnalysis.setSysUserId(sysUserId);
                 currentAnalysis.setTriggeredReflex(Boolean.TRUE);
 
                 analysisService.insert(newAnalysis);
@@ -486,18 +480,19 @@ public class TestReflexUtil {
                 && existingAnalysis.getSampleTypeName().equals(newAnalysis.getSampleTypeName());
     }
 
-    private void markSibAnalysisAsParent(List<Analysis> parentAnalysisList) {
+    private void markSibAnalysisAsParent(List<Analysis> parentAnalysisList, String sysUserId) {
         for (Analysis analysis : parentAnalysisList) {
-            analysis.setSysUserId(currentUserId);
+            analysis.setSysUserId(sysUserId);
             analysis.setTriggeredReflex(Boolean.TRUE);
             analysisService.update(analysis);
         }
 
     }
 
-    public void updateModifiedReflexes(List<TestReflexBean> reflexBeanList) throws IllegalStateException {
-        if (currentUserId == null) {
-            throw new IllegalStateException("currentUserId not set");
+    public void updateModifiedReflexes(List<TestReflexBean> reflexBeanList, String sysUserId)
+            throws IllegalStateException {
+        if (sysUserId == null) {
+            throw new IllegalStateException("sysUserId not set");
         }
         /*
          * N.B. currently we are only updating calculated values and conclusions This
@@ -550,7 +545,7 @@ public class TestReflexUtil {
                                 cd4Result = calculatedResults;
                             }
 
-                            cd4Result.setSysUserId(currentUserId);
+                            cd4Result.setSysUserId(sysUserId);
 
                             if (cd4Result.getId() == null) {
                                 resultService.insert(cd4Result);

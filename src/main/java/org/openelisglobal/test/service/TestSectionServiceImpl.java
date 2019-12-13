@@ -11,12 +11,12 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemusersection.service.SystemUserSectionService;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 import org.openelisglobal.test.dao.TestSectionDAO;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +28,10 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     private Map<String, String> testUnitIdToNameMap;
 
-    protected TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
-
-    private SystemUserSectionService systemUserSectionService = SpringContext.getBean(SystemUserSectionService.class);
+    @Autowired
+    private TestSectionDAO baseObjectDAO;
+    @Autowired
+    private SystemUserSectionService systemUserSectionService;
 
     @PostConstruct
     private void initializeGlobalVariables() {
@@ -85,12 +86,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
         return getUserLocalizedTestSectionName(testSection.getId());
     }
 
-    public String getUserLocalizedTestSectionName(String testSectionId) {
+    public synchronized String getUserLocalizedTestSectionName(String testSectionId) {
         String name = testUnitIdToNameMap.get(testSectionId);
         return name == null ? "" : name;
     }
 
-    private void createTestIdToNameMap() {
+    private synchronized void createTestIdToNameMap() {
         testUnitIdToNameMap = new HashMap<>();
 
         List<TestSection> testSections = baseObjectDAO.getAllTestSections();

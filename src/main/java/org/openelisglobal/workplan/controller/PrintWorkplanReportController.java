@@ -38,9 +38,6 @@ public class PrintWorkplanReportController extends BaseController {
             "testSectionId", "testName", "workplanTests[*].accessionNumber", "workplanTests[*].patientInfo",
             "workplanTests[*].receivedDate", "workplanTests[*].testName", "workplanTests[*].notIncludedInWorkplan" };
 
-    private static IWorkplanReport workplanReport;
-    private String reportPath;
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -68,7 +65,7 @@ public class PrintWorkplanReportController extends BaseController {
         }
 
         // get workplan report based on testName
-        workplanReport = getWorkplanReport(workplanType, workplanName);
+        IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
 
         workplanReport.setReportPath(getReportPath());
 
@@ -140,12 +137,9 @@ public class PrintWorkplanReportController extends BaseController {
     }
 
     public String getReportPath() {
-        if (reportPath == null) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File reportFile = new File(classLoader.getResource("reports/").getFile());
-            reportPath = reportFile.getAbsolutePath();
-        }
-        return reportPath;
+        ClassLoader classLoader = getClass().getClassLoader();
+        File reportFile = new File(classLoader.getResource("reports/").getFile());
+        return reportFile.getAbsolutePath();
     }
 
     @Override

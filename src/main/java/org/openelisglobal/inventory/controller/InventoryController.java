@@ -66,10 +66,6 @@ public class InventoryController extends BaseController {
     @Autowired
     private OrganizationService organizationService;
 
-    private List<InventoryKitItem> modifiedItems;
-    private List<InventorySet> newInventory;
-    private List<InventorySet> modifiedInventory;
-
     @ModelAttribute("form")
     public InventoryForm initForm() {
         return new InventoryForm();
@@ -137,11 +133,11 @@ public class InventoryController extends BaseController {
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        setModifiedItems(form);
-        createInventoryFromModifiedItems();
-        createNewInventory(form);
+        List<InventoryKitItem> modifiedItems = getModifiedItems(form);
+        List<InventorySet> modifiedInventory = createInventoryFromModifiedItems(modifiedItems);
+        List<InventorySet> newInventory = createNewInventory(form);
 
-        Errors errors = validateNewInventory();
+        Errors errors = validateNewInventory(newInventory);
 
         if (errors.hasErrors()) {
             saveErrors(errors);
@@ -182,7 +178,7 @@ public class InventoryController extends BaseController {
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    private Errors validateNewInventory() {
+    private Errors validateNewInventory(List<InventorySet> newInventory) {
         Errors errors = new BaseErrors();
 
         List<InventoryItem> items = inventoryItemService.getAllInventoryItems();
@@ -206,12 +202,13 @@ public class InventoryController extends BaseController {
         return errors;
     }
 
-    private void createInventoryFromModifiedItems() {
-        modifiedInventory = new ArrayList<>();
+    private List<InventorySet> createInventoryFromModifiedItems(List<InventoryKitItem> modifiedItems) {
+        List<InventorySet> modifiedInventory = new ArrayList<>();
 
         for (InventoryKitItem kitItem : modifiedItems) {
             modifiedInventory.add(createInventorySetFromInventoryKitItem(kitItem));
         }
+        return modifiedInventory;
     }
 
     private InventorySet createInventorySetFromInventoryKitItem(InventoryKitItem kitItem) {
@@ -246,8 +243,8 @@ public class InventoryController extends BaseController {
     }
 
     @SuppressWarnings("unchecked")
-    private void createNewInventory(InventoryForm form) {
-        newInventory = new ArrayList<>();
+    private List<InventorySet> createNewInventory(InventoryForm form) {
+        List<InventorySet> newInventory = new ArrayList<>();
 
         String newInventoryXml = form.getNewKitsXML();
 
@@ -273,6 +270,7 @@ public class InventoryController extends BaseController {
         } catch (DocumentException e) {
             LogEvent.logError(e.getMessage(), e);
         }
+        return newInventory;
 
     }
 
@@ -304,9 +302,9 @@ public class InventoryController extends BaseController {
     }
 
     @SuppressWarnings("unchecked")
-    private void setModifiedItems(InventoryForm form) {
+    private List<InventoryKitItem> getModifiedItems(InventoryForm form) {
         List<InventoryKitItem> allItems = form.getInventoryItems();
-        modifiedItems = new ArrayList<>();
+        List<InventoryKitItem> modifiedItems = new ArrayList<>();
 
         if (allItems != null) {
             for (InventoryKitItem item : allItems) {
@@ -315,6 +313,7 @@ public class InventoryController extends BaseController {
                 }
             }
         }
+        return modifiedItems;
     }
 
 //    protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form) throws Exception {

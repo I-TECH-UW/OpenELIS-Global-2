@@ -22,6 +22,7 @@ import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -108,7 +109,7 @@ public class ResultReportingConfigurationController extends BaseController {
         }
 
         ConfigurationProperties.forceReload();
-        new LateStartScheduler().restartSchedules();
+        SpringContext.getBean(LateStartScheduler.class).restartSchedules();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);

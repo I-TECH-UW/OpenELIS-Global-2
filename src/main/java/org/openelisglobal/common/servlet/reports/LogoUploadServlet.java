@@ -57,9 +57,14 @@ public class LogoUploadServlet extends HttpServlet {
     private String FULL_PREVIEW_FILE_PATH;
 
     @Override
+    public void init() throws ServletException {
+        super.init();
+        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
         // check for authentication
         if (userModuleService.isSessionExpired(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

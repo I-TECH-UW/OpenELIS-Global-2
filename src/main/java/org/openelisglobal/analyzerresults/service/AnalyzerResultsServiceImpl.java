@@ -200,8 +200,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
         }
 
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.setCurrentUserId(sysUserId);
-        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
+        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList), sysUserId);
 
         return true;
     }
