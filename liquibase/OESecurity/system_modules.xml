@@ -533,6 +533,6 @@
 		 		(SELECT id FROM clinlims.system_module_param WHERE value = 'ConnectionTestProvider' AND name = 'provider')	
 		);
     </sql>	
-</changeset>
+</changeSet>
   
 </databaseChangeLog>

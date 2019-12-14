@@ -23,8 +23,6 @@
 
 <%-- 		
 <bean:define id="patientProperties" name='${form.formName}' property='patientProperties' type="PatientManagementInfo" /> --%>
-
-
 <%
 	String formName = (String) request.getAttribute("formName");
 	PatientManagementInfo patientProperties = (PatientManagementInfo) request.getAttribute("patientProperties");
