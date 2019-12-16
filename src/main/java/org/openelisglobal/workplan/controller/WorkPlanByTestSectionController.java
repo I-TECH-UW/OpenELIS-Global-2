@@ -261,7 +261,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
     }
 
     @Override
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (GenericValidator.isBlankOrNull(request.getParameter("type"))) {
             return MessageUtil.getMessage(messageKey, MessageUtil.getMessage("workplan.unit.types"));
         }

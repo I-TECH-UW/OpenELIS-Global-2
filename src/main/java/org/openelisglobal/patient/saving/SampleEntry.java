@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.query.SampleItemTestProvider;
 import org.openelisglobal.common.services.StatusService;
@@ -51,7 +52,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     protected IAccessionerForm form;
     protected HttpServletRequest request;
 
-    public SampleEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) throws Exception {
+    public SampleEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
         this();
         setFieldsFromForm(form);
         this.request = request;
@@ -91,7 +92,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    protected void populateSampleData() throws Exception {
+    protected void populateSampleData() throws LIMSException {
         Timestamp receivedDate = DateUtil.convertStringDateStringTimeToTimestamp(projectFormMapper.getReceivedDate(),
                 projectFormMapper.getReceivedTime());
         Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(
@@ -102,7 +103,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         populateSampleItems();
     }
 
-    protected void populateSampleItems() throws Exception {
+    protected void populateSampleItems() throws LIMSException {
         List<TypeOfSampleTests> typeofSampleTestList = projectFormMapper.getTypeOfSampleTests();
 
         boolean testSampleMismatch = false;
@@ -119,7 +120,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
 
         if (testSampleMismatch) {
             messages.reject("errors.no.sample");
-            throw new Exception("Mis-match between tests and sample types.");
+            throw new LIMSException("Mis-match between tests and sample types.");
         }
 
         Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(
@@ -288,7 +289,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
      * @see org.openelisglobal.patient.saving.Accessioner#persistSampleData()
      */
     @Override
-    protected void persistSampleData() throws Exception {
+    protected void persistSampleData() {
         // TODO Auto-generated method stub
         super.persistSampleData();
     }

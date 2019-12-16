@@ -25,7 +25,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //			} else {
 //				resource.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataResourceDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataResource getData()", e);
@@ -39,7 +39,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return resource;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataResourceDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataResource getData()", e);
@@ -60,7 +60,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataResourceDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataResource insertData()", e);
@@ -80,7 +80,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "DATA_VALUE";
 //			// auditDAO.saveHistory(resource, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DataResourceDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataResource AuditTrail updateData()", e);
 //		}
@@ -91,7 +91,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> imple
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(resource);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(resource);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataResourceDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataResource updateData()", e);

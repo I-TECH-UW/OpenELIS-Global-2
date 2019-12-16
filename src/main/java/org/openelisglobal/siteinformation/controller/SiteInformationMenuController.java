@@ -102,7 +102,7 @@ public class SiteInformationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
         List<SiteInformation> configurationList;
 
         if (!(form instanceof SiteInformationMenuForm)) {

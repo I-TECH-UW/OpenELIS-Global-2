@@ -76,7 +76,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
             form.setUseLowerDateRange(true);
             form.setUseUpperDateRange(true);
             form.setInstructions(MessageUtil.getMessage("instructions.report.referral"));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
     }

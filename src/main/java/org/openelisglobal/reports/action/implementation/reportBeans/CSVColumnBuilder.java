@@ -225,7 +225,7 @@ abstract public class CSVColumnBuilder {
         BLANK // Will always be an empty string. Used when column is wanted but data is not
     }
 
-    public void buildDataSource() throws Exception {
+    public void buildDataSource() throws SQLException {
         buildResultSet();
     }
 
@@ -282,7 +282,7 @@ abstract public class CSVColumnBuilder {
         try {
             Date date = new java.sql.Date(parseDateTimeForDatabaseSql(value).getTime());
             return DateUtil.convertSqlDateToStringDate(date);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
@@ -290,17 +290,17 @@ abstract public class CSVColumnBuilder {
     protected String datetimeToLocalDateTime(String value) {
         try {
             return DateUtil.formatDateTimeAsText(parseDateTimeForDatabaseSql(value));
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
 
-    public String getValue(CSVColumn column, String accessionNumber) throws Exception {
+    public String getValue(CSVColumn column, String accessionNumber) throws SQLException, ParseException {
         String value;
         // look in the data source for a value
         try {
             value = resultSet.getString(trimToPostgresMaxColumnName(column.dbName));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
@@ -375,7 +375,7 @@ abstract public class CSVColumnBuilder {
             this.customStrategy = customStrategy;
         }
 
-        public String translate(String value, String accessionNumber) throws Exception {
+        public String translate(String value, String accessionNumber) throws SQLException, ParseException {
             switch (strategy) {
             case CUSTOM:
                 return customStrategy.translate(value, accessionNumber, csvName, dbName);
@@ -458,7 +458,7 @@ abstract public class CSVColumnBuilder {
             }
         }
 
-        public String translateAge(Strategy strategy, String end) throws Exception {
+        public String translateAge(Strategy strategy, String end) throws SQLException, ParseException {
             java.util.Date birthday = resultSet.getDate("birth_date");
             java.util.Date endDate = parseDateTimeForDatabaseSql(end);
             switch (strategy) {
@@ -474,10 +474,10 @@ abstract public class CSVColumnBuilder {
 
         /**
          * @param value
-         * @return
-         * @throws Exception
+         * @return @
+         * @throws SQLException
          */
-        public String translateTestResult(String testName, String value) throws Exception {
+        public String translateTestResult(String testName, String value) throws SQLException {
             TestResult testResult = testResultsByTestName.get(testName);
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
@@ -689,10 +689,11 @@ abstract public class CSVColumnBuilder {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * @return @
+     * @throws ParseException
+     * @throws SQLException
      */
-    public String nextLine() throws Exception {
+    public String nextLine() throws SQLException, ParseException {
         StringBuilder line = new StringBuilder();
         String accessionNumber = null;
         for (CSVColumn column : columnsInOrder) {
@@ -712,7 +713,7 @@ abstract public class CSVColumnBuilder {
         return line.toString();
     }
 
-    public boolean next() throws Exception {
+    public boolean next() throws SQLException {
         return resultSet.next();
     }
 

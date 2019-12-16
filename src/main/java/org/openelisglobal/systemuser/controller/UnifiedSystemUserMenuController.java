@@ -74,7 +74,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
         List<SystemUser> systemUsers = new ArrayList<>();
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");

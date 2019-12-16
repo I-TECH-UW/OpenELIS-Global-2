@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.result.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //				String tableName = "RESULT";
 //				auditDAO.saveHistory(new Result(), oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Result AuditTrail deleteData()", e);
@@ -77,7 +78,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Result deleteData()", e);
@@ -120,7 +121,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Result insertData()", e);
@@ -140,7 +141,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "RESULT";
 //			auditDAO.saveHistory(result, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultDAOImpl", "AuditTrail insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Result AuditTrail updateData()", e);
@@ -152,7 +153,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(result);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(result);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Result updateData()", e);
@@ -171,7 +172,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             } else {
                 result.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getData()", e);
@@ -207,7 +208,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
                 result.setId(null);
             }
 
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysisAndAnalyte()", e);
@@ -230,7 +231,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
             return results;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysis()", e);
         }
@@ -268,8 +269,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
                 result.setId(null);
             }
 
-        } catch (Exception e) {
-
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getResultByTestResult()", e);
         }
@@ -285,7 +285,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getAllResults()", e);
@@ -310,7 +310,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getPageOfResults()", e);
@@ -325,7 +325,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             data = entityManager.unwrap(Session.class).get(Result.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result readResult()", e);
@@ -349,7 +349,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             // closeSession(); // CSL remove old
 
             return result;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getResultById");
         }
 
@@ -372,7 +372,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
             return results;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Result getReportableResultsByAnalysis()", e);
         }
@@ -399,7 +399,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
                 return results.get(0);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getResultForAnalyteInAnalysisSet");
         }
 
@@ -427,7 +427,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
                 return results.get(0);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getResultForAnalyteAndSampleItem");
         }
 

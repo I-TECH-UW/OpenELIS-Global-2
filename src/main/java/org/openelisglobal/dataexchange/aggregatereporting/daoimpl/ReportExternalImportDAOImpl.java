@@ -88,7 +88,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(report);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(report);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "updateReportExternalImport");
 //		}
 //	}

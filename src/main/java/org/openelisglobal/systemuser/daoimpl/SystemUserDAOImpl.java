@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.systemuser.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //				String tableName = "SYSTEM_USER";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser AuditTrail deleteData()", e);
@@ -76,7 +77,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser deleteData()", e);
@@ -104,7 +105,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser insertData()", e);
@@ -121,7 +122,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + systemUser.getLastName() + BLANK + systemUser.getFirstName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
@@ -141,7 +142,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_USER";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser AuditTrail updateData()", e);
@@ -153,7 +154,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(systemUser);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(systemUser);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUser updateData()", e);
@@ -169,13 +170,14 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (sysUser != null) {
-                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just read sysUser " + sysUser.getId() + " " +
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just read
+                // sysUser " + sysUser.getId() + " " +
                 // sysUser.getLastName());
                 PropertyUtils.copyProperties(systemUser, sysUser);
             } else {
                 systemUser.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getData()", e);
@@ -185,14 +187,14 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     @Override
     @Transactional(readOnly = true)
     public List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException {
-        List<SystemUser> list ;
+        List<SystemUser> list;
         try {
             String sql = "from SystemUser";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
@@ -204,7 +206,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     @Override
     @Transactional(readOnly = true)
     public List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
-        List<SystemUser> list ;
+        List<SystemUser> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -218,7 +220,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
@@ -233,7 +235,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
@@ -280,7 +282,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
@@ -299,7 +301,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
         }
@@ -314,7 +316,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, userId);
             // closeSession(); // CSL remove old
             return sysUser;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getUserById");
         }
 

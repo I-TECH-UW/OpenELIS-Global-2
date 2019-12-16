@@ -54,7 +54,7 @@ public class ExternalConnectionsConfigMenuController extends BaseMenuController 
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
         AdminFormFields adminFields = AdminFormFields.getInstance();
         List<URLForDisplay> menuList = new ArrayList<>();
         URLForDisplay url = new URLForDisplay();

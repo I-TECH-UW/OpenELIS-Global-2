@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.owasp.encoder.Encode;
@@ -180,7 +181,7 @@ public class StringUtil {
                 String pre = phone.substring(5, 8);
                 String post = phone.substring(9, 13);
                 returnPhone = area + "/" + pre + "-" + post;
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
             }
 
@@ -202,7 +203,7 @@ public class StringUtil {
                 String pre = phone.substring(4, 7);
                 String post = phone.substring(8, 12);
                 returnPhone = "(" + area + ")" + pre + "-" + post;
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
             }
 
@@ -217,7 +218,7 @@ public class StringUtil {
         if (phone != null) {
             try {
                 returnPhone = phone.substring(13);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
             }
 
@@ -244,7 +245,7 @@ public class StringUtil {
                 sb.append(strArr[i]);
             }
             return sb.toString();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting string to regular expression ", e);
         }
@@ -256,7 +257,7 @@ public class StringUtil {
                 return obj.trim();
             }
             return "";
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error trimming string ", e);
         }
@@ -264,7 +265,7 @@ public class StringUtil {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static List loadListFromStringOfElements(String str, String textSeparator, boolean validate)
-            throws Exception {
+            throws LIMSException {
         List list = new ArrayList();
         String arr[] = str.split(textSeparator);
 
@@ -272,7 +273,7 @@ public class StringUtil {
             String element = arr[i];
             element = element.trim();
             if (validate && StringUtil.isNullorNill(element)) {
-                throw new Exception("empty data");
+                throw new LIMSException("empty data");
             }
             list.add(element.trim());
         }
@@ -280,7 +281,7 @@ public class StringUtil {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static List createChunksOfText(String text, int maxWidth, boolean observeSpaces) throws Exception {
+    public static List createChunksOfText(String text, int maxWidth, boolean observeSpaces) {
         List list = new ArrayList();
         int indx;
         while (text != null && text.length() > 0) {

@@ -73,7 +73,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
 
         request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
 

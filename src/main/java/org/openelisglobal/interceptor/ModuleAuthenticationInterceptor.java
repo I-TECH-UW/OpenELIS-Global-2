@@ -1,5 +1,6 @@
 package org.openelisglobal.interceptor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+            throws IOException {
 
         Errors errors = new BaseErrors();
         if (!hasPermission(errors, request)) {
@@ -58,12 +59,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e)
-            throws Exception {
+            ModelAndView modelAndView) {
     }
 
     protected boolean hasPermission(Errors errors, HttpServletRequest request) {

@@ -25,7 +25,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 //			} else {
 //				dataValue.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataValueDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue getData()", e);
@@ -39,7 +39,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return dataValue;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataValueDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue getData()", e);
@@ -60,7 +60,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataValueDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue insertData()", e);
@@ -80,7 +80,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "DATA_VALUE";
 //			// auditDAO.saveHistory(dataValue, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DataValueDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue AuditTrail updateData()", e);
 //		}
@@ -91,7 +91,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(dataValue);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(dataValue);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataValueDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue updateData()", e);

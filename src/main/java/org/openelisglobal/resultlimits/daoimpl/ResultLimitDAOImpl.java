@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.resultlimits.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //				String tableName = "RESULT_LIMITS";
 //				auditDAO.saveHistory(new ResultLimit(), oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail deleteData()", e);
 //		}
@@ -68,7 +69,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultLimitsDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultLimit deleteData()", e);
 //		}
@@ -88,7 +89,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultLimitsDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultLimit insertData()", e);
 //		}
@@ -107,7 +108,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "RESULT_LIMITS";
 //			auditDAO.saveHistory(resultLimit, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultLimitsDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultLimit AuditTrail updateData()", e);
 //		}
@@ -118,7 +119,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(resultLimit);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(resultLimit);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultLimitsDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultLimit updateData()", e);
 //		}
@@ -136,7 +137,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             } else {
                 resultLimit.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getData()", e);
         }
@@ -152,7 +153,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getAllResultLimits()", e);
         }
@@ -176,7 +177,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit getPageOfResultLimits()", e);
         }
@@ -190,7 +191,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             recoveredLimit = entityManager.unwrap(Session.class).get(ResultLimit.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultLimit readResultLimit()", e);
         }
@@ -215,7 +216,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             List<ResultLimit> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllResultLimitsForTest");
         }
 
@@ -229,7 +230,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             ResultLimit resultLimit = entityManager.unwrap(Session.class).get(ResultLimit.class, resultLimitId);
             // closeSession(); // CSL remove old
             return resultLimit;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getResultLimitById");
         }
 

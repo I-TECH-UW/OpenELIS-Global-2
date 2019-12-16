@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.organization.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //				String tableName = "ORGANIZATION";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization AuditTrail deleteData()", e);
@@ -80,7 +81,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization deleteData()", e);
@@ -104,7 +105,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization insertData()", e);
 //		}
@@ -120,7 +121,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + organization.getOrganizationName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization updateData()", e);
@@ -136,7 +137,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "ORGANIZATION";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization AuditTrail updateData()", e);
@@ -148,7 +149,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(organization);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(organization);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Organization updateData()", e);
@@ -168,7 +169,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 // bugzilla 1366
                 organization.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getData()", e);
@@ -185,7 +186,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizations()", e);
@@ -211,7 +212,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getPageOfOrganizations()", e);
@@ -250,7 +251,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
         }
@@ -265,7 +266,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             org = entityManager.unwrap(Session.class).get(Organization.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization readOrganization()", e);
@@ -287,7 +288,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizations(String filter)", e);
@@ -326,7 +327,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             return org;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByName()", e);
@@ -363,7 +364,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             return org;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByLocalAbbreviation()", e);
@@ -418,7 +419,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateOrganizationExists()", e);
@@ -460,7 +461,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 }
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getTotalSearchedOrganizations()", e);
         }
@@ -501,7 +502,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 //			session.clear();
 
             return orgs;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
@@ -522,7 +523,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             // closeSession(); // CSL remove old
 
             return orgs;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getOrganizationsByTypeNameAndLeadingChars");
         }
 

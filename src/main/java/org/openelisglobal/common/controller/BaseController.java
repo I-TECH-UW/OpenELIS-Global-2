@@ -110,7 +110,7 @@ public abstract class BaseController implements IActionConstants {
      *
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         String message = MessageUtil.getContextualMessage(messageKey);
         return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
     }
@@ -122,7 +122,7 @@ public abstract class BaseController implements IActionConstants {
      * @param request    the HttpServletRequest
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (null == messageKey) {
             return null;
         }
@@ -132,7 +132,7 @@ public abstract class BaseController implements IActionConstants {
         // messageKey);
     }
 
-    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) {
         if (null == messageKey) {
             return null;
         }
@@ -158,7 +158,7 @@ public abstract class BaseController implements IActionConstants {
             } else {
                 pageTitle = getMessageForKey(request, pageTitleKey, pageTitleKeyParameter);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
@@ -170,7 +170,7 @@ public abstract class BaseController implements IActionConstants {
                 pageSubtitle = getMessageForKey(request, pageSubtitleKey, pageSubtitleKeyParameter);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }

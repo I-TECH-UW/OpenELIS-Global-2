@@ -96,7 +96,7 @@ public class PanelOrderController extends BaseController {
 
     @RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
     public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") @Valid PanelOrderForm form,
-            BindingResult result) throws Exception {
+            BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

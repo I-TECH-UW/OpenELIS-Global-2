@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.panel.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //				String tableName = "PANEL";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel AuditTrail deleteData()", e);
@@ -80,7 +81,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel deleteData()", e);
@@ -100,7 +101,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return id;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "insert");
 //		}
 //		return null;
@@ -131,7 +132,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel insertData()", e);
@@ -153,7 +154,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel updateData()", e);
@@ -168,7 +169,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PANEL";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel AuditTrail updateData()", e);
@@ -180,7 +181,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(panel);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(panel);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PanelDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Panel updateData()", e);
@@ -201,7 +202,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             } else {
                 panel.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getData()", e);
@@ -235,7 +236,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getAllActivePanels()", e);
         }
@@ -254,7 +255,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getAllPanels()", e);
         }
@@ -264,7 +265,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     @Override
     @Transactional(readOnly = true)
     public List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
-        List<Panel> list ;
+        List<Panel> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -278,7 +279,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getPageOfPanels()", e);
@@ -293,7 +294,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             panel = entityManager.unwrap(Session.class).get(Panel.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel readPanel()", e);
@@ -315,7 +316,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getPanels()", e);
         }
@@ -365,7 +366,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicatePanelExists()", e);
         }
@@ -401,7 +402,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicatePanelDescriptionExists()", e);
         }
@@ -474,7 +475,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
             return panelList.isEmpty() ? null : panelList.get(0);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Panel getPanelByName()", e);
         }

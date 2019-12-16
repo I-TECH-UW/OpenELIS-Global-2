@@ -113,7 +113,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                 query.setString(GUID, guid);
             }
             queryResults = query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
         }

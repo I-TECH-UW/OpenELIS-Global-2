@@ -72,7 +72,7 @@ public abstract class BaseWorkplanController extends BaseController {
     }
 
     @Override
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         return MessageUtil.getMessage("workplan.page.title", messageKey);
     }
 

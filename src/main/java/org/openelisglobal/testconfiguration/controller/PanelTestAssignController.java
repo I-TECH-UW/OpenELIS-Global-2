@@ -116,7 +116,7 @@ public class PanelTestAssignController extends BaseController {
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
     public ModelAndView postPanelTestAssign(HttpServletRequest request,
             @ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

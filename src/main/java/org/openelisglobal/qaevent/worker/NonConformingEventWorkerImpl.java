@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.openelisglobal.common.log.LogEvent;
@@ -246,7 +247,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
            * catch (JsonParseException e) { jpLogEvent.logDebug(e); } catch
            * (JsonMappingException e) { jmLogEvent.logDebug(e); } catch (IOException e) {
            * io.printStackTrace(); }
-           */ catch (Exception e) {
+           */ catch (DocumentException e) {
             LogEvent.logDebug(e);
         }
         return null;

@@ -56,7 +56,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //				String tableName = "SYSTEM_USER_ROLE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole AuditTrail deleteData()", e);
 //		}
@@ -68,7 +68,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole deleteData()", e);
 //		}
@@ -91,7 +91,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //		} catch (ConstraintViolationException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "insertData()-- duplicate record", cve.toString());
 //			throw new LIMSRuntimeException("Error in UserRole insertData()-- duplicate record");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole insertData()", e);
 //		}
@@ -110,7 +110,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_USER_ROLE";
 //			auditDAO.saveHistory(role, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole AuditTrail updateData()", e);
 //		}
@@ -121,7 +121,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(role);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(role);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole updateData()", e);
 //		}
@@ -138,7 +138,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			} else {
 //				role.setCompoundId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole getData()", e);
 //		}
@@ -153,7 +153,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "getAllUserRoles()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole getAllUserRoles()", e);
 //		}
@@ -176,7 +176,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRolesDAOImpl", "getPageOfUserRoles()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole getPageOfUserRoles()", e);
 //		}
@@ -190,7 +190,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 //			recoveredUserRole = entityManager.unwrap(Session.class).get(UserRole.class, userRolePK);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UserRoleDAOImpl", "readUserRole()", e.toString());
 //			throw new LIMSRuntimeException("Error in UserRole readUserRole()", e);
 //		}
@@ -218,7 +218,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
             query.setInteger("userId", Integer.parseInt(userId));
             userRoles = query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
         }

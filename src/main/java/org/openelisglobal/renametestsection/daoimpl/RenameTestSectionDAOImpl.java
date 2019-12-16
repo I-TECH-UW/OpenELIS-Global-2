@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.renametestsection.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -55,7 +56,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //				String tableName = "TEST_SECTION";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
@@ -70,7 +71,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
@@ -97,7 +98,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
@@ -114,7 +115,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + testSection.getTestSectionName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -130,7 +131,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST_SECTION";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
@@ -142,7 +143,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(testSection);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(testSection);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -162,7 +163,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             } else {
                 testSection.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getData()", e);
@@ -181,7 +182,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
@@ -207,7 +208,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
@@ -222,7 +223,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             tr = entityManager.unwrap(Session.class).get(RenameTestSection.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection readTestSection()", e);
@@ -249,7 +250,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
             return t;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
@@ -269,7 +270,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
@@ -284,7 +285,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             RenameTestSection ts = entityManager.unwrap(Session.class).get(RenameTestSection.class, testSectionId);
             // closeSession(); // CSL remove old
             return ts;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestSectionById");
         }
 
@@ -329,7 +330,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);

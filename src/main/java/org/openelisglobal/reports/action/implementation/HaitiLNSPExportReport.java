@@ -196,7 +196,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport()  {
         StringBuilder builder = new StringBuilder();
         builder.append(TestSegmentedExportBean.getHeader());
         builder.append("\n");

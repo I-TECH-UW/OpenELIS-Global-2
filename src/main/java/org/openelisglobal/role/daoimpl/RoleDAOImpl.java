@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.role.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //				String tableName = "SYSTEM_ROLE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RolesDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role AuditTrail deleteData()", e);
 //		}
@@ -69,7 +70,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role deleteData()", e);
 //		}
@@ -89,7 +90,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role insertData()", e);
 //		}
@@ -109,7 +110,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_ROLE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RolesDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role AuditTrail updateData()", e);
 //		}
@@ -120,7 +121,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(role);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(role);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Role updateData()", e);
 //		}
@@ -138,14 +139,14 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
             } else {
                 role.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Role getData()", e);
         }
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<Role> getAllRoles() throws LIMSRuntimeException {
         List<Role> list = null;
@@ -162,7 +163,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
         List<Role> list = null;
@@ -179,7 +180,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
         List<Role> list = null;
@@ -195,7 +196,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
         }
@@ -209,7 +210,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
             recoveredRole = entityManager.unwrap(Session.class).get(Role.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Role readRole()", e);
         }
@@ -218,7 +219,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
         if (GenericValidator.isBlankOrNull(role.getId())) {
@@ -234,7 +235,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
         }

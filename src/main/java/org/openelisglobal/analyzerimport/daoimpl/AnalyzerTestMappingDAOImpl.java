@@ -49,7 +49,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerTestMappingDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl deleteData()", e);
 //		}
@@ -62,7 +62,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerTestMappingDAOImpl", "readAnalyzerTestMapping()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl readAnalyzerTestMapping()", e);
 //		}
@@ -80,7 +80,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerTestMappingDAOImpl", "getAnalyzerTestMappings()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerTestMapping getAllAnalyzerTestMappings()", e);
 //		}
@@ -96,7 +96,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //			auditDAO.saveNewHistory(analyzerTestMapping, currentUserId, "ANALYZER_TEST_MAP");
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerTestMappingDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl insertData()", e);
 //		}
@@ -114,7 +114,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //			// old(analyzerTestNameMapping);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(analyzerTestNameMapping);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);
 //		}

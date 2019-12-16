@@ -140,7 +140,7 @@ public class TestActivationController extends BaseController {
 
     @RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
     public ModelAndView postTestActivation(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

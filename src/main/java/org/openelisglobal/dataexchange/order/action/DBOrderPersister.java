@@ -243,7 +243,7 @@ public class DBOrderPersister implements IOrderPersister {
             persist(orderPatient);
             eOrder.setPatient(patient);
             eOrderService.insert(eOrder);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logErrorStack(e);
             throw e;
         }
@@ -265,7 +265,7 @@ public class DBOrderPersister implements IOrderPersister {
                 eOrder.setSysUserId(SERVICE_USER_ID);
                 try {
                     eOrderService.update(eOrder);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     LogEvent.logErrorStack(e);
                 }
 

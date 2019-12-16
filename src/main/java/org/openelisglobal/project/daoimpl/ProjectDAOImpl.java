@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.project.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //				String tableName = "PROJECT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project AuditTrail deleteData()", e);
@@ -80,7 +81,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project deleteData()", e);
@@ -108,7 +109,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project insertData()", e);
@@ -124,7 +125,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			if (duplicateProjectExists(project)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project updateData()", e);
@@ -140,7 +141,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PROJECT";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project AuditTrail updateData()", e);
@@ -152,7 +153,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(project);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(project);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project updateData()", e);
@@ -178,7 +179,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             } else {
                 project.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getData()", e);
@@ -188,14 +189,14 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     @Override
     @Transactional(readOnly = true)
     public List<Project> getAllProjects() throws LIMSRuntimeException {
-        List<Project> list ;
+        List<Project> list;
         try {
             String sql = "from Project";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getAllProjects()", e);
@@ -207,7 +208,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     @Override
     @Transactional(readOnly = true)
     public List<Project> getPageOfProjects(int startingRecNo) throws LIMSRuntimeException {
-        List<Project> list ;
+        List<Project> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -222,7 +223,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getPageOfProjects()", e);
@@ -237,7 +238,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             pro = entityManager.unwrap(Session.class).get(Project.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project readProject()", e);
@@ -284,7 +285,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
             return pro;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjectByName()", e);
@@ -311,7 +312,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjects(String filter)", e);
@@ -359,7 +360,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateProjectExists()", e);
@@ -389,7 +390,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
             return pro;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjectByLocalAbbreviation()", e);

@@ -49,7 +49,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
                     list = testSectionService.getTestSections(testSectionName);
                 }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSectionsByName()", e);
@@ -97,7 +97,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //                }
 //                // end if bugzilla 2371
 //            }
-//        } catch (Exception e) {
+//        } catch (RuntimeException e) {
 //            // bugzilla 2154
 //            LogEvent.logError(e.toString(), e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getPageOfTestsBySysUserId()", e);
@@ -123,7 +123,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //                    list = testSectionService.getAllTestSections();
 //                }
 //            }
-//        } catch (Exception e) {
+//        } catch (RuntimeException e) {
 //            // bugzilla 2154
 //            LogEvent.logError(e.toString(), e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSections()", e);
@@ -152,7 +152,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
                     list = testService.getAllTests(onlyTestsFullySetup);
                 }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTests()", e);
@@ -190,7 +190,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
     // }
     // }
     // }
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("UserTestSectionServiceImpl", "getSampleTestAnalytes()",
     // e.toString());
@@ -232,7 +232,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //
 //                samplePdfList.add(lvp);
 //            }
-//        } catch (Exception e) {
+//        } catch (RuntimeException e) {
 //            // bugzilla 2154
 //            LogEvent.logError(e.toString(), e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getSamplePdfList()", e);
@@ -267,7 +267,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //                }
 //            }
 //
-//        } catch (Exception e) {
+//        } catch (RuntimeException e) {
 //            // bugzilla 2154
 //            LogEvent.logError(e.toString(), e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAnalyses()", e);
@@ -306,7 +306,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
     // }
     // }
     // }
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("UserTestSectionServiceImpl", "getSampleTestAnalytes()",
     // e.toString());

@@ -395,7 +395,7 @@ public class ResultsValidationRetroCIUtility {
                             resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
                             LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op

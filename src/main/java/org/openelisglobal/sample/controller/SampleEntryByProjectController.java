@@ -67,7 +67,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
     @RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
     public ModelAndView postSampleEntryByProject(HttpServletRequest request,
             @ModelAttribute("form") @Valid SampleEntryByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setDisplayLists(form);

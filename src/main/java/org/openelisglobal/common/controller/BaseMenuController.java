@@ -15,9 +15,6 @@ import org.openelisglobal.common.util.SystemConfiguration;
 
 public abstract class BaseMenuController extends BaseController {
 
-	private static final String[] ALLOWED_FIELDS = new String[] {};
-
-
     protected static final int PREVIOUS = 1;
 
     protected static final int NEXT = 2;
@@ -50,7 +47,7 @@ public abstract class BaseMenuController extends BaseController {
             default:
                 menuList = doNone(form, request);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             forward = FWD_FAIL;
         }
@@ -68,7 +65,7 @@ public abstract class BaseMenuController extends BaseController {
         return forward;
     }
 
-    protected List doNextPage(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doNextPage(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -95,7 +92,7 @@ public abstract class BaseMenuController extends BaseController {
         return nextPageList;
     }
 
-    protected List doPreviousPage(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doPreviousPage(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -123,7 +120,7 @@ public abstract class BaseMenuController extends BaseController {
         return previousPageList;
     }
 
-    protected List doNone(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doNone(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -164,7 +161,7 @@ public abstract class BaseMenuController extends BaseController {
         return startingRecNo;
     }
 
-    protected abstract List createMenuList(MenuForm form, HttpServletRequest request) throws Exception;
+    protected abstract List createMenuList(MenuForm form, HttpServletRequest request);
 
     protected abstract String getDeactivateDisabled();
 

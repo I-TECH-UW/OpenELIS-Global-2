@@ -96,7 +96,7 @@ public class DataSubmitter {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 success = false;
                 LogEvent.logError(e.toString(), e);
                 LogEvent.logDebug(e);

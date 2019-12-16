@@ -63,7 +63,7 @@ public class OrganizationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) {
 
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
         // OrganizationMenuAction createMenuList()");

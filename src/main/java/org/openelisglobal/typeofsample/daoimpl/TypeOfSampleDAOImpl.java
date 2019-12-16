@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.typeofsample.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //				String tableName = "TYPE_OF_SAMPLE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail deleteData()", e);
@@ -86,7 +87,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSample deleteData()", e);
@@ -115,7 +116,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSample insertData()", e);
@@ -135,7 +136,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //
 //			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail updateData()", e);
 //		}
@@ -146,7 +147,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(typeOfSample);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(typeOfSample);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSample updateData()", e);
@@ -167,7 +168,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             } else {
                 typeOfSample.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getData()", e);
@@ -177,7 +178,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSample> getAllTypeOfSamples() throws LIMSRuntimeException {
-        List<TypeOfSample> list ;
+        List<TypeOfSample> list;
         try {
             String sql = "from TypeOfSample order by description";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -186,7 +187,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamples()", e);
@@ -205,7 +206,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
         }
@@ -216,7 +217,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException {
-        List<TypeOfSample> list ;
+        List<TypeOfSample> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -230,7 +231,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getPageOfTypeOfSamples()", e);
@@ -245,7 +246,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample readTypeOfSample()", e);
@@ -259,7 +260,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSample> getTypes(String filter, String domain) throws LIMSRuntimeException {
-        List<TypeOfSample> list ;
+        List<TypeOfSample> list;
         try {
 
             String sql = "";
@@ -280,7 +281,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
@@ -292,7 +293,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSample> getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException {
-        List<TypeOfSample> list ;
+        List<TypeOfSample> list;
         String key = getKeyForDomain(domain);
 
         try {
@@ -306,7 +307,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
         }
@@ -330,7 +331,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypesForDomainBySortOrder");
         }
 
@@ -430,7 +431,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             return typeOfSample;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTypeOfSampleByDescriptionAndDomain()", e);
@@ -474,7 +475,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTypeOfSampleExists()", e);
@@ -508,7 +509,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             TypeOfSample tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, typeOfSampleId);
             // closeSession(); // CSL remove old
             return tos;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleById");
         }
 
@@ -527,7 +528,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             TypeOfSample tos = (TypeOfSample) query.uniqueResult();
             // closeSession(); // CSL remove old
             return tos;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleTypeFromTest");
         }
         return null;

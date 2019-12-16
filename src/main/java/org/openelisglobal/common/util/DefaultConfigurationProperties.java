@@ -16,6 +16,7 @@
 */
 package org.openelisglobal.common.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -200,13 +201,13 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 
             properties.load(propertyStream);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     LogEvent.logError(e.toString(), e);
                 }
             }
