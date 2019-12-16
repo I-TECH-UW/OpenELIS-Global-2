@@ -8,6 +8,9 @@ import org.openelisglobal.common.util.validator.GenericValidator;
 
 public abstract class BaseResultValidationRetroCIController extends BaseController {
 
+	private static final String[] ALLOWED_FIELDS = new String[] {};
+
+
     private static Map<String, String> validationGroupToTitleMap = new HashMap<>();
     private static Map<String, String> validationGroupToSection = new HashMap<>();
 

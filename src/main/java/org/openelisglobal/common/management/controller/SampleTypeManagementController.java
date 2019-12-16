@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class SampleTypeManagementController extends BaseController {
+
     @RequestMapping(value = "/SampleTypeManagement", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
         SampleTypeManagementForm form = new SampleTypeManagementForm();

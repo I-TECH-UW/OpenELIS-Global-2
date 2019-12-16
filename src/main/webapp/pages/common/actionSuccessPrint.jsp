@@ -17,7 +17,7 @@ function /*void*/ showSuccessMessage( show ){
 	$("successMsg").style.visibility = show ? 'visible' : 'hidden';
 }
 
-function printBarcode(success, failure) {
+function printBarcodeInNewWindow(success, failure) {
 	var labNo = document.getElementById('searchValue').value;
 	document.getElementById('getBarcodePDF').href = "LabelMakerServlet";
 	document.getElementById('getBarcodePDF').click();
@@ -32,7 +32,7 @@ function printBarcode(success, failure) {
 		<input type="button"
         	value="<%= MessageUtil.getMessage("barcode.common.button.print")%>"
         	id="printBarcodeButton"
-        	onclick="printBarcode();">
+        	onclick="printBarcodeInNewWindow();">
         <a href="" id="getBarcodePDF" target="_blank"></a>
 	</div>
 </div>

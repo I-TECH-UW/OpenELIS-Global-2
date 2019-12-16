@@ -619,11 +619,11 @@ public class StringUtil {
         return obj == null ? "" : obj.toString();
     }
 
-    public static String concatToMaxLength(String string, int maxLength) {
+    public static String snipToMaxLength(String string, int maxLength) {
         return string.length() > maxLength ? string.substring(0, maxLength) : string;
     }
 
-    public static String concatToMaxIdLength(String string) {
+    public static String snipToMaxIdLength(String string) {
         return string.length() > 10 ? string.substring(0, 10) : string;
     }
 }

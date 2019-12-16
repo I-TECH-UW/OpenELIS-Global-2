@@ -9,11 +9,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 	
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <script type="text/javascript">
 
 /**
@@ -330,7 +325,7 @@ vl = new VLProjectChecker();
 	
 	
     	
-	<tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+	<tr><td colspan="5"><hr/></td></tr><%-- _________________________________________________ --%>
 
 	<tr> 
 		<td></td>
@@ -397,7 +392,7 @@ vl = new VLProjectChecker();
 		</tr>
 	</c:forEach>
 	
-	<tr><td colspan="5"><hr/></td></tr><!-- __________________________________________________________________________________________________ -->
+	<tr><td colspan="5"><hr/></td></tr><%-- __________________________________________________________________________________________________ --%>
 	
     <tr > 
 		<td></td>
@@ -429,7 +424,7 @@ vl = new VLProjectChecker();
 		</td>
 	</tr>
 	
-    <tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    <tr><td colspan="5"><hr/></td></tr><%-- _________________________________________________ --%>
 	
 	<tr> 
 		<td></td>
@@ -478,7 +473,7 @@ vl = new VLProjectChecker();
 				<div id="vl.initcd4DateMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+	<tr><td colspan="5"><hr/></td></tr><%-- _________________________________________________ --%>
 	
 	<tr> 
 		<td></td>
@@ -527,7 +522,7 @@ vl = new VLProjectChecker();
 				<div id="vl.demandcd4DateMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><td colspan="5"><hr/></td></tr><!-- __________________________________________________________________________________________________ -->
+	<tr><td colspan="5"><hr/></td></tr><%-- __________________________________________________________________________________________________ --%>
     <tr> 
 		<td></td>
 		<td class="observationsQuestion">

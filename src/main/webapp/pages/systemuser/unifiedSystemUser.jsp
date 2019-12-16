@@ -13,28 +13,7 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-
-<%!
-
-String allowEdits = "true";
-String basePath = "";
-String currentTab = "";
-%>
-
-<%
-if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
- allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-
-String path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
-}
-
-%>
-
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 
 <script>

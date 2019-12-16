@@ -29,7 +29,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <c:set var="formName" value="${form.formName}" />
 <c:set var="TestSectionList" value="${form.testSectionList}" />
 
@@ -154,18 +154,11 @@
     }
 </script>
 
-
-<%!
-    int itemCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-%>
-
 <%
-    columnCount = 0;
-	itemCount = 0;
-    List TestSectionList;
-    TestSectionList =  (List) pageContext.getAttribute("TestSectionList");
+	int itemCount = 0;
+	int columnCount = 0;
+	int columns = 3;
+    List TestSectionList =  (List) pageContext.getAttribute("TestSectionList");
 %>
 
 

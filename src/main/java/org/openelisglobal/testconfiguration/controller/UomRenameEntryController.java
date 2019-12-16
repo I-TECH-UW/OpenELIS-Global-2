@@ -13,6 +13,8 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,8 +23,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class UomRenameEntryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "uomId", "nameEnglish" };
+
     @Autowired
     UnitOfMeasureService unitOfMeasureService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
     public ModelAndView showUomRenameEntry(HttpServletRequest request) {

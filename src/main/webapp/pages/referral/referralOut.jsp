@@ -17,26 +17,16 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<%!
-    String basePath = "";
-%>
-<%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"
-            + request.getServerPort() + path + "/";
-%>
- 
-
-<script type="text/javascript" src="<%=basePath%>scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery.ui.js?"></script>
 <script type="text/javascript"
-        src="<%=basePath%>scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+        src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/utilities.js?"></script>
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
 <script type="text/javascript"
-        src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+        src="scripts/multiselectUtils.js?"></script>
 
 <link rel="stylesheet" type="text/css"
-      href="<%=basePath%>css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery.asmselect.css?"/>
 <script type="text/javascript">
 
 jQuery(document).ready(function () {
@@ -512,8 +502,8 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
         <td colspan="3" align="left">
-<!--         	pastNotes are escaped in an html context when they are fetched by the server before -->
-<!--         	safe html tags are added in the controller, so this does not need to be escaped here as well -->
+<%--         	pastNotes are escaped in an html context when they are fetched by the server before --%>
+<%--         	safe html tags are added in the controller, so this does not need to be escaped here as well --%>
             ${referralItems.pastNotes}
         </td>
         <td colspan="2" align="left" valign="top">

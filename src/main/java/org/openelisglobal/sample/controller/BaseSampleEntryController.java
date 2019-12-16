@@ -12,7 +12,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.patient.saving.IAccessioner;
@@ -28,11 +27,6 @@ public abstract class BaseSampleEntryController extends BaseController {
 
     protected RequestType requestType = RequestType.UNKNOWN;
 
-    public static final String FWD_EID_ENTRY = "eid_entry";
-    public static final String FWD_VL_ENTRY = "vl_entry";
-
-    @Autowired
-    private GenderService genderService;
     @Autowired
     private ProjectService projectService;
     @Autowired

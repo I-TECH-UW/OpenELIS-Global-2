@@ -206,7 +206,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
                 } catch (Exception e) {
                     LogEvent.logError(e.toString(), e);
                 }

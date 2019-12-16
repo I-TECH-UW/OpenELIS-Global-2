@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -21,7 +20,6 @@ import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
-import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -31,6 +29,8 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +40,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ReportNonConformingEventController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "currentUserId", "status", "id", "name",
+            "reporterName", "dateOfEvent", "labOrderNumber", "prescriberName", "site", "reportingUnit", "description",
+            "suspectedCauses", "proposedAction", };
+
     @Autowired
     private SampleService sampleService;
     @Autowired
@@ -47,17 +51,21 @@ public class ReportNonConformingEventController extends BaseController {
     @Autowired
     private SystemUserService systemUserService;
     @Autowired
-    private SampleRequesterService sampleRequesterService;
-    @Autowired
     private RequesterService requesterService;
     @Autowired
     private NceCategoryService nceCategoryService;
     @Autowired
     private NonConformingEventWorker nonConformingEventWorker;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/ReportNonConformingEvent", method = RequestMethod.GET)
-    public ModelAndView showReportNonConformingEvent(HttpServletRequest request) throws LIMSInvalidConfigurationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public ModelAndView showReportNonConformingEvent(HttpServletRequest request)
+            throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
         NonConformingEventForm form = new NonConformingEventForm();
         form.setCurrentUserId(getSysUserId(request));
         form.setPatientSearch(new PatientSearch());
@@ -74,8 +82,8 @@ public class ReportNonConformingEventController extends BaseController {
 
     @RequestMapping(value = "/ReportNonConformingEvent", method = RequestMethod.POST)
     public ModelAndView showReportNonConformingEventUpdate(HttpServletRequest request,
-                                                @ModelAttribute("form") NonConformingEventForm form,
-                                                BindingResult result, RedirectAttributes redirectAttributes) {
+            @ModelAttribute("form") NonConformingEventForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
         boolean updated = nonConformingEventWorker.update(form);
@@ -87,15 +95,17 @@ public class ReportNonConformingEventController extends BaseController {
 
     }
 
-    private void initForm(String labOrderNumber, String sampleItemIds, NonConformingEventForm form) throws LIMSInvalidConfigurationException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private void initForm(String labOrderNumber, String sampleItemIds, NonConformingEventForm form)
+            throws LIMSInvalidConfigurationException, NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException {
 
         SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
         form.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
         form.setNceNumber(System.currentTimeMillis() + "");
-        NcEvent event = nonConformingEventWorker.create(labOrderNumber, Arrays.asList(sampleItemIds.split(",")), systemUser.getId(), form.getNceNumber());
+        NcEvent event = nonConformingEventWorker.create(labOrderNumber, Arrays.asList(sampleItemIds.split(",")),
+                systemUser.getId(), form.getNceNumber());
         form.setNceNumber(event.getNceNumber());
         form.setId(event.getId());
-
 
         form.setLabOrderNumber(labOrderNumber);
         Sample sample = getSampleForLabNumber(labOrderNumber);
@@ -104,7 +114,7 @@ public class ReportNonConformingEventController extends BaseController {
             List<SampleItem> sampleItems = new ArrayList<>();
             String[] sampleItemIdArray = sampleItemIds.split(",");
             List<String> ids = new ArrayList<>();
-            for(String s: sampleItemIdArray) {
+            for (String s : sampleItemIdArray) {
                 SampleItem si = sampleItemService.getData(s);
                 sampleItems.add(si);
                 ids.add(si.getId());

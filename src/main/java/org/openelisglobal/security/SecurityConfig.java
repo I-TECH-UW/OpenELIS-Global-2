@@ -30,7 +30,7 @@ public class SecurityConfig {
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
             "/scripts/**", "/jsp/**" };
-    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer/**" };
+    public static final String[] HTTP_BASIC_PAGES = { "/importAnalyzer/**", "/fhir/**" };
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
             + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
@@ -52,8 +52,8 @@ public class SecurityConfig {
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
 
-            http.requestMatchers().antMatchers(HTTP_BASIC_SERVLET_PAGES).and().authorizeRequests().anyRequest()
-                    .authenticated().and().httpBasic().and().csrf().disable();
+            http.requestMatchers().antMatchers(HTTP_BASIC_PAGES).and().authorizeRequests().anyRequest().authenticated()
+                    .and().httpBasic().and().csrf().disable();
         }
 
     }

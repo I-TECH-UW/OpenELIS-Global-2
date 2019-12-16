@@ -17,6 +17,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.URLUtil;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -34,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +49,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @SessionAttributes("form")
 public class SiteInformationController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value",
+            "localization.localeValues[*]" };
 
     @Autowired
     SiteInformationFormValidator formValidator;
@@ -77,6 +83,11 @@ public class SiteInformationController extends BaseController {
     private void initialize() {
         SITE_IDENTITY_DOMAIN = siteInformationDomainService.getByName("siteIdentity");
         RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
@@ -439,21 +450,20 @@ public class SiteInformationController extends BaseController {
 
     @Override
     protected String findLocalForward(String forward) {
-        String path = request.getRequestURI().substring(request.getContextPath().length());
-        String pathWithoutSuffix = path.substring(0, path.lastIndexOf('.'));
+        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
         if (FWD_SUCCESS.equals(forward)) {
             return "siteInformationDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage.do";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = pathWithoutSuffix + "Menu.do";
+            String url = pathNoSuffix + "Menu.do";
             return "redirect:" + url;
         } else if (FWD_FAIL_INSERT.equals(forward)) {
-            String url = pathWithoutSuffix + ".do";
+            String url = pathNoSuffix + ".do";
             return "redirect:" + url;
         } else if (FWD_CANCEL.equals(forward)) {
             String prefix = "Cancel";
-            String url = pathWithoutSuffix.substring(pathWithoutSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
+            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
             return "redirect:" + url;
         } else {
             return "PageNotFound";

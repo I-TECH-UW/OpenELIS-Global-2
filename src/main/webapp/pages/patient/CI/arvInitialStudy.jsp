@@ -9,14 +9,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-	
-<%
-    String path = request.getContextPath();
-			String basePath = request.getScheme() + "://"
-					+ request.getServerName() + ":" + request.getServerPort()
-					+ path + "/";
-%>
-
 <script type="text/javascript">
 /*
  * Functionality just for this form and its fields
@@ -127,7 +119,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 01 -->
+		<%-- DEM 01 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.interviewDate" />
@@ -143,7 +135,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 02 -->
+		<%-- DEM 02 --%>
 		<td class="required">
 			+
 		</td>
@@ -171,7 +163,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 03 -->
+		<%-- DEM 03 --%>
 		<td class="required">
 			*
 		</td>
@@ -193,7 +185,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 04 -->
+		<%-- DEM 04 --%>
 		<td class="required"></td>
 		<td>
 			<spring:message code="patient.project.centerName" />
@@ -209,7 +201,7 @@ iarv = new ArvInitialProjectChecker();
 	</tr>
 
 	<tr>
-		<!-- DEM 05 -->
+		<%-- DEM 05 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.centerCode" />
@@ -225,7 +217,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 06 -->
+		<%-- DEM 06 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientFamilyName" />
@@ -238,7 +230,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 07 -->
+		<%-- DEM 07 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientFirstNames" />
@@ -250,7 +242,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 08 -->
+		<%-- DEM 08 --%>
 		<td class="required">
 			*
 		</td>
@@ -268,7 +260,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 09 -->
+		<%-- DEM 09 --%>
 		<td class="required">
 			*
 		</td>
@@ -316,7 +308,7 @@ iarv = new ArvInitialProjectChecker();
 	</tr>
 
 	<tr>
-		<!-- DEM 10 -->
+		<%-- DEM 10 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.educationLevel" />
@@ -332,7 +324,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 11 -->
+		<%-- DEM 11 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.maritalStatus" />
@@ -348,7 +340,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 12 -->
+		<%-- DEM 12 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.nationality" />
@@ -366,7 +358,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr id="nationalityOtherRow" style="display: none">
-		<!-- DEM 12.1 a -->
+		<%-- DEM 12.1 a --%>
 		<td class="required">
 			*
 		</td>
@@ -382,7 +374,7 @@ iarv = new ArvInitialProjectChecker();
 	</tr>
 
 	<tr>
-		<!-- DEM 13 -->
+		<%-- DEM 13 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.legalResidence" />
@@ -395,7 +387,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 14 -->
+		<%-- DEM 14 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.nameOfDoctor" />
@@ -413,7 +405,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 01 Prior Diseases ------------------------------------------------------------------------------->
+		<%-- CLI 01 Prior Diseases -------------------------------------------------------------------------------%>
 		<td></td>
 		<td>
 			<br />
@@ -433,7 +425,7 @@ iarv = new ArvInitialProjectChecker();
 	</tr>
 	<c:forEach items="${form.observations.priorDiseasesList}" var="disease" varStatus="iter">
 		<tr id='priorDiseasesRow${iter.index}' style="display: none">
-			<!-- CLI 09.n -->
+			<%-- CLI 09.n --%>
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
 				<c:out value="${disease.value}" />
@@ -479,7 +471,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!--CLI 02 -->
+		<%--CLI 02 --%>
 		<td>
 		</td>
 		<td class="observationsQuestion">
@@ -497,7 +489,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr id="arvProphylaxisRow" style="display: none">
-		<!--CLI 03 -->
+		<%--CLI 03 --%>
 		<td class="required">
 			*
 		</td>
@@ -516,7 +508,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!--CLI 04 -->
+		<%--CLI 04 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.currentARVTreatment" />
@@ -532,7 +524,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 05 -->
+		<%-- CLI 05 --%>
 		<td>
 		</td>
 		<td class="observationsQuestion">
@@ -550,7 +542,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr id="priorARVInnRow" style="display: none">
-		<!-- CLI 06 -->
+		<%-- CLI 06 --%>
 		<td></td>
 		<td class="observationsSubquestion" colspan="2" id="priorARVInn">
 			<spring:message code="patient.project.priorARVInn" />
@@ -573,7 +565,7 @@ iarv = new ArvInitialProjectChecker();
 	</c:forEach>
 
 	<tr>
-		<!-- CLI 07 -->
+		<%-- CLI 07 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.cotrimoxazoleTreatment" />
@@ -590,7 +582,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 08 -->
+		<%-- CLI 08 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.aidsStage" />
@@ -610,9 +602,9 @@ iarv = new ArvInitialProjectChecker();
 			<hr />
 		</td>
 	</tr>
-	<!-- Current Diseases ------------------------------------------------------------------------------->
+	<%-- Current Diseases -------------------------------------------------------------------------------%>
 	<tr>
-		<!-- CLI 09.n -->
+		<%-- CLI 09.n --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<br />
@@ -632,7 +624,7 @@ iarv = new ArvInitialProjectChecker();
 	</tr>
 	<c:forEach var="disease" items="${form.observations.currentDiseasesList}" varStatus="iter">
 		<tr id='currentDiseasesRow${iter.index}' style="display: none">
-			<!-- CLI 09.n -->
+			<%-- CLI 09.n --%>
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
 				<c:out value="${disease.value}" />
@@ -679,7 +671,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 10 -->
+		<%-- CLI 10 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.currentOITreatment" />
@@ -695,7 +687,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 11 -->
+		<%-- CLI 11 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientWeight" />
@@ -707,7 +699,7 @@ iarv = new ArvInitialProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- CLI 11 -->
+		<%-- CLI 11 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.karnofskyScore" />

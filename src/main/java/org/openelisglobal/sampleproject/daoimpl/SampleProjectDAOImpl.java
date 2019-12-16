@@ -222,7 +222,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             handleException(e, "getSampleProjectBySampleId");
         }
 
-        return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
+        return (sampleProjects == null || sampleProjects.isEmpty()) ? null : sampleProjects.get(0);
     }
 
     @Override

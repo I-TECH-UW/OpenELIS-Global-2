@@ -27,16 +27,27 @@ import org.openelisglobal.common.provider.selectdropdown.SelectDropDownProviderF
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
     @Override
     public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // check for authentication
+        boolean unauthorized = false;
+
+        // check for module authentication
         UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-        if (userModuleService.isSessionExpired(request)) {
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+
+        if (unauthorized) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("text/html; charset=utf-8");
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
             return new AjaxXmlBuilderForSortableTests().toString();
         }

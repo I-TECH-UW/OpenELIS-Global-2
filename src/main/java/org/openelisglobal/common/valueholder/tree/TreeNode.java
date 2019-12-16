@@ -110,7 +110,8 @@ public class TreeNode {
      */
     private TreeNode createTreeNode(String name) {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ">>> The class calling addChild is :"
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ">>> The class
+        // calling addChild is :"
         // +this.getClass().getName());
 
         try {
@@ -138,7 +139,8 @@ public class TreeNode {
             throw new IllegalArgumentException(e.getMessage());
         } catch (NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("Your subclass should have a constructor which takes in a string argument: " + e.toString(), e);
+            LogEvent.logError(
+                    "Your subclass should have a constructor which takes in a string argument: " + e.toString(), e);
             throw new IllegalArgumentException(
                     "Your subclass should have a constructor which takes in a string argument.");
         }
@@ -796,7 +798,6 @@ public class TreeNode {
      */
     protected String getJavascriptDefinition(String parentVarName) {
         StringBuffer scriptBuffer = new StringBuffer(100);
-        String script = "";
 
         if (parentVarName == null) {
             scriptBuffer.append("    " + getVarName() + " = " + "new JSTreeNode(");

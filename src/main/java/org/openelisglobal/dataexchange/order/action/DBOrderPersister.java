@@ -39,10 +39,12 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Scope("prototype")
 public class DBOrderPersister implements IOrderPersister {
 
     private String SERVICE_USER_ID;

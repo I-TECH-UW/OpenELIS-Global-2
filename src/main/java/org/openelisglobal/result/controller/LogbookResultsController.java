@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
@@ -74,6 +73,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -82,6 +83,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
+
+    private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
+            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "logbookType", "currentPageID",
+            "testResult[*].accessionNumber", "testResult[*].isModified", "testResult[*].analysisId",
+            "testResult[*].resultId", "testResult[*].testId", "testResult[*].technicianSignatureId",
+            "testResult[*].testKitId", "testResult[*].resultLimitId", "testResult[*].resultType", "testResult[*].valid",
+            "testResult[*].referralId", "testResult[*].referralCanceled", "testResult[*].considerRejectReason",
+            "testResult[*].hasQualifiedResult", "testResult[*].shadowResultValue", "testResult[*].reflexJSONResult",
+            "testResult[*].testDate", "testResult[*].analysisMethod", "testResult[*].testMethod",
+            "testResult[*].testKitInventoryId", "testResult[*].forceTechApproval", "testResult[*].lowerNormalRange",
+            "testResult[*].upperNormalRange", "testResult[*].significantDigits", "testResult[*].resultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].multiSelectResultValues",
+            "testResult[*].multiSelectResultValues", "testResult[*].qualifiedResultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].shadowReferredOut", "testResult[*].referredOut",
+            "testResult[*].referralReasonId", "testResult[*].technician", "testResult[*].shadowRejected",
+            "testResult[*].rejected", "testResult[*].rejectReasonId", "testResult[*].note",
+
+    };
 
     @Autowired
     private ResultSignatureService resultSigService;
@@ -94,37 +113,27 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     @Autowired
     private TestSectionService testSectionService;
     @Autowired
-    private ReferralTypeService referralTypeService;
-    @Autowired
     private LogbookResultsPersistService logbookPersistService;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
     private NoteService noteService;
 
-    private static final String RESULT_SUBJECT = "Result Note";
-    private static String REFERRAL_CONFORMATION_ID;
+    private final String RESULT_SUBJECT = "Result Note";
+    private final String REFERRAL_CONFORMATION_ID;
 
-    private boolean useTechnicianName;
-    private boolean alwaysValidate;
-    private boolean supportReferrals;
-    private String statusRuleSet;
-
-    @PostConstruct
-    private void initialize() {
+    private LogbookResultsController(ReferralTypeService referralTypeService) {
         ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
         if (referralType != null) {
             REFERRAL_CONFORMATION_ID = referralType.getId();
+        } else {
+            REFERRAL_CONFORMATION_ID = null;
         }
     }
 
-    private void refreshValues() {
-        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
-                "true");
-        alwaysValidate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS,
-                "true");
-        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
@@ -135,7 +144,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        refreshValues();
+
+        boolean useTechnicianName = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        boolean alwaysValidate = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+
         String requestedPage = request.getParameter("page");
         String testSectionId = request.getParameter("testSectionId");
 
@@ -234,6 +250,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        boolean useTechnicianName = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        boolean alwaysValidate = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -242,7 +265,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        refreshValues();
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
@@ -260,7 +282,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_VALIDATION_ERROR, form);
         }
 
-        createResultsFromItems(actionDataSet);
+        createResultsFromItems(actionDataSet, supportReferrals, alwaysValidate, useTechnicianName, statusRuleSet);
         createAnalysisOnlyUpdates(actionDataSet);
 
         try {
@@ -307,14 +329,17 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
     }
 
-    private void createResultsFromItems(ResultsUpdateDataSet actionDataSet) {
+    private void createResultsFromItems(ResultsUpdateDataSet actionDataSet, boolean supportReferrals,
+            boolean alwaysValidate, boolean useTechnicianName, String statusRuleSet) {
 
         for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
 
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
-            analysis.setStatusId(getStatusForTestResult(testResultItem));
+            analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
-            handleReferrals(testResultItem, analysis, actionDataSet);
+            if (supportReferrals) {
+                handleReferrals(testResultItem, analysis, actionDataSet);
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
@@ -348,10 +373,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             // If there is more than one result then each user selected reflex gets mapped
             // to that result
             for (Result result : results) {
-                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet);
+                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 
-                if (analysisShouldBeUpdated(testResultItem, result)) {
-                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis);
+                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
+                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
                 }
             }
         }
@@ -359,48 +384,45 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private void handleReferrals(TestResultItem testResultItem, Analysis analysis, ResultsUpdateDataSet actionDataSet) {
 
-        if (supportReferrals) {
-
-            Referral referral = null;
-            // referredOut means the referral checkbox was checked, repeating
-            // analysis means that we have multi-select results, so only do one.
-            if (testResultItem.isShadowReferredOut()
-                    && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
-                actionDataSet.getReferredAnalysisIds().add(analysis.getId());
-                // If it is a new result or there is no referral ID that means
-                // that a new referral has to be created if it was checked and
-                // it was canceled then we are un-canceling a canceled referral
-                if (testResultItem.getResultId() == null
-                        || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
-                    referral = new Referral();
-                    referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-                    referral.setSysUserId(getSysUserId(request));
-                    referral.setRequestDate(new Timestamp(new Date().getTime()));
-                    referral.setRequesterName(testResultItem.getTechnician());
-                    referral.setAnalysis(analysis);
-                    referral.setReferralReasonId(testResultItem.getReferralReasonId());
-                } else if (testResultItem.isReferralCanceled()) {
-                    referral = referralService.get(testResultItem.getReferralId());
-                    referral.setCanceled(false);
-                    referral.setSysUserId(getSysUserId(request));
-                    referral.setRequesterName(testResultItem.getTechnician());
-                    referral.setReferralReasonId(testResultItem.getReferralReasonId());
-                }
-
-                actionDataSet.getSavableReferrals().add(referral);
-
+        Referral referral = null;
+        // referredOut means the referral checkbox was checked, repeating
+        // analysis means that we have multi-select results, so only do one.
+        if (testResultItem.isShadowReferredOut()
+                && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
+            actionDataSet.getReferredAnalysisIds().add(analysis.getId());
+            // If it is a new result or there is no referral ID that means
+            // that a new referral has to be created if it was checked and
+            // it was canceled then we are un-canceling a canceled referral
+            if (testResultItem.getResultId() == null
+                    || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
+                referral = new Referral();
+                referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+                referral.setSysUserId(getSysUserId(request));
+                referral.setRequestDate(new Timestamp(new Date().getTime()));
+                referral.setRequesterName(testResultItem.getTechnician());
+                referral.setAnalysis(analysis);
+                referral.setReferralReasonId(testResultItem.getReferralReasonId());
+            } else if (testResultItem.isReferralCanceled()) {
+                referral = referralService.get(testResultItem.getReferralId());
+                referral.setCanceled(false);
+                referral.setSysUserId(getSysUserId(request));
+                referral.setRequesterName(testResultItem.getTechnician());
+                referral.setReferralReasonId(testResultItem.getReferralReasonId());
             }
+
+            actionDataSet.getSavableReferrals().add(referral);
+
         }
     }
 
-    protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result) {
+    protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result, boolean supportReferrals) {
         return result != null && !GenericValidator.isBlankOrNull(result.getValue())
                 || (supportReferrals && ResultUtil.isReferred(testResultItem))
                 || ResultUtil.isForcedToAcceptance(testResultItem) || testResultItem.isShadowRejected();
     }
 
     private void addResult(Result result, TestResultItem testResultItem, Analysis analysis,
-            boolean multipleResultsForAnalysis, ResultsUpdateDataSet actionDataSet) {
+            boolean multipleResultsForAnalysis, ResultsUpdateDataSet actionDataSet, boolean useTechnicianName) {
         boolean newResult = result.getId() == null;
         boolean newAnalysisInLoop = analysis != actionDataSet.getPreviousAnalysis();
 
@@ -464,7 +486,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
     }
 
-    private String getStatusForTestResult(TestResultItem testResult) {
+    private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
         if (testResult.isShadowRejected()) {
             return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
@@ -517,7 +539,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         return testKit;
     }
 
-    private void updateAnalysis(TestResultItem testResultItem, String testDate, Analysis analysis) {
+    private void updateAnalysis(TestResultItem testResultItem, String testDate, Analysis analysis,
+            String statusRuleSet) {
         if (testResultItem.getAnalysisMethod() != null) {
             analysis.setAnalysisType(testResultItem.getAnalysisMethod());
         }

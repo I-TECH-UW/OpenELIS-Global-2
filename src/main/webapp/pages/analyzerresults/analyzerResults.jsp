@@ -15,30 +15,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-
 <c:set var="analyzerType" value="${form.analyzerType}" />
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}" />
 
-<%!
-	String basePath = "";
-	IAccessionNumberValidator accessionNumberValidator;
-	String searchTerm = null;
-%>
-<%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	searchTerm = request.getParameter("searchTerm");
-%>
-
-<!-- N.B. testReflex.js is dependent on utilities.js so order is important  -->
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<%-- N.B. testReflex.js is dependent on utilities.js so order is important  --%>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
 <script type="text/javascript" >
 
 var dirty = false;
@@ -55,7 +39,7 @@ pagingSearch['${paging.id}'] = '${paging.value}';
 
 
 jQuery(document).ready( function() {
-			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
+			var searchTerm = '<%=Encode.forJavaScript(request.getParameter("searchTerm"))%>';
 
 			pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );
 
@@ -105,6 +89,9 @@ function validateAccessionNumberOnServer(field )
                       method: 'get', //http method
                       parameters: 'provider=SampleEntryAccessionNumberValidationProvider&field=' + field.id + '&accessionNumber=' + field.value,
                       indicator: 'throbbing',
+      				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				},
                       onSuccess:  processAccessionSuccess,
                       onFailure:  processAccessionFailure
                            }
@@ -194,7 +181,7 @@ function /*void*/ markUpdated(){
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
-	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
+	       maxlength='<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>

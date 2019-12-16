@@ -15,6 +15,9 @@ import org.openelisglobal.common.util.SystemConfiguration;
 
 public abstract class BaseMenuController extends BaseController {
 
+	private static final String[] ALLOWED_FIELDS = new String[] {};
+
+
     protected static final int PREVIOUS = 1;
 
     protected static final int NEXT = 2;

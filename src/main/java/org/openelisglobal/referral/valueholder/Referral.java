@@ -28,10 +28,6 @@ public class Referral extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;
     private String id;
-    @SuppressWarnings("unused")
-    private String analysisId;
-    @SuppressWarnings("unused")
-    private String organizationId;
     private String organizationName;
     private Timestamp requestDate;
     private Timestamp sendReadyDate;

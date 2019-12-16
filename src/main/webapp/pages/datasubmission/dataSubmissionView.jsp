@@ -10,14 +10,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-    String basePath = "";
-%>
-<%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
-%>
-
 <script type="text/javascript">
 function saveAndSubmit() {
 	if (checkURL()) {

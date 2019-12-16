@@ -65,7 +65,6 @@ public class SystemConfiguration {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
                 } catch (Exception e) {
                     // bugzilla 2154
                     LogEvent.logError(e.toString(), e);
@@ -663,7 +662,8 @@ public class SystemConfiguration {
     // 1742 openreports static ids (tests, projects etc.)
     public String getStaticIdByName(String name) {
         String testId = properties.getProperty(name);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "SystemConfig getting test by name " + name);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "SystemConfig
+        // getting test by name " + name);
         if (testId != null) {
             return testId;
         }
@@ -962,7 +962,8 @@ public class SystemConfiguration {
             try {
                 limit = Long.parseLong(timeLimit);
             } catch (NumberFormatException e) {
-                LogEvent.logError("Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used", e);
+                LogEvent.logError(
+                        "Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used", e);
             }
         }
         return limit;

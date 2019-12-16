@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,14 +33,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SiteInformationMenuController extends BaseMenuController {
 
-    @Autowired
-    SiteInformationMenuFormValidator formValidator;
-    @Autowired
-    SiteInformationService siteInformationService;
-    @Autowired
-    LocalizationService localizationService;
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
 
-    private String titleKey = null;
+    @Autowired
+    private SiteInformationMenuFormValidator formValidator;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private LocalizationService localizationService;
+
+    private static final String TITLE_KEY = "titleKey";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
             "/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
@@ -106,28 +115,28 @@ public class SiteInformationMenuController extends BaseMenuController {
         String dbDomainName = null;
         if ("SiteInformation".equals(domainName)) {
             dbDomainName = "siteIdentity";
-            titleKey = "siteInformation.browse.title";
+            request.setAttribute(TITLE_KEY, "siteInformation.browse.title");
         } else if ("ResultConfiguration".equals(domainName)) {
             dbDomainName = "resultConfiguration";
-            titleKey = "resultConfiguration.browse.title";
+            request.setAttribute(TITLE_KEY, "resultConfiguration.browse.title");
         } else if ("sampleEntryConfig".equals(domainName)) {
             dbDomainName = "sampleEntryConfig";
-            titleKey = "sample.entry.browse.title";
+            request.setAttribute(TITLE_KEY, "sample.entry.browse.title");
         } else if ("PrintedReportsConfiguration".equals(domainName)) {
             dbDomainName = "printedReportsConfig";
-            titleKey = "printedReportsConfiguration.browse.title";
+            request.setAttribute(TITLE_KEY, "printedReportsConfiguration.browse.title");
         } else if ("WorkplanConfiguration".equals(domainName)) {
             dbDomainName = "workplanConfig";
-            titleKey = "workplanConfiguration.browse.title";
+            request.setAttribute(TITLE_KEY, "workplanConfiguration.browse.title");
         } else if ("non_conformityConfiguration".equals(domainName)) {
             dbDomainName = "non_conformityConfig";
-            titleKey = "nonConformityConfiguration.browse.title";
+            request.setAttribute(TITLE_KEY, "nonConformityConfiguration.browse.title");
         } else if ("PatientConfiguration".equals(domainName)) {
             dbDomainName = "patientEntryConfig";
-            titleKey = "patientEntryConfiguration.browse.title";
+            request.setAttribute(TITLE_KEY, "patientEntryConfiguration.browse.title");
         } else if ("MenuStatementConfig".equals(domainName)) {
             dbDomainName = "MenuStatementConfig";
-            titleKey = "MenuStatementConfig.browse.title";
+            request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
         }
 
         int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));
@@ -224,11 +233,11 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     @Override
     protected String getPageTitleKey() {
-        return titleKey;
+        return (String) request.getAttribute(TITLE_KEY);
     }
 
     @Override
     protected String getPageSubtitleKey() {
-        return titleKey;
+        return (String) request.getAttribute(TITLE_KEY);
     }
 }

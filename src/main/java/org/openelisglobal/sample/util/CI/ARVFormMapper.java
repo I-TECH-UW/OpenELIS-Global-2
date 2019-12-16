@@ -96,31 +96,26 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-        List<Test> testList;
 
         // Check for Dry Tube Tests
         if (projectData.getDryTubeTaken()) {
-            testList = getDryTubeTests();
-            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getDryTubeTests()));
         }
 
         // Check for EDTA Tubes Tests
         if (projectData.getEdtaTubeTaken()) {
-            testList = getEDTATubeTests(form);
-            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("EDTA Tube"), testList));
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("EDTA Tube"), getEDTATubeTests(form)));
         }
 
         if (projectData.getDbsTaken()) {
             if (projectData.getDnaPCR()) {
-                testList = getDBSTests();
-                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getDBSTests()));
             }
         }
 
         // Check for DBS Tubes Tests for Viral Load
         if (projectData.getdbsvlTaken()) {
-            testList = getEDTATubeTests(form);
-            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getEDTATubeTests(form)));
         }
 
         return sItemTests;

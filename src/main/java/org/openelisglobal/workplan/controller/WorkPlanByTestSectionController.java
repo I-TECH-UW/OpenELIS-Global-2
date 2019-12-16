@@ -30,6 +30,8 @@ import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,12 +39,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
     private org.openelisglobal.analysis.service.AnalysisService analysisService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
     @Autowired
     private TestSectionService testSectionService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/WorkPlanByTestSection", method = RequestMethod.GET)
     public ModelAndView showWorkPlanByTestSection(HttpServletRequest request)
@@ -59,16 +68,13 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
+        List<TestResultItem> workplanTests = new ArrayList<>();
         TestSection ts = null;
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
             form.setTestSectionId("0");
-        }
 
-        List<TestResultItem> workplanTests = new ArrayList<>();
-
-        if (!GenericValidator.isBlankOrNull(testSectionId)) {
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
             form.setWorkplanTests(workplanTests);

@@ -15,23 +15,10 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
-<%!
-	IAccessionNumberValidator accessionValidator;
-	String basePath = "";
-	String formName;
- %>
+<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.css?" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?" />
 
-<%
-	accessionValidator = new AccessionNumberValidatorFactory().getValidator();
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
-	formName = (String)request.getAttribute(IActionConstants.FORM_NAME);
-%>
-
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/bootstrap.css?ver=<%= Versioning.getBuildNumber() %>" />
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
-
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <script type="text/javascript">
 
@@ -57,7 +44,7 @@ function search(){
 		<form:input path="accessionNumberSearch"
 					id="accessionNumberSearch"
 				   cssClass="input-medium" 
-	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
+	        	   maxlength="<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength()) %>" />
 		<input class="btn" type="button" onclick="search();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
 		</div>
 	</div>
@@ -91,7 +78,7 @@ function search(){
         </div>
 		<div class="row-fluid">
 			<div class="span12">		
-				<div id="loading" class="loading-note"><img src="<%=basePath%>images/indicator.gif" /><spring:message code="loading" /></div>
+				<div id="loading" class="loading-note"><img src="images/indicator.gif" /><spring:message code="loading" /></div>
 				<table class="table table-small table-hover table-bordered table-striped" id="advancedTable">
 					<thead>
 				    	<tr id="rowHeader">
@@ -125,7 +112,7 @@ function search(){
 					<button class="reset-sort btn btn-mini" disabled="disabled"><i class="icon-refresh"></i> Reset</button>
 					<label> <spring:message code="audit.show" /> :
 				        <select id="filterByType">
-				        <!--  Options for filter are added via filterByType jquery function -->
+				        <%--  Options for filter are added via filterByType jquery function --%>
 				            <option value=""><spring:message code="audit.show.all"/></option>
 				        </select>
 				    </label>
@@ -146,7 +133,7 @@ function search(){
         function getAuditEntriesDisplayed(){  return '<spring:message code="audit.entries.displayed" />';  }
         function getAuditNoRecords(){  return '<spring:message code="audit.no.records" />';  }
     </script>
-<script type="text/javascript" src="<%=basePath%>scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/oe.datatables.functions.js?"></script>
 </c:if>
 
 <script type="text/javascript">

@@ -29,7 +29,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <c:set var="formName" value="${form.formName}" />
 <c:set var="UomList" value="${form.uomList}" />
 
@@ -154,18 +154,11 @@
     }
 </script>
 
-
-<%!
-    int itemCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-%>
-
 <%
-    columnCount = 0;
-	itemCount = 0;
-    List UomList;
-    UomList =  (List) pageContext.getAttribute("UomList");
+	int itemCount = 0;
+	int columnCount = 0;
+	int columns = 3;
+    List UomList =  (List) pageContext.getAttribute("UomList");
 %>
 
 
@@ -203,10 +196,10 @@
             <td></td>
             <th colspan="2" style="text-align: center"><spring:message code="uom.uomName"/></th>
         </tr>
-<!--         <tr> -->
-<!--             <td></td> -->
+<%--         <tr> --%>
+<%--             <td></td> --%>
 <%--             <td style="text-align: center"><spring:message code="label.english"/></td> --%>
-<!--         </tr> -->
+<%--         </tr> --%>
      	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>

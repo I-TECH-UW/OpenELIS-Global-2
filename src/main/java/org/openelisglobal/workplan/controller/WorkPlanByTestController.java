@@ -32,12 +32,16 @@ import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class WorkPlanByTestController extends BaseWorkplanController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
     @Autowired
     private AnalysisService analysisService;
@@ -47,6 +51,11 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
     static {
         HAS_NFS_PANEL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CONDENSE_NFS_PANEL, "true");
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/WorkPlanByTest", method = RequestMethod.GET)

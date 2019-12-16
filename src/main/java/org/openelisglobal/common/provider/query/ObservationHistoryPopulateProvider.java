@@ -84,7 +84,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
         String sampleKey = request.getParameter("sampleKey");
         patient.setId(patientKey);
         sample.setId(sampleKey);
-        String s = (String) request.getSession().getAttribute("type");
+//        String s = (String) request.getSession().getAttribute("type");
 //        requestType = RequestType.valueOfAsUpperCase(s);
 
         String result = createSearchResultXML();

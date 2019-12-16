@@ -55,6 +55,8 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +64,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TestModifyEntryController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad", "testId", "loinc" };
 
     @Autowired
     private TestModifyEntryFormValidator formValidator;
@@ -83,6 +87,11 @@ public class TestModifyEntryController extends BaseController {
     private LocalizationService localizationService;
     @Autowired
     private TestSectionService testSectionService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
     public ModelAndView showTestModifyEntry(HttpServletRequest request) {

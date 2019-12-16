@@ -17,7 +17,6 @@ package org.openelisglobal.common.provider.reports;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -115,8 +114,6 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             LogEvent.logError(e.toString(), e);
             // display stack trace in the browser
             StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            // jre.printStackTrace(printWriter);
             response.setContentType("text/plain");
             response.getOutputStream().print(stringWriter.toString());
             errors.reject("errors.jasperreport.general");
@@ -124,13 +121,11 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             errors.reject("errors.jasperreport.general");
-
         } finally {
             try {
                 if (conn != null) {
                     conn.close();
                 }
-
             } catch (SQLException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);

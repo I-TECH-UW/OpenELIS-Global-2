@@ -13,18 +13,10 @@
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
-<%!
-String path = "";
-String basePath = "";
-%>
-
 <c:set var="success" value="${success}" />
 
 <%--bugzilla 1908 changed some disabled values for Vietnam tomcat/linux--%>
 	<%
-	       path = request.getContextPath();
-           basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
 		    String previousDisabled = "false";
             String nextDisabled = "false";
             if (request.getAttribute(IActionConstants.PREVIOUS_DISABLED) != null) {
@@ -62,7 +54,7 @@ function confirmSaveForwardPopup(direction)
 
  %>
 
-    var href = "<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
+    var href = "css/openElisCore.css?";
 
     var strHTML = "";
 

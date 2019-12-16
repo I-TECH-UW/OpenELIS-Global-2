@@ -64,6 +64,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,6 +74,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ReferredOutTestsController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "referralItems[*].additionalTestsXMLWad",
+            "referralItems[*].referralResultId", "referralItems[*].referralId", "referralItems[*].referredResultType",
+            "referralItems[*].modified", "referralItems[*].inLabResultId", "referralItems[*].referralReasonId",
+            "referralItems[*].referrer", "referralItems[*].referredInstituteId", "referralItems[*].referredSendDate",
+            "referralItems[*].referredTestId", "referralItems[*].canceled", "referralItems[*].referredResult",
+            "referralItems[*].referredDictionaryResult", "referralItems[*].referredDictionaryResult",
+            "referralItems[*].multiSelectResultValues", "referralItems[*].referredMultiDictionaryResult",
+            "referralItems[*].multiSelectResultValues", "testResult[*].multiSelectResultValues",
+            "testResult[*].qualifiedResultValue", "referralItems[*].referredReportDate",
+            "referralItems[*].additionalTests[*].referralResultId",
+            "referralItems[*].additionalTests[*].referredResultType", "referralItems[*].additionalTests[*].remove",
+            "referralItems[*].additionalTests[*].referredTestId", "referralItems[*].additionalTests[*].referredResult",
+            "referralItems[*].additionalTests[*].referredDictionaryResult",
+            "referralItems[*].additionalTests[*].multiSelectResultValues",
+            "referralItems[*].additionalTests[*].referredDictionaryResult",
+            "referralItems[*].additionalTests[*].referredMultiDictionaryResult",
+            "referralItems[*].additionalTests[*].multiSelectResultValues", "testResult[*].multiSelectResultValues",
+            "testResult[*].qualifiedResultValue", "referralItems[*].additionalTests[*].referredReportDate",
+            "referralItems[*].note"
+
+    };
 
     private static final String RESULT_SUBJECT = "Result Note";
 
@@ -93,6 +117,11 @@ public class ReferredOutTestsController extends BaseController {
     private ReferralSetService referralSetService;
     @Autowired
     private AnalysisService analysisService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
     public ModelAndView showReferredOutTests(HttpServletRequest request)

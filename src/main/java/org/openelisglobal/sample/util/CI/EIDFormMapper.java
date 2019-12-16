@@ -61,21 +61,18 @@ public class EIDFormMapper extends BaseProjectFormMapper implements IProjectForm
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-        List<Test> testList;
 
         // Check for DBS Tests
         if (projectData.getDnaPCR()) {
             if (projectData.getDbsTaken()) {
-                testList = getTests();
-                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getTests()));
             }
         }
 
         // Check for Dry Tube Tests
         if (projectData.getDnaPCR()) {
             if (projectData.getDryTubeTaken()) {
-                testList = getTests();
-                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests()));
             }
         }
 

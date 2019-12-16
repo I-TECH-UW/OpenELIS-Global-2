@@ -17,11 +17,21 @@ import org.openelisglobal.externalconnections.form.ExternalConnectionsConfigForm
 import org.openelisglobal.internationalization.MessageUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ExternalConnectionsConfigMenuController extends BaseMenuController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     // result reporting config directly in menu as it was originally
     // @RequestMapping(value = "/ExternalConnectionsConfigMenu", method =
     // RequestMethod.GET)

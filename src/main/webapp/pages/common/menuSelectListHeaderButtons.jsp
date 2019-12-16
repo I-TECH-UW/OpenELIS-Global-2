@@ -13,15 +13,13 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-  String paginationMessage = "";
-  String totalCount = "0";
-  String fromCount = "0";
-  String toCount = "0";
-  boolean allowDeactivate = false;
-%>
-
 <%
+	String paginationMessage = "";
+	String totalCount = "0";
+	String fromCount = "0";
+	String toCount = "0";
+	boolean allowDeactivate = false;
+
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
        } 
@@ -157,7 +155,7 @@ function submitSearchForClick(button){
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
+		<%-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   --%>
 			<td><button type="button" id="edit"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=');return false;"
 					name="edit"

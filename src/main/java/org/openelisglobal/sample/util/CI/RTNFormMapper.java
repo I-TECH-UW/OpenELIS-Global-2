@@ -56,13 +56,11 @@ public class RTNFormMapper extends BaseProjectFormMapper implements IProjectForm
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-        List<Test> testList = new ArrayList<>();
 
         // Check for Dry Tube Tests
         if (projectData.getSerologyHIVTest()) {
             if (projectData.getDryTubeTaken()) {
-                testList = getTests(form);
-                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
             }
         }
         return sItemTests;

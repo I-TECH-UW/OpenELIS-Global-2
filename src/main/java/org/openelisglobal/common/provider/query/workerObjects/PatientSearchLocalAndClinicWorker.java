@@ -85,7 +85,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
                 (int) SystemConfiguration.getInstance().getSearchTimeLimit());
 
         Thread searchThread = new Thread(externalSearch);
-        List<PatientSearchResults> localResults = null;
+        List<PatientSearchResults> localResults = new ArrayList<>();
         List<PatientDemographicsSearchResults> clinicResults = null;
         List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<>();
 

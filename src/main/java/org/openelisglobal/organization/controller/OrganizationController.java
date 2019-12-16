@@ -2,9 +2,10 @@ package org.openelisglobal.organization.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -36,6 +37,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,18 +51,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "id", "parentOrgName",
+            "organizationLocalAbbreviation", "organizationName", "shortName", "isActive", "multipleUnit",
+            "streetAddress", "city", "department", "commune", "village", "state", "zipCode", "internetAddress",
+            "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes[*]" };
+
     @Autowired
-    OrganizationService organizationService;
+    private OrganizationService organizationService;
     @Autowired
-    OrganizationAddressService organizationAddressService;
+    private OrganizationAddressService organizationAddressService;
     @Autowired
-    AddressPartService addressPartService;
+    private CityStateZipService cityStateZipService;
     @Autowired
-    CityStateZipService cityStateZipService;
+    private OrganizationTypeService organizationTypeService;
     @Autowired
-    OrganizationTypeService organizationTypeService;
-    @Autowired
-    DictionaryService dictionaryService;
+    private DictionaryService dictionaryService;
 
     @ModelAttribute("form")
     public OrganizationForm form() {
@@ -72,35 +78,51 @@ public class OrganizationController extends BaseController {
     private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
     private static boolean useVillage = FormFields.getInstance().useField(Field.ADDRESS_VILLAGE);
 
-    private List<String> selectedOrgTypes;
+    private final String DEPARTMENT_ID;
+    private final String COMMUNE_ID;
+    private final String VILLAGE_ID;
 
-    private String DEPARTMENT_ID;
-    private String COMMUNE_ID;
-    private String VILLAGE_ID;
-
-    private OrganizationAddress departmentAddress;
-    private boolean updateDepartment = false;
-    private OrganizationAddress communeAddress;
-    private boolean updateCommune = false;
-    private OrganizationAddress villageAddress;
-    private boolean updateVillage = false;
+    private static final String DEPARTMENT_ADDRESS_KEY = "department";
+    private static final String COMMUNE_ADDRESS_KEY = "commune";
+    private static final String VILLAGE_ADDRESS_KEY = "village";
 
     private static boolean useParentOrganization = FormFields.getInstance().useField(Field.OrganizationParent);
     private static boolean useOrganizationState = FormFields.getInstance().useField(Field.OrgState);
     private static boolean useOrganizationTypeList = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
 
-    @PostConstruct
-    private void initialize() {
+    public OrganizationController(AddressPartService addressPartService) {
+        String departmentId = null;
+        String communeId = null;
+        String villageId = null;
+
         List<AddressPart> partList = addressPartService.getAll();
         for (AddressPart addressPart : partList) {
             if ("department".equals(addressPart.getPartName())) {
-                DEPARTMENT_ID = addressPart.getId();
+                departmentId = addressPart.getId();
             } else if ("commune".equals(addressPart.getPartName())) {
-                COMMUNE_ID = addressPart.getId();
+                communeId = addressPart.getId();
             } else if ("village".equals(addressPart.getPartName())) {
-                VILLAGE_ID = addressPart.getId();
+                villageId = addressPart.getId();
             }
         }
+        DEPARTMENT_ID = departmentId;
+        COMMUNE_ID = communeId;
+        VILLAGE_ID = villageId;
+
+        if (useDepartment && departmentId == null) {
+            throw new IllegalStateException("can't use department without department Id");
+        }
+        if (useCommune && communeId == null) {
+            throw new IllegalStateException("can't use commune without commune Id");
+        }
+        if (useVillage && villageId == null) {
+            throw new IllegalStateException("can't use village without village Id");
+        }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
@@ -287,7 +309,7 @@ public class OrganizationController extends BaseController {
             request.setAttribute("key", "organization.edit.title");
         }
 
-        selectedOrgTypes = form.getSelectedTypes();
+        List<String> selectedOrgTypes = form.getSelectedTypes();
 
         organization.setSysUserId(getSysUserId(request));
 
@@ -301,7 +323,7 @@ public class OrganizationController extends BaseController {
             Organization parentOrg = organizationService.getOrganizationByName(o, false);
             organization.setOrganization(parentOrg);
         }
-        createAddressParts(id, form, isNew);
+        Map<String, OrganizationAddress> addressParts = createAddressParts(id, form, isNew);
 
         try {
             if (!isNew) {
@@ -310,9 +332,9 @@ public class OrganizationController extends BaseController {
                 organizationService.insert(organization);
             }
 
-            persistAddressParts(organization);
+            persistAddressParts(organization, addressParts);
 
-            linkOrgWithOrgType(organization);
+            linkOrgWithOrgType(organization, selectedOrgTypes);
 
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
@@ -362,40 +384,28 @@ public class OrganizationController extends BaseController {
         request.setAttribute(NEXT_DISABLED, "false");
     }
 
-    private void persistAddressParts(Organization organization) {
+    private void persistAddressParts(Organization organization, Map<String, OrganizationAddress> addressParts) {
+        OrganizationAddress departmentAddress = addressParts.get(DEPARTMENT_ADDRESS_KEY);
         if (departmentAddress != null) {
-            if (updateDepartment) {
-                organizationAddressService.update(departmentAddress);
-            } else {
-                departmentAddress.setOrganizationId(organization.getId());
-                organizationAddressService.insert(departmentAddress);
-            }
+            organizationAddressService.save(departmentAddress);
         }
 
+        OrganizationAddress communeAddress = addressParts.get(COMMUNE_ADDRESS_KEY);
         if (communeAddress != null) {
-            if (updateCommune) {
-                organizationAddressService.update(communeAddress);
-            } else {
-                communeAddress.setOrganizationId(organization.getId());
-                organizationAddressService.insert(communeAddress);
-            }
+            organizationAddressService.save(communeAddress);
         }
-
+        OrganizationAddress villageAddress = addressParts.get(VILLAGE_ADDRESS_KEY);
         if (villageAddress != null) {
-            if (updateVillage) {
-                organizationAddressService.update(villageAddress);
-            } else {
-                villageAddress.setOrganizationId(organization.getId());
-                organizationAddressService.insert(villageAddress);
-            }
+            organizationAddressService.save(villageAddress);
         }
     }
 
-    private void createAddressParts(String id, OrganizationForm form, boolean isNew) {
+    private Map<String, OrganizationAddress> createAddressParts(String id, OrganizationForm form, boolean isNew) {
+        Map<String, OrganizationAddress> addressParts = new HashMap<>();
+        OrganizationAddress departmentAddress = null;
+        OrganizationAddress communeAddress = null;
+        OrganizationAddress villageAddress = null;
         if (useDepartment || useCommune || useVillage) {
-            updateDepartment = false;
-            updateCommune = false;
-            updateVillage = false;
             if (!isNew) {
                 List<OrganizationAddress> orgAddressList = organizationAddressService
                         .getAddressPartsByOrganizationId(id);
@@ -403,33 +413,33 @@ public class OrganizationController extends BaseController {
                 for (OrganizationAddress orgAddress : orgAddressList) {
                     if (DEPARTMENT_ID.equals(orgAddress.getAddressPartId())) {
                         departmentAddress = orgAddress;
-                        updateDepartment = true;
                     } else if (COMMUNE_ID.equals(orgAddress.getAddressPartId())) {
                         communeAddress = orgAddress;
-                        updateCommune = true;
                     } else if (VILLAGE_ID.equals(orgAddress.getAddressPartId())) {
                         villageAddress = orgAddress;
-                        updateVillage = true;
                     }
                 }
             }
 
             if (useDepartment) {
-                if (!updateDepartment) {
+                if (departmentAddress == null) {
                     departmentAddress = new OrganizationAddress();
                     departmentAddress.setAddressPartId(DEPARTMENT_ID);
                     departmentAddress.setType("D");
+                    departmentAddress.setOrganizationId(form.getOrganization().getId());
                 }
 
                 departmentAddress.setValue(form.getDepartment());
                 departmentAddress.setSysUserId(getSysUserId(request));
+                addressParts.put(DEPARTMENT_ADDRESS_KEY, departmentAddress);
             }
 
             if (useCommune) {
-                if (!updateCommune) {
+                if (communeAddress == null) {
                     communeAddress = new OrganizationAddress();
                     communeAddress.setAddressPartId(COMMUNE_ID);
                     communeAddress.setType("T");
+                    communeAddress.setOrganizationId(form.getOrganization().getId());
                 }
 
                 communeAddress.setValue(form.getCommune());
@@ -437,19 +447,21 @@ public class OrganizationController extends BaseController {
             }
 
             if (useVillage) {
-                if (!updateVillage) {
+                if (villageAddress == null) {
                     villageAddress = new OrganizationAddress();
                     villageAddress.setAddressPartId(VILLAGE_ID);
                     villageAddress.setType("T");
+                    villageAddress.setOrganizationId(form.getOrganization().getId());
                 }
 
                 villageAddress.setValue(form.getVillage());
                 villageAddress.setSysUserId(getSysUserId(request));
             }
         }
+        return addressParts;
     }
 
-    private void linkOrgWithOrgType(Organization organization) {
+    private void linkOrgWithOrgType(Organization organization, List<String> selectedOrgTypes) {
         organizationService.deleteAllLinksForOrganization(organization.getId());
 
         for (String typeId : selectedOrgTypes) {

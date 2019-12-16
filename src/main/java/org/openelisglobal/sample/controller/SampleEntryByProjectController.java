@@ -31,6 +31,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,6 +41,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SampleEntryByProjectController extends BaseSampleEntryController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.GET)
     public ModelAndView showSampleEntryByProject(HttpServletRequest request) {

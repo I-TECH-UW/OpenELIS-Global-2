@@ -129,12 +129,16 @@ public class AnalyzerImportServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             } else {
-                response.getWriter().print(reader.getError());
+                if (reader != null) {
+                    response.getWriter().print(reader.getError());
+                }
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
         } else {
-            response.getWriter().print(reader.getError());
+            if (reader != null) {
+                response.getWriter().print(reader.getError());
+            }
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

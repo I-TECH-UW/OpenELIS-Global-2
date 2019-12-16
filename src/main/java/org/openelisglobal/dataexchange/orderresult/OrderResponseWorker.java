@@ -1,7 +1,6 @@
 package org.openelisglobal.dataexchange.orderresult;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +40,6 @@ public class OrderResponseWorker {
 
     private static int sequenceNum = 0;
 
-    ResultReportXmit resultReport;
     private ORU_R01 hl7Message;
 
     public ORU_R01 getHl7Message() {
@@ -53,7 +51,6 @@ public class OrderResponseWorker {
     }
 
     public void createReport(ResultReportXmit resultReport) throws HL7Exception, IOException {
-        this.resultReport = resultReport;
         hl7Message = new ORU_R01();
 
         createMSHSegment();
@@ -75,7 +72,8 @@ public class OrderResponseWorker {
             }
         }
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", hl7Message.encode());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // hl7Message.encode());
     }
 
     private void createMSHSegment() throws HL7Exception, IOException {
@@ -100,7 +98,6 @@ public class OrderResponseWorker {
     }
 
     private void createOBRSegment(TestResultsXmit testResult) throws HL7Exception {
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
         String obr25 = "";
         switch (event) {
         case ORDER_RECEIVED_NO_SPEC:

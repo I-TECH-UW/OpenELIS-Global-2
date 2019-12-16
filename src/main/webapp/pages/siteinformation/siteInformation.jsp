@@ -12,15 +12,6 @@
  
 <c:set var="valueEditable" value="${form.editable}"/>
 
-<%!String allowEdits = "true";%>
-
-<%
-    if( request.getAttribute( IActionConstants.ALLOW_EDITS_KEY ) != null ){
-        allowEdits = ( String ) request.getAttribute( IActionConstants.ALLOW_EDITS_KEY );
-    }
-%>
-
-<script type="text/javascript">
     jQuery(document).ready(function () {
     	<c:if test='${not form.editable}'>
             jQuery(".inputWidget").prop('disabled', true);
@@ -52,7 +43,7 @@
 <form:hidden path="paramName" id="siteInfoName"/>
 <c:if test="${form.valueType == 'text'}">
     <c:if test="${form.encrypted}">
-        <form:password path="${form.value}" size="60" maxlength="120"/>
+        <form:password path="value" size="60" maxlength="120"/>
     </c:if>
     <c:if test="${not form.encrypted}">
         <c:if test="${form.tag == 'localization'}" >
