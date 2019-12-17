@@ -1,6 +1,5 @@
 package org.openelisglobal.result.controller;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -342,9 +341,7 @@ public class StatusResultsController extends BaseController {
         return "banner.menu.results";
     }
 
-    public class DropPair implements Serializable {
-
-        private static final long serialVersionUID = 1L;
+    public class DropPair {
 
         public String getId() {
             return id;
