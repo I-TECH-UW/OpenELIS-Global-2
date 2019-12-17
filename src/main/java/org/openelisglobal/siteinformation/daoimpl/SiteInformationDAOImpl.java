@@ -18,6 +18,7 @@
 package org.openelisglobal.siteinformation.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -159,7 +160,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     @Transactional(readOnly = true)
     public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
             throws LIMSRuntimeException {
-        List<SiteInformation> list = null;
+        List<SiteInformation> list = new ArrayList<>();
         try {
 
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);

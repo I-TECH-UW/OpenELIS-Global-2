@@ -117,10 +117,10 @@ public abstract class BasePrintProvider implements IActionConstants {
         // sort children
         if (children != null && children.size() > 0) {
             Collections.sort(children, ResultsReportTestComparator.SORT_ORDER_COMPARATOR);
-        }
-        for (ResultsReportTest childElement : children) {
-            reportTests.add(childElement);
-            recursiveSort(childElement, reportTests);
+            for (ResultsReportTest childElement : children) {
+                reportTests.add(childElement);
+                recursiveSort(childElement, reportTests);
+            }
         }
     }
 
@@ -142,7 +142,7 @@ public abstract class BasePrintProvider implements IActionConstants {
     }
 
     // bugzilla 2264
-    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0)  {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) {
         if (null == messageKey) {
             return null;
         }

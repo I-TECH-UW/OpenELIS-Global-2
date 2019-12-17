@@ -109,7 +109,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         boolean testSampleMismatch = false;
         testSampleMismatch = (null == typeofSampleTestList) || (typeofSampleTestList.isEmpty());
 
-        if (!testSampleMismatch) {
+        if (!((null == typeofSampleTestList) || (typeofSampleTestList.isEmpty()))) {
             for (TypeOfSampleTests typeOfSampleTest : typeofSampleTestList) {
                 if (typeOfSampleTest.tests.isEmpty()) {
                     testSampleMismatch = true;

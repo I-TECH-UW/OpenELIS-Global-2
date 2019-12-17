@@ -18,6 +18,7 @@
 package org.openelisglobal.typeofsample.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -196,6 +197,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
+        List<TypeOfSamplePanel> list = new ArrayList<>();
         String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
 
         try {
@@ -208,7 +210,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             handleException(e, "getTypeOfSamplePanelsForPanel");
         }
 
-        return null;
+        return list;
     }
 
 }
