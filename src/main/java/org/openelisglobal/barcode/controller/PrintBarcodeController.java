@@ -60,17 +60,17 @@ public class PrintBarcodeController extends BaseController {
     private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
     @Autowired
-    IStatusService statusService;
+    private IStatusService statusService;
     @Autowired
-    SampleService sampleService;
+    private SampleService sampleService;
     @Autowired
-    SampleItemService sampleItemService;
+    private SampleItemService sampleItemService;
     @Autowired
-    AnalysisService analysisService;
+    private AnalysisService analysisService;
     @Autowired
-    TypeOfSampleService typeOfSampleService;
+    private TypeOfSampleService typeOfSampleService;
     @Autowired
-    SampleHumanService sampleHumanService;
+    private SampleHumanService sampleHumanService;
 
     @PostConstruct
     private void initialize() {

@@ -90,7 +90,6 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
         List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<>();
 
         try {
-
             searchThread.start();
             localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber,
                     nationalID, nationalID, patientID, guid);

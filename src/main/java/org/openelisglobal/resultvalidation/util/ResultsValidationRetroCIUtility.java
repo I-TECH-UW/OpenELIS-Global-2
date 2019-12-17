@@ -334,7 +334,6 @@ public class ResultsValidationRetroCIUtility {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
 
         List<Analysis> analysisList = new ArrayList<>();

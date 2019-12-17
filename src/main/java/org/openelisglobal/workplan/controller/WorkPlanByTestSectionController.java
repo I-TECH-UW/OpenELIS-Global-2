@@ -79,7 +79,11 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
             workplanTests = getWorkplanByTestSection(testSectionId);
             form.setWorkplanTests(workplanTests);
             form.setSearchFinished(Boolean.TRUE);
-            form.setTestName(ts.getLocalizedName());
+            if (ts != null) {
+                form.setTestName(ts.getLocalizedName());
+            } else {
+                throw new IllegalStateException("ts cannot be null here");
+            }
 
         } else {
             // set workplanTests as empty

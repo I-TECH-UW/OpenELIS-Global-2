@@ -176,7 +176,7 @@ public class ResultsValidationUtility {
                 groupingCount++;
             } else {
                 if (headItem == null) {
-                    throw new IllegalStateException("headItem should not be able to be null here");
+                    throw new IllegalStateException("headItem should not be null here");
                 }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
