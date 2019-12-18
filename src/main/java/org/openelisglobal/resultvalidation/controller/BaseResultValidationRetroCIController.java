@@ -4,12 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.util.validator.GenericValidator;
 
 public abstract class BaseResultValidationRetroCIController extends BaseController {
-
-	private static final String[] ALLOWED_FIELDS = new String[] {};
-
 
     private static Map<String, String> validationGroupToTitleMap = new HashMap<>();
     private static Map<String, String> validationGroupToSection = new HashMap<>();
@@ -58,7 +54,7 @@ public abstract class BaseResultValidationRetroCIController extends BaseControll
     }
 
     protected void setRequestType(String section) {
-        if (!GenericValidator.isBlankOrNull(section)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(section)) {
             titleKey = validationGroupToTitleMap.get(section);
         }
     }
