@@ -8,16 +8,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-	value='<%=(String) request
-									.getAttribute(IActionConstants.FORM_NAME)%>' />
-<%!String allowEdits = "true";%>
-
-<%
-		if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-		allowEdits = (String) request
-		.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-	}
-%>
 <script>
  
 function validateForm(form) {

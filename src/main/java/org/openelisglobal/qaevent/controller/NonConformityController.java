@@ -68,6 +68,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,6 +78,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class NonConformityController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "sampleId", "patientId", "sampleItemsTypeOfSampleIds",
+            "date", "time", "project", "projectId", "subjectNew", "subjectNo", "newSTNumber", "STNumber",
+            "nationalIdNew", "nationalId", "serviceNew", "newServiceName", "service", "doctorNew", "requesterSampleID",
+            "providerLastName", "providerFirstName", "providerStreetAddress", "providerCity", "providerCommune",
+            "providerDepartment", "providerWorkPhone", "doctor", "qaEvents[*].recordNumber", "qaEvents[*].id",
+            "qaEvents[*].qaEvent", "qaEvents[*].sampleType", "qaEvents[*].section", "qaEvents[*].authorizer",
+            "qaEvents[*].note", "qaEvents[*].remove", "commentNew", "comment" };
 
     @Autowired
     private NonConformityFormValidator formValidator;
@@ -106,6 +116,11 @@ public class NonConformityController extends BaseController {
     private ProjectService projectService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
     public ModelAndView showNonConformity(HttpServletRequest request,

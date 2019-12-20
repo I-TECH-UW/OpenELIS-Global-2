@@ -127,7 +127,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
             }
             if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                    && lastReport.before(analysis.getLastupdated())) {
+                    && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
 

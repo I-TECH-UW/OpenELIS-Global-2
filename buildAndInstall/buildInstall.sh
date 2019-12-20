@@ -42,6 +42,7 @@ buildInstallDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 projectDir="${buildInstallDir}/.."
 liquibaseDir="${projectDir}/liquibase"
 
+cd ${projectDir}
 echo Will build from $branch
 #cd source/openelisglobal-core
 #git checkout -- app/src/build.properties
@@ -66,6 +67,7 @@ git pull origin $branch
 #git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
 #cd ../..
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
+cd ${callDirectory}
 
 if [ $runLiquibase == true ]
 then

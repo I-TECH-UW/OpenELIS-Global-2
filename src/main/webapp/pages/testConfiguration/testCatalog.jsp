@@ -35,12 +35,8 @@
 <c:set var="testSectionList" value="${form.testSectionList}" />
 <c:set var="testCatalogList" value="${form.testCatalogList}" />
 
-<%!
-    String currentTestUnitName;
-%>
-
 <%
-    currentTestUnitName = "";
+    String currentTestUnitName = "";
 %>
 
 <script type="text/javascript">

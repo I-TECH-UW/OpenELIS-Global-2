@@ -28,6 +28,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,22 +39,34 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class PanelTestAssignController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "deactivatePanelId", "currentTests[*]",
+            "availableTests[*]" };
+
     @Autowired
-    PanelService panelService;
+    private PanelService panelService;
     @Autowired
-    PanelItemService panelItemService;
+    private PanelItemService panelItemService;
     @Autowired
-    TestService testService;
+    private TestService testService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
-    public ModelAndView showPanelTestAssign(HttpServletRequest request) {
+    public ModelAndView showPanelTestAssign(@Valid @ModelAttribute("form") PanelTestAssignForm oldForm,
+            BindingResult result,
+            HttpServletRequest request) {
         PanelTestAssignForm form = new PanelTestAssignForm();
 
-        String panelId = request.getParameter("panelId");
-        if (panelId == null) {
-            panelId = "";
+        if (!result.hasFieldErrors("panelId")) {
+            String panelId = oldForm.getPanelId();
+            if (panelId == null) {
+                panelId = "";
+            }
+            form.setPanelId(panelId);
         }
-        form.setPanelId(panelId);
 
         setupDisplayItems(form);
 
@@ -106,7 +120,7 @@ public class PanelTestAssignController extends BaseController {
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
     public ModelAndView postPanelTestAssign(HttpServletRequest request,
             @ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

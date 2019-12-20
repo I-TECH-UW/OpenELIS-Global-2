@@ -17,6 +17,9 @@
 package org.openelisglobal.reports.action.implementation;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +43,8 @@ import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYear
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYearReport.Months;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
+
+import net.sf.jasperreports.engine.JRException;
 
 public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
         implements IReportCreator, IReportParameterSetter {
@@ -94,7 +99,7 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
             form.setInstructions(MessageUtil.getMessage("report.instruction.inventory.test.count"));
             form.setMonthList(MONTH_LIST);
             form.setYearList(getYearList());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
 
@@ -183,8 +188,12 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                 currentSite = report.getSendingSite();
             }
 
-            Map<String, Integer> targetMonthTestCount = monthlyTestCount[DateUtil
-                    .getMonthForTimestamp(report.getEventDate())];
+            Map<String, Integer> targetMonthTestCount;
+            if (monthlyTestCount != null) {
+                targetMonthTestCount = monthlyTestCount[DateUtil.getMonthForTimestamp(report.getEventDate())];
+            } else {
+                throw new IllegalStateException();
+            }
 
             JSONParser parser = new JSONParser();
 
@@ -256,7 +265,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
+            JRException, java.text.ParseException {
         if (errorFound) {
             return super.runReport();
         }

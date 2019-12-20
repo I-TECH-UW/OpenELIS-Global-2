@@ -17,7 +17,6 @@ package org.openelisglobal.common.provider.reports;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,6 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -115,22 +115,18 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             LogEvent.logError(e.toString(), e);
             // display stack trace in the browser
             StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            // jre.printStackTrace(printWriter);
             response.setContentType("text/plain");
             response.getOutputStream().print(stringWriter.toString());
             errors.reject("errors.jasperreport.general");
-        } catch (Exception e) {
+        } catch (SQLException | NamingException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             errors.reject("errors.jasperreport.general");
-
         } finally {
             try {
                 if (conn != null) {
                     conn.close();
                 }
-
             } catch (SQLException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);

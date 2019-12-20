@@ -63,11 +63,10 @@ public class ReportsProviderFactory {
         try {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    true);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
     }
@@ -95,14 +94,12 @@ public class ReportsProviderFactory {
             } catch (IOException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
-                throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e,
-                        true);
+                throw new LIMSRuntimeException("Unable to load reports provider class mappings.", e, true);
             } finally {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                        propertyStream = null;
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         // bugzilla 2154
                         LogEvent.logError(e.toString(), e);
                     }

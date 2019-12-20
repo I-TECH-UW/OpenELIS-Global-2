@@ -67,14 +67,7 @@ public enum ObservationHistoryList {
 
     ;
 
-    private static DictionaryService dictionaryService;
-
-    private static DictionaryService getDictionaryService() {
-        if (dictionaryService == null) {
-            dictionaryService = SpringContext.getBean(DictionaryService.class);
-        }
-        return dictionaryService;
-    }
+    private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
     private static List<Dictionary> copyListAndDeleteEntry(List<Dictionary> oldList, String entryToDelete) {
         List<Dictionary> newList = new ArrayList<>(oldList.size());
@@ -194,10 +187,10 @@ public enum ObservationHistoryList {
     public List<Dictionary> getList() {
         if (list == null) {
             if (orderByMessageResource) {
-                list = getDictionaryService().getDictionaryEntrysByCategoryNameLocalizedSort(listName);
+                list = SpringContext.getBean(DictionaryService.class)
+                        .getDictionaryEntrysByCategoryNameLocalizedSort(listName);
             } else {
-                list = getDictionaryService().getDictionaryEntrysByCategoryAbbreviation("categoryName", listName,
-                        false);
+                list = dictionaryService.getDictionaryEntrysByCategoryAbbreviation("categoryName", listName, false);
             }
             modifyList();
         }
@@ -213,7 +206,7 @@ public enum ObservationHistoryList {
             if (add) {
                 Dictionary d = new Dictionary();
                 d.setLocalAbbreviation(entryTag);
-                d = getDictionaryService().getDictionaryByLocalAbbrev(d);
+                d = dictionaryService.getDictionaryByLocalAbbrev(d);
                 list = copyListAndAddEntry(list, d);
             } else {
                 list = copyListAndDeleteEntry(list, entryTag);

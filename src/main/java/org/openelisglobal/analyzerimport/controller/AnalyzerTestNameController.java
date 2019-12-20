@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,18 +37,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class AnalyzerTestNameController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "analyzerId", "analyzerTestName", "testId" };
+
     @Autowired
-    AnalyzerTestMappingValidator analyzerTestMappingValidator;
+    private AnalyzerTestMappingValidator analyzerTestMappingValidator;
     @Autowired
-    AnalyzerTestMappingService analyzerTestMappingService;
+    private AnalyzerTestMappingService analyzerTestMappingService;
     @Autowired
-    AnalyzerService analyzerService;
+    private AnalyzerService analyzerService;
     @Autowired
-    TestService testService;
+    private TestService testService;
 
     @ModelAttribute("form")
     public AnalyzerTestNameForm initForm() {
         return new AnalyzerTestNameForm();
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.GET)
@@ -66,10 +75,9 @@ public class AnalyzerTestNameController extends BaseController {
         newForm.setAnalyzerList(analyzerList);
         newForm.setTestList(testList);
 
-        String id = request.getParameter("ID");
 
-        if (id != null) {
-            String[] splitId = id.split("#");
+        if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
+            String[] splitId = request.getParameter("ID").split("#");
             newForm.setAnalyzerTestName(splitId[1]);
             newForm.setTestId(splitId[2]);
             newForm.setAnalyzerId(splitId[0]);
@@ -84,6 +92,10 @@ public class AnalyzerTestNameController extends BaseController {
         return findForward(FWD_SUCCESS, newForm);
     }
 
+    private boolean isValidID(String ID) {
+        return ID.matches("^[0-9]+#[^#/\\<>?]*#[0-9]+");
+    }
+
     private List<Analyzer> getAllAnalyzers() {
         return analyzerService.getAll();
     }
@@ -96,7 +108,6 @@ public class AnalyzerTestNameController extends BaseController {
     public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
             @ModelAttribute("form") @Valid AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes) {
-
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);
@@ -202,10 +213,9 @@ public class AnalyzerTestNameController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelAnalyzerTestName", method = RequestMethod.GET)
-    public ModelAndView cancelAnalyzerTestName(HttpServletRequest request,
-            @ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status) {
+    public ModelAndView cancelAnalyzerTestName(HttpServletRequest request, SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new AnalyzerTestNameForm());
     }
 
     @Override

@@ -90,7 +90,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     }
                 }
 
-                if (duplicateByAccessionAndTestOnly) {
+                if (duplicateByAccessionAndTestOnly && previousResult != null) {
                     result.setDuplicateAnalyzerResultId(previousResult.getId());
                     result.setReadOnly(true);
                 }
@@ -100,7 +100,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     String id = insert(result);
                     result.setId(id);
 
-                    if (duplicateByAccessionAndTestOnly) {
+                    if (duplicateByAccessionAndTestOnly && previousResult != null) {
                         previousResult.setDuplicateAnalyzerResultId(id);
                         previousResult.setSysUserId(sysUserId);
                     }
@@ -111,7 +111,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                 }
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
         }
@@ -200,8 +200,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
         }
 
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.setCurrentUserId(sysUserId);
-        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
+        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList), sysUserId);
 
         return true;
     }

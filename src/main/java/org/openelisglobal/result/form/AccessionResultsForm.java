@@ -9,7 +9,7 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.patient.form.PatientInfoForm;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
-//no validation, inly used to send info from server to client
+//no validation, only used to send info from server to client
 public class AccessionResultsForm extends BaseForm implements PatientInfoForm, ResultsPagingForm {
     private PagingBean paging;
 

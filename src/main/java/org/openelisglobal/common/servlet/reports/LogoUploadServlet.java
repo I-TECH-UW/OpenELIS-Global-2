@@ -57,9 +57,14 @@ public class LogoUploadServlet extends HttpServlet {
     private String FULL_PREVIEW_FILE_PATH;
 
     @Override
+    public void init() throws ServletException {
+        super.init();
+        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
         // check for authentication
         if (userModuleService.isSessionExpired(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -81,16 +86,17 @@ public class LogoUploadServlet extends HttpServlet {
                 + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
 
         if (removeImage) {
-            removeImage(whichLogo, uploadPreviewPath);
+            removeImage(whichLogo);
         } else {
-            updateImage(request, whichLogo, uploadPreviewPath);
+            updateImage(request, whichLogo);
         }
 
         response.sendRedirect(getServletContext().getContextPath() + "/PrintedReportsConfigurationMenu.do");
     }
 
-    private void removeImage(String logoName, String uploadPreviewPath) {
-        File previewFile = new File(uploadPreviewPath);
+    private void removeImage(String logoName) {
+        File previewFile = new File(
+                FULL_PREVIEW_FILE_PATH + (logoName.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
 
         boolean deleteSuccess = previewFile.delete();
         if (!deleteSuccess) {
@@ -118,8 +124,7 @@ public class LogoUploadServlet extends HttpServlet {
 
     }
 
-    private void updateImage(HttpServletRequest request, String whichLogo, String uploadPreviewPath)
-            throws ServletException {
+    private void updateImage(HttpServletRequest request, String whichLogo) throws ServletException {
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
         factory.setSizeThreshold(Image.MAX_MEMORY_SIZE);
@@ -131,14 +136,14 @@ public class LogoUploadServlet extends HttpServlet {
         upload.setSizeMax(Image.MAX_MEMORY_SIZE);
 
         try {
-            @SuppressWarnings("unchecked")
             List<FileItem> items = upload.parseRequest(request);
 
             for (FileItem item : items) {
 
                 if (validToWrite(item)) {
 
-                    File previewFile = new File(uploadPreviewPath);
+                    File previewFile = new File(FULL_PREVIEW_FILE_PATH
+                            + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
 
                     item.write(previewFile);
 
@@ -149,6 +154,8 @@ public class LogoUploadServlet extends HttpServlet {
             }
 
         } catch (FileUploadException e) {
+            throw new ServletException(e);
+        } catch (RuntimeException e) {
             throw new ServletException(e);
         } catch (Exception e) {
             throw new ServletException(e);
@@ -179,7 +186,7 @@ public class LogoUploadServlet extends HttpServlet {
             if (bytesRead != fileSize) {
                 throw new IOException("file size changed between array allocation and file read, suspected attack");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LogEvent.logError(e);
         } finally {
             if (fileInputStream != null) {

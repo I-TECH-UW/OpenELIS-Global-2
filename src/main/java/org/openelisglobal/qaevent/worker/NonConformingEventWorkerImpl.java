@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.openelisglobal.common.log.LogEvent;
@@ -119,7 +119,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
 
     /**
      * Given a String value, returns the equivalent {@link Date} object.
-     * 
+     *
      * @param value
      * @return {@link Date} object or null if there is a parse error.
      */
@@ -128,6 +128,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
             return new Date(format.parse(value).getTime());
         } catch (ParseException e) {
+            LogEvent.logError(e);
         }
         return null;
     }
@@ -137,9 +138,12 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         form.setNceCategories(nceCategoryService.getAllNceCategories());
         form.setNceTypes(nceTypeService.getAllNceTypes());
-        form.setLabComponentList(DisplayListService.getInstance().getList(DisplayListService.ListType.LABORATORY_COMPONENT));
-        form.setSeverityConsequencesList(DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
-        form.setSeverityRecurrenceList(DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
+        form.setLabComponentList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.LABORATORY_COMPONENT));
+        form.setSeverityConsequencesList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
+        form.setSeverityRecurrenceList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
         form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         SystemUser systemUser = systemUserService.getUserById(form.getCurrentUserId());
@@ -178,7 +182,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         this.initFormForFollowUp(nceNumber, form);
         NcEvent event = ncEventService.getMatch("nceNumber", nceNumber).get();
         if (event != null) {
-            form.setActionTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.ACTION_TYPE_LIST));
+            form.setActionTypeList(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.ACTION_TYPE_LIST));
             form.setLaboratoryComponent(event.getLaboratoryComponent());
             form.setNceCategory(event.getNceCategoryId() + "");
             form.setNceType(event.getNceTypeId() + "");
@@ -216,22 +221,22 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
              * int length = nceActionLogStr.length(); // JSONArray arr = new
              * JSONArray(nceActionLogStr); ObjectMapper objectMapper = new ObjectMapper();
              * final JsonNode arrNode = objectMapper.readTree(nceActionLogStr);
-             * 
+             *
              * // form.setActionLog(nceActionLogList); for (final JsonNode objNode :
              * arrNode) {
-             * 
+             *
              * JsonNode ca = objNode.get("actionType");
              * actionLog.setActionType(ca.asText());
-             * 
+             *
              * JsonNode pr = objNode.get("personResponsible");
              * actionLog.setPersonResponsible(pr.asText());
-             * 
+             *
              * JsonNode tat = objNode.get("turnAroundTime");
              * actionLog.setTurnAroundTime(tat.asInt());
-             * 
+             *
              * JsonNode dc = objNode.get("dateCompleted"); String date = dc.asText();
              * actionLog.setDateCompleted(getDate(date, "yyyy-MM-dd"));
-             * 
+             *
              * if (objNode.has("ncEventId")) {
              * actionLog.setNcEventId(objNode.get("ncEventId").asInt()); } if
              * (objNode.has("id")) { actionLog.setId(objNode.get("id").asInt() + ""); }
@@ -242,7 +247,7 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
            * catch (JsonParseException e) { jpLogEvent.logDebug(e); } catch
            * (JsonMappingException e) { jmLogEvent.logDebug(e); } catch (IOException e) {
            * io.printStackTrace(); }
-           */ catch (Exception e) {
+           */ catch (DocumentException e) {
             LogEvent.logDebug(e);
         }
         return null;

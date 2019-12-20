@@ -47,7 +47,7 @@ public abstract class BaseMenuController extends BaseController {
             default:
                 menuList = doNone(form, request);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             forward = FWD_FAIL;
         }
@@ -65,7 +65,7 @@ public abstract class BaseMenuController extends BaseController {
         return forward;
     }
 
-    protected List doNextPage(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doNextPage(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -92,7 +92,7 @@ public abstract class BaseMenuController extends BaseController {
         return nextPageList;
     }
 
-    protected List doPreviousPage(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doPreviousPage(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -120,7 +120,7 @@ public abstract class BaseMenuController extends BaseController {
         return previousPageList;
     }
 
-    protected List doNone(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List doNone(MenuForm form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -157,11 +157,15 @@ public abstract class BaseMenuController extends BaseController {
             stringStartingRecNo = request.getParameter("startingRecNo");
         }
 
+        // Make sure it's a valid value
         int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        if (startingRecNo <= 0) {
+            startingRecNo = 1;
+        }
         return startingRecNo;
     }
 
-    protected abstract List createMenuList(MenuForm form, HttpServletRequest request) throws Exception;
+    protected abstract List createMenuList(MenuForm form, HttpServletRequest request);
 
     protected abstract String getDeactivateDisabled();
 

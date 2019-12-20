@@ -22,6 +22,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +31,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class SampleTypeCreateController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "sampleTypeEnglishName", "sampleTypeFrenchName" };
 
     public static final String NAME_SEPARATOR = "$";
 
@@ -38,6 +42,11 @@ public class SampleTypeCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private SampleTypeCreateService sampleTypeCreateService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
     public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -72,7 +81,7 @@ public class SampleTypeCreateController extends BaseController {
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.POST)
     public ModelAndView postSampleTypeCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

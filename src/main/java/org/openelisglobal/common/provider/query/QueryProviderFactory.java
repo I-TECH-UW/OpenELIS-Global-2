@@ -53,7 +53,7 @@ public class QueryProviderFactory {
         try {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
@@ -86,8 +86,7 @@ public class QueryProviderFactory {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                        propertyStream = null;
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         LogEvent.logError(e.getMessage(), e);
                     }
                 }

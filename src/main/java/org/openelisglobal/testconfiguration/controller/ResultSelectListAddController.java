@@ -8,6 +8,8 @@ import org.openelisglobal.testconfiguration.form.ResultSelectListForm;
 import org.openelisglobal.testconfiguration.service.ResultSelectListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,10 +19,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ResultSelectListAddController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "nameEnglish", "nameFrench", "testSelectListJson" };
+
     @Autowired
     private TestService testService;
     @Autowired
     private ResultSelectListService resultSelectListService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ResultSelectListAdd", method = RequestMethod.GET)
     public ModelAndView showCreateResultSelectList(HttpServletRequest request) {
@@ -32,7 +41,7 @@ public class ResultSelectListAddController extends BaseController {
 
     @RequestMapping(value = "/ResultSelectListAdd", method = RequestMethod.POST)
     public ModelAndView showResultSelectListAddToTest(HttpServletRequest request,
-                                                      @ModelAttribute("form") ResultSelectListForm form) {
+            @ModelAttribute("form") ResultSelectListForm form) {
         form.setPage("2");
         if ("".equalsIgnoreCase(form.getNameEnglish())) {
             form.setNameEnglish(form.getNameFrench());
@@ -47,8 +56,7 @@ public class ResultSelectListAddController extends BaseController {
 
     @RequestMapping(value = "/SaveResultSelectList", method = RequestMethod.POST)
     public ModelAndView SaveResultSelectList(HttpServletRequest request,
-                                                      @ModelAttribute("form") ResultSelectListForm form,
-                                             RedirectAttributes redirectAttributes) {
+            @ModelAttribute("form") ResultSelectListForm form, RedirectAttributes redirectAttributes) {
 
         addFlashMsgsToRequest(request);
         String currentUserId = getSysUserId(request);

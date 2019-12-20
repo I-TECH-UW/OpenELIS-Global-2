@@ -166,6 +166,9 @@ function BaseLoader() {
                         {//options
                           method: 'get', //http method
                           parameters: urlParameters,
+						  requestHeaders : {
+								"X-CSRF-Token" : getCsrfToken()
+						  },
                           onSuccess:  onSuccessFunc, onFailure: onFailureFunc
                          });
 	}

@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.patient.saving.IAccessioner;
@@ -28,11 +28,6 @@ public abstract class BaseSampleEntryController extends BaseController {
 
     protected RequestType requestType = RequestType.UNKNOWN;
 
-    public static final String FWD_EID_ENTRY = "eid_entry";
-    public static final String FWD_VL_ENTRY = "vl_entry";
-
-    @Autowired
-    private GenderService genderService;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -64,7 +59,7 @@ public abstract class BaseSampleEntryController extends BaseController {
      * various maps full of a various lists used by the entry form (typically for
      * drop downs) and other forms who want to do patient entry.
      *
-     * @throws Exception all from setProperty problems caused by developer mistakes.
+     * @ all from setProperty problems caused by developer mistakes.
      */
     protected void addProjectList(SamplePatientEntryForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -73,7 +68,7 @@ public abstract class BaseSampleEntryController extends BaseController {
         form.setProjects(projects);
     }
 
-//    public void addAllPatientFormLists(BaseForm form) throws Exception {
+//    public void addAllPatientFormLists(BaseForm form)  {
 //        Map<String, Object> resultMap = new HashMap<>();
 //        resultMap.put("GENDERS", PatientUtil.findGenders());
 //
@@ -113,9 +108,8 @@ public abstract class BaseSampleEntryController extends BaseController {
      * current projectForm, so that the use is presented with a good guess on what
      * they might want to keep doing.
      *
-     * @param projectFormName
-     * @throws Exception all from property utils if we've coded things wrong in the
-     *                   form def or in this class.
+     * @param projectFormName @ all from property utils if we've coded things wrong
+     * in the form def or in this class.
      */
 //    protected void setProjectFormName(BaseForm form, String projectFormName)
 //            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -129,17 +123,15 @@ public abstract class BaseSampleEntryController extends BaseController {
      *
      * @param request           original request
      * @param sampleSecondEntry the object to use to attempt to save.
-     * @return a forward string or null; null => this attempt to save failed
-     * @throws Exception if things go really bad. Normally, the errors are caught
-     *                   internally an appropriate message is added and a forward
-     *                   fail is returned.
+     * @return a forward string or null; null => this attempt to save failed @ if
+     * things go really bad. Normally, the errors are caught internally an
+     * appropriate message is added and a forward fail is returned.
      */
-    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, IAccessionerForm form)
-            throws Exception {
+    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, IAccessionerForm form) {
         String forward;
         try {
             forward = accessioner.save();
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | LIMSException e) {
             Errors errors = accessioner.getMessages();
             if (errors.hasErrors()) {
                 saveErrors(errors);

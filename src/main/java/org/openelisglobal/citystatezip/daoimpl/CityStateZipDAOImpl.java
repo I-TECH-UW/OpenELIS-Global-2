@@ -69,7 +69,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getCities(String filter)", e);
@@ -112,7 +112,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             return cityStateZips;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getZipCodesByCity()", e);
@@ -144,7 +144,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 csz.setZipCode(zipCode);
                 cityStateZips.add(csz);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getCitiesByZipCode()", e);
@@ -172,7 +172,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 cityStateZip.setState(state);
                 cityStateZips.add(cityStateZip);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getAllStateCodes()", e);
@@ -200,7 +200,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getCityStateZipByCityAndZipCode()", e);
@@ -237,7 +237,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getState()", e);
@@ -275,7 +275,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getCity()", e);
@@ -313,7 +313,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in CityStateZip getZip()", e);
@@ -394,7 +394,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             return isValid;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in isCityStateZipValidForHumanSampleEntry()", e);
@@ -583,7 +583,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             return cityStateZips;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getValidCityStateZipCombosForHumanSampleEntry()", e);
@@ -626,7 +626,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getCountyCodeByStateAndZipCode()", e);
         }

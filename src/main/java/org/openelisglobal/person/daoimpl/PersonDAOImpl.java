@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.person.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Vector;
 
@@ -59,7 +60,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //				String tableName = "PERSON";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PersonDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Person AuditTrail deleteData()", e);
@@ -74,7 +75,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PersonDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Person deleteData()", e);
@@ -95,7 +96,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PersonDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Person insertData()", e);
@@ -117,7 +118,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PERSON";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PersonDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Person AuditTrail updateData()", e);
@@ -129,7 +130,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(person);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(person);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PersonDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Person updateData()", e);
@@ -149,7 +150,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
                 person.setId(null);
             }
 
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getData()", e);
@@ -166,7 +167,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
@@ -191,7 +192,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
@@ -206,7 +207,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             person = entityManager.unwrap(Session.class).get(Person.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person readPerson()", e);
@@ -228,7 +229,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
         }

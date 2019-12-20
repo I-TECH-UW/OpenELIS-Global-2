@@ -50,7 +50,7 @@ public class SecurityFilter implements Filter {
                 paramValue = paramValue.replaceAll("\\s", "");
                 if (paramValue.contains("<script>") || paramValue.contains("</script>")) {
                     suspectedAttack = true;
-                    attackList.add("XSS on " + curParam + ": " + StringUtil.concatToMaxLength(paramValue, 50));
+                    attackList.add("XSS on " + curParam + ": " + StringUtil.snipToMaxLength(paramValue, 50));
                 }
             }
         }
@@ -58,7 +58,7 @@ public class SecurityFilter implements Filter {
         if (suspectedAttack) {
             StringBuilder attackMessage = new StringBuilder();
             String separator = "";
-            attackMessage.append(StringUtil.concatToMaxLength(httpRequest.getRequestURI(), 50));
+            attackMessage.append(StringUtil.snipToMaxLength(httpRequest.getRequestURI(), 50));
             attackMessage.append(" suspected attack(s) of type: ");
             for (String attack : attackList) {
                 attackMessage.append(separator);

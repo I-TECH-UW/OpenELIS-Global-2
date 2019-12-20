@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientEntryAfterAnalyzer {
 
     public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);
@@ -67,7 +67,7 @@ public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientE
      * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
      */
     @Override
-    protected void populateSampleHuman() throws Exception {
+    protected void populateSampleHuman()  {
         sampleHuman = new SampleHuman();
         sampleHuman.setSampleId(statusSet.getSampleId());
         sampleHumanService.getDataBySample(sampleHuman);

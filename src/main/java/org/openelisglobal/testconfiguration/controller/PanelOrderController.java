@@ -27,6 +27,8 @@ import org.openelisglobal.testconfiguration.validator.PanelOrderFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PanelOrderController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList" };
 
     @Autowired
     PanelOrderFormValidator formValidator;
@@ -49,6 +53,11 @@ public class PanelOrderController extends BaseController {
         setupDisplayItems(form);
 
         return findForward(FWD_SUCCESS, form);
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     protected void setupDisplayItems(PanelOrderForm form) {
@@ -87,7 +96,7 @@ public class PanelOrderController extends BaseController {
 
     @RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
     public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") @Valid PanelOrderForm form,
-            BindingResult result) throws Exception {
+            BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

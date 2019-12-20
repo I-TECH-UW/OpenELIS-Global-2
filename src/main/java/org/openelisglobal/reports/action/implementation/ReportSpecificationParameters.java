@@ -81,7 +81,7 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
                 }
                 }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
     }

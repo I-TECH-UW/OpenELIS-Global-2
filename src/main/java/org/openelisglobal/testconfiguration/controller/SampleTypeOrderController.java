@@ -21,6 +21,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,10 +31,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleTypeOrderController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList" };
+
     @Autowired
     SampleTypeOrderFormValidator formValidator;
     @Autowired
     TypeOfSampleService typeOfSampleService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
     public ModelAndView showSampleTypeOrder(HttpServletRequest request) {
@@ -54,7 +63,7 @@ public class SampleTypeOrderController extends BaseController {
 
     @RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.POST)
     public ModelAndView postSampleTypeOrder(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeOrderForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid SampleTypeOrderForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

@@ -41,10 +41,8 @@ public final class StartStopListener implements ServletContextListener {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         try {
             lateStartScheduler.shutdown();
-        } catch (Exception e) {
-            if (e instanceof SchedulerException) {
-                LogEvent.logDebug(e);
-            }
+        } catch (SchedulerException e) {
+            LogEvent.logDebug(e);
             // rethrow as a runtime exception
             throw new IllegalStateException(e);
         }
@@ -62,7 +60,7 @@ public final class StartStopListener implements ServletContextListener {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         try {
             lateStartScheduler.checkAndStartScheduler();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // rethrow as a runtime exception
             throw new IllegalStateException(e);
         }

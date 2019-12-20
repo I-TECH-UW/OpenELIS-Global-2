@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
@@ -96,7 +97,7 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 stream.close();
             }
-        } catch (Exception e) {
+        } catch (FileUploadException e) {
             LogEvent.logError(e.getMessage(), e);
             throw new ServletException(e);
         } finally {
@@ -129,12 +130,16 @@ public class AnalyzerImportServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             } else {
-                response.getWriter().print(reader.getError());
+                if (reader != null) {
+                    response.getWriter().print(reader.getError());
+                }
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
         } else {
-            response.getWriter().print(reader.getError());
+            if (reader != null) {
+                response.getWriter().print(reader.getError());
+            }
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

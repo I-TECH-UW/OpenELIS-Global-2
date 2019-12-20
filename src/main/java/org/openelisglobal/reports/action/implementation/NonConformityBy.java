@@ -103,11 +103,10 @@ public abstract class NonConformityBy extends Report implements IReportCreator {
         }
     }
 
+    @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
-        String lowDateStr = form.getLowerDateRange();
-        String highDateStr = form.getUpperDateRange();
-        dateRange = new DateRange(lowDateStr, highDateStr);
+        dateRange = new DateRange(form.getLowerDateRange(), form.getUpperDateRange());
 
         createReportParameters();
         errorFound = !validateSubmitParameters();

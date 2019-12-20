@@ -97,9 +97,9 @@ public class BarcodeLabelMaker {
     public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
 
         /*
-         * LogEvent.logInfo(this.getClass().getName(), "method unkown",  "labNo: " + labNo + "\n" + "patientId: " + patientId +
-         * "\n" + "type: " + type + "\n" + "quantity: " + quantity + "\n" + "override: "
-         * + override);
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
+         * labNo + "\n" + "patientId: " + patientId + "\n" + "type: " + type + "\n" +
+         * "quantity: " + quantity + "\n" + "override: " + override);
          */
 
         SampleService sampleService = SpringContext.getBean(SampleService.class);
@@ -204,7 +204,7 @@ public class BarcodeLabelMaker {
             }
             document.close();
             writer.close();
-        } catch (Exception e) {
+        } catch (DocumentException | IOException e) {
             LogEvent.logDebug(e);
         }
 

@@ -141,12 +141,12 @@ function processSearchSuccessPrint(xhr) {
 <table style="width:100%;">
 <tr>
 	<td>
-		<!-- gets next accession, and calls submit and print if success -->
+		<%-- gets next accession, and calls submit and print if success --%>
 		<button type="button" onclick="getNextAccessionNumber();"
 			id="saveButtonId">
 			<spring:message code="sample.batchentry.ondemand.saveprint" />
 		</button>
-		<!-- sets up for next label to be printed -->
+		<%-- sets up for next label to be printed --%>
 		<button type="button" onclick="nextLabel();"
 			id="nextButtonId"
 			disabled="disabled">

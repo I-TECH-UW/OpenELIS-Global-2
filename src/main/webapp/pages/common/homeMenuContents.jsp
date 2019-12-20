@@ -27,10 +27,10 @@
 		<img src="images/mainResults.jpg" /><br/>
 		<h1 class="txtHeader"><spring:message code="banner.menu.results" text="banner.menu.results"/></h1>
 	</td>
- <!--    <td align="center" width="139" valign="top">
+ <%--    <td align="center" width="139" valign="top">
 		<img src="images/mainInventory.jpg" /><br/>
 		<h1 class="txtHeader"><spring:message code="banner.menu.inventory"/></h1>
-	</td> --> 
+	</td> --%> 
 	
 	<td align="center" width="139" valign="top">
 		<img src="images/mainReports.jpg" /><br/>

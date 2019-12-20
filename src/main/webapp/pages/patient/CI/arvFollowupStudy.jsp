@@ -10,11 +10,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 	
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <script type="text/javascript">
 
 /**
@@ -150,7 +145,7 @@ farv = new ArvFollowupProjectChecker();
 				<div id="farv.receivedDateForDisplayMessage" class="blank" ></div>
 		</td>
 	</tr>
-	<tr><!-- SUI 01 -->
+	<tr><%-- SUI 01 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.interviewDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
@@ -163,7 +158,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.interviewDateMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 02 -->
+	<tr> <%-- SUI 02 --%>
 		<td class="required">+</td>
 		<td class="">
 			<spring:message code="patient.subject.number"/>
@@ -188,7 +183,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.siteSubjectNumberMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 03 -->
+	<tr> <%-- SUI 03 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.labNo" />
@@ -206,7 +201,7 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 		</td>
 	</tr>
-	<tr> <!-- SUI 04 -->
+	<tr> <%-- SUI 04 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.centerName" />
@@ -221,7 +216,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.centerNameMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 05 -->
+	<tr> <%-- SUI 05 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.centerCode" />
@@ -234,7 +229,7 @@ farv = new ArvFollowupProjectChecker();
 			</form:select>
 		</td>
 	</tr>
-	<tr> <!-- SUI 06 -->
+	<tr> <%-- SUI 06 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientFamilyName" />
@@ -245,7 +240,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.patientFamilyNameMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 07 -->
+	<tr> <%-- SUI 07 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientFirstNames" />
@@ -256,7 +251,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="patientFirstNamesMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 08 -->
+	<tr> <%-- SUI 08 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.gender" />
@@ -271,7 +266,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.genderMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 09 -->
+	<tr> <%-- SUI 09 --%>
 		<td class="required">*</td>
 		<td>
 			<spring:message code="patient.project.dateOfBirth" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
@@ -296,7 +291,7 @@ farv = new ArvFollowupProjectChecker();
 				<div id="farv.ageMessage" class="blank" ></div>
 			</td>
 	</tr>
-	<tr> <!-- SUI 10 -->
+	<tr> <%-- SUI 10 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientWeight" />
@@ -307,7 +302,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.patientWeightMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 11 -->
+	<tr> <%-- SUI 11 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.karnofskyScore" />
@@ -318,7 +313,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.karnofskyScoreMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr > <!-- SUI 12 -->
+	<tr > <%-- SUI 12 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.hivStatus" />
@@ -334,7 +329,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.hivStatusMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 13 -->
+	<tr> <%-- SUI 13 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.cd4Count" />
@@ -346,7 +341,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.cd4CountMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 14 -->
+	<tr> <%-- SUI 14 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.cd4Percent" />
@@ -358,7 +353,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.cd4PercentMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 15 -->
+	<tr> <%-- SUI 15 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.priorCd4Date" />
@@ -371,7 +366,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.priorCd4DateMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr> <!-- SUI 16 -->
+	<tr> <%-- SUI 16 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.nameOfDoctor" />
@@ -382,8 +377,8 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.nameOfDoctorMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
-	<tr> <!-- SUI 17 -->
+	<tr><td colspan="5"><hr/></td></tr><%-- _________________________________________________ --%>
+	<tr> <%-- SUI 17 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.anyDiseasesSinceLast" />
@@ -397,10 +392,10 @@ farv = new ArvFollowupProjectChecker();
 			</form:select>
 		</td>
 	</tr>
-	<!-- Diseases -->
+	<%-- Diseases --%>
 	<c:forEach  var="disease" varStatus="iter" items="${form.observations.currentDiseasesList}">
 		<tr id='farv.currentDiseasesRow${iter.index}' style="display: none">
-			<!-- CLI 09.n -->
+			<%-- CLI 09.n --%>
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
 				<c:out value="${disease.value}" />
@@ -445,7 +440,7 @@ farv = new ArvFollowupProjectChecker();
 		</td>
 	</tr>
 
-	<tr> <!-- SUI 18 -->
+	<tr> <%-- SUI 18 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.antiTbTreatment"/>
@@ -459,7 +454,7 @@ farv = new ArvFollowupProjectChecker();
 			</form:select>
 		</td>
 	</tr>
-	<tr> <!-- SUI 19 -->
+	<tr> <%-- SUI 19 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.interruptedARVTreatment"/>
@@ -473,7 +468,7 @@ farv = new ArvFollowupProjectChecker();
 			</form:select>
 		</td>
 	</tr>
-	<tr id="farv.priorARVTreatmentRow" style="display:none"> <!-- SUI 20 -->
+	<tr id="farv.priorARVTreatmentRow" style="display:none"> <%-- SUI 20 --%>
 		<td></td>
 		<td class="observationsSubquestion">
 			<spring:message code="patient.project.onGoingARVTreatment"/>
@@ -487,14 +482,14 @@ farv = new ArvFollowupProjectChecker();
 			</form:select>
 		</td>
 	</tr>
-	<tr id="farv.onGoingARVTreatmentINNsRow" style="display:none"> <!--SUI 21 -->
+	<tr id="farv.onGoingARVTreatmentINNsRow" style="display:none"> <%--SUI 21 --%>
 		<td></td>
 		<td class="observationsSubSubquestion" colspan="2">
 			<spring:message code="patient.project.onGoingARVTreatmentINNs" />
 		</td>
 	</tr>
 	<c:forEach var="ongoingARVTreatment" varStatus="iter" items="${formobservations.priorARVTreatmentINNsList}" >
-		<tr style="display:none" id='farv.priorARVTreatmentINNRow${iter.index}'><!-- SUI 21 -->
+		<tr style="display:none" id='farv.priorARVTreatmentINNRow${iter.index}'><%-- SUI 21 --%>
 			<td></td>
 			<td class="bulletItem">${iter.index + 1})</td>
 			<td>
@@ -506,7 +501,7 @@ farv = new ArvFollowupProjectChecker();
 		</tr>
 	</c:forEach>
 
-	<tr id="farv.arvTreatmentAnyAdverseEffectsRow" style="display:none"> <!-- SUI 22 -->
+	<tr id="farv.arvTreatmentAnyAdverseEffectsRow" style="display:none"> <%-- SUI 22 --%>
 		<td></td>
 		<td class="observationsSubSubquestion">
 			<spring:message code="patient.project.treatmentAnyAdverseEffects"/>
@@ -522,7 +517,7 @@ farv = new ArvFollowupProjectChecker();
 		</td>
 	</tr>
 	<c:forEach var="adverseEffect" varStatus="iter" items="${form.observations.arvTreatmentAdverseEffects}" >
-		<tr style="display:none" id='farv.arvTreatmentAdverseEffectsRow${iter.index}'><!-- SUI 22.n -->
+		<tr style="display:none" id='farv.arvTreatmentAdverseEffectsRow${iter.index}'><%-- SUI 22.n --%>
 			<td ></td>
 			<td style="text-align:right">
 				<spring:message code="patient.project.treatmentAdverseEffects.type"/>
@@ -540,7 +535,7 @@ farv = new ArvFollowupProjectChecker();
 			</td>
 		</tr>
 	</c:forEach>
-	<tr id="farv.arvTreatmentChangeRow" style="display:none"> <!-- SUI 23 -->
+	<tr id="farv.arvTreatmentChangeRow" style="display:none"> <%-- SUI 23 --%>
 		<td></td>
 		<td class="observationsSubquestion">
 			<spring:message code="patient.project.arvTreatmentChange"/>
@@ -555,8 +550,8 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.arvTreatmentChangeMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><td colspan="5"><hr/></td></tr><!-- __________________________________________________________________________________________________ -->
-	<tr> <!-- SUI 24 -->
+	<tr><td colspan="5"><hr/></td></tr><%-- __________________________________________________________________________________________________ --%>
+	<tr> <%-- SUI 24 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.arvTreatmentNew"/>
@@ -570,7 +565,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="ARVTreatmentNewMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr id="farv.arvTreatmentRegimeRow" style="display:none"> <!-- SUI 25 -->
+	<tr id="farv.arvTreatmentRegimeRow" style="display:none"> <%-- SUI 25 --%>
 		<td></td>
 		<td class="observationsSubquestion">
 			<spring:message code="patient.project.arvTreatmentRegime"/>
@@ -584,14 +579,14 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.arvTreatmentRegimeMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr id="farv.prescribedARVTreatmentINNsRow" style="display:none"> <!--SUI 26 -->
+	<tr id="farv.prescribedARVTreatmentINNsRow" style="display:none"> <%--SUI 26 --%>
 		<td></td>
 		<td class="observationsSubquestion" colspan="2">
 			<spring:message code="patient.project.prescribedARVTreatmentINNs" />
 		</td>
 	</tr>
 	<c:forEach var="futureARVTreatment" varStatus="iter" items="${form.observations.futureARVTreatmentINNsList}" >
-		<tr id='farv.futureARVTreatmentINNsRow${iter.index}' style="display:none"><!-- SUI 26.n -->
+		<tr id='farv.futureARVTreatmentINNsRow${iter.index}' style="display:none"><%-- SUI 26.n --%>
 			<td></td>
 			<td class="bulletItem">${iter.index + 1})</td>
 			<td>
@@ -602,7 +597,7 @@ farv = new ArvFollowupProjectChecker();
 			</td>
 		</tr>
 	</c:forEach>
-	<tr> <!-- SUI 27 -->
+	<tr> <%-- SUI 27 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.cotrimoxazoleTreatment" />
@@ -617,7 +612,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.cotrimoxazoleTreatmentMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr id="farv.cotrimoxazoleTreatmentAnyAdverseEffectsRow" style="display:none"> <!-- SUI 28 -->
+	<tr id="farv.cotrimoxazoleTreatmentAnyAdverseEffectsRow" style="display:none"> <%-- SUI 28 --%>
 		<td></td>
 		<td class="observationsSubquestion">
 			<spring:message code="patient.project.treatmentAnyAdverseEffects"/>
@@ -632,7 +627,7 @@ farv = new ArvFollowupProjectChecker();
 		</td>
 	</tr>
 	<c:forEach var="adverseEffect" varStatus="iter" items="${form.observations.cotrimoxazoleTreatmentAdverseEffects}" >
-		<tr id='farv.cotrimoxazoleTreatAdvEffRow${iter.index}' style="display:none"><!-- SUI 29 -->
+		<tr id='farv.cotrimoxazoleTreatAdvEffRow${iter.index}' style="display:none"><%-- SUI 29 --%>
 			<td ></td>
 			<td style="text-align:right">
 				<spring:message code="patient.project.treatmentAdverseEffects.type"/>
@@ -646,7 +641,7 @@ farv = new ArvFollowupProjectChecker();
 			</td>
 		</tr>
 	</c:forEach>
-	<tr> <!-- SUI 30 -->
+	<tr> <%-- SUI 30 --%>
 		<td ></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.anySecondaryTreatment"/>
@@ -661,7 +656,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.anySecondaryTreatmentMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr id="farv.secondaryTreatmentRow" style="display:none"> <!-- SUI 31 -->
+	<tr id="farv.secondaryTreatmentRow" style="display:none"> <%-- SUI 31 --%>
 		<td></td>
 		<td class="observationsQuestion observationsSubquestion" >
 			<spring:message code="patient.project.secondaryTreatment" />
@@ -675,7 +670,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="farv.secondaryTreatmentMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><!-- SUI 32 -->
+	<tr><%-- SUI 32 --%>
 		<td></td>
 		<td><spring:message code="patient.project.clinicVisits" /></td>
 		<td>
@@ -685,7 +680,7 @@ farv = new ArvFollowupProjectChecker();
 			<div id="observations.clinicVisitsMessage" class="blank"></div>
 		</td>
 	</tr>
-	<tr><td colspan="5"><hr/></td></tr><!-- __________________________________________________________________________________________________ -->
+	<tr><td colspan="5"><hr/></td></tr><%-- __________________________________________________________________________________________________ --%>
 	 	<tr id="farv.patientRecordStatusRow" style="display: none;">
 		<td class="required"></td>
 		<td>
@@ -726,7 +721,7 @@ farv = new ArvFollowupProjectChecker();
 			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+			<form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
 				onchange="makeDirty();" id="farv.underInvestigationComment" />
 		</td>
     </tr>

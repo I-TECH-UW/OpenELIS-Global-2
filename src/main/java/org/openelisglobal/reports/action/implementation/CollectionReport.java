@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
 import com.lowagie.text.pdf.PdfReader;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -82,7 +85,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws JRException, DocumentException {
         List<byte[]> byteList = generateReports();
         if (byteList.isEmpty()) {
             Map<String, Object> parameterMap = new HashMap<>();
@@ -167,7 +170,7 @@ public abstract class CollectionReport implements IReportCreator {
             handledOrders.addAll(reportCreator.getReportedOrders());
             try {
                 return reportCreator.runReport();
-            } catch (Exception e) {
+            } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
                 LogEvent.logDebug(e);
             }
         }

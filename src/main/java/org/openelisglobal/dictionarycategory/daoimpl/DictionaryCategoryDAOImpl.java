@@ -59,7 +59,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //				String tableName = "DICTIONARY_CATEGORY";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory AuditTrail deleteData()", e);
@@ -74,7 +74,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory deleteData()", e);
@@ -102,7 +102,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory insertData()", e);
@@ -120,7 +120,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + dictionaryCategory.getCategoryName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory updateData()", e);
@@ -136,7 +136,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "DICTIONARY_CATEGORY";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory AuditTrail updateData()", e);
@@ -150,7 +150,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			// old(dictionaryCategory);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(dictionaryCategory);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory updateData()", e);
@@ -169,7 +169,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			} else {
 //				dictionaryCategory.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory getData()", e);
@@ -189,7 +189,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getAllDictionaryCategorys()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory getAllDictionaryCategorys()", e);
@@ -213,7 +213,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getPageOfDictionaryCategorys()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory getPageOfDictionaryCategorys()", e);
@@ -228,7 +228,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			dc = entityManager.unwrap(Session.class).get(DictionaryCategory.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "readDictionaryCategory()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryCategory readDictionaryCategory(idString)", e);
@@ -279,7 +279,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -312,7 +312,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -359,7 +359,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
@@ -376,7 +376,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		try {
 //			results = entityManager.unwrap(Session.class).createCriteria(DictionaryCategory.class)
 //					.add(Example.create(entity)).list();
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DictionaryCategoryDAOImpl", "readByExample()", e.toString());
 //			throw new LIMSRuntimeException("Error in readByExample()", e);
 //		}
@@ -398,7 +398,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //			if (categoryList.size() > 0) {
 //				return categoryList.get(0);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "getDictonaryCategoryByName");
 //		}
 //

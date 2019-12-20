@@ -1,9 +1,12 @@
 package org.openelisglobal.reports.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +28,12 @@ import org.openelisglobal.reports.action.implementation.IReportCreator;
 import org.openelisglobal.reports.action.implementation.IReportParameterSetter;
 import org.openelisglobal.reports.action.implementation.ReportImplementationFactory;
 import org.openelisglobal.reports.form.ReportForm;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,15 +41,21 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lowagie.text.DocumentException;
+
+import net.sf.jasperreports.engine.JRException;
+
 @Controller
 @SessionAttributes("form")
 public class ReportController extends BaseController {
 
-    @Autowired
-    ServletContext context;
+    private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "accessionDirect",
+            "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
+            "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
+            "upperYear", "selectList.selection", };
 
     @Autowired
-    private SiteInformationService siteInformationService;
+    private ServletContext context;
 
     private static String reportPath = null;
     private static String imagesPath = null;
@@ -53,6 +63,11 @@ public class ReportController extends BaseController {
     @ModelAttribute("form")
     public BaseForm form() {
         return new ReportForm();
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/Report", method = RequestMethod.GET)
@@ -110,7 +125,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.write(bytes, 0, bytes.length);
                 servletOutputStream.flush();
                 servletOutputStream.close();
-            } catch (Exception e) {
+            } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
                 LogEvent.logErrorStack(e);
                 LogEvent.logDebug(e);
             }

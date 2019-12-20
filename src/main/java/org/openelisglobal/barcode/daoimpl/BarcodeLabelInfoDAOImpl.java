@@ -41,7 +41,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("BarcodeLabelInfoDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in BarcodeLabelInfo insertData()", e);
 //		}
@@ -66,7 +66,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "BARCODE_LABEL_INFO";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("BarcodeLabelInfoDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
@@ -79,7 +79,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(barcodeLabelInfo);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(barcodeLabelInfo);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
 //		}
@@ -104,7 +104,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //			}
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("BarcodeLabelInfoDAOImpl", "getDataByCode()", e.toString());
 //			throw new LIMSRuntimeException("Error in getDataByCode()", e);
 //		}
@@ -123,7 +123,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 //			recoveredBarcodeLabelInfo = entityManager.unwrap(Session.class).get(BarcodeLabelInfo.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("BarcodeLabelInfoDAOImpl", "readBarcodeLabelInfo()", e.toString());
 //			throw new LIMSRuntimeException("Error in BarcodeLabelInfo readBarcodeLabelInfo()", e);
 //		}

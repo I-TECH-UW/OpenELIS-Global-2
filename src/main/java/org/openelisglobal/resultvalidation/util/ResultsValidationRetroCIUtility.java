@@ -323,6 +323,9 @@ public class ResultsValidationRetroCIUtility {
                 headItem = analysisResultItem;
                 groupingCount++;
             } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be able to be null here");
+                }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
             }
@@ -331,7 +334,6 @@ public class ResultsValidationRetroCIUtility {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
 
         List<Analysis> analysisList = new ArrayList<>();
@@ -392,7 +394,7 @@ public class ResultsValidationRetroCIUtility {
                             resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
                             LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op

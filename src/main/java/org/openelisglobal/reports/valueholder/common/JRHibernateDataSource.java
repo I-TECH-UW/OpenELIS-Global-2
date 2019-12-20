@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.reports.valueholder.common;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                         PropertyUtils.getPropertyDescriptor(object, field.substring(0, field.indexOf("__"))));
                 Object nestedObject = nestedGetter.invoke(object, (Object[]) null);
                 value = nestedFieldValue(nestedObject, field.substring(field.indexOf("__") + 2, field.length()));
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
             }
@@ -77,7 +78,7 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                 if (Map.class.isAssignableFrom(getter.getReturnType())) {
                     return new JRHibernateDataSource((Map) value);
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
             }

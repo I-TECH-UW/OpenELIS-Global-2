@@ -63,6 +63,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +73,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
+            "testName", "resultList[*].accessionNumber", "resultList[*].analysisId", "resultList[*].testId",
+            "resultList[*].sampleId", "resultList[*].resultType", "resultList[*].sampleGroupingNumber",
+            "resultList[*].noteId", "resultList[*].resultId", "resultList[*].hasQualifiedResult",
+            "resultList[*].sampleIsAccepted", "resultList[*].sampleIsRejected", "resultList[*].result",
+            "resultList[*].qualifiedResultValue", "resultList[*].multiSelectResultValues", "resultList[*].isAccepted",
+            "resultList[*].isRejected", "resultList[*].note" };
 
     // autowiring not needed, using constructor injection
     private AnalysisService analysisService;
@@ -105,18 +115,26 @@ public class ResultValidationController extends BaseResultValidationController {
         RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
-    public ModelAndView showResultValidation(HttpServletRequest request)
+    public ModelAndView showResultValidation(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        ResultValidationForm form = new ResultValidationForm();
-        return getResultValidation(request, form);
+
+        ResultValidationForm newForm = new ResultValidationForm();
+        newForm.setTestSectionId(oldForm.getTestSectionId());
+        newForm.setTestSection(oldForm.getTestSection());
+        return getResultValidation(request, newForm);
     }
 
     private ModelAndView getResultValidation(HttpServletRequest request, ResultValidationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
-        String testSectionId = (request.getParameter("testSectionId"));
 
         ResultValidationPaging paging = new ResultValidationPaging();
         String newPage = request.getParameter("page");
@@ -129,16 +147,17 @@ public class ResultValidationController extends BaseResultValidationController {
             form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
-            if (!GenericValidator.isBlankOrNull(testSectionId)) {
-                ts = testSectionService.get(testSectionId);
+            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+                ts = testSectionService.get(form.getTestSectionId());
                 form.setTestSectionId("0");
             }
 
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            if (!GenericValidator.isBlankOrNull(testSectionId)) {
-                resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(), testSectionId);
+            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+                resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
+                        form.getTestSectionId());
 
             } else {
                 resultList = new ArrayList<>();
@@ -146,7 +165,7 @@ public class ResultValidationController extends BaseResultValidationController {
             paging.setDatabaseResults(request, form, resultList);
 
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         addFlashMsgsToRequest(request);

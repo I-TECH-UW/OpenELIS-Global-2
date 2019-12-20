@@ -5,15 +5,8 @@
 			org.openelisglobal.login.valueholder.UserSessionData,
 			org.openelisglobal.internationalization.MessageUtil"%>
 
-<%!
-      String path = "";
-      String basePath = "";
-      UserSessionData usd = null;
-%>
 <%
-      path = request.getContextPath();
-      basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-	  
+	UserSessionData usd = null;
 	  if ( request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null ){
           usd = ( UserSessionData ) request.getSession().getAttribute( IActionConstants.USER_SESSION_DATA );
       }

@@ -110,7 +110,7 @@ public abstract class BaseController implements IActionConstants {
      *
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         String message = MessageUtil.getContextualMessage(messageKey);
         return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
     }
@@ -122,7 +122,7 @@ public abstract class BaseController implements IActionConstants {
      * @param request    the HttpServletRequest
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (null == messageKey) {
             return null;
         }
@@ -132,7 +132,7 @@ public abstract class BaseController implements IActionConstants {
         // messageKey);
     }
 
-    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) {
         if (null == messageKey) {
             return null;
         }
@@ -158,7 +158,7 @@ public abstract class BaseController implements IActionConstants {
             } else {
                 pageTitle = getMessageForKey(request, pageTitleKey, pageTitleKeyParameter);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
@@ -170,7 +170,7 @@ public abstract class BaseController implements IActionConstants {
                 pageSubtitle = getMessageForKey(request, pageSubtitleKey, pageSubtitleKeyParameter);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }
@@ -235,22 +235,6 @@ public abstract class BaseController implements IActionConstants {
     protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {
         ModelAndView mv = findForward(forward, form);
         mv.addAllObjects(requestObjects);
-        return mv;
-    }
-
-    protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {
-        LogEvent.logInfo("BaseAction", "getForward()", "This is forward " + mv.getViewName());
-
-        if (id != null) {
-            mv.addObject(ID, id);
-        }
-        if (startingRecNo != null) {
-            mv.addObject("startingRecNo", startingRecNo);
-        }
-        if (direction != null) {
-            mv.addObject("direction", direction);
-        }
-
         return mv;
     }
 

@@ -2,49 +2,79 @@ package org.openelisglobal.qaevent.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.openelisglobal.qaevent.valueholder.NceCategory;
 import org.openelisglobal.qaevent.valueholder.NceType;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class NonConformingEventForm extends BaseForm {
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String id;
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String currentUserId;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String status;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String reportDate;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String name;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String reporterName;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String nceNumber;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String dateOfEvent;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String labOrderNumber;
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String specimen; // FK
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String prescriberName;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String site;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String reportingUnit;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String description;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String suspectedCauses;
 
+    @SafeHtml(whitelistType = WhiteListType.NONE)
     private String proposedAction;
 
+    @Valid
     private List<SampleItem> specimens;
+
+    @ValidAccessionNumber
+    private String labNo;
+
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String specimenId;
 
     /// for display
     private PatientSearch patientSearch;
@@ -411,5 +441,21 @@ public class NonConformingEventForm extends BaseForm {
 
     public void setActionTypeList(List<IdValuePair> actionTypeList) {
         this.actionTypeList = actionTypeList;
+    }
+
+    public String getLabNo() {
+        return labNo;
+    }
+
+    public void setLabNo(String labNo) {
+        this.labNo = labNo;
+    }
+
+    public String getSpecimenId() {
+        return specimenId;
+    }
+
+    public void setSpecimenId(String specimenId) {
+        this.specimenId = specimenId;
     }
 }

@@ -127,7 +127,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
 
             job.print(doc, aset);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new LIMSRuntimeException("Error in SampleLabelPrintProvider processRequest()", e);
         }
 

@@ -40,7 +40,7 @@ public class NCESampleSearchProvider extends BaseQueryProvider {
         String nationalID = request.getParameter("nationalID");
         String labNumber = request.getParameter("labNumber");
         String guid = request.getParameter("guid");
-        String suppressExternalSearch = request.getParameter("suppressExternalSearch");
+//        String suppressExternalSearch = request.getParameter("suppressExternalSearch");
         String patientID = null;
 
         String result = VALID;

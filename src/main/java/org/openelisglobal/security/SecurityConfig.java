@@ -20,9 +20,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Autowired
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",

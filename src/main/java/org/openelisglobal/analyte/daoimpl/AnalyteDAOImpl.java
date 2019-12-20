@@ -62,7 +62,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				String tableName = "ANALYTE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte AuditTrail deleteData()", e);
@@ -80,7 +80,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte deleteData()", e);
@@ -108,7 +108,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte insertData()", e);
@@ -129,7 +129,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			if (duplicateAnalyteExists(analyte)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte updateData()", e);
@@ -144,7 +144,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "ANALYTE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte AuditTrail updateData()", e);
@@ -156,7 +156,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(analyte);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(analyte);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte updateData()", e);
@@ -174,7 +174,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			} else {
 //				analyte.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte getData()", e);
@@ -191,7 +191,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getAllAnalytes()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte getAllAnalytes()", e);
@@ -216,7 +216,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getPageOfAnalytes()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte getPageOfAnalytes()", e);
@@ -253,7 +253,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
 //		}
@@ -268,7 +268,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			analyte = entityManager.unwrap(Session.class).get(Analyte.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "readAnalyte()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte readAnalyte()", e);
@@ -288,7 +288,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getAnalytes()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyte getAnalytes(String filter)", e);
@@ -342,7 +342,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
             return ana;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
@@ -368,7 +368,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //
 //			list = query.list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -389,7 +389,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //			query.setMaxResults(2);
 //
 //			list = query.list();
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("AnalyteDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -433,7 +433,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list.size() > 0;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
@@ -474,7 +474,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 //				}
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getTotalSearchedAnalyteCount()", e);
 //		}

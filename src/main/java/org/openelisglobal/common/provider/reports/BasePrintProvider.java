@@ -117,10 +117,10 @@ public abstract class BasePrintProvider implements IActionConstants {
         // sort children
         if (children != null && children.size() > 0) {
             Collections.sort(children, ResultsReportTestComparator.SORT_ORDER_COMPARATOR);
-        }
-        for (ResultsReportTest childElement : children) {
-            reportTests.add(childElement);
-            recursiveSort(childElement, reportTests);
+            for (ResultsReportTest childElement : children) {
+                reportTests.add(childElement);
+                recursiveSort(childElement, reportTests);
+            }
         }
     }
 
@@ -131,7 +131,7 @@ public abstract class BasePrintProvider implements IActionConstants {
      * @param request    the HttpServletRequest
      * @param messageKey the message key to look up bugzilla 2264
      */
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (null == messageKey) {
             return null;
         }
@@ -142,7 +142,7 @@ public abstract class BasePrintProvider implements IActionConstants {
     }
 
     // bugzilla 2264
-    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) {
         if (null == messageKey) {
             return null;
         }

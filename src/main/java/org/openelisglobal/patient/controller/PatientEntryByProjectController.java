@@ -21,6 +21,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +33,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
     @Autowired
-    PatientEntryByProjectFormValidator formValidator;
+    private PatientEntryByProjectFormValidator formValidator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        String[] allowedFields = getBasePatientEntryByProjectFields().toArray(new String[0]);
+        binder.setAllowedFields(allowedFields);
+    }
 
     @RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.GET)
     public ModelAndView showPatientEntryByProject(HttpServletRequest request)
@@ -66,7 +74,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
     @RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.POST)
     public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

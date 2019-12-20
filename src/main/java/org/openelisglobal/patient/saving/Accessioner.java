@@ -42,6 +42,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -296,13 +297,17 @@ public abstract class Accessioner implements IAccessioner {
      * Primary entry point for processing a patient/sample combination Check the
      * messages, on true there may have been errors
      *
-     * @return TRUE => errors FALSE => did not do it, had a problem doing it.
-     * @throws Exception
-     * @throws Exception
+     * @return TRUE => errors FALSE => did not do it, had a problem doing it. @ @
+     * @throws IllegalAccessException
+     * @throws LIMSRuntimeException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws LIMSException
      */
     @Override
     @Transactional // only works if this class is autowired in
-    public String save() throws Exception {
+    public String save() throws IllegalAccessException, LIMSRuntimeException, InvocationTargetException,
+            NoSuchMethodException, LIMSException {
         try {
             if (!canAccession()) {
                 return null;
@@ -342,7 +347,7 @@ public abstract class Accessioner implements IAccessioner {
             deleteOldPatient();
             populateAndPersistUnderInvestigationNote();
             return IActionConstants.FWD_SUCCESS_INSERT;
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             logAndAddMessage("save()", "errors.InsertException", e);
             throw e;
         }
@@ -386,7 +391,7 @@ public abstract class Accessioner implements IAccessioner {
         }
     }
 
-    protected void persistSampleData() throws Exception {
+    protected void persistSampleData() {
         persistSample();
         persistSampleProject();
         persistSampleOrganization();
@@ -643,16 +648,18 @@ public abstract class Accessioner implements IAccessioner {
      * SampleOrganization but not to any of the entities which tie a patient to a
      * sample; don't include ObservationHistory and SampleHuman
      *
-     * @throws Exception if things go wrong.
+     * @throws LIMSException
+     *
+     * @ if things go wrong.
      */
-    abstract protected void populateSampleData() throws Exception;
+    abstract protected void populateSampleData() throws LIMSException;
 
     /**
      * Create any appropriate sample human entity
      *
-     * @throws Exception
+     * @
      */
-    protected void populateSampleHuman() throws Exception {
+    protected void populateSampleHuman() {
         if (isNewSample()) {
             sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Entered));
             sampleHuman = new SampleHuman();
@@ -690,8 +697,7 @@ public abstract class Accessioner implements IAccessioner {
         return patient;
     }
 
-    protected void populateSample(Timestamp receivedDateForDisplay, Timestamp collectionDateForDisplay)
-            throws Exception {
+    protected void populateSample(Timestamp receivedDateForDisplay, Timestamp collectionDateForDisplay) {
         sample.setAccessionNumber(accessionNumber);
         sample.setReceivedTimestamp(receivedDateForDisplay);
         sample.setCollectionDate(collectionDateForDisplay);
@@ -837,13 +843,12 @@ public abstract class Accessioner implements IAccessioner {
         patientInDB.setBirthDateForDisplay(birthDateForDisplay);
     }
 
-    protected void populateSampleItems(List<TypeOfSampleTests> typeofSampleTestList, Timestamp collectionDate)
-            throws Exception {
+    protected void populateSampleItems(List<TypeOfSampleTests> typeofSampleTestList, Timestamp collectionDate) {
         sampleItemsAnalysis = new ArrayList<>();
 
         if (typeofSampleTestList.size() == 0) {
             messages.reject("errors.no.tests");
-            throw new Exception("No tests selected.");
+            throw new LIMSRuntimeException("No tests selected.");
         }
 
         for (TypeOfSampleTests typeofSampleTest : typeofSampleTestList) {
@@ -869,7 +874,7 @@ public abstract class Accessioner implements IAccessioner {
         public List<Test> tests;
         public String collectionDate;
 
-        public SampleItemAnalysisCollection(SampleItem item, List<Test> tests) throws Exception {
+        public SampleItemAnalysisCollection(SampleItem item, List<Test> tests) {
             // Currently we allow a sampleItem w/o any tests requested,
             // elsewhere we check that at least one test is ordered somewhere.
             // if (tests.size() == 0) {
@@ -900,7 +905,7 @@ public abstract class Accessioner implements IAccessioner {
         }
     }
 
-    protected void persistSampleItemsAndAnalysis() throws Exception {
+    protected void persistSampleItemsAndAnalysis() {
         if (0 == sampleItemsAnalysis.size()) {
             return;
         }
@@ -992,9 +997,9 @@ public abstract class Accessioner implements IAccessioner {
      * is not already been declared bad, then we're ready to mark the sample as
      * done.
      *
-     * @throws Exception
+     * @
      */
-    public void completeSample() throws Exception {
+    public void completeSample() {
         if (isAllAnalysisDone() && !StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated)
                 .equals(sample.getStatus())) {
             sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
@@ -1071,7 +1076,7 @@ public abstract class Accessioner implements IAccessioner {
         }
     }
 
-    protected void persistSample() throws LIMSRuntimeException, Exception {
+    protected void persistSample() throws LIMSRuntimeException {
         if (null != sample) {
             sample.setSysUserId(sysUserId);
             if (sample.getId() != null) {

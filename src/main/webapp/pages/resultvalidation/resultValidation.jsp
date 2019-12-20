@@ -24,6 +24,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
+<c:set var="testSection"	value='${form.testSection}' />
 <c:set var="results" value="${form.resultList}" />
 <c:set var="pagingSearch" value='${form.paging.searchTermToPage}'/>
 <c:set var="testSectionsByName" value='${form.testSectionsByName}' />
@@ -31,40 +32,28 @@
 <c:set var="rowColorIndex" value="${2}" />
 
 <%!
-	boolean showAccessionNumber = false;
-	String currentAccessionNumber = "";
-	int rowColorIndex = 2;
-	IAccessionNumberValidator accessionNumberValidator;
-	String searchTerm = null;
-	//boolean showTestSectionSelect = false;
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 <%
-
-	String basePath;
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
-	currentAccessionNumber="";
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	searchTerm = request.getParameter("searchTerm");
+	int rowColorIndex = 2;
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
+	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
-	//showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
-	
-		
+	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
 %>
 
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/math-extend.js?" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?" ></script>
+<script src="scripts/ajaxCalls.js" ></script>
 
-
-<script type="text/javascript" >
+<script>
 var dirty = false;
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(testSection == "") ? "" : "&type=" += testSection}</spring:escapeBody>' + '&test= <spring:escapeBody javaScriptEscape="true">testName</spring:escapeBody>');
@@ -264,6 +253,9 @@ function updateReflexChild( group){
                       method: 'get', //http method
                       parameters: 'provider=TestReflexCD4Provider&' + requestString,
                       indicator: 'throbbing',
+      				  requestHeaders : {
+    					  "X-CSRF-Token" : getCsrfToken()
+    				  },
                       onSuccess:  processTestReflexCD4Success,
                       onFailure:  processTestReflexCD4Failure
                            }
@@ -434,7 +426,7 @@ function /*boolean*/ handleEnterEvent(){
 			<c:if test="${resultList.multipleResultForSample && showAccessionNumber}">
 				<c:set var="showAccessionNumber" value="${false}"/>
 			<tr  class='${(rowColorIndex % 2 == 0) ? "evenRow" : "oddRow"}' >
-				<td colspan="3" class='<%= currentAccessionNumber %>'>
+				<td colspan="3" class='${currentAccessionNumber}'>
 	      			<c:out value="${resultList.accessionNumber}"/>
 	    		</td>
 	    		<td style="text-align:center">
@@ -497,7 +489,7 @@ function /*boolean*/ handleEnterEvent(){
 					   			/>
                     <c:out value="${resultList.units}"/>
 					</c:when><c:when test="${'M' == resultList.resultType}">
-                    <!-- multiple results -->
+                    <%-- multiple results --%>
                     <form:select path="resultList[${iter.index}].multiSelectResultValues"
                             id='resultId_${iter.index}_0'
                             multiple="multiple"
@@ -517,7 +509,7 @@ function /*boolean*/ handleEnterEvent(){
                             />
                     <c:out value="${resultList.units}"/>
                     </c:when><c:when test="${'C' == resultList.resultType}">
-                    <!-- cascading multiple results -->
+                    <%-- cascading multiple results --%>
                     <div id='cascadingMulti_${iter.index}_0' class='cascadingMulti_${iter.index}' >
                     <input type="hidden" id='divCount_${iter.index}' value="0" >
                     <form:select path="resultList[${iter.index}].multiSelectResultValues"

@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +52,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SampleBatchEntryController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.birthDateForDisplay", "patientProperties.age", "patientProperties.gender",
+            //
+            "sampleOrderItems.labNo",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
+            "form.sampleOrderItems.referringSiteName", "patientProperties.patientUpdateStatus", "currentDate",
+            "currentTime", "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
+            "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId",
+            //
+            "method", "facilityIDCheck", "facilityID", "patientInfoCheck" };
 
     @Autowired
     SampleBatchEntryFormValidator formValidator;
@@ -66,6 +84,11 @@ public class SampleBatchEntryController extends BaseController {
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = { "/SampleBatchEntry" }, method = RequestMethod.POST)
     public ModelAndView showSampleBatchEntry(HttpServletRequest request,

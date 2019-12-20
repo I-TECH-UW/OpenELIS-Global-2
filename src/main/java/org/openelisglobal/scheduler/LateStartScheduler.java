@@ -45,11 +45,11 @@ import org.springframework.stereotype.Component;
 public class LateStartScheduler {
 
     @Autowired
-    CronSchedulerService cronSchedulerService;
+    private CronSchedulerService cronSchedulerService;
 
     private static final String NEVER = "never";
 
-    private static Map<String, Class<? extends Job>> scheduleJobMap;
+    private static final Map<String, Class<? extends Job>> scheduleJobMap;
 
     private Scheduler scheduler;
 
@@ -57,6 +57,14 @@ public class LateStartScheduler {
         scheduleJobMap = new HashMap<>();
         scheduleJobMap.put("sendSiteIndicators", AggregateReportJob.class);
         scheduleJobMap.put("sendMalariaSurviellanceReport", MalariaSurveilanceJob.class);
+    }
+
+    public LateStartScheduler() {
+        try {
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+        } catch (SchedulerException e) {
+            LogEvent.logError(e);
+        }
     }
 
     public void restartSchedules() {
@@ -67,7 +75,7 @@ public class LateStartScheduler {
         @Override
         public void run() {
             try {
-                scheduler = StdSchedulerFactory.getDefaultScheduler();
+//                scheduler = StdSchedulerFactory.getDefaultScheduler();
                 scheduler.shutdown();
                 checkAndStartScheduler();
             } catch (SchedulerException e) {
@@ -78,7 +86,7 @@ public class LateStartScheduler {
 
     public void checkAndStartScheduler() {
         try {
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
+//            scheduler = StdSchedulerFactory.getDefaultScheduler();
 
             List<CronScheduler> schedulers = cronSchedulerService.getAll();
 
@@ -128,7 +136,8 @@ public class LateStartScheduler {
                 new ImmediateRunner(scheduler, jobName).start();
             }
         } catch (NumberFormatException e) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Malformed cron statement." + schedule.getCronStatement());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    "Malformed cron statement." + schedule.getCronStatement());
         }
     }
 

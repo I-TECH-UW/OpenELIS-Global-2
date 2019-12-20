@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class SampleEntryAfterPatientEntry extends SampleEntry {
 
     public SampleEntryAfterPatientEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);
@@ -43,7 +43,7 @@ public class SampleEntryAfterPatientEntry extends SampleEntry {
      * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
      */
     @Override
-    protected void populateSampleHuman() throws Exception {
+    protected void populateSampleHuman()  {
         sampleHuman = new SampleHuman();
         sampleHuman.setSampleId(statusSet.getSampleId());
         sampleHumanService.getDataBySample(sampleHuman);

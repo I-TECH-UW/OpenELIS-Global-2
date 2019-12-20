@@ -89,7 +89,7 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
             try {
                 // a little past 0 millisecs
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
             }

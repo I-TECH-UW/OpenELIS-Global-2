@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,6 +29,8 @@ import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,11 +40,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class BatchTestReassignmentController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad" };
+
     @Autowired
     BatchTestReassignmentFormValidator formValidator;
 
     @Autowired
     private AnalysisService analysisService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.GET)
     public ModelAndView showBatchTestReassignment(HttpServletRequest request)
@@ -88,7 +96,8 @@ public class BatchTestReassignmentController extends BaseController {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
-            form.setSampleList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+            form.setSampleList(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
             form.setStatusChangedList(changeBeans);
             form.setStatusChangedSampleType(changedMetaInfo.sampleTypeName);
             form.setStatusChangedCurrentTest(changedMetaInfo.currentTest);

@@ -87,7 +87,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      * @param xml
      */
     private void createReturnXML(Sample sample, String patientId, StringBuilder xml) {
-        XMLUtil.appendKeyValue("patientPK", StringUtil.concatToMaxIdLength(patientId), xml);
+        XMLUtil.appendKeyValue("patientPK", StringUtil.snipToMaxIdLength(patientId), xml);
         XMLUtil.appendKeyValue("samplePK", sample.getId(), xml);
         XMLUtil.appendKeyValue("labNo", sample.getAccessionNumber(), xml);
         XMLUtil.appendKeyValue("receivedDateForDisplay", sample.getReceivedDateForDisplay(), xml);

@@ -13,15 +13,13 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-  String paginationMessage = "";
-  String totalCount = "0";
-  String fromCount = "0";
-  String toCount = "0";
-  boolean allowDeactivate = false;
-%>
-
 <%
+	String paginationMessage = "";
+	String totalCount = "0";
+	String fromCount = "0";
+	String toCount = "0";
+	boolean allowDeactivate = false;
+
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
        } 
@@ -49,13 +47,6 @@
       if (request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN) != null) {
           notAllowSearching = "false";
 
-       }
-
-       String searchStr="";
-       if (request.getAttribute(IActionConstants.MENU_SELECT_LIST_HEADER_SEARCH_STRING) != null ) {
-          {
-             searchStr = (String) request.getAttribute(IActionConstants.MENU_SELECT_LIST_HEADER_SEARCH_STRING);
-           }
        }
 
        String searchColumn="";
@@ -157,7 +148,7 @@ function submitSearchForClick(button){
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
+		<%-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   --%>
 			<td><button type="button" id="edit"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=');return false;"
 					name="edit"
@@ -198,7 +189,7 @@ function submitSearchForClick(button){
 
 				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> 
 				<form:input path="searchString" onkeypress="submitSearchForEnter(event);"
-						size="20" maxlength="20" value="<%=searchStr%>"
+						size="20" maxlength="20"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>" />
 
 

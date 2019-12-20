@@ -492,7 +492,7 @@
             <insert schemaName="clinlims" tableName="login_user">
                     <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/>
                     <column name="login_name" value="aggUser"/>
-                    <column name="password" value="fruwkmHht3w1j3kXBc2CcQ=="/>
+                    <column name="password" value=""/>
                     <column name="password_expired_dt" valueDate="2050-01-01"/>
                     <column name="account_locked" value="N"/>
                     <column name="account_disabled" value="N"/>
