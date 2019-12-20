@@ -17,7 +17,7 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<c:set var="workplanType" value="${param.type}"/>
+<c:set var="workplanType" value="${form.workplanType}"/>
 <c:set var="tests" value="${form.workplanTests}"/>
 <c:set var="testCount" value="${fn:length(tests)}"/>
 <c:set var="currentAccessionNumber" value=""/>

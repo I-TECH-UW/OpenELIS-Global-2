@@ -49,13 +49,6 @@
 
        }
 
-       String searchStr="";
-       if (request.getAttribute(IActionConstants.MENU_SELECT_LIST_HEADER_SEARCH_STRING) != null ) {
-          {
-             searchStr = (String) request.getAttribute(IActionConstants.MENU_SELECT_LIST_HEADER_SEARCH_STRING);
-           }
-       }
-
        String searchColumn="";
        if (request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN) != null )  {
           {
@@ -196,7 +189,7 @@ function submitSearchForClick(button){
 
 				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> 
 				<form:input path="searchString" onkeypress="submitSearchForEnter(event);"
-						size="20" maxlength="20" value="<%=searchStr%>"
+						size="20" maxlength="20"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>" />
 
 

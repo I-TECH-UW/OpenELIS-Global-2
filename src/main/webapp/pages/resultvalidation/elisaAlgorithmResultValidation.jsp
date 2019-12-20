@@ -19,7 +19,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 	
-<c:set var="testSection"	value='<%=(String) request.getParameter("type")%>' />
+<c:set var="testSection"	value='${form.testSection}' />
 <c:set var="results" value="${form.resultList}" />
 <c:set var="resultCount" value="${fn:length(results)}" />
 <c:set var="pageSearchList" value='${form.paging.searchTermToPage}'/>	

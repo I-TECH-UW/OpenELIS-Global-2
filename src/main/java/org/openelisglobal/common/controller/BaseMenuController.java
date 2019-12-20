@@ -157,7 +157,11 @@ public abstract class BaseMenuController extends BaseController {
             stringStartingRecNo = request.getParameter("startingRecNo");
         }
 
+        // Make sure it's a valid value
         int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        if (startingRecNo <= 0) {
+            startingRecNo = 1;
+        }
         return startingRecNo;
     }
 

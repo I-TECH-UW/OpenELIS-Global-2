@@ -12,7 +12,6 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.form.DictionaryMenuForm;
@@ -62,20 +61,18 @@ public class DictionaryMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<Dictionary> createMenuList(MenuForm form, HttpServletRequest request) {
 
         List<Dictionary> dictionaries;
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
         int startingRecNo = Integer.parseInt(stringStartingRecNo);
         // bugzilla 1413
-        String searchString = request.getParameter("searchString");
-
-        String doingSearch = request.getParameter("search");
         int total;
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-            dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo, searchString);
-            total = dictionaryService.getCountSearchedDictionaries(searchString);
+        if (YES.equals(request.getParameter("search"))) {
+            dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo,
+                    request.getParameter("searchString"));
+            total = dictionaryService.getCountSearchedDictionaries(request.getParameter("searchString"));
         } else {
             dictionaries = dictionaryService.getPage(startingRecNo);
             total = dictionaryService.getCount();
@@ -105,11 +102,8 @@ public class DictionaryMenuController extends BaseMenuController {
         // know
         // what to do
 
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-
+        if (YES.equals(request.getParameter("search"))) {
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
-
-            request.setAttribute(MENU_SELECT_LIST_HEADER_SEARCH_STRING, searchString);
         }
 
         return dictionaries;
@@ -125,7 +119,6 @@ public class DictionaryMenuController extends BaseMenuController {
         return "false";
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
     public ModelAndView showDeleteDictionary(HttpServletRequest request,
             @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -171,19 +172,23 @@ public class AnalyzerResultsController extends BaseController {
     }
 
     @RequestMapping(value = "/AnalyzerResults", method = RequestMethod.GET)
-    public ModelAndView showAnalyzerResults(HttpServletRequest request)
+    public ModelAndView showAnalyzerResults(@Valid @ModelAttribute("form") AnalyzerResultsForm oldForm,
+            BindingResult result,
+            HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerResultsForm form = new AnalyzerResultsForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        String page = request.getParameter("page");
-        String requestAnalyzerType = request.getParameter("type");
+        String requestAnalyzerType = null;
+        if (!result.hasFieldErrors("analyzerType")) {
+            requestAnalyzerType = oldForm.getAnalyzerType();
+        }
 
         form.setAnalyzerType(requestAnalyzerType);
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
-        if (GenericValidator.isBlankOrNull(page)) {
+        if (GenericValidator.isBlankOrNull(request.getParameter("page"))) {
             // get list of AnalyzerData from table based on analyzer type
             List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
 
@@ -246,7 +251,7 @@ public class AnalyzerResultsController extends BaseController {
                 paging.setDatabaseResults(request, form, analyzerResultItemList);
             }
         } else {
-            paging.page(request, form, page);
+            paging.page(request, form, Integer.parseInt(request.getParameter("page")));
         }
 
         addFlashMsgsToRequest(request);

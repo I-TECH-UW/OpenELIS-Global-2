@@ -113,7 +113,7 @@ public class StatusResultsController extends BaseController {
 
             setSelectionLists(form);
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);

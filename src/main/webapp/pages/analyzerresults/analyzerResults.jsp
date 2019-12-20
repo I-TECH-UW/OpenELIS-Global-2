@@ -27,7 +27,7 @@
 
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
+var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&analyzerType=" +=  analyzerType}</spring:escapeBody>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
@@ -76,7 +76,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?type=" += analyzerType}</spring:escapeBody>';
+	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?analyzerType=" += analyzerType}</spring:escapeBody>';
 	form.submit();
 
 }

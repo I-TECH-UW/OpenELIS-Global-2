@@ -41,9 +41,9 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs[*]" };
 
     @Autowired
-    AnalyzerTestMappingService analyzerTestMappingService;
+    private AnalyzerTestMappingService analyzerTestMappingService;
     @Autowired
-    AnalyzerService analyzerService;
+    private AnalyzerService analyzerService;
 
     private static final int ANALYZER_NAME = 0;
     private static final int ANALYZER_TEST = 1;
@@ -78,7 +78,13 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
         request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = 0;
+        if (stringStartingRecNo != null) {
+            startingRecNo = Integer.parseInt(stringStartingRecNo);
+            if (startingRecNo < 0) {
+                startingRecNo = 0;
+            }
+        }
 
         List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
         List<String> analyzerList = AnalyzerTestNameCache.getInstance().getAnalyzerNames();

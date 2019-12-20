@@ -281,7 +281,7 @@ public class PluginLoader {
         } catch (java.lang.InstantiationException e) {
             LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
-        }
+        } 
 
     }
 

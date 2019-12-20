@@ -125,8 +125,6 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 
     private void setupCommonFields(SampleBatchEntryForm form, HttpServletRequest request)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setCurrentDate(request.getParameter("currentDate"));
-        form.setCurrentTime(request.getParameter("currentTime"));
         addOrganizationLists(form);
     }
 

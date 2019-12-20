@@ -34,9 +34,9 @@ import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.sample.bean.SampleEditItem;
 import org.openelisglobal.sample.form.SampleEditForm;
+import org.openelisglobal.sample.form.SampleEditForm.SampleEdit;
 import org.openelisglobal.sample.service.SampleEditService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
@@ -123,13 +123,11 @@ public class SampleEditController extends BaseController {
     @Autowired
     private AnalysisService analysisService;
     @Autowired
-    TypeOfSampleTestService typeOfSampleTestService;
+    private TypeOfSampleTestService typeOfSampleTestService;
     @Autowired
-    ResultService resultService;
+    private SampleHumanService sampleHumanService;
     @Autowired
-    SampleHumanService sampleHumanService;
-    @Autowired
-    UserRoleService userRoleService;
+    private UserRoleService userRoleService;
     @Autowired
     private SampleEditService sampleEditService;
 
@@ -139,7 +137,8 @@ public class SampleEditController extends BaseController {
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
-    public ModelAndView showSampleEdit(HttpServletRequest request)
+    public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
+    SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         SampleEditForm form = new SampleEditForm();
         form.setFormAction("SampleEdit.do");
@@ -152,9 +151,11 @@ public class SampleEditController extends BaseController {
                 || "readwrite".equals(request.getParameter("type"));
         form.setIsEditable(isEditable);
 
-        String accessionNumber = request.getParameter("accessionNumber");
-        if (GenericValidator.isBlankOrNull(accessionNumber)) {
+        String accessionNumber = "";
+        if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
+        } else if (!result.hasFieldErrors("accessionNumber")) {
+            accessionNumber = form.getAccessionNumber();
         }
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             form.setAccessionNumber(accessionNumber);
@@ -187,7 +188,9 @@ public class SampleEditController extends BaseController {
             }
         } else {
             form.setSearchFinished(Boolean.FALSE);
-            request.getSession().setAttribute(SAMPLE_EDIT_WRITABLE, request.getParameter("type"));
+            if ("readwrite".equals(request.getParameter("type"))) {
+                request.getSession().setAttribute(SAMPLE_EDIT_WRITABLE, "readwrite");
+            }
         }
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {

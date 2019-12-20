@@ -65,7 +65,7 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
             }
 
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         addFlashMsgsToRequest(request);

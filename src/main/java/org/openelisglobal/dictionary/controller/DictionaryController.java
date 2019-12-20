@@ -17,6 +17,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.form.DictionaryForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.validator.DictionaryFormValidator;
@@ -70,7 +71,10 @@ public class DictionaryController extends BaseController {
         DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
         newForm.setCancelAction("CancelDictionary.do");
 
-        String id = request.getParameter(ID);
+        String id = "";
+        if (ValidationHelper.ID_REGEX.matches(request.getParameter(ID))) {
+            id = request.getParameter(ID);
+        }
 
         setDefaultButtonAttributes(request);
 
@@ -278,10 +282,10 @@ public class DictionaryController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelDictionary", method = RequestMethod.GET)
-    public ModelAndView cancelDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
+    public ModelAndView cancelDictionary(HttpServletRequest request,
             SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new DictionaryForm());
     }
 
     @Override

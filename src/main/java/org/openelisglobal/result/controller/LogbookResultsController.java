@@ -52,6 +52,7 @@ import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.form.LogbookResultsForm;
+import org.openelisglobal.result.form.LogbookResultsForm.LogbookResults;
 import org.openelisglobal.result.service.LogbookResultsPersistService;
 import org.openelisglobal.result.service.ResultInventoryService;
 import org.openelisglobal.result.service.ResultSignatureService;
@@ -85,7 +86,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LogbookResultsController extends LogbookResultsBaseController {
 
     private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
-            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "logbookType", "currentPageID",
+            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
             "testResult[*].accessionNumber", "testResult[*].isModified", "testResult[*].analysisId",
             "testResult[*].resultId", "testResult[*].testId", "testResult[*].technicianSignatureId",
             "testResult[*].testKitId", "testResult[*].resultLimitId", "testResult[*].resultType", "testResult[*].valid",
@@ -137,23 +138,30 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
-    public ModelAndView showLogbookResults(HttpServletRequest request, @ModelAttribute("form") LogbookResultsForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return getLogbookResults(request, new LogbookResultsForm());
+    public ModelAndView showLogbookResults(HttpServletRequest request,
+            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        LogbookResultsForm newForm = new LogbookResultsForm();
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId"))) {
+            newForm.setType(form.getType());
+            newForm.setTestSectionId(form.getTestSectionId());
+        }
+        return getLogbookResults(request, newForm);
     }
 
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        boolean useTechnicianName = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(Property.resultTechnicianName, "true");
-        boolean alwaysValidate = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
-        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        //        boolean useTechnicianName = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        //        boolean alwaysValidate = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        //        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String requestedPage = request.getParameter("page");
-        String testSectionId = request.getParameter("testSectionId");
+        int requestedPageNumber = Integer.parseInt(requestedPage);
+        String testSectionId = form.getTestSectionId();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -161,7 +169,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         String currentDate = getCurrentDate();
         form.setCurrentDate(currentDate);
-        form.setLogbookType(request.getParameter("type"));
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
         form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
@@ -206,7 +213,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.setDatabaseResults(request, form, tests);
 
         } else {
-            paging.page(request, form, requestedPage);
+            paging.page(request, form, requestedPageNumber);
         }
         form.setDisplayTestKit(false);
         if (ts != null) {
@@ -245,11 +252,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
-            "/StatusResults" }, method = RequestMethod.POST)
+    "/StatusResults" }, method = RequestMethod.POST)
     public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         boolean useTechnicianName = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.resultTechnicianName, "true");
         boolean alwaysValidate = ConfigurationProperties.getInstance()
@@ -307,11 +314,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getLogbookType())) {
+        if (GenericValidator.isBlankOrNull(form.getType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getLogbookType());
+            params.put("type", form.getType());
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
     }

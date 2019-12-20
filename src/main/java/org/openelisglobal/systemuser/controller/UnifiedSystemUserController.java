@@ -382,11 +382,6 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(PREVIOUS_DISABLED, "false");
         request.setAttribute(NEXT_DISABLED, "false");
 
-        String id = request.getParameter(ID);
-
-        String start = request.getParameter("startingRecNo");
-        String direction = request.getParameter("direction");
-
         if (form.getUserLoginName() != null) {
             form.setUserLoginName(form.getUserLoginName().trim());
         } else {
@@ -395,9 +390,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String forward = validateAndUpdateSystemUser(request, form);
 
-        if (forward.equals(FWD_SUCCESS)) {
-            return getForward(findForward(forward, form), id, start, direction);
-        } else if (forward.equals(FWD_SUCCESS_INSERT)) {
+        if (forward.equals(FWD_SUCCESS_INSERT)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             Map<String, String> params = new HashMap<>();
             params.put("forward", FWD_SUCCESS);
@@ -409,7 +402,6 @@ public class UnifiedSystemUserController extends BaseController {
     }
 
     private String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
-        String forward = FWD_SUCCESS_INSERT;
         String loginUserId = form.getLoginUserId();
         String systemUserId = form.getSystemUserId();
 
@@ -446,10 +438,10 @@ public class UnifiedSystemUserController extends BaseController {
 
             saveErrors(errors);
             disableNavigationButtons(request);
-            forward = FWD_FAIL_INSERT;
+            return FWD_FAIL_INSERT;
         }
 
-        return forward;
+        return FWD_SUCCESS_INSERT;
     }
 
     private boolean passwordHasBeenUpdated(boolean loginUserNew, UnifiedSystemUserForm form) {

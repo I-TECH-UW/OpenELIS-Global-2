@@ -54,7 +54,7 @@ public class PrintWorkplanReportController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String workplanType = form.getWorkplanType();
+        String workplanType = form.getType();
         String workplanName;
 
         if (workplanType.equals("test")) {

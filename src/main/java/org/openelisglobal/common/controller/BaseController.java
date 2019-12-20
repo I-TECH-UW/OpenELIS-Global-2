@@ -238,22 +238,6 @@ public abstract class BaseController implements IActionConstants {
         return mv;
     }
 
-    protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {
-        LogEvent.logInfo("BaseAction", "getForward()", "This is forward " + mv.getViewName());
-
-        if (id != null) {
-            mv.addObject(ID, id);
-        }
-        if (startingRecNo != null) {
-            mv.addObject("startingRecNo", startingRecNo);
-        }
-        if (direction != null) {
-            mv.addObject("direction", direction);
-        }
-
-        return mv;
-    }
-
     protected ModelAndView getForwardWithParameters(ModelAndView mv, Map<String, String> params) {
         mv.addAllObjects(params);
         return mv;

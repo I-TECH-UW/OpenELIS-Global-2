@@ -118,7 +118,7 @@ public class AccessionResultsController extends BaseController {
                 form.setSearchFinished(Boolean.FALSE);
             }
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         return findForward(FWD_SUCCESS, form);
