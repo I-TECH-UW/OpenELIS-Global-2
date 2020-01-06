@@ -71,9 +71,9 @@ public class DictionaryController extends BaseController {
         DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
         newForm.setCancelAction("CancelDictionary.do");
 
-        String id = "";
-        if (ValidationHelper.ID_REGEX.matches(request.getParameter(ID))) {
-            id = request.getParameter(ID);
+        String id = request.getParameter(ID) == null ? "" : request.getParameter(ID);
+        if (!id.matches(ValidationHelper.ID_REGEX)) {
+            id = "";
         }
 
         setDefaultButtonAttributes(request);

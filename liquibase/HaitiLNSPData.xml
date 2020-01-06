@@ -487,19 +487,19 @@
 			<column name="org_type_id" header="org_type_id"  type="NUMERIC" />
        </loadData>
   </changeSet>
- <changeSet author="paulsc" id="22" context="haitiLNSP">
-            <comment>Adding the user for IndicatorAggregationReportServlet</comment>
-            <insert schemaName="clinlims" tableName="login_user">
-                    <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/>
-                    <column name="login_name" value="aggUser"/>
-                    <column name="password" value=""/>
-                    <column name="password_expired_dt" valueDate="2050-01-01"/>
-                    <column name="account_locked" value="N"/>
-                    <column name="account_disabled" value="N"/>
-                    <column name="is_admin" value="N"/>
-                    <column name="user_time_out" value="480"/>
-            </insert>
- </changeSet>
+<!--  <changeSet author="paulsc" id="22" context="haitiLNSP"> -->
+<!--             <comment>Adding the user for IndicatorAggregationReportServlet</comment> -->
+<!--             <insert schemaName="clinlims" tableName="login_user"> -->
+<!--                     <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/> -->
+<!--                     <column name="login_name" value="aggUser"/> -->
+<!--                     <column name="password" value=""/> -->
+<!--                     <column name="password_expired_dt" valueDate="2050-01-01"/> -->
+<!--                     <column name="account_locked" value="N"/> -->
+<!--                     <column name="account_disabled" value="N"/> -->
+<!--                     <column name="is_admin" value="N"/> -->
+<!--                     <column name="user_time_out" value="480"/> -->
+<!--             </insert> -->
+<!--  </changeSet> -->
  <changeSet author="paulsc" id="23" context="haitiLNSP" >
 	<comment>Sets the default for site_information ResultTechnicianRequired to true</comment>
 	<update schemaName="clinlims" tableName="site_information" >
