@@ -24,6 +24,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVRo
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +37,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -57,6 +59,25 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
  * @since Mar 18, 2011
  */
 abstract public class CSVRoutineColumnBuilder {
+
+    // these are used so we are not passing around strings in the methods that are
+    // appended to sql
+    // this is to cover any potential sql injection that could be introduced by a
+    // developer
+    protected enum SQLConstant {
+        DEMO("demo"), RESULT("result");
+
+        private final String nameInSql;
+
+        private SQLConstant(String name) {
+            nameInSql = name;
+        }
+
+        @Override
+        public String toString() {
+            return nameInSql;
+        }
+    }
 
     /**
      *
@@ -185,17 +206,20 @@ abstract public class CSVRoutineColumnBuilder {
         BLANK // Will always be an empty string. Used when column is wanted but data is not
     }
 
-    public void buildDataSource() throws Exception {
+    public void buildDataSource() throws SQLException {
         buildResultSet();
     }
 
     protected void buildResultSet() throws SQLException {
+        // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
-        // System.out.println("===1===\n" + sql.substring(0, 7000)); // the SQL is
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
+        // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // System.out.println("===2===\n" + sql.substring(7000));
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
@@ -212,39 +236,60 @@ abstract public class CSVRoutineColumnBuilder {
         });
     }
 
+    protected synchronized String formatDateForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.format(date);
+    }
+
+    private synchronized String formatDateTimeForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.format(date);
+    }
+
+    protected synchronized Date parseDateForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.parse(date);
+    }
+
+    private synchronized Date parseDateTimeForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.parse(date);
+    }
+
     /**
      * @param value
      * @return
      */
     protected String datetimeToLocalDate(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
+            Date parsed = parseDateTimeForDatabaseSql(value);
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             return DateUtil.convertSqlDateToStringDate(date);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
 
     protected String datetimeToLocalDateTime(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
+            Date parsed = parseDateTimeForDatabaseSql(value);
             return DateUtil.formatDateTimeAsText(parsed);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
 
-    public String getValue(CSVRoutineColumn column, String accessionNumber) throws Exception {
+    public String getValue(CSVRoutineColumn column, String accessionNumber) throws SQLException, ParseException {
         String value;
         // look in the data source for a value
         try {
             value = resultSet.getString(trimToPostgresMaxColumnName(column.dbName));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            System.out.println("Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
 
@@ -252,9 +297,14 @@ abstract public class CSVRoutineColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            System.out.println("A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
         }
         return result;
+    }
+
+    private String prepareColumnName(String columnName) {
+        // trim and escape the column name so it is safe from sql injection
+        return trimToPostgresMaxColumnName("\"" + columnName.replace('"', '\'') + "\"");
     }
 
     private String trimToPostgresMaxColumnName(String name) {
@@ -310,7 +360,7 @@ abstract public class CSVRoutineColumnBuilder {
             this.customStrategy = customStrategy;
         }
 
-        public String translate(String value, String accessionNumber) throws Exception {
+        public String translate(String value, String accessionNumber) throws SQLException, ParseException {
             switch (strategy) {
             case CUSTOM:
                 return customStrategy.translate(value, accessionNumber, csvName, dbName);
@@ -361,7 +411,8 @@ abstract public class CSVRoutineColumnBuilder {
                 }
 
             case DEBUG:
-                System.out.println("Processing Column Value: " + csvName + " \"" + value + "\"");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                        "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
             default:
@@ -389,14 +440,14 @@ abstract public class CSVRoutineColumnBuilder {
             try {
                 double d = Double.parseDouble(value);
                 return String.valueOf(Math.log10(d));
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return "";
             }
         }
 
-        public String translateAge(Strategy strategy, String end) throws Exception {
+        public String translateAge(Strategy strategy, String end) throws SQLException, ParseException {
             Date birthday = resultSet.getDate("birth_date");
-            Date endDate = postgresDateTime.parse(end);
+            Date endDate = parseDateTimeForDatabaseSql(end);
             if ((birthday != null) && (endDate != null)) {
                 switch (strategy) {
                 case AGE_YEARS:
@@ -413,10 +464,10 @@ abstract public class CSVRoutineColumnBuilder {
 
         /**
          * @param value
-         * @return
-         * @throws Exception
+         * @return @
+         * @throws SQLException
          */
-        public String translateTestResult(String testName, String value) throws Exception {
+        public String translateTestResult(String testName, String value) throws SQLException {
             TestResult testResult = testResultsByTestName.get(testName);
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
@@ -466,39 +517,40 @@ abstract public class CSVRoutineColumnBuilder {
      * For every sample, one row per sample item, one column per test result for
      * that sample item.
      *
-     * @param lowDatePostgres
-     * @param highDatePostgres
+     * @param lowDate
+     * @param highDate
      */
-    protected void appendResultCrosstab(String lowDatePostgres, String highDatePostgres) {
+    protected void appendResultCrosstab(java.sql.Date lowDate, java.sql.Date highDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
         // String excludeAnalytes = getExcludedAnalytesSet();
-        String listName = "result";
+        SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
                 + ".* " + " FROM sample_item AS si LEFT JOIN \n ");
 
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''" + lowDatePostgres
-                + "'')  AND s.entered_date <= date(''" + highDatePostgres + " '') " + "\n AND s.id = si.samp_id "
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
+                + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
+                // sql injection safe as user cannot overwrite validStatusId in database
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 + "\n AND a.id = r.analysis_id " + "\n AND r.test_result_id = tr.id" + "\n AND tr.test_id = t.id       "
                 // + (( excludeAnalytes == null)?"":
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-//                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
-                + "\n ', 'SELECT description FROM test where test_name != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
         // resource name, because some tests have fancy characters in them and
         // somewhere
         // between iReport, Java and postgres a complex name (e.g. one including
-        // a beta, "�HCG Quant") get messed up and isn't found.
+        // a beta, " HCG Quant") get messed up and isn't found.
         query.append("\n as " + listName + " ( " // inner use of the list name
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
@@ -506,7 +558,7 @@ abstract public class CSVRoutineColumnBuilder {
             if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
                                            // it isn't clear it should be line
                                            // 446 may also have to be changed
-                query.append("\n, \"" + trimToPostgresMaxColumnName(testName) + "\" varchar(200) ");
+                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
             }
         }
         query.append(" ) \n");
@@ -530,14 +582,13 @@ abstract public class CSVRoutineColumnBuilder {
         return sb.toString();
     }
 
-    protected void appendObservationHistoryCrosstab(String lowDatePostgres, String highDatePostgres) {
-        String listName = "demo";
-        appendCrosstabPreamble(listName);
+    protected void appendObservationHistoryCrosstab(java.sql.Date lowDate, java.sql.Date highDate) {
+        appendCrosstabPreamble(SQLConstant.DEMO);
         query.append( // any Observation History items
                 "\n crosstab( " + "\n 'SELECT DISTINCT oh.sample_id as samp_id, oht.type_name, value "
                         + "\n FROM observation_history AS oh, sample AS s, observation_history_type AS oht "
-                        + "\n WHERE s.entered_date >= date(''" + lowDatePostgres + "'') "
-                        + "\n AND s.entered_date <= date(''" + highDatePostgres + "'')"
+                        + "\n WHERE s.entered_date >= date(''" + formatDateForDatabaseSql(lowDate) + "'') "
+                        + "\n AND s.entered_date <= date(''" + formatDateForDatabaseSql(highDate) + "'')"
                         + "\n AND s.id = oh.sample_id AND oh.observation_history_type_id = oht.id order by 1;' "
                         + "\n , "
                         + "\n 'SELECT DISTINCT oht.type_name FROM observation_history_type AS oht ORDER BY 1;' " + // must
@@ -570,19 +621,22 @@ abstract public class CSVRoutineColumnBuilder {
         // ... )
         query.append(" as demo ( " + " \"s_id\"                           numeric(10) ");
         for (ObservationHistoryType oht : allObHistoryTypes) {
+            // this is sql injection safe as users currently have no way of modifying fields
+            // in ObservationHistoryTypes
             query.append("\n," + oht.getTypeName() + " varchar(100) ");
         }
         query.append(" ) \n");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, listName);
+        appendCrosstabPostfix(lowDate, highDate, SQLConstant.DEMO);
     }
 
-    protected void appendCrosstabPreamble(String listName) {
+    protected void appendCrosstabPreamble(SQLConstant listName) {
         query.append(", \n\n ( SELECT s.id AS samp_id, " + listName + ".* " + " FROM sample AS s LEFT JOIN \n ");
     }
 
-    protected void appendCrosstabPostfix(String lowDatePostgres, String highDatePostgres, String listName) {
-        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.entered_date >= '" + lowDatePostgres + "'"
-                + " AND s.entered_date <= '" + highDatePostgres + "'" + " ORDER BY 1 " + "\n) AS " + listName + "\n ");
+    protected void appendCrosstabPostfix(java.sql.Date lowDate, java.sql.Date highDate, SQLConstant listName) {
+        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.entered_date >= '"
+                + formatDateForDatabaseSql(lowDate) + "'" + " AND s.entered_date <= '"
+                + formatDateForDatabaseSql(highDate) + "'" + " ORDER BY 1 " + "\n) AS " + listName + "\n ");
     }
 
     protected Object pad20(Object translate) {
@@ -625,10 +679,11 @@ abstract public class CSVRoutineColumnBuilder {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * @return @
+     * @throws ParseException
+     * @throws SQLException
      */
-    public String nextLine() throws Exception {
+    public String nextLine() throws SQLException, ParseException {
         StringBuilder line = new StringBuilder();
         String accessionNumber = null;
         for (CSVRoutineColumn column : columnsInOrder) {
@@ -648,7 +703,7 @@ abstract public class CSVRoutineColumnBuilder {
         return line.toString();
     }
 
-    public boolean next() throws Exception {
+    public boolean next() throws SQLException {
         return resultSet.next();
     }
 

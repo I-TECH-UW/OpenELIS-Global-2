@@ -27,21 +27,17 @@ public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest, String> {
 
 //	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) throws LIMSRuntimeException;
 
-    public List getAllTypeOfSampleTests() throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException;
 
-    public List getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
+    void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
 
-    public List getNextTypeOfSampleTestRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException;
 
-    public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException;
 
-    public Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException;
+    TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException;
 
-    public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException;
-
-    public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException;
-
-    public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException;
 }

@@ -54,7 +54,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
     private String error;
 
     public CobasTaqmanDBSReader() {
-        Test test = testService.getActiveTestByName("DNA PCR").get(0);
+        Test test = testService.getActiveTestsByName("DNA PCR").get(0);
         List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 
         for (TestResult testResult : testResults) {
@@ -81,11 +81,11 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
             return false;
         }
 
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.COBAS_DBS,
                 TEST_NAME);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_DBS,
                     TEST_NAME);
         }
 
@@ -96,7 +96,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
         if (results.size() > 0) {
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 error = "Cobas Taqman DBS analyzer: Unable to save to database";
                 successful = false;
             }

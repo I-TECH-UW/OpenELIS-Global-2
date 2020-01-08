@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.query;
@@ -39,7 +39,7 @@ public class HivStatusProvider extends BaseQueryProvider {
 
     private static final String NOT_FOUND = "Not found";
     /**
-     * 
+     *
      */
     private static final String HIV_STATUS_OH_TYPE = "hivStatus";
 
@@ -51,10 +51,11 @@ public class HivStatusProvider extends BaseQueryProvider {
         this.ajaxServlet = ajaxServlet;
     }
 
+    @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String patientId = (String) request.getParameter("patientId");
+        String patientId = request.getParameter("patientId");
         StringBuilder xml = new StringBuilder();
         String result = findHivStatus(patientId, xml);
         ajaxServlet.sendData(xml.toString(), result, request, response);
@@ -69,8 +70,8 @@ public class HivStatusProvider extends BaseQueryProvider {
                 return INVALID;
             }
             XMLUtil.appendKeyValue(HIV_STATUS_OH_TYPE, hivStatus, xml);
-        } catch (Exception e) {
-            LogEvent.logError("HivStatusProvider", "findHivStatus()", e.getMessage());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.getMessage(), e);
             retVal = INVALID;
         }
         return retVal;

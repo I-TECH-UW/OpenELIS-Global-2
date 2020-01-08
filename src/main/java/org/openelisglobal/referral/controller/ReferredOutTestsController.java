@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -25,6 +24,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
@@ -64,6 +64,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,6 +74,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ReferredOutTestsController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "referralItems[*].additionalTestsXMLWad",
+            "referralItems[*].referralResultId", "referralItems[*].referralId", "referralItems[*].referredResultType",
+            "referralItems[*].modified", "referralItems[*].inLabResultId", "referralItems[*].referralReasonId",
+            "referralItems[*].referrer", "referralItems[*].referredInstituteId", "referralItems[*].referredSendDate",
+            "referralItems[*].referredTestId", "referralItems[*].canceled", "referralItems[*].referredResult",
+            "referralItems[*].referredDictionaryResult", "referralItems[*].referredDictionaryResult",
+            "referralItems[*].multiSelectResultValues", "referralItems[*].referredMultiDictionaryResult",
+            "referralItems[*].multiSelectResultValues", "testResult[*].multiSelectResultValues",
+            "testResult[*].qualifiedResultValue", "referralItems[*].referredReportDate",
+            "referralItems[*].additionalTests[*].referralResultId",
+            "referralItems[*].additionalTests[*].referredResultType", "referralItems[*].additionalTests[*].remove",
+            "referralItems[*].additionalTests[*].referredTestId", "referralItems[*].additionalTests[*].referredResult",
+            "referralItems[*].additionalTests[*].referredDictionaryResult",
+            "referralItems[*].additionalTests[*].multiSelectResultValues",
+            "referralItems[*].additionalTests[*].referredDictionaryResult",
+            "referralItems[*].additionalTests[*].referredMultiDictionaryResult",
+            "referralItems[*].additionalTests[*].multiSelectResultValues", "testResult[*].multiSelectResultValues",
+            "testResult[*].qualifiedResultValue", "referralItems[*].additionalTests[*].referredReportDate",
+            "referralItems[*].note"
+
+    };
 
     private static final String RESULT_SUBJECT = "Result Note";
 
@@ -94,6 +118,11 @@ public class ReferredOutTestsController extends BaseController {
     @Autowired
     private AnalysisService analysisService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
     public ModelAndView showReferredOutTests(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -101,17 +130,22 @@ public class ReferredOutTestsController extends BaseController {
         ReferredOutTestsForm form = new ReferredOutTestsForm();
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        List<ReferralItem> referralItems = getReferralItems();
-        PropertyUtils.setProperty(form, "referralItems", referralItems);
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "referralOrganizations", DisplayListService.getInstance()
-                .getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
-
-        fillInDictionaryValuesForReferralItems(referralItems);
+        setupPageForDisplay(form);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
+    }
+
+    private void setupPageForDisplay(ReferredOutTestsForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        List<ReferralItem> referralItems = getReferralItems();
+        form.setReferralItems(referralItems);
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setReferralOrganizations(DisplayListService.getInstance()
+                .getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
+
+        fillInDictionaryValuesForReferralItems(referralItems);
     }
 
     private void fillInDictionaryValuesForReferralItems(List<ReferralItem> referralItems) {
@@ -418,7 +452,8 @@ public class ReferredOutTestsController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
-            findForward(FWD_FAIL_INSERT, form);
+            setupPageForDisplay(form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
 
         List<ReferralSet> referralSetList = new ArrayList<>();
@@ -430,12 +465,13 @@ public class ReferredOutTestsController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        List<ReferralItem> referralItems = (List<ReferralItem>) PropertyUtils.getProperty(form, "referralItems");
+        List<ReferralItem> referralItems = form.getReferralItems();
         selectModifiedAndCanceledItems(referralItems, modifiedItems, canceledItems);
         validateModifedItems(result, modifiedItems);
 
         if (result.hasErrors()) {
             saveErrors(result);
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
@@ -443,24 +479,26 @@ public class ReferredOutTestsController extends BaseController {
             createReferralSets(referralSetList, removableReferralResults, modifiedItems, canceledItems, parentSamples);
         } catch (LIMSRuntimeException e) {
             saveErrors(result);
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
         try {
             referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
                     removableReferralResults, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 errorMsg = "error.system";
             }
 
             result.reject(errorMsg);
             saveErrors(result);
             request.setAttribute(ALLOW_EDITS_KEY, "false");
+            setupPageForDisplay(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
@@ -634,7 +672,7 @@ public class ReferredOutTestsController extends BaseController {
                             }
                         }
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        LogEvent.logDebug(e);
                     }
                 } else {
                     ReferralResult referralResult = referralSet.getNextReferralResult();
@@ -772,7 +810,7 @@ public class ReferredOutTestsController extends BaseController {
                 newTestList.add(referralTest);
             }
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException(e);
         }
 

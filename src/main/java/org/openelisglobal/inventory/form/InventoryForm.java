@@ -26,7 +26,7 @@ public class InventoryForm extends BaseForm {
     private List<IdValuePair> sources;
 
     // for display
-    private List<IdValuePair> kitTypes;
+    private List<String> kitTypes;
 
     // in display
     private String newKitsXML = "";
@@ -59,11 +59,11 @@ public class InventoryForm extends BaseForm {
         this.sources = sources;
     }
 
-    public List<IdValuePair> getKitTypes() {
+    public List<String> getKitTypes() {
         return kitTypes;
     }
 
-    public void setKitTypes(List<IdValuePair> kitTypes) {
+    public void setKitTypes(List<String> kitTypes) {
         this.kitTypes = kitTypes;
     }
 

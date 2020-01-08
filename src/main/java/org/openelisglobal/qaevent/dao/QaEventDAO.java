@@ -35,23 +35,19 @@ public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
 //	public void deleteData(List qaEvents) throws LIMSRuntimeException;
 
-    public List getAllQaEvents() throws LIMSRuntimeException;
+    List<QaEvent> getAllQaEvents() throws LIMSRuntimeException;
 
-    public List getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException;
+    List<QaEvent> getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException;
 
-    public List getQaEvents(String filter) throws LIMSRuntimeException;
+    List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException;
 
-    public void getData(QaEvent qaEvent) throws LIMSRuntimeException;
+    void getData(QaEvent qaEvent) throws LIMSRuntimeException;
 
 //	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-    public List getNextQaEventRecord(String id) throws LIMSRuntimeException;
+    QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
 
-    public List getPreviousQaEventRecord(String id) throws LIMSRuntimeException;
-
-    public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
-
-    public Integer getTotalQaEventCount() throws LIMSRuntimeException;
+    Integer getTotalQaEventCount() throws LIMSRuntimeException;
 
     boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException;
 

@@ -1,16 +1,13 @@
 package org.openelisglobal.patient.saving;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 
 public interface ISampleEntry extends IAccessioner {
 
-    void setFieldsFromForm(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException;
 
     void setSysUserId(String sysUserId);
 

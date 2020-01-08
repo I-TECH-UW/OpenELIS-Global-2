@@ -28,6 +28,7 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.owasp.encoder.Encode;
 
 public class DateValidationProvider extends BaseValidationProvider {
 
@@ -55,7 +56,7 @@ public class DateValidationProvider extends BaseValidationProvider {
             Date date = getDate(dateString);
             result = validateDate(date, relative);
         }
-        ajaxServlet.sendData(formField, result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
     }
 
     public Date getDate(String date) {

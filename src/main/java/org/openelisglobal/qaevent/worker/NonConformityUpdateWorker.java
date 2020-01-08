@@ -28,6 +28,7 @@ import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.QAService.QAObservationValueType;
@@ -312,14 +313,14 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
                 }
             }
 
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 errors.reject("errors.UpdateException", "errors.UpdateException");
             }
-            throw lre;
+            throw e;
 
         }
 

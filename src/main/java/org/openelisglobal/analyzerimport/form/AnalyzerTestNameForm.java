@@ -28,7 +28,7 @@ public class AnalyzerTestNameForm extends BaseForm {
     private String testId;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String analyzerTestName;
 
     private boolean newMapping = true;

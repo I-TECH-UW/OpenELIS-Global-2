@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +39,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+
     @Autowired
     SystemUserService systemUserService;
     @Autowired
@@ -45,6 +49,11 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
     UserRoleService userRoleService;
     @Autowired
     UnifiedSystemUserService unifiedSystemUserService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
     public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -65,7 +74,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
         List<SystemUser> systemUsers = new ArrayList<>();
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
@@ -188,9 +197,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
         try {
             unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
 
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
                 result.reject("errors.DeleteException", "errors.DeleteException");

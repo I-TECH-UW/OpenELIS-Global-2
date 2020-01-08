@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
@@ -15,32 +15,18 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	     
 
-<c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
 
-<%!
-	IAccessionNumberValidator accessionNumberValidator;
-	boolean supportSTNumber = true;
-	boolean supportMothersName = true;
-	boolean supportSubjectNumber = true;
-	boolean supportNationalID = true;
-	boolean supportLabNumber = false;
-	String basePath = "";
- %>
-
  <%
- 	supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-  	supportMothersName = FormFields.getInstance().useField(Field.MothersName);
-  	supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-  	supportNationalID = FormFields.getInstance().useField(Field.NationalID);
-  	supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
- 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
- 	String path = request.getContextPath();
- 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
+	 boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
+	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
  %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
 <script type="text/javascript">
 var validator = new FieldValidator();
 validator.setRequiredFields( new Array("quantity") );
@@ -282,7 +268,7 @@ function enableSearchButton(eventCode){
     } else {
         searchButton.attr("disabled", "disabled");
     }
-    valueElem.attr("maxlength","<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>");
+    valueElem.attr("maxlength","<%=Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>");
     
 }
 

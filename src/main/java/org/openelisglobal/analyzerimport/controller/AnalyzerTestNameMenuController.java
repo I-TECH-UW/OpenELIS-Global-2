@@ -20,12 +20,15 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,13 +38,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs[*]" };
+
     @Autowired
-    AnalyzerTestMappingService analyzerTestMappingService;
+    private AnalyzerTestMappingService analyzerTestMappingService;
     @Autowired
-    AnalyzerService analyzerService;
+    private AnalyzerService analyzerService;
 
     private static final int ANALYZER_NAME = 0;
     private static final int ANALYZER_TEST = 1;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/AnalyzerTestNameMenu", method = RequestMethod.GET)
     public ModelAndView showAnalyzerTestNameMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -63,19 +73,25 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
 
         request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = 0;
+        if (stringStartingRecNo != null) {
+            startingRecNo = Integer.parseInt(stringStartingRecNo);
+            if (startingRecNo < 0) {
+                startingRecNo = 0;
+            }
+        }
 
         List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
-        List<String> analyzerList = AnalyzerTestNameCache.instance().getAnalyzerNames();
+        List<String> analyzerList = AnalyzerTestNameCache.getInstance().getAnalyzerNames();
         Analyzer analyzer = new Analyzer();
 
         for (String analyzerName : analyzerList) {
-            Collection<MappedTestName> mappedTestNames = AnalyzerTestNameCache.instance()
+            Collection<MappedTestName> mappedTestNames = AnalyzerTestNameCache.getInstance()
                     .getMappedTestsForAnalyzer(analyzerName).values();
             if (mappedTestNames.size() > 0) {
                 analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
@@ -144,7 +160,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
             return findForward(performMenuAction(form, request), form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
 
         // String sysUserId = getSysUserId(request);
         List<AnalyzerTestMapping> testMappingList = new ArrayList<>();
@@ -152,20 +168,20 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
         for (int i = 0; i < selectedIDs.size(); i++) {
             String[] ids = selectedIDs.get(i).split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
             AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
-            testMapping.setAnalyzerId(AnalyzerTestNameCache.instance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
+            testMapping.setAnalyzerId(AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
             testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);
             testMapping.setSysUserId(getSysUserId(request));
             testMappingList.add(testMapping);
             try {
                 analyzerTestMappingService.delete(testMapping);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
                 saveErrors(result);
                 return findForward(performMenuAction(form, request), form);
             }
         }
 
-        AnalyzerTestNameCache.instance().reloadCache();
+        AnalyzerTestNameCache.getInstance().reloadCache();
         request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
         redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
         return findForward(FWD_SUCCESS_DELETE, form);

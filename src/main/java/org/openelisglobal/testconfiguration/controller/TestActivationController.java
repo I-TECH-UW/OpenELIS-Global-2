@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.spring.util.SpringContext;
@@ -30,6 +31,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,12 +41,20 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestActivationController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList", "activeTestList[*].sampleType.id",
+            "inactiveTestList[*].sampleType.id" };
+
     @Autowired
     private TestActivationFormValidator formValidator;
     @Autowired
     private TypeOfSampleService typeOfSampleService;
     @Autowired
     private TestActivationService testActivationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
     public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -129,7 +140,7 @@ public class TestActivationController extends BaseController {
 
     @RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
     public ModelAndView postTestActivation(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
@@ -155,8 +166,8 @@ public class TestActivationController extends BaseController {
 
         try {
             testActivationService.updateAll(deactivateTests, activateTests, deactivateSampleTypes, activateSampleTypes);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
         List<TestActivationBean> activeTestList = createTestList(true, true);
@@ -236,7 +247,7 @@ public class TestActivationController extends BaseController {
                 list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;
@@ -258,7 +269,7 @@ public class TestActivationController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

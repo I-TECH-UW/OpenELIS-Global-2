@@ -8,21 +8,21 @@ import org.openelisglobal.common.service.BaseObjectService;
 public interface CityStateZipService extends BaseObjectService<CityStateZip, String> {
     CityStateZip getState(CityStateZip cityStateZip);
 
-    List getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip);
+    List<CityStateZip> getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip);
 
-    List getCities(String filter);
+    List<CityStateZip> getCities(String filter);
 
     CityStateZip getZipCode(CityStateZip cityStateZip);
 
-    List getAllStateCodes();
+    List<CityStateZip> getAllStateCodes();
 
     CityStateZip getCity(CityStateZip cityStateZip);
 
-    List getCitiesByZipCode(CityStateZip cityStateZip);
+    List<CityStateZip> getCitiesByZipCode(CityStateZip cityStateZip);
 
     String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip);
 
-    List getZipCodesByCity(CityStateZip cityStateZip);
+    List<CityStateZip> getZipCodesByCity(CityStateZip cityStateZip);
 
     boolean isCityStateZipComboValid(CityStateZip cityStateZip);
 

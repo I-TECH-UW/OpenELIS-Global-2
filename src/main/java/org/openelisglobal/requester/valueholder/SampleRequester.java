@@ -63,6 +63,7 @@ public class SampleRequester extends BaseObject<String> {
         this.requesterTypeId = Long.parseLong(requesterTypeId);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -77,10 +78,21 @@ public class SampleRequester extends BaseObject<String> {
         return sr.requesterId == requesterId && sr.requesterTypeId == requesterTypeId && sr.sampleId == sampleId;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash = 31 * hash + (int) requesterId;
+        hash = 31 * hash + (int) requesterTypeId;
+        hash = 31 * hash + (int) sampleId;
+        return hash;
+    }
+
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -12,7 +12,7 @@ import org.openelisglobal.validation.annotations.ValidDate;
 
 //only used to communicate from server to client
 //does not require validation
-public class StatusResultsForm extends BaseForm {
+public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
     private PagingBean paging;
 
     private Boolean singlePatient = false;
@@ -66,10 +66,12 @@ public class StatusResultsForm extends BaseForm {
         setFormName("StatusResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -170,10 +172,12 @@ public class StatusResultsForm extends BaseForm {
         this.displayTestKit = displayTestKit;
     }
 
+    @Override
     public List<TestResultItem> getTestResult() {
         return testResult;
     }
 
+    @Override
     public void setTestResult(List<TestResultItem> testResult) {
         this.testResult = testResult;
     }
@@ -242,11 +246,14 @@ public class StatusResultsForm extends BaseForm {
         this.displayTestSections = displayTestSections;
     }
 
+    @Override
     public String getTestSectionId() {
         return testSectionId;
     }
 
+    @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
+
 }

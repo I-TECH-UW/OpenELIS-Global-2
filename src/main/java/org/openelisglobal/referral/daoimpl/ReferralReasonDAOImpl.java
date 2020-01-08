@@ -38,7 +38,7 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> i
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
         String sql = "from ReferralReason";

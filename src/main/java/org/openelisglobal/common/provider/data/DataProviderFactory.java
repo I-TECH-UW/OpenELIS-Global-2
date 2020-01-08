@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.data;
@@ -26,14 +26,16 @@ import org.openelisglobal.common.util.resources.ResourceLocator;
 /**
  * This class will abstract the DataProvider creation. It will read the name of
  * the class file from properties file and create the class
- * 
+ *
  * @version 1.0
  * @author diane benz bugzilla 2443
  */
 
 public class DataProviderFactory {
 
-    private static DataProviderFactory instance; // Instance of this
+    private static class SingletonHelper {
+        private static final DataProviderFactory INSTANCE = new DataProviderFactory(); // Instance of this
+    }
 
     // class
 
@@ -42,24 +44,16 @@ public class DataProviderFactory {
 
     /**
      * Singleton global access for DataProviderFactory
-     * 
+     *
      */
 
     public static DataProviderFactory getInstance() {
-        if (instance == null) {
-            synchronized (DataProviderFactory.class) {
-                if (instance == null) {
-                    instance = new DataProviderFactory();
-                }
-            }
-
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
      * Create an object for the full class name passed in.
-     * 
+     *
      * @param String full class name
      * @return Object Created object
      */
@@ -68,11 +62,10 @@ public class DataProviderFactory {
         try {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             // bugzilla 2154
-            LogEvent.logError("DataProviderFactory", "createObject()", e.toString());
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e,
-                    LogEvent.getLog(DataProviderFactory.class));
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
     }
@@ -80,7 +73,7 @@ public class DataProviderFactory {
     /**
      * Search for the DataProvider implementation class name in the Data.properties
      * file for the given DataProvider name
-     * 
+     *
      * @param String DataProvider name e.g "NextTestSortOrderDataProvider"
      * @return String Full implementation class e.g
      *         "org.openelisglobal.common.data.provider"
@@ -99,17 +92,15 @@ public class DataProviderFactory {
                 dataProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", e.toString());
-                throw new LIMSRuntimeException("Unable to load data provider class mappings.", e,
-                        LogEvent.getLog(DataProviderFactory.class));
+                LogEvent.logError(e.toString(), e);
+                throw new LIMSRuntimeException("Unable to load data provider class mappings.", e, true);
             } finally {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                        propertyStream = null;
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         // bugzilla 2154
-                        LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", e.toString());
+                        LogEvent.logError(e.toString(), e);
                     }
                 }
             }
@@ -118,7 +109,7 @@ public class DataProviderFactory {
         String mapping = dataProviderClassMap.getProperty(dataProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError("DataProviderFactory", "getDataProviderClassName()", dataProvidername);
+//            LogEvent.logError(this.getClass().getName(), "getDataProviderClassName", dataProvidername, e);
             throw new LIMSRuntimeException("getDataProviderClassName - Unable to find mapping for " + dataProvidername);
         }
         return mapping;
@@ -126,10 +117,10 @@ public class DataProviderFactory {
 
     /**
      * Data Provider creation method
-     * 
+     *
      * @param name
      * @return Data Provider object
-     * 
+     *
      */
     public BaseDataProvider getDataProvider(String name) throws LIMSRuntimeException {
         BaseDataProvider provider = null;

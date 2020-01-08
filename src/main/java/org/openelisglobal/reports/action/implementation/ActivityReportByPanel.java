@@ -21,10 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ActivityReportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 
@@ -34,7 +34,7 @@ public class ActivityReportByPanel extends ActivityReport implements IReportCrea
     private String panelName;
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage("report.activity.report.base") + " " + MessageUtil.getMessage("report.by.panel"),
                 MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);

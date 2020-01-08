@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -54,7 +55,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     private PanelService panelService;
 
     @PostConstruct
-    private void initializeGlobalVariables() {
+    private synchronized void initializeGlobalVariables() {
         if (typeOfSampleIdtoTypeOfSampleMap == null) {
             createTypeOfSampleIdentityMap();
         }
@@ -77,7 +78,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List<Test> getActiveTestsBySampleTypeId(String sampleTypeId, boolean orderableOnly) {
+    public synchronized List<Test> getActiveTestsBySampleTypeId(String sampleTypeId, boolean orderableOnly) {
 
         List<Test> testList = sampleIdTestMap.get(sampleTypeId);
 
@@ -127,7 +128,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public TypeOfSample getTypeOfSampleForTest(String testId) {
+    public synchronized TypeOfSample getTypeOfSampleForTest(String testId) {
         if (testIdToTypeOfSampleMap == null) {
             createTestIdToTypeOfSampleMap();
         }
@@ -135,7 +136,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         return testIdToTypeOfSampleMap.get(testId);
     }
 
-    private void createTestIdToTypeOfSampleMap() {
+    private synchronized void createTestIdToTypeOfSampleMap() {
         testIdToTypeOfSampleMap = new HashMap<>();
 
         List<TypeOfSampleTest> typeOfSampleTestList = typeOfSampleTestService.getAllTypeOfSampleTests();
@@ -148,7 +149,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         }
     }
 
-    private List<Test> createSampleIdTestMap(String sampleTypeId) {
+    private synchronized List<Test> createSampleIdTestMap(String sampleTypeId) {
         List<Test> testList;
         List<TypeOfSampleTest> tests = typeOfSampleTestService.getTypeOfSampleTestsForSampleType(sampleTypeId);
 
@@ -172,7 +173,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
      * changes, we need to invalidate such lists.
      */
     @Override
-    public void clearCache() {
+    public synchronized void clearCache() {
         sampleIdTestMap.clear();
         createTypeOfSampleIdentityMap();
         typeOfSampleIdToNameMap = null;
@@ -180,10 +181,9 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         testIdToTypeOfSampleMap = null;
     }
 
-    private void createTypeOfSampleIdentityMap() {
+    private synchronized void createTypeOfSampleIdentityMap() {
         typeOfSampleIdtoTypeOfSampleMap = new HashMap<>();
 
-        @SuppressWarnings("unchecked")
         List<TypeOfSample> typeOfSampleList = baseObjectDAO.getAllTypeOfSamples();
 
         for (TypeOfSample typeOfSample : typeOfSampleList) {
@@ -193,7 +193,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public String getTypeOfSampleNameForId(String id) {
+    public synchronized String getTypeOfSampleNameForId(String id) {
         if (typeOfSampleIdToNameMap == null) {
             createSampleNameIDMaps();
         }
@@ -203,7 +203,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public String getTypeOfSampleIdForLocalAbbreviation(String name) {
+    public synchronized String getTypeOfSampleIdForLocalAbbreviation(String name) {
         if (typeOfSampleWellKnownNameToIdMap == null) {
             createSampleNameIDMaps();
         }
@@ -211,8 +211,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         return typeOfSampleWellKnownNameToIdMap.get(name);
     }
 
-    @SuppressWarnings("unchecked")
-    private void createSampleNameIDMaps() {
+    private synchronized void createSampleNameIDMaps() {
         typeOfSampleIdToNameMap = new HashMap<>();
         typeOfSampleWellKnownNameToIdMap = new HashMap<>();
 
@@ -225,7 +224,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List<TypeOfSample> getTypeOfSampleForPanelId(String id) {
+    public synchronized List<TypeOfSample> getTypeOfSampleForPanelId(String id) {
         if (panelIdToTypeOfSampleMap == null) {
             panelIdToTypeOfSampleMap = new HashMap<>();
 
@@ -261,7 +260,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamples() {
+    public List<TypeOfSample> getAllTypeOfSamples() {
         return baseObjectDAO.getAllTypeOfSamples();
     }
 
@@ -273,26 +272,14 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getTypesForDomain(SampleDomain domain) {
+    public List<TypeOfSample> getTypesForDomain(SampleDomain domain) {
         return getBaseObjectDAO().getTypesForDomain(domain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTypeOfSampleCount() {
         return getBaseObjectDAO().getTotalTypeOfSampleCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSampleRecord(id);
     }
 
     @Override
@@ -315,13 +302,13 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamples(int startingRecNo) {
+    public List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTypeOfSamples(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTypes(String filter, String domain) {
+    public List<TypeOfSample> getTypes(String filter, String domain) {
         return getBaseObjectDAO().getTypes(filter, domain);
     }
 
@@ -376,6 +363,8 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     @Transactional(readOnly = true)
     public Localization getLocalizationForSampleType(String id) {
         TypeOfSample typeOfSample = getTypeOfSampleById(id);
-        return typeOfSample != null ? typeOfSample.getLocalization() : null;
+        Localization localization = typeOfSample != null ? typeOfSample.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }

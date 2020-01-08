@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
     import="org.openelisglobal.common.action.IActionConstants,
             org.openelisglobal.common.util.DateUtil,
             org.openelisglobal.internationalization.MessageUtil"%>
@@ -10,11 +10,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
   
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <script type="text/javascript">
 function EidProjectChecker() {
     this.idPre = "eid.";
@@ -126,7 +121,7 @@ eid = new EidProjectChecker();
         </td>
 
         <td>
-            <form:select path="ProjectData.EIDSiteName"
+            <form:select path="projectData.EIDSiteName"
                          id="eid.centerName"
                          onchange="eid.checkCenterName(true)">
                 <option value=""></option>
@@ -140,7 +135,7 @@ eid = new EidProjectChecker();
         <td class="required">*</td>
         <td><spring:message code="sample.entry.project.siteCode"/></td>
         <td style="width: 40%;">
-            <form:select path="ProjectData.EIDsiteCode" cssClass="text"
+            <form:select path="projectData.EIDsiteCode" cssClass="text"
                     id="eid.centerCode"
                     onchange="eid.checkCenterCode(true);" >
                 <option value=""></option>
@@ -477,7 +472,7 @@ eid = new EidProjectChecker();
             <spring:message code="patient.project.underInvestigationComment" />
         </td>
         <td colspan="3">
-            <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+            <form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
                 onchange="makeDirty();" id="eid.underInvestigationComment" />
         </td>
     </tr>

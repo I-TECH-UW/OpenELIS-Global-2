@@ -37,7 +37,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact,
         super(OrganizationContact.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {

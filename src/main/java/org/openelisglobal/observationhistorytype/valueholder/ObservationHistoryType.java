@@ -7,7 +7,7 @@ import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 
 /**
  * DemographicHistoryType entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  * @author pahill
  * @since 2010-04-09
@@ -29,14 +29,14 @@ public class ObservationHistoryType extends BaseObject<String> implements Simple
 
     /** minimal constructor */
     public ObservationHistoryType(String id, String typeName, String description) {
-        setId(id);
+        this.id = id;
         this.typeName = typeName;
         this.description = description;
     }
 
     /** full constructor */
     public ObservationHistoryType(String id, String typeName, String description, Timestamp lastupdated) {
-        setId(id);
+        this.id = id;
         this.typeName = typeName;
         this.description = description;
         setLastupdated(lastupdated);

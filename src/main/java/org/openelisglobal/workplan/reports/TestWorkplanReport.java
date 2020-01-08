@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.workplan.form.WorkplanForm;
 
 import net.sf.jasperreports.engine.JRParameter;
 
@@ -82,10 +82,9 @@ public class TestWorkplanReport implements IWorkplanReport {
     }
 
     @Override
-    public List<?> prepareRows(BaseForm form) {
+    public List<?> prepareRows(WorkplanForm form) {
 
-        @SuppressWarnings("unchecked")
-        List<TestResultItem> workplanTests = (List<TestResultItem>) form.get("workplanTests");
+        List<TestResultItem> workplanTests = form.getWorkplanTests();
 
         // remove unwanted tests from workplan
         List<TestResultItem> includedTests = new ArrayList<>();

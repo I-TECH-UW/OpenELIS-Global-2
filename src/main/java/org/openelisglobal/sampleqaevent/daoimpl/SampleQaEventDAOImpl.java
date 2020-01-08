@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.sampleqaevent.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //				String tableName = "SAMPLE_QAEVENT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail deleteData()", e);
@@ -80,7 +81,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent deleteData()", e);
@@ -101,7 +102,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent insertData()", e);
@@ -123,7 +124,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SAMPLE_QAEVENT";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail updateData()", e);
@@ -135,7 +136,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleQaEvent);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleQaEvent);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent updateData()", e);
@@ -149,7 +150,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             SampleQaEvent data = entityManager.unwrap(Session.class).get(SampleQaEvent.class, sampleQaEventId);
             // closeSession(); // CSL remove old
             return data;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getData");
         }
         return null;
@@ -167,9 +168,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             } else {
                 sampleQaEvent.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // buzilla 2154
-            LogEvent.logError("SampleQaEventDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEvent getData()", e);
         }
     }
@@ -180,9 +181,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             sp = entityManager.unwrap(Session.class).get(SampleQaEvent.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError("SampleQaEventDAOImpl", "readSampleQaEvent()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEvent readSampleQaEvent()", e);
         }
 
@@ -191,8 +192,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
-        List sampleQaEvents = new ArrayList();
+    public List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
+        List<SampleQaEvent> sampleQaEvents = new ArrayList();
 
         try {
             String sql = "from SampleQaEvent aqe where aqe.sample = :param";
@@ -205,15 +206,15 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
             return sampleQaEvents;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError("SampleQaEventDAOImpl", "getSampleQaEventsBySample(SampleQaEvent)", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEventDAO getSampleQaEventsBySample(SampleQaEvent)", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException {
         List<SampleQaEvent> sampleQaEvents;
@@ -227,7 +228,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             // closeSession(); // CSL remove old
 
             return sampleQaEvents;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleQaEventsBySample(Sample sample)");
         }
 
@@ -245,16 +246,16 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", sampleQaEvent.getSample().getId());
             query.setParameter("param2", sampleQaEvent.getQaEvent().getId());
-            List list = query.list();
+            List<SampleQaEvent> list = query.list();
             if ((list != null) && !list.isEmpty()) {
-                analQaEvent = (SampleQaEvent) list.get(0);
+                analQaEvent = list.get(0);
             }
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError("SampleQaEventDAOImpl", "getSampleQaEventBySampleAndQaEvent()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Exception occurred in getSampleQaEventBySampleAndQaEvent", e);
         }
         return analQaEvent;
@@ -266,7 +267,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
      *      java.sql.Date)
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException {
         List<SampleQaEvent> sampleQaEvents = null;
@@ -279,14 +280,13 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
             sampleQaEvents = query.list();
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleQaEventsByDate");
         }
 
         return sampleQaEvents;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException {

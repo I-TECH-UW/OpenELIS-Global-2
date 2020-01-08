@@ -17,12 +17,14 @@
 */
 package org.openelisglobal.reports.action.implementation;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import java.sql.SQLException;
+
 import org.jfree.util.Log;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.HaitiColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.ResourceTranslator;
+import org.openelisglobal.reports.form.ReportForm;
 
 /**
  * @author pahill (pahill@uw.edu)
@@ -36,12 +38,12 @@ public class HaitiExportReport extends CSVSampleExportReport implements IReportP
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-        } catch (Exception e) {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+        } catch (RuntimeException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".setRequestParemeters: ", e);
         }
     }
@@ -55,12 +57,12 @@ public class HaitiExportReport extends CSVSampleExportReport implements IReportP
      * @see org.openelisglobal.reports.action.implementation.IReportCreator#initializeReport(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
@@ -92,9 +94,9 @@ public class HaitiExportReport extends CSVSampleExportReport implements IReportP
 
             csvColumnBuilder = new HaitiColumnBuilder(dateRange);
             csvColumnBuilder.buildDataSource();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             add1LineErrorMessage("report.error.message.general.error");
         }
     }

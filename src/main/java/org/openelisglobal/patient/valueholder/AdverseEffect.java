@@ -10,9 +10,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class AdverseEffect implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String type;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String grade;
 
     public String getType() {

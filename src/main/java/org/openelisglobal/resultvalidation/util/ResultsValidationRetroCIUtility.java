@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.StatusService;
@@ -135,7 +137,7 @@ public class ResultsValidationRetroCIUtility {
         analyte = analyteService.getAnalyteByName(analyte, false);
         ANALYTE_CD4_CT_GENERATED_ID = analyte == null ? "" : analyte.getId();
 
-        Test test = testService.getTestByName("CD4 absolute count");
+        Test test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
         if (test != null) {
             CD4_COUNT_SORT_NUMBER = test.getSortOrder();
         }
@@ -321,6 +323,9 @@ public class ResultsValidationRetroCIUtility {
                 headItem = analysisResultItem;
                 groupingCount++;
             } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be able to be null here");
+                }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
             }
@@ -329,7 +334,6 @@ public class ResultsValidationRetroCIUtility {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
 
         List<Analysis> analysisList = new ArrayList<>();
@@ -390,7 +394,9 @@ public class ResultsValidationRetroCIUtility {
                             resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
+                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
                             // no-op
                         }
 
@@ -915,7 +921,7 @@ public class ResultsValidationRetroCIUtility {
     }
 
     private String getTestId(String testName) {
-        Test test = testService.getTestByName(testName);
+        Test test = testService.getTestByLocalizedName(testName, Locale.FRENCH);
         return test.getId();
     }
 

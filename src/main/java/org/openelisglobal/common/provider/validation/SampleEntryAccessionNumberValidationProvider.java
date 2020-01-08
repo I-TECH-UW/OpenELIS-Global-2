@@ -26,6 +26,7 @@ import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.V
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.util.CI.ProjectForm;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -100,6 +101,6 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
         }
 
         response.setCharacterEncoding("UTF-8");
-        ajaxServlet.sendData(field, returnData, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
     }
 }

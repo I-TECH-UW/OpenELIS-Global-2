@@ -208,6 +208,9 @@ function validateAccessionNumberOnServer( field, recordType, isWanted, successCa
                       method: 'get', //http method
                       parameters: 'provider=SampleEntryAccessionNumberValidationProvider&field=' + field.id + '&accessionNumber=' + field.value + '&recordType=' + recordType + '&isRequired=' + isWanted +"&projectFormName=" + projectFormName,
                       indicator: 'throbbing',
+      				  requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				  },
                       onSuccess:  function (xhr) {
                           successCallback(xhr, field, isWanted);
                       },

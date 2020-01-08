@@ -21,7 +21,7 @@ package org.openelisglobal.workplan.reports;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.workplan.form.WorkplanForm;
 
 public interface IWorkplanReport {
 
@@ -29,7 +29,7 @@ public interface IWorkplanReport {
 
     String getFileName();
 
-    List<?> prepareRows(BaseForm dynaForm);
+    List<?> prepareRows(WorkplanForm dynaForm);
 
     void setReportPath(String reportPath);
 }

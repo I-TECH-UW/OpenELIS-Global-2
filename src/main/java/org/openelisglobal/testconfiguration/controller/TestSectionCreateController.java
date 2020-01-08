@@ -1,17 +1,15 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -24,6 +22,8 @@ import org.openelisglobal.testconfiguration.service.TestSectionCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +31,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TestSectionCreateController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "testUnitEnglishName", "testUnitFrenchName" };
 
     public static final String NAME_SEPARATOR = "$";
 
@@ -40,8 +42,11 @@ public class TestSectionCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private TestSectionCreateService testSectionCreateService;
-    @Autowired
-    private LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestSectionCreate", method = RequestMethod.GET)
     public ModelAndView showTestSectionCreate(HttpServletRequest request) {
@@ -53,18 +58,14 @@ public class TestSectionCreateController extends BaseController {
     }
 
     private void setupDisplayItems(TestSectionCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingTestUnitList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
-            PropertyUtils.setProperty(form, "inactiveTestUnitList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-            List<TestSection> testSections = testSectionService.getAllTestSections();
-            PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(testSections, Locale.ENGLISH));
+        form.setExistingTestUnitList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setInactiveTestUnitList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+        List<TestSection> testSections = testSectionService.getAllTestSections();
+        form.setExistingEnglishNames(getExistingTestNames(testSections, Locale.ENGLISH));
 
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(testSections, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        form.setExistingFrenchNames(getExistingTestNames(testSections, Locale.FRENCH));
     }
 
     private String getExistingTestNames(List<TestSection> testSections, Locale locale) {
@@ -80,17 +81,17 @@ public class TestSectionCreateController extends BaseController {
 
     @RequestMapping(value = "/TestSectionCreate", method = RequestMethod.POST)
     public ModelAndView postTestSectionCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestSectionCreateForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestSectionCreateForm form, BindingResult result)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String identifyingName = form.getString("testUnitEnglishName");
+        String identifyingName = form.getTestUnitEnglishName();
         String userId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getString("testUnitFrenchName"), identifyingName, userId);
+        Localization localization = createLocalization(form.getTestUnitFrenchName(), identifyingName, userId);
 
         TestSection testSection = createTestSection(identifyingName, userId);
 
@@ -108,8 +109,8 @@ public class TestSectionCreateController extends BaseController {
         try {
             testSectionCreateService.insertTestSection(localization, testSection, workplanModule, resultModule,
                     validationModule, workplanResultModule, resultResultModule, validationValidationModule);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

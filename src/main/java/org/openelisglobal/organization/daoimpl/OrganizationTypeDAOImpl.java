@@ -24,7 +24,6 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.organization.dao.OrganizationTypeDAO;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
         List<OrganizationType> list = null;
@@ -48,8 +47,8 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
         }
 
@@ -66,44 +65,15 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
 
             query.setString("name", name);
 
-            @SuppressWarnings("unchecked")
+            
             List<OrganizationType> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list.size() > 0 ? list.get(0) : null;
 
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationTypeByName()", e.toString());
-            throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names)
-            throws LIMSRuntimeException {
-        String sql = null;
-        try {
-            sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
-            Session session = entityManager.unwrap(Session.class);
-            org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
-            @SuppressWarnings("unchecked")
-            OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);
-            sql = "where this.isActive = 'Y' ";
-            if (null != orderByCol) {
-                sql += " order by " + orderByCol;
-            }
-            @SuppressWarnings("unchecked")
-            List<Organization> orgs2 = session.createFilter(ot.getOrganizations(), sql).list();
-
-            session.flush();
-            session.clear();
-
-            return orgs2;
-
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationsByTypeName()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

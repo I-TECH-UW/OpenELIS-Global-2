@@ -28,14 +28,15 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.MathUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.HaitiHIVSummaryData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -157,7 +158,7 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         setDateRange(form);
 
@@ -199,7 +200,7 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
             if (testName.equals("CD4 en mm3") || testName.equals("CD4 en %") || testName.equals("CD4  Compte Abs")
                     || testName.equals("CD4 Compte en %") || testName.equals("Dénombrement des lymphocytes CD4 (mm3)")
                     || testName.equals("Dénombrement des lymphocytes  CD4 (%)")) {
-                if (firstResult.getMinNormal() == firstResult.getMaxNormal()) {
+                if (MathUtil.isEqual(firstResult.getMinNormal(), firstResult.getMaxNormal())) {
                     continue;
                 }
 

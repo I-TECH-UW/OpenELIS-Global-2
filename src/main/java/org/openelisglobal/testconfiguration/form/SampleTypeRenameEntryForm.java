@@ -14,11 +14,11 @@ public class SampleTypeRenameEntryForm extends BaseForm {
     private List sampleTypeList;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameEnglish = "";
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameFrench = "";
 
     @NotBlank

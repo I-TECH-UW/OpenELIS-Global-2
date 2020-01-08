@@ -129,7 +129,8 @@ public class MalariaSurveilanceJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        System.out.println("MalariaSurveilance triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                "MalariaSurveilance triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("MalariaSurveilance", "execute()",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -272,7 +273,7 @@ public class MalariaSurveilanceJob implements Job {
                 setJobTimestamp(runTime);
                 break;
             default:
-                System.out.println(errors);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", errors.toString());
             }
         }
 
@@ -284,7 +285,7 @@ public class MalariaSurveilanceJob implements Job {
             try {
                 cronSchedulerService.update(gatherScheduler);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logError("AggregateGatherJob", "execute", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
         }
 

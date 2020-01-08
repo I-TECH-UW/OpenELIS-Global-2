@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.MalariaSurveilance.MalariaSurveilanceJob;
 import org.openelisglobal.dataexchange.aggregatereporting.AggregateReportJob;
@@ -44,11 +45,11 @@ import org.springframework.stereotype.Component;
 public class LateStartScheduler {
 
     @Autowired
-    CronSchedulerService cronSchedulerService;
+    private CronSchedulerService cronSchedulerService;
 
     private static final String NEVER = "never";
 
-    private static Map<String, Class<? extends Job>> scheduleJobMap;
+    private static final Map<String, Class<? extends Job>> scheduleJobMap;
 
     private Scheduler scheduler;
 
@@ -56,6 +57,14 @@ public class LateStartScheduler {
         scheduleJobMap = new HashMap<>();
         scheduleJobMap.put("sendSiteIndicators", AggregateReportJob.class);
         scheduleJobMap.put("sendMalariaSurviellanceReport", MalariaSurveilanceJob.class);
+    }
+
+    public LateStartScheduler() {
+        try {
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+        } catch (SchedulerException e) {
+            LogEvent.logError(e);
+        }
     }
 
     public void restartSchedules() {
@@ -66,18 +75,18 @@ public class LateStartScheduler {
         @Override
         public void run() {
             try {
-                scheduler = StdSchedulerFactory.getDefaultScheduler();
+//                scheduler = StdSchedulerFactory.getDefaultScheduler();
                 scheduler.shutdown();
                 checkAndStartScheduler();
             } catch (SchedulerException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
     }
 
     public void checkAndStartScheduler() {
         try {
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
+//            scheduler = StdSchedulerFactory.getDefaultScheduler();
 
             List<CronScheduler> schedulers = cronSchedulerService.getAll();
 
@@ -86,10 +95,10 @@ public class LateStartScheduler {
             }
 
             scheduler.start();
-        } catch (SchedulerException se) {
-            se.printStackTrace();
-        } catch (ParseException pe) {
-            pe.printStackTrace();
+        } catch (SchedulerException e) {
+            LogEvent.logDebug(e);
+        } catch (ParseException e) {
+            LogEvent.logDebug(e);
         }
     }
 
@@ -103,7 +112,7 @@ public class LateStartScheduler {
         }
 
         String jobName = schedule.getJobName();
-        System.out.println("Adding cron job: " + jobName);
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Adding cron job: " + jobName);
 
         Class<? extends Job> targetJob = scheduleJobMap.get(jobName);
 
@@ -127,7 +136,8 @@ public class LateStartScheduler {
                 new ImmediateRunner(scheduler, jobName).start();
             }
         } catch (NumberFormatException e) {
-            System.out.println("Malformed cron statement." + schedule.getCronStatement());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    "Malformed cron statement." + schedule.getCronStatement());
         }
     }
 
@@ -156,9 +166,9 @@ public class LateStartScheduler {
                     }
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } catch (SchedulerException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 

@@ -9,10 +9,8 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.QAService;
@@ -58,7 +56,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Autowired
     private NoteService noteService;
 
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
     private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 
     @PostConstruct
@@ -70,6 +68,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public AnalysisServiceImpl() {
         super(Analysis.class);
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override
@@ -398,13 +400,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
-    public void update(Analysis analysis, boolean skipAuditTrail) {
-        Analysis oldObject = getBaseObjectDAO().get(analysis.getId())
-                .orElseThrow(() -> new ObjectNotFoundException(analysis.getId(), "Analysis"));
-        if (auditTrailLog && !skipAuditTrail) {
-            auditTrailDAO.saveHistory(analysis, oldObject, analysis.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-                    getBaseObjectDAO().getTableName());
-        }
+    public void updateNoAuditTrail(Analysis analysis) {
         getBaseObjectDAO().update(analysis);
     }
 
@@ -417,19 +413,19 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) {
+    public List<Analysis> getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) {
         return getBaseObjectDAO().getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(sample);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers) {
+    public List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List<String> accessionNumbers) {
         return getBaseObjectDAO().getMaxRevisionAnalysesReadyForReportPreviewBySample(accessionNumbers);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) {
+    public List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) {
         return getBaseObjectDAO().getMaxRevisionPendingAnalysesReadyToBeReportedBySample(sample);
     }
 
@@ -449,7 +445,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
+    public List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
         return getBaseObjectDAO().getMaxRevisionAnalysesBySampleIncludeCanceled(sampleItem);
     }
 
@@ -469,7 +465,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) {
+    public List<Analysis> getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) {
         return getBaseObjectDAO().getMaxRevisionParentTestAnalysesBySample(sampleItem);
     }
 
@@ -481,7 +477,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) {
+    public List<Analysis> getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) {
         return getBaseObjectDAO().getRevisionHistoryOfAnalysesBySample(sampleItem);
     }
 
@@ -493,7 +489,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList) {
+    public List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId,
+            List<Integer> statusIdList) {
         return getBaseObjectDAO().getAllAnalysisByTestSectionAndExcludedStatus(testSectionId, statusIdList);
     }
 
@@ -511,7 +508,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionAnalysesReadyToBeReported() {
+    public List<Analysis> getMaxRevisionAnalysesReadyToBeReported() {
         return getBaseObjectDAO().getMaxRevisionAnalysesReadyToBeReported();
     }
 
@@ -524,13 +521,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getAnalysesAlreadyReportedBySample(Sample sample) {
+    public List<Analysis> getAnalysesAlreadyReportedBySample(Sample sample) {
         return getBaseObjectDAO().getAnalysesAlreadyReportedBySample(sample);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
+    public List<Analysis> getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
             boolean includeLatestRevision) {
         return getBaseObjectDAO().getRevisionHistoryOfAnalysesBySampleAndTest(sampleItem, test, includeLatestRevision);
     }
@@ -561,19 +558,19 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getMaxRevisionAnalysesBySample(SampleItem sampleItem) {
+    public List<Analysis> getMaxRevisionAnalysesBySample(SampleItem sampleItem) {
         return getBaseObjectDAO().getMaxRevisionAnalysesBySample(sampleItem);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllChildAnalysesByResult(Result result) {
+    public List<Analysis> getAllChildAnalysesByResult(Result result) {
         return getBaseObjectDAO().getAllChildAnalysesByResult(result);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAnalysesReadyToBeReported() {
+    public List<Analysis> getAnalysesReadyToBeReported() {
         return getBaseObjectDAO().getAnalysesReadyToBeReported();
     }
 
@@ -591,7 +588,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllMaxRevisionAnalysesPerTest(Test test) {
+    public List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test) {
         return getBaseObjectDAO().getAllMaxRevisionAnalysesPerTest(test);
     }
 
@@ -609,9 +606,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional
-    public void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
+    public void updateAllNoAuditTrail(List<Analysis> updatedAnalysis) {
         for (Analysis analysis : updatedAnalysis) {
-            update(analysis, skipAuditTrail);
+            updateNoAuditTrail(analysis);
         }
     }
 }

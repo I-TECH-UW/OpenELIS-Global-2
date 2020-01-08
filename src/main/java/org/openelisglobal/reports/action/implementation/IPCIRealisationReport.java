@@ -33,13 +33,13 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
 import org.openelisglobal.reports.action.implementation.reportBeans.IPCIRealisationTest;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -85,12 +85,12 @@ public class IPCIRealisationReport extends Report {
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowerDateRange = form.getString("lowerDateRange");
-        upperDateRange = form.getString("upperDateRange");
+        lowerDateRange = form.getLowerDateRange();
+        upperDateRange = form.getUpperDateRange();
 
         if (GenericValidator.isBlankOrNull(lowerDateRange)) {
             errorFound = true;
@@ -106,7 +106,7 @@ public class IPCIRealisationReport extends Report {
         try {
             lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
             highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
-        } catch (LIMSRuntimeException re) {
+        } catch (LIMSRuntimeException e) {
             errorFound = true;
             ErrorMessages msgs = new ErrorMessages();
             msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));

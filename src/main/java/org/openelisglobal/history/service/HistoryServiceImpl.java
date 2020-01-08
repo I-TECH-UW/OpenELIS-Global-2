@@ -27,13 +27,13 @@ public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> i
 
     @Override
     @Transactional(readOnly = true)
-    public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
+    public List<History> getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
         return baseObjectDAO.getHistoryByRefIdAndRefTableId(history);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getHistoryByRefIdAndRefTableId(String id, String table) throws LIMSRuntimeException {
+    public List<History> getHistoryByRefIdAndRefTableId(String id, String table) throws LIMSRuntimeException {
         return baseObjectDAO.getHistoryByRefIdAndRefTableId(id, table);
     }
 

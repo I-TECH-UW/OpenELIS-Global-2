@@ -26,10 +26,10 @@ public class OrganizationForm extends BaseForm {
     private String organizationLocalAbbreviation = "";
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String organizationName = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String city = "";
 
     @OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.ZipCode })
@@ -37,7 +37,7 @@ public class OrganizationForm extends BaseForm {
     private String zipCode = "";
 
     @OptionalNotBlank(formFields = { Field.MLS })
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String mlsSentinelLabFlag = "";
 
     @NotBlank
@@ -50,23 +50,23 @@ public class OrganizationForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String selectedOrgId = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String parentOrgName = "";
 
     @Valid
     private Organization organization;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String shortName = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String multipleUnit = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String streetAddress = "";
 
     @OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.OrgState })
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String state = "";
     // for display
     private Collection states;
@@ -75,10 +75,10 @@ public class OrganizationForm extends BaseForm {
     private String internetAddress = "";
 
     @OptionalNotBlank(formFields = { Field.MLS })
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String mlsLabFlag = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String cliaNum = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -91,10 +91,10 @@ public class OrganizationForm extends BaseForm {
 
     private Timestamp lastupdated;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String commune = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String village = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)

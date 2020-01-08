@@ -6,7 +6,6 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -14,6 +13,7 @@ import org.dom4j.Element;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +52,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SampleBatchEntryController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.birthDateForDisplay", "patientProperties.age", "patientProperties.gender",
+            //
+            "sampleOrderItems.labNo",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
+            "form.sampleOrderItems.referringSiteName", "patientProperties.patientUpdateStatus", "currentDate",
+            "currentTime", "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
+            "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId",
+            //
+            "method", "facilityIDCheck", "facilityID", "patientInfoCheck" };
 
     @Autowired
     SampleBatchEntryFormValidator formValidator;
@@ -66,6 +84,11 @@ public class SampleBatchEntryController extends BaseController {
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = { "/SampleBatchEntry" }, method = RequestMethod.POST)
     public ModelAndView showSampleBatchEntry(HttpServletRequest request,
@@ -138,9 +161,8 @@ public class SampleBatchEntryController extends BaseController {
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
-        PatientManagementInfo patientInfo = (PatientManagementInfo) PropertyUtils.getProperty(form,
-                "patientProperties");
-        SampleOrderItem sampleOrder = (SampleOrderItem) PropertyUtils.getProperty(form, "sampleOrderItems");
+        PatientManagementInfo patientInfo = form.getPatientProperties();
+        SampleOrderItem sampleOrder = form.getSampleOrderItems();
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
@@ -173,17 +195,17 @@ public class SampleBatchEntryController extends BaseController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // ActionError error;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 // error = new ActionError("errors.OptimisticLockException", null, null);
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            System.out.println(result);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);

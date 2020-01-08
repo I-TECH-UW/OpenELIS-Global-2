@@ -8,19 +8,15 @@ import org.openelisglobal.project.valueholder.Project;
 public interface ProjectService extends BaseObjectService<Project, String> {
     void getData(Project project);
 
-    List getPageOfProjects(int startingRecNo);
-
-    List getPreviousProjectRecord(String id);
+    List<Project> getPageOfProjects(int startingRecNo);
 
     Integer getTotalProjectCount();
 
     Project getProjectByLocalAbbreviation(Project project, boolean activeOnly);
 
-    List getNextProjectRecord(String id);
-
     Project getProjectById(String id);
 
-    List getProjects(String filter, boolean activeOnly);
+    List<Project> getProjects(String filter, boolean activeOnly);
 
     List<Project> getAllProjects();
 

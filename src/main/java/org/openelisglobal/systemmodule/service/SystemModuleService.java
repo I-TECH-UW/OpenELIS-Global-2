@@ -11,13 +11,9 @@ public interface SystemModuleService extends BaseObjectService<SystemModule, Str
 
     Integer getTotalSystemModuleCount();
 
-    List getPageOfSystemModules(int startingRecNo);
+    List<SystemModule> getPageOfSystemModules(int startingRecNo);
 
-    List getNextSystemModuleRecord(String id);
-
-    List getAllSystemModules();
-
-    List getPreviousSystemModuleRecord(String id);
+    List<SystemModule> getAllSystemModules();
 
     SystemModule getSystemModuleByName(String name);
 

@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.result.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -39,9 +40,9 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
-    public List<ResultInventory> getAllResultInventoryss() throws LIMSRuntimeException {
+    public List<ResultInventory> getAllResultInventorys() throws LIMSRuntimeException {
         List<ResultInventory> resultInventories;
         try {
             String sql = "from ResultInventory";
@@ -49,8 +50,8 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             resultInventories = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getAllResultInventorys()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getAllResultInventorys()", e);
         }
 
@@ -72,7 +73,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //				String tableName = "RESULT_INVENTORY";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultInventoryDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultInventory AuditTrail deleteData()", e);
@@ -87,7 +88,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultInventoryDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultInventory deleteData()", e);
 //		}
@@ -106,7 +107,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultInventoryDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultInventory insertData()", e);
 //		}
@@ -126,7 +127,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "RESULT_INVENTORY";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultInventoryDAOImpl", "AuditTrail insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultInventory AuditTrail updateData()", e);
 //		}
@@ -138,7 +139,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(resultInventory);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(resultInventory);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultInventoryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultInventory updateData()", e);
 //		}
@@ -157,14 +158,14 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             } else {
                 resultInventory.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<ResultInventory> getResultInventorysByResult(Result result) throws LIMSRuntimeException {
         List<ResultInventory> resultInventories = null;
@@ -180,8 +181,8 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 
             return resultInventories;
 
-        } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryByResult()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryByResult()", e);
         }
     }
@@ -192,8 +193,8 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             data = entityManager.unwrap(Session.class).get(ResultInventory.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "readResultInventory()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory readResultInventory()", e);
         }
 
@@ -209,8 +210,8 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return re;
-        } catch (Exception e) {
-            LogEvent.logError("ResultInventoryDAOImpl", "getResultInventoryById()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryById()", e);
         }
     }

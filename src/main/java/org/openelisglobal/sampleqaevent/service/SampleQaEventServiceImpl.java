@@ -53,7 +53,7 @@ public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEven
 
     @Override
     @Transactional(readOnly = true)
-    public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) {
+    public List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) {
         return getBaseObjectDAO().getSampleQaEventsBySample(sampleQaEvent);
     }
 

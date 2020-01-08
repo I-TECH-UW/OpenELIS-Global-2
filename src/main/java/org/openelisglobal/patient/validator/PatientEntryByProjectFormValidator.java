@@ -1,6 +1,5 @@
 package org.openelisglobal.patient.validator;
 
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.springframework.stereotype.Component;
@@ -30,8 +29,7 @@ public class PatientEntryByProjectFormValidator implements Validator {
         } else if ("EID_Id".equals(form.getObservations().getProjectFormName())) {
             validateEIDForm(form, errors);
         } else {
-            errors.reject("error.formname.unrecognized",
-                    "The provided form name '" + form.getObservations().getProjectFormName() + "' is unrecognized");
+            errors.reject("error.formname.unrecognized", "The provided form name is unrecognized");
         }
     }
 
@@ -46,8 +44,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
         ValidationHelper.validateFieldRequired(form.getProjectData().getEIDsiteCode(), "ProjectData.EIDSiteCode",
                 errors);
 
-        if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
-                && GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())
+                && org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
             ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
             ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
@@ -72,8 +70,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
         ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-        if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
-                && GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())
+                && org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
             ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
             ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
@@ -114,8 +112,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
         ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-        if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
-                && GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())
+                && org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
             ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
             ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
@@ -138,8 +136,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
         ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-        if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
-                && GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())
+                && org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
             ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
             ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);

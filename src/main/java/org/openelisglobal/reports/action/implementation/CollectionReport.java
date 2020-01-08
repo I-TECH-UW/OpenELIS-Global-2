@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,18 +29,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.reports.form.ReportForm;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
 import com.lowagie.text.pdf.PdfReader;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -56,7 +60,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     protected String reportPath;
-    protected BaseForm form;
+    protected ReportForm form;
     protected Set<String> handledOrders;
 
     @Override
@@ -70,7 +74,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         handledOrders = new HashSet<>();
         this.form = form;
     }
@@ -81,7 +85,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws JRException, DocumentException {
         List<byte[]> byteList = generateReports();
         if (byteList.isEmpty()) {
             Map<String, Object> parameterMap = new HashMap<>();
@@ -137,16 +141,16 @@ public abstract class CollectionReport implements IReportCreator {
 
             return outputBytes;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         } finally {
             try {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+            } catch (IOException e) {
+                LogEvent.logDebug(e);
             }
         }
         return null;
@@ -166,8 +170,8 @@ public abstract class CollectionReport implements IReportCreator {
             handledOrders.addAll(reportCreator.getReportedOrders());
             try {
                 return reportCreator.runReport();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
+                LogEvent.logDebug(e);
             }
         }
 
@@ -175,7 +179,7 @@ public abstract class CollectionReport implements IReportCreator {
     }
 
     protected Patient getPatient() {
-        String patientId = form.getString("patientNumberDirect");
+        String patientId = form.getPatientNumberDirect();
         return PatientUtil.getPatientByIdentificationNumber(patientId);
     }
 

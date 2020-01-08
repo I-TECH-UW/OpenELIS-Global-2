@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.login.valueholder.UserSessionData,
             org.openelisglobal.common.util.Versioning,java.util.HashSet,org.owasp.encoder.Encode"%>
@@ -11,10 +11,7 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 
-<%!String basePath = ""; %>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
 	String requestType = (String)request.getSession().getAttribute("type");
 	HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 	boolean isAdmin = ((UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA)).isAdmin();
@@ -23,9 +20,9 @@
 	boolean canEditAccessionNo = isAdmin || accessMap.contains(IActionConstants.MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT);
 %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/neon2/retroCIUtilities.js"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/neon/entryByProjectUtils.js"></script>
+<script type="text/javascript" src="scripts/utilities.js?"></script>
+<script type="text/javascript" src="scripts/neon2/retroCIUtilities.js"></script>
+<script type="text/javascript" src="scripts/neon/entryByProjectUtils.js"></script>
 <script type="text/javascript">
 
 var dirty = false;

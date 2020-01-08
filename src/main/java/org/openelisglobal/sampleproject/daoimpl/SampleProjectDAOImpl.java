@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.sampleproject.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //				String tableName = "SAMPLE_PROJECTS";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleProject AuditTrail deleteData()", e);
@@ -79,7 +80,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleProject deleteData()", e);
@@ -103,7 +104,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleProject insertData()", e);
@@ -126,7 +127,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
 //			String tableName = "SAMPLE_PROJECTS";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleProject AuditTrail updateData()", e);
@@ -138,7 +139,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleProj);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleProj);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleProject updateData()", e);
@@ -157,9 +158,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             } else {
                 sampleProj.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleProjectDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleProject getData()", e);
         }
     }
@@ -170,9 +171,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
         }
 
@@ -183,12 +184,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
     // Diane - bugzilla 1920
     @Override
     @Transactional(readOnly = true)
-    public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
-        List sampleProjects = new ArrayList();
+    public List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
+        List<SampleProject> sampleProjects = new ArrayList<>();
 
         try {
             String sql = "from SampleProject sp where sp.project = :param";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", projId);
 
             sampleProjects = query.list();
@@ -197,35 +198,34 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
             return sampleProjects;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleProjectDAOImpl", "getSampleProjectsByProjId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
         List<SampleProject> sampleProjects = null;
 
         try {
             String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("sampleId", Integer.parseInt(id));
 
             sampleProjects = query.list();
             // closeSession(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleProjectBySampleId");
         }
 
-        return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
+        return (sampleProjects == null || sampleProjects.isEmpty()) ? null : sampleProjects.get(0);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
@@ -235,15 +235,15 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             String sql = "FROM SampleProject as sp "
                     + " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
                     + " AND   so.organization.id = :organizationId ) ";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setString("projectName", projectName);
             query.setDate("dateLow", lowReceivedDate);
             query.setDate("dateHigh", highReceivedDate);
             query.setInteger("organizationId", Integer.valueOf(organizationId));
             list = query.list();
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getSamplesByOrganiztionAndReceivedOnRange()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
         }

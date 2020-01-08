@@ -9,7 +9,7 @@ import org.openelisglobal.sampleproject.valueholder.SampleProject;
 public interface SampleProjectService extends BaseObjectService<SampleProject, String> {
     void getData(SampleProject sampleProj);
 
-    List getSampleProjectsByProjId(String projId);
+    List<SampleProject> getSampleProjectsByProjId(String projId);
 
     SampleProject getSampleProjectBySampleId(String id);
 

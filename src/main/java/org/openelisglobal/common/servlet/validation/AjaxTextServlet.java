@@ -26,8 +26,9 @@ import org.openelisglobal.common.provider.validation.ValidationProviderFactory;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.security.SecureXmlHttpServletRequest;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxTextServlet extends AjaxServlet {
 
@@ -46,9 +47,19 @@ public class AjaxTextServlet extends AjaxServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // check for authentication
+        boolean unauthorized = false;
+
+        // check for module authentication
         UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-        if (userModuleService.isSessionExpired(request)) {
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+
+        if (unauthorized) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("text/html; charset=utf-8");
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
@@ -58,7 +69,7 @@ public class AjaxTextServlet extends AjaxServlet {
         String valProvider = request.getParameter("provider");
         BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
         provider.setServlet(this);
-        provider.processRequest(new SecureXmlHttpServletRequest(request), response);
+        provider.processRequest(request, response);
     }
 
 }

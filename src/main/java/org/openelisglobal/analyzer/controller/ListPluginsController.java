@@ -9,12 +9,23 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.plugin.PluginLoader;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ListPluginsController extends BaseController {
+
+    // form isn't submitted back
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
     public ModelAndView showListPlugins(HttpServletRequest request) {
         ListPluginForm form = new ListPluginForm();

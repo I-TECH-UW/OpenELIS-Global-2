@@ -9,7 +9,7 @@ public class AnalyzerTestNameMenuForm extends MenuForm {
     // for display
     private List menuList;
 
-    private List<@SafeHtml String> selectedIDs;
+    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> selectedIDs;
 
     public AnalyzerTestNameMenuForm() {
         setFormName("analyzerTestNameMenuForm");

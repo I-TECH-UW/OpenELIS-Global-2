@@ -15,10 +15,12 @@ public interface LocalizationService extends BaseObjectService<Localization, Str
 
     void updateTestNames(Localization name, Localization reportingName);
 
-    String getCurrentLocale();
+    String getCurrentLocaleLanguage();
 
     String getLocalizedValueById(String id);
 
     List<Locale> getAllActiveLocales();
+
+    Locale getCurrentLocale();
 
 }

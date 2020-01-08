@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 				 org.openelisglobal.common.formfields.FormFields,
 				 org.openelisglobal.common.formfields.FormFields.Field,
@@ -12,16 +12,11 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-	
-
-<%!
-	boolean useCollectionDate = true;
-	boolean useSampleStatus = false;
- %>
 <%
-	useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
-	useSampleStatus = FormFields.getInstance().useField(Field.SearchSampleStatus);
- %>
+	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
+	boolean useSampleStatus = FormFields.getInstance().useField(Field.SearchSampleStatus);
+%>
+ 
 <script type="text/javascript">
 
 var newSearchInfo = false;

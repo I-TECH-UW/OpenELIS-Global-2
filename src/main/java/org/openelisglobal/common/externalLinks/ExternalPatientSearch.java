@@ -3,14 +3,14 @@
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
@@ -31,15 +31,16 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
@@ -112,7 +113,7 @@ public class ExternalPatientSearch implements Runnable {
         }
 
         if (searchResults == null) {
-            searchResults = new ArrayList<PatientDemographicsSearchResults>();
+            searchResults = new ArrayList<>();
 
             convertXMLToResults();
         }
@@ -128,6 +129,7 @@ public class ExternalPatientSearch implements Runnable {
         return returnStatus;
     }
 
+    @Override
     public void run() {
         try {
             synchronized (this) {
@@ -138,7 +140,7 @@ public class ExternalPatientSearch implements Runnable {
                 if (connectionCredentialsIncomplete()) {
                     throw new IllegalStateException("Search requested before connection credentials set.");
                 }
-                errors = new ArrayList<String>();
+                errors = new ArrayList<>();
 
                 doSearch();
             }
@@ -160,13 +162,14 @@ public class ExternalPatientSearch implements Runnable {
     // protected for unit testing called from synchronized block
     protected void doSearch() {
 
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = new DefaultHttpClient();
         setTimeout(httpclient);
 
         HttpGet httpget = new HttpGet(connectionString);
         URI getUri = buildConnectionString(httpget.getURI());
         httpget.setURI(getUri);
 
+        CloseableHttpResponse getResponse = null;
         try {
             // Ignore hostname mismatches and allow trust of self-signed certs
             SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(),
@@ -175,41 +178,57 @@ public class ExternalPatientSearch implements Runnable {
             ClientConnectionManager ccm = httpclient.getConnectionManager();
             ccm.getSchemeRegistry().register(https);
 
-            HttpResponse getResponse = httpclient.execute(httpget);
+            getResponse = httpclient.execute(httpget);
             returnStatus = getResponse.getStatusLine().getStatusCode();
             setPossibleErrors();
             setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-            // System.out.println("Tinny time out" + e);
+            LogEvent.logError(e.toString(), e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out"
+            // + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-            // System.out.println("you no talks? " + e);
+            LogEvent.logError(e.toString(), e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? "
+            // + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
-            // System.out.println("all else failed " + e);
+            LogEvent.logError(e.toString(), e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed
+            // " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (UnrecoverableKeyException e) {
             errors.add("Unrecoverable key error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (NoSuchAlgorithmException e) {
             errors.add("No such encyrption algorithm error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (KeyStoreException e) {
             errors.add("Keystore error trying to connect to external search service.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (RuntimeException e) {
             errors.add("Runtime error trying to retrieve patient information.");
-            LogEvent.logError("ExternalPatientSearch", "doSearch()", e.toString());
+            LogEvent.logError(e.toString(), e);
             httpget.abort();
             throw e;
         } finally {
+            if (getResponse != null) {
+                try {
+                    getResponse.close();
+                } catch (IOException e) {
+                    LogEvent.logError(e);
+                }
+            }
+
             httpclient.getConnectionManager().shutdown();
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                LogEvent.logError(e.getMessage(), e);
+            }
         }
     }
 

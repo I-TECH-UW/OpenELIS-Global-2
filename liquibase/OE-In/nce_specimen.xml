@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="john" id="1">
+        <comment>Creates NCE Specimen sequence</comment>
+        <createSequence
+                        incrementBy="1"
+                        maxValue="2147483647"
+                        minValue="1"
+                        schemaName="clinlims"
+                        sequenceName="nce_specimen_id_seq"
+                        startValue="1"/>
+    </changeSet>
+    <changeSet author="john" id="2">
+        <comment>Creates NCE Specimen table</comment>
+        <createTable tableName="nce_specimen" schemaName="clinlims">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="nce_id" type="integer">
+                <constraints references="clinlims.nc_event(id)" foreignKeyName="specimen_nc_event_fk"/>
+            </column>
+            <column name="sample_item_id" type="integer">
+                <constraints references="clinlims.sample_item(id)" foreignKeyName="sample_item_specimen_fk"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="john" id="3">
+        <comment>Creates NCE Specimen ownership</comment>
+        <sql>
+            ALTER TABLE clinlims.nce_specimen OWNER to clinlims;
+            ALTER SEQUENCE clinlims.nce_specimen_id_seq OWNER to clinlims;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

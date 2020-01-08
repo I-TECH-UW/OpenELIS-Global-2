@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -18,12 +19,13 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
 
-public class SampleEntryByProjectForm extends BaseForm {
+public class SampleEntryByProjectForm extends BaseForm implements IAccessionerForm {
 
     @ValidDate(relative = DateRelation.TODAY)
     private String currentDate = "";
@@ -40,13 +42,13 @@ public class SampleEntryByProjectForm extends BaseForm {
     @ValidTime
     private String interviewTime = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String project = "";
 
     @ValidAccessionNumber(format = AccessionFormat.PROGRAM, dateValidate = true)
     private String labNo = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String doctor = "";
 
     @NotBlank
@@ -73,10 +75,10 @@ public class SampleEntryByProjectForm extends BaseForm {
 
     private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String patientLastUpdated = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String personLastUpdated = "";
 
     @Valid
@@ -84,6 +86,9 @@ public class SampleEntryByProjectForm extends BaseForm {
 
     @Valid
     private ObservationData observations;
+
+    @Min(0)
+    private Integer centerCode;
 
     // for display
     private Map<String, List<Organization>> organizationTypeLists;
@@ -100,7 +105,7 @@ public class SampleEntryByProjectForm extends BaseForm {
     // for display
     private PatientSearch patientSearch;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String domain = "";
 
     public SampleEntryByProjectForm() {
@@ -123,6 +128,7 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.currentDate = currentDate;
     }
 
+    @Override
     public String getReceivedDateForDisplay() {
         return receivedDateForDisplay;
     }
@@ -131,6 +137,7 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.receivedDateForDisplay = receivedDateForDisplay;
     }
 
+    @Override
     public String getReceivedTimeForDisplay() {
         return receivedTimeForDisplay;
     }
@@ -139,6 +146,7 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.receivedTimeForDisplay = receivedTimeForDisplay;
     }
 
+    @Override
     public String getInterviewDate() {
         return interviewDate;
     }
@@ -147,6 +155,7 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.interviewDate = interviewDate;
     }
 
+    @Override
     public String getInterviewTime() {
         return interviewTime;
     }
@@ -163,10 +172,12 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.project = project;
     }
 
+    @Override
     public String getLabNo() {
         return labNo;
     }
 
+    @Override
     public void setLabNo(String labNo) {
         this.labNo = labNo;
     }
@@ -179,18 +190,22 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.doctor = doctor;
     }
 
+    @Override
     public String getSubjectNumber() {
         return subjectNumber;
     }
 
+    @Override
     public void setSubjectNumber(String subjectNumber) {
         this.subjectNumber = subjectNumber;
     }
 
+    @Override
     public String getSiteSubjectNumber() {
         return siteSubjectNumber;
     }
 
+    @Override
     public void setSiteSubjectNumber(String siteSubjectNumber) {
         this.siteSubjectNumber = siteSubjectNumber;
     }
@@ -211,14 +226,17 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.genders = genders;
     }
 
+    @Override
     public String getBirthDateForDisplay() {
         return birthDateForDisplay;
     }
 
+    @Override
     public void setBirthDateForDisplay(String birthDateForDisplay) {
         this.birthDateForDisplay = birthDateForDisplay;
     }
 
+    @Override
     public String getSamplePK() {
         return samplePK;
     }
@@ -227,6 +245,7 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.samplePK = samplePK;
     }
 
+    @Override
     public String getPatientPK() {
         return patientPK;
     }
@@ -259,18 +278,22 @@ public class SampleEntryByProjectForm extends BaseForm {
         this.personLastUpdated = personLastUpdated;
     }
 
+    @Override
     public ProjectData getProjectData() {
         return ProjectData;
     }
 
+    @Override
     public void setProjectData(ProjectData projectData) {
         ProjectData = projectData;
     }
 
+    @Override
     public ObservationData getObservations() {
         return observations;
     }
 
+    @Override
     public void setObservations(ObservationData observations) {
         this.observations = observations;
     }
@@ -305,6 +328,15 @@ public class SampleEntryByProjectForm extends BaseForm {
 
     public void setPatientSearch(PatientSearch patientSearch) {
         this.patientSearch = patientSearch;
+    }
+
+    @Override
+    public Integer getCenterCode() {
+        return centerCode;
+    }
+
+    public void setCenterCode(Integer centerCode) {
+        this.centerCode = centerCode;
     }
 
 }

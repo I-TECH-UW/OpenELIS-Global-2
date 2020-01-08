@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.common.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,9 +37,12 @@ import org.openelisglobal.internationalization.MessageUtil;
  */
 
 public class SystemConfiguration {
-    private static String propertyFile = "/SystemConfiguration.properties";
+    private static final String propertyFile = "/SystemConfiguration.properties";
 
-    private static SystemConfiguration config = null;
+    private static class SingletonHelper {
+        private static final SystemConfiguration INSTANCE = new SystemConfiguration();
+    }
+
     private List<LocaleChangeListener> localChangeListeners = new ArrayList<>();
 
     private Properties properties = null;
@@ -55,17 +59,16 @@ public class SystemConfiguration {
 
             properties.load(propertyStream);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // bugzilla 2154
-            LogEvent.logError("SystemConfiguration", "Constructor", e.toString());
+            LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     // bugzilla 2154
-                    LogEvent.logError("SystemConfiguration", "Constructor final", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
 
@@ -74,15 +77,7 @@ public class SystemConfiguration {
     }
 
     public static SystemConfiguration getInstance() {
-        if (config == null) {
-            synchronized (SystemConfiguration.class) {
-                if (config == null) {
-                    config = new SystemConfiguration();
-                }
-            }
-        }
-
-        return config;
+        return SingletonHelper.INSTANCE;
     }
 
     public void addLocalChangeListener(LocaleChangeListener listener) {
@@ -432,7 +427,9 @@ public class SystemConfiguration {
         String prependHumanReadable = properties.getProperty("print.label.sample.prepend.humanreadable");
         String postpend = properties.getProperty("print.label.sample.postpend");
         if (prependBarcode != null && prependHumanReadable != null && postpend != null) {
-            StringBuffer sb = new StringBuffer();
+            int sampleLabelLength = prependBarcode.length() + accessionNumber.length() + prependHumanReadable.length()
+                    + accessionNumber.length() + postpend.length();
+            StringBuffer sb = new StringBuffer(sampleLabelLength);
             sb.append(prependBarcode).append(accessionNumber).append(prependHumanReadable).append(accessionNumber)
                     .append(postpend);
             return sb.toString();
@@ -666,7 +663,8 @@ public class SystemConfiguration {
     // 1742 openreports static ids (tests, projects etc.)
     public String getStaticIdByName(String name) {
         String testId = properties.getProperty(name);
-        // System.out.println("SystemConfig getting test by name " + name);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "SystemConfig
+        // getting test by name " + name);
         if (testId != null) {
             return testId;
         }
@@ -964,9 +962,9 @@ public class SystemConfiguration {
         if (!GenericValidator.isBlankOrNull(timeLimit)) {
             try {
                 limit = Long.parseLong(timeLimit);
-            } catch (NumberFormatException nfe) {
-                LogEvent.logError("SystemConfiguration", "getSearchTimeLimit()",
-                        "Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used");
+            } catch (NumberFormatException e) {
+                LogEvent.logError(
+                        "Invalid SystemConfiguration format for 'patient.search.time.limit.ms'.  Default used", e);
             }
         }
         return limit;

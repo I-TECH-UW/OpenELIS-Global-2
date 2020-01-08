@@ -40,6 +40,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     EntityManager entityManager;
 
     @Override
+    @Transactional
     public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
         try {
@@ -47,13 +48,14 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
             query.setInteger("id", Integer.parseInt(id));
             query.executeUpdate();
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "deleteAllLinksForOrganization()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
         }
     }
 
     @Override
+    @Transactional
     public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
         try {
@@ -63,15 +65,14 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("type_id", Integer.parseInt(typeId));
             query.executeUpdate();
 
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "linkOrganizationAndType()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
         String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
@@ -81,16 +82,15 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("orgTypeId", Integer.parseInt(typeId));
             orgIdList = query.list();
 
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "getOrganizationForType()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
         }
         return orgIdList;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
         List<String> orgIdList = null;
         String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
@@ -100,7 +100,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("orgId", Integer.parseInt(organizationId));
             orgIdList = query.list();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeIdsForOrganizationId");
         }
         return orgIdList;
@@ -108,7 +108,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
     private void handleException(Exception e, String string) {
         // TODO Auto-generated method stub
-        e.printStackTrace();
+        LogEvent.logDebug(e);
 
     }
 }

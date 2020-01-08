@@ -334,8 +334,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
         try {
             return getBaseObjectDAO().getNext(id).orElse(classType.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), "get()",
-                    "Could not create new Instance for " + classType.getName());
+            LogEvent.logError("Could not create new Instance for " + classType.getName(), e);
             throw new LIMSRuntimeException(e);
         }
     }
@@ -346,8 +345,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
         try {
             return getBaseObjectDAO().getPrevious(id).orElse(classType.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), "get()",
-                    "Could not create new Instance for " + classType.getName());
+            LogEvent.logError("Could not create new Instance for " + classType.getName(), e);
             throw new LIMSRuntimeException(e);
         }
     }

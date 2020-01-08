@@ -73,8 +73,6 @@
 		<property name="code" column="code" type="java.lang.String"
 			length="20" />
 
-
-
 		<set name="organizationTypes"
 			table="organization_organization_type" cascade="all" lazy="true"
 			inverse="true">
@@ -82,5 +80,6 @@
 			<many-to-many column="org_type_id"
 				class="org.openelisglobal.organization.valueholder.OrganizationType" />
 		</set>
+	
 	</class>
 </hibernate-mapping>

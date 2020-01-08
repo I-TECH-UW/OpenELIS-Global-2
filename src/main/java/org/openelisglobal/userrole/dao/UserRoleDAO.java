@@ -39,9 +39,9 @@ public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 
 //	public void updateData(UserRole userRole) throws LIMSRuntimeException;
 
-//	public List getNextUserRoleRecord(String id) throws LIMSRuntimeException;
 
-//	public List getPreviousUserRoleRecord(String id) throws LIMSRuntimeException;
+
+
 
 //	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
 

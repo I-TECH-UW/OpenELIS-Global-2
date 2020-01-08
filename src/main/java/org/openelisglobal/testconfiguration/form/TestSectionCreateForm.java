@@ -22,11 +22,11 @@ public class TestSectionCreateForm extends BaseForm {
     private String existingFrenchNames;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String testUnitEnglishName;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String testUnitFrenchName;
 
     public TestSectionCreateForm() {

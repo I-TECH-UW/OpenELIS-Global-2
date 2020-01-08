@@ -17,6 +17,7 @@
 package org.openelisglobal.common.services;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -60,7 +61,7 @@ public class TestIdentityService implements ITestIdentityService {
             if (test != null) {
                 VIRAL_LOAD_TEST_ID = test.getId();
             } else {
-                test = testService.getTestByName("Viral Load");
+                test = testService.getTestByLocalizedName("Viral Load", Locale.ENGLISH);
                 if (test != null) {
                     VIRAL_LOAD_TEST_ID = test.getId();
                 }
@@ -98,12 +99,14 @@ public class TestIdentityService implements ITestIdentityService {
      */
     @Override
     public boolean doesTestExist(String name) {
-        return testService.getTestByName(name) != null;
+        List<Test> tests = testService.getTestsByName(name);
+        return (tests != null && !tests.isEmpty());
     }
 
     @Override
     public boolean doesActiveTestExist(String name) {
-        return !testService.getActiveTestByName(name).isEmpty();
+        List<Test> tests = testService.getActiveTestsByName(name);
+        return (tests != null && !tests.isEmpty());
     }
 
     /*

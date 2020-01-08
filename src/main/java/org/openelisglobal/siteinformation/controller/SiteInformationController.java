@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
@@ -18,6 +17,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.URLUtil;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +49,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @SessionAttributes("form")
 public class SiteInformationController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value",
+            "localization.localeValues[*]" };
 
     @Autowired
     SiteInformationFormValidator formValidator;
@@ -80,6 +85,11 @@ public class SiteInformationController extends BaseController {
         RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/SiteInformation", "/NextPreviousNonConformityConfiguration", "/NextPreviousWorkplanConfiguration",
@@ -88,12 +98,12 @@ public class SiteInformationController extends BaseController {
             "/NextPreviousSiteInformation" }, method = RequestMethod.GET)
     // TODO decide if still needing NextPrevious (functionality is not implemented)
     public ModelAndView showSiteInformation(HttpServletRequest request,
-            @ModelAttribute("form") SiteInformationForm form)
+            @ModelAttribute("form") SiteInformationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // protect form from injection arbitrary values on the get step (since csrf is
         // not checked at this stage)
-        form = resetFormToType(form, SiteInformationForm.class);
-        setupFormForRequest(form, request);
+        SiteInformationForm newForm = resetSessionFormToType(oldForm, SiteInformationForm.class);
+        setupFormForRequest(newForm, request);
 
         String id = request.getParameter(ID);
 
@@ -108,14 +118,14 @@ public class SiteInformationController extends BaseController {
 
             request.setAttribute(ID, siteInformation.getId());
 
-            PropertyUtils.setProperty(form, "paramName", siteInformation.getName());
-            PropertyUtils.setProperty(form, "description", getInstruction(siteInformation));
-            PropertyUtils.setProperty(form, "value", siteInformation.getValue());
-            setLocalizationValues(form, siteInformation);
-            PropertyUtils.setProperty(form, "encrypted", siteInformation.isEncrypted());
-            PropertyUtils.setProperty(form, "valueType", siteInformation.getValueType());
-            PropertyUtils.setProperty(form, "editable", isEditable(siteInformation));
-            PropertyUtils.setProperty(form, "tag", siteInformation.getTag());
+            newForm.setParamName(siteInformation.getName());
+            newForm.setDescription(getInstruction(siteInformation));
+            newForm.setValue(siteInformation.getValue());
+            setLocalizationValues(newForm, siteInformation);
+            newForm.setEncrypted(siteInformation.isEncrypted());
+            newForm.setValueType(siteInformation.getValueType());
+            newForm.setEditable(isEditable(siteInformation));
+            newForm.setTag(siteInformation.getTag());
 
             if ("dictionary".equals(siteInformation.getValueType())) {
                 List<String> dictionaryValues = new ArrayList<>();
@@ -127,11 +137,11 @@ public class SiteInformationController extends BaseController {
                     dictionaryValues.add(dictionary.getDictEntry());
                 }
 
-                PropertyUtils.setProperty(form, "dictionaryValues", dictionaryValues);
+                newForm.setDictionaryValues(dictionaryValues);
             }
         }
 
-        String domainName = form.getString("siteInfoDomainName");
+        String domainName = newForm.getSiteInfoDomainName();
         if ("SiteInformation".equals(domainName)) {
             if (isNew) {
                 request.setAttribute("key", "siteInformation.add.title");
@@ -146,7 +156,7 @@ public class SiteInformationController extends BaseController {
             }
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
@@ -240,8 +250,8 @@ public class SiteInformationController extends BaseController {
         // N.B. The reason for this branch is that localization does not actually update
         // site information, it updates the
         // localization table
-        if ("localization".equals(form.getString("tag"))) {
-            String localizationId = form.getString("value");
+        if ("localization".equals(form.getTag())) {
+            String localizationId = form.getValue();
             forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
         } else {
             forward = validateAndUpdateSiteInformation(request, response, form, isNew);
@@ -268,7 +278,7 @@ public class SiteInformationController extends BaseController {
             }
             try {
                 localizationService.update(localization);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 errors = new BaseErrors();
                 errors.reject("errors.UpdateException");
                 saveErrors(errors);
@@ -281,8 +291,8 @@ public class SiteInformationController extends BaseController {
     public String validateAndUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
             SiteInformationForm form, boolean newSiteInformation) {
 
-        String name = form.getString("paramName");
-        String value = form.getString("value");
+        String name = form.getParamName();
+        String value = form.getValue();
         Errors errors = new BaseErrors();
 
         if (!isValid(request, name, value, errors)) {
@@ -294,9 +304,9 @@ public class SiteInformationController extends BaseController {
 
         if (newSiteInformation) {
             siteInformation.setName(name);
-            siteInformation.setDescription(form.getString("description"));
+            siteInformation.setDescription(form.getDescription());
             siteInformation.setValueType("text");
-            siteInformation.setEncrypted((Boolean) form.get("encrypted"));
+            siteInformation.setEncrypted(form.isEncrypted());
             siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
         } else {
             siteInformation = siteInformationService.get(request.getParameter(ID));
@@ -305,7 +315,7 @@ public class SiteInformationController extends BaseController {
         siteInformation.setValue(value);
         siteInformation.setSysUserId(getSysUserId(request));
 
-        String domainName = form.getString("siteInfoDomainName");
+        String domainName = form.getSiteInfoDomainName();
 
         if ("SiteInformation".equals(domainName)) {
             siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
@@ -317,9 +327,9 @@ public class SiteInformationController extends BaseController {
             if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
                 localeResolver.setLocale(request, response, Locale.forLanguageTag(siteInformation.getValue()));
             }
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
 
                 errorMsg = "errors.OptimisticLockException";
 
@@ -418,7 +428,7 @@ public class SiteInformationController extends BaseController {
      * id = siteInformation.getId(); } else { // just disable next button
      * request.setAttribute(PREVIOUS_DISABLED, TRUE); } }
      *
-     * } catch (LIMSRuntimeException lre) { request.setAttribute(ALLOW_EDITS_KEY,
+     * } catch (LIMSRuntimeException e) { request.setAttribute(ALLOW_EDITS_KEY,
      * FALSE); // disable previous and next request.setAttribute(PREVIOUS_DISABLED,
      * TRUE); request.setAttribute(NEXT_DISABLED, TRUE); forward = FWD_FAIL_INSERT;
      * } if (forward.equals(FWD_FAIL_INSERT)) { return findForward(forward, form); }
@@ -433,15 +443,14 @@ public class SiteInformationController extends BaseController {
             "/CancelMenuStatementConfig", "/CancelPatientConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)
     public ModelAndView cancelSiteInformation(HttpServletRequest request,
-            @ModelAttribute("form") SiteInformationForm form, SessionStatus status) {
+            SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new SiteInformationForm());
     }
 
     @Override
     protected String findLocalForward(String forward) {
-        String path = request.getRequestURI().substring(request.getContextPath().length());
-        String pathNoSuffix = path.substring(0, path.lastIndexOf('.'));
+        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
         if (FWD_SUCCESS.equals(forward)) {
             return "siteInformationDefinition";
         } else if (FWD_FAIL.equals(forward)) {

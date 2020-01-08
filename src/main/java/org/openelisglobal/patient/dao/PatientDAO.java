@@ -36,32 +36,28 @@ public interface PatientDAO extends BaseDAO<Patient, String> {
 
 //	public void deleteData(List patients) throws LIMSRuntimeException;
 
-    public List getAllPatients() throws LIMSRuntimeException;
+    List<Patient> getAllPatients() throws LIMSRuntimeException;
 
-    public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
+    List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Patient patient) throws LIMSRuntimeException;
+    void getData(Patient patient) throws LIMSRuntimeException;
 
 //	public void updateData(Patient patient) throws LIMSRuntimeException;
 
-    public List getNextPatientRecord(String id) throws LIMSRuntimeException;
+    boolean externalIDExists(String patientExternalID);
 
-    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException;
+    Patient readPatient(String idString);
 
-    public boolean externalIDExists(String patientExternalID);
+    Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
 
-    public Patient readPatient(String idString);
+    Patient getPatientByNationalId(String subjectNumber);
 
-    public Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
+    List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
 
-    public Patient getPatientByNationalId(String subjectNumber);
+    Patient getPatientByExternalId(String externalId);
 
-    public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
-
-    public Patient getPatientByExternalId(String externalId);
-
-    public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
+    List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
             throws LIMSRuntimeException;
 
-    public Patient getData(String patientId) throws LIMSRuntimeException;
+    Patient getData(String patientId) throws LIMSRuntimeException;
 }

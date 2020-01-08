@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -33,6 +32,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.RejectionReportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
@@ -80,12 +80,10 @@ public abstract class RejectionReport extends Report implements IReportCreator {
     protected abstract void buildReportContent(ReportSpecificationList testSelection);
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         initialized = true;
-        ReportSpecificationList selection = (ReportSpecificationList) form.get("selectList");
-        String lowDateStr = form.getString("lowerDateRange");
-        String highDateStr = form.getString("upperDateRange");
-        dateRange = new DateRange(lowDateStr, highDateStr);
+        ReportSpecificationList selection = form.getSelectList();
+        dateRange = new DateRange(form.getLowerDateRange(), form.getUpperDateRange());
 
         errorFound = !validateSubmitParameters(selection);
         if (errorFound) {

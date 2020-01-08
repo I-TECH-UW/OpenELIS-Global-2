@@ -56,7 +56,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //				String tableName = "UNIT_OF_MEASURE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure AuditTrail deleteData()", e);
@@ -71,7 +71,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure deleteData()", e);
@@ -80,7 +80,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
 //	@Override
 //	public boolean insertData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
-//		// System.out.println("insertData = " + unitOfMeasure.getUnitOfMeasureName());
+//		// LogEvent.logInfo(this.getClass().getName(), "method unkown", "insertData = " + unitOfMeasure.getUnitOfMeasureName());
 //		try {
 //			// bugzilla 1482 throw Exception if record already exists
 //			if (duplicateUnitOfMeasureExists(unitOfMeasure)) {
@@ -99,7 +99,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure insertData()", e);
@@ -116,7 +116,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure updateData()", e);
@@ -129,7 +129,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //			auditDAO.saveHistory(unitOfMeasure, oldData, unitOfMeasure.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "UNIT_OF_MEASURE");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure AuditTrail updateData()", e);
 //		}
@@ -140,7 +140,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(unitOfMeasure);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(unitOfMeasure);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure updateData()", e);
@@ -175,7 +175,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			} else {
 //				unitOfMeasure.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure getData()", e);
@@ -193,7 +193,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getAllUnitOfMeasures()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure getAllUnitOfMeasures()", e);
@@ -213,7 +213,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getAllUnitOfMeasures()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure getAllUnitOfMeasures()", e);
@@ -225,7 +225,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //		try {
 //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			@SuppressWarnings("unchecked")
+//
 //			List<TestSection> sections = query.list();
 //			// closeSession(); // CSL remove old
 //			return sections;
@@ -251,7 +251,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getPageOfUnitOfMeasures()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure getPageOfUnitOfMeasures()", e);
@@ -266,7 +266,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			data = entityManager.unwrap(Session.class).get(UnitOfMeasure.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "readUnitOfMeasure()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure readUnitOfMeasure()", e);
@@ -305,7 +305,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //			return data;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getUnitOfMeasureByName()", e.toString());
 //			throw new LIMSRuntimeException("Error in UnitOfMeasure getUnitOfMeasureByName()", e);
@@ -315,7 +315,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
 //	@Override
 //	public Integer getTotalUnitOfMeasureCount() throws LIMSRuntimeException {
-//		return getTotalCount("UnitOfMeasure", UnitOfMeasure.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id
@@ -331,7 +331,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //
 //			list = query.list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -352,7 +352,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 //			query.setMaxResults(2);
 //
 //			list = query.list();
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("UnitOfMeasureDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -364,7 +364,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
     @Override
     public boolean duplicateUnitOfMeasureExists(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
         try {
-            List list;
+            List<UnitOfMeasure> list;
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -386,9 +386,9 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
             return !list.isEmpty();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("UnitOfMeasureDAOImpl", "duplicateUnitOfMeasureExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateUnitOfMeasureExists()", e);
         }
     }

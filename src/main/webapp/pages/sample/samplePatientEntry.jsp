@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.util.SystemConfiguration,
                  org.openelisglobal.common.util.ConfigurationProperties,
@@ -25,47 +25,33 @@
 <c:set var="sampleOrderItems" value="${form.sampleOrderItems}" />
 
 
-<%!
-    String basePath = "";
-    boolean useSTNumber = true;
-    boolean useMothersName = true;
-
-    boolean useProviderInfo = false;
-    boolean patientRequired = false;
-    boolean trackPayment = false;
-    boolean requesterLastNameRequired = false;
-    boolean acceptExternalOrders = false;
-    IAccessionNumberValidator accessionNumberValidator;
-
-%>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
-    useSTNumber =  FormFields.getInstance().useField(FormFields.Field.StNumber);
-    useMothersName = FormFields.getInstance().useField(FormFields.Field.MothersName);
-    useProviderInfo = FormFields.getInstance().useField(FormFields.Field.ProviderInfo);
-    patientRequired = FormFields.getInstance().useField(FormFields.Field.PatientRequired);
-    trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-    accessionNumberValidator = AccessionNumberUtil.getAccessionNumberValidator();
-    requesterLastNameRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterLastNameRequired);
-    acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
+    boolean useSTNumber =  FormFields.getInstance().useField(FormFields.Field.StNumber);
+    boolean useMothersName = FormFields.getInstance().useField(FormFields.Field.MothersName);
+    boolean useProviderInfo = FormFields.getInstance().useField(FormFields.Field.ProviderInfo);
+    boolean patientRequired = FormFields.getInstance().useField(FormFields.Field.PatientRequired);
+    boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
+    boolean requesterLastNameRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterLastNameRequired);
+	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
+
+	IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil.getAccessionNumberValidator();
 %>
 
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
-<link type="text/css" rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link type="text/css" rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<link type="text/css" rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link type="text/css" rel="stylesheet" href="css/customAutocomplete.css?">
 
-<script type="text/javascript" src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/laborder.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.core.js?"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.widget.js?"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.button.js?"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.menu.js?"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.position.js?"></script>
+<script type="text/javascript" src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script type="text/javascript" src="scripts/customAutocomplete.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/laborder.js?"></script>
 
 
 <script type="text/javascript" >
@@ -584,7 +570,7 @@ function  processPhoneSuccess(xhr){
 }
 </script>
 
-<!-- This define may not be needed, look at usages (not in any other jsp or js page-->
+<%-- This define may not be needed, look at usages (not in any other jsp or js page--%>
 
 <form:hidden path="currentDate"/>
 <form:hidden path="sampleOrderItems.newRequesterName" />

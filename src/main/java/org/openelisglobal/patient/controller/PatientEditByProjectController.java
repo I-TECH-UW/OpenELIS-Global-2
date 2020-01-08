@@ -1,9 +1,10 @@
 package org.openelisglobal.patient.controller;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
@@ -19,6 +20,8 @@ import org.openelisglobal.patient.validator.PatientEditByProjectFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,20 +32,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PatientEditByProjectController extends BasePatientEntryByProject {
 
     @Autowired
-    PatientEditByProjectFormValidator formValidator;
+    private PatientEditByProjectFormValidator formValidator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        String[] allowedFields = getBasePatientEntryByProjectFields().toArray(new String[0]);
+        binder.setAllowedFields(allowedFields);
+    }
 
     @RequestMapping(value = "/PatientEditByProject", method = RequestMethod.GET)
-    public ModelAndView showPatientEditByProject(HttpServletRequest request) throws Exception {
+    public ModelAndView showPatientEditByProject(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PatientEditByProjectForm form = new PatientEditByProjectForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         updateRequestType(request);
 
         // Set current date and entered date to today's date
-        PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText()); // TODO Needed?
+        form.setCurrentDate(DateUtil.getCurrentDateAsText()); // TODO Needed?
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(false);
-        PropertyUtils.setProperty(form, "patientSearch", patientSearch);
+        form.setPatientSearch(patientSearch);
 
         addAllPatientFormLists(form);
 
@@ -53,7 +63,8 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
     @RequestMapping(value = "/PatientEditByProject", method = RequestMethod.POST)
     public ModelAndView showPatientEditByProjectSave(HttpServletRequest request,
             @ModelAttribute("form") @Valid PatientEditByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws LIMSRuntimeException, Exception {
+            RedirectAttributes redirectAttributes)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
@@ -124,22 +135,22 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
     @Override
     protected String getPageSubtitleKey() {
         RequestType requestType = getRequestType(request);
-        String key = null;
+        String pageKey = null;
         switch (requestType) {
         case READWRITE: {
-            key = "banner.menu.editPatient.ReadWrite";
+            pageKey = "banner.menu.editPatient.ReadWrite";
             break;
         }
         case READONLY: {
-            key = "banner.menu.editPatient.ReadOnly";
+            pageKey = "banner.menu.editPatient.ReadOnly";
             break;
         }
 
         default: {
-            key = "banner.menu.editPatient.ReadOnly";
+            pageKey = "banner.menu.editPatient.ReadOnly";
         }
         }
 
-        return key;
+        return pageKey;
     }
 }

@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -14,6 +15,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,10 +25,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleTypeRenameEntryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "sampleTypeId", "nameEnglish", "nameFrench" };
+
     @Autowired
-    TypeOfSampleService typeOfSampleService;
+    private TypeOfSampleService typeOfSampleService;
     @Autowired
-    LocalizationService localizationService;
+    private LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.GET)
     public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
@@ -85,8 +95,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 
             try {
                 localizationService.update(name);
-            } catch (HibernateException lre) {
-                lre.printStackTrace();
+            } catch (HibernateException e) {
+                LogEvent.logDebug(e);
             }
         }
 

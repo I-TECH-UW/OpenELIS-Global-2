@@ -6,7 +6,7 @@ import java.util.List;
 
 public class StopWatch {
 
-    private Mark start;
+    private Mark startMark;
     private List<Mark> marks = new ArrayList<Mark>();
     private boolean disable = false;
 
@@ -19,9 +19,9 @@ public class StopWatch {
      */
     public void start(String message) {
         if (!disable) {
-            start = new Mark();
-            start.msg = message;
-            start.time = System.currentTimeMillis();
+            startMark = new Mark();
+            startMark.msg = message;
+            startMark.time = System.currentTimeMillis();
         }
     }
 
@@ -44,7 +44,7 @@ public class StopWatch {
      * events
      */
     public void reset() {
-        start = null;
+        startMark = null;
         marks = new ArrayList<Mark>();
     }
 
@@ -63,18 +63,18 @@ public class StopWatch {
      */
     public void report(PrintStream out) {
         if (!disable) {
-            if (start == null) {
+            if (startMark == null) {
                 out.println("Stop watch not started");
                 return;
             }
             out.println();
-            out.println(start.msg);
+            out.println(startMark.msg);
             out.println("\taccum\tperiod");
-            long lastMark = start.time;
+            long lastMark = startMark.time;
 
             for (Mark mark : marks) {
                 long period = mark.time - lastMark;
-                long duration = mark.time - start.time;
+                long duration = mark.time - startMark.time;
 
                 String report = String.format("%s\t%4.3f\t%4.3f", mark.msg, ((float) duration) / 1000.0,
                         ((float) period) / 1000.0);

@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants"
 %>
 
@@ -56,7 +56,7 @@
 	   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	   </td>
 	  <td>
-  			<html:button onclick="setMenuAction(this, document.getElementById('mainForm'), 'Cancel', 'no', '');" property="cancel" >
+  			<html:button onclick="setMenuActionUrl(this, document.getElementById('mainForm'), 'Cancel', 'no', '');" property="cancel" >
   			   <spring:message code="label.button.cancel"/>
   			</html:button>
 	    </td>

@@ -28,11 +28,9 @@ public abstract class AFormFields {
 
     public Map<FormFields.Field, Boolean> getFieldFormSet() throws IllegalStateException {
 
-        boolean patientRequired;
         Map<FormFields.Field, Boolean> defaultAttributes = getDefaultAttributes();
         Map<FormFields.Field, Boolean> setAttributes = getSetAttributes();
 
-        patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
         if (defaultAttributes == null) {
             defaultAttributes = new HashMap<>();
         }
@@ -42,7 +40,6 @@ public abstract class AFormFields {
         }
 
         defaultAttributes.putAll(setAttributes);
-        patientRequired = defaultAttributes.get(FormFields.Field.PatientRequired);
 
         return defaultAttributes;
     }

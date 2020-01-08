@@ -15,6 +15,8 @@ import org.openelisglobal.testconfiguration.form.TestRenameEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,14 +26,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class TestRenameEntryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "testId", "nameEnglish", "nameFrench",
+            "reportNameEnglish", "reportNameFrench" };
+
     @Autowired
     private LocalizationService localizationService;
     @Autowired
     private TestService testService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/TestRenameEntry", method = RequestMethod.GET)
     public ModelAndView showTestRenameEntry(HttpServletRequest request) {
-        System.out.println("Hibernate Version: " + org.hibernate.Version.getVersionString());
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                "Hibernate Version: " + org.hibernate.Version.getVersionString());
         String forward = FWD_SUCCESS;
         TestRenameEntryForm form = new TestRenameEntryForm();
 
@@ -94,7 +105,7 @@ public class TestRenameEntryController extends BaseController {
             try {
                 localizationService.updateTestNames(name, reportingName);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateTestNames()", e);
+                LogEvent.logErrorStack(e);
             }
 
         }

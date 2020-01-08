@@ -16,18 +16,17 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -39,17 +38,9 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
     private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
     @Override
-    public void setRequestParameters(BaseForm form) {
-        try {
-            PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("patient.report.associated.name"));
-            PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+    public void setRequestParameters(ReportForm form) {
+        form.setReportName(MessageUtil.getMessage("patient.report.associated.name"));
+        form.setUsePatientNumberDirect(Boolean.TRUE);
     }
 
     @Override
@@ -64,9 +55,9 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
 
             for (Sample sample : samples) {
                 List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
-                System.out.println("\n" + sample.getAccessionNumber());
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "\n" + sample.getAccessionNumber());
                 if (!projects.isEmpty()) {
-                    setProperty("accessionDirect", sample.getAccessionNumber());
+                    form.setAccessionDirect(sample.getAccessionNumber());
 
                     if ("InitialARV_Id".equals(projects.get(0).getValue())) {
                         byteList.add(createReport("patientARVInitial1"));
@@ -88,29 +79,17 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
                 }
 
                 if (QAService.isOrderNonConforming(sample)) {
-                    setProperty("lowerDateRange", sample.getReceivedDateForDisplay());
+                    form.setLowerDateRange(sample.getReceivedDateForDisplay());
                     byteList.add(createReport("retroCINonConformityByDate"));
                 }
 
                 if (isUnderInvestigation(sample)) {
-                    setProperty("lowerDateRange", sample.getReceivedDateForDisplay());
+                    form.setLowerDateRange(sample.getReceivedDateForDisplay());
                     byteList.add(createReport("retroCIFollowupRequiredByLocation"));
                 }
             }
         }
         return byteList;
-    }
-
-    private void setProperty(String key, String value) {
-        try {
-            PropertyUtils.setProperty(form, key, value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean isUnderInvestigation(Sample sample) {

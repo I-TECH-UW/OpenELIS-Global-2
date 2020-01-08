@@ -64,10 +64,12 @@ public class ReportingConfiguration implements Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultReportingConfigurationForm.ResultReportConfig.class })
     private String schedulerId;
 
-    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultReportingConfigurationForm.ResultReportConfig.class })
+    @Pattern(regexp = ValidationHelper.HOUR_REGEX, groups = {
+            ResultReportingConfigurationForm.ResultReportConfig.class })
     private String scheduleHours;
 
-    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultReportingConfigurationForm.ResultReportConfig.class })
+    @Pattern(regexp = ValidationHelper.MINUTES_REGEX, groups = {
+            ResultReportingConfigurationForm.ResultReportConfig.class })
     private String scheduleMin;
 
     private String title;

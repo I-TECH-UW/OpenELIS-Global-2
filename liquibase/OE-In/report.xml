@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="john" id="1">
+        <comment>Creates report id sequence</comment>
+        <createSequence
+                incrementBy="1"
+                maxValue="2147483647"
+                minValue="1"
+                schemaName="clinlims"
+                sequenceName="report_id_seq"
+                startValue="1"/>
+    </changeSet>
+    <changeSet author="john" id="2">
+        <comment>Creates report table</comment>
+        <createTable tableName="report" schemaName="clinlims">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="category" type="character varying(200)" />
+            <column name="sort_order" type="integer" />
+            <column name="menu_element_id" type="character varying(100)" />
+            <column name="display_key" type="character varying(200)" />
+            <column name="name" type="character varying(200)" />
+            <column name="is_visible" type="boolean" />
+        </createTable>
+    </changeSet>
+    <changeSet author="john" id="3">
+        <comment>Creates report ownership and inserts first values</comment>
+        <sql>
+            ALTER TABLE clinlims.report OWNER to clinlims;
+            ALTER SEQUENCE clinlims.report_id_seq OWNER to clinlims;
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 0, 'menu_reports_status_patient.classique', 'Patient Status report classic version', true, 'openreports.patientTestStatus.classique');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 1, 'menu_reports_status_patient.vreduit', 'Patient Status report reduced version', true, 'openreports.patientTestStatus.vreduit');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 4, 1, 'menu_reports_aggregate_all', 'Summary of all tests', true, 'openreports.all.tests.aggregate');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 4, 2, 'menu_reports_aggregate_hiv', 'HIV Test Summary', true, 'openreports.hiv.aggregate');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 6, 1, 'menu_activity_report_test', 'By Test Type', true, 'banner.menu.workplan.test');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 6, 2, 'menu_activity_report_panel', 'By Panel Type', true, 'banner.menu.workplan.panel');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 6, 3, 'menu_activity_report_bench', 'By Unit', true, 'banner.menu.workplan.bench');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 4, 'menu_reports_referred', 'Referred Tests Reports', true, 'reports.label.referred.out');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 7, 1, 'menu_reports_nonconformity_date', 'By Date', true, 'reports.nonConformity.byDate.report');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 7, 2, 'menu_reports_nonconformity_section', 'By Unit and Reason', true, 'reports.nonConformity.bySectionReason.report');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 6, 'menu_reports_validation_backlog', 'Delayed Validation', true, 'banner.menu.report.validation.backlog');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 7, 'menu_reports_auditTrail', 'Audit Trail', true, 'reports.auditTrail');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 3, 'menu_reports_export_routine', 'Export Routice CSV File', true, 'reports.export.byDate_routine');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 9, 'menu_reports_arv_initial1', 'ARV Initial Version 1', true, 'reports.patient.ARVInitial.version1');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 9, 'menu_reports_arv_initial2', 'ARV Initial Version 2', true, 'reports.patient.ARVInitial.version2');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 9, 'menu_reports_arv_followup1', 'ARV Follow-up Version 1', true, 'reports.patient.ARVFollowup.version1');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 4, 9, 'menu_reports_arv_followup2', 'ARV Follow-up Version 2', true, 'reports.patient.ARVFollowup.version2');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 9, 'menu_reports_arv_all', 'ARV-Version 1', true, 'reports.patient.ARV.version1');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 10, 'menu_reports_eid_version1', 'EID Version 1', true, 'openreports.patient.EID.version1');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 10, 'menu_reports_eid_version2', 'EID Version 2', true, 'openreports.patient.EID.version2');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 11, 'menu_reports_vl_version1', 'VL Version Nationale', true, 'openreports.patient.VL.version1');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 12, 'menu_reports_indeterminate_version1', 'Indeterminate Version 1', true, 'reports.patient.Indeterminate.version1');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 12, 'menu_reports_indeterminate_version2', 'Indeterminate Version 2', true, 'reports.patient.Indeterminate.version2');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 12, 'menu_reports_indeterminate_location', 'Indeterminate by Service', true, 'reports.patient.Indeterminate.location');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 4, 8, 'menu_reports_special', 'Special Request', true, 'project.SpecialRequestStudy.name');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 8, 'menu_reports_patient_collection', 'Collected ARV Patient Report', true, 'project.SpecialRequestStudy.name');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 6, 8, 'menu_reports_patient_associated', 'Associated Patient Report', true, 'patient.report.associated.name');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 13, 'menu_reports_indicator_performance', 'Section Performance', true, 'reports.label.indicator.performance');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 13, 'menu_reports_validation_backlog.study', 'Delayed Validation', true, 'banner.menu.report.validation.backlog');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 14, 'menu_reports_nonconformity_date.study', 'By Date', true, 'reports.nonConformity.byDate.report');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 14, 'menu_reports_nonconformity_section.study', 'By Unit and Reason', true, 'reports.nonConformity.bySectionReason.report');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 14, 'menu_reports_nonconformity.Labno', 'By Labno', true, 'reports.nonConformity.byLabno.report');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 4, 14, 'menu_reports_nonconformity_notification.study', 'Non-conformity notification', true, 'reports.nonConformity.notification.report');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 5, 14, 'menu_reports_followupRequired_ByLocation.study', 'Follow-up required', true, 'reports.followupRequired.byLocation');
+
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 1, 15, 'menu_reports_export_general', 'General Export', true, 'reports.export.general');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 2, 15, 'menu_reports_export_valid', 'Valid Export', true, 'reports.export.valid');
+            INSERT INTO clinlims.report(id, category, sort_order, menu_element_id, name, is_visible, display_key) VALUES (nextval('clinlims.report_id_seq'), 3, 15, 'menu_reports_export_specific', 'Viral Load Data Export', true, 'reports.export.specific');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

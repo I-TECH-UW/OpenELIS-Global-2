@@ -4,7 +4,7 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
  * Class for persisting bar code label information in the database
- * 
+ *
  * @author Caleb
  *
  */
@@ -28,7 +28,7 @@ public class BarcodeLabelInfo extends BaseObject<String> {
         super();
         this.code = code;
         numPrinted = 0;
-        type = parseCodeForType();
+        type = parseCodeForType(code);
     }
 
     public void incrementNumPrinted() {
@@ -37,10 +37,10 @@ public class BarcodeLabelInfo extends BaseObject<String> {
 
     /**
      * Determines the type of label based on the given code
-     * 
+     *
      * @return The type of label this code belongs to
      */
-    public String parseCodeForType() {
+    private final String parseCodeForType(String code) {
         if (code.contains("-")) {
             return "aliquot";
         } else if (code.contains(".")) {
@@ -52,18 +52,20 @@ public class BarcodeLabelInfo extends BaseObject<String> {
 
     /**
      * Get the id (PK of the object in the database)
-     * 
+     *
      * @return PK
      */
+    @Override
     public String getId() {
         return id;
     }
 
     /**
      * Set the id (PK of the object in the database)
-     * 
+     *
      * @param id PK
      */
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -17,6 +17,9 @@
 package org.openelisglobal.reports.action.implementation;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
@@ -39,7 +41,10 @@ import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternal
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYearReport;
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSiteYearReport.Months;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
+
+import net.sf.jasperreports.engine.JRException;
 
 public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
         implements IReportCreator, IReportParameterSetter {
@@ -86,17 +91,16 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "usePredefinedDateRanges", Boolean.TRUE);
+            form.setUsePredefinedDateRanges(Boolean.TRUE);
             new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site"))
                     .setRequestParameters(form);
-            PropertyUtils.setProperty(form, "instructions",
-                    MessageUtil.getMessage("report.instruction.inventory.test.count"));
-            PropertyUtils.setProperty(form, "monthList", MONTH_LIST);
-            PropertyUtils.setProperty(form, "yearList", getYearList());
-        } catch (Exception e) {
-            e.printStackTrace();
+            form.setInstructions(MessageUtil.getMessage("report.instruction.inventory.test.count"));
+            form.setMonthList(MONTH_LIST);
+            form.setYearList(getYearList());
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
     }
@@ -126,18 +130,18 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         createReportParameters();
 
-        String period = form.getString("datePeriod");
-        ReportSpecificationList specificationList = (ReportSpecificationList) form.get("selectList");
+        String period = form.getDatePeriod();
+        ReportSpecificationList specificationList = form.getSelectList();
 
         createResults(specificationList.getSelection(), period, form);
     }
 
     @SuppressWarnings("unchecked")
-    private void createResults(String site, String period, BaseForm form) {
+    private void createResults(String site, String period, ReportForm form) {
 
         Timestamp beginning = null;
         Timestamp end = DateUtil.getTimestampForBeginningOfMonthAgo(-1);
@@ -151,10 +155,10 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
         } else if ("months12".equals(period)) {
             beginning = DateUtil.getTimestampForBeginningOfMonthAgo(11);
         } else if ("custom".equals(period)) {
-            int lowYear = Integer.parseInt(form.getString("lowerYear"));
-            int lowMonth = Integer.parseInt(form.getString("lowerMonth"));
-            int highYear = Integer.parseInt(form.getString("upperYear"));
-            int highMonth = Integer.parseInt(form.getString("upperMonth"));
+            int lowYear = Integer.parseInt(form.getLowerYear());
+            int lowMonth = Integer.parseInt(form.getLowerMonth());
+            int highYear = Integer.parseInt(form.getUpperYear());
+            int highMonth = Integer.parseInt(form.getUpperMonth());
 
             int currentYear = DateUtil.getCurrentYear();
             int currentMonth = DateUtil.getCurrentMonth();
@@ -184,8 +188,12 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                 currentSite = report.getSendingSite();
             }
 
-            Map<String, Integer> targetMonthTestCount = monthlyTestCount[DateUtil
-                    .getMonthForTimestamp(report.getEventDate())];
+            Map<String, Integer> targetMonthTestCount;
+            if (monthlyTestCount != null) {
+                targetMonthTestCount = monthlyTestCount[DateUtil.getMonthForTimestamp(report.getEventDate())];
+            } else {
+                throw new IllegalStateException();
+            }
 
             JSONParser parser = new JSONParser();
 
@@ -203,8 +211,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
                     targetMonthTestCount.put(test, current + additional);
                 }
 
-            } catch (ParseException pe) {
-                System.out.println(pe);
+            } catch (ParseException e) {
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", e.toString());
             }
 
         }
@@ -257,7 +265,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
+            JRException, java.text.ParseException {
         if (errorFound) {
             return super.runReport();
         }

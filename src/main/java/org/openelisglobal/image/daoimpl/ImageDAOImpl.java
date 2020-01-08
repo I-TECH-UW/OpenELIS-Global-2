@@ -55,7 +55,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 //		try {
 //			entityManager.unwrap(Session.class).delete(image);
 //			// closeSession(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "deleteImage");
 //		}
 //	}
@@ -66,7 +66,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return image;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "readImage");
 //		}
 //

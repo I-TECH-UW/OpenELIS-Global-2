@@ -2,19 +2,20 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.reports.valueholder.common;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,9 +64,9 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                         PropertyUtils.getPropertyDescriptor(object, field.substring(0, field.indexOf("__"))));
                 Object nestedObject = nestedGetter.invoke(object, (Object[]) null);
                 value = nestedFieldValue(nestedObject, field.substring(field.indexOf("__") + 2, field.length()));
-            } catch (Exception ex) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
-                LogEvent.logError("JRHibernateDataSource", "nestedFieldValue()", ex.toString());
+                LogEvent.logError(e.toString(), e);
             }
         } else {
             try {
@@ -77,9 +78,9 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                 if (Map.class.isAssignableFrom(getter.getReturnType())) {
                     return new JRHibernateDataSource((Map) value);
                 }
-            } catch (Exception ex) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
-                LogEvent.logError("JRHibernateDataSource", "nestedFieldValue()", ex.toString());
+                LogEvent.logError(e.toString(), e);
             }
         }
         return value;
@@ -94,16 +95,19 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
         return currentValue;
     }
 
+    @Override
     public Object getFieldValue(JRField field) throws JRException {
         return nestedFieldValue(currentValue, field.getName());
     }
 
+    @Override
     public boolean next() throws JRException {
         currentValue = iterator.hasNext() ? iterator.next() : null;
         return currentValue != null;
     }
 
     // bugzilla 2325
+    @Override
     public void moveFirst() throws JRException {
         // reinitialize the iterator for JRRewindableDataSource
         this.iterator = records.iterator();

@@ -11,7 +11,8 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		
+		<maven.java.release>8</maven.java.release>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<apachetiles.version>3.0.8</apachetiles.version>
@@ -294,6 +295,13 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -318,11 +326,56 @@
 	</dependencies>
 
 	<build>
-		<finalName>OpenElis</finalName>
+		<finalName>OpenELIS</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
+				<configuration>
+					<!-- move to release when we compile for java versions >= 9 -->
+<!-- 					<release>${maven.java.release}</release> -->
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.9</version>
+				<executions>
+					<execution>
+						<id>tag-latest</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>tag</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<tag>latest</tag>
+						</configuration>
+					</execution>
+					<execution>
+						<id>tag-version</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>tag</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<tag>${project.version}</tag>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${project.artifactId}</repository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-help-plugin</artifactId>
+				<version>3.2.0</version>
 			</plugin>
 		</plugins>
 	</build>

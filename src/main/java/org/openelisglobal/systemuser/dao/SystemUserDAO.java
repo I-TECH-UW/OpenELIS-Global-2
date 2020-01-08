@@ -33,23 +33,19 @@ public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
 //	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
 
-    public List getAllSystemUsers() throws LIMSRuntimeException;
+    List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException;
 
-    public List getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException;
+    List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(SystemUser systemUser) throws LIMSRuntimeException;
+    void getData(SystemUser systemUser) throws LIMSRuntimeException;
 
 //	public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
 
-    public List getNextSystemUserRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalSystemUserCount() throws LIMSRuntimeException;
 
-    public List getPreviousSystemUserRecord(String id) throws LIMSRuntimeException;
+    SystemUser getDataForLoginUser(String name) throws LIMSRuntimeException;
 
-    public Integer getTotalSystemUserCount() throws LIMSRuntimeException;
-
-    public SystemUser getDataForLoginUser(String name) throws LIMSRuntimeException;
-
-    public SystemUser getUserById(String userId) throws LIMSRuntimeException;
+    SystemUser getUserById(String userId) throws LIMSRuntimeException;
 
     boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException;
 }

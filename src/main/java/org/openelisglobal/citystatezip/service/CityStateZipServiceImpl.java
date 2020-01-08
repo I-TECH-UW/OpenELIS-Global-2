@@ -26,7 +26,7 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip,
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllStateCodes() {
+    public List<CityStateZip> getAllStateCodes() {
         return baseObjectDAO.getAllStateCodes();
     }
 
@@ -38,13 +38,13 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip,
 
     @Override
     @Transactional(readOnly = true)
-    public List getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip) {
+    public List<CityStateZip> getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip) {
         return getBaseObjectDAO().getValidCityStateZipCombosForHumanSampleEntry(cityStateZip);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getCities(String filter) {
+    public List<CityStateZip> getCities(String filter) {
         return getBaseObjectDAO().getCities(filter);
     }
 
@@ -62,7 +62,7 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip,
 
     @Override
     @Transactional(readOnly = true)
-    public List getCitiesByZipCode(CityStateZip cityStateZip) {
+    public List<CityStateZip> getCitiesByZipCode(CityStateZip cityStateZip) {
         return getBaseObjectDAO().getCitiesByZipCode(cityStateZip);
     }
 
@@ -74,7 +74,7 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip,
 
     @Override
     @Transactional(readOnly = true)
-    public List getZipCodesByCity(CityStateZip cityStateZip) {
+    public List<CityStateZip> getZipCodesByCity(CityStateZip cityStateZip) {
         return getBaseObjectDAO().getZipCodesByCity(cityStateZip);
     }
 

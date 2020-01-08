@@ -3,19 +3,21 @@
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
 * http://www.mozilla.org/MPL/
-* 
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
 package org.openelisglobal.reports.action.implementation.reportBeans;
+
+import java.sql.Date;
 
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 
@@ -48,8 +50,8 @@ public class RoutineColumnBuilder extends CIRoutineColumnBuilder {
     @Override
     public void makeSQL() {
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // more cross tabulation of other columns goes where
         query.append(SELECT_ALL_DEMOGRAPHIC_AND_RESULTS);
@@ -58,13 +60,13 @@ public class RoutineColumnBuilder extends CIRoutineColumnBuilder {
         query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
         // all observation history from expressions
-        appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
+        appendObservationHistoryCrosstab(lowDate, highDate);
 
-        appendResultCrosstab(lowDatePostgres, highDatePostgres);
+        appendResultCrosstab(lowDate, highDate);
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(buildWhereSamplePatienOrgSQL(lowDatePostgres, highDatePostgres)
+        query.append(buildWhereSamplePatienOrgSQL(lowDate, highDate)
                 // insert joining of any other crosstab here.
                 + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
         // no don't insert another crosstab or table here, go up before the main WHERE

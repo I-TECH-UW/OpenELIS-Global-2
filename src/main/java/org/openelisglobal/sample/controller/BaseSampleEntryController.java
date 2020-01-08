@@ -1,34 +1,26 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.dictionary.ObservationHistoryList;
-import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.organization.util.OrganizationTypeList;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
-import org.openelisglobal.patient.util.PatientUtil;
-import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 
@@ -36,15 +28,8 @@ public abstract class BaseSampleEntryController extends BaseController {
 
     protected RequestType requestType = RequestType.UNKNOWN;
 
-    public static final String FWD_EID_ENTRY = "eid_entry";
-    public static final String FWD_VL_ENTRY = "vl_entry";
-    private static int referenceLabParentId = 0;
-    @Autowired
-    private GenderService genderService;
     @Autowired
     private ProjectService projectService;
-    @Autowired
-    private OrganizationService organizationService;
     @Autowired
     private LocalizationService localizationService;
 
@@ -63,51 +48,36 @@ public abstract class BaseSampleEntryController extends BaseController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
     }
 
-    protected void addGenderList(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        List genders = genderService.getAll();
-        PropertyUtils.setProperty(form, "genders", genders);
-    }
+//    protected void addGenderList(BaseForm form)
+//            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//
+//        List genders = genderService.getAll();
+//        form.setGenders(genders);
+//    }
 
     /**
      * various maps full of a various lists used by the entry form (typically for
      * drop downs) and other forms who want to do patient entry.
      *
-     * @throws Exception all from setProperty problems caused by developer mistakes.
+     * @ all from setProperty problems caused by developer mistakes.
      */
-    protected void addProjectList(BaseForm form)
+    protected void addProjectList(SamplePatientEntryForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<Project> projects = projectService.getAll();
-        PropertyUtils.setProperty(form, "projects", projects);
+        form.setProjects(projects);
     }
 
-    public void addAllPatientFormLists(BaseForm form) throws Exception {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("GENDERS", PatientUtil.findGenders());
-
-        PropertyUtils.setProperty(form, "formLists", resultMap);
-        PropertyUtils.setProperty(form, "dictionaryLists", ObservationHistoryList.MAP);
-        PropertyUtils.setProperty(form, "organizationTypeLists", OrganizationTypeList.MAP);
-
-        return;
-    }
-
-    protected int getReferenceLabParentId() {
-        if (referenceLabParentId == 0) {
-            String parentOrgName = ConfigurationProperties.getInstance()
-                    .getPropertyValue(Property.ReferingLabParentOrg);
-
-            if (parentOrgName != null) { // this dosn't seem to actually do anything. is parentOrg referenced anyplace?
-                Organization parentOrg = new Organization();
-                parentOrg.setName(parentOrgName);
-                parentOrg = organizationService.getOrganizationByName(parentOrg, false);
-            }
-        }
-
-        return referenceLabParentId;
-    }
+//    public void addAllPatientFormLists(BaseForm form)  {
+//        Map<String, Object> resultMap = new HashMap<>();
+//        resultMap.put("GENDERS", PatientUtil.findGenders());
+//
+//        form.setFormLists(resultMap);
+//        form.setDictionaryLists(ObservationHistoryList.MAP);
+//        form.setOrganizationTypeLists(OrganizationTypeList.MAP);
+//
+//        return;
+//    }
 
     /**
      * @param requestTypeStr
@@ -138,14 +108,13 @@ public abstract class BaseSampleEntryController extends BaseController {
      * current projectForm, so that the use is presented with a good guess on what
      * they might want to keep doing.
      *
-     * @param projectFormName
-     * @throws Exception all from property utils if we've coded things wrong in the
-     *                   form def or in this class.
+     * @param projectFormName @ all from property utils if we've coded things wrong
+     * in the form def or in this class.
      */
-    protected void setProjectFormName(BaseForm form, String projectFormName)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).setProjectFormName(projectFormName);
-    }
+//    protected void setProjectFormName(BaseForm form, String projectFormName)
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//        ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).setProjectFormName(projectFormName);
+//    }
 
     /**
      * This method captures how we deal with the curious accession objects I
@@ -154,16 +123,15 @@ public abstract class BaseSampleEntryController extends BaseController {
      *
      * @param request           original request
      * @param sampleSecondEntry the object to use to attempt to save.
-     * @return a forward string or null; null => this attempt to save failed
-     * @throws Exception if things go really bad. Normally, the errors are caught
-     *                   internally an appropriate message is added and a forward
-     *                   fail is returned.
+     * @return a forward string or null; null => this attempt to save failed @ if
+     * things go really bad. Normally, the errors are caught internally an
+     * appropriate message is added and a forward fail is returned.
      */
-    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, BaseForm form) throws Exception {
+    protected String handleSave(HttpServletRequest request, IAccessioner accessioner, IAccessionerForm form) {
         String forward;
         try {
             forward = accessioner.save();
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | LIMSException e) {
             Errors errors = accessioner.getMessages();
             if (errors.hasErrors()) {
                 saveErrors(errors);
@@ -178,7 +146,7 @@ public abstract class BaseSampleEntryController extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter sample into system");
+        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter sample into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         addErrors(request, errors);

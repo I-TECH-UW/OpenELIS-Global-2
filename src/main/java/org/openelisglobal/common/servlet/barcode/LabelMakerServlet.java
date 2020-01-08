@@ -39,10 +39,13 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        boolean unauthorized = false;
 
-        // check for authentication
+        // check for module authentication
         UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-        if (userModuleService.isSessionExpired(request)) {
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        if (unauthorized) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("text/html; charset=utf-8");
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
@@ -122,6 +125,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             labelAsOutputStream.writeTo(response.getOutputStream());
             response.getOutputStream().flush();
             response.getOutputStream().close();
+            return;
         }
     }
 
@@ -140,7 +144,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             String override) {
         Errors errors = new BaseErrors();
         // Validate quantity
-        if (!GenericValidator.isInt(quantity)) {
+        if (!org.apache.commons.validator.GenericValidator.isInt(quantity)) {
             errors.reject("barcode.label.error.quantity.invalid", "barcode.label.error.quantity.invalid");
         }
         // Validate type
@@ -148,27 +152,28 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             errors.reject("barcode.label.error.type.invalid", "barcode.label.error.type.invalid");
         }
         // Validate patientId
-        if (!GenericValidator.isInt(patientId)) {
+        if (!org.apache.commons.validator.GenericValidator.isInt(patientId)) {
             errors.reject("barcode.label.error.patientid.invalid", "barcode.label.error.patientid.invalid");
         }
         // Validate "labNo" (either labNo, labNo.itemNo)
         IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
                 .getAccessionNumberValidator(programCode);
         String accessionNumber;
-        String sampleItemNumber;
+//        String sampleItemNumber;
         if (labNo.indexOf(".") > 0) {
             accessionNumber = labNo.substring(0, labNo.indexOf("."));
-            sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
+//            sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
         } else {
             accessionNumber = labNo;
-            sampleItemNumber = "0";
+//            sampleItemNumber = "0";
         }
         if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
                 .validFormat(accessionNumber, false))) {
             errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
         }
         // validate override
-        if (!GenericValidator.isBool(override) && !GenericValidator.isBlankOrNull(override)) {
+        if (!GenericValidator.isBool(override)
+                && !org.apache.commons.validator.GenericValidator.isBlankOrNull(override)) {
             errors.reject("barcode.label.error.override.invalid", "barcode.label.error.override.invalid");
         }
 

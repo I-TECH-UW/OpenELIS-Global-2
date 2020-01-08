@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
@@ -32,6 +33,7 @@ import org.openelisglobal.renametestsection.service.RenameTestSectionService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
+import org.owasp.encoder.Encode;
 
 public class EntityNamesProvider extends BaseQueryProvider {
 
@@ -67,16 +69,16 @@ public class EntityNamesProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             } catch (IllegalStateException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

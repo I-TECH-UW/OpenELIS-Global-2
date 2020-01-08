@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.systemusermodule.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				String tableName = "SYSTEM_ROLE_MODULE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule AuditTrail deleteData()", e);
 //		}
@@ -76,7 +77,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule deleteData()", e);
 //		}
@@ -103,7 +104,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule insertData()", e);
 //		}
@@ -119,7 +120,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + roleModule.getPermissionAgentId());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
 //		}
@@ -134,7 +135,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_ROLE_MODULE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule AuditTrail updateData()", e);
 //		}
@@ -145,7 +146,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(roleModule);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(roleModule);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
 //		}
@@ -164,24 +165,24 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             } else {
                 systemUserModule.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModules() throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getAllPermissionModules() throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             String sql = "from RoleModule";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getAllSystemModules()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getAllSystemModules()", e);
         }
 
@@ -190,8 +191,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             String sql = "from RoleModule s where s.role.id = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -199,8 +200,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getAllRoleModulesBySystemUserId()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getAllRoleModulesBySystemUserId()", e);
         }
 
@@ -209,8 +210,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<RoleModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
+        List<RoleModule> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -223,8 +224,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getPageOfRoleModules()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getPageOfRoleModules()", e);
         }
 
@@ -237,8 +238,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             sysUserModule = entityManager.unwrap(Session.class).get(RoleModule.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "readRoleModule()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Gender readRoleModule(idString)", e);
         }
 
@@ -257,8 +258,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             List<RoleModule> modules = query.list();
             // closeSession(); // CSL remove old
             return modules.isEmpty() ? new RoleModule() : modules.get(0);
-        } catch (HibernateException he) {
-            handleException(he, "getRoleModuleByRoleAndModuleId");
+        } catch (HibernateException e) {
+            handleException(e, "getRoleModuleByRoleAndModuleId");
         }
 
         return null;
@@ -266,76 +267,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "RoleModule", RoleModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "RoleModule", RoleModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
-        return getTotalCount("RoleModule", RoleModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        int rrn;
-        try {
-            String sql = "select rm.id from RoleModule rm order by rm.role.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        int rrn;
-        try {
-            String sql = "select rm.id from RoleModule rm order by rm.role.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
+        return getCount();
     }
 
     @Override
@@ -343,7 +276,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
         try {
 
-            List list;
+            List<RoleModule> list;
 
             String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -362,8 +295,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
             return list.size() > 0;
 
-        } catch (Exception e) {
-            LogEvent.logError("RoleModuleDAOImpl", "duplicateRoleModuleExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateRoleModuleExists()", e);
         }
     }
@@ -374,6 +307,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //	}
 
     @Override
+    @Transactional
     public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
         try {
             String sql = "select count(*) from system_user_role where system_user_id = :userId";
@@ -381,9 +315,9 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             query.setInteger("userId", userId);
             int roleCount = ((BigInteger) query.uniqueResult()).intValue();
             return roleCount > 0;
-        } catch (HibernateException he) {
-            LogEvent.logError("RoleModuleDAOImpl", "doesUserHaveAnyModules(int)", he.toString());
-            throw new LIMSRuntimeException("Error in doesUserHaveAnyModules(int)", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in doesUserHaveAnyModules(int)", e);
         }
     }
 }

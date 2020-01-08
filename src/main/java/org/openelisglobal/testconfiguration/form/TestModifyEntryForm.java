@@ -13,16 +13,16 @@ public class TestModifyEntryForm extends BaseForm {
     // for display
     private List testList;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameEnglish = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameFrench = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String reportNameEnglish = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String reportNameFrench = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)

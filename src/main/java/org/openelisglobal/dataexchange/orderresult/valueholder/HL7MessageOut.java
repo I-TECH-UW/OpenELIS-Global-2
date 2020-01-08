@@ -6,18 +6,20 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class HL7MessageOut extends BaseObject<String> {
 
-    public static String FAIL = "fail";
-    public static String SUCCESS = "success";
+    public static final String FAIL = "fail";
+    public static final String SUCCESS = "success";
 
     private String id;
     private String data;
     private String status;
     private Timestamp lastupdated;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

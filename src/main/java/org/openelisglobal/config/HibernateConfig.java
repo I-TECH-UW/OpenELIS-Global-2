@@ -1,13 +1,12 @@
 package org.openelisglobal.config;
 
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -16,29 +15,35 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //	@ComponentScans(value = { @ComponentScan("com.howtodoinjava.demo.spring")})
 public class HibernateConfig {
 
-    @Autowired
-    private ApplicationContext context;
-
-    static HibernateTransactionManager transactionManager;
-    static LocalSessionFactoryBean factoryBean;
+    static JpaTransactionManager transactionManager;
+    static LocalContainerEntityManagerFactoryBean emf;
 
     @Bean
-    public LocalSessionFactoryBean getSessionFactory() {
-        if (factoryBean == null) {
-            factoryBean = new LocalSessionFactoryBean();
-            factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        if (emf == null) {
+            emf = new LocalContainerEntityManagerFactoryBean();
+//            emf.setDataSource(dataSource);
+            emf.setPersistenceXmlLocation("classpath:persistence/persistence.xml");
         }
-        return factoryBean;
+
+        return emf;
     }
 
     @Bean
     @Primary
-    public PlatformTransactionManager getTransactionManager(SessionFactory sessionFactory) {
+    public PlatformTransactionManager getTransactionManager(EntityManagerFactory entityManagerFactory) {
         if (transactionManager == null) {
-            transactionManager = new HibernateTransactionManager();
-            transactionManager.setSessionFactory(sessionFactory);
+            transactionManager = new JpaTransactionManager();
+            transactionManager.setEntityManagerFactory(entityManagerFactory);
         }
         return transactionManager;
     }
 
+//    @Bean(destroyMethod = "close")
+//    public DataSource dataSource() {
+//        JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+//        dsLookup.setResourceRef(true);
+//        DataSource dataSource = dsLookup.getDataSource("jdbc/LimsDS");
+//        return dataSource;
+//    }
 }

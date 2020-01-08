@@ -6,8 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /*
- * Nothing special, just for when id's and values should be encapsulated. 
- * 
+ * Nothing special, just for when id's and values should be encapsulated.
+ *
  * N.B. This is very light weight, if you want to stick it in a hash and want to use something
  * other than identity of equals then over-ride equals and hash.
  */
@@ -22,7 +22,7 @@ public class IdValuePair implements Serializable {
         this.setValue(value);
     }
 
-    public void setId(String id) {
+    public final void setId(String id) {
         this.id = id;
     }
 
@@ -30,7 +30,7 @@ public class IdValuePair implements Serializable {
         return id;
     }
 
-    public void setValue(String value) {
+    public final void setValue(String value) {
         this.value = value;
     }
 

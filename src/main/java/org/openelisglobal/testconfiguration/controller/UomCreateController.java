@@ -1,23 +1,23 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.testconfiguration.form.UomCreateForm;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,12 +26,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class UomCreateController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "uomEnglishName" };
+
     public static final String NAME_SEPARATOR = "$";
 
     @Autowired
     UnitOfMeasureService unitOfMeasureService;
-    @Autowired
-    private LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
     public ModelAndView showUomCreate(HttpServletRequest request) {
@@ -43,23 +48,12 @@ public class UomCreateController extends BaseController {
     }
 
     private void setupDisplayItems(UomCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingUomList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
-            PropertyUtils.setProperty(form, "inactiveUomList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setExistingUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+        form.setInactiveUomList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
         List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
-        try {
-            PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, Locale.ENGLISH));
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setExistingEnglishNames(getExistingUomNames(uoms, Locale.ENGLISH));
+        form.setExistingFrenchNames(getExistingUomNames(uoms, Locale.FRENCH));
     }
 
     private String getExistingUomNames(List<UnitOfMeasure> uoms, Locale locale) {
@@ -75,7 +69,7 @@ public class UomCreateController extends BaseController {
 
     @RequestMapping(value = "/UomCreate", method = RequestMethod.POST)
     public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") @Valid UomCreateForm form,
-            BindingResult result) throws Exception {
+            BindingResult result)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);
@@ -86,15 +80,15 @@ public class UomCreateController extends BaseController {
         String userId = getSysUserId(request);
 
         // Localization localization =
-        // createLocalization(dynaForm.getString("uomFrenchName"), identifyingName,
+        // createLocalization(dynaform.getUomFrenchName(), identifyingName,
         // userId);
 
         UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);
 
         try {
             unitOfMeasureService.insert(unitOfMeasure);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);

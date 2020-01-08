@@ -21,9 +21,9 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.note.service.NoteObject;
-import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.service.SampleItemServiceImpl;
 import org.openelisglobal.sourceofsample.valueholder.SourceOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
@@ -198,7 +198,7 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
 
     @Override
     public String getTableId() {
-        return NoteServiceImpl.SAMPLE_ITEM_TABLE_REFERENCE_ID;
+        return SampleItemServiceImpl.getSampleItemTableReferenceId();
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -33,6 +34,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,6 +44,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PatientManagementController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
+            "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
+            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
+            "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
+            "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
+            "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
+            "patientProperties.nationality", "patientProperties.otherNationality" };
 
     @Autowired
     SamplePatientEntryFormValidator formValidator;
@@ -63,6 +79,11 @@ public class PatientManagementController extends BaseController {
     PersonAddressService personAddressService;
     @Autowired
     SearchResultsService searchService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PatientManagement", method = RequestMethod.GET)
     public ModelAndView showPatientManagement(HttpServletRequest request) {
@@ -101,12 +122,12 @@ public class PatientManagementController extends BaseController {
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
 
-                if (lre.getException() instanceof StaleObjectStateException) {
+                if (e.getException() instanceof StaleObjectStateException) {
                     result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
                 } else {
-                    lre.printStackTrace();
+                    LogEvent.logDebug(e);
                     result.reject("errors.UpdateException", "errors.UpdateException");
                 }
                 request.setAttribute(ALLOW_EDITS_KEY, "false");

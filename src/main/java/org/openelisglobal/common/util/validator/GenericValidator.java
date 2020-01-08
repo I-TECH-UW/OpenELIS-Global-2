@@ -35,7 +35,7 @@ public class GenericValidator extends org.apache.commons.validator.GenericValida
      * @param locale The locale to use for the date format, defaults to the default
      *               system default if null.
      */
-    public static boolean isDate(String value, Locale locale) {
+    public static boolean isDateFormat(String value, Locale locale) {
         return DateValidator.getInstance().isValid(value, locale);
     }
 
@@ -51,7 +51,7 @@ public class GenericValidator extends org.apache.commons.validator.GenericValida
      *                    &lt;code&gt;SimpleDateFormat&lt;/code&gt;.
      * @param strict      Whether or not to have an exact match of the datePattern.
      */
-    public static boolean isDate(String value, String datePattern, boolean strict) {
+    public static boolean isDateFormat(String value, String datePattern, boolean strict) {
         return CustomDateValidator.getInstance().isValid(value, datePattern, strict);
     }
 

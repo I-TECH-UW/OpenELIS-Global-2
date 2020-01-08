@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.util.SystemConfiguration,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.formfields.AdminFormFields,
@@ -15,9 +15,11 @@
 
 
 
-<%!String permissionBase = SystemConfiguration.getInstance()
-			.getPermissionAgent();
-	AdminFormFields adminFields = AdminFormFields.getInstance();%>
+<%!
+	String permissionBase = SystemConfiguration.getInstance().getPermissionAgent();
+	AdminFormFields adminFields = AdminFormFields.getInstance();
+%>
+	
 <table cellpadding="0" cellspacing="1" width="100%" align="left">
 	<%--id is important for activating the menu tabs: see tabs.js from struts-menu for how masterListsSubMenu is used--%>
 	<%-- similar code will need to be added in the left panel and in tabs.js for any menu tab that has the submenu on the left hand side--%>

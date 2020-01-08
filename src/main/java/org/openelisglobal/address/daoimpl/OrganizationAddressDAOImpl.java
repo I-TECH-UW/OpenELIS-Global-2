@@ -38,7 +38,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
         super(OrganizationAddress.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
             throws LIMSRuntimeException {

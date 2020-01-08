@@ -1,19 +1,18 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -22,6 +21,8 @@ import org.openelisglobal.testconfiguration.validator.TestSectionOrderFormValida
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,10 +31,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestSectionOrderController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList" };
+
     @Autowired
     TestSectionOrderFormValidator formValidator;
     @Autowired
     TestSectionService testSectionService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestSectionOrder", method = RequestMethod.GET)
     public ModelAndView showTestSectionOrder(HttpServletRequest request) {
@@ -45,12 +53,7 @@ public class TestSectionOrderController extends BaseController {
     }
 
     private void setupDisplayItems(TestSectionOrderForm form) {
-        try {
-            PropertyUtils.setProperty(form, "testSectionList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        form.setTestSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
     }
 
     @Override
@@ -83,7 +86,7 @@ public class TestSectionOrderController extends BaseController {
 
     @RequestMapping(value = "/TestSectionOrder", method = RequestMethod.POST)
     public ModelAndView postTestSectionOrder(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestSectionOrderForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestSectionOrderForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
@@ -107,8 +110,8 @@ public class TestSectionOrderController extends BaseController {
 
         try {
             testSectionService.updateAll(testSections);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
@@ -133,7 +136,7 @@ public class TestSectionOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

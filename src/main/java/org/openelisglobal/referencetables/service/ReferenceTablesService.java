@@ -8,9 +8,9 @@ import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 public interface ReferenceTablesService extends BaseObjectService<ReferenceTables, String> {
     void getData(ReferenceTables referenceTables);
 
-    List getAllReferenceTablesForHl7Encoding();
+    List<ReferenceTables> getAllReferenceTablesForHl7Encoding();
 
-    List getAllReferenceTables();
+    List<ReferenceTables> getAllReferenceTables();
 
     ReferenceTables getReferenceTableByName(String tableName);
 
@@ -18,11 +18,7 @@ public interface ReferenceTablesService extends BaseObjectService<ReferenceTable
 
     Integer getTotalReferenceTableCount();
 
-    List getPreviousReferenceTablesRecord(String id);
-
-    List getPageOfReferenceTables(int startingRecNo);
-
-    List getNextReferenceTablesRecord(String id);
+    List<ReferenceTables> getPageOfReferenceTables(int startingRecNo);
 
     Integer getTotalReferenceTablesCount();
 }

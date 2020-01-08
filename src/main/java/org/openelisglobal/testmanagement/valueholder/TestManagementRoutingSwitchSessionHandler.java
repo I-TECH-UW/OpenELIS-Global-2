@@ -49,7 +49,7 @@ public class TestManagementRoutingSwitchSessionHandler implements IActionConstan
             testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
             testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(true);
             break;
-        default: // System.out.println("An error occurred with QaEventRoutingSwitchSessionHandler
+        default: // LogEvent.logInfo(this.getClass().getName(), "method unkown", "An error occurred with QaEventRoutingSwitchSessionHandler
                  // switchOn(" + routingSwitch + ")");
         }
 
@@ -74,7 +74,7 @@ public class TestManagementRoutingSwitchSessionHandler implements IActionConstan
         case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
             testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
             break;
-        default: // System.out.println("An error occurred with QaEventRoutingSwitchSessionHandler
+        default: // LogEvent.logInfo(this.getClass().getName(), "method unkown", "An error occurred with QaEventRoutingSwitchSessionHandler
                  // switchOff(" + routingSwitch + ")");
         }
 
@@ -120,7 +120,7 @@ public class TestManagementRoutingSwitchSessionHandler implements IActionConstan
                 return true;
             else
                 return false;
-        default: // System.out.println("An error occurred with QaEventRoutingSwitchSessionHandler
+        default: // LogEvent.logInfo(this.getClass().getName(), "method unkown", "An error occurred with QaEventRoutingSwitchSessionHandler
                  // isSwitchOn(" + routingSwitch + ")");
             return false;
         }

@@ -1,6 +1,5 @@
 package org.openelisglobal.result.controller;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -37,6 +35,8 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,14 +44,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class StatusResultsController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     private static final boolean REVERSE_SORT_ORDER = false;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
     private SampleService sampleService;
     @Autowired
-    SampleItemService sampleItemService;
-    private ResultsLoadUtility resultsUtility;
+    private SampleItemService sampleItemService;
+
     private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
 
@@ -64,6 +66,11 @@ public class StatusResultsController extends BaseController {
         excludedStatusIds.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/StatusResults", method = RequestMethod.GET)
     public ModelAndView showStatusResults(HttpServletRequest request, @Valid StatusResultsForm form,
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -73,16 +80,15 @@ public class StatusResultsController extends BaseController {
             return findForward(FWD_FAIL, form);
         }
 
-        resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+        ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsUtility.setSysUser(getSysUserId(request));
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         String newRequest = request.getParameter("blank");
 
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
         ResultsPaging paging = new ResultsPaging();
@@ -91,7 +97,7 @@ public class StatusResultsController extends BaseController {
         if (GenericValidator.isBlankOrNull(newPage)) {
             List<TestResultItem> tests;
             if (GenericValidator.isBlankOrNull(newRequest) || newRequest.equals("false")) {
-                tests = setSearchResults(form);
+                tests = setSearchResults(form, resultsUtility);
 
                 if (configProperties.isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true")
                         && !userHasPermissionForModule(request, "PatientResults")) {
@@ -107,23 +113,23 @@ public class StatusResultsController extends BaseController {
 
             setSelectionLists(form);
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<TestResultItem> setSearchResults(StatusResultsForm form)
+    private List<TestResultItem> setSearchResults(StatusResultsForm form, ResultsLoadUtility resultsUtility)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        List<TestResultItem> tests = getSelectedTests(form);
-        PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+        List<TestResultItem> tests = getSelectedTests(form, resultsUtility);
+        form.setSearchFinished(Boolean.TRUE);
 
         if (resultsUtility.inventoryNeeded()) {
             addInventory(form);
-            PropertyUtils.setProperty(form, "displayTestKit", true);
+            form.setDisplayTestKit(true);
         } else {
             addEmptyInventoryList(form);
-            PropertyUtils.setProperty(form, "displayTestKit", false);
+            form.setDisplayTestKit(false);
         }
 
         return tests;
@@ -131,25 +137,25 @@ public class StatusResultsController extends BaseController {
 
     private void setEmptyResults(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "testResult", new ArrayList<TestResultItem>());
-        PropertyUtils.setProperty(form, "displayTestKit", false);
-        PropertyUtils.setProperty(form, "collectionDate", "");
-        PropertyUtils.setProperty(form, "recievedDate", "");
-        PropertyUtils.setProperty(form, "selectedAnalysisStatus", "");
-        PropertyUtils.setProperty(form, "selectedTest", "");
-        PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
+        form.setTestResult(new ArrayList<TestResultItem>());
+        form.setDisplayTestKit(false);
+        form.setCollectionDate("");
+        form.setRecievedDate("");
+        form.setSelectedAnalysisStatus("");
+        form.setSelectedTest("");
+        form.setSearchFinished(Boolean.FALSE);
     }
 
     private void addInventory(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
-        PropertyUtils.setProperty(form, "inventoryItems", list);
+        form.setInventoryItems(list);
     }
 
     private void addEmptyInventoryList(StatusResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "inventoryItems", new ArrayList<InventoryKitItem>());
+        form.setInventoryItems(new ArrayList<InventoryKitItem>());
     }
 
     private void setSelectionLists(StatusResultsForm form)
@@ -157,21 +163,21 @@ public class StatusResultsController extends BaseController {
 
         List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
-        PropertyUtils.setProperty(form, "analysisStatusSelections", analysisStatusList);
-        PropertyUtils.setProperty(form, "testSelections",
+        form.setAnalysisStatusSelections(analysisStatusList);
+        form.setTestSelections(
                 DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
-        PropertyUtils.setProperty(form, "sampleStatusSelections", sampleStatusList);
+        form.setSampleStatusSelections(sampleStatusList);
 
     }
 
-    private List<TestResultItem> getSelectedTests(StatusResultsForm form) {
-        String collectionDate = form.getString("collectionDate");
-        String receivedDate = form.getString("recievedDate");
-        String analysisStatus = form.getString("selectedAnalysisStatus");
-        String sampleStatus = form.getString("selectedSampleStatus");
-        String test = form.getString("selectedTest");
+    private List<TestResultItem> getSelectedTests(StatusResultsForm form, ResultsLoadUtility resultsUtility) {
+        String collectionDate = form.getCollectionDate();
+        String receivedDate = form.getRecievedDate();
+        String analysisStatus = form.getSelectedAnalysisStatus();
+        String sampleStatus = form.getSelectedSampleStatus();
+        String test = form.getSelectedTest();
 
         List<Analysis> analysisList = new ArrayList<>();
 
@@ -210,7 +216,7 @@ public class StatusResultsController extends BaseController {
             }
         }
 
-        return buildTestItems(analysisList);
+        return buildTestItems(analysisList, resultsUtility);
     }
 
     private List<Analysis> blendLists(List<Analysis> masterList, List<Analysis> newList) {
@@ -273,7 +279,7 @@ public class StatusResultsController extends BaseController {
         return analysisService.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
     }
 
-    private List<TestResultItem> buildTestItems(List<Analysis> analysisList) {
+    private List<TestResultItem> buildTestItems(List<Analysis> analysisList, ResultsLoadUtility resultsUtility) {
         if (analysisList.isEmpty()) {
             return new ArrayList<>();
         }
@@ -335,9 +341,7 @@ public class StatusResultsController extends BaseController {
         return "banner.menu.results";
     }
 
-    public class DropPair implements Serializable {
-
-        private static final long serialVersionUID = 1L;
+    public class DropPair {
 
         public String getId() {
             return id;

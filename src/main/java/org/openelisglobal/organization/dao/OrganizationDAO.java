@@ -35,31 +35,26 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
 //	public void deleteData(List organizations) throws LIMSRuntimeException;
 
-    public List getAllOrganizations() throws LIMSRuntimeException;
+    List<Organization> getAllOrganizations() throws LIMSRuntimeException;
 
-    public List getPageOfOrganizations(int startingRecNo) throws LIMSRuntimeException;
+    List<Organization> getPageOfOrganizations(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Organization organization) throws LIMSRuntimeException;
+    void getData(Organization organization) throws LIMSRuntimeException;
 
 //	public void updateData(Organization organization) throws LIMSRuntimeException;
 
-    public List getOrganizations(String filter) throws LIMSRuntimeException;
+    List<Organization> getOrganizations(String filter) throws LIMSRuntimeException;
 
-    public List getNextOrganizationRecord(String id) throws LIMSRuntimeException;
+    Organization getOrganizationByName(Organization organization, boolean ignoreCase) throws LIMSRuntimeException;
 
-    public List getPreviousOrganizationRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalOrganizationCount() throws LIMSRuntimeException;
 
-    public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
+    Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException;
 
-    public Integer getTotalOrganizationCount() throws LIMSRuntimeException;
+    List<Organization> getPagesOfSearchedOrganizations(int startRecNo, String searchString) throws LIMSRuntimeException;
 
-    public Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase)
-            throws LIMSRuntimeException;
-
-    public List getPagesOfSearchedOrganizations(int startRecNo, String searchString) throws LIMSRuntimeException;
-
-    public Integer getTotalSearchedOrganizationCount(String searchString) throws LIMSRuntimeException;
+    Integer getTotalSearchedOrganizationCount(String searchString) throws LIMSRuntimeException;
 
     /**
      * Find all organizations which are associated with a particular project.
@@ -73,16 +68,16 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
      * Find all organzations which are of the given organization type (matching the
      * types name).
      */
-    public List<Organization> getOrganizationsByTypeName(String orderByProperty, String... typeName);
+    List<Organization> getOrganizationsByTypeName(String orderByProperty, String... typeName);
 
-    public List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName)
+    List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName)
             throws LIMSRuntimeException;
 
-    public Organization getOrganizationById(String organizationId) throws LIMSRuntimeException;
+    Organization getOrganizationById(String organizationId) throws LIMSRuntimeException;
 
 //	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException;
 
-    public List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException;
+    List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException;
 
     boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException;
 

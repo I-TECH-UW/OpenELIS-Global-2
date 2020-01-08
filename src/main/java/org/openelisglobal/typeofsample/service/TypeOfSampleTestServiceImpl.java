@@ -51,19 +51,13 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSampleTests(int startingRecNo) {
+    public List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTypeOfSampleTests(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTypeOfSampleTestRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSampleTestRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getAllTypeOfSampleTests() {
+    public List<TypeOfSampleTest> getAllTypeOfSampleTests() {
         return getBaseObjectDAO().getAllTypeOfSampleTests();
     }
 
@@ -73,9 +67,4 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
         return getBaseObjectDAO().getTotalTypeOfSampleTestCount();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
-    }
 }

@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.servlet.selectdropdown;
@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.openelisglobal.common.util.XMLUtil;
+import org.owasp.encoder.Encode;
 
 /**
  * Helper class to build valid XML typically returned in a response to the
@@ -38,10 +40,12 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
     private String encoding = "UTF-8";
     private List items = new ArrayList();
 
+    @Override
     public String getEncoding() {
         return encoding;
     }
 
+    @Override
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -105,7 +109,7 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
             String sortFieldAProperty, String sortFieldBProperty, String alternateLabelProperty, boolean asCData)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Iterator iter = collection.iterator(); iter.hasNext();) {
-            Object element = (Object) iter.next();
+            Object element = iter.next();
             String name = BeanUtils.getProperty(element, nameProperty);
             String value = BeanUtils.getProperty(element, valueProperty);
             String sortFieldA = BeanUtils.getProperty(element, sortFieldAProperty);
@@ -142,12 +146,11 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
-        StringBuffer xml = new StringBuffer().append("<?xml version=\"1.0\"");
+        StringBuilder xml = new StringBuilder().append("<?xml version=\"1.0\"");
         if (encoding != null) {
-            xml.append(" encoding=\"");
-            xml.append(encoding);
-            xml.append("\"");
+            XMLUtil.appendAttributeKeyValue("encoding", encoding, xml);
         }
         xml.append(" ?>");
 
@@ -159,47 +162,50 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
             xml.append("<name>");
             if (item.isAsCData()) {
                 xml.append("<![CDATA[");
-            }
-            xml.append(item.getName());
-            if (item.isAsCData()) {
+                xml.append(Encode.forCDATA(item.getName()));
                 xml.append("]]>");
+            } else {
+                xml.append(Encode.forXmlContent(item.getName()));
             }
             xml.append("</name>");
+
             xml.append("<value>");
             if (item.isAsCData()) {
                 xml.append("<![CDATA[");
-            }
-            xml.append(item.getValue());
-            if (item.isAsCData()) {
+                xml.append(Encode.forCDATA(item.getValue()));
                 xml.append("]]>");
+            } else {
+                xml.append(Encode.forXmlContent(item.getValue()));
             }
             xml.append("</value>");
+
             xml.append("<sortFieldA>");
             if (item.isAsCData()) {
                 xml.append("<![CDATA[");
-            }
-            xml.append(item.getSortFieldA());
-            if (item.isAsCData()) {
+                xml.append(Encode.forCDATA(item.getSortFieldA()));
                 xml.append("]]>");
+            } else {
+                xml.append(item.getSortFieldA());
             }
             xml.append("</sortFieldA>");
+
             xml.append("<sortFieldB>");
             if (item.isAsCData()) {
                 xml.append("<![CDATA[");
-            }
-            xml.append(item.getSortFieldB());
-            if (item.isAsCData()) {
+                xml.append(Encode.forCDATA(item.getSortFieldB()));
                 xml.append("]]>");
+            } else {
+                xml.append(Encode.forXmlContent(item.getSortFieldB()));
             }
             xml.append("</sortFieldB>");
 
             xml.append("<alternateLabel>");
             if (item.isAsCData()) {
                 xml.append("<![CDATA[");
-            }
-            xml.append(item.getAlternateLabel());
-            if (item.isAsCData()) {
+                xml.append(Encode.forCDATA(item.getAlternateLabel()));
                 xml.append("]]>");
+            } else {
+                xml.append(Encode.forXmlContent(item.getAlternateLabel()));
             }
             xml.append("</alternateLabel>");
 

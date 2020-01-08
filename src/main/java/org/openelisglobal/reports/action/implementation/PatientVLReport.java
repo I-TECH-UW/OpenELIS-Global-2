@@ -118,7 +118,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                         try {
                             double viralLoad = Double.parseDouble(baseValue);
                             data.setAmpli2lo(String.format("%.3g%n", Math.log10(viralLoad)));
-                        } catch (NumberFormatException nfe) {
+                        } catch (NumberFormatException e) {
                             data.setAmpli2lo("");
                         }
                     }
@@ -127,7 +127,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
             }
             if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                    && lastReport.before(analysis.getLastupdated())) {
+                    && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
 

@@ -128,9 +128,10 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 
     protected void setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.setCurrentUserId(sysUserId);
-        testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()));
-        testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()));
+        testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()),
+                sysUserId);
+        testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()),
+                sysUserId);
     }
 
     private List<TestReflexBean> convertToTestReflexBeanList(List<ResultSet> resultSetList) {

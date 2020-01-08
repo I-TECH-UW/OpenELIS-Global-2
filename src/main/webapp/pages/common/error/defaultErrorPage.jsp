@@ -1,4 +1,5 @@
-<%@ page language="java" import="java.util.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.util.*"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -7,26 +8,21 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <!DOCTYPE html>
 <html>
 <head>
 	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <base href="<%=basePath%>">
     <title><spring:message code="errors.unhandled.title"/></title>   
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="0">    
     <meta http-equiv="description" content="Default error page">
-    <link rel="stylesheet" type="text/css" href="<%=basePath%>css/bootstrap.css" />
-    <script type="text/javascript" src="<%=basePath%>scripts/jquery-1.8.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <script type="text/javascript" src="scripts/jquery-1.8.0.min.js"></script>
         
-    <!-- Inline css --> 
+    <%-- Inline css --%> 
     <style type="text/css">
     #header {
         margin-bottom: 1em;
@@ -48,6 +44,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         float: left;
         margin: 0 15px 0 0
     }
+	#oe-logo-img {
+	    height: 71px;
+	    width: auto;
+	}
     #oe-title {
         font-size: 24px;
         line-height: 32px;
@@ -64,7 +64,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body id="defaultErrorPage">
 
 <div id="header">
-    <div id="oe-logo"><img src="<%=basePath%>images/openelis_logo.png" title="OpenELIS" alt="OpenELIS"></div>
+    <div id="oe-logo"><img id="oe-logo-img" src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS"></div>
     <div id="oe-title"><spring:message code="homePage.heading"/></div>
 </div>
       
@@ -76,7 +76,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <div class="well">	
         <div class="row">
             <div class="span2">
-                <img src="<%=basePath%>images/icon-exclamation.png"  title="<spring:message code="errorpage.title"/>" alt="<spring:message code="errorpage.title"/>" />
+                <img src="images/icon-exclamation.png"  title="<spring:message code="errorpage.title"/>" alt="<spring:message code="errorpage.title"/>" />
             </div>
             <div class="span9">
                 <h3><spring:message code="errorpage.head1"/></h3> 
