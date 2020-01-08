@@ -10631,27 +10631,6 @@ COPY localization (id, description, english, french, lastupdated) FROM stdin;
 
 
 --
--- Data for Name: login_user; Type: TABLE DATA; Schema: clinlims; Owner: clinlims
---
-
-COPY login_user (id, login_name, password, password_expired_dt, account_locked, account_disabled, is_admin, user_time_out) FROM stdin;
-1	admin	n2OrWHXVm/BQsgd1YZJoCA==	2022-11-25	N	N	Y	220
-136	TesterCR	nRG0+tx3vTLOQIAhdgCPQQ==	2024-08-22	N	N	N	480
-137	testerod	uZlGerZxGyfn9n3GToaCcw==	2024-08-29	N	N	N	480
-138	ReceptionCR	nRG0+tx3vTLOQIAhdgCPQQ==	2024-09-18	N	N	N	480
-139	casey	lfztjB3idZobrZUyGU3iTQ==	2024-09-25	N	N	N	480
-142	intake	lfztjB3idZobrZUyGU3iTQ==	2024-10-02	N	N	N	480
-143	testuser	LTK+NZS9dG8brZUyGU3iTQ==	2024-10-02	N	N	N	480
-148	testadd	gxj13grIVE79MiWZ9TDJtA==	2024-10-10	N	N	N	480
-149	Meg	YuQqWdeuk0X3rKQ3mAEKbQ==	2024-10-10	N	N	N	480
-150	permTest	F8rf8wNZtXkbrZUyGU3iTQ==	2024-10-13	N	N	N	480
-152	odtesternew	jYHmNQ6n6w5Qi3NNSpbRTw==	2024-10-13	N	N	N	480
-153	eowiti	No8mmee3zLwbrZUyGU3iTQ==	2025-02-14	N	N	N	480
-154	pablo	Z/VTMBwmEj4=	2025-02-20	N	N	N	480
-\.
-
-
---
 -- Data for Name: menu; Type: TABLE DATA; Schema: clinlims; Owner: clinlims
 --
 

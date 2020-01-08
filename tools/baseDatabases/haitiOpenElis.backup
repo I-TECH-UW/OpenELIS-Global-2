@@ -10862,15 +10862,6 @@ SELECT pg_catalog.setval('label_seq', 3, false);
 
 
 --
--- Data for Name: login_user; Type: TABLE DATA; Schema: clinlims; Owner: clinlims
---
-
-COPY login_user (id, login_name, password, password_expired_dt, account_locked, account_disabled, is_admin, user_time_out) FROM stdin;
-1	admin	n2OrWHXVm/BQsgd1YZJoCA==	2020-04-02	N	N	Y	220
-\.
-
-
---
 -- Name: login_user_seq; Type: SEQUENCE SET; Schema: clinlims; Owner: clinlims
 --
 

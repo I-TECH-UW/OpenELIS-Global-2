@@ -7,6 +7,9 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.login.valueholder.Login;
 
 public interface LoginService extends BaseObjectService<Login, String> {
+
+    String DEFAULT_ADMIN_USER_NAME = "admin";
+
     boolean isUserAdmin(Login login) throws LIMSRuntimeException;
 
     int getPasswordExpiredDayNo(Login login);
@@ -18,5 +21,11 @@ public interface LoginService extends BaseObjectService<Login, String> {
     void hashPassword(Login login, String password);
 
     Optional<Login> getValidatedLogin(String loginName, String password);
+
+    boolean defaultAdminExists();
+
+    boolean nonDefaultAdminExists();
+
+    boolean isHashedPassword(String password);
 
 }
