@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import javax.annotation.PostConstruct;
@@ -46,6 +45,7 @@ public class CreateAdminUserTask {
 
     private Login createAdminUser() throws LIMSException {
         Login login = new Login();
+        login.setSysUserId("1");
         login.setLoginName(LoginService.DEFAULT_ADMIN_USER_NAME);
         login.setPasswordExpiredDate(getExpiredDate());
         login.setAccountLocked(IActionConstants.NO);
@@ -56,8 +56,12 @@ public class CreateAdminUserTask {
         String password;
         try {
             byte[] adminUserInfo = getAdminUserInfo();
-            password = new String(Arrays.copyOfRange(adminUserInfo, PASSWORD_MARKER.length(), adminUserInfo.length),
-                    StandardCharsets.UTF_8);
+            if (adminUserInfo.length <= 0) {
+                throw new LIMSException("could not create default admin user as password is 0 length");
+            }
+            password = new String(adminUserInfo, StandardCharsets.UTF_8);
+            password = processPassword(password);
+
             if (!loginService.isHashedPassword(password)) {
                 if (PasswordValidationFactory.getPasswordValidator().passwordValid(password)) {
                     loginService.hashPassword(login, password);
@@ -74,6 +78,20 @@ public class CreateAdminUserTask {
         return login;
     }
 
+    private String processPassword(String password) {
+        // strip password marker at beginning of line and newline character at end
+        if (password.startsWith(PASSWORD_MARKER)) {
+            password = password.substring(PASSWORD_MARKER.length());
+        }
+        if (password.endsWith("\n")) {
+            password = password.substring(0, password.length() - 1);
+        }
+        if (password.startsWith("$2y")) {
+            password = password.replace("$2y", "$2a");
+        }
+        return password;
+    }
+
     private Date getExpiredDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 5);
@@ -81,7 +99,7 @@ public class CreateAdminUserTask {
     }
 
     private byte[] getAdminUserInfo() throws IOException, URISyntaxException {
-        return Files.readAllBytes(Paths.get(getClass().getResource(PASSWORD_FILEPATH).toURI()));
+        return Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(PASSWORD_FILEPATH).toURI()));
     }
 
 }

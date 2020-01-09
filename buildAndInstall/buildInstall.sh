@@ -84,7 +84,7 @@ echo "creating docker image"
 bash ${buildInstallDir}/install/linux/setupTomcatDocker.sh
 	
 #create the docker image
-bash ${buildInstallDir}/build/build.sh -b ${branch} -d
+bash ${buildInstallDir}/build/build.sh -d
 cd ${projectDir}
 #run the docker image
 echo "starting up docker"
