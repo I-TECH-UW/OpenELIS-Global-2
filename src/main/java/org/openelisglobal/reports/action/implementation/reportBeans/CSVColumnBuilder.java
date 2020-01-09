@@ -37,6 +37,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -320,7 +321,11 @@ abstract public class CSVColumnBuilder {
 
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is safe from sql injection
-        return trimToPostgresMaxColumnName("\"" + columnName.replace('"', '\'') + "\"");
+        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
+            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
+        } else {
+            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+        }
     }
 
     private String trimToPostgresMaxColumnName(String name) {

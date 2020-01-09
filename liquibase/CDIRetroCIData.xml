@@ -517,34 +517,34 @@
     
    	<include file="RetroCITests.xml"/>
 
-    <changeSet author="paulsc" id="3" context="CDIRetroCI" runOnChange="true">
-    <preConditions onFail="MARK_RAN">
-    <sqlCheck expectedResult="0">
-              SELECT count( * )  FROM clinlims.system_user where login_name = 'analyzer';
-    </sqlCheck>
-    </preConditions>
-    <comment>Adds analyzer user to db if they do not exist</comment>
-    <insert schemaName="clinlims" tableName="system_user">
-            <column name="id" valueNumeric=" nextval( 'system_user_seq' ) "/>
-            <column name="login_name" value="analyzer"/>
-            <column name="first_name" value="analyzer"/>
-            <column name="last_name" value="service"/>
-            <column name="initials" value="AS"/>
-            <column name="is_active" value="Y"/>
-            <column name="is_employee" value="Y"/>
-            <column name="lastupdated" valueDate=" now() "/>
-    </insert>
-    <insert schemaName="clinlims" tableName="login_user">
-            <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/>
-            <column name="login_name" value="analyzer"/>
-            <column name="password" value=""/>
-            <column name="password_expired_dt" valueDate=" current_date + interval '10 year' "/>
-            <column name="account_locked" value="Y"/>
-            <column name="account_disabled" value="N"/>
-            <column name="is_admin" value="N"/>
-            <column name="user_time_out" value="1"/>
-    </insert>
-    </changeSet>
+<!--     <changeSet author="paulsc" id="3" context="CDIRetroCI" runOnChange="true"> -->
+<!--     <preConditions onFail="MARK_RAN"> -->
+<!--     <sqlCheck expectedResult="0"> -->
+<!--               SELECT count( * )  FROM clinlims.system_user where login_name = 'analyzer'; -->
+<!--     </sqlCheck> -->
+<!--     </preConditions> -->
+<!--     <comment>Adds analyzer user to db if they do not exist</comment> -->
+<!--     <insert schemaName="clinlims" tableName="system_user"> -->
+<!--             <column name="id" valueNumeric=" nextval( 'system_user_seq' ) "/> -->
+<!--             <column name="login_name" value="analyzer"/> -->
+<!--             <column name="first_name" value="analyzer"/> -->
+<!--             <column name="last_name" value="service"/> -->
+<!--             <column name="initials" value="AS"/> -->
+<!--             <column name="is_active" value="Y"/> -->
+<!--             <column name="is_employee" value="Y"/> -->
+<!--             <column name="lastupdated" valueDate=" now() "/> -->
+<!--     </insert> -->
+<!--     <insert schemaName="clinlims" tableName="login_user"> -->
+<!--             <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/> -->
+<!--             <column name="login_name" value="analyzer"/> -->
+<!--             <column name="password" value=""/> -->
+<!--             <column name="password_expired_dt" valueDate=" current_date + interval '10 year' "/> -->
+<!--             <column name="account_locked" value="Y"/> -->
+<!--             <column name="account_disabled" value="N"/> -->
+<!--             <column name="is_admin" value="N"/> -->
+<!--             <column name="user_time_out" value="1"/> -->
+<!--     </insert> -->
+<!--     </changeSet> -->
     
     <changeSet author="paulsc" id="4" context="CDIRetroCI">
                <comment>drop and repopulates analyzer table unconditionally</comment>

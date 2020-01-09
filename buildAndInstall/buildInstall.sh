@@ -77,12 +77,14 @@ then
 	cd ${callDirectory}
 fi
 
+bash ${buildInstallDir}/build/createDefaultPassword.sh
+
 echo "creating docker image"
 #setup linux for tomcat docker to work
 bash ${buildInstallDir}/install/linux/setupTomcatDocker.sh
 	
 #create the docker image
-bash ${buildInstallDir}/build/build.sh -b ${branch} -d
+bash ${buildInstallDir}/build/build.sh -d
 cd ${projectDir}
 #run the docker image
 echo "starting up docker"

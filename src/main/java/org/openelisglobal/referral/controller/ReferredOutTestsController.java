@@ -526,14 +526,14 @@ public class ReferredOutTestsController extends BaseController {
     private void validateModifedItem(ReferralItem referralItem, Errors errors) {
         // if an institution has not been entered then there may not be a test
         if (!institutionEntered(referralItem) && testEntered(referralItem)) {
-            errors.reject("error.referral.missingInstitution", new String[] { referralItem.getAccessionNumber() },
+            errors.reject("error.referral.missingInstitution", new String[] {},
                     "error.referral.missingInstitution");
         }
 
         // if a test has not been entered then there can not be a result or
         // report date
         if (!testEntered(referralItem) && (reportDateEntered(referralItem) || resultEntered(referralItem))) {
-            errors.reject("error.referral.missingTest", new String[] { referralItem.getAccessionNumber() },
+            errors.reject("error.referral.missingTest", new String[] {},
                     "error.referral.missingTest");
         }
         try {
