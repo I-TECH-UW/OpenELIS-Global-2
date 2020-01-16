@@ -46,6 +46,7 @@ import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -147,10 +148,10 @@ public abstract class Accessioner implements IAccessioner {
      */
     private Set<String> analysisDone = new HashSet<>();
     {
-        analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized));
+        analysisDone.add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized));
         analysisDone
-                .add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
-        analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled));
+                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
+        analysisDone.add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled));
     }
 
     /**
@@ -635,9 +636,9 @@ public abstract class Accessioner implements IAccessioner {
         if (statusSet == null) {
             String sampleId = projectFormMapper.getSampleId();
             if (GenericValidator.isBlankOrNull(sampleId)) {
-                statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+                statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
             } else {
-                statusSet = StatusService.getInstance().getStatusSetForSampleId(sampleId);
+                statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForSampleId(sampleId);
             }
         }
         return statusSet;
@@ -661,7 +662,7 @@ public abstract class Accessioner implements IAccessioner {
      */
     protected void populateSampleHuman() {
         if (isNewSample()) {
-            sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Entered));
+            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
             sampleHuman = new SampleHuman();
         } else {
             if (isNewPatient() || isADifferentPatient()) {
@@ -864,7 +865,7 @@ public abstract class Accessioner implements IAccessioner {
         SampleItem item = new SampleItem();
         item.setTypeOfSample(typeofsample);
         item.setSortOrder(Integer.toString(0));
-        item.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+        item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
         item.setCollectionDate(collectionDate);
         return item;
     }
@@ -1000,9 +1001,9 @@ public abstract class Accessioner implements IAccessioner {
      * @
      */
     public void completeSample() {
-        if (isAllAnalysisDone() && !StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated)
+        if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated)
                 .equals(sample.getStatus())) {
-            sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
+            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
             sample.setSysUserId(sysUserId);
             sampleService.update(sample);
         }
@@ -1010,7 +1011,7 @@ public abstract class Accessioner implements IAccessioner {
 
     /**
      * The question is whether we are ready to update the sample status. TODO Pahill
-     * maybe we could move this to StatusService.getInstance()?
+     * maybe we could move this to SpringContext.getBean(IStatusService.class)?
      */
     private boolean isAllAnalysisDone() {
         List<Analysis> analyses = analysisService.getAnalysesBySampleId(sample.getId());
@@ -1033,7 +1034,7 @@ public abstract class Accessioner implements IAccessioner {
         analysis.setSampleItem(sampleTestCollection.item);
         analysis.setRevision(analysisRevision);
         analysis.setStartedDate(collectionDateTime);
-        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
         analysis.setTestSection(test.getTestSection());
         analysis.setSysUserId(sysUserId);
         return analysis;
@@ -1246,7 +1247,7 @@ public abstract class Accessioner implements IAccessioner {
         if (projectForm == SPECIAL_REQUEST || projectForm == EID) {
             newPatientStatus = newSampleStatus;
         }
-        StatusService.getInstance().persistRecordStatusForSample(sample, newSampleStatus, patientInDB, newPatientStatus,
+        SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(sample, newSampleStatus, patientInDB, newPatientStatus,
                 sysUserId);
     }
 

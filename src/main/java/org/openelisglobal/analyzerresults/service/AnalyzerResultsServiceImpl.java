@@ -11,7 +11,7 @@ import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
@@ -22,6 +22,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
@@ -162,7 +163,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                 RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
                         ? RecordStatus.NotRegistered
                         : null;
-                StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
+                SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(grouping.sample, sampleStatus,
                         grouping.patient, patientStatus, sysUserId);
             }
 

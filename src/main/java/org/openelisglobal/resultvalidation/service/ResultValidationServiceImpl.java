@@ -6,8 +6,8 @@ import java.util.List;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IResultSaveService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
@@ -18,6 +18,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +106,7 @@ public class ResultValidationServiceImpl implements ResultValidationService {
 
                 if (sampleFinished) {
                     Sample sample = sampleService.get(currentSampleId);
-                    sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
+                    sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
                     sampleUpdateList.add(sample);
                 }
 
@@ -118,10 +119,10 @@ public class ResultValidationServiceImpl implements ResultValidationService {
 
     private List<Integer> getSampleFinishedStatuses() {
         ArrayList<Integer> sampleFinishedStatus = new ArrayList<>();
-        sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-        sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+        sampleFinishedStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        sampleFinishedStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
         sampleFinishedStatus.add(
-                Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
         return sampleFinishedStatus;
     }
 

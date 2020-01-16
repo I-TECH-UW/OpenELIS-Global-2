@@ -13,7 +13,7 @@ import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -64,7 +64,7 @@ public class BarcodeLabelMaker {
 
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
     static {
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(StatusService.getInstance().getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
     }
 
     public BarcodeLabelMaker() {

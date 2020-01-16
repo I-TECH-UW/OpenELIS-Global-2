@@ -31,8 +31,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Attribute;
@@ -44,7 +43,9 @@ import org.hibernate.InstantiationException;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PluginLoader {
     private static final String PLUGIN_ANALYZER = "/plugin" + File.separator;
     private static final String VERSION = "version";
@@ -59,7 +60,6 @@ public class PluginLoader {
     private static final String VALUE = "value";
     private int JDK_VERSION_MAJOR;
     private int JDK_VERSION_MINOR;
-    private ServletContext context;
 
     private static List<String> currentPlugins;
 
@@ -69,11 +69,8 @@ public class PluginLoader {
         }
     }
 
-    public PluginLoader(ServletContextEvent event) {
-        context = event.getServletContext();
-    }
-
-    public void load() {
+    @PostConstruct
+    private void load() {
         ClassLoader classLoader = getClass().getClassLoader();
         String pluginsDirPath;
         try {
@@ -85,6 +82,8 @@ public class PluginLoader {
         File pluginDir = new File(pluginsDirPath);
 
         loadDirectory(pluginDir);
+
+        LogEvent.logInfo(this.getClass().getName(), "load", "Plugins loaded");
     }
 
     private void loadDirectory(File pluginDir) {
@@ -281,7 +280,7 @@ public class PluginLoader {
         } catch (java.lang.InstantiationException e) {
             LogEvent.logDebug(e);
             throw new LIMSException("See previous stack trace");
-        } 
+        }
 
     }
 

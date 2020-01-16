@@ -28,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -46,8 +47,14 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
 
-public class ExternalPatientSearch implements Runnable {
+@Service
+@Scope("prototype")
+public class ExternalPatientSearch implements IExternalPatientSearch {
 
     private static final String GET_PARAM_PWD = "pwd";
     private static final String GET_PARAM_NAME = "name";
@@ -79,6 +86,7 @@ public class ExternalPatientSearch implements Runnable {
     protected List<String> errors;
     protected int returnStatus = HttpStatus.SC_CREATED;
 
+    @Override
     synchronized public void setConnectionCredentials(String connectionString, String name, String password,
             int timeout_Mil) {
         if (finished) {
@@ -91,6 +99,7 @@ public class ExternalPatientSearch implements Runnable {
         timeout = timeout_Mil;
     }
 
+    @Override
     synchronized public void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber,
             String nationalID, String guid) throws IllegalStateException {
 
@@ -106,6 +115,7 @@ public class ExternalPatientSearch implements Runnable {
         this.guid = guid;
     }
 
+    @Override
     synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
 
         if (!finished) {
@@ -130,11 +140,12 @@ public class ExternalPatientSearch implements Runnable {
     }
 
     @Override
-    public void run() {
+    @Async
+    public Future<Integer> runExternalSearch() {
         try {
             synchronized (this) {
                 if (noSearchTerms()) {
-                    return;
+                    throw new IllegalStateException("Search requested before without any search terms.");
                 }
 
                 if (connectionCredentialsIncomplete()) {
@@ -147,6 +158,7 @@ public class ExternalPatientSearch implements Runnable {
         } finally {
             finished = true;
         }
+        return new AsyncResult<>(getSearchResultStatus());
     }
 
     private boolean connectionCredentialsIncomplete() {

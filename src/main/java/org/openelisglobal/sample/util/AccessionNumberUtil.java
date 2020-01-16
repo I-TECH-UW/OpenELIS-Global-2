@@ -27,10 +27,11 @@ import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFac
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.provider.validation.ProgramAccessionValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AccessionNumberUtil {
 
@@ -84,7 +85,7 @@ public class AccessionNumberUtil {
     }
 
     public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         if (statusSet.getPatientRecordStatus() == validStatus) {
             return SAMPLE_FOUND;
         } else {
@@ -93,7 +94,7 @@ public class AccessionNumberUtil {
     }
 
     public static ValidationResults isSampleStatusValid(String accessionNumber, RecordStatus validStatus) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         RecordStatus sampleRecordStatus = statusSet.getSampleRecordStatus();
         if (sampleRecordStatus == validStatus) {
             return SAMPLE_FOUND;

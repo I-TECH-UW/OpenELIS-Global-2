@@ -39,6 +39,7 @@ import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -97,7 +98,7 @@ abstract public class CSVColumnBuilder {
         ResourceTranslator.GenderTranslator.getInstance();
 
         if (validStatusFilter != null) {
-            validStatusId = StatusService.getInstance().getStatusID(validStatusFilter);
+            validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(validStatusFilter);
         }
     }
 
@@ -412,7 +413,7 @@ abstract public class CSVColumnBuilder {
             case LOG:
                 return isBlankOrNull(value) ? "" : translateLog(value);
             case SAMPLE_STATUS:
-                OrderStatus orderStatus = StatusService.getInstance().getOrderStatusForID(value);
+                OrderStatus orderStatus = SpringContext.getBean(IStatusService.class).getOrderStatusForID(value);
                 if (orderStatus == null) {
                     return "?";
                 }

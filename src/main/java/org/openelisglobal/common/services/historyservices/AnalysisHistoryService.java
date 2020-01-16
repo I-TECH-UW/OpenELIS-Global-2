@@ -24,7 +24,7 @@ import java.util.Map;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.history.service.HistoryService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
@@ -52,7 +52,7 @@ public class AnalysisHistoryService extends AbstractHistoryService {
             historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
             newValueMap = new HashMap<String, String>();
-            newValueMap.put(STATUS_ATTRIBUTE, StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));
+            newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
 
             identifier = TestServiceImpl.getLocalizedTestNameWithType(analysis.getTest()) + " - "
                     + analysis.getAnalysisType();

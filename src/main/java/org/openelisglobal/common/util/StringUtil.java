@@ -40,11 +40,12 @@ import org.owasp.encoder.Encode;
 public class StringUtil {
 
     private static final String COMMA = ",";
-    private static final Character CHAR_COMA = ',';
-    private static final Character CHAR_TIDDLE = '~';
     private static final String TIDDLE = "~";
     private static final String QUOTE = "\"";
-    private static String STRING_KEY_SUFFIX = null;
+    private static final Character CHAR_COMA = ',';
+    private static final Character CHAR_TIDDLE = '~';
+    private static final Character CHAR_QUOTE = '"';
+//    private static String STRING_KEY_SUFFIX = null;
     private static Pattern INTEGER_REG_EX = Pattern.compile("^-?\\d+$");
 
     public enum EncodeContext {
@@ -381,7 +382,8 @@ public class StringUtil {
 
         String[] breakOnQuotes = line.split(QUOTE);
 
-        StringBuffer substitutedString = new StringBuffer();
+        int numQuotes = countInstances(line, CHAR_QUOTE);
+        StringBuffer substitutedString = new StringBuffer(line.length() + (numQuotes * 2));
         for (String subString : breakOnQuotes) {
             if (subString.startsWith(COMMA)) {
                 substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
@@ -603,6 +605,10 @@ public class StringUtil {
         }
     }
 
+    public static int countInstances(String str, char character) {
+        return (int) str.codePoints().filter(ch -> ch == character).count();
+    }
+
     public static String encodeForContext(String message, EncodeContext context) {
         switch (context) {
         case HTML:
@@ -626,5 +632,13 @@ public class StringUtil {
 
     public static String snipToMaxIdLength(String string) {
         return string.length() > 10 ? string.substring(0, 10) : string;
+    }
+
+    public static int countChars(String[] strArray) {
+        int total = 0;
+        for (String str : strArray) {
+            total += str.length();
+        }
+        return total;
     }
 }

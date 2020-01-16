@@ -10,8 +10,8 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
@@ -31,6 +31,7 @@ import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -240,7 +241,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         analysis.setSysUserId(sampleTestCollection.item.getSysUserId());
         analysis.setRevision(analysisRevision);
         analysis.setStartedDate(collectionDateTime == null ? DateUtil.getNowAsSqlDate() : collectionDateTime);
-        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleTypeName)) {
             analysis.setSampleTypeName(sampleTypeName);
         }

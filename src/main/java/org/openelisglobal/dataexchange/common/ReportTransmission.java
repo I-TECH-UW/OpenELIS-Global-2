@@ -117,9 +117,8 @@ public class ReportTransmission {
             sender.setURI(url);
 
             if (sendAsychronously) {
-                AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
-                        contents);
-                asynchSender.sendMessage();
+                IAsyncExternalSender asynchSender = SpringContext.getBean(IAsyncExternalSender.class);
+                asynchSender.sendMessage(sender, responseHandler, contents);
             } else {
                 sender.sendMessage();
                 if (responseHandler != null) {
