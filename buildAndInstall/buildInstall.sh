@@ -10,19 +10,16 @@ usage() {
 Usage: $PROGNAME [-b <branch>] [-l] [-i]
 
 -b <branch>: git branch to build from
-         -l: run liquibase
          -i: create installer
 EOF
   exit 1
 }
 
 branch=master 
-runLiquibase=false 
 createInstaller=false
-while getopts :b:li opt; do
+while getopts :b:i opt; do
   case $opt in
     (b) branch=$OPTARG;;
-    (l) runLiquibase=true;;
     (i) createInstaller=true;;
     (*) usage
   esac
@@ -40,7 +37,6 @@ buildInstallDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 #and other important locations
 projectDir="${buildInstallDir}/.."
-liquibaseDir="${projectDir}/liquibase"
 
 cd ${projectDir}
 echo Will build from $branch
@@ -69,14 +65,6 @@ git pull origin $branch
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
 cd ${callDirectory}
 
-if [ $runLiquibase == true ]
-then
-	cd ${liquibaseDir}
-	#                                    context     dbname
-	bash runLiquibase.sh ci_regional       clinlims
-	cd ${callDirectory}
-fi
-
 bash ${buildInstallDir}/build/createDefaultPassword.sh
 
 echo "creating docker image"
@@ -98,7 +86,6 @@ createLinuxInstaller() {
 	echo "creating installer for context ${context}"
 	mkdir -p ${installerDir}/linux/${context}
 	cp -r ${buildInstallDir}/installerTemplate/linux/* ${installerDir}/linux/${context}
-	cp -a ${liquibaseDir}/. ${installerDir}/linux/${context}/liquibase/
 	cp OpenELIS_DockerImage.tar.gz ${installerDir}/linux/${context}/dockerImage/${context}-${projectVersion}.tar.gz
 	cp ${projectDir}/tools/DBBackup/installerTemplates/${backupFile} ${installerDir}/linux/${context}/templates/DatabaseBackup.pl
 	cp ${projectDir}/tools/baseDatabases/${context}.backup ${installerDir}/linux/${context}/databaseFiles/databaseInstall.backup

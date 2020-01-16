@@ -5,9 +5,9 @@
 
 	<groupId>org.openelisglobal</groupId>
 	<artifactId>openelisglobal</artifactId>
-<!-- 	for deployment cycles -->
-<!-- 	<version>${major.version}.${minor.version}.${fix.version}</version> -->
-<!-- 	for development cycles -->
+	<!-- for deployment cycles -->
+	<!-- <version>${major.version}.${minor.version}.${fix.version}</version> -->
+	<!-- for development cycles -->
 	<version>${major.version}.${minor.version}.${state.version}.${fix.version}</version>
 	<packaging>war</packaging>
 
@@ -15,13 +15,15 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.java.release>8</maven.java.release>
-		
+
 		<major.version>2</major.version>
 		<minor.version>0</minor.version>
-		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = release candidate, 3 = deployable -->
+		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
 		<fix.version>0</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
 
 		<apachetiles.version>3.0.8</apachetiles.version>
 		<castor.version>1.4.1</castor.version>
@@ -29,6 +31,7 @@
 		<hibernate.version>5.4.3.Final</hibernate.version>
 		<hibernate-validator.version>6.1.0.Final</hibernate-validator.version>
 		<log4j.version>2.11.2</log4j.version>
+		<postgresql.version>42.2.9</postgresql.version>
 		<springframework.version>5.1.7.RELEASE</springframework.version>
 		<springsecurity.version>5.1.5.RELEASE</springsecurity.version>
 	</properties>
@@ -178,6 +181,17 @@
 			<artifactId>jta</artifactId>
 			<version>1.1</version>
 		</dependency>
+		<!-- LIQUIBASE DEPENDENCIES -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>3.8.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-liquibase</artifactId>
+			<version>2.13.0</version>
+		</dependency>
 		<!-- LOG4J DEPENDENCIES -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -303,13 +317,11 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20190722</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -324,7 +336,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
+			<version>${postgresql.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -341,7 +353,7 @@
 				<version>3.8.0</version>
 				<configuration>
 					<!-- move to release when we compile in java versions >= 9 -->
-<!-- 					<release>${maven.java.release}</release> -->
+					<!-- <release>${maven.java.release}</release> -->
 					<!-- legacy for java versions < 9 -->
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>

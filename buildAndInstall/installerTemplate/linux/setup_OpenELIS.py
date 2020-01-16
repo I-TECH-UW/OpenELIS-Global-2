@@ -18,7 +18,6 @@ VERSION = ""
 DOCKER_DIR = "./dockerImage/"
 TEMPLATE_DIR = "./templates/"
 STAGING_DIR = "./stagingFiles/"
-LIQUIBASE_DIR = "./liquibase/"
 DB_DIR = "./databaseFiles/"
 SCRIPTS_DIR = "./scripts/"
 CROSSTAB_DIR = "./crosstab/"
@@ -38,9 +37,6 @@ LOG_FILE_NAME = "installer.log"
 LANG_NAME = "en_US.UTF-8"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 APP_NAME = ""
-# maps the application name to the liquibase context name
-APP_CONTEX_MAP = {'CDI': 'CDIRetroCI', 'LNSP_Haiti': 'haitiLNSP', 'haiti': 'haiti', 'CI_LNSP': 'ciLNSP',
-                  'CI_IPCI': 'CI_IPCI', 'CDI_RegLab': 'ci_regional', 'Kenya': 'Kenya'}
 CLINLIMS_PWD = ''
 ADMIN_PWD = ''
 SITE_ID = ''
@@ -97,8 +93,6 @@ def do_install():
     install_db()
     
     preserve_db_password()
-
-    update_with_liquibase()
 
     install_crosstab()
 
@@ -252,8 +246,6 @@ def do_update():
         return
 
     backup_db()
-
-    update_with_liquibase()
 
     load_docker_image()
 
@@ -454,52 +446,6 @@ def persist_site_information(file, name, description, value):
 
     file.write(delete_line)
     file.write(insert_line)
-
-
-def update_with_liquibase():
-    global LOG_FILE
-    context = False
-
-    app_names = APP_CONTEX_MAP.keys()
-
-    for app in app_names:
-        if APP_NAME.find(app) == 0:
-            context = APP_CONTEX_MAP[app]
-            break
-
-    context_arg = ''
-    if context:
-        context_arg = "--contexts=" + context
-
-    log("Updating database\n", True)
-    LOG_FILE.flush()
-    cmd = "java -jar  ./lib/liquibase-1.9.5.jar --defaultsFile=liquibaseInstall.properties " + context_arg + \
-          " --password=" + CLINLIMS_PWD + " --username=clinlims  update >> ../" + LOG_DIR + LOG_FILE_NAME + " 2>&" + str(
-        LOG_FILE.fileno())
-
-    print "The following command may take a few minutes to complete.  Please take a short break until it finishes"
-    print cmd
-
-    current_dir = os.getcwd()
-    os.chdir(LIQUIBASE_DIR)
-    result = os.system(cmd)
-
-    if result > 0:
-        log("Error running database update", PRINT_TO_CONSOLE)
-        log("Re running with diagnostics", PRINT_TO_CONSOLE)
-        log("If the issue is reported as an authentication problem run the installer with the '-recover' option", PRINT_TO_CONSOLE)
-        print "For further information please check the log file " + LOG_DIR + LOG_FILE_NAME
-        LOG_FILE.flush()
-        cmd = "java -jar  ./lib/liquibase-1.9.5.jar --defaultsFile=liquibaseInstall.properties " + context_arg + \
-              " --password=" + CLINLIMS_PWD + " --username=clinlims --logLevel=fine update  >> ../" + LOG_DIR + LOG_FILE_NAME + " 2>&" + str(
-            LOG_FILE.fileno())
-        result = os.system(cmd)
-
-        if result > 0:
-            os.chdir(current_dir)
-            clean_exit()
-
-    os.chdir(current_dir)
 
 
 def update_postgres_role():
