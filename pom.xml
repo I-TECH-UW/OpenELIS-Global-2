@@ -5,13 +5,21 @@
 
 	<groupId>org.openelisglobal</groupId>
 	<artifactId>openelisglobal</artifactId>
-	<version>0.0.1-Beta</version>
+<!-- 	for deployment cycles -->
+<!-- 	<version>${major.version}.${minor.version}.${fix.version}</version> -->
+<!-- 	for development cycles -->
+	<version>${major.version}.${minor.version}.${state.version}.${fix.version}</version>
 	<packaging>war</packaging>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.java.release>8</maven.java.release>
+		
+		<major.version>2</major.version>
+		<minor.version>0</minor.version>
+		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = release candidate, 3 = deployable -->
+		<fix.version>0</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

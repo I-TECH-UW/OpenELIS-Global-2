@@ -7,7 +7,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -30,7 +30,7 @@ public class AnalyzerReaderUtil {
 
         if (sample != null && sample.getId() != null) {
             List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
-            String acceptedStatusId = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+            String acceptedStatusId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
 
             for (Analysis analysis : analysisList) {
                 if (analysis.getStatusId().equals(acceptedStatusId)

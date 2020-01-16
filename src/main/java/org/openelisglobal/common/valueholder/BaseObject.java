@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 
 public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
@@ -86,15 +85,17 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
         Timestamp ts = new Timestamp(System.currentTimeMillis());
 
         if (ts.getNanos() == 0) {
-            try {
-                // a little past 0 millisecs
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
-            }
-
-            ts = new Timestamp(System.currentTimeMillis());
+            ts.setNanos(1);
+            // unsure why we need this, but this is an unnecessary way to get non 0
+//            try {
+//                // a little past 0 millisecs
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                // bugzilla 2154
+//                LogEvent.logError(e.toString(), e);
+//            }
+//
+//            ts = new Timestamp(System.currentTimeMillis());
         }
         setLastupdated(ts);
         // setLastupdatedBy( getSessionContext().getUsername() );

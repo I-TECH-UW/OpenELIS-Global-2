@@ -20,7 +20,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.form.PrintBarcodeForm;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -204,17 +203,17 @@ public class PrintBarcodeController extends BaseController {
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
             boolean canCancel = allowedToCancelAll
-                    || (!StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
             sampleEditItem.setHasResults(
-                    !StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
             break;

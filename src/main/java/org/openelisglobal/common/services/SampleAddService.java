@@ -141,7 +141,7 @@ public class SampleAddService {
                 item.setSample(sample);
                 item.setTypeOfSample(typeOfSampleService.getTypeOfSampleById(sampleItem.attributeValue("sampleID")));
                 item.setSortOrder(Integer.toString(sampleItemIdIndex));
-                item.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+                item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
                 item.setCollector(sampleItem.attributeValue("collector"));
 
                 if (!GenericValidator.isBlankOrNull(collectionDateTime)) {

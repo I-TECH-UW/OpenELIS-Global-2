@@ -19,13 +19,13 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.order.action.IOrderExistanceChecker.CheckResult;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.spring.util.SpringContext;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -60,7 +60,7 @@ public class OrderWorker {
 
     private IStatusService getStatusService() {
         if (statusService == null) {
-            statusService = StatusService.getInstance();
+            statusService = SpringContext.getBean(IStatusService.class);
         }
         return statusService;
     }

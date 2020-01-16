@@ -106,7 +106,6 @@ public class PanelTestAssignController extends BaseController {
     public List<Test> getAllTestsByPanelId(String panelId) {
         List<Test> testList = new ArrayList<>();
 
-        @SuppressWarnings("unchecked")
         List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);
 
         for (PanelItem link : testLinks) {

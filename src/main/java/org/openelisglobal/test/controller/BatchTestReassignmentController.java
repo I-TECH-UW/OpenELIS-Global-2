@@ -17,6 +17,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.spring.util.SpringContext;
@@ -177,7 +178,7 @@ public class BatchTestReassignmentController extends BaseController {
 
     private void verifyStatusNotChanged(List<Analysis> changed, List<Analysis> noChanged,
             StatusService.AnalysisStatus status, List<BatchTestStatusChangeBean> changeBeans) {
-        String statusId = StatusService.getInstance().getStatusID(status);
+        String statusId = SpringContext.getBean(IStatusService.class).getStatusID(status);
 
         List<Analysis> changedAnalysis = new ArrayList<>();
 
@@ -211,9 +212,9 @@ public class BatchTestReassignmentController extends BaseController {
     }
 
     private String getStatusName(String statusId) {
-        StatusService.AnalysisStatus status = StatusService.getInstance().getAnalysisStatusForID(statusId);
+        StatusService.AnalysisStatus status = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(statusId);
         String name = getStatusName(status);
-        return name == null ? StatusService.getInstance().getStatusName(status) : name;
+        return name == null ? SpringContext.getBean(IStatusService.class).getStatusName(status) : name;
     }
 
     private String getStatusName(StatusService.AnalysisStatus status) {

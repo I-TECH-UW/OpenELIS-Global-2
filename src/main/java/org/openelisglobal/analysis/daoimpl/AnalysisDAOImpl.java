@@ -1577,7 +1577,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 //		}
 //
 //		List<Integer> statusList = new ArrayList<>();
-//		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
+//		statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 //
 ////		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 //		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);

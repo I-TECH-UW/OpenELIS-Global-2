@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -119,7 +119,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         }
 
         ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-        ExternalOrderStatus eOrderStatus = StatusService.getInstance()
+        ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
                 .getExternalOrderStatusForID(eOrder.getStatusId());
 
         if (eOrderStatus == ExternalOrderStatus.Cancelled) {
