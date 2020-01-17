@@ -41,9 +41,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ReportNonConformingEventController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "currentUserId", "status", "id", "name",
+    private static final String[] ALLOWED_FIELDS = new String[] { "currentUserId", "status", "id", "reportDate", "name",
             "reporterName", "dateOfEvent", "labOrderNumber", "prescriberName", "site", "reportingUnit", "description",
-            "suspectedCauses", "proposedAction", };
+            "suspectedCauses", "proposedAction", "specimenId" };
 
     @Autowired
     private SampleService sampleService;
@@ -77,7 +77,7 @@ public class ReportNonConformingEventController extends BaseController {
         NonConformingEventForm form = new NonConformingEventForm();
         form.setCurrentUserId(getSysUserId(request));
         form.setPatientSearch(new PatientSearch());
-        String labNumber = oldForm.getLabNo();
+        String labNumber = oldForm.getLabOrderNumber();
         String specimenId = oldForm.getSpecimenId();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             initForm(labNumber, specimenId, form);

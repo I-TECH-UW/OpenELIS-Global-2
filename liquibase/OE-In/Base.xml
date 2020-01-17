@@ -26,4 +26,5 @@
     <include file="OE-In/nce_specimen.xml" />
     <include file="OE-In/report.xml" />
     <include file="OE-In/test_result.xml" />
+    <include file="OE-In/reference_table.xml" />
 </databaseChangeLog>
