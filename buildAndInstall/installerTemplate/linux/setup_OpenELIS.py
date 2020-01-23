@@ -36,7 +36,7 @@ BACKUP_SCRIPT_NAME = "DatabaseBackup.pl"
 LOG_FILE_NAME = "installer.log"
 LANG_NAME = "en_US.UTF-8"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
-APP_NAME = ""
+APP_NAME = "OpenELIS-Global"
 CLINLIMS_PWD = ''
 ADMIN_PWD = ''
 SITE_ID = ''
@@ -86,8 +86,7 @@ def do_install():
     config_files_for_postgres()
 
     # prepare any site-specific information
-    if APP_NAME == 'haitiOpenElis' or APP_NAME == 'CDI_RegLabOpenElis':
-        config_site_information()
+    config_site_information()
 
     # add database users and install db
     install_db()
@@ -144,7 +143,7 @@ def install_backup_task():
         return
     else:
         log("Curl found, continuing with backup installation", PRINT_TO_CONSOLE)
-    if APP_NAME == 'haitiOpenElis' or not NO_PROMPT:
+    if not NO_PROMPT:
         if len(SITE_ID) < 1:
             SITE_ID = raw_input("site number or identification for this lab: ")
             while len(SITE_ID) < 1:
@@ -530,9 +529,14 @@ def get_app_details():
     docker_files = glob.glob(DOCKER_DIR + '*.tar.gz')
     for file in docker_files:
         filename = get_file_name(file)
-        if re.match('.*OpenElis-.*.tar.gz', filename):
-            APP_NAME = filename.split('-', 1)[0]
-            VERSION = filename.split('-', 1)[1][:-7]    #strip .tar.gz off
+        if re.match('.*OpenElis-Global-.*.tar.gz', filename):
+            filename_parts = filename.split('-')
+            i = 0
+            filename_parts_size = len(filename_parts)
+            while i < filename_parts_size - 1:
+                APP_NAME = APP_NAME + filename_parts[i]               # get everything before final '-'
+                i += 1                                                #     (version delimiter)
+            VERSION = filename_parts[len(filename_parts) - 1][:-7]    # strip .tar.gz off
             log("app name is: " + APP_NAME, PRINT_TO_CONSOLE)
             log("Version is: " + VERSION, PRINT_TO_CONSOLE)
             return

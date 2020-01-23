@@ -86,7 +86,7 @@ createLinuxInstaller() {
 	echo "creating installer for context ${context}"
 	mkdir -p ${installerDir}/linux/${context}
 	cp -r ${buildInstallDir}/installerTemplate/linux/* ${installerDir}/linux/${context}
-	cp OpenELIS_DockerImage.tar.gz ${installerDir}/linux/${context}/dockerImage/${context}-${projectVersion}.tar.gz
+	cp OpenELIS-Global_DockerImage.tar.gz ${installerDir}/linux/${context}/dockerImage/${context}-${projectVersion}.tar.gz
 	cp ${projectDir}/tools/DBBackup/installerTemplates/${backupFile} ${installerDir}/linux/${context}/templates/DatabaseBackup.pl
 	cp ${projectDir}/tools/baseDatabases/${context}.backup ${installerDir}/linux/${context}/databaseFiles/databaseInstall.backup
 	cp ${buildInstallDir}/install/linux/* ${installerDir}/linux/${context}/scripts/
@@ -112,8 +112,8 @@ then
 	projectVersion=$(echo "$output" | grep '^PROJECT_VERSION' | cut -d = -f 2)
 	cd ${callDirectory}
 	
-	echo "saving docker image as OpenELIS_DockerImage.tar.gz"
-	docker save ${artifactId}:latest | gzip > OpenELIS_DockerImage.tar.gz
+	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
+	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
 	
 	if [ -d "${installerDir}" ]
 	then
@@ -133,16 +133,10 @@ then
 	curl -fsSL https://get.docker.com -o ${stagingDir}/get-docker.sh
 	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${stagingDir}/docker-compose
 	
-	#createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CDI_RegLabOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller haitiOpenElis HaitiBackup.pl 
-	#createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
-	#createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
+	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
+
 	
-	rm OpenELIS_DockerImage*.tar.gz
+	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm -r ${stagingDir}
 	
 fi

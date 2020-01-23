@@ -346,7 +346,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>OpenELIS</finalName>
+		<finalName>OpenELIS-Global</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
