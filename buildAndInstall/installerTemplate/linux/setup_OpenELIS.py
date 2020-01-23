@@ -529,13 +529,17 @@ def get_app_details():
     docker_files = glob.glob(DOCKER_DIR + '*.tar.gz')
     for file in docker_files:
         filename = get_file_name(file)
-        if re.match('.*OpenElis-Global-.*.tar.gz', filename):
+        if re.match('.*OpenELIS-Global-.*.tar.gz', filename):
+            APP_NAME = ""
             filename_parts = filename.split('-')
             i = 0
             filename_parts_size = len(filename_parts)
+            # get everything before final '-' (version delimiter) for APP_NAME
             while i < filename_parts_size - 1:
-                APP_NAME = APP_NAME + filename_parts[i]               # get everything before final '-'
-                i += 1                                                #     (version delimiter)
+                APP_NAME = APP_NAME + filename_parts[i] + "-"
+                i += 1                                   
+            APP_NAME = APP_NAME[:-1]                 
+            
             VERSION = filename_parts[len(filename_parts) - 1][:-7]    # strip .tar.gz off
             log("app name is: " + APP_NAME, PRINT_TO_CONSOLE)
             log("Version is: " + VERSION, PRINT_TO_CONSOLE)
