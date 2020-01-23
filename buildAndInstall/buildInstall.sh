@@ -104,6 +104,7 @@ createLinuxInstaller() {
 if [ $createInstaller == true ]
 then
 	cd ${projectDir}
+	
 	#get useful info from the maven project
 	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\
 	    echo 'PROJECT_VERSION=${project.version}'; } \
