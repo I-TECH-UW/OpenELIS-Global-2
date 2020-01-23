@@ -46,9 +46,8 @@
     <input type="text" name="searchValue"
            value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
     &nbsp;
-    <input type="button" id="searchButtonId"
-           value='<spring:message code="label.button.search" />'
-           onclick="searchNCE();" disabled />
+    <button type="button" id="searchButtonId"
+           onclick="searchNCE();" disabled ><spring:message code="label.button.search" /></button>
 
     <table id="searchResults">
 
@@ -292,7 +291,7 @@
         </tr>
         <tr id="followUpAlert" style="display: none"><td colspan="2"><spring:message code="nonconforming.page.correctiveAction.followUpAlert" /></td></tr>
     </table>
-    <div class="center-caption"><button id="submitResolved" onclick="return completeNCE()">
+    <div class="center-caption"><button id="submitResolved" onclick="completeNCE()">
         <spring:message code="nonconforming.page.correctiveAction.submit" />
     </button></div>
 </c:if>

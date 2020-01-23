@@ -39,6 +39,7 @@
         <sqlFile path="OE5.3/sampleTypeLocalizationFiles/ciLNSPsampleTypeLocalization.sql" />
     </changeSet>
     <changeSet id="6" author="paulsc" context="ci_regional">
+        <validCheckSum>12551080235172c252f9559c4e2fd37</validCheckSum>
         <comment>localization for ci regional lab</comment>
         <sqlFile path="OE5.3/sampleTypeLocalizationFiles/ciRegionalsampleTypeLocalization.sql" />
     </changeSet>
