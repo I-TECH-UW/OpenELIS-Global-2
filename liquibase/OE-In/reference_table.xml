@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  
+    <changeSet author="csteele" id="1" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'nc_event'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nc_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'nc_event', 'Y', 'N');
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="2" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'nce_action_log'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nc_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'nce_action_log', 'Y', 'N');
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="3" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'nce_category'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nce_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'nce_category', 'Y', 'N');
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="4" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'nce_specimen'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nc_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'nce_specimen', 'Y', 'N');
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="5" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'nce_type'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nc_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'nce_type', 'Y', 'N');
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="6" >
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'report'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to nc_event</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'report', 'Y', 'N');
+        </sql>
+    </changeSet>
+  
+</databaseChangeLog>
