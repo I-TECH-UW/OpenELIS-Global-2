@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.referencetables.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -61,7 +62,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //				String tableName = "REFERENCE_TABLES";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ReferenceTables AuditTrail deleteData()", e);
@@ -77,7 +78,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ReferenceTables deleteData()", e);
@@ -120,7 +121,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Referencetables insertData()", e);
@@ -153,7 +154,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //			if (duplicateReferenceTablesExists(referenceTables, isNew)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + referenceTables.getTableName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
@@ -173,7 +174,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "REFERENCE_TABLES";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Referencetables AuditTrail updateData()", e);
@@ -186,7 +187,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(referenceTables);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(referenceTables);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Referencetables updateData()", e);
@@ -206,7 +207,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             } else {
                 referenceTables.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getData()", e);
@@ -225,7 +226,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getAllReferenceTables()", e);
@@ -251,7 +252,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables getPageOfReferenceTables()", e);
@@ -266,7 +267,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             referenceTables = entityManager.unwrap(Session.class).get(ReferenceTables.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Referencetables readReferenceTables(idString)", e);
@@ -300,9 +301,11 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
                 sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
             }
 
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in duplicateReferencetables sql is " + sql);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in
+            // duplicateReferencetables sql is " + sql);
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "duplicateReferencetables sql is " + sql);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            // "duplicateReferencetables sql is " + sql);
 
             query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
 
@@ -326,7 +329,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateReferenceTablesExists()", e);
@@ -346,7 +349,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ReferenceTables getAllReferenceTablesForHl7Encoding()", e);

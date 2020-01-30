@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.test.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +65,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				String tableName = "TEST";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test AuditTrail deleteData()", e);
@@ -82,7 +83,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test deleteData()", e);
@@ -106,7 +107,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test insertData()", e);
@@ -123,7 +124,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test updateData()", e);
 //		}
@@ -135,7 +136,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST";
 //			auditDAO.saveHistory(test, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TestDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test AuditTrail updateData()", e);
 //		}
@@ -146,7 +147,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(test);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(test);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test updateData()", e);
@@ -165,7 +166,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             } else {
                 test.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getData()", e);
@@ -183,7 +184,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllTests()");
         }
 
@@ -203,7 +204,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllActiveTests()");
         }
 
@@ -234,7 +235,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllActiveOrderableTests()");
         }
 
@@ -274,7 +275,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "getAllTestsBySysUserId()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test getAllTestsBySysUserId()", e);
@@ -299,7 +300,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getPageOfTests()", e);
@@ -337,7 +338,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
         }
@@ -385,7 +386,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "getPageOfTestsBySysUserId()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
@@ -449,7 +450,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return list;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
 //		}
@@ -462,7 +463,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             test = entityManager.unwrap(Session.class).get(Test.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test readTest()", e);
@@ -486,7 +487,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTests(String filter)", e);
         }
@@ -503,7 +504,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             query.setParameter("testName", testName);
 
             return query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
@@ -519,7 +520,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             query.setParameter("testName", testName);
 
             return query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
@@ -548,7 +549,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             return t;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
@@ -577,7 +578,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             return t;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
@@ -602,7 +603,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             handleException(e, "getActiveTestById");
         }
 
-        return list.size() > 0 ? list.get(0) : null;
+        return (list != null && list.size() > 0) ? list.get(0) : null;
     }
 
     @Override
@@ -613,7 +614,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             returnTest = entityManager.unwrap(Session.class).get(Test.class, test.getId());
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestById()", e);
@@ -655,7 +656,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             return methods;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethodsByTestSection(String filter)", e);
@@ -676,7 +677,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByTestSection(String filter)", e);
@@ -695,7 +696,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // closeSession(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestsByTestSectionId");
         }
 
@@ -716,7 +717,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
@@ -738,7 +739,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
@@ -784,7 +785,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCount()", e);
         }
@@ -846,7 +847,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
 //		}
@@ -876,7 +877,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //				}
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
 //		}
@@ -914,7 +915,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             return !list.isEmpty();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestExists()", e);
         }
@@ -944,7 +945,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //			return result;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
 //			throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
@@ -978,7 +979,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getNextAvailableSortOrderByTestSection()", e);
@@ -1007,7 +1008,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(hql);
             entities = query.list();
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getAllOrderBy()", e);
         }

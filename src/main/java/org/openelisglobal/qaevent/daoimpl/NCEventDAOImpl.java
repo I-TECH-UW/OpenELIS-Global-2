@@ -33,7 +33,7 @@ public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEv
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }

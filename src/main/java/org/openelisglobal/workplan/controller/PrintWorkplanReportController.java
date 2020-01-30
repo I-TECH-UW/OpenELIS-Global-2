@@ -1,6 +1,7 @@
 package org.openelisglobal.workplan.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import org.openelisglobal.workplan.reports.TestWorkplanReport;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,8 +35,14 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
-    private static IWorkplanReport workplanReport;
-    private String reportPath;
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "workplanType", "testTypeID",
+            "testSectionId", "testName", "workplanTests[*].accessionNumber", "workplanTests[*].patientInfo",
+            "workplanTests[*].receivedDate", "workplanTests[*].testName", "workplanTests[*].notIncludedInWorkplan" };
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
     public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
@@ -45,7 +54,7 @@ public class PrintWorkplanReportController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String workplanType = form.getWorkplanType();
+        String workplanType = form.getType();
         String workplanName;
 
         if (workplanType.equals("test")) {
@@ -57,7 +66,7 @@ public class PrintWorkplanReportController extends BaseController {
         }
 
         // get workplan report based on testName
-        workplanReport = getWorkplanReport(workplanType, workplanName);
+        IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
 
         workplanReport.setReportPath(getReportPath());
 
@@ -89,14 +98,10 @@ public class PrintWorkplanReportController extends BaseController {
             servletOutputStream.flush();
             servletOutputStream.close();
 
-        } catch (JRException e) {
-            LogEvent.logError(e.toString(), e);
-            result.reject("error.jasper", "error.jasper");
-        } catch (Exception e) {
+        } catch (JRException | IOException e) {
             LogEvent.logError(e.toString(), e);
             result.reject("error.jasper", "error.jasper");
         }
-
         if (result.hasErrors()) {
             saveErrors(result);
         }
@@ -129,12 +134,9 @@ public class PrintWorkplanReportController extends BaseController {
     }
 
     public String getReportPath() {
-        if (reportPath == null) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File reportFile = new File(classLoader.getResource("reports/").getFile());
-            reportPath = reportFile.getAbsolutePath();
-        }
-        return reportPath;
+        ClassLoader classLoader = getClass().getClassLoader();
+        File reportFile = new File(classLoader.getResource("reports/").getFile());
+        return reportFile.getAbsolutePath();
     }
 
     @Override

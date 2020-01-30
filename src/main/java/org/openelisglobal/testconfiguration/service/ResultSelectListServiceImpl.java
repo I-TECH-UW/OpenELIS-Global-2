@@ -151,7 +151,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             }
             return true;
         } catch (ParseException e) {
-
+            LogEvent.logError(e);
         }
         return false;
     }
@@ -168,14 +168,14 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             localization.setEnglish(form.getNameEnglish());
             localization.setFrench(form.getNameFrench());
             localization.setSysUserId(currentUserId);
-            localization = localizationService.save(localization);
+            localizationService.save(localization);
 
             dictionary.setDictEntry(form.getNameEnglish());
             dictionary.setLocalAbbreviation(form.getNameEnglish());
             dictionary.setSysUserId(currentUserId);
             dictionaryService.save(dictionary);
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
         return false;

@@ -30,7 +30,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}"); // make sure this
+    private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2[ya]?\\$\\d\\d\\$[./0-9A-Za-z]{53}"); // make sure this
                                                                                                 // variable is current
 
     LoginServiceImpl() {
@@ -171,8 +171,27 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
         return getBaseObjectDAO().getSystemUserId(login);
     }
 
-    private boolean isHashedPassword(String password) {
+    @Override
+    public boolean isHashedPassword(String password) {
         return BCryptPasswordEncoder.class.isInstance(passwordEncoder) && BCRYPT_PATTERN.matcher(password).matches();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean defaultAdminExists() {
+        return getUserProfile(DEFAULT_ADMIN_USER_NAME) != null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean nonDefaultAdminExists() {
+        List<Login> logins = getAll();
+        for (Login login : logins) {
+            if (login.getIsAdmin().equalsIgnoreCase(IActionConstants.YES)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -19,6 +19,8 @@ package org.openelisglobal.reports.action.implementation;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
@@ -51,7 +53,7 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
             form.setUseUpperDateRange(Boolean.TRUE);
             // form.setUseProjectCode(Boolean.TRUE);
             // form.setProjectCodeList(getProjectList());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Log.error("Error in ExportRoutineByDate.setRequestParemeters: ", e);
         }
     }
@@ -118,7 +120,7 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
         try {
             csvRoutineColumnBuilder = getColumnBuilder();
             csvRoutineColumnBuilder.buildDataSource();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
             add1LineErrorMessage("report.error.message.general.error");
         }
@@ -126,7 +128,7 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
 
     @Override
     protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-            throws Exception, IOException, UnsupportedEncodingException {
+            throws IOException, UnsupportedEncodingException, SQLException, ParseException {
 
         String currentAccessionNumber = null;
         String[] splitBase = null;

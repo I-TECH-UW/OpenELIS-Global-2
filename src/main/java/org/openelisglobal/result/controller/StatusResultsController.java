@@ -1,6 +1,5 @@
 package org.openelisglobal.result.controller;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -36,6 +35,8 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,14 +44,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class StatusResultsController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     private static final boolean REVERSE_SORT_ORDER = false;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
     private SampleService sampleService;
     @Autowired
-    SampleItemService sampleItemService;
-    private ResultsLoadUtility resultsUtility;
+    private SampleItemService sampleItemService;
+
     private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
 
@@ -60,7 +63,12 @@ public class StatusResultsController extends BaseController {
         // currently this is the only one being excluded for Haiti_LNSP. If it
         // gets more complicate use the status sets
         excludedStatusIds = new HashSet<>();
-        excludedStatusIds.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+        excludedStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/StatusResults", method = RequestMethod.GET)
@@ -72,7 +80,7 @@ public class StatusResultsController extends BaseController {
             return findForward(FWD_FAIL, form);
         }
 
-        resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+        ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsUtility.setSysUser(getSysUserId(request));
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -89,7 +97,7 @@ public class StatusResultsController extends BaseController {
         if (GenericValidator.isBlankOrNull(newPage)) {
             List<TestResultItem> tests;
             if (GenericValidator.isBlankOrNull(newRequest) || newRequest.equals("false")) {
-                tests = setSearchResults(form);
+                tests = setSearchResults(form, resultsUtility);
 
                 if (configProperties.isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true")
                         && !userHasPermissionForModule(request, "PatientResults")) {
@@ -105,15 +113,15 @@ public class StatusResultsController extends BaseController {
 
             setSelectionLists(form);
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<TestResultItem> setSearchResults(StatusResultsForm form)
+    private List<TestResultItem> setSearchResults(StatusResultsForm form, ResultsLoadUtility resultsUtility)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        List<TestResultItem> tests = getSelectedTests(form);
+        List<TestResultItem> tests = getSelectedTests(form, resultsUtility);
         form.setSearchFinished(Boolean.TRUE);
 
         if (resultsUtility.inventoryNeeded()) {
@@ -164,7 +172,7 @@ public class StatusResultsController extends BaseController {
 
     }
 
-    private List<TestResultItem> getSelectedTests(StatusResultsForm form) {
+    private List<TestResultItem> getSelectedTests(StatusResultsForm form, ResultsLoadUtility resultsUtility) {
         String collectionDate = form.getCollectionDate();
         String receivedDate = form.getRecievedDate();
         String analysisStatus = form.getSelectedAnalysisStatus();
@@ -208,7 +216,7 @@ public class StatusResultsController extends BaseController {
             }
         }
 
-        return buildTestItems(analysisList);
+        return buildTestItems(analysisList, resultsUtility);
     }
 
     private List<Analysis> blendLists(List<Analysis> masterList, List<Analysis> newList) {
@@ -271,7 +279,7 @@ public class StatusResultsController extends BaseController {
         return analysisService.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
     }
 
-    private List<TestResultItem> buildTestItems(List<Analysis> analysisList) {
+    private List<TestResultItem> buildTestItems(List<Analysis> analysisList, ResultsLoadUtility resultsUtility) {
         if (analysisList.isEmpty()) {
             return new ArrayList<>();
         }
@@ -284,16 +292,16 @@ public class StatusResultsController extends BaseController {
         List<DropPair> list = new ArrayList<>();
         list.add(new DropPair("0", ""));
 
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted),
-                StatusService.getInstance().getStatusName(AnalysisStatus.NotStarted)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled),
-                StatusService.getInstance().getStatusName(AnalysisStatus.Canceled)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance),
-                StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalAcceptance)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected),
-                StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalRejected)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected),
-                StatusService.getInstance().getStatusName(AnalysisStatus.BiologistRejected)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.NotStarted)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.Canceled)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalAcceptance)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalRejected)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.BiologistRejected)));
 
         return list;
     }
@@ -303,10 +311,10 @@ public class StatusResultsController extends BaseController {
         List<DropPair> list = new ArrayList<>();
         list.add(new DropPair("0", ""));
 
-        list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Entered),
-                StatusService.getInstance().getStatusName(OrderStatus.Entered)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Started),
-                StatusService.getInstance().getStatusName(OrderStatus.Started)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered),
+                SpringContext.getBean(IStatusService.class).getStatusName(OrderStatus.Entered)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started),
+                SpringContext.getBean(IStatusService.class).getStatusName(OrderStatus.Started)));
 
         return list;
     }
@@ -333,9 +341,7 @@ public class StatusResultsController extends BaseController {
         return "banner.menu.results";
     }
 
-    public class DropPair implements Serializable {
-
-        private static final long serialVersionUID = 1L;
+    public class DropPair {
 
         public String getId() {
             return id;

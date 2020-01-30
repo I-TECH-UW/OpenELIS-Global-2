@@ -9,8 +9,8 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IReportTrackingService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ReportTrackingService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -115,8 +115,8 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
                     data.setHiv_status(invalidValue);
                 }
             }
-            if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                    && lastReport.before(analysis.getLastupdated())) {
+            if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                    && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
         }

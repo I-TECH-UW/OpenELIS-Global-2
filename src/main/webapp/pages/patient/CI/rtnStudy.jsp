@@ -10,12 +10,6 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 	
-<%
-    String path = request.getContextPath();
-    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-                    + path + "/";
-%>
-
 <script type="text/javascript">
 
 function RtnProjectChecker() {
@@ -77,7 +71,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 01 -->
+		<%-- DEM 01 --%>
 		<td class="required">
 			*
 		</td>
@@ -95,7 +89,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 02 -->
+		<%-- DEM 02 --%>
 		<td class="required">
 			*
 		</td>
@@ -110,7 +104,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 03 -->
+		<%-- DEM 03 --%>
 		<td class="required">
 			*
 		</td>
@@ -127,7 +121,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 04 -->
+		<%-- DEM 04 --%>
 		<td class="required">
 			*
 		</td>
@@ -144,7 +138,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 05 -->
+		<%-- DEM 05 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.hospitalPatient" />
@@ -160,7 +154,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 06 -->
+		<%-- DEM 06 --%>
 		<td></td>
 		<td class="observationsQuestion">
 			<spring:message code="patient.project.patientFamilyName" />
@@ -173,7 +167,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 07 -->
+		<%-- DEM 07 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.patientFirstNames" />
@@ -186,7 +180,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 08 -->
+		<%-- DEM 08 --%>
 		<td class="required">
 			*
 		</td>
@@ -225,7 +219,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 10 -->
+		<%-- DEM 10 --%>
 		<td class="required">
 			*
 		</td>
@@ -244,7 +238,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 11 -->
+		<%-- DEM 11 --%>
 		<td></td>
 		<td>
 			<spring:message code="patient.project.nationality" />
@@ -261,7 +255,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr id="rtn.nationalityOtherRow" style="display: none">
-		<!-- DEM 11.1 -->
+		<%-- DEM 11.1 --%>
 		<td class="required">
 			*
 		</td>
@@ -276,7 +270,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 12 -->
+		<%-- DEM 12 --%>
 		<td class="required"></td>
 		<td>
 			<spring:message code="patient.project.serologyReason" />
@@ -289,7 +283,7 @@ rtn = new RtnProjectChecker();
 		</td>
 	</tr>
 	<tr>
-		<!-- DEM 13 -->
+		<%-- DEM 13 --%>
 		<td class="required">
 			*
 		</td>
@@ -330,13 +324,13 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
 	</c:forEach>
 	<tr><td colspan="2" style="text-align:center"><spring:message code="patient.project.physicalExam" /></td>
-	<!-- current -->
+	<%-- current --%>
 	<c:forEach var="disease" varStatus="iter" items="${form.observations.rtnCurrentDiseasesList}">
 		<tr id='currentDiseasesRow${iter.index}' >
 			<td></td>
@@ -348,14 +342,14 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
 	</c:forEach>
 		<%--
 	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_DISEASES.list" >
-		<tr id='rtn.priorDiseasesRow" + i %>' > <!-- CLI 09.<%= i %> -->
+		<tr id='rtn.priorDiseasesRow" + i %>' > 
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>
@@ -367,7 +361,7 @@ rtn = new RtnProjectChecker();
 		</tr>
 	</c:forEach>
 	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_EXAM_DISEASES.list" >
-		<tr id='rtn.currDiseasesRow" + i %>' > <!-- CLI 09.n -->
+		<tr id='rtn.currDiseasesRow" + i %>' > 
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>

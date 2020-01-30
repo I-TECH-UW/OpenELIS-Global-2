@@ -48,7 +48,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
             query.setInteger("id", Integer.parseInt(id));
             query.executeUpdate();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
         }
@@ -65,7 +65,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("type_id", Integer.parseInt(typeId));
             query.executeUpdate();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
         }
@@ -82,7 +82,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("orgTypeId", Integer.parseInt(typeId));
             orgIdList = query.list();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
         }
@@ -100,7 +100,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setInteger("orgId", Integer.parseInt(organizationId));
             orgIdList = query.list();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeIdsForOrganizationId");
         }
         return orgIdList;

@@ -58,7 +58,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //				String tableName = "LOGIN_USER";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login AuditTrail deleteData()", e);
@@ -73,7 +73,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login deleteData()", e);
@@ -103,7 +103,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login insertData()", e);
@@ -119,7 +119,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			if (duplicateLoginNameExists(login)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login updateData()", e);
@@ -142,7 +142,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "LOGIN_USER";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
@@ -154,7 +154,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login updateData()", e);
@@ -174,7 +174,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			} else {
 //				login.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login getData()", e);
@@ -190,7 +190,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getAllLogins()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login getAllLogins()", e);
@@ -214,7 +214,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getPageOfLogins()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login getPageOfLogins()", e);
@@ -231,7 +231,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// l.setPassword(crypto.getDecrypt(l.getPassword()));
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "readLoginUser()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login readLoginUser(idString)", e);
@@ -275,7 +275,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -302,7 +302,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -334,7 +334,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
             return list.size() > 0;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
@@ -390,7 +390,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //				}
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getValidateLogin()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login getValidateLogin()", e);
@@ -427,7 +427,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //				login.setSystemUserId(systemUserId);
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "getUserProfile()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login getUserProfile()", e);
@@ -453,7 +453,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
             if (obj != null) {
                 retVal = (int) Float.parseFloat(obj.toString());
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
@@ -485,7 +485,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
                 retVal = Integer.parseInt(obj.toString());
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getSystemUserId()", e);
@@ -523,7 +523,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "updatePassword()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login updatePassword()", e);
@@ -546,7 +546,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //			isSuccess = true;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "lockAccount()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login lockAccount()", e);
@@ -570,7 +570,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(login);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(login);
 //			isSuccess = true;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("LoginDAOImpl", "unlockAccount()", e.toString());
 //			throw new LIMSRuntimeException("Error in Login unlockAccount()", e);

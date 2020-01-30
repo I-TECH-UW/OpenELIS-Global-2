@@ -17,28 +17,21 @@
 
 <c:set var="cancelableResults" value="${form.ableToCancelResults}"/>
 
-<%!
-	String basePath = "";
-	String accessionNumber = "";
-    boolean useCollectionDate = true;
-%>
 <%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
-    useCollectionDate = FormFields.getInstance().useField( FormFields.Field.CollectionDate);
+	boolean useCollectionDate = FormFields.getInstance().useField( FormFields.Field.CollectionDate);
 %>
 
-<script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
 
 <script type="text/javascript" >
 
@@ -307,9 +300,9 @@ jQuery('body').on('change', 'input', function() {
 	</div>
 </c:if>
     <div id="sampleOrder" class="colorFill" >
-    	<c:if test="${form.isConfirmationSample}">
-        	<tiles:insertAttribute name="sampleConfirmationOrder" />
-        </c:if>
+<%--     	<c:if test="${form.isConfirmationSample}"> --%>
+<%--         	<tiles:insertAttribute name="sampleConfirmationOrder" /> --%>
+<%--         </c:if> --%>
     	<c:if test="${not form.isConfirmationSample}">
         	<tiles:insertAttribute name="sampleOrder" />
         </c:if>

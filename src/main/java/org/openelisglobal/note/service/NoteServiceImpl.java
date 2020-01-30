@@ -170,7 +170,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
             List<SampleQaEvent> sampleQAList = sampleQAService.getSampleQaEventsBySample(sample);
             for (SampleQaEvent event : sampleQAList) {
                 if (sampleItem == null || event.getSampleItem() == null
-                        || (sampleItem.getId().equals(event.getSampleItem().getId()))) {
+                        || sampleItem.getId().equals(event.getSampleItem().getId())) {
                     notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(),
                             QAService.TABLE_REFERENCE_ID, filter));
                     Note proxyNote = new Note();

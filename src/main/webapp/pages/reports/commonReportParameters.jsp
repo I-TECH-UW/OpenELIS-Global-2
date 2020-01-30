@@ -16,22 +16,19 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
-	IAccessionNumberValidator accessionValidator;
-	String basePath = "";
+	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
  %>
 
 <%
-	accessionValidator = new AccessionNumberValidatorFactory().getValidator();
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
+	IAccessionNumberValidator accessionValidator = accessionValidatorFactory.getValidator();
 %>
 
-<!-- Creates updated UI. Removing for current release 
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/bootstrap.min.css?ver=<%= Versioning.getBuildNumber() %>" />
-<link rel="stylesheet" media="screen" type="text/css" href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
--->
+<%-- Creates updated UI. Removing for current release 
+<link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.min.css?" />
+<link rel="stylesheet" media="screen" type="text/css" href="css/openElisCore.css?" />
+--%>
 
-<script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <script type="text/javascript">
 
@@ -176,9 +173,7 @@ function onPrint(){
 
 	  <c:if test="${form.useAccessionDirect}">
 		<span style="padding-left: 10px">
-		<c:if test="${form.useAccessionDirect}">
 			<%= MessageUtil.getContextualMessage("report.from") %>
-		</c:if>
 		</span>
 		<form:input path="accessionDirect"
 				   cssClass="input-medium" 

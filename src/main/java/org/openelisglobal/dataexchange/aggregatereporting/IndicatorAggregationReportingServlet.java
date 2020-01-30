@@ -121,7 +121,7 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 
         try {
             reportImportService.updateReports(insertableImportReports, updatableImportReports);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logErrorStack(e);
         }
     }

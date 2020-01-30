@@ -22,17 +22,13 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%! String basePath = "";
-    IAccessionNumberValidator accessionNumberValidator;
+<%! 
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     String maxDate = df.format(Calendar.getInstance().getTime());
 %>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-            + "/";
-    accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 <script>
     var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.event.laborderNumber")%>";
@@ -41,18 +37,18 @@
     var specimenType="<%= MessageUtil.getContextualMessage("nonconforming.specimenType")%>";
 </script>
 
-<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
 
-<script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<script src="scripts/utilities.js?"></script>
+<script src="scripts/ajaxCalls.js?"></script>
 
 <div align="center">
     <h2><%= MessageUtil.getContextualMessage("nonconforming.page.title") %></h2>
@@ -214,7 +210,7 @@
             labNo = input.dataset.labordernumber
         }
         if (specimenId.length > 0 && labNo !== "") {
-            window.location = "ReportNonConformingEvent.do?labNo=" + labNo + "&specimenId=" + specimenId.join(",");
+            window.location = "ReportNonConformingEvent.do?labOrderNumber=" + labNo + "&specimenId=" + specimenId.join(",");
         }
         return false;
     }
@@ -279,6 +275,9 @@
                     "&labNumber=" + labNumber +
                     "&guid=" + guid +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+    			requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    			},
                 onSuccess:  success,
                 onFailure:  failure
             }

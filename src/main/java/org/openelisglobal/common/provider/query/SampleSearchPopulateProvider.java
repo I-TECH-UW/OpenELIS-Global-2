@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
@@ -67,7 +67,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
             sample = getSampleForPatientID(patientID);
         } else {
             sample = sampleService.getSampleByAccessionNumber(accessionNo);
-            StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNo);
+            StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNo);
             patientID = statusSet.getPatientId();
         }
 
@@ -87,7 +87,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      * @param xml
      */
     private void createReturnXML(Sample sample, String patientId, StringBuilder xml) {
-        XMLUtil.appendKeyValue("patientPK", StringUtil.concatToMaxIdLength(patientId), xml);
+        XMLUtil.appendKeyValue("patientPK", StringUtil.snipToMaxIdLength(patientId), xml);
         XMLUtil.appendKeyValue("samplePK", sample.getId(), xml);
         XMLUtil.appendKeyValue("labNo", sample.getAccessionNumber(), xml);
         XMLUtil.appendKeyValue("receivedDateForDisplay", sample.getReceivedDateForDisplay(), xml);

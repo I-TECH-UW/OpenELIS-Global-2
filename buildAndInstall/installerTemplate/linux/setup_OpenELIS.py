@@ -266,6 +266,7 @@ def do_update():
     log("Finished updating " + APP_NAME, PRINT_TO_CONSOLE)
 
 def do_uninstall():
+    delete_docker_image()
     if db_installed('clinlims'):
         backup_db()
         log("removing " + APP_NAME, PRINT_TO_CONSOLE)
@@ -277,12 +278,14 @@ def do_uninstall():
         delete_database()
 
     delete_backup_script()
-    delete_docker_image()
+
 
 def delete_docker_image():
-    cmd = 'docker images -a | grep "openelis" | awk \'{print $3}\' | xargs docker rmi'
+    log("removing docker images...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter=ancestor=openelisglobal --format="{{.ID}}"))'
     os.system(cmd)
-
+    cmd = 'docker images -a | grep "openelisglobal" | awk \'{print $3}\' | xargs docker rmi'
+    os.system(cmd)
 
 def delete_backup():
     if os.path.exists(BACKUP_DIR):

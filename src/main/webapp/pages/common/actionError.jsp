@@ -15,15 +15,6 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
 
-<%!
-String path = "";
-String basePath = "";
-%>
-<%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-%>
-
 <script>
 
 function onLoad() {

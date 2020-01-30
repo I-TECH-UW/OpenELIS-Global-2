@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.common.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -39,14 +40,13 @@ public class Versioning {
             propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
             properties = new Properties();
             properties.load(propertyStream);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     LogEvent.logError(e.toString(), e);
                 }
             }

@@ -16,11 +16,19 @@
 */
 package org.openelisglobal.reports.action.implementation;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.reports.form.ReportForm;
+
+import com.lowagie.text.DocumentException;
+
+import net.sf.jasperreports.engine.JRException;
 
 public interface IReportCreator {
     String INCOMPLETE_PARAMS = "Incompleate parameters";
@@ -37,7 +45,8 @@ public interface IReportCreator {
 
     HashMap<String, ?> getReportParameters() throws IllegalStateException;
 
-    byte[] runReport() throws Exception;
+    byte[] runReport() throws UnsupportedEncodingException, IOException, SQLException, IllegalStateException,
+            JRException, DocumentException, ParseException;
 
     void setReportPath(String path);
 

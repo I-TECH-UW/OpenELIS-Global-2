@@ -31,8 +31,8 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 
 
  
@@ -40,25 +40,17 @@
 <c:set var="panelList" value="${form.panelList}" />
 <c:set var="selectedPanel" value="${form.selectedPanel}" />
 
-
-<%!
-    String basePath = "";
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-    int columnSize = (int) (100 / columns);
-    Boolean success = false;
-%>
-
 <%
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
-    columnCount = 0;
-    testCount = 0;
-    success = (Boolean)request.getAttribute("success");
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 3;
+	int columnSize = (int) (100 / columns);
+	
+    Boolean success = (Boolean)request.getAttribute("success");
 %>
 
 <link rel="stylesheet" media="screen" type="text/css"
-      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 
 <script type="text/javascript">
     if (!jQuery) {

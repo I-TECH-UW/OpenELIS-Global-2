@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,11 +42,60 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
+            "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
+            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
+            "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
+            "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
+            "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
+            "patientProperties.nationality", "patientProperties.otherNationality", "patientClinicalProperties.stdOther",
+            "patientClinicalProperties.tbDiarrhae", "patientClinicalProperties.stdZona",
+            "patientClinicalProperties.tbPrurigol", "patientClinicalProperties.stdKaposi",
+            "patientClinicalProperties.tbMenigitis", "patientClinicalProperties.stdCandidiasis",
+            "patientClinicalProperties.tbCerebral", "patientClinicalProperties.stdColonCancer",
+            "patientClinicalProperties.tbExtraPulmanary", "patientClinicalProperties.arvProphyaxixType",
+            "patientClinicalProperties.arvTreatmentReceiving", "patientClinicalProperties.arvTreatmentRemembered",
+            "patientClinicalProperties.arvTreatment1", "patientClinicalProperties.arvTreatment2",
+            "patientClinicalProperties.arvTreatment3", "patientClinicalProperties.arvTreatment4",
+            "patientClinicalProperties.cotrimoxazoleReceiving", "patientClinicalProperties.cotrimoxazoleType",
+            "patientClinicalProperties.infectionExtraPulmanary", "patientClinicalProperties.stdInfectionColon",
+            "patientClinicalProperties.infectionCerebral", "patientClinicalProperties.stdInfectionCandidiasis",
+            "patientClinicalProperties.infectionMeningitis", "patientClinicalProperties.stdInfectionKaposi",
+            "patientClinicalProperties.infectionPrurigol", "patientClinicalProperties.stdInfectionZona",
+            "patientClinicalProperties.infectionOther", "patientClinicalProperties.infectionUnderTreatment",
+            "patientClinicalProperties.weight", "patientClinicalProperties.karnofskyScore",
+            //
+            "initialSampleConditionList", "sampleXML",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.modified", "sampleOrderItems.sampleId",
+            "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
+            "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
+            "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
+            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
+            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
+            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
+            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
+            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
+            "sampleOrderItems.otherLocationCode",
+            //
+            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber" };
+
     @Autowired
     SamplePatientEntryFormValidator formValidator;
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)

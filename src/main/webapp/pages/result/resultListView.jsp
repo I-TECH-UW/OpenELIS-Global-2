@@ -37,7 +37,7 @@
 
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}"  />
 
-<c:set var="logbookType" value="${form.logbookType}" />
+<c:set var="type" value="${form.type}" />
 <c:if test="${form.displayTestSections}">
 	<c:set var="testSectionsByName" value="${form.testSectionsByName}" />
 	<script type="text/javascript" >
@@ -49,64 +49,42 @@
 </c:if>
 	
 <%!
-	String basePath = "";
-	String searchTerm = null;
-	IAccessionNumberValidator accessionNumberValidator;
-	boolean useSTNumber = true;
-	boolean useNationalID = true;
-	boolean useSubjectNumber = true;
-	boolean useTechnicianName = true;
-	boolean depersonalize = false;
-	boolean ableToRefer = false;
-	boolean compactHozSpace = false;
-	boolean useInitialCondition = false;
-	boolean failedValidationMarks = false;
-	boolean noteRequired = false;
-	boolean autofillTechBox = false;
-    boolean useRejected = false;
+	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
  %>
 <%
+	String searchTerm = request.getParameter("searchTerm");
 
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
+	IAccessionNumberValidator accessionNumberValidator = accessionValidatorFactory.getValidator();
+	
+	boolean useSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean useSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	boolean useTechnicianName =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName, "true");
+	boolean useRejected =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
 
-	searchTerm = request.getParameter("searchTerm");
-
-    try{
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-    }catch( LIMSInvalidConfigurationException e ){
-        //no-op
-    }
-	useSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	useNationalID = FormFields.getInstance().useField(Field.NationalID);
-	useSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-	useTechnicianName =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName, "true");
-	useRejected =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
-
-	depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
-	ableToRefer = FormFields.getInstance().useField(Field.ResultsReferral);
-	compactHozSpace = FormFields.getInstance().useField(Field.ValueHozSpaceOnResults);
-	useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
-	noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
+	boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
+	boolean ableToRefer = FormFields.getInstance().useField(Field.ResultsReferral);
+	boolean compactHozSpace = FormFields.getInstance().useField(Field.ValueHozSpaceOnResults);
+	boolean useInitialCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean failedValidationMarks = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.failedValidationMarker, "true");
+	boolean noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
 	pageContext.setAttribute("noteRequired", noteRequired);
-	autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
+	boolean autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 
 %>
 
-<link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?ver=<%= Versioning.getBuildNumber() %>" />
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testResults.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/math-extend.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?" />
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
+<script type="text/javascript" src="scripts/testResults.js?" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/overlibmws.js?"></script>
+<script type="text/javascript" src="scripts/jquery.ui.js?"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
+<script type="text/javascript" src="scripts/math-extend.js?" ></script>
+<script type="text/javascript" src="scripts/multiselectUtils.js?" ></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 
 
@@ -121,8 +99,8 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<c:out value="${logbookType}"/>');
-pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
+var pager = new OEPager('${form.formName}', '&type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
 var pageSearch; //assigned in post load function
 
@@ -257,7 +235,7 @@ function  /*void*/ savePage()
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<c:out value="logbookType"/>';
+	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>';
 	form.submit();
 }
 
@@ -286,6 +264,9 @@ function updateReflexChild( group){
                       method: 'get', //http method
                       parameters: 'provider=TestReflexCD4Provider&' + requestString,
                       indicator: 'throbbing',
+      				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				},
                       onSuccess:  processTestReflexCD4Success,
                       onFailure:  processTestReflexCD4Failure
                            }
@@ -392,7 +373,7 @@ function setField(id, value) {
 </div>
 </c:if>
 
-<!-- Modal popup-->
+<%-- Modal popup--%>
 <div id="reflexSelect" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -410,8 +391,8 @@ function setField(id, value) {
     </div>
 </div>
 
-<c:if test="${not empty form.logbookType}" >
-	<form:hidden path="logbookType" />
+<c:if test="${not empty form.type}" >
+	<form:hidden path="type" />
 </c:if>
 
 <c:if test="${testCount != 0}">
@@ -528,7 +509,7 @@ function setField(id, value) {
 </div>
 
 <Table style="width:100%" border="0" cellspacing="0" >
-	<!-- header -->
+	<%-- header --%>
 	<tr >
 		<% if( !compactHozSpace ){ %>
 		<th style="text-align: left">
@@ -581,7 +562,7 @@ function setField(id, value) {
 			<spring:message code="result.notes"/>
 		</th>
 	</tr>
-	<!-- body -->
+	<%-- body --%>
 	<c:forEach items="${form.testResult}" var="testResult" varStatus="iter">
 	<form:hidden path="testResult[${iter.index}].accessionNumber"/>
 	<c:if test="${testResult.isGroupSeparator}">
@@ -675,7 +656,7 @@ function setField(id, value) {
 			</td>
 		</c:if>
 		<% } %>
-		<!-- date cell -->
+		<%-- date cell --%>
 		<td class="ruled">
 			<form:input path="testResult[${iter.index}].testDate"
                        size="10"
@@ -693,7 +674,7 @@ function setField(id, value) {
 					 onchange='markUpdated(${iter.index});' />
 			</td>
 		</c:if>
-		<!-- results -->
+		<%-- results --%>
 		<c:if test="${testResult.resultDisplayType == 'HIV'}">
 			<td style="vertical-align:top" class="ruled">
 				<form:hidden path="testResult[${iter.index}].testMethod" />
@@ -750,7 +731,7 @@ function setField(id, value) {
 			<img src="./images/nonconforming.gif" />
 		</c:if>
 		</td>
-		<!-- force acceptance -->
+		<%-- force acceptance --%>
 		<td class="ruled" style='text-align: center'>
 			<form:checkbox path="testResult[${iter.index}].forceTechApproval"
 							value="on"
@@ -758,7 +739,7 @@ function setField(id, value) {
 							onchange='markUpdated(${iter.index}); forceTechApproval(this, ${iter.index});' 
 							/>
 		</td>
-		<!-- result cell -->
+		<%-- result cell --%>
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
 				<form:hidden path="testResult[${iter.index}].lowerNormalRange"/>
@@ -788,7 +769,7 @@ function setField(id, value) {
 					   			 	updateShadowResult(this, ${iter.index});"
 						/>
 			</c:if><c:if test="${testResult.resultType == 'R'}">
-				<!-- text results -->
+				<%-- text results --%>
 				<form:textarea path="testResult[${iter.index}].resultValue"
 						  rows="2"
 						  disabled='${testResult.readOnly}'
@@ -800,7 +781,7 @@ function setField(id, value) {
 					   			   updateShadowResult(this, ${iter.index}); "
 						  />
 			</c:if><c:if test="${testResult.resultType == 'D'}">
-			<!-- dictionary results -->
+			<%-- dictionary results --%>
 			<form:select path="testResult[${iter.index}].resultValue"
 			        id="resultId_${iter.index}"
 			        onchange="markUpdated(${iter.index}, ${testResult.userChoiceReflex}, '${testResult.siblingReflexKey}');
@@ -819,7 +800,7 @@ function setField(id, value) {
 					   onchange='markUpdated(${iter.index});'
 					    />
 			</c:if><c:if test="${testResult.resultType == 'M'}">
-			<!-- multiple results -->
+			<%-- multiple results --%>
 			<form:select path="testResult[${iter.index}].multiSelectResultValues"
 					id="resultId_${iter.index}_0"
                     multiple="multiple"
@@ -838,7 +819,7 @@ function setField(id, value) {
                    onchange='markUpdated(${iter.index});'
                 />
 			</c:if><c:if test="${testResult.resultType == 'C'}">
-                <!-- cascading multiple results -->
+                <%-- cascading multiple results --%>
                 <div id="cascadingMulti_${iter.index}_0" class="cascadingMulti_${iter.index}" >
                 <input type="hidden" id="divCount_${iter.index}" value="0" >
                 <form:select path="testResult[${iter.index}].multiSelectResultValues"

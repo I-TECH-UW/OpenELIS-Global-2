@@ -31,14 +31,22 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
+import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class WorkplanByPanelController extends BaseWorkplanController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchId" };
+
     @Autowired
     private AnalysisService analysisService;
     @Autowired
@@ -48,8 +56,14 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     @Autowired
     private SampleQaEventService sampleQaEventService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/WorkPlanByPanel", method = RequestMethod.GET)
-    public ModelAndView showWorkPlanByTest(HttpServletRequest request)
+    public ModelAndView showWorkPlanByTest(@Validated(PrintWorkplan.class) @ModelAttribute("form") WorkplanForm oldForm,
+            HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WorkplanForm form = new WorkplanForm();
 
@@ -57,7 +71,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
         List<TestResultItem> workplanTests;
 
-        String panelID = request.getParameter("selectedSearchID");
+        String panelID = oldForm.getSelectedSearchID();
 
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
@@ -75,7 +89,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
             form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        form.setWorkplanType("panel");
+        form.setType("panel");
         form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
         form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
         form.setSearchAction("WorkPlanByPanel.do");

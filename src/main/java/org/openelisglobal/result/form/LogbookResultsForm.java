@@ -47,8 +47,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     // for display
     private List<String> syphilisKits;
 
-    // for display
-    private String logbookType = "";
+    @Pattern(regexp = "^[a-zA-Z-]*$", groups = { LogbookResults.class })
+    private String type = "";
 
     // for display
     private List<IdValuePair> referralReasons;
@@ -148,12 +148,12 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
         this.syphilisKits = syphilisKits;
     }
 
-    public String getLogbookType() {
-        return logbookType;
+    public String getType() {
+        return type;
     }
 
-    public void setLogbookType(String logbookType) {
-        this.logbookType = logbookType;
+    public void setType(String logbookType) {
+        this.type = logbookType;
     }
 
     public List<IdValuePair> getReferralReasons() {

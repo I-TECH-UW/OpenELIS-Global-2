@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
@@ -38,26 +37,22 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AccessionResultsController extends BaseController {
 
-    private static String RESULT_EDIT_ROLE_ID;
+    private final String RESULT_EDIT_ROLE_ID;
 
-    private String accessionNumber;
-    private Sample sample;
     private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     @Autowired
-    SampleService sampleService;
+    private SampleService sampleService;
     @Autowired
-    SampleHumanService sampleHumanService;
-    @Autowired
-    private RoleService roleService;
+    private SampleHumanService sampleHumanService;
     @Autowired
     private UserRoleService userRoleService;
 
-    @PostConstruct
-    private void initializeGlobalVariables() {
+    public AccessionResultsController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
-
         if (editRole != null) {
             RESULT_EDIT_ROLE_ID = editRole.getId();
+        } else {
+            RESULT_EDIT_ROLE_ID = null;
         }
     }
 
@@ -75,7 +70,7 @@ public class AccessionResultsController extends BaseController {
         String newPage = request.getParameter("page");
         if (GenericValidator.isBlankOrNull(newPage)) {
 
-            accessionNumber = request.getParameter("accessionNumber");
+            String accessionNumber = request.getParameter("accessionNumber");
             form.setDisplayTestKit(false);
 
             if (!GenericValidator.isBlankOrNull(accessionNumber)) {
@@ -86,23 +81,23 @@ public class AccessionResultsController extends BaseController {
                 resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
                 // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
                 resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
-                validateAll(request, errors, form);
+                validateAll(request, errors, form, accessionNumber);
 
                 if (errors.hasErrors()) {
                     saveErrors(errors);
                     request.setAttribute(ALLOW_EDITS_KEY, "false");
 
-                    setEmptyResults(form);
+                    setEmptyResults(form, accessionNumber);
 
                     return findForward(FWD_FAIL, form);
                 }
 
                 form.setSearchFinished(Boolean.TRUE);
 
-                getSample();
+                Sample sample = getSample(accessionNumber);
 
                 if (!GenericValidator.isBlankOrNull(sample.getId())) {
-                    Patient patient = getPatient();
+                    Patient patient = getPatient(sample);
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
@@ -111,19 +106,19 @@ public class AccessionResultsController extends BaseController {
                         addInventory(form);
                         form.setDisplayTestKit(true);
                     } else {
-                        addEmptyInventoryList(form);
+                        addEmptyInventoryList(form, accessionNumber);
                     }
 
                     paging.setDatabaseResults(request, form, results);
                 } else {
-                    setEmptyResults(form);
+                    setEmptyResults(form, accessionNumber);
                 }
             } else {
                 form.setTestResult(new ArrayList<TestResultItem>());
                 form.setSearchFinished(Boolean.FALSE);
             }
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         return findForward(FWD_SUCCESS, form);
@@ -144,11 +139,11 @@ public class AccessionResultsController extends BaseController {
         return !roleIds.contains(RESULT_EDIT_ROLE_ID);
     }
 
-    private void setEmptyResults(AccessionResultsForm form)
+    private void setEmptyResults(AccessionResultsForm form, String accessionNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         form.setTestResult(new ArrayList<TestResultItem>());
         form.setDisplayTestKit(false);
-        addEmptyInventoryList(form);
+        addEmptyInventoryList(form, accessionNumber);
     }
 
     private void addInventory(AccessionResultsForm form)
@@ -169,33 +164,34 @@ public class AccessionResultsController extends BaseController {
         form.setInventoryItems(list);
     }
 
-    private void addEmptyInventoryList(AccessionResultsForm form)
+    private void addEmptyInventoryList(AccessionResultsForm form, String accessionNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         form.setInventoryItems(new ArrayList<InventoryKitItem>());
         form.setHivKits(new ArrayList<String>());
         form.setSyphilisKits(new ArrayList<String>());
     }
 
-    private Errors validateAll(HttpServletRequest request, Errors errors, AccessionResultsForm form) {
+    private Errors validateAll(HttpServletRequest request, Errors errors, AccessionResultsForm form,
+            String accessionNumber) {
 
         Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 
         if (sample == null) {
             // ActionError error = new ActionError("sample.edit.sample.notFound",
             // accessionNumber, null, null);
-            errors.reject("sample.edit.sample.notFound", new String[] { accessionNumber },
+            errors.reject("sample.edit.sample.notFound", new String[] {},
                     "sample.edit.sample.notFound");
         }
 
         return errors;
     }
 
-    private Patient getPatient() {
+    private Patient getPatient(Sample sample) {
         return sampleHumanService.getPatientForSample(sample);
     }
 
-    private void getSample() {
-        sample = sampleService.getSampleByAccessionNumber(accessionNumber);
+    private Sample getSample(String accessionNumber) {
+        return sampleService.getSampleByAccessionNumber(accessionNumber);
     }
 
     @Override

@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 public class PatientEntryAfterSampleEntry extends PatientEntry implements IPatientEntryAfterSampleEntry {
 
     public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

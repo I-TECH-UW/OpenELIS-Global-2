@@ -9,12 +9,21 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.login.form.LoginForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginPageController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "loginName", "password" };
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/LoginPage", method = RequestMethod.GET)
     public ModelAndView showLoginPage(HttpServletRequest request, Principal principal) {

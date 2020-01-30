@@ -7,10 +7,9 @@ stagingDir="OEInstaller_stagingDir"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-b <branch>] [-d] [-l] [-i]
+Usage: $PROGNAME [-b <branch>] [-l] [-i]
 
 -b <branch>: git branch to build from
-         -d: build docker images on machine
          -l: run liquibase
          -i: create installer
 EOF
@@ -43,26 +42,49 @@ buildInstallDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 projectDir="${buildInstallDir}/.."
 liquibaseDir="${projectDir}/liquibase"
 
+cd ${projectDir}
+echo Will build from $branch
+#cd source/openelisglobal-core
+#git checkout -- app/src/build.properties
+git checkout $branch
+if [ $? != 0 ]
+then
+    echo
+    echo "branch is not local will try to create"
+    echo 
+    
+    git checkout -b $branch origin/$branch
+
+    if [ $? != 0 ]
+	then
+	echo
+	echo "$branch not found in main repository. Check name"
+	exit 1 
+    fi
+fi
+git pull origin $branch
+
+#git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
+#cd ../..
+#sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
+cd ${callDirectory}
+
 if [ $runLiquibase == true ]
 then
 	cd ${liquibaseDir}
 	#                                    context     dbname
-	bash runLiquibase.sh CDIRetroCI  cdielis
-	bash runLiquibase.sh haiti       clinlims
-	bash runLiquibase.sh haitiLNSP   lnsphaiti
-	bash runLiquibase.sh ciLNSP      cilnsp
-	bash runLiquibase.sh CI_IPCI     ci_ipci
-	bash runLiquibase.sh ci_regional ci_reg_lab
-	bash runLiquibase.sh Kenya       kenya
+	bash runLiquibase.sh ci_regional       clinlims
 	cd ${callDirectory}
 fi
+
+bash ${buildInstallDir}/build/createDefaultPassword.sh
 
 echo "creating docker image"
 #setup linux for tomcat docker to work
 bash ${buildInstallDir}/install/linux/setupTomcatDocker.sh
 	
 #create the docker image
-bash ${buildInstallDir}/build/build.sh -b ${branch} -d
+bash ${buildInstallDir}/build/build.sh -d
 cd ${projectDir}
 #run the docker image
 echo "starting up docker"
@@ -117,21 +139,21 @@ then
 		    esac
 		done
 	fi
-	rm -rf ${installerDir}
+	rm -r ${installerDir}
 	mkdir -p ${installerDir}
 	
 	mkdir ${stagingDir}
 	curl -fsSL https://get.docker.com -o ${stagingDir}/get-docker.sh
 	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${stagingDir}/docker-compose
 	
-	createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
 	createLinuxInstaller CDI_RegLabOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller haitiOpenElis HaitiBackup.pl 
-	createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
-	createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
+	#createLinuxInstaller haitiOpenElis HaitiBackup.pl 
+	#createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
+	#createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
 	
 	rm OpenELIS_DockerImage*.tar.gz
 	rm -r ${stagingDir}

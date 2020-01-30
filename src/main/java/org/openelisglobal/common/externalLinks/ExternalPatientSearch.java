@@ -28,12 +28,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ClientConnectionManager;
@@ -46,8 +47,14 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
 
-public class ExternalPatientSearch implements Runnable {
+@Service
+@Scope("prototype")
+public class ExternalPatientSearch implements IExternalPatientSearch {
 
     private static final String GET_PARAM_PWD = "pwd";
     private static final String GET_PARAM_NAME = "name";
@@ -79,6 +86,7 @@ public class ExternalPatientSearch implements Runnable {
     protected List<String> errors;
     protected int returnStatus = HttpStatus.SC_CREATED;
 
+    @Override
     synchronized public void setConnectionCredentials(String connectionString, String name, String password,
             int timeout_Mil) {
         if (finished) {
@@ -91,6 +99,7 @@ public class ExternalPatientSearch implements Runnable {
         timeout = timeout_Mil;
     }
 
+    @Override
     synchronized public void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber,
             String nationalID, String guid) throws IllegalStateException {
 
@@ -106,6 +115,7 @@ public class ExternalPatientSearch implements Runnable {
         this.guid = guid;
     }
 
+    @Override
     synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
 
         if (!finished) {
@@ -130,11 +140,12 @@ public class ExternalPatientSearch implements Runnable {
     }
 
     @Override
-    public void run() {
+    @Async
+    public Future<Integer> runExternalSearch() {
         try {
             synchronized (this) {
                 if (noSearchTerms()) {
-                    return;
+                    throw new IllegalStateException("Search requested before without any search terms.");
                 }
 
                 if (connectionCredentialsIncomplete()) {
@@ -147,6 +158,7 @@ public class ExternalPatientSearch implements Runnable {
         } finally {
             finished = true;
         }
+        return new AsyncResult<>(getSearchResultStatus());
     }
 
     private boolean connectionCredentialsIncomplete() {
@@ -169,6 +181,7 @@ public class ExternalPatientSearch implements Runnable {
         URI getUri = buildConnectionString(httpget.getURI());
         httpget.setURI(getUri);
 
+        CloseableHttpResponse getResponse = null;
         try {
             // Ignore hostname mismatches and allow trust of self-signed certs
             SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(),
@@ -177,22 +190,25 @@ public class ExternalPatientSearch implements Runnable {
             ClientConnectionManager ccm = httpclient.getConnectionManager();
             ccm.getSchemeRegistry().register(https);
 
-            HttpResponse getResponse = httpclient.execute(httpget);
+            getResponse = httpclient.execute(httpget);
             returnStatus = getResponse.getStatusLine().getStatusCode();
             setPossibleErrors();
             setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
             LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out" + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out"
+            // + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
             LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? " + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? "
+            // + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
             LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed " + e);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed
+            // " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
             LogEvent.logError(e.toString(), e);
@@ -211,6 +227,14 @@ public class ExternalPatientSearch implements Runnable {
             httpget.abort();
             throw e;
         } finally {
+            if (getResponse != null) {
+                try {
+                    getResponse.close();
+                } catch (IOException e) {
+                    LogEvent.logError(e);
+                }
+            }
+
             httpclient.getConnectionManager().shutdown();
             try {
                 httpclient.close();

@@ -89,7 +89,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
             form.setReportName(getReportNameForParameterPage());
             form.setUseLowerDateRange(Boolean.TRUE);
             form.setUseUpperDateRange(Boolean.TRUE);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Log.error("Error in FollowupRequired_ByLocation.setRequestParemeters: ", e);
             // throw e;
         }
@@ -293,7 +293,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
         Dictionary dictionary = null;
         try {
             dictionary = dictionaryService.getDictionaryById(dictionaryId);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return dictionaryId; // I guess it wasn't really a dictionary ID
                                  // after all, so let's just return it.
         }

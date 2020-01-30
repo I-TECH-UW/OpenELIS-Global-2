@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,8 +52,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
+            "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",
+            "accountLocked", "accountDisabled", "accountActive", "selectedRoles[*]" };
+
     @Autowired
-    UnifiedSystemUserFormValidator formValidator;
+    private UnifiedSystemUserFormValidator formValidator;
 
     @Autowired
     private LoginService loginService;
@@ -80,6 +86,11 @@ public class UnifiedSystemUserController extends BaseController {
                 break;
             }
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.GET)
@@ -307,7 +318,8 @@ public class UnifiedSystemUserController extends BaseController {
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
             form.setSelectedRoles(roleIds);
 
-            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
+            // is this meant to be returned?
+//            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
         }
 
     }
@@ -370,11 +382,6 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(PREVIOUS_DISABLED, "false");
         request.setAttribute(NEXT_DISABLED, "false");
 
-        String id = request.getParameter(ID);
-
-        String start = request.getParameter("startingRecNo");
-        String direction = request.getParameter("direction");
-
         if (form.getUserLoginName() != null) {
             form.setUserLoginName(form.getUserLoginName().trim());
         } else {
@@ -383,9 +390,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String forward = validateAndUpdateSystemUser(request, form);
 
-        if (forward.equals(FWD_SUCCESS)) {
-            return getForward(findForward(forward, form), id, start, direction);
-        } else if (forward.equals(FWD_SUCCESS_INSERT)) {
+        if (forward.equals(FWD_SUCCESS_INSERT)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             Map<String, String> params = new HashMap<>();
             params.put("forward", FWD_SUCCESS);
@@ -396,8 +401,7 @@ public class UnifiedSystemUserController extends BaseController {
         }
     }
 
-    public String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
-        String forward = FWD_SUCCESS_INSERT;
+    private String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
         String loginUserId = form.getLoginUserId();
         String systemUserId = form.getSystemUserId();
 
@@ -420,10 +424,8 @@ public class UnifiedSystemUserController extends BaseController {
         Login loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
 
-        List<String> selectedRoles = form.getSelectedRoles();
-
         try {
-            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
+            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
         } catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -436,12 +438,10 @@ public class UnifiedSystemUserController extends BaseController {
 
             saveErrors(errors);
             disableNavigationButtons(request);
-            forward = FWD_FAIL_INSERT;
+            return FWD_FAIL_INSERT;
         }
 
-        selectedRoles = new ArrayList<>();
-
-        return forward;
+        return FWD_SUCCESS_INSERT;
     }
 
     private boolean passwordHasBeenUpdated(boolean loginUserNew, UnifiedSystemUserForm form) {

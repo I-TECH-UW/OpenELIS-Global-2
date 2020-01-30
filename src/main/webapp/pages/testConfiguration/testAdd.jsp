@@ -31,26 +31,19 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<%!
-    String basePath = "";
-    String locale = "en_US";
-%>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":"
-            + request.getServerPort() + path + "/";
-    locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+    String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 %>
-<!--Do not add jquery.ui.js, it will break the sorting -->
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<%--Do not add jquery.ui.js, it will break the sorting --%>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <script type="text/javascript"
-        src="<%=basePath%>scripts/multiselectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
+        src="scripts/multiselectUtils.js?"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?"/>
 <link rel="stylesheet" media="screen" type="text/css"
-      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
-<link rel="stylesheet" type="text/css" href="css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
+<link rel="stylesheet" type="text/css" href="css/openElisCore.css?"/>
 
 
  <%--
@@ -74,15 +67,10 @@
 <c:set var="dictionaryList" value="${form.dictionaryList}" />
 <c:set var="groupedDictionaryList" value="${form.groupedDictionaryList}" />             
 
-<%!
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 4;
-%>
-
 <%
-    columnCount = 0;
-    testCount = 0;
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 4;
 %>
 
 <script type="text/javascript">

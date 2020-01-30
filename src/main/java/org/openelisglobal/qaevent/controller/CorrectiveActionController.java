@@ -9,11 +9,12 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
-import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,11 +24,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class CorrectiveActionController extends BaseController {
 
-    @Autowired
-    private NceCategoryService nceCategoryService;
+    private static final String[] ALLOWED_FIELDS = new String[] { "id", "currentUserId", "status", "reportDate",
+            "reporterName", "prescriberName", "site", "nceNumber", "dateOfEvent", "labOrderNumber", "specimen",
+            "reportingUnit", "description", "suspectedCauses", "proposedAction", "laboratoryComponent", "nceCategory",
+            "nceType", "consequences", "recurrence", "severityScore", "colorCode", "correctiveAction", "controlAction",
+            "comments", "discussionDate", "actionLogStr", "effective" };
+
     @Autowired
     private NonConformingEventWorker nonConformingEventWorker;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/NCECorrectiveAction", method = RequestMethod.GET)
     public ModelAndView showNCECorrectiveAction(HttpServletRequest request) throws LIMSInvalidConfigurationException,
@@ -47,8 +56,8 @@ public class CorrectiveActionController extends BaseController {
 
     @RequestMapping(value = "/NCECorrectiveAction", method = RequestMethod.POST)
     public ModelAndView showNCECorrectiveAction(HttpServletRequest request,
-                                                           @ModelAttribute("form") NonConformingEventForm form,
-                                                           BindingResult result, RedirectAttributes redirectAttributes) {
+            @ModelAttribute("form") NonConformingEventForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
         boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
@@ -63,8 +72,8 @@ public class CorrectiveActionController extends BaseController {
 
     @RequestMapping(value = "/ResolveNonConformingEvent", method = RequestMethod.POST)
     public ModelAndView resolveNonConformingEvent(HttpServletRequest request,
-                                                           @ModelAttribute("form") NonConformingEventForm form,
-                                                           BindingResult result, RedirectAttributes redirectAttributes) {
+            @ModelAttribute("form") NonConformingEventForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         boolean updated = nonConformingEventWorker.resolveNCEvent(form);
         if (updated) {

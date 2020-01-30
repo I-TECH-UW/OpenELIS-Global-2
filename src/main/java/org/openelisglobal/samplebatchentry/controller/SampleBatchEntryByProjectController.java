@@ -20,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,11 +30,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleBatchEntryByProjectController extends BaseSampleEntryController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "labNo"
+            //
+            , "sampleOrderItems.newRequesterName", "observations.projectFormName", "ProjectData.viralLoadTest",
+            "ProjectData.edtaTubeTaken", "ProjectData.dryTubeTaken", "ProjectData.dbsTaken", "ProjectData.dnaPCR",
+            "ProjectData.ARVcenterName", "ProjectData.ARVcenterCode", "ProjectData.EIDSiteName",
+            "ProjectData.EIDsiteCode", "currentDate", "currentTime", "sampleOrderItems.receivedDateForDisplay",
+            "sampleOrderItems.receivedTime", "sampleXML", "sampleOrderItems.referringSiteId" };
+
     @Autowired
     SampleBatchEntryFormValidator formValidator;
 
     private static final String ON_DEMAND = "ondemand";
     private static final String PRE_PRINTED = "preprinted";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
     public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
@@ -52,7 +67,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             }
             setupCommonFields(form, request);
             return findForward(setForward(form), form);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 //            Log.error(e.toString());
             LogEvent.logDebug(e);
             return findForward(FWD_FAIL, form);
@@ -110,8 +125,6 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 
     private void setupCommonFields(SampleBatchEntryForm form, HttpServletRequest request)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setCurrentDate(request.getParameter("currentDate"));
-        form.setCurrentTime(request.getParameter("currentTime"));
         addOrganizationLists(form);
     }
 

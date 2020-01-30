@@ -30,7 +30,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -186,7 +186,7 @@ public abstract class AbstractHistoryService {
 
     protected String extractStatus(String changes) {
         String statusId = extractSimple(changes, "statusId");
-        return statusId == null ? null : StatusService.getInstance().getStatusNameFromId(statusId);
+        return statusId == null ? null : SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId);
     }
 
     protected String getViewableValue(String value, Result result) {

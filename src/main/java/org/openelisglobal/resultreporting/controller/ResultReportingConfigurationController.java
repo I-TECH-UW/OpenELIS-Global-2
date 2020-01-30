@@ -17,15 +17,18 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration;
 import org.openelisglobal.resultreporting.form.ResultReportingConfigurationForm;
 import org.openelisglobal.resultreporting.service.ResultReportingConfigurationService;
-import org.openelisglobal.scheduler.LateStartScheduler;
+import org.openelisglobal.scheduler.SchedulerConfig;
 import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +37,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "reports[*].enabledId", "reports[*].enabled",
+            "reports[*].urlId", "reports[*].url", "reports[*].scheduleHours", "reports[*].scheduleMin",
+            "reports[*].userName", "reports[*].password", };
 
     @Autowired
     private SiteInformationService siteInformationService;
@@ -44,6 +51,11 @@ public class ResultReportingConfigurationController extends BaseController {
     private static final String NEVER = "never";
     private static final String CRON_POSTFIX = "? * *";
     private static final String CRON_PREFIX = "0 ";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.GET)
     public ModelAndView showResultReportingConfiguration(HttpServletRequest request)
@@ -75,7 +87,6 @@ public class ResultReportingConfigurationController extends BaseController {
         }
         List<SiteInformation> informationList = new ArrayList<>();
         List<CronScheduler> scheduleList = new ArrayList<>();
-        @SuppressWarnings("unchecked")
         List<ReportingConfiguration> reports = form.getReports();
 
         for (ReportingConfiguration config : reports) {
@@ -97,7 +108,7 @@ public class ResultReportingConfigurationController extends BaseController {
         }
 
         ConfigurationProperties.forceReload();
-        new LateStartScheduler().restartSchedules();
+        SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);

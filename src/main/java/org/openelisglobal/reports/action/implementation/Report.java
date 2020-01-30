@@ -18,7 +18,11 @@ package org.openelisglobal.reports.action.implementation;
 
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +42,7 @@ import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessage
 import org.openelisglobal.spring.util.SpringContext;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperRunManager;
 
@@ -212,7 +217,8 @@ public abstract class Report implements IReportCreator {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, SQLException, IllegalStateException,
+            JRException, ParseException {
         return JasperRunManager.runReportToPdf(fullReportFilename, getReportParameters(), getReportDataSource());
     }
 
@@ -365,7 +371,7 @@ public abstract class Report implements IReportCreator {
                 if (!GenericValidator.isBlankOrNull(highDateStr)) {
                     range += "  -  " + highDateStr;
                 }
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
             }
             return range;

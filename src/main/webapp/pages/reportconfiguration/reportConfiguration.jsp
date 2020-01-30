@@ -21,36 +21,33 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%! String basePath = "";
-    IAccessionNumberValidator accessionNumberValidator;
-    boolean useProject = FormFields.getInstance().useField(Field.Project);
-    boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
-    boolean useSubjectNo = FormFields.getInstance().useField(Field.QASubjectNumber);
-    boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
+<%!
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 <%
-    String path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-            + "/";
-    accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 
+	boolean useProject = FormFields.getInstance().useField(Field.Project);
+	boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
+	boolean useSubjectNo = FormFields.getInstance().useField(Field.QASubjectNumber);
+	boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
 %>
 
-<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
 
-<script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<script src="scripts/utilities.js?"></script>
+<script src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <link rel="stylesheet" media="screen" type="text/css"
-      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 
 <h2><spring:message code="reports.configuration.title" /></h2>
 
@@ -184,9 +181,9 @@
             <input type="checkbox" name="currentReport.isVisible" />
         </div>
 
-        <!--<ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
+        <%--<ul id="report-ordering-panel" class="report-ordering-panel sortable sortable-tag ui-sortable report-ordering-panel">
 
-        </ul>-->
+        </ul>--%>
         <input name="idOrder" type="hidden" />
         <input name="currentReport.id" type="hidden" />
         <div class="form-div">

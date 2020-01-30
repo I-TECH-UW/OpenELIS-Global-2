@@ -192,7 +192,9 @@ isValidDate(date, successCallback, field, relativeToNow, failCallback) {
             method: 'get',
             //http method
             parameters: 'provider=DateValidationProvider&date=' + date + '&relativeToNow=' + relativeToNow + '&field=' + field,
-            onSuccess: successCallback,
+			requestHeaders : {
+				"X-CSRF-Token" : getCsrfToken()
+			},onSuccess: successCallback,
             onFailure: failCallback
         });
 

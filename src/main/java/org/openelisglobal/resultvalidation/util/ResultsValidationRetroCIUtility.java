@@ -36,6 +36,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.StatusService;
@@ -126,8 +127,8 @@ public class ResultsValidationRetroCIUtility {
 
     @PostConstruct
     private void initializeGlobalVariables() {
-        notValidStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-        notValidStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
         analyte = analyteService.getAnalyteByName(analyte, false);
@@ -323,6 +324,9 @@ public class ResultsValidationRetroCIUtility {
                 headItem = analysisResultItem;
                 groupingCount++;
             } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be able to be null here");
+                }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
             }
@@ -331,7 +335,6 @@ public class ResultsValidationRetroCIUtility {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
 
         List<Analysis> analysisList = new ArrayList<>();
@@ -392,7 +395,7 @@ public class ResultsValidationRetroCIUtility {
                             resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
                             LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
@@ -803,7 +806,7 @@ public class ResultsValidationRetroCIUtility {
             return null;
         }
 
-        return StatusService.getInstance().getRecordStatusForID(ohList.get(0).getValue());
+        return SpringContext.getBean(IStatusService.class).getRecordStatusForID(ohList.get(0).getValue());
     }
 
     public AnalysisItem testResultItemToAnalysisItem(ResultValidationItem testResultItem) {
@@ -864,7 +867,7 @@ public class ResultsValidationRetroCIUtility {
         analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
         analysisResultItem.setChildReflex(testResultItem.isChildReflex());
         if (!(testResultItem.getAnalysis() == null)) {
-            analysisResultItem.setNonconforming(testResultItem.isNonconforming() || StatusService.getInstance()
+            analysisResultItem.setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
                     .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
         }
         analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());

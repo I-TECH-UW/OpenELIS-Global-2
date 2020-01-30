@@ -503,5 +503,36 @@
 		INSERT INTO clinlims.system_module_url ("id", "url_path", "system_module_id", "system_module_param_id")VALUES (nextval('clinlims.system_module_url_seq'), '/AnalyzerResults', (SELECT id FROM clinlims.system_module WHERE name = 'AnalyzerResults:TaqMan96VLAnalyzer' LIMIT 1), (SELECT id FROM clinlims.system_module_param WHERE value = 'TaqMan96VLAnalyzer' AND name = 'type'));
 	</sql>
 </changeSet>
+
+<changeSet author="csteele" id="6">
+    <preConditions onFail="MARK_RAN">
+	    	<sqlCheck expectedResult="0">
+	    		SELECT COUNT(*) FROM clinlims.system_module_url AS smu
+	    		INNER JOIN clinlims.system_module_param AS smp
+	    		ON smu.system_module_param_id = smp.id
+				WHERE smu.url_path = '/ajaxQueryXML'
+				AND smp.name = 'provider'
+				AND smp.value = 'ConnectionTestProvider';
+	    	</sqlCheck>
+	    	<not>
+		    	<sqlCheck expectedResult="0">
+		    		select count(*) from clinlims.system_module WHERE name = 'ResultReportingConfiguration';
+		    	</sqlCheck>
+	    	</not>
+    </preConditions>
+    <comment>link url to system modules</comment>
+    <sql>
+    	INSERT INTO clinlims.system_module_param ("id", "name", "value")
+    	SELECT nextval('clinlims.system_module_param_seq'),'provider','ConnectionTestProvider'
+    	WHERE NOT EXISTS (SELECT 1 FROM clinlims.system_module_param WHERE value = 'ConnectionTestProvider' AND name = 'provider'); 
+    	
+		INSERT INTO clinlims.system_module_url ("id", "url_path", "system_module_id", "system_module_param_id") 
+		VALUES( nextval('clinlims.system_module_url_seq'),
+		 		'/ajaxQueryXML',
+		 		(SELECT id FROM clinlims.system_module WHERE name = 'ResultReportingConfiguration'),
+		 		(SELECT id FROM clinlims.system_module_param WHERE value = 'ConnectionTestProvider' AND name = 'provider')	
+		);
+    </sql>	
+</changeSet>
   
 </databaseChangeLog>

@@ -20,7 +20,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.form.PrintBarcodeForm;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -42,6 +41,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,23 +51,25 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PrintBarcodeController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
     private static final Set<Integer> excludedAnalysisStatusList = new HashSet<>();
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
     private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
     @Autowired
-    IStatusService statusService;
+    private IStatusService statusService;
     @Autowired
-    SampleService sampleService;
+    private SampleService sampleService;
     @Autowired
-    SampleItemService sampleItemService;
+    private SampleItemService sampleItemService;
     @Autowired
-    AnalysisService analysisService;
+    private AnalysisService analysisService;
     @Autowired
-    TypeOfSampleService typeOfSampleService;
+    private TypeOfSampleService typeOfSampleService;
     @Autowired
-    SampleHumanService sampleHumanService;
+    private SampleHumanService sampleHumanService;
 
     @PostConstruct
     private void initialize() {
@@ -75,6 +78,11 @@ public class PrintBarcodeController extends BaseController {
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
@@ -195,17 +203,17 @@ public class PrintBarcodeController extends BaseController {
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
             boolean canCancel = allowedToCancelAll
-                    || (!StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
             sampleEditItem.setHasResults(
-                    !StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
             break;

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -27,10 +28,10 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingBean.Paging;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.PluginMenuService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
@@ -80,6 +81,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,6 +91,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AnalyzerResultsController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "analyzerType", "paging.currentPage",
+            "resultList[*].id", "resultList[*].sampleGroupingNumber", "resultList[*].readOnly",
+            "resultList[*].testResultType", "resultList[*].testId", "resultList[*].accessionNumber",
+            "resultList[*].isAccepted", "resultList[*].isRejected", "resultList[*].isDeleted", "resultList[*].result",
+            "resultList[*].completeDate", "resultList[*].note", "resultList[*].reflexSelectionId", };
 
     private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
             .isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
@@ -106,6 +115,11 @@ public class AnalyzerResultsController extends BaseController {
         } else {
             DBS_SAMPLE_TYPE_ID = null;
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @Autowired
@@ -158,19 +172,23 @@ public class AnalyzerResultsController extends BaseController {
     }
 
     @RequestMapping(value = "/AnalyzerResults", method = RequestMethod.GET)
-    public ModelAndView showAnalyzerResults(HttpServletRequest request)
+    public ModelAndView showAnalyzerResults(@Valid @ModelAttribute("form") AnalyzerResultsForm oldForm,
+            BindingResult result,
+            HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerResultsForm form = new AnalyzerResultsForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        String page = request.getParameter("page");
-        String requestAnalyzerType = request.getParameter("type");
+        String requestAnalyzerType = null;
+        if (!result.hasFieldErrors("analyzerType")) {
+            requestAnalyzerType = oldForm.getAnalyzerType();
+        }
 
         form.setAnalyzerType(requestAnalyzerType);
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
-        if (GenericValidator.isBlankOrNull(page)) {
+        if (GenericValidator.isBlankOrNull(request.getParameter("page"))) {
             // get list of AnalyzerData from table based on analyzer type
             List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
 
@@ -233,7 +251,7 @@ public class AnalyzerResultsController extends BaseController {
                 paging.setDatabaseResults(request, form, analyzerResultItemList);
             }
         } else {
-            paging.page(request, form, page);
+            paging.page(request, form, Integer.parseInt(request.getParameter("page")));
         }
 
         addFlashMsgsToRequest(request);
@@ -456,8 +474,7 @@ public class AnalyzerResultsController extends BaseController {
                     } else {
                         // find if the sibling reflex is satisfied
                         TestReflex sibTestReflex = testReflexService.get(possibleTestReflex.getSiblingReflexId());
-
-                        TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
+//                        TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
 
                         for (Analysis analysis : analysisList) {
                             List<Result> resultList = resultService.getResultsByAnalysis(analysis);
@@ -731,7 +748,7 @@ public class AnalyzerResultsController extends BaseController {
     private void createResultsFromItems(List<AnalyzerResultItem> actionableResults,
             List<SampleGrouping> sampleGroupList) {
         int groupingNumber = -1;
-        List<AnalyzerResultItem> groupedResultList = null;
+        List<AnalyzerResultItem> groupedResultList = new ArrayList<>();
 
         /*
          * Basic idea is that analyzerResultItems are put into a groupedResultList if
@@ -777,7 +794,7 @@ public class AnalyzerResultsController extends BaseController {
 
         if (groupedAnalyzerResultItems != null && !groupedAnalyzerResultItems.isEmpty()) {
             String accessionNumber = groupedAnalyzerResultItems.get(0).getAccessionNumber();
-            StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+            StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
 
             // If neither the test request or demographics has been entered then
             // both a skeleton set of entries should be made
@@ -884,7 +901,7 @@ public class AnalyzerResultsController extends BaseController {
             sampleItem = new SampleItem();
             sampleItem.setSysUserId(getSysUserId(request));
             sampleItem.setSortOrder(Integer.toString(maxSampleItemSortOrder + 1));
-            sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+            sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
             TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleId);
             sampleItem.setTypeOfSample(typeOfSample);
         }
@@ -906,8 +923,8 @@ public class AnalyzerResultsController extends BaseController {
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
         List<Note> noteList = new ArrayList<>();
 
-        if (StatusService.getInstance().getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
-            sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Started));
+        if (SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
+            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started));
         }
         sample.setEnteredDate(new Date(new java.util.Date().getTime()));
         sample.setSysUserId(getSysUserId(request));
@@ -943,8 +960,8 @@ public class AnalyzerResultsController extends BaseController {
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
         List<Note> noteList = new ArrayList<>();
 
-        if (StatusService.getInstance().getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
-            sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Started));
+        if (SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
+            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started));
         }
         sample.setEnteredDate(new Date(new java.util.Date().getTime()));
         sample.setSysUserId(getSysUserId(request));
@@ -989,7 +1006,7 @@ public class AnalyzerResultsController extends BaseController {
                     sampleItem = new SampleItem();
                     sampleItem.setSysUserId(getSysUserId(request));
                     sampleItem.setSortOrder("1");
-                    sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+                    sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
                     sampleItem.setCollectionDate(DateUtil.getNowAsTimestamp());
                     sampleItem.setTypeOfSample(typeOfSample);
                     analysis.setSampleItem(sampleItem);
@@ -1030,7 +1047,7 @@ public class AnalyzerResultsController extends BaseController {
         sampleGrouping.addSample = false;
         sampleGrouping.updateSample = true;
         sampleGrouping.statusSet = statusSet;
-        sampleGrouping.addSampleItem = sampleItem.getId() == null;
+        sampleGrouping.addSampleItem = (sampleItem == null || sampleItem.getId() == null);
         sampleGrouping.accepted = groupedAnalyzerResultItems.get(0).getIsAccepted();
         sampleGrouping.patient = patient;
         sampleGrouping.resultToUserserSelectionMap = resultToUserSelectionMap;
@@ -1046,7 +1063,7 @@ public class AnalyzerResultsController extends BaseController {
         SampleItem sampleItem = new SampleItem();
         sampleItem.setSysUserId(getSysUserId(request));
         sampleItem.setSortOrder("1");
-        sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+        sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
 
         List<Analysis> analysisList = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
@@ -1055,7 +1072,7 @@ public class AnalyzerResultsController extends BaseController {
 
         sample.setAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
         sample.setDomain("H");
-        sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Started));
+        sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started));
         sample.setEnteredDate(new Date(new java.util.Date().getTime()));
         sample.setReceivedDate(new Date(new java.util.Date().getTime()));
         sample.setSysUserId(getSysUserId(request));
@@ -1122,7 +1139,7 @@ public class AnalyzerResultsController extends BaseController {
                 Test test = testService.get(resultItem.getTestId());
                 populateAnalysis(resultItem, analysis, test);
             } else {
-                String statusId = StatusService.getInstance()
+                String statusId = SpringContext.getBean(IStatusService.class)
                         .getStatusID(resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance
                                 : AnalysisStatus.TechnicalRejected);
                 analysis.setStatusId(statusId);
@@ -1241,8 +1258,8 @@ public class AnalyzerResultsController extends BaseController {
     }
 
     private void populateAnalysis(AnalyzerResultItem resultItem, Analysis analysis, Test test) {
-        if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
-            String statusId = StatusService.getInstance().getStatusID(
+        if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+            String statusId = SpringContext.getBean(IStatusService.class).getStatusID(
                     resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance : AnalysisStatus.TechnicalRejected);
             analysis.setStatusId(statusId);
             analysis.setAnalysisType(resultItem.getManual() ? ANALYSIS_TYPE_MANUAL : ANALYSIS_TYPE_AUTO);

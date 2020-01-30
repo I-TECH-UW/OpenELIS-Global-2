@@ -15,18 +15,18 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
 
-<script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<script src="scripts/utilities.js?"></script>
+<script src="scripts/ajaxCalls.js?"></script>
 
 <script>
     var nceTypes= [];
@@ -49,9 +49,8 @@
     <input type="text" name="searchValue"
            value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
     &nbsp;
-    <input type="button" id="searchButtonId"
-           value='<spring:message code="label.button.search" />'
-           onclick="searchNCE();" disabled />
+    <button type="button" id="searchButtonId"
+           onclick="searchNCE();" disabled><spring:message code="label.button.search" /></button>
 
     <table id="searchResults">
 
@@ -150,6 +149,7 @@
                         <p>
                             <form:select path="nceType" id="nceType" onchange="checkIfValid()">
                                 <option value="">Select one</option>
+                                <form:options items="${form.nceTypes}" itemLabel="name" itemValue="id" />
                             </form:select>
                         </p>
                     </td>
@@ -272,7 +272,7 @@
     function searchNCE() {
         var criteria = jQuery("#searchCriteria").val();
         var value = jQuery("#searchValue").val();
-        var nceNumber;
+        var nceNumber = "";
         var labNumber = "";
 
 
@@ -294,6 +294,9 @@
                 parameters: "provider=NonConformingEventSearchProvider&nceNumber=" + nceNumber +
                     "&labNumber=" + labNumber + "&status=Pending" +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+    			requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    	     	},
                 onSuccess:  success,
                 onFailure:  failure
             }

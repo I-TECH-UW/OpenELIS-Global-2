@@ -25,6 +25,8 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,8 +34,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PatientResultsController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
     PatientService patientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
     public ModelAndView showPatientResults(HttpServletRequest request)
@@ -94,7 +103,7 @@ public class PatientResultsController extends BaseController {
                 form.setSearchFinished(Boolean.FALSE);
             }
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         addFlashMsgsToRequest(request);

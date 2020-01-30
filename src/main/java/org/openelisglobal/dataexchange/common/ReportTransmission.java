@@ -28,7 +28,10 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletResponse;
 
 import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.ValidationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
@@ -81,8 +84,14 @@ public class ReportTransmission {
             List<String> errors = new ArrayList<>();
             errors.add(e.toString());
             responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
-        } catch (Exception e) {
+        } catch (ValidationException | MarshalException | IOException | MappingException e) {
             LogEvent.logError(e.toString(), e);
+        } finally {
+            try {
+                source.getByteStream().close();
+            } catch (IOException e) {
+                LogEvent.logError(e);
+            }
         }
 
     }
@@ -108,16 +117,15 @@ public class ReportTransmission {
             sender.setURI(url);
 
             if (sendAsychronously) {
-                AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
-                        contents);
-                asynchSender.sendMessage();
+                IAsyncExternalSender asynchSender = SpringContext.getBean(IAsyncExternalSender.class);
+                asynchSender.sendMessage(sender, responseHandler, contents);
             } else {
                 sender.sendMessage();
                 if (responseHandler != null) {
                     responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), contents);
                 }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
         }
 
@@ -131,7 +139,6 @@ public class ReportTransmission {
         Properties transmissionMap = new Properties();
         try {
             propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
-
             transmissionMap.load(propertyStream);
         } catch (IOException e) {
             LogEvent.logError(e.toString(), e);
@@ -140,8 +147,7 @@ public class ReportTransmission {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     LogEvent.logError(e.toString(), e);
                 }
             }

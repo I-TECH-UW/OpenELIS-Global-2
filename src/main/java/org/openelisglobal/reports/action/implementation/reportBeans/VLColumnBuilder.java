@@ -23,6 +23,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 
 import java.sql.Date;
 
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 
 //import org.apache.commons.validator.GenericValidator;
@@ -95,7 +96,7 @@ public class VLColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
+        String validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized);
         Test test = SpringContext.getBean(TestService.class).getActiveTestsByName("Viral Load").get(0);
         // this is done to ensure that sql injection can't succeed
         int testId = Integer.parseInt(test.getId());

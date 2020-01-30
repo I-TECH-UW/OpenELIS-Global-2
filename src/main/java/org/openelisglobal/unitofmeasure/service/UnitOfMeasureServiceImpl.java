@@ -62,12 +62,12 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
         createTestIdToNameMap();
     }
 
-    public String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
+    public synchronized String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
         String name = unitOfMeasureIdToNameMap.get(unitOfMeasureId);
         return name == null ? "" : name;
     }
 
-    private void createTestIdToNameMap() {
+    private synchronized void createTestIdToNameMap() {
         unitOfMeasureIdToNameMap = new HashMap<>();
 
         List<UnitOfMeasure> unitOfMeasures = unitOfMeasureDAO.getAll();

@@ -2,7 +2,6 @@ package org.openelisglobal.common.form;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
@@ -13,13 +12,10 @@ public class BaseForm implements Serializable {
      */
     private static final long serialVersionUID = 2614369858245937250L;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String formName;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String formAction;
     private RequestMethod formMethod = RequestMethod.POST;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String cancelAction = "Home.do";
     private boolean submitOnCancel = false;
     private RequestMethod cancelMethod = RequestMethod.POST;

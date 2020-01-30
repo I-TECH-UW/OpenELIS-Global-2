@@ -27,6 +27,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,12 +36,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestCatalogController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
-    TestService testService;
+    private TestService testService;
     @Autowired
-    DictionaryService dictionaryService;
+    private DictionaryService dictionaryService;
     @Autowired
-    LocalizationService localizationService;
+    private LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestCatalog", method = RequestMethod.GET)
     public ModelAndView showTestCatalog(HttpServletRequest request) {

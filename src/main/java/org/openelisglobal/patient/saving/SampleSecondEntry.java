@@ -40,7 +40,7 @@ public class SampleSecondEntry extends SampleEntry implements ISampleSecondEntry
      * @param dynaBean
      * @param sysUserId
      */
-    public SampleSecondEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) throws Exception {
+    public SampleSecondEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request)  {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

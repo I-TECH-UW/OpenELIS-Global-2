@@ -198,6 +198,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
+                Errors errors = new BaseErrors();
                 try {
                     parameters.put(JRParameter.REPORT_LOCALE, locale);
                     parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE,
@@ -243,11 +244,11 @@ public class ResultsReportProvider extends BaseReportsProvider {
                     HashMap samples = new HashMap();
                     ResultsReportSample reportSample = new ResultsReportSample();
                     List currentTests = new ArrayList();
-                    List previousTests = new ArrayList();
+//                    List previousTests = new ArrayList();
                     List currentTestsToReport = new ArrayList();
-                    List previousTestsToReport = new ArrayList();
-                    List currentAnalyteResults = new ArrayList();
-                    List previousAnalyteResults = new ArrayList();
+//                    List previousTestsToReport = new ArrayList();
+//                    List currentAnalyteResults = new ArrayList();
+//                    List previousAnalyteResults = new ArrayList();
                     reportAnalyteResult = new ResultsReportAnalyteResult();
 
                     amendedMessage = getMessageForKey(request, "label.jasper.results.report.amended");
@@ -571,33 +572,37 @@ public class ResultsReportProvider extends BaseReportsProvider {
                     }
                     return true;
 
-                } catch (Exception e) {
-                    Errors errors = new BaseErrors();
+                } catch (JRException e) {
+                    errors.reject("errors.jasperreport.general");
                     // bugzilla 2154
                     LogEvent.logError(e.toString(), e);
-
-                    if (e instanceof JRException) {
-                        errors.reject("errors.jasperreport.general");
-                        // bugzilla 2154
-                        LogEvent.logError(e.toString(), e);
-                        // bugzilla 1900
-                    } else if (e instanceof LIMSResultsReportHasNoDataException) {
-                        if (accessionNumbers.size() > 1) {
-                            // message if report is for several samples
-                            errors.reject("errors.jasperreport.resultsreports.nodata");
-                        } else {
-                            // message if report is for one sample
-                            errors.reject("errors.jasperreport.resultsreport.nodata");
-                        }
-                    } else if (e instanceof org.hibernate.StaleObjectStateException) {
-                        errors.reject("errors.OptimisticLockException");
-                    } else {
-                        errors.reject("errors.jasperreport.general");
-                    }
-                    request.setAttribute(Constants.REQUEST_ERRORS, errors);
-
                     // rethrow an exception so transaction management detects it and rolls back
                     throw new LIMSRuntimeException(e);
+                } catch (LIMSResultsReportHasNoDataException e) {
+                    LogEvent.logError(e.toString(), e);
+                    if (accessionNumbers.size() > 1) {
+                        // message if report is for several samples
+                        errors.reject("errors.jasperreport.resultsreports.nodata");
+                    } else {
+                        // message if report is for one sample
+                        errors.reject("errors.jasperreport.resultsreport.nodata");
+                    }
+                    // rethrow an exception so transaction management detects it and rolls back
+                    throw new LIMSRuntimeException(e);
+                } catch (org.hibernate.StaleObjectStateException e) {
+                    LogEvent.logError(e.toString(), e);
+                    errors.reject("errors.OptimisticLockException");
+                    // rethrow an exception so transaction management detects it and rolls back
+                    throw new LIMSRuntimeException(e);
+                } catch (IOException | RuntimeException e) {
+                    LogEvent.logError(e.toString(), e);
+                    errors.reject("errors.jasperreport.general");
+                    // rethrow an exception so transaction management detects it and rolls back
+                    throw new LIMSRuntimeException(e);
+                } finally {
+                    if (errors.hasErrors()) {
+                        request.setAttribute(Constants.REQUEST_ERRORS, errors);
+                    }
                 }
             }
         });
@@ -605,7 +610,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
     // this is for current and previous tests
     private List populateTests(List listOfTests, int section) {
-        Dictionary dictionary = new Dictionary();
         // filter list of analyses to report (depending on whether amended/original
         // report
         // preload list of resultsReportTests - then process those in a later loop
@@ -647,7 +651,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
         return testsToReport;
     }
 
-    private List populatePendingTests(List pendingAnalyses) throws Exception {
+    private List populatePendingTests(List pendingAnalyses) {
         List pendingReportTests = new ArrayList();
         for (int i = 0; i < pendingAnalyses.size(); i++) {
             String id = (String) pendingAnalyses.get(i);
@@ -718,8 +722,6 @@ public class ResultsReportProvider extends BaseReportsProvider {
             Analysis analysis = new Analysis();
             analysis.setId(id);
             analysisService.getData(analysis);
-
-            String accessionNumber = analysis.getSampleItem().getSample().getAccessionNumber();
 
             // get reportable results for test, and corresponding analyte information
             List results = resultService.getReportableResultsByAnalysis(analysis);

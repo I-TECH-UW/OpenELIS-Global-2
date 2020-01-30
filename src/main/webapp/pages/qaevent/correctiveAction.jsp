@@ -23,18 +23,18 @@
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     String today = df.format(Calendar.getInstance().getTime());
 %>
-<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
-<link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
 
-<script src="scripts/ui/jquery.ui.core.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.widget.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.button.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.menu.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.position.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ui/jquery.ui.autocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/customAutocomplete.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<script src="scripts/utilities.js?"></script>
+<script src="scripts/ajaxCalls.js?"></script>
 <script></script>
 <div align="center">
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
@@ -46,9 +46,8 @@
     <input type="text" name="searchValue"
            value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
     &nbsp;
-    <input type="button" id="searchButtonId"
-           value='<spring:message code="label.button.search" />'
-           onclick="searchNCE();" disabled />
+    <button type="button" id="searchButtonId"
+           onclick="searchNCE();" disabled ><spring:message code="label.button.search" /></button>
 
     <table id="searchResults">
 
@@ -292,7 +291,7 @@
         </tr>
         <tr id="followUpAlert" style="display: none"><td colspan="2"><spring:message code="nonconforming.page.correctiveAction.followUpAlert" /></td></tr>
     </table>
-    <div class="center-caption"><button id="submitResolved" onclick="return completeNCE()">
+    <div class="center-caption"><button id="submitResolved" onclick="completeNCE()">
         <spring:message code="nonconforming.page.correctiveAction.submit" />
     </button></div>
 </c:if>
@@ -401,6 +400,9 @@
                 parameters: "provider=NonConformingEventSearchProvider&nceNumber=" + nceNumber +
                     "&labNumber=" + labNumber + "&status=CAPA" +
                     "&suppressExternalSearch=" + suppressExternalSearch,
+				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    			},
                 onSuccess:  success,
                 onFailure:  failure
             }
