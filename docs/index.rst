@@ -9,7 +9,8 @@ Welcome to OpenELIS Global's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   Introduction
+   
+   intro
    How to Install OpenELIS Global <setup>
    How to Set Up a Dev Environment <dev>
    Analyzer Plugins <plugins>
