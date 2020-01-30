@@ -11,6 +11,7 @@ Welcome to OpenELIS Global's documentation!
    :caption: Contents:
    
    intro
+   setup
    How to Install OpenELIS Global <setup>
    How to Set Up a Dev Environment <dev>
    Analyzer Plugins <plugins>
