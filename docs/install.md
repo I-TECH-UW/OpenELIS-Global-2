@@ -2,7 +2,7 @@
 
 ### Setup Ubuntu (16.04)
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, or desktop if you want the GUI) (http://releases.ubuntu.com/16.04/ )
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, or desktop if you want the GUI) [Download](http://releases.ubuntu.com/16.04/).
 2. Select to download the updates in the background while installing. 
 3. Select: Erase disk and install Ubuntu
 4. Select the appropriate time zone 
@@ -21,7 +21,7 @@ a    .this will allow you to ssh into this computer allowing copy/paste for Wind
 
 14. Reboot
 
-**NOTE: I like to connect via ssh if I’m going to be using a lot of resources from my own computer here. This allows me to easily copy and paste commands below. For windows, the best utility I’ve found is Mobaxterm** `available for free download online <https://mobaxterm.mobatek.net/>`_
+**NOTE: I like to connect via ssh if I’m going to be using a lot of resources from my own computer here. This allows me to easily copy and paste commands below. For windows, the best utility I’ve found is Mobaxterm, as it incoperates a SCP client as well** [available for free download online](https://mobaxterm.mobatek.net/).
 .
 
 ### Install Prerequisites for OpenELIS
@@ -48,9 +48,9 @@ This updates the system from the sources in the sources list. It updates what ne
 
 4. Install Postgresql
 
-    ``sudo apt update``
+    `sudo apt update`
 
-    ``sudo apt install postgresql postgresql-contrib``
+    `sudo apt install postgresql postgresql-contrib`
 
 5. Install Java: 
      We install java on the host only to run liquibase. Java used for running OpenELIS will be the one specified in the docker image.
@@ -89,11 +89,12 @@ Wait while install procedure completes
 
     ``/etc/tomcat/ssl/private/tomcat_cert.key``
 
-Run setupTomcatDocker script to ensure file permissions are correctly set
+3. Run setupTomcatDocker script to ensure file permissions are correctly set 
+    
+	``sudo ./scripts/setupTomcatDocker.sh``
 
-    ``sudo ./scripts/setupTomcatDocker.sh``
-
-Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS
+	
+4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS
 
 Configure the backup:
 
