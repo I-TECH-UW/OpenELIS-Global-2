@@ -211,6 +211,11 @@
 		<!-- SPRING DEPENDENCIES -->
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
@@ -240,6 +245,11 @@
 			<version>${springframework.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+			<version>1.2.5.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>${springsecurity.version}</version>
@@ -254,6 +264,11 @@
 			<groupId>org.ajaxtags</groupId>
 			<artifactId>ajaxtags</artifactId>
 			<version>1.2-beta3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.10</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.barbecue</groupId>
