@@ -1,1 +1,8 @@
-site_name: My Docs
+site_name: OpenELIS Global Documentation
+nav:
+    - Home: docs/index.md
+    - About: docs/about.md
+    - Install OpenELIS Global: docs/install.md
+    - Analyzers: docs/analyzer.md
+    - Deploy: docs/deploy.md 
+    - Develop: docs/dev-sop.md

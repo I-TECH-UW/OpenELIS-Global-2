@@ -1,17 +1,5 @@
-# Welcome to MkDocs
+# Welcome to The OpenELIS Global 2.0 Documentation
 
-For full documentation visit [mkdocs.org](https://mkdocs.org).
+For more OpenELIS Information, please visit [openelisglobal.org](http://openelisglobal.org).
 
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+This Documentation is broken down into two broad catagories, information for Software Developers (this is mostly information about how to write the code for OpenELIS, how to contribute to the code case, ETC) and Information for those deploying OpenELIS Global (this contains SOPs focused on how to deploy, installation of software, setup of a bulid server, etc)
