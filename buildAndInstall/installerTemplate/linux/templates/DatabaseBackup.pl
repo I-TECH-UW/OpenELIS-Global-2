@@ -75,13 +75,16 @@ my $siteId = '[% siteId %]';
 #my $upLoadUserName = 'ftpuser';
 #my $upLoadPassword = '12345678';
 
+my $databaseBackupMountPoint			 = '/var/lib/OpenELIS-Global/backups';
+my $databaseDockerBackupDir	 			 = '/backups';
+my $databaseDockerImageName				 = 'openelisglobal-database';
 my $snapShotFileBase     = 'lastSnapshot_' . $siteId; 
 my $snapShotFileName     = $snapShotFileBase . '.backup'; 
 my $snapShotFileNameZipped     = $snapShotFileName . '.gz'; 
-my $cmd = 'pg_dump -h localhost  -U clinlims -f "' . $snapShotFileName . '" -n \"clinlims\" clinlims';
+my $cmd = 'docker exec ' . $databaseDockerImageName . ' /usr/bin/pg_dump -U clinlims -f "' . $databaseDockerBackupDir . '/' . $snapShotFileName . '" -n \"clinlims\" clinlims';
 my $zipCmd = 'gzip -f ' .  $snapShotFileName;
 #my $backBaseDir          = cwd();
-my $backBaseDir          = '/home/oeserver/openElisBackup';
+my $backBaseDir          = $databaseBackupMountPoint;
 my $baseFileName         = '[% installName %]';
 my $mountedBackup        = "/media/My\ Passport/backup";
 my $dailyDir             = "$backBaseDir/daily";
@@ -96,6 +99,7 @@ $ENV{'PGPASSWORD'} = "$postgres_pwd";
 
 chdir "$dailyDir";
 my $response = system("$cmd")  and warn "Error while running: $! \n";
+copy( "$databaseBackupMountPoint/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
 system("$zipCmd")  and warn "Error while running: $! \n";
 
 copy( $snapShotFileNameZipped, "$cumulativeDir/$todaysCummlativeFile" ) or die "File cannot be copied.";

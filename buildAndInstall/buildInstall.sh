@@ -2,7 +2,7 @@
 PROGNAME=$0
 callDirectory=$PWD
 
-installerDir="OEInstaller"
+installerCreationDir="OEInstaller"
 stagingDir="OEInstaller_stagingDir"
 
 usage() {
@@ -10,19 +10,16 @@ usage() {
 Usage: $PROGNAME [-b <branch>] [-l] [-i]
 
 -b <branch>: git branch to build from
-         -l: run liquibase
          -i: create installer
 EOF
   exit 1
 }
 
 branch=master 
-runLiquibase=false 
 createInstaller=false
-while getopts :b:li opt; do
+while getopts :b:i opt; do
   case $opt in
     (b) branch=$OPTARG;;
-    (l) runLiquibase=true;;
     (i) createInstaller=true;;
     (*) usage
   esac
@@ -40,7 +37,6 @@ buildInstallDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 #and other important locations
 projectDir="${buildInstallDir}/.."
-liquibaseDir="${projectDir}/liquibase"
 
 cd ${projectDir}
 echo Will build from $branch
@@ -69,14 +65,6 @@ git pull origin $branch
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
 cd ${callDirectory}
 
-if [ $runLiquibase == true ]
-then
-	cd ${liquibaseDir}
-	#                                    context     dbname
-	bash runLiquibase.sh ci_regional       clinlims
-	cd ${callDirectory}
-fi
-
 bash ${buildInstallDir}/build/createDefaultPassword.sh
 
 echo "creating docker image"
@@ -94,29 +82,30 @@ cd ${callDirectory}
 createLinuxInstaller() {
 	context=$1
 	backupFile=$2
+	installerName="${context}_${projectVersion}_Installer"
 	
 	echo "creating installer for context ${context}"
-	mkdir -p ${installerDir}/linux/${context}
-	cp -r ${buildInstallDir}/installerTemplate/linux/* ${installerDir}/linux/${context}
-	cp -a ${liquibaseDir}/. ${installerDir}/linux/${context}/liquibase/
-	cp OpenELIS_DockerImage.tar.gz ${installerDir}/linux/${context}/dockerImage/${context}-${projectVersion}.tar.gz
-	cp ${projectDir}/tools/DBBackup/installerTemplates/${backupFile} ${installerDir}/linux/${context}/templates/DatabaseBackup.pl
-	cp ${projectDir}/tools/baseDatabases/${context}.backup ${installerDir}/linux/${context}/databaseFiles/databaseInstall.backup
-	cp ${buildInstallDir}/install/linux/* ${installerDir}/linux/${context}/scripts/
+	mkdir -p ${installerCreationDir}/linux/${installerName}
+	cp -r ${buildInstallDir}/installerTemplate/linux/* ${installerCreationDir}/linux/${installerName}
+	cp OpenELIS-Global_DockerImage.tar.gz ${installerCreationDir}/linux/${installerName}/dockerImage/${context}-${projectVersion}.tar.gz
+#	cp ${projectDir}/tools/DBBackup/installerTemplates/${backupFile} ${installerCreationDir}/linux/${context}/templates/DatabaseBackup.pl
+#	cp ${projectDir}/database/baseDatabase/OpenELIS-Global.sql ${installerCreationDir}/linux/${installerName}/database/baseDatabase/databaseInstall.sql
+	cp ${buildInstallDir}/install/linux/* ${installerCreationDir}/linux/${installerName}/scripts/
 	
-	cp ${stagingDir}/get-docker.sh ${installerDir}/linux/${context}/scripts/
-	chmod +x ${installerDir}/linux/${context}/scripts/*.sh
+	cp ${stagingDir}/get-docker.sh ${installerCreationDir}/linux/${installerName}/scripts/
+	chmod +x ${installerCreationDir}/linux/${installerName}/scripts/*.sh
 	
-	cp ${stagingDir}/docker-compose ${installerDir}/linux/${context}/bin/docker-compose
-	cd ${installerDir}/linux
-	tar -cf ${context}_${projectVersion}_Installer.tar ${context}
-	gzip ${context}_${projectVersion}_Installer.tar 
+	cp ${stagingDir}/docker-compose ${installerCreationDir}/linux/${installerName}/bin/docker-compose
+	cd ${installerCreationDir}/linux
+	tar -cf ${installerName}.tar ${installerName}
+	gzip ${installerName}.tar 
 	cd ${callDirectory}
 }
 
 if [ $createInstaller == true ]
 then
 	cd ${projectDir}
+	
 	#get useful info from the maven project
 	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\
 	    echo 'PROJECT_VERSION=${project.version}'; } \
@@ -125,10 +114,10 @@ then
 	projectVersion=$(echo "$output" | grep '^PROJECT_VERSION' | cut -d = -f 2)
 	cd ${callDirectory}
 	
-	echo "saving docker image as OpenELIS_DockerImage.tar.gz"
-	docker save ${artifactId}:latest | gzip > OpenELIS_DockerImage.tar.gz
+	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
+	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
 	
-	if [ -d "${installerDir}" ]
+	if [ -d "${installerCreationDir}" ]
 	then
 		while true; do
 		    read -p "Installer directory has been detected, replace it? [Y]es [N]o: " yn
@@ -138,24 +127,18 @@ then
 		        * ) echo "Please answer yes or no.";;
 		    esac
 		done
+		rm -r ${installerCreationDir}
 	fi
-	rm -r ${installerDir}
-	mkdir -p ${installerDir}
+	mkdir -p ${installerCreationDir}
 	
 	mkdir ${stagingDir}
 	curl -fsSL https://get.docker.com -o ${stagingDir}/get-docker.sh
 	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${stagingDir}/docker-compose
 	
-	#createLinuxInstaller CDIOpenElis OffSiteBackupLinux.pl 
-	createLinuxInstaller CDI_RegLabOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_OpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_IPCIOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller CI_LNSPOpenElis OffSiteBackupLinux.pl 
-	#createLinuxInstaller haitiOpenElis HaitiBackup.pl 
-	#createLinuxInstaller LNSP_HaitiOpenElis HaitiBackup.pl
-	#createLinuxInstaller KenyaOpenElis OffSiteBackupLinux.pl 
+	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
+
 	
-	rm OpenELIS_DockerImage*.tar.gz
+	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm -r ${stagingDir}
 	
 fi
