@@ -45,41 +45,8 @@ This updates the system from the sources in the sources list. It updates what ne
     ``sudo apt-get upgrade``
 
     ``sudo apt-get install python``
-
-4. Install Postgresql
-
-    `sudo apt update`
-
-    `sudo apt install postgresql postgresql-contrib`
-
-5. Install Java: 
-     We install java on the host only to run liquibase. Java used for running OpenELIS will be the one specified in the docker image.
-
-    ``sudo apt install default-jre``
-
-6. Install OpenELIS Global
-
-    a. Download latest installer package: 
-
-    ``curl -L -O https://url_for_the _file.tar.gz``
- 
-    b. EG: for OE 2.0 Beta 1: 
-
-    ``curl -L -O https://www.dropbox.com/s/2z04rng0tt7txbg/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
- 
-7. Unpack installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
-
-    ``tar xzf {context_name}_{installer_version}_Installer.tar.gz``
-
-8. Run the install script in Terminal or Putty 
-
-    ``cd {context_name}_{installer_version}_Installer``
-
-    ``sudo python setup_OpenELIS.py -install``
-
-Wait while install procedure completes
-
-### Create and Load SSL Certificates (Optional if just a test server)
+    
+### Create and Load SSL Certificates
 
 1. Generate a signed .crt and .key for individual installation
 
@@ -89,12 +56,32 @@ Wait while install procedure completes
 
     ``/etc/tomcat/ssl/private/tomcat_cert.key``
 
-3. Run setupTomcatDocker script to ensure file permissions are correctly set 
-    
-	``sudo ./scripts/setupTomcatDocker.sh``
-
 	
-4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS
+### Install OpenELIS Global
+
+1. Install OpenELIS Global
+
+    a. Download latest installer package: 
+
+    ``curl -L -O https://url_for_the _file.tar.gz``
+ 
+    b. EG: for OE 2.0 Beta 1: 
+
+    ``curl -L -O https://www.dropbox.com/s/2z04rng0tt7txbg/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
+ 
+2. Unpack installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
+
+    ``tar xzf {context_name}_{installer_version}_Installer.tar.gz``
+
+3. Run the install script in Terminal or Putty 
+
+    ``cd {context_name}_{installer_version}_Installer``
+
+    ``sudo python setup_OpenELIS.py -install``
+
+Wait while install procedure completes
+
+4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS-Global
 
 Configure the backup:
 
