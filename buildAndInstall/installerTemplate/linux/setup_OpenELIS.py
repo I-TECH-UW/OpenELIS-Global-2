@@ -14,8 +14,8 @@ import re
 from time import gmtime, strftime
 from random import Random
 
-OE_VAR_DIR = "/var/lib/OpenELIS-Global/"
-OE_USR_DIR = "/usr/OpenELIS-Global/"
+OE_VAR_DIR = "/var/lib/openelis-global/"
+OE_CONFIG_DIR = "/etc/openelis-global/"
 
 VERSION = ""
 DOCKER_DIR = "./dockerImage/"
@@ -50,13 +50,17 @@ NO_PROMPT = False
 
 DOCKER_OE_REPO_NAME = "openelisglobal"
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp"
-DOCKER_SECRETS_DIR = OE_USR_DIR + "secrets/"
-
-DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
-DOCKER_DB_BACKUPS_MOUNT_POINT = BACKUP_DIR  # path on host
-DOCKER_DB_DATA_MOUNT_POINT = OE_VAR_DIR + "database/"  # path on host
-DOCKER_DB = True
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database"
+DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
+
+SECRETS_MOUNT_POINT = OE_CONFIG_DIR + "secrets/"
+DB_ENVIRONMENT_MOUNT_POINT = OE_CONFIG_DIR + "database/"
+DB_BACKUPS_MOUNT_POINT = BACKUP_DIR  # path on host
+DB_DATA_MOUNT_POINT = OE_VAR_DIR + "data/"  # path on host
+DB_INIT_MOUNT_POINT = OE_VAR_DIR + DB_INIT_DIR
+DB_FILES_MOUNT_POINT = OE_VAR_DIR + DB_DIR
+
+DOCKER_DB = True #DB installed through docker
 
 
 def install():
@@ -131,12 +135,11 @@ def do_install():
 
 def install_db():
     if DOCKER_DB:
-        ensure_dir_exists(OE_USR_DIR)
-        ensure_dir_not_exists(OE_USR_DIR + DB_INIT_DIR)
-        ensure_dir_not_exists(OE_USR_DIR + DB_DIR)
+        ensure_dir_not_exists(DB_INIT_MOUNT_POINT)
+        ensure_dir_not_exists(DB_FILES_MOUNT_POINT)
         
-        shutil.copytree(DB_INIT_DIR, OE_USR_DIR + DB_INIT_DIR)
-        shutil.copytree(DB_DIR, OE_USR_DIR + DB_DIR)
+        shutil.copytree(DB_INIT_DIR, DB_INIT_MOUNT_POINT)
+        shutil.copytree(DB_DIR, DB_FILES_MOUNT_POINT)
     else:
         cmd = 'su -c "psql  <  ' + STAGING_DIR + 'pgsqlPermissions.sql" postgres'
         os.system(cmd)
@@ -155,9 +158,13 @@ def install_backup_task():
             over_ride = raw_input("The backup script is already installed. Do you want to overwrite it? y/n ")
             if not over_ride.lower() == "y":
                 return
+    
+    BACKUP_SCRIPT_TEMPLATE = TEMPLATE_DIR + BACKUP_SCRIPT_NAME        
+    if DOCKER_DB:
+        BACKUP_SCRIPT_TEMPLATE = TEMPLATE_DIR + "dockerDB/" + BACKUP_SCRIPT_NAME
 
     # make sure the template files for the backup exits
-    if not os.path.exists(TEMPLATE_DIR + BACKUP_SCRIPT_NAME):
+    if not os.path.exists(BACKUP_SCRIPT_TEMPLATE):
         log("Not installing backup. Script missing", PRINT_TO_CONSOLE)
         return
     else:
@@ -179,7 +186,7 @@ def install_backup_task():
                 if SITE_ID.lower() == 'q':
                     return
 
-    template_file = open(TEMPLATE_DIR + BACKUP_SCRIPT_NAME, "r")
+    template_file = open(BACKUP_SCRIPT_TEMPLATE, "r")
     staging_file = open(STAGING_DIR + BACKUP_SCRIPT_NAME, "w")
 
     for line in template_file:
@@ -257,13 +264,13 @@ def setup_tomcat_docker():
 
 
 def preserve_db_password():
-    db_user_password_file = open(DOCKER_SECRETS_DIR + 'OE_DB_USER_PASSWORD', 'w')
+    db_user_password_file = open(SECRETS_MOUNT_POINT + 'OE_DB_USER_PASSWORD', 'w')
     db_user_password_file.write(CLINLIMS_PWD)
     db_user_password_file.close()
 
     # own directory by tomcat user
-    os.chown(DOCKER_SECRETS_DIR + 'OE_DB_USER_PASSWORD', 8443, 8443)
-    os.chmod(DOCKER_SECRETS_DIR + 'OE_DB_USER_PASSWORD', 0640)
+    os.chown(SECRETS_MOUNT_POINT + 'OE_DB_USER_PASSWORD', 8443, 8443)
+    os.chmod(SECRETS_MOUNT_POINT + 'OE_DB_USER_PASSWORD', 0640)
 
 
 def do_update():
@@ -329,15 +336,17 @@ def delete_backup_script():
         
         
 def delete_program_files():
-    if os.path.exists(OE_USR_DIR):
-        shutil.rmtree(OE_USR_DIR)
+    if os.path.exists(OE_VAR_DIR):
+        shutil.rmtree(OE_VAR_DIR)
+    if os.path.exists(OE_CONFIG_DIR):
+        shutil.rmtree(OE_CONFIG_DIR)
 
 
 def delete_database():
     if DOCKER_DB:
-        if os.path.exists(DOCKER_DB_DATA_MOUNT_POINT):
+        if os.path.exists(DB_DATA_MOUNT_POINT):
             log("removing database data", PRINT_TO_CONSOLE)
-            shutil.rmtree(DOCKER_DB_DATA_MOUNT_POINT)
+            shutil.rmtree(DB_DATA_MOUNT_POINT)
     else:
         log("Dropping clinlims database and OpenELIS database roles", PRINT_TO_CONSOLE)
         os.system('su -c "dropdb -e clinlims" postgres')
@@ -363,24 +372,45 @@ def config_files_for_postgres():
         print raw_input("\npress any key once you have recorded it")
         os.system('clear')
 
-    # set values for database users
-
-    pg_permissions = open(TEMPLATE_DIR + 'pgsql-permissions.sql')
-
-    output_file = open(DB_DIR + 'pgsqlPermissions.sql', 'w')
-
-    for line in pg_permissions:
-        if line.find('itechappPassword') > 0:
-            line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
-            output_file.write(line)
-        elif line.find('adminPassword') > 0:
-            line = line.replace('[% adminPassword %]', ADMIN_PWD)
-            output_file.write(line)
-        else:
-            output_file.write(line)
-
-    output_file.close()
-    pg_permissions.close()
+    # set values for database users if installing with docker
+    if DOCKER_DB:
+        pg_permissions = open(TEMPLATE_DIR + 'dockerDB/pgsql-permissions.sql')
+        output_file = open(DB_DIR + 'pgsqlPermissions.sql', 'w')
+        for line in pg_permissions:
+            if line.find('itechappPassword') > 0:
+                line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
+                output_file.write(line)
+            else:
+                output_file.write(line)
+        output_file.close()
+        pg_permissions.close()
+    
+        database_environment = open(TEMPLATE_DIR + 'dockerDB/database.env')
+        output_file = open(DB_ENVIRONMENT_MOUNT_POINT + 'database.env', 'w')
+        for line in database_environment:
+            if line.find('adminPassword') > 0:
+                line = line.replace('[% adminPassword %]', ADMIN_PWD)
+                output_file.write(line)
+            else:
+                output_file.write(line)
+        output_file.close()
+        database_environment.close()
+        os.chmod(DB_ENVIRONMENT_MOUNT_POINT + 'database.env', 0640)
+    # set values for database users if installing with native postgresql
+    else:
+        pg_permissions = open(TEMPLATE_DIR + 'pgsql-permissions.sql')
+        output_file = open(DB_DIR + 'pgsqlPermissions.sql', 'w')
+        for line in pg_permissions:
+            if line.find('itechappPassword') > 0:
+                line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
+                output_file.write(line)
+            elif line.find('adminPassword') > 0:
+                line = line.replace('[% adminPassword %]', ADMIN_PWD)
+                output_file.write(line)
+            else:
+                output_file.write(line)
+        output_file.close()
+        pg_permissions.close() 
 
 
 def check_preconditions(goal):
@@ -449,7 +479,7 @@ def check_postgres_preconditions():
 
 def db_installed(db_name):
     if DOCKER_DB:
-        return os.path.isdir(DOCKER_DB_DATA_MOUNT_POINT)
+        return os.path.isdir(DB_DATA_MOUNT_POINT)
     else:
         cmd = 'sudo -u postgres psql -c "SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'' + db_name + '\');"'
         result = subprocess.check_output(cmd, shell=True)
@@ -507,9 +537,14 @@ def update_postgres_role():
 
     template_file.close()
     staging_file.close()
-
-    cmd = 'su -c "psql  <  ' + STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME + '" postgres > /dev/null'
-    os.system(cmd)
+    #in case staging isn't deleted, make sure we're not storing password without protection
+    os.chmod(STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME, 0640)
+    if DOCKER_DB:
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -f ' + STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME
+        os.system(cmd)
+    else:
+        cmd = 'su -c "psql  <  ' + STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME + '" postgres > /dev/null'
+        os.system(cmd)
 
 
 def recover_database():
@@ -568,12 +603,16 @@ def backup_db():
     if find_password():
         log("backing up database to " + ROLLBACK_DIR + backup_name, PRINT_TO_CONSOLE)
         if DOCKER_DB:
-            ensure_dir_exists(DOCKER_DB_BACKUPS_MOUNT_POINT + action_time)
+            ensure_dir_exists(DB_BACKUPS_MOUNT_POINT + action_time)
             os.system(
                 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' /usr/bin/pg_dump -U clinlims -f "' 
                 + DOCKER_DB_BACKUPS_DIR + backup_name + '" clinlims')
-            
-            shutil.move(DOCKER_DB_BACKUPS_MOUNT_POINT + backup_name, ROLLBACK_DIR + backup_name)
+            if os.path.exists(DB_BACKUPS_MOUNT_POINT + backup_name):
+                shutil.move(DB_BACKUPS_MOUNT_POINT + backup_name, ROLLBACK_DIR + backup_name)
+            else:
+                over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
+                if not over_ride.lower() == "y":
+                    clean_exit()  
         else:
             os.system(
                 "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pg_dump -h localhost -U clinlims clinlims > " + ROLLBACK_DIR + backup_name + "'")
@@ -607,7 +646,7 @@ def get_app_details():
 def find_password():
     global CLINLIMS_PWD
     try:
-        config_file = open(DOCKER_SECRETS_DIR + 'OE_DB_USER_PASSWORD')
+        config_file = open(SECRETS_MOUNT_POINT + 'OE_DB_USER_PASSWORD')
 
         for line in config_file:
             CLINLIMS_PWD = line
@@ -703,7 +742,9 @@ if len(sys.argv) > 1:
     ensure_dir_exists(STAGING_DIR)
     ensure_dir_exists(LOG_DIR)
     ensure_dir_exists(ROLLBACK_DIR)
-    ensure_dir_exists(DOCKER_SECRETS_DIR)
+    ensure_dir_exists(OE_VAR_DIR)
+    ensure_dir_exists(SECRETS_MOUNT_POINT)
+    ensure_dir_exists(DB_ENVIRONMENT_MOUNT_POINT)
     open_log_file()
     get_app_details()
     write_version()

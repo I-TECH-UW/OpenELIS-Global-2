@@ -11,4 +11,4 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f $
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname clinlims -f ${DB_DIR}/baseDatabase/OpenELIS-Global.sql
 
 #modify site info based on installation values
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f ${DB_DIR}/siteInfo.sql
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname clinlims -f ${DB_DIR}/siteInfo.sql

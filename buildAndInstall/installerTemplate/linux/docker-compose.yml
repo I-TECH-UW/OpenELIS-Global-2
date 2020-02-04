@@ -5,15 +5,17 @@ services:
         container_name: openelisglobal-database
         image: postgres:9.5
         restart: always
+        env_file:
+            - /etc/openelis-global/database/database.env
         volumes:
               #preserves the database between containers
-            - /var/lib/OpenELIS-Global/database:/var/lib/postgresql/data                
+            - /var/lib/openelis-global/data:/var/lib/postgresql/data                
               #files here will run on install
-            - /usr/OpenELIS-Global/databaseInitScripts/:/docker-entrypoint-initdb.d    
+            - /var/lib/openelis-global/databaseInitScripts/:/docker-entrypoint-initdb.d    
               #second value must match value in createDB.sh
-            - /usr/OpenELIS-Global/database/:/database                                 
+            - /var/lib/openelis-global/database/:/database                                 
               #values must match values in DatabaseBackup.pl
-            - /var/lib/OpenELIS-Global/backups/:/backups      
+            - /var/lib/openelis-global/backups/:/backups     
             
     openelisglobal:
         container_name: openelisglobal-webapp
@@ -35,7 +37,7 @@ services:
             
 secrets:
   OE_DB_USER_PASSWORD:
-    file: /usr/OpenELIS-Global/secrets/OE_DB_USER_PASSWORD
+    file: /etc/openelis-global/secrets/OE_DB_USER_PASSWORD
   tomcat_cert.crt:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
