@@ -69,7 +69,7 @@ sub sendOffsite{
 	}           
 }
 my $db_install_type  = '[% db_install_type %]';
-my $postgres_pwd_filepath = '/etc/openelis-global/secrets/OE_DB_USER_PASSWORD';
+my $postgres_pwd_filepath = '[% secrets_dir %]OE_DB_USER_PASSWORD';
 open my $fh, '<', $postgres_pwd_filepath or die "Can't open file $!";
 read $fh, my $postgres_pwd, -s $fh;
 my $keepFileDays  = 30;
@@ -82,16 +82,15 @@ my $siteId = '[% siteId %]';
 my $snapShotFileBase     = 'lastSnapshot_' . $siteId; 
 my $snapShotFileName     = $snapShotFileBase . '.backup'; 
 my $snapShotFileNameZipped     = $snapShotFileName . '.gz'; 
-my $databaseBackupMountPoint			 = '/var/lib/openelis-global/backups';
-my $databaseDockerBackupDir	 			 = '/backups';
-my $databaseDockerImageName				 = 'openelisglobal-database';
+my $databaseDockerBackupDir	 			 = '[% docker_backups_dir %]';
+my $databaseDockerImageName				 = 'openelisglobal-database'; #don't change
 #for backups using docker image
 my $docker_cmd = 'docker exec ' . $databaseDockerImageName . ' /usr/bin/pg_dump -U clinlims -f "' . $databaseDockerBackupDir . '/' . $snapShotFileName . '" -n \"clinlims\" clinlims';
 #for backups using postgres running on the host
 my $host_cmd = 'pg_dump -h localhost  -U clinlims -f "' . $snapShotFileName . '" -n \"clinlims\" clinlims'; 
 my $zipCmd = 'gzip -f ' .  $snapShotFileName;
 #my $backBaseDir          = cwd();
-my $backBaseDir          = $databaseBackupMountPoint;
+my $backBaseDir          = '[% db_backups_dir %]';
 my $baseFileName         = '[% installName %]';
 my $mountedBackup        = "/media/My\ Passport/backup";
 my $dailyDir             = "$backBaseDir/daily";
@@ -107,7 +106,7 @@ $ENV{'PGPASSWORD'} = $postgres_pwd;
 chdir "$dailyDir";
 if ( $db_install_type eq "docker" ) {
 	my $response = system("$docker_cmd")  and warn "Error while running: $! \n";
-	copy( "$databaseBackupMountPoint/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
+	copy( "$backBaseDir/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
 } else {
 	my $response = system("$host_cmd")  and warn "Error while running: $! \n";
 }

@@ -55,6 +55,16 @@ This updates the system from the sources in the sources list. It updates what ne
     ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
     ``/etc/tomcat/ssl/private/tomcat_cert.key``
+    
+### Optionally install Postgresql
+OpenELIS-Global is configured to work with a docker based Postgresql instance, but also supports connecting to a full Postgresql instance.
+If you have doubts about docker's reliability for preserving your database, use the following steps to install a full instance of postgresql.
+
+1. Install Postgresql
+
+	``sudo apt update``
+	
+	``sudo apt install postgresql postgresql-contrib``
 
 	
 ### Install OpenELIS Global
@@ -69,15 +79,19 @@ This updates the system from the sources in the sources list. It updates what ne
 
     ``curl -L -O https://www.dropbox.com/s/2z04rng0tt7txbg/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
  
-2. Unpack installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
+2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
     ``tar xzf {context_name}_{installer_version}_Installer.tar.gz``
-
-3. Run the install script in Terminal or Putty 
-
+    
     ``cd {context_name}_{installer_version}_Installer``
+    
+3. Optionally configure your install by editing setup.ini
 
-    ``sudo python setup_OpenELIS.py -d``
+	set docker.database=False if you are using a local instance of postgresql instead of a docker database
+
+3. Run the install script in Terminal or Putty
+
+     ``sudo python setup_OpenELIS.py ``
 
 Wait while install procedure completes
 
