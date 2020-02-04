@@ -77,7 +77,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
     ``cd {context_name}_{installer_version}_Installer``
 
-    ``sudo python setup_OpenELIS.py -install``
+    ``sudo python setup_OpenELIS.py -d``
 
 Wait while install procedure completes
 

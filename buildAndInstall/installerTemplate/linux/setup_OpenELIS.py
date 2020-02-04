@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import getopt
+import grp
 import glob
 import os
 import subprocess
@@ -60,7 +62,9 @@ DB_DATA_MOUNT_POINT = OE_VAR_DIR + "data/"  # path on host
 DB_INIT_MOUNT_POINT = OE_VAR_DIR + DB_INIT_DIR
 DB_FILES_MOUNT_POINT = OE_VAR_DIR + DB_DIR
 
-DOCKER_DB = True #DB installed through docker
+#arguments set through command line
+DOCKER_DB = False #DB installed through docker
+MODE = "install"
 
 
 def install():
@@ -139,13 +143,16 @@ def install_db():
         ensure_dir_not_exists(DB_FILES_MOUNT_POINT)
         
         shutil.copytree(DB_INIT_DIR, DB_INIT_MOUNT_POINT)
+        os.chown(DB_INIT_MOUNT_POINT + '1-pgsqlPermissions.sql', 0, grp.getgrnam('docker')[2])
         shutil.copytree(DB_DIR, DB_FILES_MOUNT_POINT)
     else:
-        cmd = 'su -c "psql  <  ' + STAGING_DIR + 'pgsqlPermissions.sql" postgres'
+        cmd = 'su -c "createdb  clinlims" postgres'
         os.system(cmd)
-        cmd = 'su -c "psql clinlims  < ' + DB_DIR + 'baseDatabase/OpenELIS-Global.sql" postgres'
+        cmd = 'su -c "psql  <  ' + DB_INIT_DIR + '1-pgsqlPermissions.sql" postgres'
         os.system(cmd)
-        cmd = 'su -c "psql clinlims <  ' + STAGING_DIR + 'siteInfo.sql" postgres'
+        cmd = 'su -c "psql clinlims  < ' + DB_INIT_DIR + 'OpenELIS-Global.sql" postgres'
+        os.system(cmd)
+        cmd = 'su -c "psql clinlims <  ' + DB_INIT_DIR + 'siteInfo.sql" postgres'
         os.system(cmd)
 
 
@@ -159,10 +166,7 @@ def install_backup_task():
             if not over_ride.lower() == "y":
                 return
     
-    BACKUP_SCRIPT_TEMPLATE = TEMPLATE_DIR + BACKUP_SCRIPT_NAME        
-    if DOCKER_DB:
-        BACKUP_SCRIPT_TEMPLATE = TEMPLATE_DIR + "dockerDB/" + BACKUP_SCRIPT_NAME
-
+    BACKUP_SCRIPT_TEMPLATE = TEMPLATE_DIR + BACKUP_SCRIPT_NAME 
     # make sure the template files for the backup exits
     if not os.path.exists(BACKUP_SCRIPT_TEMPLATE):
         log("Not installing backup. Script missing", PRINT_TO_CONSOLE)
@@ -186,6 +190,9 @@ def install_backup_task():
                 if SITE_ID.lower() == 'q':
                     return
 
+
+      
+    
     template_file = open(BACKUP_SCRIPT_TEMPLATE, "r")
     staging_file = open(STAGING_DIR + BACKUP_SCRIPT_NAME, "w")
 
@@ -194,8 +201,13 @@ def install_backup_task():
             line = line.replace("[% installName %]", APP_NAME)
         if line.find("[% siteId %]") > 0:
             line = line.replace("[% siteId %]", SITE_ID)
-        if line.find("[% postgres_password %]") > 0:
-            line = line.replace("[% postgres_password %]", CLINLIMS_PWD)
+        #if line.find("[% postgres_password %]") > 0:
+        #    line = line.replace("[% postgres_password %]", CLINLIMS_PWD)
+        if line.find("[% db_install_type %]") > 0:
+            if DOCKER_DB:
+                line = line.replace("[% db_install_type %]", "docker")
+            else:
+                line = line.replace("[% db_install_type %]", "host")
 
         staging_file.write(line)
 
@@ -203,16 +215,16 @@ def install_backup_task():
     staging_file.close()
 
     if not os.path.exists(BACKUP_DIR):
-        os.makedirs(BACKUP_DIR, 0755)
+        os.makedirs(BACKUP_DIR, 0640)
     if not os.path.exists(BACKUP_DIR + "daily"):
-        os.makedirs(BACKUP_DIR + "daily", 0755)
+        os.makedirs(BACKUP_DIR + "daily", 0640)
     if not os.path.exists(BACKUP_DIR + "cumulative"):
-        os.makedirs(BACKUP_DIR + "cumulative", 0755)
+        os.makedirs(BACKUP_DIR + "cumulative", 0640)
     if not os.path.exists(BACKUP_DIR + "transmissionQueue"):
-        os.makedirs(BACKUP_DIR + "transmissionQueue", 0755)
+        os.makedirs(BACKUP_DIR + "transmissionQueue", 0640)
 
     shutil.copy(STAGING_DIR + BACKUP_SCRIPT_NAME, BACKUP_DIR + BACKUP_SCRIPT_NAME)
-    os.chmod(BACKUP_DIR + BACKUP_SCRIPT_NAME, 0777)
+    os.chmod(BACKUP_DIR + BACKUP_SCRIPT_NAME, 0744)
 
     shutil.copy(CRON_FILE_DIR + CRON_FILE, CRON_INSTALL_DIR)
 
@@ -310,9 +322,10 @@ def do_uninstall():
 
 
 def delete_docker_images():
-    log("stopping database docker image...", PRINT_TO_CONSOLE)
-    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_DB_CONTAINER_NAME + '" --format="{{.ID}}"))'
-    os.system(cmd)
+    if DOCKER_DB:
+        log("stopping database docker image...", PRINT_TO_CONSOLE)
+        cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_DB_CONTAINER_NAME + '" --format="{{.ID}}"))'
+        os.system(cmd)
     log("removing openelis docker image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
@@ -372,19 +385,24 @@ def config_files_for_postgres():
         print raw_input("\npress any key once you have recorded it")
         os.system('clear')
 
-    # set values for database users if installing with docker
+    # set values for database users
+    pg_permissions = open(TEMPLATE_DIR + 'pgsql-permissions.sql')
+    output_file = open(DB_INIT_DIR + '1-pgsqlPermissions.sql', 'w')
+    for line in pg_permissions:
+        if line.find('itechappPassword') > 0:
+            line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
+            output_file.write(line)
+        elif line.find('adminPassword') > 0:
+            line = line.replace('[% adminPassword %]', ADMIN_PWD)
+            output_file.write(line)
+        else:
+            output_file.write(line)
+    output_file.close()
+    pg_permissions.close() 
+    os.chmod(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0640)
+
+    # set values for database admin user if installing with docker
     if DOCKER_DB:
-        pg_permissions = open(TEMPLATE_DIR + 'dockerDB/pgsql-permissions.sql')
-        output_file = open(DB_DIR + 'pgsqlPermissions.sql', 'w')
-        for line in pg_permissions:
-            if line.find('itechappPassword') > 0:
-                line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
-                output_file.write(line)
-            else:
-                output_file.write(line)
-        output_file.close()
-        pg_permissions.close()
-    
         database_environment = open(TEMPLATE_DIR + 'dockerDB/database.env')
         output_file = open(DB_ENVIRONMENT_MOUNT_POINT + 'database.env', 'w')
         for line in database_environment:
@@ -396,27 +414,17 @@ def config_files_for_postgres():
         output_file.close()
         database_environment.close()
         os.chmod(DB_ENVIRONMENT_MOUNT_POINT + 'database.env', 0640)
-    # set values for database users if installing with native postgresql
-    else:
-        pg_permissions = open(TEMPLATE_DIR + 'pgsql-permissions.sql')
-        output_file = open(DB_DIR + 'pgsqlPermissions.sql', 'w')
-        for line in pg_permissions:
-            if line.find('itechappPassword') > 0:
-                line = line.replace('[% itechappPassword %]', CLINLIMS_PWD)
-                output_file.write(line)
-            elif line.find('adminPassword') > 0:
-                line = line.replace('[% adminPassword %]', ADMIN_PWD)
-                output_file.write(line)
-            else:
-                output_file.write(line)
-        output_file.close()
-        pg_permissions.close() 
 
 
 def check_preconditions(goal):
     """Checks if server is in right state for goal"""
     global POSTGRES_LIB_DIR
 
+    if not DOCKER_DB:
+        log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
+        if not check_postgres_preconditions():
+            return False
+        
     if goal == 'install':
         if (db_installed('clinlims')):
             log("\nThere is a currently installed version of OpenElis", PRINT_TO_CONSOLE)
@@ -434,11 +442,6 @@ def check_preconditions(goal):
             log("\nThere is no currently installed version of OpenElis", PRINT_TO_CONSOLE)
             print "Nothing to uninstall"
             write_help()
-            return False
-
-    if not DOCKER_DB:
-        log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
-        if not check_postgres_preconditions():
             return False
 
     return True
@@ -475,8 +478,8 @@ def check_postgres_preconditions():
     else:
         log("Postgres must be 8.3 or later\n", PRINT_TO_CONSOLE)
         return False
-
-
+        
+    
 def db_installed(db_name):
     if DOCKER_DB:
         return os.path.isdir(DB_DATA_MOUNT_POINT)
@@ -499,7 +502,7 @@ def config_site_information():
     if NO_PROMPT:
         pass
     else:
-        site_file = open(DB_DIR + 'siteInfo.sql', 'w')
+        site_file = open(DB_INIT_DIR + 'siteInfo.sql', 'w')
         SITE_ID = raw_input("site number for this lab (5 character): ")
         persist_site_information(site_file, 'siteNumber', 'The site number of the this lab', SITE_ID)
         persist_site_information(site_file, 'Accession number prefix',
@@ -564,9 +567,18 @@ def load_docker_image():
     
 
 def start_docker_container():
+    get_docker_compose()
     cmd = 'sudo docker-compose up -d '
     os.system(cmd)
 
+
+def get_docker_compose():
+    if DOCKER_DB:
+        shutil.copy(TEMPLATE_DIR + "dockerDB/docker-compose.yml", "docker-compose.yml")
+    else:
+        shutil.copy(TEMPLATE_DIR + "docker-compose.yml", "docker-compose.yml")
+        
+        
 # def apply_separate_test_fix():
 #     if not os.path.exists(FIX_DIR + "collapseTests/packages/python-pgsql_2.5.1-2+b2_i386.deb"):
 #         log("Note: Not applying separateTestFix.", PRINT_TO_CONSOLE)
@@ -692,21 +704,30 @@ def write_help():
 setup_OpenELIS.py <options>
     This script must be run as sudo or else it will fail due to permission problems.
 
--install  - Installs OpenELIS.  Assumes that there is not a partial install
-
--installNoPrompt  - Installs OpenELIS without prompting.  Assumes that there is not a partial install
-
--installBackup - Installs just the backup.  Will overwrite any existing backup
-
--update - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
-
--uninstall - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
-
--recover - Will try to recover the system if somebody has tried to fix the system manually.  It will re-install the war file and reset the database password
-
--version - The version number of this installer
-
--help - This screen
+    <options>
+        -d --dockerDB           -   use a docker database instead of a separate Postgres DB
+        
+        -m --mode <mode>        -   chose what mode you want to run in, default is install
+        <mode>
+            install             - Installs OpenELIS.  Assumes that there is not a partial install
+            
+            installNoPrompt     - Installs OpenELIS without prompting.  Assumes that there is not a partial install
+            
+            installBackup       - Installs just the backup.  Will overwrite any existing backup
+            
+            update              - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
+            
+            uninstall           - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
+            
+            recover             - Will try to recover the system if somebody has tried to fix the system manually.  It will re-install the war file and reset the database password
+            
+            version             - The version number of this installer
+            
+            help                - This screen
+            
+        -v --version            -   run in version mode
+        
+        -h --help               -   print help
         """
 
 
@@ -732,13 +753,28 @@ def log(message, to_console):
     if to_console:
         print message
 
-        
-# Main entry point
-if len(sys.argv) > 1:
+def main(argv):   
+    global MODE, DOCKER_DB     
     os.putenv("LANG", LANG_NAME)
-
+    
+    try:
+        opts, args = getopt.getopt(argv,"dm:vh",["dockerDB","mode=", "version", "help"])
+    except getopt.GetoptError:
+        write_help()
+        sys.exit(2)
+            
+    for opt, arg in opts:
+        if opt in ("-d", "--dockerDB"):
+            DOCKER_DB = True
+        elif opt in ("-m","--mode"):
+            MODE = arg
+        elif opt in ("-v","--version"):
+            MODE = "version"
+        elif opt in ("-h","--help"):
+            MODE = "help"
+    
     check_on_writable_system()
-
+    
     ensure_dir_exists(STAGING_DIR)
     ensure_dir_exists(LOG_DIR)
     ensure_dir_exists(ROLLBACK_DIR)
@@ -748,55 +784,52 @@ if len(sys.argv) > 1:
     open_log_file()
     get_app_details()
     write_version()
-
-    arg = sys.argv[1]
-
-    if arg == "-installCrossTabs":
+    
+    if MODE == "installCrossTabs":
         log("installCrossTabs " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         install_crosstab()
         clean_exit()
-
-    if arg == "-uninstall":
+    
+    if MODE == "uninstall":
         log("uninstall " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         print "This will uninstall OpenELIS from this machine including **ALL** data from database"
         remove = raw_input("Do you want to continue with the uninstall? y/n: ")
         if remove.lower() == 'y':
             uninstall()
-        clean_exit()
-
-    if arg == "-update":
+            clean_exit()
+    
+    if MODE == "update":
         log("update " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         update()
         clean_exit()
-
-    if arg == "-installBackup":
+    
+    if MODE == "installBackup":
         log("installBackup " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         find_password()
         install_backup_task()
         clean_exit()
-
-    if arg == "-install":
+    
+    if MODE == "install":
         log("install " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         install()
         clean_exit()
-
-    if arg == "-installNoPrompt":
+    
+    if MODE == "installNoPrompt":
         log("installNoPrompt " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         install_no_prompt()
         clean_exit()
-
-    if arg == "-recover":
+    
+    if MODE == "recover":
         log("recover " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         recover_database()
         clean_exit()
-
-    if arg == "-version":
+    
+    if MODE == "version":
         # version already written
         clean_exit()
-
+    
     # if all else fails give help
     write_help()
-    clean_exit()
-
-# default is help
-write_help()
+    
+if __name__ == "__main__":
+   main(sys.argv[1:])
