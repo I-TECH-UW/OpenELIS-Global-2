@@ -23,11 +23,9 @@ APP_NAME = "OpenELIS-Global"
 LANG_NAME = "en_US.UTF-8"
 
 #Installer directories' names
-INSTALLER_CRON_FILE_DIR = "./cronFiles/"
 INSTALLER_CROSSTAB_DIR = "./crosstab/"
 INSTALLER_DB_INIT_DIR = "./initDB/"
 INSTALLER_DOCKER_DIR = "./dockerImage/"
-INSTALLER_FIX_DIR = "./fixes/"
 INSTALLER_LOG_DIR = "./log/"
 INSTALLER_ROLLBACK_DIR = "./rollback/"
 INSTALLER_SCRIPTS_DIR = "./scripts/"
@@ -52,6 +50,10 @@ DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
+#database variables
+DB_HOST="localhost"
+DB_PORT="5432"
+
 #Docker variables
 DOCKER_OE_REPO_NAME = "openelisglobal" #don't change
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" #don't change
@@ -60,6 +62,7 @@ DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 
 #Behaviour variables
 DOCKER_DB = True 
+LOCAL_DB = False
 PRINT_TO_CONSOLE = True
 MODE = "update-install"
 
@@ -225,23 +228,39 @@ def create_docker_compose_file():
     output_file = open("docker-compose.yml", "w")
 
     for line in template_file:
-        if DOCKER_DB and line.find("#db") >= 0:
-            line = line.replace("#db", "")
-        if not DOCKER_DB and line.find("#h") >= 0:
-            line = line.replace("#h", "")
-            
+        #set docker db attributes
+        if DOCKER_DB:
+            if line.find("#db") >= 0:
+                line = line.replace("#db", "")
+            if line.find("#port") >= 0:
+                line = line.replace("#port", "")
+            if line.find("[% db_env_dir %]")  >= 0:
+                line = line.replace("[% db_env_dir %]", DB_ENVIRONMENT_DIR)  
+            if line.find("[% db_data_dir %]")  >= 0:
+                line = line.replace("[% db_data_dir %]", DB_DATA_DIR)  
+            if line.find("[% db_init_dir %]")  >= 0:
+                line = line.replace("[% db_init_dir %]", DB_INIT_DIR)  
+            if line.find("[% docker_backups_dir %]")  >= 0:
+                line = line.replace("[% docker_backups_dir %]", DOCKER_DB_BACKUPS_DIR)  
+            if line.find("[% db_backups_dir %]")  >= 0:
+                line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)
+        #set local db attributes
+        elif LOCAL_DB:
+            if line.find("#h") >= 0:
+                line = line.replace("#h", "")
+        #set remote db attributes
+        else:
+            if line.find("#port") >= 0:
+                line = line.replace("#port", "")
+        
+        #common attributes
+        if line.find("[% db_host %]")  >= 0:
+            line = line.replace("[% db_host %]", DB_HOST) 
+        if line.find("[% db_port %]")  >= 0:
+            line = line.replace("[% db_port %]", DB_PORT) 
         if line.find("[% secrets_dir %]")  >= 0:
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
-        if line.find("[% db_env_dir %]")  >= 0:
-            line = line.replace("[% db_env_dir %]", DB_ENVIRONMENT_DIR)  
-        if line.find("[% db_data_dir %]")  >= 0:
-            line = line.replace("[% db_data_dir %]", DB_DATA_DIR)  
-        if line.find("[% db_init_dir %]")  >= 0:
-            line = line.replace("[% db_init_dir %]", DB_INIT_DIR)  
-        if line.find("[% db_backups_dir %]")  >= 0:
-            line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)  
-        if line.find("[% docker_backups_dir %]")  >= 0:
-            line = line.replace("[% docker_backups_dir %]", DOCKER_DB_BACKUPS_DIR)  
+        
         output_file.write(line)
 
     template_file.close()
@@ -290,8 +309,10 @@ def install_backup_script():
         if line.find("[% db_install_type %]") >= 0:
             if DOCKER_DB:
                 line = line.replace("[% db_install_type %]", "docker")
-            else:
+            elif LOCAL_DB:
                 line = line.replace("[% db_install_type %]", "host")
+            else:
+                line = line.replace("[% db_install_type %]", "remote")
         if line.find("[% db_backups_dir %]") >= 0:
             line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)
         if line.find("[% docker_backups_dir %]") >= 0:
@@ -386,13 +407,14 @@ def install_docker():
 
 def install_db():
     log("installing database", PRINT_TO_CONSOLE)
+    
     if DOCKER_DB:
         ensure_dir_not_exists(DB_INIT_DIR)
         #every .sql and .sh in db_init_dir will be auto run by docker on install
         shutil.copytree(INSTALLER_DB_INIT_DIR, DB_INIT_DIR)
         #make sure docker can read this file to run it
         os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, grp.getgrnam('docker')[2])
-    else:
+    elif LOCAL_DB:
         cmd = 'su -c "createdb  clinlims" postgres'
         os.system(cmd)
         #make sure postgres can read this file to run it
@@ -403,6 +425,10 @@ def install_db():
         os.system(cmd)
         cmd = 'su -c "psql clinlims <  ' + INSTALLER_DB_INIT_DIR + 'siteInfo.sql" postgres'
         os.system(cmd)
+    else:
+        log("can't install database remotely". PRINT_TO_CONSOLE)
+        log("please follow instructions for setting up a remote database". PRINT_TO_CONSOLE)
+        log("if you have already done so, please ignore this". PRINT_TO_CONSOLE)
 
 
 def preserve_database_user_password():
@@ -418,7 +444,7 @@ def preserve_database_user_password():
 
 # note There is a fair amount of copying files, it should be re-written using shutil
 def install_crosstab():
-    if not DOCKER_DB:
+    if LOCAL_DB:
         log("Checking if crosstab is installed in Postgres", True)
     
         # this creates an empty file to write to
@@ -518,11 +544,13 @@ def delete_database():
         if os.path.exists(DB_DATA_DIR):
             log("removing database data ", PRINT_TO_CONSOLE)
             shutil.rmtree(DB_DATA_DIR)
-    else:
+    elif LOCAL_DB:
         log("Dropping clinlims database and OpenELIS database roles", PRINT_TO_CONSOLE)
         os.system('su -c "dropdb -e clinlims" postgres')
         os.system('su -c "dropuser -e clinlims" postgres')
         os.system('su -c "dropuser -e admin" postgres')
+    else:
+        log("please manually remove remote database". PRINT_TO_CONSOLE)
 
 
 def uninstall_docker_images():
@@ -598,9 +626,11 @@ def update_database_user_role():
     if DOCKER_DB:
         cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -f ' + INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME
         os.system(cmd)
-    else:
+    elif LOCAL_DB:
         cmd = 'su -c "psql  <  ' + INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME + '" postgres > /dev/null'
         os.system(cmd)
+    else:
+        log("cannot update remote databases users". PRINT_TO_CONSOLE)
         
         
         
@@ -608,18 +638,34 @@ def update_database_user_role():
 #             GET/SET SETUP PROPERTIES
 #---------------------------------------------------------------------
 def read_setup_properties_file():
-    global DB_BACKUPS_DIR, DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, SECRETS_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR
+    global DB_BACKUPS_DIR, SECRETS_DIR
+    global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR
+    global DB_HOST, DB_PORT
+    global LOCAL_DB
+    
     config = ConfigParser.ConfigParser() 
     config.read(OE_ETC_DIR + SETUP_CONFIG_FILE_NAME)
     
-    DB_BACKUPS_DIR = config.get("INSTALL_DIRS", 'db.backup_dir')
-    DB_DATA_DIR = config.get("INSTALL_DIRS",'db.data_dir')
-    DB_ENVIRONMENT_DIR = config.get("INSTALL_DIRS",'db.env_dir')
-    DB_INIT_DIR = config.get("INSTALL_DIRS",'db.init_dir')
-    SECRETS_DIR = config.get("INSTALL_DIRS",'oe.secrets_dir')
+    install_dirs_info = "INSTALL_DIRS"
+    DB_BACKUPS_DIR = ensure_dir_string(config.get(install_dirs_info, 'backup_dir'))
+    SECRETS_DIR = ensure_dir_string(config.get(install_dirs_info,'secrets_dir'))
     
-    DOCKER_DB = is_true_string(config.get("DOCKER_VALUES",'docker.database'))
-    DOCKER_DB_BACKUPS_DIR = config.get("DOCKER_VALUES",'docker.backups_dir')
+    database_info = "DATABASE_CONNECTION"
+    DB_HOST = config.get(database_info, "host") # unused if docker_db
+    DB_PORT = config.get(database_info, "port") # unused if docker_db
+    
+    docker_info = "DOCKER_VALUES"
+    DOCKER_DB = is_true_string(config.get(docker_info, 'database'))
+    if DOCKER_DB:
+        DB_HOST = "database" 
+        DB_PORT = "5432" 
+    DOCKER_DB_BACKUPS_DIR = ensure_dir_string(config.get(docker_info,'backups_dir'))
+    DB_DATA_DIR = ensure_dir_string(config.get(docker_info,'host_data_dir'))
+    DB_ENVIRONMENT_DIR = ensure_dir_string(config.get(docker_info,'host_env_dir'))
+    DB_INIT_DIR = ensure_dir_string(config.get(docker_info,'host_init_dir'))
+    
+    if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
+        LOCAL_DB = True
     
     
 def write_setup_properties_file():
@@ -629,7 +675,7 @@ def write_setup_properties_file():
         return
     
     shutil.copy(SETUP_CONFIG_FILE_NAME, OE_ETC_DIR + SETUP_CONFIG_FILE_NAME)
-    
+
     
 def get_app_details():
     global APP_NAME, VERSION
@@ -722,7 +768,7 @@ def check_preconditions(goal):
     """Checks if server is in right state for goal"""
     global POSTGRES_LIB_DIR
 
-    if not DOCKER_DB:
+    if LOCAL_DB:
         log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
         if not check_postgres_preconditions():
             return False
@@ -742,10 +788,13 @@ def check_preconditions(goal):
 def db_installed(db_name):
     if DOCKER_DB:
         return os.path.isdir(DB_DATA_DIR)
-    else:
+    elif LOCAL_DB:
         cmd = 'sudo -u postgres psql -c "SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'' + db_name + '\');"'
         result = subprocess.check_output(cmd, shell=True)
         return db_name in result
+    else:
+        log("cannot check if remote database is installed. proceeding", PRINT_TO_CONSOLE)
+        return True
 
 
 def check_postgres_preconditions():
@@ -844,9 +893,11 @@ def backup_db():
                 over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
                 if not over_ride.lower() == "y":
                     clean_exit()  
-        else:
+        elif LOCAL_DB:
             os.system(
                 "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pg_dump -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+        else:
+            log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
     else:
         log("can't back up database, missing password file ", PRINT_TO_CONSOLE)
     
@@ -864,6 +915,12 @@ def ensure_dir_not_exists(dir):
 def get_file_name(file):
     filename_parts = file.split('/')
     return filename_parts[len(filename_parts) - 1]
+ 
+ 
+def ensure_dir_string(dir_string):
+    if not dir_string.endswith('/'):
+        return dir_string + '/'
+    return dir_string
 
         
 def check_on_writable_system():

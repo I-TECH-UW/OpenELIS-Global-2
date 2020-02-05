@@ -107,8 +107,10 @@ chdir "$dailyDir";
 if ( $db_install_type eq "docker" ) {
 	my $response = system("$docker_cmd")  and warn "Error while running: $! \n";
 	copy( "$backBaseDir/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
-} else {
+} else if ( $db_install_type eq "host" ) {
 	my $response = system("$host_cmd")  and warn "Error while running: $! \n";
+} else {
+	die "Cannot backup remote databases";
 }
 system("$zipCmd")  and warn "Error while running: $! \n";
 
