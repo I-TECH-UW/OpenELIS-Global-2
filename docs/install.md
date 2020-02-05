@@ -57,7 +57,7 @@ This updates the system from the sources in the sources list. It updates what ne
     ``/etc/tomcat/ssl/private/tomcat_cert.key``
     
 ### Install Postgresql
-OpenELIS-Global is configured to be able to install a docker based version of Postgres, but for this is generally not recommended for production databases
+OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
 If you trust docker to provide your database, you can ignore this section
 
 1. Install Postgresql
