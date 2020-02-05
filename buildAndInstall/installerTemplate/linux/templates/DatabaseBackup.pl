@@ -74,7 +74,7 @@ open my $fh, '<', $postgres_pwd_filepath or die "Can't open file $!";
 read $fh, my $postgres_pwd, -s $fh;
 my $keepFileDays  = 30;
 my $siteId = '[% siteId %]';
-#my $upLoadtargetURL = 'sftp://172.26.224.55/EFI/backup';
+#my $upLoadtargetURL = 'sftp://192.168.1.1/EFI/backup';
 #my $upLoadUserName = 'ftpuser';
 #my $upLoadPassword = '12345678';
 
@@ -84,15 +84,15 @@ my $snapShotFileName     = $snapShotFileBase . '.backup';
 my $snapShotFileNameZipped     = $snapShotFileName . '.gz'; 
 my $databaseDockerBackupDir	 			 = '[% docker_backups_dir %]';
 my $databaseDockerImageName				 = 'openelisglobal-database'; #don't change
-#for backups using docker image
+#for backup task in docker database command
 my $docker_cmd = 'docker exec ' . $databaseDockerImageName . ' /usr/bin/pg_dump -U clinlims -f "' . $databaseDockerBackupDir . '/' . $snapShotFileName . '" -n \"clinlims\" clinlims';
-#for backups using postgres running on the host
+#for backup task using postgres running on the host
 my $host_cmd = 'pg_dump -h localhost  -U clinlims -f "' . $snapShotFileName . '" -n \"clinlims\" clinlims'; 
 my $zipCmd = 'gzip -f ' .  $snapShotFileName;
 #my $backBaseDir          = cwd();
 my $backBaseDir          = '[% db_backups_dir %]';
 my $baseFileName         = '[% installName %]';
-my $mountedBackup        = "/media/My\ Passport/backup";
+my $mountedBackup        = "/media/USB0/Backup";
 my $dailyDir             = "$backBaseDir/daily";
 my $cumulativeDir        = "$backBaseDir/cumulative";
 my $queueDir             = "$backBaseDir/transmissionQueue";
@@ -121,14 +121,3 @@ if (-d $mountedBackup) {
 deleteOverAgedBackups ($maxTimeSpan, $cumulativeDir);
 
 #sendOffsite($queueDir, $upLoadtargetURL, $upLoadUserName, $upLoadPassword) or die "File cannot be copied on FTP server.";
-
-   
-
-
-
-
-
-
-
-
-
