@@ -1,3 +1,0 @@
-# m h  dom mon dow   command
-01 14 * * * root cd /var/lib/openelis-global/backups; ./DatabaseBackup.pl 
-
