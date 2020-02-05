@@ -96,10 +96,6 @@ setup_OpenELIS.py <options>
             
             recover             - Will try to recover the system if somebody has tried to fix the system manually.  It will reset the database password
             
-            version             - The version number of this installer
-            
-            help                - This screen
-            
         -v --version            -   run in version mode
         
         -h --help               -   print help
@@ -110,6 +106,8 @@ setup_OpenELIS.py <options>
 def main(argv):   
     global MODE, DOCKER_DB     
     os.putenv("LANG", LANG_NAME)
+    check_on_writable_system()
+    open_log_file()
     
     try:
         opts, args = getopt.getopt(argv,"m:vh",["mode=", "version", "help"])
@@ -121,22 +119,15 @@ def main(argv):
         if opt in ("-m","--mode"):
             MODE = arg
         elif opt in ("-v","--version"):
-            MODE = "version"
+            write_version()
+            return
         elif opt in ("-h","--help"):
-            MODE = "help"
+            write_help()()
+            return
           
-    check_on_writable_system()
-    open_log_file()
     get_app_details()
     write_version()
     
-    if MODE == "version":
-        # version already written
-        clean_exit()
-    if MODE == "help":
-        write_help()
-        clean_exit()
-        
     write_setup_properties_file()
     read_setup_properties_file()
     ensure_dir_exists(INSTALLER_STAGING_DIR)

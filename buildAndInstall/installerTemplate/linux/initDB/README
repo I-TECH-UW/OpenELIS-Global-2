@@ -1,1 +1,3 @@
-scripts placed here will be autorun on install
+.sh .sql placed here will be autorun on install if using docker db
+
+if not using docker db, then files must be manually called in setup_OpenELIS.py
