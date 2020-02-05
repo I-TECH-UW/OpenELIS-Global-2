@@ -61,8 +61,8 @@ DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" #don't change
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 
 #Behaviour variables
-DOCKER_DB = True 
-LOCAL_DB = False
+DOCKER_DB = False 
+LOCAL_DB = True
 PRINT_TO_CONSOLE = True
 MODE = "update-install"
 
@@ -655,7 +655,7 @@ def read_setup_properties_file():
     DB_PORT = config.get(database_info, "port") # unused if docker_db
     
     docker_info = "DOCKER_VALUES"
-    DOCKER_DB = is_true_string(config.get(docker_info, 'database'))
+    DOCKER_DB = is_true_string(config.get(docker_info, 'provide_database'))
     if DOCKER_DB:
         DB_HOST = "database" 
         DB_PORT = "5432" 
