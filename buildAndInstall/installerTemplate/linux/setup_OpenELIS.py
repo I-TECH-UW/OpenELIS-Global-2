@@ -48,6 +48,7 @@ DB_DATA_DIR = OE_VAR_DIR + "data/"
 DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
+PLUGINS_DIR = OE_VAR_DIR + "plugins/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #database variables
@@ -59,6 +60,7 @@ DOCKER_OE_REPO_NAME = "openelisglobal" #don't change
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" #don't change
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" #don't change
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
+DOCKER_DB_HOST_PORT = "5432"
 
 #Behaviour variables
 DOCKER_DB = False 
@@ -210,6 +212,8 @@ def do_install():
     install_crosstab()
 
     load_docker_image()
+    
+    install_plugins_dir()
 
     start_docker_containers()
 
@@ -244,6 +248,8 @@ def create_docker_compose_file():
                 line = line.replace("[% docker_backups_dir %]", DOCKER_DB_BACKUPS_DIR)  
             if line.find("[% db_backups_dir %]")  >= 0:
                 line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)
+            if line.find("[% db_host_port %]")  >= 0:
+                line = line.replace("[% db_host_port %]", DOCKER_DB_HOST_PORT)
         #set local db attributes
         elif LOCAL_DB:
             if line.find("#h") >= 0:
@@ -260,6 +266,9 @@ def create_docker_compose_file():
             line = line.replace("[% db_port %]", DB_PORT) 
         if line.find("[% secrets_dir %]")  >= 0:
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
+        if line.find("[% plugins_dir %]")  >= 0:
+            line = line.replace("[% plugins_dir %]", PLUGINS_DIR)  
+            
         
         output_file.write(line)
 
@@ -473,6 +482,10 @@ def install_crosstab():
             # run the installer
         cmd = cmd = 'sudo -u postgres psql -d clinlims -f ' + INSTALLER_CROSSTAB_DIR + 'tablefunc.sql'
         os.system(cmd)
+        
+
+def install_plugins_dir():
+    ensure_dir_exists(PLUGINS_DIR)
     
 
 
@@ -498,6 +511,8 @@ def do_update():
     backup_db()
 
     load_docker_image()
+    
+    create_docker_compose_file()
 
     start_docker_containers()
 
@@ -638,8 +653,8 @@ def update_database_user_role():
 #             GET/SET SETUP PROPERTIES
 #---------------------------------------------------------------------
 def read_setup_properties_file():
-    global DB_BACKUPS_DIR, SECRETS_DIR
-    global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR
+    global DB_BACKUPS_DIR, SECRETS_DIR, PLUGINS_DIR
+    global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR, DOCKER_DB_HOST_PORT
     global DB_HOST, DB_PORT
     global LOCAL_DB
     
@@ -649,23 +664,27 @@ def read_setup_properties_file():
     install_dirs_info = "INSTALL_DIRS"
     DB_BACKUPS_DIR = ensure_dir_string(config.get(install_dirs_info, 'backup_dir'))
     SECRETS_DIR = ensure_dir_string(config.get(install_dirs_info,'secrets_dir'))
+    PLUGINS_DIR = ensure_dir_string(config.get(install_dirs_info,'plugins_dir'))
     
     database_info = "DATABASE_CONNECTION"
     DB_HOST = config.get(database_info, "host") # unused if docker_db
     DB_PORT = config.get(database_info, "port") # unused if docker_db
     
-    docker_info = "DOCKER_VALUES"
-    DOCKER_DB = is_true_string(config.get(docker_info, 'provide_database'))
+    docker_db_info = "DOCKER_DB_VALUES"
+    DOCKER_DB = is_true_string(config.get(docker_db_info, 'provide_database'))
     if DOCKER_DB:
         DB_HOST = "database" 
         DB_PORT = "5432" 
-    DOCKER_DB_BACKUPS_DIR = ensure_dir_string(config.get(docker_info,'backups_dir'))
-    DB_DATA_DIR = ensure_dir_string(config.get(docker_info,'host_data_dir'))
-    DB_ENVIRONMENT_DIR = ensure_dir_string(config.get(docker_info,'host_env_dir'))
-    DB_INIT_DIR = ensure_dir_string(config.get(docker_info,'host_init_dir'))
+    DOCKER_DB_HOST_PORT = config.get(docker_db_info,'host_port')
+    DOCKER_DB_BACKUPS_DIR = ensure_dir_string(config.get(docker_db_info,'backups_dir'))
+    DB_DATA_DIR = ensure_dir_string(config.get(docker_db_info,'host_data_dir'))
+    DB_ENVIRONMENT_DIR = ensure_dir_string(config.get(docker_db_info,'host_env_dir'))
+    DB_INIT_DIR = ensure_dir_string(config.get(docker_db_info,'host_init_dir'))
     
     if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
         LOCAL_DB = True
+    else:
+        LOCAL_DB = False
     
     
 def write_setup_properties_file():
