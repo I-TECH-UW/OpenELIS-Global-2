@@ -22,17 +22,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import org.openelisglobal.internationalization.MessageUtil;
 
+@MappedSuperclass
 public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "last_updated")
     private Timestamp lastupdated;
 
+    @Transient
     private Timestamp originalLastupdated;
+    @Transient
     private String sysUserId;
-    protected String nameKey;
+    @Transient
+    private String nameKey;
 
     public BaseObject() {
     }

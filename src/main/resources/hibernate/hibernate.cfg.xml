@@ -92,7 +92,6 @@
 		<mapping resource="hibernate/hbm/SystemModule.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemUserModule.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemUserSection.hbm.xml" />
-		<mapping resource="hibernate/hbm/Login.hbm.xml" />
 		<mapping resource="hibernate/hbm/SamplePdf.hbm.xml" />
 		<mapping resource="hibernate/hbm/SampleNewborn.hbm.xml" />
 		<mapping resource="hibernate/hbm/PatientRelation.hbm.xml" />

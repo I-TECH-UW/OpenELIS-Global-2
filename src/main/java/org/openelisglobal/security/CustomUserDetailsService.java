@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,13 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String loginName) {
 
-        Login user = loginService.getMatch("loginName", loginName).orElseThrow(() -> new UsernameNotFoundException(
+        LoginUser user = loginService.getMatch("loginName", loginName).orElseThrow(() -> new UsernameNotFoundException(
                 "Unique Username not found, could be duplicates in database or it doesn't exist"));
 
         boolean disabled = user.getAccountDisabled().equalsIgnoreCase(IActionConstants.YES);
@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 !disabled, true, !credentialsExpired, !locked, getGrantedAuthorities(user));
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Login user) {
+    private List<GrantedAuthority> getGrantedAuthorities(LoginUser user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         return authorities;
     }

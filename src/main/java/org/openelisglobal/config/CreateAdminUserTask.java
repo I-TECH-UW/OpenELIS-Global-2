@@ -14,8 +14,8 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +23,16 @@ import org.springframework.stereotype.Component;
 public class CreateAdminUserTask {
 
     private static String PASSWORD_FILEPATH = "adminPassword.txt";
-    private static String PASSWORD_MARKER = LoginService.DEFAULT_ADMIN_USER_NAME + ":";
+    private static String PASSWORD_MARKER = LoginUserService.DEFAULT_ADMIN_USER_NAME + ":";
 
     @Autowired
-    private LoginService loginService;
+    private LoginUserService loginService;
 
     @PostConstruct
     private void ensureAdminUserIsCreated() {
         if (!loginService.defaultAdminExists()) {
             if (!loginService.nonDefaultAdminExists()) {
-                Login login;
+                LoginUser login;
                 try {
                     login = createAdminUser();
                     loginService.insert(login);
@@ -43,10 +43,10 @@ public class CreateAdminUserTask {
         }
     }
 
-    private Login createAdminUser() throws LIMSException {
-        Login login = new Login();
+    private LoginUser createAdminUser() throws LIMSException {
+        LoginUser login = new LoginUser();
         login.setSysUserId("1");
-        login.setLoginName(LoginService.DEFAULT_ADMIN_USER_NAME);
+        login.setLoginName(LoginUserService.DEFAULT_ADMIN_USER_NAME);
         login.setPasswordExpiredDate(getExpiredDate());
         login.setAccountLocked(IActionConstants.NO);
         login.setAccountDisabled(IActionConstants.NO);

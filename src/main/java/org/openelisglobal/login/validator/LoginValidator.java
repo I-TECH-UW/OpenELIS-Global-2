@@ -1,7 +1,7 @@
 package org.openelisglobal.login.validator;
 
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -12,7 +12,7 @@ public class LoginValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Login.class.equals(clazz);
+        return LoginUser.class.equals(clazz);
     }
 
     // basic validation at any point in execution
@@ -24,13 +24,13 @@ public class LoginValidator implements Validator {
 
     // validate before persisting for the first time
     // TODO needs expansion
-    public void preInsertValidate(Login login, Errors errors) {
+    public void preInsertValidate(LoginUser login, Errors errors) {
         validate(login, errors);
     }
 
     // validate before updating
     // TODO possibly needs expansion
-    public void preUpdateValidate(Login login, Errors errors) {
+    public void preUpdateValidate(LoginUser login, Errors errors) {
         validate(login, errors);
         // validate password expired day
         // bugzilla 2286
@@ -45,7 +45,7 @@ public class LoginValidator implements Validator {
 
     // complex validation for password update when user is not authenticated (ie
     // /UpdateLoginChangePassword.do)
-    public void unauthenticatedPasswordUpdateValidate(Login login, Errors errors) {
+    public void unauthenticatedPasswordUpdateValidate(LoginUser login, Errors errors) {
         preUpdateValidate(login, errors);
 
         // validate account disabled

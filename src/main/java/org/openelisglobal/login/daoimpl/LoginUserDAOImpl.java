@@ -25,9 +25,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.login.dao.LoginDAO;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.dao.LoginUserDAO;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO {
+public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements LoginUserDAO {
 
-    public LoginDAOImpl() {
-        super(Login.class);
+    public LoginUserDAOImpl() {
+        super(LoginUser.class);
     }
 
 //	@Override
@@ -185,7 +184,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	public List getAllLoginUsers() throws LIMSRuntimeException {
 //		List list ;
 //		try {
-//			String sql = "from Login";
+//			String sql = "from LoginUser";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -206,7 +205,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
-//			String sql = "from Login l order by l.loginName";
+//			String sql = "from LoginUser l order by l.loginName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
@@ -265,7 +264,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		List list ;
 //		int rrn = 0;
 //		try {
-//			String sql = "select l.id from Login l order by l.loginName";
+//			String sql = "select l.id from LoginUser l order by l.loginName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -292,7 +291,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		List list ;
 //		int rrn = 0;
 //		try {
-//			String sql = "select l.id from Login l order by l.loginName";
+//			String sql = "select l.id from LoginUser l order by l.loginName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -312,21 +311,21 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //	}
 
     @Override
-    public boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
+    public boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException {
         try {
 
-            List<Login> list = new ArrayList<>();
+            List<LoginUser> list = new ArrayList<>();
 
-            String sql = "from Login l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
+            String sql = "from LoginUser l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
 
-            String loginId = "0";
-            if (!StringUtil.isNullorNill(login.getId())) {
+            Integer loginId = 0;
+            if (null != login.getId()) {
                 loginId = login.getId();
             }
 
-            query.setInteger("loginId", Integer.parseInt(loginId));
+            query.setInteger("loginId", loginId);
 
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -356,7 +355,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //
 //		try {
 //			List list = new ArrayList();
-//			String sql = "from Login l where l.loginName = :param1";
+//			String sql = "from LoginUser l where l.loginName = :param1";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param1", login.getLoginName());
 //			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
@@ -411,7 +410,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 //		Login login = null;
 //		try {
 //			List list = new ArrayList();
-//			String sql = "from Login l where l.loginName = :param";
+//			String sql = "from LoginUser l where l.loginName = :param";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 //			query.setParameter("param", loginName);
 //
@@ -443,7 +442,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
      */
     @Override
     @Transactional
-    public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
+    public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException {
         int retVal = 0;
         try {
             String sql = "SELECT \n" + "                    floor(current_date-password_expired_dt)*-1 as cnt\n"
@@ -471,7 +470,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
      */
     @Override
     @Transactional
-    public int getSystemUserId(Login login) throws LIMSRuntimeException {
+    public int getSystemUserId(LoginUser login) throws LIMSRuntimeException {
         int retVal = 0;
         try {
             String sql = "SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'";

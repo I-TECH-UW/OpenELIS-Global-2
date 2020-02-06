@@ -17,7 +17,16 @@ package org.openelisglobal.login.valueholder;
 
 import java.sql.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -25,38 +34,71 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
-/**
- * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
- */
-public class Login extends BaseObject<String> {
+@Entity
+@Table(name = "login_user")
+public class LoginUser extends BaseObject<Integer> {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "login_user_generator")
+    @SequenceGenerator(name = "login_user_generator", sequenceName = "login_user_seq", allocationSize = 1)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "login_name")
+    @Size(max = 20)
     @NotBlank
     @ValidName(nameType = NameType.USERNAME, message = "username is invalid")
     private String loginName;
+
+    @Column(name = "password")
+    @Size(max = 255)
     private String password;
+
+    @Transient
     private String newPassword;
+
+    @Transient
     private String confirmPassword;
+
+    @Column(name = "password_expired_dt")
     private Date passwordExpiredDT;
+
+    @Transient
     private String passwordExpiredDateForDisplay;
+
+    @Column(name = "account_locked")
+    @Size(max = 1)
     private String accountLocked;
+
+    @Column(name = "account_disabled")
+    @Size(max = 1)
     private String accountDisabled;
+
+    @Column(name = "is_admin")
+    @Size(max = 1)
     private String isAdmin;
+
+    @Transient
     private int passwordExpiredDayNo;
+
+    @Transient
     private int systemUserId;
+
+    @Column(name = "user_time_out")
+    @Size(max = 3)
     private String userTimeOut;
 
-    public Login() {
+    public LoginUser() {
         super();
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -158,5 +200,10 @@ public class Login extends BaseObject<String> {
 
     public void setAccountDisabled(String accountDisabled) {
         this.accountDisabled = accountDisabled;
+    }
+
+    @Override
+    public String getStringId() {
+        return Integer.toString(id);
     }
 }
