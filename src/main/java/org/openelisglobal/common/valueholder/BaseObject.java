@@ -25,6 +25,7 @@ import java.util.Scanner;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.openelisglobal.internationalization.MessageUtil;
 
@@ -34,6 +35,7 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
     private static final long serialVersionUID = 1L;
 
     @Column(name = "last_updated")
+    @Version
     private Timestamp lastupdated;
 
     @Transient
@@ -56,9 +58,13 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
             return null;
         } else if (getId().getClass().equals(String.class)) {
             return (String) getId();
+        } else if (getId().getClass().equals(Integer.class)) {
+            return Integer.toString((Integer) getId());
+        } else if (getId().getClass().equals(Long.class)) {
+            return Long.toString((Long) getId());
         } else {
             throw new UnsupportedOperationException(
-                    "object must override getStringId() as its id is not of type String");
+                    "object must override getStringId() as it's id is not a recognizeable type");
         }
     }
 
