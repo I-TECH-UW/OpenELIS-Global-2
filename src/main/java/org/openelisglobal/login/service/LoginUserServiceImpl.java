@@ -13,8 +13,8 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.dao.LoginDAO;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.dao.LoginUserDAO;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,35 +23,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> implements LoginService {
+public class LoginUserServiceImpl extends BaseObjectServiceImpl<LoginUser, Integer> implements LoginUserService {
 
     @Autowired
-    protected LoginDAO baseObjectDAO;
+    protected LoginUserDAO baseObjectDAO;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2[ya]?\\$\\d\\d\\$[./0-9A-Za-z]{53}"); // make sure this
                                                                                                 // variable is current
 
-    LoginServiceImpl() {
-        super(Login.class);
+    LoginUserServiceImpl() {
+        super(LoginUser.class);
     }
 
     @Override
-    protected LoginDAO getBaseObjectDAO() {
+    protected LoginUserDAO getBaseObjectDAO() {
         return baseObjectDAO;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isUserAdmin(Login login) throws LIMSRuntimeException {
+    public boolean isUserAdmin(LoginUser login) throws LIMSRuntimeException {
         return login.getIsAdmin().equalsIgnoreCase(IActionConstants.YES);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Login get(String id) {
-        Login login = super.get(id);
+    public LoginUser get(Integer id) {
+        LoginUser login = super.get(id);
         inferExtraData(login);
         return login;
 
@@ -59,8 +59,8 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Login> getMatch(String propertyName, Object propertyValue) {
-        Optional<Login> login = super.getMatch(propertyName, propertyValue);
+    public Optional<LoginUser> getMatch(String propertyName, Object propertyValue) {
+        Optional<LoginUser> login = super.getMatch(propertyName, propertyValue);
         if (login.isPresent()) {
             inferExtraData(login.get());
         }
@@ -69,27 +69,27 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Login> getMatch(Map<String, Object> propertyValues) {
-        Optional<Login> login = super.getMatch(propertyValues);
+    public Optional<LoginUser> getMatch(Map<String, Object> propertyValues) {
+        Optional<LoginUser> login = super.getMatch(propertyValues);
         if (login.isPresent()) {
             inferExtraData(login.get());
         }
         return login;
     }
 
-    private void inferExtraData(Login login) {
+    private void inferExtraData(LoginUser login) {
         login.setSystemUserId(baseObjectDAO.getSystemUserId(login));
         login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Login> getValidatedLogin(String loginName, String password) {
+    public Optional<LoginUser> getValidatedLogin(String loginName, String password) {
         PasswordUtil passUtil = new PasswordUtil();
-        List<Login> logins = baseObjectDAO.getAllMatching("loginName", loginName);
+        List<LoginUser> logins = baseObjectDAO.getAllMatching("loginName", loginName);
 
         if (logins.size() == 1) {
-            Login login = logins.get(0);
+            LoginUser login = logins.get(0);
             if (passUtil.checkPassword(password, login.getPassword())) {
                 inferExtraData(login);
                 login.setSysUserId(String.valueOf(login.getSystemUserId()));
@@ -100,7 +100,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     }
 
     @Override
-    public void hashPassword(Login login, String newPassword) {
+    public void hashPassword(LoginUser login, String newPassword) {
         PasswordUtil passUtil = new PasswordUtil();
         login.setPassword(passUtil.hashPassword(newPassword));
         Calendar passwordExpiredDate = Calendar.getInstance();
@@ -112,7 +112,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     }
 
     @Override
-    public String insert(Login login) {
+    public Integer insert(LoginUser login) {
         if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
         }
@@ -126,7 +126,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     }
 
     @Override
-    public Login save(Login login) {
+    public LoginUser save(LoginUser login) {
         if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
         }
@@ -140,7 +140,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     }
 
     @Override
-    public Login update(Login login) {
+    public LoginUser update(LoginUser login) {
         if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
         }
@@ -155,19 +155,19 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public int getPasswordExpiredDayNo(Login login) {
+    public int getPasswordExpiredDayNo(LoginUser login) {
         return getBaseObjectDAO().getPasswordExpiredDayNo(login);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Login getUserProfile(String loginName) {
+    public LoginUser getUserProfile(String loginName) {
         return getMatch("loginName", loginName).orElse(null);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public int getSystemUserId(Login login) {
+    public int getSystemUserId(LoginUser login) {
         return getBaseObjectDAO().getSystemUserId(login);
     }
 
@@ -185,8 +185,8 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
     @Override
     @Transactional(readOnly = true)
     public boolean nonDefaultAdminExists() {
-        List<Login> logins = getAll();
-        for (Login login : logins) {
+        List<LoginUser> logins = getAll();
+        for (LoginUser login : logins) {
             if (login.getIsAdmin().equalsIgnoreCase(IActionConstants.YES)) {
                 return true;
             }

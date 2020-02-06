@@ -25,6 +25,8 @@ public class HibernateConfig {
             emf = new LocalContainerEntityManagerFactoryBean();
 //            emf.setDataSource(dataSource);
             emf.setPersistenceXmlLocation("classpath:persistence/persistence.xml");
+//            activate this once we migrate away from hbm.xmls and persistence.xml
+//            emf.setPackagesToScan("org.openelisglobal");
         }
 
         return emf;

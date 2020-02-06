@@ -17,20 +17,20 @@ package org.openelisglobal.login.dao;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.LoginUser;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface LoginDAO extends BaseDAO<Login, String> {
+public interface LoginUserDAO extends BaseDAO<LoginUser, Integer> {
 
 //	public Login getValidateLogin(Login login) throws LIMSRuntimeException;
 
 //	public void updatePassword(Login login) throws LIMSRuntimeException;
 
-    public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException;
+    public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException;
 
-    public int getSystemUserId(Login login) throws LIMSRuntimeException;
+    public int getSystemUserId(LoginUser login) throws LIMSRuntimeException;
 
 //	public Login getUserProfile(String loginName) throws LIMSRuntimeException;
 
@@ -57,5 +57,5 @@ public interface LoginDAO extends BaseDAO<Login, String> {
 
 //	public boolean unlockAccount(Login login) throws LIMSRuntimeException;
 
-    boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException;
+    boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException;
 }

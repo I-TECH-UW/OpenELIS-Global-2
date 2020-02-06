@@ -23,12 +23,12 @@ result=$?
 while [ $result != 0 ]; do
   if [ $result == 3 ]
   then 
-    echo "passwords did not match, try again?"
+    echo "passwords did not match"
   else 
-    echo "an error occured creating the password, try again?"
+    echo "an error occured creating the password"
   fi
   while true; do
-    read -p "Installer directory has been detected, replace it? [Y]es [N]o: " yn
+    read -p "try again? [Y]es [N]o: " yn
     case $yn in
       [Yy][Ee][Ss]|[Yy] ) break;;
       [Nn][Oo]|[Nn] ) exit;;

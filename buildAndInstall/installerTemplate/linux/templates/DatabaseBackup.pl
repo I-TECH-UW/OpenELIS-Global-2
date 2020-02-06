@@ -68,25 +68,31 @@ sub sendOffsite{
     	}
 	}           
 }
-my $postgres_pwd  = '[% postgres_password %]';
+my $db_install_type  = '[% db_install_type %]';
+my $postgres_pwd_filepath = '[% secrets_dir %]OE_DB_USER_PASSWORD';
+open my $fh, '<', $postgres_pwd_filepath or die "Can't open file $!";
+read $fh, my $postgres_pwd, -s $fh;
 my $keepFileDays  = 30;
 my $siteId = '[% siteId %]';
-#my $upLoadtargetURL = 'ftp://172.26.224.55/EFI/backup';
+#my $upLoadtargetURL = 'sftp://192.168.1.1/EFI/backup';
 #my $upLoadUserName = 'ftpuser';
 #my $upLoadPassword = '12345678';
 
-my $databaseBackupMountPoint			 = '/var/lib/OpenELIS-Global/backups';
-my $databaseDockerBackupDir	 			 = '/backups';
-my $databaseDockerImageName				 = 'openelisglobal-database';
+
 my $snapShotFileBase     = 'lastSnapshot_' . $siteId; 
 my $snapShotFileName     = $snapShotFileBase . '.backup'; 
 my $snapShotFileNameZipped     = $snapShotFileName . '.gz'; 
-my $cmd = 'docker exec ' . $databaseDockerImageName . ' /usr/bin/pg_dump -U clinlims -f "' . $databaseDockerBackupDir . '/' . $snapShotFileName . '" -n \"clinlims\" clinlims';
+my $databaseDockerBackupDir	 			 = '[% docker_backups_dir %]';
+my $databaseDockerImageName				 = 'openelisglobal-database'; #don't change
+#for backup task in docker database command
+my $docker_cmd = 'docker exec ' . $databaseDockerImageName . ' /usr/bin/pg_dump -U clinlims -f "' . $databaseDockerBackupDir . '/' . $snapShotFileName . '" -n \"clinlims\" clinlims';
+#for backup task using postgres running on the host
+my $host_cmd = 'pg_dump -h localhost  -U clinlims -f "' . $snapShotFileName . '" -n \"clinlims\" clinlims'; 
 my $zipCmd = 'gzip -f ' .  $snapShotFileName;
 #my $backBaseDir          = cwd();
-my $backBaseDir          = $databaseBackupMountPoint;
+my $backBaseDir          = '[% db_backups_dir %]';
 my $baseFileName         = '[% installName %]';
-my $mountedBackup        = "/media/My\ Passport/backup";
+my $mountedBackup        = "/media/USB0/Backup";
 my $dailyDir             = "$backBaseDir/daily";
 my $cumulativeDir        = "$backBaseDir/cumulative";
 my $queueDir             = "$backBaseDir/transmissionQueue";
@@ -95,11 +101,17 @@ my $todaysCummlativeFile = "$siteId$baseFileName$timeStamp.backup.gz";
 my $maxTimeSpan = 60 * 60 * 24 * $keepFileDays;
 
 
-$ENV{'PGPASSWORD'} = "$postgres_pwd";
+$ENV{'PGPASSWORD'} = $postgres_pwd;
 
 chdir "$dailyDir";
-my $response = system("$cmd")  and warn "Error while running: $! \n";
-copy( "$databaseBackupMountPoint/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
+if ( $db_install_type eq "docker" ) {
+	my $response = system("$docker_cmd")  and warn "Error while running: $! \n";
+	copy( "$backBaseDir/$snapShotFileName", "$dailyDir" ) or die "File cannot be copied.";
+} else if ( $db_install_type eq "host" ) {
+	my $response = system("$host_cmd")  and warn "Error while running: $! \n";
+} else {
+	die "Cannot backup remote databases";
+}
 system("$zipCmd")  and warn "Error while running: $! \n";
 
 copy( $snapShotFileNameZipped, "$cumulativeDir/$todaysCummlativeFile" ) or die "File cannot be copied.";
@@ -111,14 +123,3 @@ if (-d $mountedBackup) {
 deleteOverAgedBackups ($maxTimeSpan, $cumulativeDir);
 
 #sendOffsite($queueDir, $upLoadtargetURL, $upLoadUserName, $upLoadPassword) or die "File cannot be copied on FTP server.";
-
-   
-
-
-
-
-
-
-
-
-
