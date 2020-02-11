@@ -43,15 +43,13 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Scope("prototype")
-public class MalariaResultExporter extends Thread implements IMalariaResultExporter {
-
-    private long sleepTime;
-    private boolean running = true;
+@Component
+public class MalariaResultExporter {
 
     @Autowired
     private ReportQueueTypeService reportQueueTypeService;
@@ -71,31 +69,7 @@ public class MalariaResultExporter extends Thread implements IMalariaResultExpor
         resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
     }
 
-    @Override
-    public void setSleepInMins(long sleepInMin) {
-        sleepTime = sleepInMin * 1000L * 60L;
-
-    }
-
-    @Override
-    public void run() {
-
-        while (running) {
-            exportResults();
-
-            try {
-                sleep(sleepTime);
-            } catch (InterruptedException e) {
-                running = false;
-            }
-        }
-
-    }
-
-    public void stopExports() {
-        running = false;
-    }
-
+    @Scheduled(fixedRateString = "#{resultsResendTime}")
     private void exportResults() {
         if (shouldReportResults()) {
             List<ReportExternalExport> reportList = reportExternalExportService

@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.sampleqaevent.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //				String tableName = "SAMPLE_QAEVENT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail deleteData()", e);
@@ -80,7 +81,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent deleteData()", e);
@@ -101,7 +102,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent insertData()", e);
@@ -123,7 +124,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SAMPLE_QAEVENT";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail updateData()", e);
@@ -135,7 +136,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleQaEvent);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleQaEvent);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// buzilla 2154
 //			LogEvent.logError("SampleQaEventDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleQaEvent updateData()", e);
@@ -149,7 +150,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             SampleQaEvent data = entityManager.unwrap(Session.class).get(SampleQaEvent.class, sampleQaEventId);
             // closeSession(); // CSL remove old
             return data;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getData");
         }
         return null;
@@ -167,7 +168,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             } else {
                 sampleQaEvent.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEvent getData()", e);
@@ -180,7 +181,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             sp = entityManager.unwrap(Session.class).get(SampleQaEvent.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEvent readSampleQaEvent()", e);
@@ -205,7 +206,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
             return sampleQaEvents;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleQaEventDAO getSampleQaEventsBySample(SampleQaEvent)", e);
@@ -227,7 +228,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             // closeSession(); // CSL remove old
 
             return sampleQaEvents;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleQaEventsBySample(Sample sample)");
         }
 
@@ -252,7 +253,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // buzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Exception occurred in getSampleQaEventBySampleAndQaEvent", e);
@@ -279,7 +280,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
             sampleQaEvents = query.list();
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getSampleQaEventsByDate");
         }
 

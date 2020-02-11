@@ -83,7 +83,7 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
         return false;
@@ -138,7 +138,7 @@ public class ReportServiceImpl extends BaseObjectServiceImpl<Report, String> imp
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
         return false;

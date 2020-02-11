@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.test.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				String tableName = "TEST_SECTION";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
@@ -74,7 +75,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
@@ -98,7 +99,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
@@ -115,7 +116,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + testSection.getTestSectionName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -131,7 +132,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST_SECTION";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
@@ -143,7 +144,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(testSection);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(testSection);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -162,7 +163,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             } else {
                 testSection.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getData()", e);
         }
@@ -179,7 +180,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
         }
@@ -217,7 +218,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
@@ -242,7 +243,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
@@ -257,7 +258,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             ts = entityManager.unwrap(Session.class).get(TestSection.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection readCity()", e);
@@ -278,7 +279,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
@@ -314,7 +315,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
@@ -342,7 +343,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
             return null;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
         }
@@ -376,7 +377,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
             return !list.isEmpty();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
         }
@@ -431,7 +432,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
                 return list.get(0);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestSectionByName");
         }
 

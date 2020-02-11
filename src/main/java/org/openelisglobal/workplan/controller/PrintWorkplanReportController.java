@@ -1,6 +1,7 @@
 package org.openelisglobal.workplan.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class PrintWorkplanReportController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String workplanType = form.getWorkplanType();
+        String workplanType = form.getType();
         String workplanName;
 
         if (workplanType.equals("test")) {
@@ -97,14 +98,10 @@ public class PrintWorkplanReportController extends BaseController {
             servletOutputStream.flush();
             servletOutputStream.close();
 
-        } catch (JRException e) {
-            LogEvent.logError(e.toString(), e);
-            result.reject("error.jasper", "error.jasper");
-        } catch (Exception e) {
+        } catch (JRException | IOException e) {
             LogEvent.logError(e.toString(), e);
             result.reject("error.jasper", "error.jasper");
         }
-
         if (result.hasErrors()) {
             saveErrors(result);
         }

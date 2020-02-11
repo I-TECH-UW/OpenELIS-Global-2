@@ -17,6 +17,6 @@
         <property name="displayKey" column="display_key"/>
         <property name="categoryId" column="category_id"/>
         <property name="active" column="active"/>
-        <property name="lastupdated" column="lastupdated"/>
+        <property name="lastupdated" column="last_updated"/>
     </class>
 </hibernate-mapping>

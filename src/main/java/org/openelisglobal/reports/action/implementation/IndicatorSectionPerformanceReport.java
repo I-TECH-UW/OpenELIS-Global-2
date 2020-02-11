@@ -26,7 +26,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -131,7 +131,7 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
 
     private void addTestItems() {
         List<Integer> includedStatusList = new ArrayList<>();
-        includedStatusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
+        includedStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
 
         List<Analysis> bioAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(BIOCHEMISTRY_SECTION_ID,
                 includedStatusList, true);
@@ -155,7 +155,7 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
     private void addValidationItems() {
         List<Integer> includedStatusList = new ArrayList<>();
         includedStatusList
-                .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
 
         List<Analysis> bioAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(BIOCHEMISTRY_SECTION_ID,
                 includedStatusList, true);
@@ -217,8 +217,8 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
     }
 
     private void addIntakeItems() throws LIMSInvalidConfigurationException {
-        String notRegisteredID = StatusService.getInstance().getDictionaryID(RecordStatus.NotRegistered);
-        String initialRegisteredID = StatusService.getInstance().getDictionaryID(RecordStatus.InitialRegistration);
+        String notRegisteredID = SpringContext.getBean(IStatusService.class).getDictionaryID(RecordStatus.NotRegistered);
+        String initialRegisteredID = SpringContext.getBean(IStatusService.class).getDictionaryID(RecordStatus.InitialRegistration);
 
         List<ObservationHistory> notRegisteredList = observationHistoryService
                 .getObservationHistoryByDictonaryValues(notRegisteredID);

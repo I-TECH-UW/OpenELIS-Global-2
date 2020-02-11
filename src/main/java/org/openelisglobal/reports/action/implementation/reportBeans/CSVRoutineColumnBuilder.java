@@ -37,7 +37,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -87,7 +89,7 @@ abstract public class CSVRoutineColumnBuilder {
         ResourceTranslator.GenderTranslator.getInstance();
 
         if (validStatusFilter != null) {
-            validStatusId = StatusService.getInstance().getStatusID(validStatusFilter);
+            validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(validStatusFilter);
         }
     }
 
@@ -206,7 +208,7 @@ abstract public class CSVRoutineColumnBuilder {
         BLANK // Will always be an empty string. Used when column is wanted but data is not
     }
 
-    public void buildDataSource() throws Exception {
+    public void buildDataSource() throws SQLException {
         buildResultSet();
     }
 
@@ -265,7 +267,7 @@ abstract public class CSVRoutineColumnBuilder {
             Date parsed = parseDateTimeForDatabaseSql(value);
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             return DateUtil.convertSqlDateToStringDate(date);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
@@ -274,17 +276,17 @@ abstract public class CSVRoutineColumnBuilder {
         try {
             Date parsed = parseDateTimeForDatabaseSql(value);
             return DateUtil.formatDateTimeAsText(parsed);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
 
-    public String getValue(CSVRoutineColumn column, String accessionNumber) throws Exception {
+    public String getValue(CSVRoutineColumn column, String accessionNumber) throws SQLException, ParseException {
         String value;
         // look in the data source for a value
         try {
             value = resultSet.getString(trimToPostgresMaxColumnName(column.dbName));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
@@ -304,7 +306,11 @@ abstract public class CSVRoutineColumnBuilder {
 
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is safe from sql injection
-        return trimToPostgresMaxColumnName("\"" + columnName.replace('"', '\'') + "\"");
+        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
+            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
+        } else {
+            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+        }
     }
 
     private String trimToPostgresMaxColumnName(String name) {
@@ -360,7 +366,7 @@ abstract public class CSVRoutineColumnBuilder {
             this.customStrategy = customStrategy;
         }
 
-        public String translate(String value, String accessionNumber) throws Exception {
+        public String translate(String value, String accessionNumber) throws SQLException, ParseException {
             switch (strategy) {
             case CUSTOM:
                 return customStrategy.translate(value, accessionNumber, csvName, dbName);
@@ -395,7 +401,7 @@ abstract public class CSVRoutineColumnBuilder {
             case LOG:
                 return isBlankOrNull(value) ? "" : translateLog(value);
             case SAMPLE_STATUS:
-                OrderStatus orderStatus = StatusService.getInstance().getOrderStatusForID(value);
+                OrderStatus orderStatus = SpringContext.getBean(IStatusService.class).getOrderStatusForID(value);
                 if (orderStatus == null) {
                     return "?";
                 }
@@ -445,7 +451,7 @@ abstract public class CSVRoutineColumnBuilder {
             }
         }
 
-        public String translateAge(Strategy strategy, String end) throws Exception {
+        public String translateAge(Strategy strategy, String end) throws SQLException, ParseException {
             Date birthday = resultSet.getDate("birth_date");
             Date endDate = parseDateTimeForDatabaseSql(end);
             if ((birthday != null) && (endDate != null)) {
@@ -464,10 +470,10 @@ abstract public class CSVRoutineColumnBuilder {
 
         /**
          * @param value
-         * @return
-         * @throws Exception
+         * @return @
+         * @throws SQLException
          */
-        public String translateTestResult(String testName, String value) throws Exception {
+        public String translateTestResult(String testName, String value) throws SQLException {
             TestResult testResult = testResultsByTestName.get(testName);
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
@@ -679,10 +685,11 @@ abstract public class CSVRoutineColumnBuilder {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * @return @
+     * @throws ParseException
+     * @throws SQLException
      */
-    public String nextLine() throws Exception {
+    public String nextLine() throws SQLException, ParseException {
         StringBuilder line = new StringBuilder();
         String accessionNumber = null;
         for (CSVRoutineColumn column : columnsInOrder) {
@@ -702,7 +709,7 @@ abstract public class CSVRoutineColumnBuilder {
         return line.toString();
     }
 
-    public boolean next() throws Exception {
+    public boolean next() throws SQLException {
         return resultSet.next();
     }
 

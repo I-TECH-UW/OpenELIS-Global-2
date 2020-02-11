@@ -89,7 +89,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
         } else {
             try {
                 isChecked = wasTestSelected(sampleKey, projectFormName, sampleItemTypeTag, testTag);
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new ServletException(e);
             }
         }

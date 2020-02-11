@@ -19,7 +19,7 @@ public class NcEvent extends BaseObject<String> {
     private String labOrderNumber;
     private String prescriberName;
     private String site;
-    private String reportingUnitId;
+    private Integer reportingUnitId;
     private String description;
     private String suspectedCauses;
     private String proposedAction;
@@ -40,6 +40,7 @@ public class NcEvent extends BaseObject<String> {
     private String status;
     private String discussionDate;
 
+    @Override
     @Id
     @Column(name = "id", nullable = false)
     public String getId() {
@@ -47,6 +48,7 @@ public class NcEvent extends BaseObject<String> {
     }
 
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -133,11 +135,11 @@ public class NcEvent extends BaseObject<String> {
 
     @Basic
     @Column(name = "reporting_unit_id", nullable = true, length = 10)
-    public String getReportingUnitId() {
+    public Integer getReportingUnitId() {
         return reportingUnitId;
     }
 
-    public void setReportingUnitId(String reportingUnitId) {
+    public void setReportingUnitId(Integer reportingUnitId) {
         this.reportingUnitId = reportingUnitId;
     }
 
@@ -283,8 +285,12 @@ public class NcEvent extends BaseObject<String> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NcEvent ncEvent = (NcEvent) o;
         return id == ncEvent.id &&
                 Objects.equals(reportDate, ncEvent.reportDate) &&

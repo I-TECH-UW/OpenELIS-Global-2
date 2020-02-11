@@ -1,19 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+ *
+ */
 package org.openelisglobal.resultvalidation.action.util;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +39,7 @@ public class ResultValidationPaging {
 
     public void setDatabaseResults(HttpServletRequest request, ResultValidationForm form,
             List<AnalysisItem> analysisItems)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         paging.setDatabaseResults(request.getSession(), analysisItems, pagingHelper);
 
@@ -51,23 +51,25 @@ public class ResultValidationPaging {
         }
     }
 
-    public void page(HttpServletRequest request, ResultValidationForm form, String newPage)
+    public void page(HttpServletRequest request, ResultValidationForm form, int newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
         List<AnalysisItem> clientAnalysis = form.getResultList();
         PagingBean bean = form.getPaging();
-        String testSectionId = (request.getParameter("testSectionId"));
+        String testSectionId = form.getTestSectionId();
 
         paging.updatePagedResults(request.getSession(), clientAnalysis, bean, pagingHelper);
 
-        int page = Integer.parseInt(newPage);
+        if (newPage < 0) {
+            newPage = 0;
+        }
 
-        List<AnalysisItem> resultPage = paging.getPage(page, request.getSession());
+        List<AnalysisItem> resultPage = paging.getPage(newPage, request.getSession());
         if (resultPage != null) {
             form.setResultList(resultPage);
             form.setTestSectionId(testSectionId);
-            form.setPaging(paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+            form.setPaging(paging.getPagingBeanWithSearchMapping(newPage, request.getSession()));
         }
     }
 
@@ -83,7 +85,7 @@ public class ResultValidationPaging {
     }
 
     private static class AnalysisItemPageHelper implements IPageDivider<List<AnalysisItem>>,
-            IPageUpdater<List<AnalysisItem>>, IPageFlattener<List<AnalysisItem>> {
+    IPageUpdater<List<AnalysisItem>>, IPageFlattener<List<AnalysisItem>> {
 
         @Override
         public void createPages(List<AnalysisItem> analysisList, List<List<AnalysisItem>> pagedResults) {

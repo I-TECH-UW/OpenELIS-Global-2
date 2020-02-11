@@ -27,6 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -117,7 +118,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             response.setContentType("text/plain");
             response.getOutputStream().print(stringWriter.toString());
             errors.reject("errors.jasperreport.general");
-        } catch (Exception e) {
+        } catch (SQLException | NamingException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             errors.reject("errors.jasperreport.general");

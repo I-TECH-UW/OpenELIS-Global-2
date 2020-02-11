@@ -25,8 +25,8 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.beanAdapters.ResultSaveBeanAdapter;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
@@ -52,6 +52,7 @@ import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.form.LogbookResultsForm;
+import org.openelisglobal.result.form.LogbookResultsForm.LogbookResults;
 import org.openelisglobal.result.service.LogbookResultsPersistService;
 import org.openelisglobal.result.service.ResultInventoryService;
 import org.openelisglobal.result.service.ResultSignatureService;
@@ -85,7 +86,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LogbookResultsController extends LogbookResultsBaseController {
 
     private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
-            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "logbookType", "currentPageID",
+            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
             "testResult[*].accessionNumber", "testResult[*].isModified", "testResult[*].analysisId",
             "testResult[*].resultId", "testResult[*].testId", "testResult[*].technicianSignatureId",
             "testResult[*].testKitId", "testResult[*].resultLimitId", "testResult[*].resultType", "testResult[*].valid",
@@ -137,23 +138,30 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
-    public ModelAndView showLogbookResults(HttpServletRequest request, @ModelAttribute("form") LogbookResultsForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return getLogbookResults(request, new LogbookResultsForm());
+    public ModelAndView showLogbookResults(HttpServletRequest request,
+            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        LogbookResultsForm newForm = new LogbookResultsForm();
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId"))) {
+            newForm.setType(form.getType());
+            newForm.setTestSectionId(form.getTestSectionId());
+        }
+        return getLogbookResults(request, newForm);
     }
 
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        boolean useTechnicianName = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(Property.resultTechnicianName, "true");
-        boolean alwaysValidate = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
-        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        //        boolean useTechnicianName = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        //        boolean alwaysValidate = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        //        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String requestedPage = request.getParameter("page");
-        String testSectionId = request.getParameter("testSectionId");
+        int requestedPageNumber = Integer.parseInt(requestedPage);
+        String testSectionId = form.getTestSectionId();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -161,7 +169,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         String currentDate = getCurrentDate();
         form.setCurrentDate(currentDate);
-        form.setLogbookType(request.getParameter("type"));
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
         form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
@@ -206,7 +213,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.setDatabaseResults(request, form, tests);
 
         } else {
-            paging.page(request, form, requestedPage);
+            paging.page(request, form, requestedPageNumber);
         }
         form.setDisplayTestKit(false);
         if (ts != null) {
@@ -245,11 +252,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
-            "/StatusResults" }, method = RequestMethod.POST)
+    "/StatusResults" }, method = RequestMethod.POST)
     public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         boolean useTechnicianName = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.resultTechnicianName, "true");
         boolean alwaysValidate = ConfigurationProperties.getInstance()
@@ -307,11 +314,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getLogbookType())) {
+        if (GenericValidator.isBlankOrNull(form.getType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getLogbookType());
+            params.put("type", form.getType());
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
     }
@@ -488,19 +495,19 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
         if (testResult.isShadowRejected()) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         } else if (noResults(testResult.getShadowResultValue(), testResult.getMultiSelectResultValues(),
                 testResult.getResultType())) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
         } else {
             ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
             if (resultLimit != null && resultLimit.isAlwaysValidate()) {
-                return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+                return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
             }
 
-            return StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
         }
     }
 
@@ -549,12 +556,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
         if (statusRuleSet.equals(STATUS_RULES_RETROCI)) {
-            if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
                 analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
-                analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance));
+                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
             }
-        } else if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+        } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
                 || (analysis.isReferredOut()
                         && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
             analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));

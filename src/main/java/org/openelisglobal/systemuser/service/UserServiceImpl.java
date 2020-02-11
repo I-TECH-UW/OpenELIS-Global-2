@@ -3,8 +3,8 @@ package org.openelisglobal.systemuser.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.UserRole;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private LoginService loginService;
+    private LoginUserService loginService;
     @Autowired
     private UserRoleService userRoleService;
     @Autowired
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
+    public void updateLoginUser(LoginUser loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
             List<String> selectedRoles, String loggedOnUserId) {
         if (loginUserNew) {
             loginService.insert(loginUser);

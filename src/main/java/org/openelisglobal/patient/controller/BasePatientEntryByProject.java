@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
@@ -119,9 +120,8 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * current projectForm, so that the user is presented with a good guess on what
      * they might want to keep doing.
      *
-     * @param projectFormName
-     * @throws Exception all from property utils if we've coded things wrong in the
-     *                   form def or in this class.
+     * @param projectFormName @ all from property utils if we've coded things wrong
+     * in the form def or in this class.
      */
     protected void setProjectFormName(PatientEntryByProjectForm form, String projectFormName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -140,16 +140,15 @@ public abstract class BasePatientEntryByProject extends BaseController {
      *
      * @param request     original request
      * @param accessioner the object to use to attempt to save.
-     * @return a forward string or null; null => this attempt to save failed
-     * @throws Exception if things go really bad. Normally, the errors are caught
-     *                   internally an appropriate message is added and a forward
-     *                   fail is returned.
+     * @return a forward string or null; null => this attempt to save failed @ if
+     * things go really bad. Normally, the errors are caught internally an
+     * appropriate message is added and a forward fail is returned.
      */
-    protected String handleSave(HttpServletRequest request, IAccessioner accessioner) throws Exception {
+    protected String handleSave(HttpServletRequest request, IAccessioner accessioner) {
         String forward;
         try {
             forward = accessioner.save();
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | LIMSException e) {
             Errors errors = accessioner.getMessages();
             if (errors.hasErrors()) {
                 saveErrors(errors);

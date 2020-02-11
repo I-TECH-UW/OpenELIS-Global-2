@@ -3,8 +3,7 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-b <branch>] [-d]
-
+Usage: $PROGNAME [-d]
          -d: build docker images on machine
 EOF
   exit 1

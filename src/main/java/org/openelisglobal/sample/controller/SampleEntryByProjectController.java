@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
@@ -42,7 +42,36 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SampleEntryByProjectController extends BaseSampleEntryController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String[] ALLOWED_FIELDS = new String[] { "currentDate", "domain", "project",
+            "patientLastUpdated", "personLastUpdated", "patientUpdateStatus", "patientPK", "samplePK",
+            "observations.projectFormName", "ProjectData.ARVcenterName", "ProjectData.ARVcenterCode",
+            "observations.nameOfDoctor", "receivedDateForDisplay", "receivedTimeForDisplay", "interviewDate",
+            "interviewTime", "subjectNumber", "siteSubjectNumber", "labNo", "gender", "birthDateForDisplay",
+            "ProjectData.dryTubeTaken", "ProjectData.edtaTubeTaken", "ProjectData.serologyHIVTest",
+            "ProjectData.glycemiaTest", "ProjectData.creatinineTest", "ProjectData.transaminaseTest",
+            "ProjectData.nfsTest", "ProjectData.cd4cd8Test", "ProjectData.viralLoadTest", "ProjectData.genotypingTest",
+            "observations.underInvestigation", "ProjectData.underInvestigationNote", "observations.hivStatus",
+            "ProjectData.EIDSiteName", "projectData.EIDsiteCode", "observations.whichPCR",
+            "observations.reasonForSecondPCRTest", "observations.nameOfRequestor", "observations.nameOfSampler",
+            "observations.eidInfantPTME", "observations.eidTypeOfClinic", "observations.eidHowChildFed",
+            "observations.eidStoppedBreastfeeding", "observations.eidInfantSymptomatic", "observations.eidInfantsARV",
+            "observations.eidInfantCotrimoxazole", "observations.eidMothersHIVStatus", "observations.eidMothersARV",
+            "ProjectData.dbsTaken", "ProjectData.dnaPCR", "ProjectData.INDsiteName", "ProjectData.address",
+            "ProjectData.phoneNumber", "ProjectData.faxNumber", "ProjectData.email", "observations.indFirstTestDate",
+            "observations.indFirstTestName", "observations.indFirstTestResult", "observations.indSecondTestDate",
+            "observations.indSecondTestName", "observations.indSecondTestResult", "observations.indSiteFinalResult",
+            "observations.reasonForRequest", "ProjectData.murexTest", "ProjectData.integralTest",
+            "ProjectData.vironostikaTest", "ProjectData.innoliaTest", "ProjectData.transaminaseALTLTest",
+            "ProjectData.transaminaseASTLTest", "ProjectData.gbTest", "ProjectData.lymphTest", "ProjectData.monoTest",
+            "ProjectData.eoTest", "ProjectData.basoTest", "ProjectData.grTest", "ProjectData.hbTest",
+            "ProjectData.hctTest", "ProjectData.vgmTest", "ProjectData.tcmhTest", "ProjectData.ccmhTest",
+            "ProjectData.plqTest", "ProjectData.cd3CountTest", "ProjectData.cd4CountTest", "observations.vlPregnancy",
+            "observations.vlSuckle", "observations.currentARVTreatment", "observations.arvTreatmentInitDate",
+            "observations.arvTreatmentRegime", "observations.currentARVTreatmentINNsList[*]",
+            "observations.vlReasonForRequest", "observations.vlOtherReasonForRequest", "observations.initcd4Count",
+            "observations.initcd4Percent", "observations.initcd4Date", "observations.demandcd4Count",
+            "observations.demandcd4Percent", "observations.demandcd4Date", "observations.vlBenefit",
+            "observations.priorVLValue", "observations.priorVLDate" };
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -67,7 +96,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
     @RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
     public ModelAndView postSampleEntryByProject(HttpServletRequest request,
             @ModelAttribute("form") @Valid SampleEntryByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             saveErrors(result);
             setDisplayLists(form);
@@ -133,7 +162,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
         item.setSample(sample);
         item.setTypeOfSample(typeofsample);
         item.setSortOrder(Integer.toString(1));
-        item.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+        item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
 
         return item;
     }

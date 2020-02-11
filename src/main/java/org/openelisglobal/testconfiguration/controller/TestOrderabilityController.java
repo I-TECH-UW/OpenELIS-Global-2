@@ -140,7 +140,7 @@ public class TestOrderabilityController extends BaseController {
 
     @RequestMapping(value = "/TestOrderability", method = RequestMethod.POST)
     public ModelAndView postTestOrderability(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestOrderabilityForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestOrderabilityForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

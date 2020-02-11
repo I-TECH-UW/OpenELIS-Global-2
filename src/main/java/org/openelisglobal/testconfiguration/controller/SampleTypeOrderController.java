@@ -63,7 +63,7 @@ public class SampleTypeOrderController extends BaseController {
 
     @RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.POST)
     public ModelAndView postSampleTypeOrder(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeOrderForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid SampleTypeOrderForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

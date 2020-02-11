@@ -82,9 +82,6 @@ public class LogoUploadServlet extends HttpServlet {
             return;
         }
 
-        String uploadPreviewPath = FULL_PREVIEW_FILE_PATH
-                + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
-
         if (removeImage) {
             removeImage(whichLogo);
         } else {
@@ -155,6 +152,8 @@ public class LogoUploadServlet extends HttpServlet {
 
         } catch (FileUploadException e) {
             throw new ServletException(e);
+        } catch (RuntimeException e) {
+            throw new ServletException(e);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -184,7 +183,7 @@ public class LogoUploadServlet extends HttpServlet {
             if (bytesRead != fileSize) {
                 throw new IOException("file size changed between array allocation and file read, suspected attack");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LogEvent.logError(e);
         } finally {
             if (fileInputStream != null) {

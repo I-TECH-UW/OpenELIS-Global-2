@@ -22,11 +22,12 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,7 @@ public class TestReflexResolver {
         List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
         for (Analysis analysis : analysisList) {
-            if (!StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)
+            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)
                     .equals(analysis.getStatusId())) {
                 List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 

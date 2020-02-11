@@ -81,7 +81,7 @@ public class TestSectionCreateController extends BaseController {
 
     @RequestMapping(value = "/TestSectionCreate", method = RequestMethod.POST)
     public ModelAndView postTestSectionCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestSectionCreateForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestSectionCreateForm form, BindingResult result)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

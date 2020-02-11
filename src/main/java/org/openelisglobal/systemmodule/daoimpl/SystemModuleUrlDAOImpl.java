@@ -42,7 +42,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("urlPath", urlPath);
             list = query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
@@ -63,7 +63,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// closeSession(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logDebug(e);
 //			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());

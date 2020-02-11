@@ -1,11 +1,11 @@
 FROM tomcat:8.5-jdk8
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
-RUN rm -rf rm -rf /usr/local/tomcat/webapps/* \ 
+RUN rm -rf /usr/local/tomcat/webapps/* \ 
     /usr/local/tomcat/conf/Catalina/localhost/manager.xml
     
 #Deploy the war into tomcat image
-ADD target/OpenELIS.war /usr/local/tomcat/webapps/OpenELIS.war
+ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #rewrite server.xml with our server.xml for a number of security configurations
 #    

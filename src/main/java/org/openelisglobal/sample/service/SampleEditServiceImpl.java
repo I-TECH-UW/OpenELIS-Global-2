@@ -10,11 +10,11 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.services.SampleAddService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.SampleOrderService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
@@ -40,6 +40,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -58,8 +59,8 @@ public class SampleEditServiceImpl implements SampleEditService {
     private static final String CANCELED_SAMPLE_STATUS_ID;
 
     static {
-        CANCELED_TEST_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Canceled);
-        CANCELED_SAMPLE_STATUS_ID = StatusService.getInstance().getStatusID(SampleStatus.Canceled);
+        CANCELED_TEST_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
+        CANCELED_SAMPLE_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Canceled);
     }
 
     @Autowired
@@ -307,7 +308,7 @@ public class SampleEditServiceImpl implements SampleEditService {
         analysis.setSysUserId(sampleTestCollection.item.getSysUserId());
         analysis.setRevision("0");
         analysis.setStartedDate(collectionDateTime == null ? DateUtil.getNowAsSqlDate() : collectionDateTime);
-        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
         analysis.setTestSection(testSection);
         analysis.setPanel(panel);
         return analysis;
@@ -377,7 +378,7 @@ public class SampleEditServiceImpl implements SampleEditService {
                     analysis.setStartedDate(DateUtil.getNowAsSqlDate());
                 }
 
-                analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
+                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
                 analysis.setSysUserId(sysUserId);
 
                 addAnalysisList.add(analysis);
@@ -416,7 +417,7 @@ public class SampleEditServiceImpl implements SampleEditService {
     private Analysis getCancelableAnalysis(SampleEditItem sampleEditItem, String sysUserId) {
         Analysis analysis = analysisService.get(sampleEditItem.getAnalysisId());
         analysis.setSysUserId(sysUserId);
-        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled));
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled));
         return analysis;
     }
 

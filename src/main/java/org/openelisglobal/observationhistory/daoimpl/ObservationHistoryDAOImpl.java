@@ -79,7 +79,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
             // closeSession(); // CSL remove old
             return observationList;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getObservationHistoryByDictonaryValues");
         }
 
@@ -210,7 +210,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         try {
             results = entityManager.unwrap(Session.class).createCriteria(entity.getClass()).add(Example.create(entity))
                     .list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw createAndLogException("readByExample()", e);
         }
         return results;

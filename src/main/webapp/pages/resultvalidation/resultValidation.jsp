@@ -24,6 +24,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
+<c:set var="testSection"	value='${form.testSection}' />
 <c:set var="results" value="${form.resultList}" />
 <c:set var="pagingSearch" value='${form.paging.searchTermToPage}'/>
 <c:set var="testSectionsByName" value='${form.testSectionsByName}' />

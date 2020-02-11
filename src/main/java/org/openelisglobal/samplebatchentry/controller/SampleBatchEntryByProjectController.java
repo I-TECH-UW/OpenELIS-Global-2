@@ -67,7 +67,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             }
             setupCommonFields(form, request);
             return findForward(setForward(form), form);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 //            Log.error(e.toString());
             LogEvent.logDebug(e);
             return findForward(FWD_FAIL, form);
@@ -125,8 +125,6 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 
     private void setupCommonFields(SampleBatchEntryForm form, HttpServletRequest request)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setCurrentDate(request.getParameter("currentDate"));
-        form.setCurrentTime(request.getParameter("currentTime"));
         addOrganizationLists(form);
     }
 

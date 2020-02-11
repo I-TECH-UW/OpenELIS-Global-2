@@ -92,7 +92,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(cronSchedule);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(cronSchedule);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "update");
 //		}
 //		return Optional.ofNullable(cronSchedule);

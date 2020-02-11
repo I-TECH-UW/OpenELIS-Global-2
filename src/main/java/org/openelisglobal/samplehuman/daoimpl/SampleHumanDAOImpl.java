@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.samplehuman.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -65,7 +66,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
     // String tableName = "SAMPLE_HUMAN";
     // auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
     // }
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("SampleHumanDAOImpl", "AuditTrail deleteData()",
     // e.toString());
@@ -82,7 +83,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
     // // entityManager.unwrap(Session.class).flush(); // CSL remove old
     // // entityManager.unwrap(Session.class).clear(); // CSL remove old
     // }
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("SampleHumanDAOImpl", "deleteData()", e.toString());
     // throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
@@ -106,7 +107,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
     // // entityManager.unwrap(Session.class).flush(); // CSL remove old
     // // entityManager.unwrap(Session.class).clear(); // CSL remove old
     //
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("SampleHumanDAOImpl", "insertData()", e.toString());
     // throw new LIMSRuntimeException("Error in SampleHuman insertData()", e);
@@ -128,7 +129,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
     // String event = IActionConstants.AUDIT_TRAIL_UPDATE;
     // String tableName = "SAMPLE_HUMAN";
     // auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
     // throw new LIMSRuntimeException("Error in SampleHuman AuditTrail
@@ -142,7 +143,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
     // // entityManager.unwrap(Session.class).evict // CSL remove old(sampleHuman);
     // // entityManager.unwrap(Session.class).refresh // CSL remove
     // old(sampleHuman);
-    // } catch (Exception e) {
+    // } catch (RuntimeException e) {
     // // bugzilla 2154
     // LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
     // throw new LIMSRuntimeException("Error in SampleHuman updateData()", e);
@@ -161,7 +162,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             } else {
                 sampleHuman.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman getData()", e);
@@ -174,7 +175,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
             sh = entityManager.unwrap(Session.class).get(SampleHuman.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman readSampleHuman()", e);
@@ -199,7 +200,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
                 sh = list.get(0);
                 PropertyUtils.copyProperties(sampleHuman, sh);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleHuman getDataBySample()", e);
         }

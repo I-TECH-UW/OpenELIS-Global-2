@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.common.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,14 +59,14 @@ public class SystemConfiguration {
 
             properties.load(propertyStream);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     // bugzilla 2154
                     LogEvent.logError(e.toString(), e);
                 }

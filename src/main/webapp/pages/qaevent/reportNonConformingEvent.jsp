@@ -210,7 +210,7 @@
             labNo = input.dataset.labordernumber
         }
         if (specimenId.length > 0 && labNo !== "") {
-            window.location = "ReportNonConformingEvent.do?labNo=" + labNo + "&specimenId=" + specimenId.join(",");
+            window.location = "ReportNonConformingEvent.do?labOrderNumber=" + labNo + "&specimenId=" + specimenId.join(",");
         }
         return false;
     }

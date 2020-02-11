@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.testresult.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //				String tableName = "TEST_RESULT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestResult AuditTrail deleteData()", e);
@@ -76,7 +77,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestResult deleteData()", e);
@@ -99,7 +100,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestResult insertData()", e);
@@ -119,7 +120,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST_RESULT";
 //			auditDAO.saveHistory(testResult, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestResult AuditTrail updateData()", e);
@@ -131,7 +132,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(testResult);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(testResult);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestResultDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestResult updateData()", e);
@@ -150,7 +151,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             } else {
                 testResult.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getData()", e);
@@ -167,7 +168,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getAllTestResults()", e);
@@ -191,7 +192,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getPageOfTestResults()", e);
@@ -206,7 +207,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             tr = entityManager.unwrap(Session.class).get(TestResult.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult readTestResult()", e);
@@ -224,7 +225,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             newTestResult = entityManager.unwrap(Session.class).get(TestResult.class, testResult.getId());
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getTestResultById()", e);
@@ -251,7 +252,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
                 // entityManager.unwrap(Session.class).clear(); // CSL remove old
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getTestResultByTestAndResultGroup()", e);
@@ -277,7 +278,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()", e);
         }
@@ -303,7 +304,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
                     return list.get(0);
                 }
 
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException(
                         "Error in TestResult getTestResultsByTestAndDictonaryResult(String testId, String result)", e);
@@ -328,7 +329,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // closeSession(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getActiveTestResultsByTest");
         }
 

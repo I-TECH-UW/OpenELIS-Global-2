@@ -1,1 +1,0 @@
-update clinlims.dictionary set dict_entry='Indetectable <300 copies/ml' where dict_entry='Indetectable <300';

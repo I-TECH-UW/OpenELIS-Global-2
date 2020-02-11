@@ -57,7 +57,7 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
             form.setUseLocationCode(Boolean.TRUE);
             List<Organization> list = OrganizationTypeList.EID_ORGS_BY_NAME.getList();
             form.setLocationCodeList(list);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
     }

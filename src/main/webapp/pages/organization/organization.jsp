@@ -68,6 +68,8 @@ function validateForm(form) {
 							<form:input path="id" readonly="readonly"/>
 						</td>
 		</tr>
+		<% }  else { %>
+			<form:hidden path="id" />
 		<% } %>
 		<% if( useParent ){ %>
 		<tr>

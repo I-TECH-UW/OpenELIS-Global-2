@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -86,8 +88,6 @@ public class StatusService implements IStatusService {
     private String orderRecordStatusID;
     private String patientRecordStatusID;
 
-    private boolean mapsSet = false;
-
     @Autowired
     ObservationHistoryService observationHistoryService;
     @Autowired
@@ -103,131 +103,133 @@ public class StatusService implements IStatusService {
     @Autowired
     SampleHumanService sampleHumanService;
 
+    @PostConstruct
+    private void buildMaps() {
+        orderStatusToObjectMap = new HashMap<>();
+        sampleStatusToObjectMap = new HashMap<>();
+        analysisStatusToObjectMap = new HashMap<>();
+        recordStatusToObjectMap = new HashMap<>();
+        externalOrderStatusToObjectMap = new HashMap<>();
+        idToOrderStatusMap = new HashMap<>();
+        idToSampleStatusMap = new HashMap<>();
+        idToAnalysisStatusMap = new HashMap<>();
+        idToRecordStatusMap = new HashMap<>();
+        idToExternalOrderStatusMap = new HashMap<>();
+
+        buildStatusToIdMaps();
+
+        // now put everything in the reverse map
+        buildIdToStatusMapsFromStatusToIdMaps();
+
+        getObservationHistoryTypeIDs();
+    }
+
     public static IStatusService getInstance() {
         return SpringContext.getBean(IStatusService.class);
     }
 
     @Override
     public boolean matches(String id, SampleStatus sampleStatus) {
-        insureMapsAreBuilt();
         return getStatusID(sampleStatus).equals(id);
     }
 
     @Override
     public boolean matches(String id, AnalysisStatus analysisStatus) {
-        insureMapsAreBuilt();
         return getStatusID(analysisStatus).equals(id);
     }
 
     @Override
     public boolean matches(String id, OrderStatus orderStatus) {
-        insureMapsAreBuilt();
         return getStatusID(orderStatus).equals(id);
     }
 
     @Override
     public boolean matches(String id, ExternalOrderStatus externalOrderStatus) {
-        insureMapsAreBuilt();
         return getStatusID(externalOrderStatus).equals(id);
     }
 
     @Override
     public String getStatusID(OrderStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = orderStatusToObjectMap.get(statusType);
         return status == null ? "-1" : status.getId();
     }
 
     @Override
     public String getStatusID(SampleStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = sampleStatusToObjectMap.get(statusType);
         return status == null ? "-1" : status.getId();
     }
 
     @Override
     public String getStatusID(AnalysisStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = analysisStatusToObjectMap.get(statusType);
         return status == null ? "-1" : status.getId();
     }
 
     @Override
     public String getStatusID(ExternalOrderStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = externalOrderStatusToObjectMap.get(statusType);
         return status == null ? "-1" : status.getId();
     }
 
     @Override
     public String getStatusName(RecordStatus statusType) {
-        insureMapsAreBuilt();
         Dictionary dictionary = recordStatusToObjectMap.get(statusType);
         return dictionary == null ? "unknown" : dictionary.getLocalizedName();
     }
 
     @Override
     public String getStatusName(OrderStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = orderStatusToObjectMap.get(statusType);
         return status == null ? "unknown" : status.getLocalizedName();
     }
 
     @Override
     public String getStatusName(SampleStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = sampleStatusToObjectMap.get(statusType);
         return status == null ? "unknown" : status.getLocalizedName();
     }
 
     @Override
     public String getStatusName(AnalysisStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = analysisStatusToObjectMap.get(statusType);
         return status == null ? "unknown" : status.getLocalizedName();
     }
 
     @Override
     public String getStatusName(ExternalOrderStatus statusType) {
-        insureMapsAreBuilt();
         StatusOfSample status = externalOrderStatusToObjectMap.get(statusType);
         return status == null ? "unknown" : status.getLocalizedName();
     }
 
     @Override
     public String getDictionaryID(RecordStatus statusType) {
-        insureMapsAreBuilt();
         Dictionary dictionary = recordStatusToObjectMap.get(statusType);
         return dictionary == null ? "-1" : dictionary.getId();
     }
 
     @Override
     public OrderStatus getOrderStatusForID(String id) {
-        insureMapsAreBuilt();
         return idToOrderStatusMap.get(id);
     }
 
     @Override
     public SampleStatus getSampleStatusForID(String id) {
-        insureMapsAreBuilt();
         return idToSampleStatusMap.get(id);
     }
 
     @Override
     public AnalysisStatus getAnalysisStatusForID(String id) {
-        insureMapsAreBuilt();
         return idToAnalysisStatusMap.get(id);
     }
 
     @Override
     public ExternalOrderStatus getExternalOrderStatusForID(String id) {
-        insureMapsAreBuilt();
         return idToExternalOrderStatusMap.get(id);
     }
 
     @Override
     public RecordStatus getRecordStatusForID(String id) {
-        insureMapsAreBuilt();
         return idToRecordStatusMap.get(id);
     }
 
@@ -265,7 +267,6 @@ public class StatusService implements IStatusService {
     @Transactional
     public void persistRecordStatusForSample(Sample sample, RecordStatus recordStatus, Patient patient,
             RecordStatus patientStatus, String sysUserId) {
-        insureMapsAreBuilt();
 
         if (sample == null || patient == null) {
             return;
@@ -315,7 +316,6 @@ public class StatusService implements IStatusService {
     @Override
     @Transactional
     public void deleteRecordStatus(Sample sample, Patient patient, String sysUserId) {
-        insureMapsAreBuilt();
 
         if (sample == null || patient == null) {
             return;
@@ -338,7 +338,6 @@ public class StatusService implements IStatusService {
 
     @Override
     public String getStatusNameFromId(String id) {
-        insureMapsAreBuilt();
         if (idToAnalysisStatusMap.get(id) != null) {
             return getStatusName(idToAnalysisStatusMap.get(id));
         } else if (idToOrderStatusMap.get(id) != null) {
@@ -353,36 +352,6 @@ public class StatusService implements IStatusService {
         return null;
     }
 
-    private void insureMapsAreBuilt() {
-        synchronized (StatusService.class) {
-            if (!mapsSet) {
-                buildMap();
-                mapsSet = true;
-            }
-        }
-    }
-
-    private void buildMap() {
-        orderStatusToObjectMap = new HashMap<>();
-        sampleStatusToObjectMap = new HashMap<>();
-        analysisStatusToObjectMap = new HashMap<>();
-        recordStatusToObjectMap = new HashMap<>();
-        externalOrderStatusToObjectMap = new HashMap<>();
-        idToOrderStatusMap = new HashMap<>();
-        idToSampleStatusMap = new HashMap<>();
-        idToAnalysisStatusMap = new HashMap<>();
-        idToRecordStatusMap = new HashMap<>();
-        idToExternalOrderStatusMap = new HashMap<>();
-
-        buildStatusToIdMaps();
-
-        // now put everything in the reverse map
-        buildIdToStatusMapsFromStatusToIdMaps();
-
-        getObservationHistoryTypeIDs();
-    }
-
-    @SuppressWarnings("unchecked")
     private void buildStatusToIdMaps() {
 
         List<StatusOfSample> statusList = statusOfSampleService.getAllStatusOfSamples();

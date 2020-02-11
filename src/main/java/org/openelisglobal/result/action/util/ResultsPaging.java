@@ -49,7 +49,7 @@ public class ResultsPaging {
         }
     }
 
-    public void page(HttpServletRequest request, ResultsPagingForm form, String newPage)
+    public void page(HttpServletRequest request, ResultsPagingForm form, int newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
@@ -57,13 +57,14 @@ public class ResultsPaging {
         PagingBean bean = form.getPaging();
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
-        int page = Integer.parseInt(newPage);
-
-        List<TestResultItem> resultPage = paging.getPage(page, request.getSession());
+        if (newPage < 0) {
+            newPage = 0;
+        }
+        List<TestResultItem> resultPage = paging.getPage(newPage, request.getSession());
         if (resultPage != null) {
             form.setTestResult(resultPage);
             form.setTestSectionId("0");
-            form.setPaging(paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+            form.setPaging(paging.getPagingBeanWithSearchMapping(newPage, request.getSession()));
         }
 
     }

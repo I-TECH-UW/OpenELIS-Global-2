@@ -57,7 +57,7 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
         for (NcEvent nce : results) {
             String reportingUnit = "";
             if (nce.getReportingUnitId() != null) {
-                TestSection testSection = testSectionService.getTestSectionById(nce.getReportingUnitId());
+                TestSection testSection = testSectionService.getTestSectionById(nce.getReportingUnitId().toString());
                 reportingUnit = testSection.getTestSectionName();
             }
             xml.append("<nce>");

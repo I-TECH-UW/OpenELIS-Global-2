@@ -74,7 +74,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
     @RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.POST)
     public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

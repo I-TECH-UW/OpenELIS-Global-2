@@ -27,9 +27,9 @@ public class ElectronicOrdersController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] {};
 
     @Autowired
-    StatusOfSampleService statusOfSampleService;
+    private StatusOfSampleService statusOfSampleService;
     @Autowired
-    ElectronicOrderService electronicOrderService;
+    private ElectronicOrderService electronicOrderService;
 
     @InitBinder
     public void initBinder(final WebDataBinder webdataBinder) {

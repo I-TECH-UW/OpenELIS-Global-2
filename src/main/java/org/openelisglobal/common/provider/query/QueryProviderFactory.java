@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
@@ -26,9 +24,6 @@ public class QueryProviderFactory {
     }
 
     // class
-
-    // Logger
-    private static Log log = LogFactory.getLog(QueryProviderFactory.class);
 
     // Properties object that holds validation provider mappings
     private Properties queryProviderClassMap = null;
@@ -53,7 +48,7 @@ public class QueryProviderFactory {
         try {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
         }
         return object;
@@ -86,7 +81,7 @@ public class QueryProviderFactory {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         LogEvent.logError(e.getMessage(), e);
                     }
                 }
@@ -95,7 +90,8 @@ public class QueryProviderFactory {
 
         String mapping = queryProviderClassMap.getProperty(queryProvidername);
         if (mapping == null) {
-            log.error("getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
+            LogEvent.logError(this.getClass().getName(), "getQueryProviderClassName",
+                    "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
             throw new LIMSRuntimeException(
                     "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
         }

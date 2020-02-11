@@ -12,10 +12,10 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.form.ChangePasswordLoginForm;
-import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.validator.ChangePasswordLoginFormValidator;
 import org.openelisglobal.login.validator.LoginValidator;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -40,7 +40,7 @@ public class ChangePasswordLoginController extends BaseController {
     @Autowired
     private LoginValidator loginValidator;
     @Autowired
-    private LoginService loginService;
+    private LoginUserService loginService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -68,9 +68,9 @@ public class ChangePasswordLoginController extends BaseController {
 //		// populate valueholder from form
 //		PropertyUtils.copyProperties(newLogin, form);
         try {
-            Login login;
+            LoginUser login;
             // get user information if password correct
-            Optional<Login> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
+            Optional<LoginUser> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
             if (!matchedLogin.isPresent()) {
                 result.reject("login.error.message");
             } else {
