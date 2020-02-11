@@ -25,6 +25,7 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -72,7 +73,7 @@ public class OrganizationController extends BaseController {
         return new OrganizationForm();
     }
 
-//    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
+    //    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
     private static boolean useState = FormFields.getInstance().useField(FormFields.Field.OrgState);
     private static boolean useDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT);
     private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
@@ -137,13 +138,15 @@ public class OrganizationController extends BaseController {
         // creating a new Organization.
         // If there is a parameter present, we should bring up an existing
         // Organization to edit.
-        String id = request.getParameter(ID);
-        String start = request.getParameter("startingRecNo");
-        String direction = request.getParameter("direction");
-
+        String id = "";
+        String start = "";
         // validate start
-        if (!StringUtils.isNumericSpace(start)) {
-            start = "";
+        if (StringUtils.isNumericSpace(request.getParameter("startingRecNo"))) {
+            start = request.getParameter("startingRecNo");
+        }
+        // validate id
+        if (ValidationHelper.ID_REGEX.matches(id)) {
+            id = request.getParameter(ID);
         }
 
         request.setAttribute(ALLOW_EDITS_KEY, "true");
@@ -156,13 +159,13 @@ public class OrganizationController extends BaseController {
         Organization organization;
 
         // redirect to get organization for next or previous entry
-        if (FWD_NEXT.equals(direction)) {
+        if (FWD_NEXT.equals(request.getParameter("direction"))) {
             organization = organizationService.getNext(id);
             String newId = organization.getId();
 
             return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
                     + Encode.forUriComponent(start));
-        } else if (FWD_PREVIOUS.equals(direction)) {
+        } else if (FWD_PREVIOUS.equals(request.getParameter("direction"))) {
             organization = organizationService.getPrevious(id);
             String newId = organization.getId();
             return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
@@ -289,7 +292,7 @@ public class OrganizationController extends BaseController {
     public ModelAndView showUpdateOrganization(HttpServletRequest request,
             @ModelAttribute("form") @Valid OrganizationForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         setDefaultButtonAttributes(request);
         if (result.hasErrors()) {
@@ -297,15 +300,13 @@ public class OrganizationController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String id = request.getParameter(ID);
-        form.setId(id);
         Organization organization;
-        boolean isNew = (StringUtil.isNullorNill(id) || "0".equals(id));
+        boolean isNew = (StringUtil.isNullorNill(form.getId()) || "0".equals(form.getId()));
         if (isNew) {
             organization = new Organization();
             request.setAttribute("key", "organization.add.title");
         } else {
-            organization = organizationService.get(id);
+            organization = organizationService.get(form.getId());
             request.setAttribute("key", "organization.edit.title");
         }
 
@@ -323,7 +324,7 @@ public class OrganizationController extends BaseController {
             Organization parentOrg = organizationService.getOrganizationByName(o, false);
             organization.setOrganization(parentOrg);
         }
-        Map<String, OrganizationAddress> addressParts = createAddressParts(id, form, isNew);
+        Map<String, OrganizationAddress> addressParts = createAddressParts(form, isNew);
 
         try {
             if (!isNew) {
@@ -358,9 +359,9 @@ public class OrganizationController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+        //		finally {
+        //			HibernateUtil.closeSession();
+        //		}
         PropertyUtils.copyProperties(form, organization);
 
         if (states != null) {
@@ -400,7 +401,7 @@ public class OrganizationController extends BaseController {
         }
     }
 
-    private Map<String, OrganizationAddress> createAddressParts(String id, OrganizationForm form, boolean isNew) {
+    private Map<String, OrganizationAddress> createAddressParts(OrganizationForm form, boolean isNew) {
         Map<String, OrganizationAddress> addressParts = new HashMap<>();
         OrganizationAddress departmentAddress = null;
         OrganizationAddress communeAddress = null;
@@ -408,7 +409,7 @@ public class OrganizationController extends BaseController {
         if (useDepartment || useCommune || useVillage) {
             if (!isNew) {
                 List<OrganizationAddress> orgAddressList = organizationAddressService
-                        .getAddressPartsByOrganizationId(id);
+                        .getAddressPartsByOrganizationId(form.getId());
 
                 for (OrganizationAddress orgAddress : orgAddressList) {
                     if (DEPARTMENT_ID.equals(orgAddress.getAddressPartId())) {
@@ -482,10 +483,9 @@ public class OrganizationController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelOrganization", method = RequestMethod.GET)
-    public ModelAndView cancelOrganization(HttpServletRequest request, @ModelAttribute("form") OrganizationForm form,
-            SessionStatus status) {
+    public ModelAndView cancelOrganization(HttpServletRequest request, SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new OrganizationForm());
     }
 
     @Override

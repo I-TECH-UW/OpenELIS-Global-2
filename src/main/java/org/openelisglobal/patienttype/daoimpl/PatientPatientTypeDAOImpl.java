@@ -52,7 +52,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in PatientPatientType insertData()", e);
 //		}
@@ -71,7 +71,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PATIENT_PATIENT_TYPE";
 //			auditDAO.saveHistory(patientType, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientPatientTypeDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in PatientPatientTypeAuditTrail updateData()", e);
 //		}
@@ -82,7 +82,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(patientType);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(patientType);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
 //		}
@@ -95,7 +95,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
             current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
         }

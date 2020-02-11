@@ -68,7 +68,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(qaObservation);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(qaObservation);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "updateData");
 //		}
 //	}
@@ -98,7 +98,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
         try {
             qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "readQaObservation");
         }
 

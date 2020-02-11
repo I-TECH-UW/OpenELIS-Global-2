@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -141,7 +142,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     }
 
     private boolean isCanceled(Analysis analysis) {
-        return StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled)
+        return SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled)
                 .equals(analysis.getStatusId());
     }
 
@@ -285,7 +286,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         }
 
         List<Integer> statusList = new ArrayList<>();
-        statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
+        statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 
         List<Analysis> analysisList = analysisService.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
                 statusList);

@@ -26,8 +26,8 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.security.PageIdentityUtil;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.systemusermodule.service.PermissionModuleService;
 import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
@@ -54,7 +54,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Autowired
     SystemUserModuleService systemUserModuleService;
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
 
     @Override
     public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException {
@@ -156,8 +156,8 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
      * @return user information
      */
     @Transactional(readOnly = true)
-    private Login getUserLogin(HttpServletRequest request) throws LIMSRuntimeException {
-        Login login = null;
+    private LoginUser getUserLogin(HttpServletRequest request) throws LIMSRuntimeException {
+        LoginUser login = null;
         try {
 //            UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 //            login = loginService.getUserProfile(usd.getLoginName());
@@ -187,7 +187,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Transactional(readOnly = true)
     public boolean isAccountLocked(HttpServletRequest request) throws LIMSRuntimeException {
         try {
-            Login login = getUserLogin(request);
+            LoginUser login = getUserLogin(request);
             if (login.getAccountLocked().equalsIgnoreCase(YES)) {
                 return true;
             }
@@ -209,7 +209,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Transactional(readOnly = true)
     public boolean isAccountDisabled(HttpServletRequest request) throws LIMSRuntimeException {
         try {
-            Login login = getUserLogin(request);
+            LoginUser login = getUserLogin(request);
             if (login.getAccountDisabled().equalsIgnoreCase(YES)) {
                 return true;
             }
@@ -231,7 +231,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Transactional(readOnly = true)
     public boolean isPasswordExpired(HttpServletRequest request) throws LIMSRuntimeException {
         try {
-            Login login = getUserLogin(request);
+            LoginUser login = getUserLogin(request);
             if (login.getPasswordExpiredDayNo() <= 0) {
                 return true;
             }
@@ -253,7 +253,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Transactional(readOnly = true)
     public boolean isUserAdmin(HttpServletRequest request) throws LIMSRuntimeException {
         try {
-            Login login = getUserLogin(request);
+            LoginUser login = getUserLogin(request);
             if (login.getIsAdmin().equalsIgnoreCase(YES)) {
                 return true;
             }
@@ -276,7 +276,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     @Override
     public void setupUserSessionTimeOut(HttpServletRequest request) throws LIMSRuntimeException {
         try {
-            Login login = getUserLogin(request);
+            LoginUser login = getUserLogin(request);
             int timeOut = Integer.parseInt(login.getUserTimeOut());
 
             request.getSession().setMaxInactiveInterval(timeOut * 60);

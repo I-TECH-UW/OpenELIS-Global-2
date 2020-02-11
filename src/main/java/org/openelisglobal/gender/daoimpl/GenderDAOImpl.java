@@ -23,7 +23,6 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.gender.dao.GenderDAO;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements GenderDAO {
+public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements GenderDAO {
 
     public GenderDAOImpl() {
         super(Gender.class);
@@ -55,7 +54,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //				String tableName = "GENDER";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender AuditTrail deleteData()", e);
@@ -69,7 +68,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender deleteData()", e);
 //		}
@@ -93,7 +92,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender insertData()", e);
@@ -108,7 +107,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			if (duplicateGenderExists(gender)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("GenderDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender updateData()", e);
 //		}
@@ -122,7 +121,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "GENDER";
 //			auditDAO.saveHistory(gender, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender AuditTrail updateData()", e);
@@ -134,7 +133,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(gender);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(gender);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender updateData()", e);
@@ -152,7 +151,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			} else {
 //				gender.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender getData()", e);
@@ -170,7 +169,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getAllGenders()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender getAllGenders()", e);
@@ -195,7 +194,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getPageOfGenders()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender getPageOfGenders()", e);
@@ -210,7 +209,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			gender = entityManager.unwrap(Session.class).get(Gender.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "readGender()", e.toString());
 //			throw new LIMSRuntimeException("Error in Gender readGender(idString)", e);
@@ -270,7 +269,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -297,7 +296,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("GenderDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -321,11 +320,11 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 
             // initialize with 0 (for new records where no id has been generated
             // yet
-            String genderId = "0";
-            if (!StringUtil.isNullorNill(gender.getId())) {
+            Integer genderId = 0;
+            if (gender.getId() != null) {
                 genderId = gender.getId();
             }
-            query.setInteger("genderId", Integer.parseInt(genderId));
+            query.setInteger("genderId", genderId);
 
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
@@ -333,7 +332,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 
             return list.size() > 0;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);

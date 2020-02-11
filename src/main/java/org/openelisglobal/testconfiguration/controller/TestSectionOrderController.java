@@ -86,7 +86,7 @@ public class TestSectionOrderController extends BaseController {
 
     @RequestMapping(value = "/TestSectionOrder", method = RequestMethod.POST)
     public ModelAndView postTestSectionOrder(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestSectionOrderForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid TestSectionOrderForm form, BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

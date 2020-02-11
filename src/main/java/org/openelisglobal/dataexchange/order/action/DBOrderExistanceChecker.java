@@ -19,10 +19,11 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,11 +45,11 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
         }
 
         ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-        if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_CANCELED;
         }
 
-        if (StatusService.getInstance().getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_QUEUED;
         }
 

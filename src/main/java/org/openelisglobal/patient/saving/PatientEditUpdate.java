@@ -45,7 +45,7 @@ public class PatientEditUpdate extends PatientEntry implements IPatientEditUpdat
      * @throws LIMSRuntimeException
      */
     public PatientEditUpdate(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

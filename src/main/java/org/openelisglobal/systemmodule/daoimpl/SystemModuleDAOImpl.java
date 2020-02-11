@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.systemmodule.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -58,7 +59,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //				String tableName = "SYSTEM_MODULE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SystemModuleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule AuditTrail deleteData()", e);
 //		}
@@ -71,7 +72,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SystemModuleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule deleteData()", e);
 //		}
@@ -96,7 +97,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule insertData()", e);
@@ -112,7 +113,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + systemModule.getSystemModuleName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SystemModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule updateData()", e);
 //		}
@@ -124,7 +125,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //
 //			auditDAO.saveHistory(systemModule, oldData, systemModule.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "SYSTEM_MODULE");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SystemModuleDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule AuditTrail updateData()", e);
 //		}
@@ -135,7 +136,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(systemModule);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(systemModule);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SystemModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemModule updateData()", e);
 //		}
@@ -153,7 +154,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             } else {
                 systemModule.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getData()", e);
@@ -170,7 +171,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
         }
@@ -194,7 +195,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
         }
@@ -208,7 +209,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
         }
@@ -260,7 +261,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list.size() > 0;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
         }

@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -36,6 +36,7 @@ import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService
 import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,7 +244,7 @@ public class DBOrderPersister implements IOrderPersister {
             persist(orderPatient);
             eOrder.setPatient(patient);
             eOrderService.insert(eOrder);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logErrorStack(e);
             throw e;
         }
@@ -261,11 +262,11 @@ public class DBOrderPersister implements IOrderPersister {
 
             if (eOrders != null && !eOrders.isEmpty()) {
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-                eOrder.setStatusId(StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled));
+                eOrder.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled));
                 eOrder.setSysUserId(SERVICE_USER_ID);
                 try {
                     eOrderService.update(eOrder);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     LogEvent.logErrorStack(e);
                 }
 

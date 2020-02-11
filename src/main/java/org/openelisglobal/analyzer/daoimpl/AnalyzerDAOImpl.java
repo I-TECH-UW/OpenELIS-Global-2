@@ -51,7 +51,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer deleteData()", e);
 //		}
@@ -67,7 +67,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			analyzer = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
 //		}
@@ -82,7 +82,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return re;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer getAnalyzerById()", e);
 //		}
@@ -114,7 +114,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			} else {
 //				analyzer.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer getData()", e);
 //		}
@@ -133,7 +133,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in analyzer insertData()", e);
 //		}
@@ -159,7 +159,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(analyzer);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(analyzer);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
 //		}
@@ -172,7 +172,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 //			data = entityManager.unwrap(Session.class).get(Analyzer.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
 //			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);
 //		}

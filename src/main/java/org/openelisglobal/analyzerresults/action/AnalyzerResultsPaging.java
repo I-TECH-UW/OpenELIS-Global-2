@@ -50,8 +50,12 @@ public class AnalyzerResultsPaging {
         }
     }
 
-    public void page(HttpServletRequest request, AnalyzerResultsForm form, String newPage)
+    public void page(HttpServletRequest request, AnalyzerResultsForm form, int newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (newPage < 0) {
+            newPage = 0;
+        }
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
         List<AnalyzerResultItem> clientTests = form.getResultList();
@@ -59,12 +63,10 @@ public class AnalyzerResultsPaging {
 
         paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
-        int page = Integer.parseInt(newPage);
-
-        List<AnalyzerResultItem> resultPage = paging.getPage(page, request.getSession());
+        List<AnalyzerResultItem> resultPage = paging.getPage(newPage, request.getSession());
         if (resultPage != null) {
             form.setResultList(resultPage);
-            form.setPaging(paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+            form.setPaging(paging.getPagingBeanWithSearchMapping(newPage, request.getSession()));
         }
     }
 

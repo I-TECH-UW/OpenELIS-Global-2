@@ -42,7 +42,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			inventoryItems = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "getAllInventoryLocations()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation getAllInventoryLocations()", e);
 //		}
@@ -72,7 +72,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation deleteData()", e);
 //		}
@@ -91,7 +91,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation insertData()", e);
 //		}
@@ -117,7 +117,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(inventoryItem);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(inventoryItem);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation updateData()", e);
 //		}
@@ -135,7 +135,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			} else {
 //				inventoryItem.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation getData()", e);
 //		}
@@ -147,7 +147,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
             data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
         }
@@ -163,7 +163,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return re;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryLocationDAOImpl", "getInventoryLocationById()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryLocation getInventoryLocationById()", e);
 //		}

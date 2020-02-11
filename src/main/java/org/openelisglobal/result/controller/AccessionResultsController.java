@@ -118,7 +118,7 @@ public class AccessionResultsController extends BaseController {
                 form.setSearchFinished(Boolean.FALSE);
             }
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         return findForward(FWD_SUCCESS, form);
@@ -179,7 +179,7 @@ public class AccessionResultsController extends BaseController {
         if (sample == null) {
             // ActionError error = new ActionError("sample.edit.sample.notFound",
             // accessionNumber, null, null);
-            errors.reject("sample.edit.sample.notFound", new String[] { accessionNumber },
+            errors.reject("sample.edit.sample.notFound", new String[] {},
                     "sample.edit.sample.notFound");
         }
 

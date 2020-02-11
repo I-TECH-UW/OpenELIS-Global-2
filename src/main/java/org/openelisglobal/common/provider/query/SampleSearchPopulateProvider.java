@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
@@ -67,7 +67,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
             sample = getSampleForPatientID(patientID);
         } else {
             sample = sampleService.getSampleByAccessionNumber(accessionNo);
-            StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNo);
+            StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNo);
             patientID = statusSet.getPatientId();
         }
 

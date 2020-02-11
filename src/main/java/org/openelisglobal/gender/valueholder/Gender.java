@@ -2,39 +2,60 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.gender.valueholder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import org.openelisglobal.common.valueholder.BaseObject;
 
-public class Gender extends BaseObject<String> {
+@Entity
+@Table(name = "gender")
+public class Gender extends BaseObject<Integer> {
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gender_generator")
+    @SequenceGenerator(name = "gender_generator", sequenceName = "gender_seq", allocationSize = 1)
+    @Column(name = "id")
+    private Integer id;
 
+    @Column(name = "description")
+    @Size(max = 20)
     private String description;
 
+    @Column(name = "gender_type")
+    @Size(max = 1)
     private String genderType;
 
     public Gender() {
         super();
     }
 
-    public void setId(String id) {
+    @Override
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
@@ -59,6 +80,7 @@ public class Gender extends BaseObject<String> {
         return this.description;
     }
 
+    @Override
     public String toString() {
         return "Gender { Id = " + id + ", description=" + description + " }";
     }

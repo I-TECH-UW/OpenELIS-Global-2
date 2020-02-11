@@ -6,9 +6,6 @@ import org.openelisglobal.internationalization.MessageUtil;
 
 public abstract class BaseResultValidationController extends BaseController {
 
-	private static final String[] ALLOWED_FIELDS = new String[] {};
-
-
     private String titleKey = "";
 
     @Override
@@ -22,7 +19,7 @@ public abstract class BaseResultValidationController extends BaseController {
     }
 
     @Override
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         return MessageUtil.getMessage("validation.title", messageKey);
     }
 

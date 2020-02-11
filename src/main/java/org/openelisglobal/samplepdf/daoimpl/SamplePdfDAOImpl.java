@@ -50,7 +50,7 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
             }
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SamplePdf isAccessionNumberFound()", e);
@@ -76,7 +76,7 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SamplePdf getSamplePdfByAccessionNumber()", e);
         }

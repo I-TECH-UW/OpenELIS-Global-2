@@ -12,7 +12,6 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.organization.form.OrganizationMenuForm;
@@ -63,23 +62,18 @@ public class OrganizationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) {
 
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
         // OrganizationMenuAction createMenuList()");
 
         List<Organization> organizations = new ArrayList<>();
 
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = this.getCurrentStartingRecNo(request);
 
-        // bugzilla 2372
-        String searchString = request.getParameter("searchString");
-
-        String doingSearch = request.getParameter("search");
-
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-            organizations = organizationService.getPagesOfSearchedOrganizations(startingRecNo, searchString);
+        if (YES.equals(request.getParameter("search"))) {
+            organizations = organizationService.getPagesOfSearchedOrganizations(startingRecNo,
+                    request.getParameter("searchString"));
         } else {
             organizations = organizationService.getOrderedPage("organizationName", false, startingRecNo);
         }
@@ -88,9 +82,10 @@ public class OrganizationMenuController extends BaseMenuController {
 
         // bugzilla 1411 set pagination variables
         // bugzilla 2372 set pagination variables for searched results
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
+        if (YES.equals(request.getParameter("search"))) {
             request.setAttribute(MENU_TOTAL_RECORDS,
-                    String.valueOf(organizationService.getTotalSearchedOrganizationCount(searchString)));
+                    String.valueOf(organizationService
+                            .getTotalSearchedOrganizationCount(request.getParameter("searchString"))));
         } else {
             request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationService.getCount()));
         }
@@ -115,11 +110,9 @@ public class OrganizationMenuController extends BaseMenuController {
         // know
         // what to do
 
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
+        if (YES.equals(request.getParameter("search"))) {
 
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
-
-            request.setAttribute(MENU_SELECT_LIST_HEADER_SEARCH_STRING, searchString);
         }
 
         return organizations;

@@ -42,7 +42,7 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -436,7 +436,7 @@ public abstract class PatientReport extends Report {
                 : Integer.parseInt(test.getSortOrder()));
         data.setSectionSortOrder(test.getTestSection().getSortOrderInt());
 
-        if (StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
+        if (SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
                 AnalysisStatus.Canceled)) {
             data.setResult(MessageUtil.getMessage("report.test.status.canceled"));
         } else if (currentAnalysis.isReferredOut()) {
@@ -449,7 +449,7 @@ public abstract class PatientReport extends Report {
              * setAppropriateResults( resultList, data ); setReferredResult( data,
              * resultList.get( 0 ) ); setNormalRange( data, test, resultList.get( 0 ) ); }
              */
-        } else if (!StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
+        } else if (!SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
                 AnalysisStatus.Finalized)) {
             sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
             setEmptyResult(data);

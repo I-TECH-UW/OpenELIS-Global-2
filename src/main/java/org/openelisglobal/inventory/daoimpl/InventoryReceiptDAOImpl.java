@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.inventory.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -49,7 +50,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             inventoryReceipts = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
         }
@@ -79,7 +80,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryReceiptDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryReceipt deleteData()", e);
 //		}
@@ -98,7 +99,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryReceiptDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryReceipt insertData()", e);
 //		}
@@ -125,7 +126,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(inventoryReceipt);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(inventoryReceipt);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
 //		}
@@ -144,7 +145,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             } else {
                 inventoryReceipt.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getData()", e);
         }
@@ -158,7 +159,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             data = entityManager.unwrap(Session.class).get(InventoryReceipt.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
         }
@@ -185,7 +186,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
                 inventory = inventoryReceipts.get(0);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getInventoryReceiptByInventoryItemId()", e);
         }

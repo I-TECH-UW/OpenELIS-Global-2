@@ -15,8 +15,11 @@
 */
 package org.openelisglobal.common.servlet.autocomplete;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,7 +35,8 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
     @Override
-    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         boolean unauthorized = false;
 
         // check for module authentication

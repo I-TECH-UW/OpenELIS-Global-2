@@ -23,6 +23,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 
 import java.sql.Date;
 
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 import org.openelisglobal.spring.util.SpringContext;
@@ -110,7 +111,7 @@ public class EIDColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
+        String validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized);
         Test test = testService.getActiveTestsByName("DNA PCR").get(0);
         query = new StringBuilder();
         Date lowDate = dateRange.getLowDate();

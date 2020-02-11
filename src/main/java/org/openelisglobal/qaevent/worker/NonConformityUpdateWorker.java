@@ -29,10 +29,10 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.QAService.QAObservationValueType;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -369,7 +369,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
         sample.setDomain("H");
         sample.setEnteredDate(DateUtil.convertStringDateToSqlDate(getCompleteDateTime()));
         sample.setReceivedDate(DateUtil.convertStringDateToSqlDate(getCompleteDateTime()));
-        sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Entered));
+        sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
         sample.setReferringId(webData.getRequesterSpecimanID());
 
         sampleHuman = new SampleHuman();
@@ -770,7 +770,7 @@ public class NonConformityUpdateWorker implements INonConformityUpdateWorker {
                 sampleItem.setSysUserId(webData.getCurrentSysUserId());
                 sampleItem.setTypeOfSample(typeOfSample);
                 sampleItem.setSortOrder(getNextSampleItemSortOrder());
-                sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+                sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
             }
         }
         addSampleQaEvent(item, sampleItem);

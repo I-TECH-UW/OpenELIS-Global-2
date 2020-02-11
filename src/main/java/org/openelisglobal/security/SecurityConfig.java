@@ -20,9 +20,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Autowired
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",
@@ -52,8 +51,16 @@ public class SecurityConfig {
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
 
-            http.requestMatchers().antMatchers(HTTP_BASIC_PAGES).and().authorizeRequests().anyRequest().authenticated()
-                    .and().httpBasic().and().csrf().disable();
+            // for all requests going to a http basic page, use this security configuration
+            http.requestMatchers().antMatchers(HTTP_BASIC_PAGES).and().authorizeRequests().anyRequest()
+                    // ensure they are authenticated
+                    .authenticated().and()
+                    // ensure they authenticate with http basic
+                    .httpBasic().and()
+                    // disable csrf as it is not needed for httpBasic
+                    .csrf().disable()
+                    // add security headers
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
 
     }

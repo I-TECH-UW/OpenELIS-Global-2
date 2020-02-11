@@ -316,7 +316,7 @@ public class InventoryController extends BaseController {
         return modifiedItems;
     }
 
-//    protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form) throws Exception {
+//    protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form)  {
 //
 //        // test validation against database
 //        String testNameSelected = (String) form.get("testName");

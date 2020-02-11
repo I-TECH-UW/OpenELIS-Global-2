@@ -1,9 +1,12 @@
 package org.openelisglobal.reports.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +40,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.lowagie.text.DocumentException;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Controller
 @SessionAttributes("form")
@@ -118,7 +125,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.write(bytes, 0, bytes.length);
                 servletOutputStream.flush();
                 servletOutputStream.close();
-            } catch (Exception e) {
+            } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
                 LogEvent.logErrorStack(e);
                 LogEvent.logDebug(e);
             }

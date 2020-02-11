@@ -175,7 +175,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             dictionary.setSysUserId(currentUserId);
             dictionaryService.save(dictionary);
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
         return false;

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -149,8 +149,8 @@ public class HaitiLNSPExportReport extends CSVExportReport {
         ts.setLastName(patientService.getLastName(patient));
         ts.setGender(patientService.getGender(patient));
         ts.setNationalId(patientService.getNationalId(patient));
-        ts.setStatus(StatusService.getInstance()
-                .getStatusName(StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId())));
+        ts.setStatus(SpringContext.getBean(IStatusService.class)
+                .getStatusName(SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId())));
         ts.setSampleType(sampleItem.getTypeOfSample().getLocalizedName());
         ts.setTestBench(analysis.getTestSection() == null ? "" : analysis.getTestSection().getTestSectionName());
         ts.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
@@ -167,7 +167,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
             ts.setReferringSiteName(requesterOrganization.getOrganizationName());
         }
 
-        if (StatusService.getInstance().getStatusID(AnalysisStatus.Finalized).equals(analysis.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized).equals(analysis.getStatusId())) {
             ts.setResultDate(DateUtil.convertSqlDateToStringDate(analysis.getCompletedDate()));
 
             List<Result> resultList = resultService.getResultsByAnalysis(analysis);
@@ -196,7 +196,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport()  {
         StringBuilder builder = new StringBuilder();
         builder.append(TestSegmentedExportBean.getHeader());
         builder.append("\n");

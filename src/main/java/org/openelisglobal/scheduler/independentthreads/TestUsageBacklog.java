@@ -39,11 +39,12 @@ import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternal
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
+@Component
+public class TestUsageBacklog {
 
     @Autowired
     private ReportExternalExportService reportExternalExportService;
@@ -63,7 +64,9 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
         }
     }
 
-    @Override
+    // workaround to make this run once on startup.
+    // If program is continuously running for 290,0000 millenia it will run again
+    @Scheduled(initialDelay = 1000 * 30, fixedDelay = Long.MAX_VALUE)
     @Transactional
     public void run() {
         if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.testUsageReporting, "true")) {

@@ -37,7 +37,7 @@
 
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}"  />
 
-<c:set var="logbookType" value="${form.logbookType}" />
+<c:set var="type" value="${form.type}" />
 <c:if test="${form.displayTestSections}">
 	<c:set var="testSectionsByName" value="${form.testSectionsByName}" />
 	<script type="text/javascript" >
@@ -99,8 +99,8 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<c:out value="${logbookType}"/>');
-pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
+var pager = new OEPager('${form.formName}', '&type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
 var pageSearch; //assigned in post load function
 
@@ -235,7 +235,7 @@ function  /*void*/ savePage()
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<c:out value="logbookType"/>';
+	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>';
 	form.submit();
 }
 
@@ -391,8 +391,8 @@ function setField(id, value) {
     </div>
 </div>
 
-<c:if test="${not empty form.logbookType}" >
-	<form:hidden path="logbookType" />
+<c:if test="${not empty form.type}" >
+	<form:hidden path="type" />
 </c:if>
 
 <c:if test="${testCount != 0}">

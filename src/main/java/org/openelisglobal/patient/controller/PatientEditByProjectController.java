@@ -1,5 +1,7 @@
 package org.openelisglobal.patient.controller;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -39,7 +41,8 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
     }
 
     @RequestMapping(value = "/PatientEditByProject", method = RequestMethod.GET)
-    public ModelAndView showPatientEditByProject(HttpServletRequest request) throws Exception {
+    public ModelAndView showPatientEditByProject(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PatientEditByProjectForm form = new PatientEditByProjectForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -60,7 +63,8 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
     @RequestMapping(value = "/PatientEditByProject", method = RequestMethod.POST)
     public ModelAndView showPatientEditByProjectSave(HttpServletRequest request,
             @ModelAttribute("form") @Valid PatientEditByProjectForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws LIMSRuntimeException, Exception {
+            RedirectAttributes redirectAttributes)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);

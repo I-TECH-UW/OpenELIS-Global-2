@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -190,7 +191,7 @@ public class DateUtil {
         if (date != null) {
             try {
                 returnDate = format.format(date);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
@@ -222,7 +223,7 @@ public class DateUtil {
 
         try {
             returnDate = format.format(date);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting date", e);
@@ -254,7 +255,7 @@ public class DateUtil {
                 }
 
                 returnTime = hours + ":" + minutes;
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
@@ -265,7 +266,7 @@ public class DateUtil {
 
     // Decodes a time value in "hh:mm:ss" format and returns it as milliseconds
     // since midnight.
-    public static synchronized int decodeTime(String s) throws Exception {
+    public static synchronized int decodeTime(String s) throws LIMSException {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
         // time " +s);
@@ -275,7 +276,7 @@ public class DateUtil {
         ParsePosition p = new ParsePosition(0);
         Date d = f.parse(s, p);
         if (d == null || !StringUtil.isRestOfStringBlank(s, p.getIndex())) {
-            throw new Exception("Invalid time value (hh:mm:ss): \"" + s + "\".");
+            throw new LIMSException("Invalid time value (hh:mm:ss): \"" + s + "\".");
         }
         return (int) d.getTime();
     }
@@ -300,7 +301,7 @@ public class DateUtil {
             try {
                 java.util.Date date = format.parse(ts);
                 tsToReturn = new Timestamp(date.getTime());
-            } catch (Exception e) {
+            } catch (ParseException e) {
                 // bugzilla 2154
                 LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);

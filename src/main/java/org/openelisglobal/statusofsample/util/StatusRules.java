@@ -17,17 +17,18 @@
 package org.openelisglobal.statusofsample.util;
 
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class StatusRules {
 
     public boolean hasFailedValidation(String analysisStatusId) {
-        return analysisStatusId.equals(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected));
+        return analysisStatusId.equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
     }
 
     public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {
@@ -40,7 +41,7 @@ public class StatusRules {
     }
 
     public String getStartingAnalysisStatus() {
-        return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+        return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
     }
 
     public static boolean useRecordStatusForValidation() {

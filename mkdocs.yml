@@ -1,0 +1,10 @@
+site_name: OpenELIS Global Documentation
+nav:
+    - Home: index.md
+    - About: about.md
+    - Install OpenELIS Global: install.md
+    - Analyzers: analyzer.md
+    - Deploy: deploy.md 
+    - Develop: dev-sop.md
+theme: readthedocs
+

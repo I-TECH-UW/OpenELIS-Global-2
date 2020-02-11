@@ -19,11 +19,9 @@ package org.openelisglobal.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -31,8 +29,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Attribute;
@@ -42,11 +39,12 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.InstantiationException;
 import org.openelisglobal.common.exception.LIMSException;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PluginLoader {
-    private static final String PLUGIN_ANALYZER = "/plugin" + File.separator;
+    private static final String PLUGIN_ANALYZER = "/var/lib/openelis-global/plugins/";
     private static final String VERSION = "version";
     private static final String SUPPORTED_VERSION = "1.0";
     private static final String PATH = "path";
@@ -57,40 +55,27 @@ public class PluginLoader {
     private static final String EXTENSION = "extension";
     private static final String DESCRIPTION = "description";
     private static final String VALUE = "value";
-    private int JDK_VERSION_MAJOR;
-    private int JDK_VERSION_MINOR;
-    private ServletContext context;
+    private final int JDK_VERSION_MAJOR;
+    private final int JDK_VERSION_MINOR;
 
     private static List<String> currentPlugins;
 
-    private static void registerPluginNames(List<String> listOfPlugins) {
-        if (currentPlugins == null) {
-            currentPlugins = listOfPlugins;
-        }
-    }
-
-    public PluginLoader(ServletContextEvent event) {
-        context = event.getServletContext();
-    }
-
-    public void load() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String pluginsDirPath;
-        try {
-            pluginsDirPath = URLDecoder.decode(classLoader.getResource(PLUGIN_ANALYZER).getPath(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LogEvent.logDebug(e);
-            throw new LIMSRuntimeException(e);
-        }
-        File pluginDir = new File(pluginsDirPath);
-
-        loadDirectory(pluginDir);
-    }
-
-    private void loadDirectory(File pluginDir) {
+    public PluginLoader() {
         String[] version = System.getProperty("java.version").split("\\.");
         JDK_VERSION_MAJOR = Integer.parseInt(version[0]);
         JDK_VERSION_MINOR = Integer.parseInt(version[1]);
+    }
+
+    @PostConstruct
+    private void load() {
+        File pluginDir = new File(PLUGIN_ANALYZER);
+
+        loadDirectory(pluginDir);
+
+        LogEvent.logInfo(this.getClass().getName(), "load", "Plugins loaded");
+    }
+
+    private void loadDirectory(File pluginDir) {
         List<String> pluginList = new ArrayList<>();
 
         File[] files = pluginDir.listFiles();
@@ -287,5 +272,11 @@ public class PluginLoader {
 
     public static List<String> getCurrentPlugins() {
         return currentPlugins;
+    }
+
+    private void registerPluginNames(List<String> listOfPlugins) {
+        if (currentPlugins == null) {
+            currentPlugins = listOfPlugins;
+        }
     }
 }

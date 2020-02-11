@@ -9,7 +9,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -45,11 +45,11 @@ public abstract class BaseWorkplanController extends BaseController {
     private void initialize() {
         if (statusList == null) {
             statusList = new ArrayList<>();
-            statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
-            statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected)));
-            statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+            statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+            statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+            statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
             statusList.add(
-                    Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
+                    Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
         }
 
         if (nfsTestIdList == null) {
@@ -72,7 +72,7 @@ public abstract class BaseWorkplanController extends BaseController {
     }
 
     @Override
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         return MessageUtil.getMessage("workplan.page.title", messageKey);
     }
 

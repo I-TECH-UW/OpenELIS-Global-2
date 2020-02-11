@@ -68,6 +68,13 @@ public class DataSubmissionController extends BaseController {
                 ? DateUtil.getCurrentYear()
                 : Integer.parseInt(request.getParameter("year"));
 
+        if (month < 0 ) {
+            month = DateUtil.getCurrentMonth() + 1;
+        }
+        if (year < 0) {
+            year = DateUtil.getCurrentYear();
+        }
+
         List<DataIndicator> indicators = new ArrayList<>();
         List<TypeOfDataIndicator> typeOfIndicatorList = typeOfDataIndicatorService.getAllTypeOfDataIndicator();
         for (TypeOfDataIndicator typeOfIndicator : typeOfIndicatorList) {

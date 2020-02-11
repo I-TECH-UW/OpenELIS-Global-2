@@ -47,7 +47,7 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
     static {
-        IStatusService statusService = StatusService.getInstance();
+        IStatusService statusService = SpringContext.getBean(IStatusService.class);
         NOT_STARTED = new ArrayList<>();
         NOT_STARTED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.NotStarted)));
 

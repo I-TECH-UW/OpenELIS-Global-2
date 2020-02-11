@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.QAService;
@@ -71,7 +70,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
             form.setSelectList(new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
             form.setUseAccessionDirect(Boolean.TRUE);
             form.setInstructions(MessageUtil.getMessage("reports.nonConformity.notification.report.instructions"));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logDebug(e);
         }
     }

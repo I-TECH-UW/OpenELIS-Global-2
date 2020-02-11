@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.systemusermodule.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				String tableName = "SYSTEM_ROLE_MODULE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule AuditTrail deleteData()", e);
 //		}
@@ -76,7 +77,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule deleteData()", e);
 //		}
@@ -103,7 +104,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule insertData()", e);
 //		}
@@ -119,7 +120,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + roleModule.getPermissionAgentId());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
 //		}
@@ -134,7 +135,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_ROLE_MODULE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule AuditTrail updateData()", e);
 //		}
@@ -145,7 +146,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(roleModule);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(roleModule);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
 //		}
@@ -164,7 +165,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             } else {
                 systemUserModule.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getData()", e);
         }
@@ -180,7 +181,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getAllSystemModules()", e);
         }
@@ -199,7 +200,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getAllRoleModulesBySystemUserId()", e);
         }
@@ -223,7 +224,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in RoleModule getPageOfRoleModules()", e);
         }
@@ -237,7 +238,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             sysUserModule = entityManager.unwrap(Session.class).get(RoleModule.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Gender readRoleModule(idString)", e);
         }
@@ -294,7 +295,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
             return list.size() > 0;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateRoleModuleExists()", e);
         }

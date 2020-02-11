@@ -20,12 +20,15 @@ import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
@@ -61,7 +64,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
             // form.setUseProjectCode(Boolean.TRUE);
             form.setUseDashboard(Boolean.TRUE);
             form.setProjectCodeList(getProjectList());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Log.error("Error in CIDashboard.setRequestParemeters: ", e);
         }
     }
@@ -133,14 +136,14 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
         try {
             csvColumnBuilder = getColumnBuilder();
             csvColumnBuilder.buildDataSource();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
             add1LineErrorMessage("report.error.message.general.error");
         }
     }
 
     @Override
-    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception {
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws IOException, SQLException, ParseException {
 
         String currentAccessionNumber = null;
         String[] splitBase = {};
@@ -196,7 +199,8 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException {
 
         if (splitBase != null) {
-            StringBuilder consolidatedLine = new StringBuilder();
+            int splitBaseNumChars = StringUtil.countChars(splitBase);
+            StringBuilder consolidatedLine = new StringBuilder(splitBaseNumChars + splitBase.length);
             for (String value : splitBase) {
                 consolidatedLine.append(value);
                 consolidatedLine.append(",");

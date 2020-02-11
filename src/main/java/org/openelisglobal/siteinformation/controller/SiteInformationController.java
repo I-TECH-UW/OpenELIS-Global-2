@@ -443,9 +443,9 @@ public class SiteInformationController extends BaseController {
             "/CancelMenuStatementConfig", "/CancelPatientConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)
     public ModelAndView cancelSiteInformation(HttpServletRequest request,
-            @ModelAttribute("form") SiteInformationForm form, SessionStatus status) {
+            SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new SiteInformationForm());
     }
 
     @Override

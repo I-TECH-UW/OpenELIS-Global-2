@@ -30,6 +30,7 @@ public class Dictionary extends BaseObject<String> {
     private static final long serialVersionUID = 1L;
 
     public class ComparatorLocalizedName implements Comparator<Dictionary> {
+        @Override
         public int compare(Dictionary o1, Dictionary o2) {
             return o1.getLocalizedName().compareTo(o2.getDefaultLocalizedName());
         }
@@ -73,6 +74,7 @@ public class Dictionary extends BaseObject<String> {
         this.localizedDictionaryName = new ValueHolder();
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
@@ -89,6 +91,7 @@ public class Dictionary extends BaseObject<String> {
         this.dictionaryCategory.setValue(dictionaryCategory);
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -140,6 +143,6 @@ public class Dictionary extends BaseObject<String> {
 
     @Override
     public String toString() {
-        return "Dictionary [id=" + id + ", localAbbreviation=" + localAbbreviation + ", nameKey=" + nameKey + "]";
+        return "Dictionary [id=" + id + ", localAbbreviation=" + localAbbreviation + ", nameKey=" + getNameKey() + "]";
     }
 }

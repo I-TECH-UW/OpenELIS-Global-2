@@ -17,7 +17,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.dataexchange.resultreporting.beans.ReportingConfiguration;
 import org.openelisglobal.resultreporting.form.ResultReportingConfigurationForm;
 import org.openelisglobal.resultreporting.service.ResultReportingConfigurationService;
-import org.openelisglobal.scheduler.LateStartScheduler;
+import org.openelisglobal.scheduler.SchedulerConfig;
 import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
@@ -108,7 +108,7 @@ public class ResultReportingConfigurationController extends BaseController {
         }
 
         ConfigurationProperties.forceReload();
-        SpringContext.getBean(LateStartScheduler.class).restartSchedules();
+        SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);

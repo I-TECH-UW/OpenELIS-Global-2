@@ -31,7 +31,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -63,7 +63,7 @@ public class MalariaSurveilanceJob implements Job {
     private static Map<String, String> RAPID_DICTIONARY_ID_VALUE_MAP;
     private static List<String> MALARIA_TEST_NAMES;
     private static List<String> RAPID_TEST_NAMES;
-    private static final String FINISHED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+    private static final String FINISHED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
 
     private StringBuffer buffer;
 

@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.typeofsample.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -53,7 +54,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
@@ -71,7 +72,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 //			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
 //		}
@@ -92,7 +93,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             } else {
                 typeOfSample.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getData()", e);
@@ -114,7 +115,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getAllTypeOfSamples()", e);
@@ -138,7 +139,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
         }
@@ -152,7 +153,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest readTypeOfSample()", e);
@@ -177,7 +178,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             List<TypeOfSampleTest> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestsForSampleType");
         }
 
@@ -197,7 +198,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             List<TypeOfSampleTest> list = query.list();
             // closeSession(); // CSL remove old
             return list.size() > 0 ? list.get(0) : null;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestForTest");
         }
 
@@ -216,7 +217,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             List<TypeOfSampleTest> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestsForTest");
         }
         return null;

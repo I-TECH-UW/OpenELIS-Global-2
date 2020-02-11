@@ -113,7 +113,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
         PanelItem pi;
         try {
             pi = get(idString);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
         }

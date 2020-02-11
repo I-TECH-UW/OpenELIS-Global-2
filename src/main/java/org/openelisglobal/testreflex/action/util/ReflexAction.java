@@ -19,7 +19,7 @@ package org.openelisglobal.testreflex.action.util;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -91,7 +91,7 @@ public abstract class ReflexAction {
             generatedAnalysis.setAnalysisType(currentAnalysis.getAnalysisType());
             generatedAnalysis.setRevision(currentAnalysis.getRevision());
             generatedAnalysis.setStartedDate(DateUtil.getNowAsSqlDate());
-            generatedAnalysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
+            generatedAnalysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
             generatedAnalysis.setParentAnalysis(currentAnalysis);
             generatedAnalysis.setParentResult(result);
             generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());

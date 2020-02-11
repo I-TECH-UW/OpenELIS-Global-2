@@ -79,31 +79,37 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
             listOfTestResults = testResultService.getTestResultsByTestAndResultGroup(testAnalyte);
         }
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning from Running getTestResultsByTestAndResultGr
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning from
+        // Running getTestResultsByTestAndResultGr
         // ");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "size ofo list " + listOfTestResults.size());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "size ofo list "
+        // + listOfTestResults.size());
         if (listOfTestResults != null && listOfTestResults.size() > 0) {
             for (int i = 0; i < listOfTestResults.size(); i++) {
-                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "one elem " + listOfTestResults.get(i));
+                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "one elem " +
+                // listOfTestResults.get(i));
             }
         }
         // for testResults load the value field with dict entry if needed
         List list = new ArrayList();
-        for (int i = 0; i < listOfTestResults.size(); i++) {
-            TestResult tr = new TestResult();
-            tr = (TestResult) listOfTestResults.get(i);
-            if (tr.getTestResultType().equals(SystemConfiguration.getInstance().getDictionaryType())) {
-                // get from dictionary
-                Dictionary dictionary = new Dictionary();
-                dictionary.setId(tr.getValue());
-                dictionaryService.getData(dictionary);
-                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "setting dictEntry "
-                // + dictionary.getDictEntry());
-                // bugzilla 1847: use dictEntryDisplayValue
-                tr.setValue(dictionary.getDictEntryDisplayValue());
+        if (listOfTestResults != null) {
+            for (int i = 0; i < listOfTestResults.size(); i++) {
+                TestResult tr = new TestResult();
+                tr = (TestResult) listOfTestResults.get(i);
+                if (tr.getTestResultType().equals(SystemConfiguration.getInstance().getDictionaryType())) {
+                    // get from dictionary
+                    Dictionary dictionary = new Dictionary();
+                    dictionary.setId(tr.getValue());
+                    dictionaryService.getData(dictionary);
+                    // LogEvent.logInfo(this.getClass().getName(), "method unkown", "setting
+                    // dictEntry "
+                    // + dictionary.getDictEntry());
+                    // bugzilla 1847: use dictEntryDisplayValue
+                    tr.setValue(dictionary.getDictEntryDisplayValue());
 
+                }
+                list.add(tr);
             }
-            list.add(tr);
         }
 
         Collections.sort(list, TestResultComparator.VALUE_COMPARATOR);

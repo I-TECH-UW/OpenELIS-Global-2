@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
@@ -40,9 +41,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ReportNonConformingEventController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "currentUserId", "status", "id", "name",
+    private static final String[] ALLOWED_FIELDS = new String[] { "currentUserId", "status", "id", "reportDate", "name",
             "reporterName", "dateOfEvent", "labOrderNumber", "prescriberName", "site", "reportingUnit", "description",
-            "suspectedCauses", "proposedAction", };
+            "suspectedCauses", "proposedAction", "specimenId" };
 
     @Autowired
     private SampleService sampleService;
@@ -63,14 +64,21 @@ public class ReportNonConformingEventController extends BaseController {
     }
 
     @RequestMapping(value = "/ReportNonConformingEvent", method = RequestMethod.GET)
-    public ModelAndView showReportNonConformingEvent(HttpServletRequest request)
+    public ModelAndView showReportNonConformingEvent(@Valid @ModelAttribute("form") NonConformingEventForm oldForm,
+            BindingResult result,
+            HttpServletRequest request)
             throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL, oldForm);
+        }
+
         NonConformingEventForm form = new NonConformingEventForm();
         form.setCurrentUserId(getSysUserId(request));
         form.setPatientSearch(new PatientSearch());
-        String labNumber = request.getParameter("labNo");
-        String specimenId = request.getParameter("specimenId");
+        String labNumber = oldForm.getLabOrderNumber();
+        String specimenId = oldForm.getSpecimenId();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             initForm(labNumber, specimenId, form);
         }
@@ -124,7 +132,7 @@ public class ReportNonConformingEventController extends BaseController {
 
         form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
-        requesterService.setSampleId(sample.getId());
+        requesterService.setSampleId(sample == null ? null : sample.getId());
         form.setSite(requesterService.getReferringSiteName());
         form.setPrescriberName(requesterService.getRequesterLastFirstName());
 
@@ -153,6 +161,8 @@ public class ReportNonConformingEventController extends BaseController {
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
             return "reportNonConformingEventDefiniton";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "redirect:/HomePage.do";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/ReportNonConformingEvent.do";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
