@@ -73,11 +73,6 @@ bash ${buildInstallDir}/install/linux/setupTomcatDocker.sh
 	
 #create the docker image
 bash ${buildInstallDir}/build/build.sh -d
-cd ${projectDir}
-#run the docker image
-echo "starting up docker"
-docker-compose up -d
-cd ${callDirectory}
 
 createLinuxInstaller() {
 	context=$1
@@ -88,6 +83,7 @@ createLinuxInstaller() {
 	mkdir -p ${installerCreationDir}/linux/${installerName}
 	cp -r ${buildInstallDir}/installerTemplate/linux/* ${installerCreationDir}/linux/${installerName}
 	cp OpenELIS-Global_DockerImage.tar.gz ${installerCreationDir}/linux/${installerName}/dockerImage/${context}-${projectVersion}.tar.gz
+	cp Postgres_DockerImage.tar.gz ${installerCreationDir}/linux/${installerName}/dockerImage/Postgres_DockerImage.tar.gz
 #	cp ${projectDir}/tools/DBBackup/installerTemplates/${backupFile} ${installerCreationDir}/linux/${context}/templates/DatabaseBackup.pl
 #	cp ${projectDir}/database/baseDatabase/OpenELIS-Global.sql ${installerCreationDir}/linux/${installerName}/database/baseDatabase/databaseInstall.sql
 	cp ${buildInstallDir}/install/linux/* ${installerCreationDir}/linux/${installerName}/scripts/
@@ -106,17 +102,6 @@ if [ $createInstaller == true ]
 then
 	cd ${projectDir}
 	
-	#get useful info from the maven project
-	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\
-	    echo 'PROJECT_VERSION=${project.version}'; } \
-	  | mvn help:evaluate --non-recursive )
-	artifactId=$(echo "$output" | grep '^ARTIFACT_ID' | cut -d = -f 2)
-	projectVersion=$(echo "$output" | grep '^PROJECT_VERSION' | cut -d = -f 2)
-	cd ${callDirectory}
-	
-	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
-	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
-	
 	if [ -d "${installerCreationDir}" ]
 	then
 		while true; do
@@ -131,6 +116,18 @@ then
 	fi
 	mkdir -p ${installerCreationDir}
 	
+	#get useful info from the maven project
+	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\
+	    echo 'PROJECT_VERSION=${project.version}'; } \
+	  | mvn help:evaluate --non-recursive )
+	artifactId=$(echo "$output" | grep '^ARTIFACT_ID' | cut -d = -f 2)
+	projectVersion=$(echo "$output" | grep '^PROJECT_VERSION' | cut -d = -f 2)
+	cd ${callDirectory}
+	
+	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
+	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
+	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
+	
 	mkdir ${stagingDir}
 	curl -fsSL https://get.docker.com -o ${stagingDir}/get-docker.sh
 	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${stagingDir}/docker-compose
@@ -139,6 +136,7 @@ then
 
 	
 	rm OpenELIS-Global_DockerImage*.tar.gz
+	rm Postgres_DockerImage.tar.gz
 	rm -r ${stagingDir}
 	
 fi
