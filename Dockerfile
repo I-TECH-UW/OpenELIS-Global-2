@@ -6,7 +6,7 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
     
 #Deploy the war into tomcat image and point root to it
 ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
-RUN ln -s OpenELIS-Global ROOT
+RUN ln -s /usr/local/tomcat/webapps/OpenELIS-Global /usr/local/tomcat/webapps/ROOT
     
 #rewrite server.xml with our server.xml for a number of security configurations
 #    
