@@ -885,6 +885,10 @@ def load_docker_image():
     log("loading openelis-global docker image", PRINT_TO_CONSOLE)
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + APP_NAME + '-' + VERSION + '.tar.gz'
     os.system(cmd)
+    
+    log("loading jpa-server docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'JPAServer_DockerImage.tar.gz'
+    os.system(cmd)
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)
         cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'Postgres_DockerImage.tar.gz'
