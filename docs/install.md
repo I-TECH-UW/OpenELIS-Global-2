@@ -77,7 +77,7 @@ If you trust docker to provide your database, you can ignore this section
  
     b. EG: for OE 2.0 Beta 1: 
 
-    ``curl -L -O https://www.dropbox.com/s/2z04rng0tt7txbg/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
+    ``curl -L -O https://www.dropbox.com/s/pzipn4c7taxczj0/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
