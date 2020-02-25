@@ -16,6 +16,7 @@ from time import gmtime, strftime
 import random
 import ConfigParser
 from string import letters
+from getpass import getpass
 
 #About
 VERSION = ""
@@ -53,11 +54,13 @@ CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #database variables
 DB_HOST="localhost"
+DB_HOST_FOR_DOCKER_SERVICES="172.17.0.1" #docker containers can't point to 'localhost' without a loopback
 DB_PORT="5432"
 
 #Docker variables
 DOCKER_OE_REPO_NAME = "openelisglobal" #don't change
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" #don't change
+#DOCKER_FHIR_API_CONTAINER_NAME = "hapi-fhir-jpaserver-starter"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" #don't change
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 DOCKER_DB_HOST_PORT = "5432"
@@ -74,8 +77,12 @@ EXPECTED_CROSSTAB_FUNCTIONS = "3"
 #Generated values
 CLINLIMS_PWD = ''
 ADMIN_PWD = ''
-SITE_ID = ''
 ACTION_TIME = ''
+
+#Get from user values
+SITE_ID = ''
+#FHIR_API_USERNAME = "fhir"
+#FHIR_API_PWD = ""
 
 #Stateful objects
 LOG_FILE = ''
@@ -198,7 +205,10 @@ def do_install():
     log("installing " + APP_NAME, PRINT_TO_CONSOLE)
     
     generate_passwords()
+    
     get_site_id()    
+    
+#    get_fhir_api_user()
     
     install_files_from_templates()
     
@@ -207,6 +217,7 @@ def do_install():
     install_docker()
 
     install_db()
+    
     preserve_database_user_password()
 
     install_crosstab()
@@ -236,8 +247,6 @@ def create_docker_compose_file():
         if DOCKER_DB:
             if line.find("#db") >= 0:
                 line = line.replace("#db", "")
-            if line.find("#port") >= 0:
-                line = line.replace("#port", "")
             if line.find("[% db_env_dir %]")  >= 0:
                 line = line.replace("[% db_env_dir %]", DB_ENVIRONMENT_DIR)  
             if line.find("[% db_data_dir %]")  >= 0:
@@ -250,24 +259,18 @@ def create_docker_compose_file():
                 line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)
             if line.find("[% db_host_port %]")  >= 0:
                 line = line.replace("[% db_host_port %]", DOCKER_DB_HOST_PORT)
-        #set local db attributes
-        elif LOCAL_DB:
-            if line.find("#h") >= 0:
-                line = line.replace("#h", "")
-        #set remote db attributes
-        else:
-            if line.find("#port") >= 0:
-                line = line.replace("#port", "")
         
         #common attributes
         if line.find("[% db_host %]")  >= 0:
-            line = line.replace("[% db_host %]", DB_HOST) 
+            line = line.replace("[% db_host %]", DB_HOST_FOR_DOCKER_SERVICES) 
         if line.find("[% db_port %]")  >= 0:
             line = line.replace("[% db_port %]", DB_PORT) 
         if line.find("[% secrets_dir %]")  >= 0:
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
         if line.find("[% plugins_dir %]")  >= 0:
             line = line.replace("[% plugins_dir %]", PLUGINS_DIR)  
+#        if line.find("[% fhir_api_username %]") >= 0:
+#            line = line.replace("[% fhir_api_username %]", FHIR_API_USERNAME)
             
         
         output_file.write(line)
@@ -449,6 +452,21 @@ def preserve_database_user_password():
     # own directory by tomcat user
     os.chown(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 8443, 8443)
     os.chmod(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 0640)
+    
+    
+#def get_fhir_api_user():
+#    global FHIR_API_USERNAME, FHIR_API_PWD
+#    FHIR_API_USERNAME = raw_input("What user would you like to use for the fhir api? ")
+#    print("This installer needs a password that the fhir server will use to internally talk to the OE fhir api. Please provide one now.")
+#    FHIR_API_PWD = getpass()
+#    ensure_dir_exists(SECRETS_DIR)
+#    db_user_password_file = open(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 'w')
+#    db_user_password_file.write(FHIR_API_PWD)
+#    db_user_password_file.close()
+#
+#    # own directory by tomcat user
+#    os.chown(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 8443, 8443)
+#    os.chmod(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 0640)
 
 
 # note There is a fair amount of copying files, it should be re-written using shutil
@@ -512,6 +530,8 @@ def do_update():
 
     load_docker_image()
     
+#    get_fhir_api_user()
+    
     create_docker_compose_file()
 
     start_docker_containers()
@@ -574,11 +594,16 @@ def uninstall_docker_images():
         log("stopping database docker image...", PRINT_TO_CONSOLE)
         cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_DB_CONTAINER_NAME + '" --format="{{.ID}}"))'
         os.system(cmd)
+        
     log("removing openelis docker image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     cmd = 'docker rmi $(docker images \'' + DOCKER_OE_REPO_NAME + '\' -q)'
     os.system(cmd)
+    
+#    log("removing fhir api image...", PRINT_TO_CONSOLE)
+#    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
+#    os.system(cmd)
 
 
 def uninstall_backup_task():
@@ -655,7 +680,7 @@ def update_database_user_role():
 def read_setup_properties_file():
     global DB_BACKUPS_DIR, SECRETS_DIR, PLUGINS_DIR
     global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR, DOCKER_DB_HOST_PORT
-    global DB_HOST, DB_PORT
+    global DB_HOST, DB_HOST_FOR_DOCKER_SERVICES, DB_PORT
     global LOCAL_DB
     
     config = ConfigParser.ConfigParser() 
@@ -673,7 +698,8 @@ def read_setup_properties_file():
     docker_db_info = "DOCKER_DB_VALUES"
     DOCKER_DB = is_true_string(config.get(docker_db_info, 'provide_database'))
     if DOCKER_DB:
-        DB_HOST = "database" 
+        DB_HOST = "docker"
+        DB_HOST_FOR_DOCKER_SERVICES = "database" #use docker network to connect by service name
         DB_PORT = "5432" 
     DOCKER_DB_HOST_PORT = config.get(docker_db_info,'host_port')
     DOCKER_DB_BACKUPS_DIR = ensure_dir_string(config.get(docker_db_info,'backups_dir'))
@@ -681,7 +707,9 @@ def read_setup_properties_file():
     DB_ENVIRONMENT_DIR = ensure_dir_string(config.get(docker_db_info,'host_env_dir'))
     DB_INIT_DIR = ensure_dir_string(config.get(docker_db_info,'host_init_dir'))
     
+    #if localhost database, get the docker host ip address so services can connect to db on host
     if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
+        DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
         LOCAL_DB = True
     else:
         LOCAL_DB = False
@@ -858,11 +886,24 @@ def load_docker_image():
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + APP_NAME + '-' + VERSION + '.tar.gz'
     os.system(cmd)
     
+#    log("loading jpa-server docker image", PRINT_TO_CONSOLE)
+#    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'JPAServer_DockerImage.tar.gz'
+#    os.system(cmd)
+    if DOCKER_DB:
+        log("loading postgres docker image", PRINT_TO_CONSOLE)
+        cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'Postgres_DockerImage.tar.gz'
+        os.system(cmd)
+    
 
 def start_docker_containers():
     log("starting docker containers", PRINT_TO_CONSOLE)
     cmd = 'sudo docker-compose up -d '
     os.system(cmd)
+    
+    
+def get_docker_host_ip():
+    cmd = "ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+'"
+    return subprocess.check_output(cmd, shell=True).strip()
 
 
 

@@ -11,7 +11,7 @@ done
 buildDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 #and other important locations
-projectDir="${buildDir}/../.."
+projectDir="${buildDir}/.."
 resourcesDir="${projectDir}/src/main/resources"
 
 echo "Please enter a default password that can be used to login into the default admin account that is created on install"
