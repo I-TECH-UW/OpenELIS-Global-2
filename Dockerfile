@@ -9,7 +9,7 @@ ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #rewrite server.xml with our server.xml for a number of security configurations
 #    
-ADD buildAndInstall/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
+ADD install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
 
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
@@ -17,11 +17,11 @@ ADD buildAndInstall/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xm
 #    org.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false
 #    org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false
 #    org.apache.coyote.USE_CUSTOM_STATUS_MSG_IN_HEADER=false
-ADD buildAndInstall/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
+ADD install/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
 
 #replace ServerInfo.properties with a less informative one
 RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util
-ADD buildAndInstall/tomcat-resources/ServerInfo.properties /usr/local/tomcat/lib/org/apache/catalina/util/ServerInfo.properties 
+ADD install/tomcat-resources/ServerInfo.properties /usr/local/tomcat/lib/org/apache/catalina/util/ServerInfo.properties 
 
 #restrict files
 #GID AND UID must be kept the same as setupTomcat.sh (if using default certificate group)
@@ -44,7 +44,7 @@ RUN groupadd tomcat; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml
 
-ADD buildAndInstall/install/docker-entrypoint.sh /docker-entrypoint.sh
+ADD install/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chown tomcat_admin:tomcat /docker-entrypoint.sh; \
     chmod 770 /docker-entrypoint.sh;
     
