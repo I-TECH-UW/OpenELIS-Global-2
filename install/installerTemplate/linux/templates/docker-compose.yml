@@ -39,33 +39,9 @@ services:
               # this will be read into CATALINA_OPTS in docker-entrypoint.sh
             - source: OE_DB_USER_PASSWORD
             
-    hapi-fhir-jpaserver-starter:
-        container_name: hapi-fhir-jpaserver-starter
-        image: hapi-fhir-jpaserver-starter
-#db        depends_on:
-#db            - database
-        ports:
-            - "8081:8080"
-            - "8444:8443"
-        links:
-           - "openelisglobal:internal.openelisglobalci.org"
-        restart: on-failure
-        environment:
-              # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-            - CATALINA_OPTS= -DOE_DB_URL=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims?currentSchema=clinlims -DOE_DB_USERNAME=clinlims 
-               -DOE_FHIR_API_USERNAME=[% fhir_api_username %] -DOE_FHIR_API_ADDRESS=https://internal.openelisglobalci.org:8443/OpenELIS-Global/fhir/
-        secrets:
-            - source: tomcat_cert.crt
-            - source: tomcat_cert.key
-              # this will be read into CATALINA_OPTS in docker-entrypoint.sh
-            - source: OE_DB_USER_PASSWORD
-            - source: OE_FHIR_API_USER_PASSWORD
-            
 secrets:
   OE_DB_USER_PASSWORD:
     file: [% secrets_dir %]OE_DB_USER_PASSWORD
-  OE_FHIR_API_USER_PASSWORD:
-    file: [% secrets_dir %]OE_FHIR_API_USER_PASSWORD
   tomcat_cert.crt:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
