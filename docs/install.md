@@ -48,13 +48,11 @@ This updates the system from the sources in the sources list. It updates what ne
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for individual installation
+1. Generate a signed .crt and .key for individual installation or if you are just creating a test server, you can skip signed keys and instead run:
 
-2. If you are just creating a test server, you can skip this section and instead run:
-    ''sudo apt-get install ssl-cert''
-or
+    ``sudo apt-get install ssl-cert``
 
-3. Place files in server as:
+2. If you have signed keys, place files in server as:
 
     ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
