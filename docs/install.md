@@ -50,7 +50,11 @@ This updates the system from the sources in the sources list. It updates what ne
 
 1. Generate a signed .crt and .key for individual installation
 
-2. Place files in server as:
+2. If you are just creating a test server, you can skip this section and instead run:
+    ''sudo apt-get install ssl-cert''
+or
+
+3. Place files in server as:
 
     ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
