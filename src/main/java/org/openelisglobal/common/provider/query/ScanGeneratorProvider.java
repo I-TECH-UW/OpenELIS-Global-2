@@ -31,6 +31,7 @@ import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 
 public class ScanGeneratorProvider extends BaseQueryProvider {
 
@@ -82,7 +83,7 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
         }
 
         String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;
-        String returnData = GenericValidator.isBlankOrNull(error) ? nextNumber : error;
+        String returnData = Encode.forXmlContent(GenericValidator.isBlankOrNull(error) ? nextNumber : error);
 
         ajaxServlet.sendData(returnData, result, request, response);
     }

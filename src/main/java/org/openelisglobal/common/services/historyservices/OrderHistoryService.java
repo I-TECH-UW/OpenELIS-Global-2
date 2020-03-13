@@ -22,9 +22,9 @@ import java.util.Map;
 
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.services.IStatusService;
 //import org.openelisglobal.common.services.PersonService;
 import org.openelisglobal.common.services.RequesterService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.history.service.HistoryService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -78,7 +78,7 @@ public class OrderHistoryService extends AbstractHistoryService {
         newValueMap = new HashMap<>();
         addReferrerHistory(sample, searchHistory);
 
-        newValueMap.put(STATUS_ATTRIBUTE, StatusService.getInstance().getStatusNameFromId(sample.getStatusId()));
+        newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(sample.getStatusId()));
         newValueMap.put(ACCESSION_ATTRIBUTE, sample.getAccessionNumber());
 
     }

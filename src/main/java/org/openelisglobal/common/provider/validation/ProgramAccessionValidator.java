@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -169,7 +169,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
         if (recordType == null) {
             return accessionNumberUsed;
         }
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         String recordStatus = new String();
         boolean isSampleEntry = recordType.contains("Sample");
         boolean isPatientEntry = recordType.contains("Patient");
@@ -321,7 +321,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     }
 
     public static String findStudyFormName(String accessionNumber) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         Patient p = new Patient();
         p.setId(statusSet.getPatientId());
         Sample s = new Sample();

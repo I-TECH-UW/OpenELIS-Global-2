@@ -1,3 +1,0 @@
-# m h  dom mon dow   command
-01 14 * * * root cd /home/itech/openElisBackup; ./DatabaseBackup.pl 
-

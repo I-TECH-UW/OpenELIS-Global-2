@@ -82,9 +82,6 @@ public class LogoUploadServlet extends HttpServlet {
             return;
         }
 
-        String uploadPreviewPath = FULL_PREVIEW_FILE_PATH
-                + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg");
-
         if (removeImage) {
             removeImage(whichLogo);
         } else {

@@ -34,15 +34,15 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class AnalyzerImportServlet extends HttpServlet {
 
-    protected LoginService loginService = SpringContext.getBean(LoginService.class);
+    protected LoginUserService loginService = SpringContext.getBean(LoginUserService.class);
     protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
     private static final long serialVersionUID = 1L;
@@ -147,7 +147,7 @@ public class AnalyzerImportServlet extends HttpServlet {
     }
 
     private String getSysUserId(String user, String password) {
-        Login login = new Login();
+        LoginUser login = new LoginUser();
         login.setLoginName(user);
         login.setPassword(password);
 
@@ -162,7 +162,7 @@ public class AnalyzerImportServlet extends HttpServlet {
     }
 
     private boolean userValid(String user, String password) {
-        Login login = new Login();
+        LoginUser login = new LoginUser();
         login.setLoginName(user);
         login.setPassword(password);
 

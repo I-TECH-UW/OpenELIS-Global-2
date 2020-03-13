@@ -13,6 +13,7 @@ import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IReportTrackingService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService;
@@ -288,7 +289,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         analysis.setAnalysisType(DEFAULT_ANALYSIS_TYPE);
         analysis.setRevision("0");
         analysis.setStartedDate(DateUtil.getNowAsSqlDate());
-        analysis.setStatusId(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NotStarted));
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.NotStarted));
         analysis.setSampleItem(sampleItem);
         analysis.setTestSection(test.getTestSection());
         analysis.setSampleTypeName(sampleItem.getTypeOfSample().getLocalizedName());
@@ -348,7 +349,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     @Transactional
     public void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId) {
-        String cancelStatus = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled);
+        String cancelStatus = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled);
         for (Analysis analysis : cancelAnalysis) {
             analysis.setStatusId(cancelStatus);
             analysis.setSysUserId(sysUserId);

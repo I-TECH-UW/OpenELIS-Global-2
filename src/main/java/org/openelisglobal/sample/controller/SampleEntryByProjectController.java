@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
@@ -162,7 +162,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
         item.setSample(sample);
         item.setTypeOfSample(typeofsample);
         item.setSortOrder(Integer.toString(1));
-        item.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+        item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
 
         return item;
     }

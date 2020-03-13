@@ -28,7 +28,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.query.SampleItemTestProvider;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -39,6 +39,7 @@ import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
 import org.openelisglobal.sample.util.CI.ProjectForm;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -219,7 +220,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     private Map<String, SampleItem> cleanupExistingAnalysis(List<Analysis> analysisList) {
-        String canceledId = StatusService.getInstance().getStatusID(AnalysisStatus.Canceled);
+        String canceledId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
         Map<String, SampleItem> sampleItemsToDelete = new HashMap<>();
         // first we assume we'll delete them all
         for (Analysis analysis : analysisList) {
@@ -227,7 +228,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             sampleItemsToDelete.put(sampleItem.getId(), sampleItem);
         }
         for (Analysis analysis : analysisList) {
-            AnalysisStatus analysisStatus = StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId());
+            AnalysisStatus analysisStatus = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId());
             switch (analysisStatus) {
             case NotStarted:
                 // deletable => leave sampleItem in the Delete list

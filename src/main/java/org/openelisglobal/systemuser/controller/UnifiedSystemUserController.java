@@ -25,8 +25,8 @@ import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -60,7 +60,7 @@ public class UnifiedSystemUserController extends BaseController {
     private UnifiedSystemUserFormValidator formValidator;
 
     @Autowired
-    private LoginService loginService;
+    private LoginUserService loginService;
     @Autowired
     private RoleService roleService;
     @Autowired
@@ -293,12 +293,12 @@ public class UnifiedSystemUserController extends BaseController {
     private void setPropertiesForExistingUser(UnifiedSystemUserForm form, String id, boolean doFiltering)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        Login login = getLoginFromCombinedId(id);
+        LoginUser login = getLoginFromCombinedId(id);
         SystemUser systemUser = getSystemUserFromCombinedId(id);
 
         if (login != null) {
             String proxyPassword = getProxyPassword(login);
-            form.setLoginUserId(login.getId());
+            form.setLoginUserId(Integer.toString(login.getId()));
             form.setAccountDisabled(login.getAccountDisabled());
             form.setAccountLocked(login.getAccountLocked());
             form.setUserLoginName(login.getLoginName());
@@ -324,7 +324,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     }
 
-    private String getProxyPassword(Login login) {
+    private String getProxyPassword(LoginUser login) {
         char[] chars = new char[9];
         Arrays.fill(chars, DEFAULT_OBFUSCATED_CHARACTER);
         return new String(chars);
@@ -332,11 +332,11 @@ public class UnifiedSystemUserController extends BaseController {
         // DEFAULT_PASSWORD_FILLER);
     }
 
-    private Login getLoginFromCombinedId(String id) {
-        Login login = null;
-        String loginId = UnifiedSystemUser.getLoginUserIDFromCombinedID(id);
+    private LoginUser getLoginFromCombinedId(String id) {
+        LoginUser login = null;
+        Integer loginId = UnifiedSystemUser.getLoginUserIDFromCombinedID(id);
 
-        if (!GenericValidator.isBlankOrNull(loginId)) {
+        if (null != loginId) {
             login = loginService.get(loginId);
         }
 
@@ -421,7 +421,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String loggedOnUserId = getSysUserId(request);
 
-        Login loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
+        LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
 
         try {
@@ -462,7 +462,7 @@ public class UnifiedSystemUserController extends BaseController {
         if (GenericValidator.isBlankOrNull(form.getUserLoginName())) {
             errors.reject("errors.loginName.required", "errors.loginName.required");
         } else if (checkForDuplicateName) {
-            Login login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
+            LoginUser login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
             if (login != null) {
                 errors.reject("errors.loginName.duplicated");
             }
@@ -500,7 +500,7 @@ public class UnifiedSystemUserController extends BaseController {
             return false;
         }
 
-        Login login = loginService.get(loginUserId);
+        LoginUser login = loginService.get(Integer.parseInt(loginUserId));
 
         return !newName.equals(login.getLoginName());
     }
@@ -518,13 +518,13 @@ public class UnifiedSystemUserController extends BaseController {
         return PasswordValidationFactory.getPasswordValidator().passwordValid(password);
     }
 
-    private Login createLoginUser(UnifiedSystemUserForm form, String loginUserId, boolean loginUserNew,
+    private LoginUser createLoginUser(UnifiedSystemUserForm form, String loginUserId, boolean loginUserNew,
             boolean passwordUpdated, String loggedOnUserId) {
 
-        Login login = new Login();
+        LoginUser login = new LoginUser();
 
         if (!loginUserNew) {
-            login = loginService.get(form.getLoginUserId());
+            login = loginService.get(Integer.parseInt(form.getLoginUserId()));
         }
         login.setAccountDisabled(form.getAccountDisabled());
         login.setAccountLocked(form.getAccountLocked());
