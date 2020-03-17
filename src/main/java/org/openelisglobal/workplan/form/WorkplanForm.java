@@ -49,7 +49,7 @@ public class WorkplanForm extends BaseForm {
     // TODO switch to an enum?
     // @Pattern(regexp = "^$|^test$|^panel$", groups = { PrintWorkplan.class })
     @Pattern(regexp = "^[a-zA-Z-]*", groups = { PrintWorkplan.class })
-    private String type = "";
+    private String workplanType = "";
 
     @Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
     private String searchAction = "";
@@ -139,12 +139,12 @@ public class WorkplanForm extends BaseForm {
         this.resultList = resultList;
     }
 
-    public String getType() {
-        return type;
+    public String getWorkplanType() {
+        return workplanType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setWorkplanType(String type) {
+        this.workplanType = type;
     }
 
     public String getSearchAction() {
