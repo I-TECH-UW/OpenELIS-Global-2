@@ -15,8 +15,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -32,8 +34,10 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @EnableWebMvc
+@EnableAsync
 @Configuration
-@ComponentScan(basePackages = { "spring", "org.openelisglobal" })
+@PropertySource(value = { "classpath:application.properties" })
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired

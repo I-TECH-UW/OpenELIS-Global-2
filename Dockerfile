@@ -1,4 +1,4 @@
-FROM tomcat:8.5-jdk8
+FROM tomcat:8.5-jdk11
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
