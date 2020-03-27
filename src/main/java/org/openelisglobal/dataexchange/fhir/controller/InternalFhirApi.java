@@ -11,7 +11,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.common.log.LogEvent;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fhir")
 public class InternalFhirApi {
 
-
     @Value("${org.openelisglobal.server.uri}")
     private String localServerPath;
 
@@ -39,38 +37,36 @@ public class InternalFhirApi {
     private String fhirStorePath;
 
     @Autowired
+    CloseableHttpClient httpClient;
+
+    @Autowired
     FhirApiWorkflowService fhirApiWorkflowService;
 
     @PostConstruct
     // TODO make this run once for all time, not once per startup
     public void registerExternalApi() throws IOException, URISyntaxException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPut httpPost = new HttpPut(dataSubscriberPath);
-            BasicNameValuePair param1 = new BasicNameValuePair("resourceGroupName", "openElisOpenMrsBridge");
-            BasicNameValuePair param2 = new BasicNameValuePair("sourceServerUri", fhirStorePath);
-            BasicNameValuePair param3 = new BasicNameValuePair("notificationUri", localServerPath);
-            BasicNameValuePair param4 = new BasicNameValuePair("directSubscription", Boolean.TRUE.toString());
-            // TODO change to bearer authorization
-            BasicNameValuePair param5 = new BasicNameValuePair("headers",
-                    "Authorization: Basic YWRtaW46YWRtaW5BRE1JTiE=");
-            HttpEntity entity;
-            entity = new UrlEncodedFormEntity(Arrays.asList(param1, param2, param3, param4, param5));
-            httpPost.setEntity(entity);
+        HttpPut httpPost = new HttpPut(dataSubscriberPath);
+        BasicNameValuePair param1 = new BasicNameValuePair("resourceGroupName", "openElisInternalApi");
+        BasicNameValuePair param2 = new BasicNameValuePair("sourceServerUri", fhirStorePath);
+        BasicNameValuePair param3 = new BasicNameValuePair("notificationUri", localServerPath);
+        BasicNameValuePair param4 = new BasicNameValuePair("directSubscription", Boolean.TRUE.toString());
+        HttpEntity entity;
+        entity = new UrlEncodedFormEntity(Arrays.asList(param1, param2, param3, param4));
+        httpPost.setEntity(entity);
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                int responseCode = response.getStatusLine().getStatusCode();
-                switch (responseCode) {
-                case 200:
-                case 201:
-                case 202:
-                    break;
-                default:
-                    LogEvent.logError(this.getClass().getName(), "registerExternalApi",
-                            "could not successfully subscribe at " + localServerPath);
-                    LogEvent.logError(this.getClass().getName(), "registerExternalApi", "responseCode " + responseCode);
-                }
-
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            int responseCode = response.getStatusLine().getStatusCode();
+            switch (responseCode) {
+            case 200:
+            case 201:
+            case 202:
+                break;
+            default:
+                LogEvent.logError(this.getClass().getName(), "registerExternalApi",
+                        "could not successfully subscribe at " + localServerPath);
+                LogEvent.logError(this.getClass().getName(), "registerExternalApi", "responseCode " + responseCode);
             }
+
         }
     }
 
@@ -80,7 +76,5 @@ public class InternalFhirApi {
 
         return ResponseEntity.ok("");
     }
-
-
 
 }

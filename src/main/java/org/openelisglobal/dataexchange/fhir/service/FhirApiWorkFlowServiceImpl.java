@@ -48,7 +48,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Bundle bundle = fhirClient.search()//
                 .forResource(Task.class)//
                 .include(Task.INCLUDE_PATIENT)//
-                .include(Task.INCLUDE_BASED_ON)
+                .include(Task.INCLUDE_BASED_ON)//
 //                .whereMap(searchParams)//
                 .returnBundle(Bundle.class)//
                 .execute();
@@ -57,10 +57,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
                 Task task = (Task) bundleComponent.getResource();
-                Patient forPatient = getForPatientFromTask(bundle, task);
+//                Patient forPatient = getForPatientFromTask(bundle, task);
                 List<ServiceRequest> basedOn = getBasedOnServiceRequestFromTask(bundle, task);
                 System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(task));
-                System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
+//                System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
                 for (ServiceRequest serviceRequest : basedOn) {
                     System.out.println("BasedOn ServiceRequest: "
                             + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
