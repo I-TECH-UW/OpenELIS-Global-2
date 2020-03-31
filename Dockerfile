@@ -8,9 +8,8 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
 ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
 RUN ln -s /usr/local/tomcat/webapps/OpenELIS-Global /usr/local/tomcat/webapps/ROOT
     
-#rewrite server.xml with our server.xml for a number of security configurations
-#    
-ADD install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
+#contains sensitive data, so being mounted at runtime
+#ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
 
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true

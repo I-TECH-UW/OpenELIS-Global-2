@@ -66,8 +66,6 @@
 		</web-resource-collection>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-<!-- 			uncomment for development  -->
-<!-- 			<transport-guarantee>NONE</transport-guarantee> -->
 		</user-data-constraint>
 	</security-constraint>
 	<security-constraint>

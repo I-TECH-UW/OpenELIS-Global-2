@@ -15,13 +15,21 @@ useradd -u 8443 -g tomcat-ssl-cert tomcat_admin || echo "tomcat_admin user alrea
 mkdir -m 755 -p /etc/tomcat/ssl/certs
 mkdir -m 710 -p /etc/tomcat/ssl/private
 
-#MUST BE SAME DESTINATIONS AS IN docker-compose.yaml
 DEST_CERT_FILE=/etc/tomcat/ssl/certs/tomcat_cert.crt
 DEST_KEY_FILE=/etc/tomcat/ssl/private/tomcat_cert.key
 if [ ! -f "$DEST_CERT_FILE" ]; then
 	echo "creating ${DEST_CERT_FILE}"
 	cp /etc/ssl/certs/ssl-cert-snakeoil.pem ${DEST_CERT_FILE}
 fi
+if [ ! -f "$DEST_KEY_FILE" ]; then
+	echo "creating ${DEST_KEY_FILE}"
+	cp /etc/ssl/private/ssl-cert-snakeoil.key ${DEST_KEY_FILE}
+fi
+
+
+#MUST BE SAME DESTINATIONS AS IN docker-compose.yaml
+DEST_KEYSTORE_FILE=/etc/openelis-global/keystore
+DEST_TRUSTSTORE_FILE=/etc/openelis-global/truststore
 if [ ! -f "$DEST_KEY_FILE" ]; then
 	echo "creating ${DEST_KEY_FILE}"
 	cp /etc/ssl/private/ssl-cert-snakeoil.key ${DEST_KEY_FILE}

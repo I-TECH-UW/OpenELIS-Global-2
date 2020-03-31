@@ -37,7 +37,7 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 @EnableAsync
 @Configuration
 @PropertySource(value = { "classpath:application.properties",
-        "file:/etc/openelis-global/common_ssl.properties" })
+        "file:/run/secrets/common.properties" })
 @ComponentScan(basePackages = { "spring", "org.openelisglobal" })
 public class AppConfig implements WebMvcConfigurer {
 
