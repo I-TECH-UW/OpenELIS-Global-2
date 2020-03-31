@@ -69,7 +69,7 @@ sub sendOffsite{
 	}           
 }
 my $db_install_type  = '[% db_install_type %]';
-my $postgres_pwd_filepath = '[% secrets_dir %]OE_DB_USER_PASSWORD';
+my $postgres_pwd_filepath = '[% secrets_dir %]datasource.password';
 open my $fh, '<', $postgres_pwd_filepath or die "Can't open file $!";
 read $fh, my $postgres_pwd, -s $fh;
 my $keepFileDays  = 30;

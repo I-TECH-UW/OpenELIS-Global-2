@@ -25,7 +25,7 @@
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
   <!--APR library loader. Documentation at /docs/apr.html -->
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <!--<Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />-->
   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
@@ -59,23 +59,12 @@
     -->
 
 
-    <!-- A "Connector" represents an endpoint by which requests are received
-         and responses are returned. Documentation at :
-         Java HTTP Connector: /docs/config/http.html
-         Java AJP  Connector: /docs/config/ajp.html
-         APR (HTTP/AJP) Connector: /docs/apr.html
-         Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
-    -->
-    <Connector port="8080" protocol="HTTP/1.1"
-               connectionTimeout="20000"
-               redirectPort="8443" />
-               
-    <Connector port="8443" minProcessors="5" maxProcessors="75"
+    <Connector port="8443" minProcessors="5" maxProcessors="75" 
                enableLookups="true" disableUploadTimeout="true"
                acceptCount="100" debug="0" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" SSLEnabled="true" 
-               SSLCertificateFile="/run/secrets/tomcat_cert.crt"
-               SSLCertificateKeyFile="/run/secrets/tomcat_cert.key" />
+               clientAuth="true" sslProtocol="TLS" SSLEnabled="true" 
+               keystoreFile="/run/secrets/keystore" keystorePass="[% keystore_password %]"
+               truststoreFile="/run/secrets/truststore" truststorePass="[% truststore_password %]"/>
                
     <!-- A "Connector" using the shared thread pool-->
     <!--

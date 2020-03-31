@@ -39,6 +39,8 @@ CRON_FILE_NAME = "openElis"
 LOG_FILE_NAME = "installer.log"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 SETUP_CONFIG_FILE_NAME = "setup.ini"
+KEYSTORE = "keystore"
+TRUSTSTORE = "truststore"
 
 #install directories
 OE_VAR_DIR = "/var/lib/openelis-global/"
@@ -52,16 +54,22 @@ SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
+#full file paths
+KEYSTORE_PATH = OE_ETC_DIR + KEYSTORE
+TRUSTSTORE_PATH = OE_ETC_DIR + TRUSTSTORE
+
 #database variables
 DB_HOST="localhost"
 DB_HOST_FOR_DOCKER_SERVICES="172.17.0.1" #docker containers can't point to 'localhost' without a loopback
 DB_PORT="5432"
 
 #Docker variables
-DOCKER_OE_REPO_NAME = "openelisglobal" #don't change
-DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" #don't change
-DOCKER_FHIR_API_CONTAINER_NAME = "hapi-fhir-jpaserver-starter"
-DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" #don't change
+DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
+DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
+DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
+DOCKER_OE_SUB_CONTAINER_NAME = "datasubscriber-webapp"
+DOCKER_OE_IMPORT_CONTAINER_NAME = "dataimport-webapp"
+DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 DOCKER_DB_HOST_PORT = "5432"
 
@@ -81,8 +89,8 @@ ACTION_TIME = ''
 
 #Get from user values
 SITE_ID = ''
-FHIR_API_USERNAME = "fhir"
-FHIR_API_PWD = ""
+KEYSTORE_PWD = ''
+TRUSTSTORE_PWD = ''
 
 #Stateful objects
 LOG_FILE = ''
@@ -206,9 +214,7 @@ def do_install():
     
     generate_passwords()
     
-    get_site_id()    
-    
-    get_fhir_api_user()
+    get_user_values()
     
     install_files_from_templates()
     
@@ -232,6 +238,8 @@ def do_install():
 def install_files_from_templates():
     log("installing files from templates", PRINT_TO_CONSOLE)
     create_docker_compose_file()
+    create_properties_files()
+    create_server_xml_files()
     install_backup_task()
     install_permissions_file()
     if DOCKER_DB:
@@ -259,6 +267,8 @@ def create_docker_compose_file():
                 line = line.replace("[% db_backups_dir %]", DB_BACKUPS_DIR)
             if line.find("[% db_host_port %]")  >= 0:
                 line = line.replace("[% db_host_port %]", DOCKER_DB_HOST_PORT)
+            if line.find("[% db_name %]")  >= 0:
+                line = line.replace("[% db_name %]", DOCKER_DB_CONTAINER_NAME )
         
         #common attributes
         if line.find("[% db_host %]")  >= 0:
@@ -268,15 +278,87 @@ def create_docker_compose_file():
         if line.find("[% secrets_dir %]")  >= 0:
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
         if line.find("[% plugins_dir %]")  >= 0:
-            line = line.replace("[% plugins_dir %]", PLUGINS_DIR)  
-        if line.find("[% fhir_api_username %]") >= 0:
-            line = line.replace("[% fhir_api_username %]", FHIR_API_USERNAME)
+            line = line.replace("[% plugins_dir %]", PLUGINS_DIR)
+        if line.find("[% etc_dir %]")  >= 0:
+            line = line.replace("[% etc_dir %]", OE_ETC_DIR )
+        if line.find("[% oe_name %]")  >= 0:
+            line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
+        if line.find("[% fhir_api_name %]")  >= 0:
+            line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% data_subscriber_name %]")  >= 0:
+            line = line.replace("[% data_subscriber_name %]", DOCKER_OE_SUB_CONTAINER_NAME )
+        if line.find("[% data_import_name %]")  >= 0:
+            line = line.replace("[% data_import_name %]", DOCKER_OE_IMPORT_CONTAINER_NAME )
+        
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    
+    
+def create_properties_files():
+    ensure_dir_exists(SECRETS_DIR)
+    template_file = open(INSTALLER_TEMPLATE_DIR + "common.properties", "r")
+    output_file = open(SECRETS_DIR + "common.properties", "w")
+
+    for line in template_file:
+        #common attributes
+        if line.find("[% db_host %]")  >= 0:
+            line = line.replace("[% db_host %]", DB_HOST_FOR_DOCKER_SERVICES) 
+        if line.find("[% db_port %]")  >= 0:
+            line = line.replace("[% db_port %]", DB_PORT) 
+        if line.find("[% db_password %]")  >= 0:
+            line = line.replace("[% db_password %]", CLINLIMS_PWD)
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
+        
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(SECRETS_DIR + "common.properties", 0640)   
+    os.chown(SECRETS_DIR + 'common.properties', 8443, 8443) 
+    
+    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
+    output_file = open(SECRETS_DIR + "hapi.properties", "w")
+
+    for line in template_file:
+        #common attributes
+        if line.find("[% db_host %]")  >= 0:
+            line = line.replace("[% db_host %]", DB_HOST_FOR_DOCKER_SERVICES) 
+        if line.find("[% db_port %]")  >= 0:
+            line = line.replace("[% db_port %]", DB_PORT) 
+        if line.find("[% db_password %]")  >= 0:
+            line = line.replace("[% db_password %]", CLINLIMS_PWD) 
             
         
         output_file.write(line)
 
     template_file.close()
     output_file.close()
+    os.chmod(SECRETS_DIR + "hapi.properties", 0640)  
+    os.chown(SECRETS_DIR + 'hapi.properties', 8443, 8443)   
+    
+
+def create_server_xml_files():
+    ensure_dir_exists(SECRETS_DIR)
+    template_file = open(INSTALLER_TEMPLATE_DIR + "server.xml", "r")
+    output_file = open(OE_ETC_DIR + "server.xml", "w")
+
+    for line in template_file:
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
+        
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(OE_ETC_DIR + "server.xml", 0640) 
+    os.chown(OE_ETC_DIR + 'server.xml', 8443, 8443)      
     
 
 def install_backup_task():
@@ -445,30 +527,15 @@ def install_db():
 
 def preserve_database_user_password():
     ensure_dir_exists(SECRETS_DIR)
-    db_user_password_file = open(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 'w')
+    db_user_password_file = open(SECRETS_DIR + 'datasource.password', 'w')
     db_user_password_file.write(CLINLIMS_PWD)
     db_user_password_file.close()
 
     # own directory by tomcat user
-    os.chown(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 8443, 8443)
-    os.chmod(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 0640)
+    os.chown(SECRETS_DIR + 'datasource.password', 8443, 8443)
+    os.chmod(SECRETS_DIR + 'datasource.password', 0640)
     
     
-def get_fhir_api_user():
-    global FHIR_API_USERNAME, FHIR_API_PWD
-    FHIR_API_USERNAME = raw_input("What user would you like to use for the fhir api? ")
-    print("This installer needs a password that the fhir server will use to internally talk to the OE fhir api. Please provide one now.")
-    FHIR_API_PWD = getpass()
-    ensure_dir_exists(SECRETS_DIR)
-    db_user_password_file = open(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 'w')
-    db_user_password_file.write(FHIR_API_PWD)
-    db_user_password_file.close()
-
-    # own directory by tomcat user
-    os.chown(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 8443, 8443)
-    os.chmod(SECRETS_DIR + 'OE_FHIR_API_USER_PASSWORD', 0640)
-
-
 # note There is a fair amount of copying files, it should be re-written using shutil
 def install_crosstab():
     if LOCAL_DB:
@@ -530,9 +597,11 @@ def do_update():
 
     load_docker_image()
     
-    get_fhir_api_user()
-    
     create_docker_compose_file()
+    
+    create_properties_files()
+    
+    create_server_xml_files()
 
     start_docker_containers()
 
@@ -603,6 +672,14 @@ def uninstall_docker_images():
     
     log("removing fhir api image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing data subscriber image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_SUB_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing data import image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_IMPORT_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
 
 
@@ -750,7 +827,7 @@ def get_app_details():
 def find_password():
     global CLINLIMS_PWD
     try:
-        config_file = open(SECRETS_DIR + 'OE_DB_USER_PASSWORD')
+        config_file = open(SECRETS_DIR + 'datasource.password')
 
         for line in config_file:
             CLINLIMS_PWD = line
@@ -770,12 +847,30 @@ def get_action_time():
     return ACTION_TIME
 
 
+def get_user_values():
+    get_keystore_password()
+    get_truststore_password()
+    get_site_id()
+
+
+def get_keystore_password():
+    global KEYSTORE_PWD
+    print "keystore location: " + KEYSTORE_PATH
+    KEYSTORE_PWD = getpass("keystore password: ")
+
+
+def  get_truststore_password():
+    global TRUSTSTORE_PWD
+    print "truststore location: " + TRUSTSTORE_PATH
+    TRUSTSTORE_PWD = getpass("truststore password: ")
+    
+        
 def get_site_id():
     global SITE_ID
 
     # Get site specific information
     print """
-    Some installations require configuuration.  
+    Some installations require configuration.  
         You will be asked for specific information which may or may not be needed for this installation.
         If you do not know if it is needed or you do not know the correct value it may be left blank.
         You can set the values after the installation is complete.
@@ -824,7 +919,29 @@ def check_preconditions(goal):
         if (db_installed('clinlims')):
             log("\nThere is a currently installed version of OpenElis", PRINT_TO_CONSOLE)
             return False
-    elif goal == 'update' or goal == 'uninstall':
+        if (not os.path.isfile(KEYSTORE_PATH) or not os.access(KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\ntruststore should exist at: " + TRUSTSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        
+    elif goal == 'update':
+        if (not db_installed('clinlims')):
+            log("\nThere is no currently installed version of OpenElis", PRINT_TO_CONSOLE)
+            return False
+        if (not os.path.isfile(KEYSTORE_PATH) or not os.access(KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\ntruststore should exist at: " + TRUSTSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        
+    elif goal == 'uninstall':
         if (not db_installed('clinlims')):
             log("\nThere is no currently installed version of OpenElis", PRINT_TO_CONSOLE)
             return False
@@ -888,6 +1005,14 @@ def load_docker_image():
     
     log("loading jpa-server docker image", PRINT_TO_CONSOLE)
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'JPAServer_DockerImage.tar.gz'
+    os.system(cmd)
+    
+    log("loading dataimport-webapp docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataImporter_DockerImage.tar.gz'
+    os.system(cmd)
+    
+    log("loading datasubscriber-webapp docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataSubscriber_DockerImage.tar.gz'
     os.system(cmd)
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)
