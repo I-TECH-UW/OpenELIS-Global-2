@@ -43,7 +43,7 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     @ValidDate(groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referralDate;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referrer;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })
@@ -55,16 +55,16 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     private String referredTestIdShadow;
     private List<IdValuePair> testSelectionList;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResult = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredDictionaryResult;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredMultiDictionaryResult = "";
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResultType = "";
 
     private List<IdValuePair> dictionaryResults = new ArrayList<>();
@@ -79,7 +79,7 @@ public class ReferralItem implements IReferralResultTest, Serializable {
 
     // can't be used as this is an xml wad, but it should be safe since this field
     // is meant to be parsed
-    // @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    // @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String additionalTestsXMLWad;
 
     private boolean canceled = false;
@@ -95,13 +95,13 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     @Valid
     private List<ReferredTest> additionalTests;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String inLabResultId;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String multiSelectResultValues;
 
-    @SafeHtml(groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String qualifiedResultValue;
 
     @Override

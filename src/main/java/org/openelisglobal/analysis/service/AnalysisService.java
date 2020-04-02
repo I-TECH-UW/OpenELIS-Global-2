@@ -23,11 +23,11 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date sqlDayOne,
             Date sqlDayTwo);
 
-    List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample);
+    List<Analysis> getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample);
 
-    List getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers);
+    List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List<String> accessionNumbers);
 
-    List getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample);
+    List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample);
 
     List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds);
 
@@ -36,29 +36,29 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
 
-    List getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
+    List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession);
 
-    List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
+    List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
 
     List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate);
 
     List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList,
             List<Integer> statusIdList);
 
-    List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem);
+    List<Analysis> getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem);
 
     List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem, Set<Integer> statusIds);
 
     List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID);
 
-    List getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem);
+    List<Analysis> getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem);
 
     List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds);
 
     Analysis getPreviousAnalysisForAmendedAnalysis(Analysis analysis);
 
-    List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList);
+    List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList);
 
     List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String statusId, Set<Integer> statusIds);
 
@@ -68,15 +68,16 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate);
 
-    List getMaxRevisionAnalysesReadyToBeReported();
+    List<Analysis> getMaxRevisionAnalysesReadyToBeReported();
 
     void getMaxRevisionAnalysisBySampleAndTest(Analysis analysis);
 
-    List getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList);
+    List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList);
 
-    List getAnalysesAlreadyReportedBySample(Sample sample);
+    List<Analysis> getAnalysesAlreadyReportedBySample(Sample sample);
 
-    List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test, boolean includeLatestRevision);
+    List<Analysis> getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
+            boolean includeLatestRevision);
 
     List<Analysis> getAnalysesBySampleStatusId(String statusId);
 
@@ -86,13 +87,13 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOn(Date collectionDate);
 
-    List getMaxRevisionAnalysesBySample(SampleItem sampleItem);
+    List<Analysis> getMaxRevisionAnalysesBySample(SampleItem sampleItem);
 
-    List getAllChildAnalysesByResult(Result result);
+    List<Analysis> getAllChildAnalysesByResult(Result result);
 
     List<Analysis> getAnalysesBySampleId(String id);
 
-    List getAnalysesReadyToBeReported();
+    List<Analysis> getAnalysesReadyToBeReported();
 
     List<Analysis> getAnalysisBySampleAndTestIds(String sampleKey, List<Integer> testIds);
 
@@ -100,25 +101,25 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysesForStatusId(String statusId);
 
-    List getAllMaxRevisionAnalysesPerTest(Test test);
+    List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test);
 
     List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId);
 
     List<Analysis> getAnalysisCollectedOn(Date collectionDate);
 
-    List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList);
+    List<Analysis> getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList);
 
     List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem);
 
-    List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList);
+    List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList);
 
     Analysis buildAnalysis(Test test, SampleItem sampleItem);
 
     void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId);
 
-    void updateAll(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+    void updateAllNoAuditTrail(List<Analysis> updatedAnalysis);
 
-    void update(Analysis analysis, boolean skipAuditTrail);
+    void updateNoAuditTrail(Analysis analysis);
 
     String getTestDisplayName(Analysis analysis);
 

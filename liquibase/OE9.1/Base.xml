@@ -18,6 +18,6 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
   <include file="OE9.1/Menu_Study.xml" />
   <include file="OE9.1/siteinformation.xml" />
-  
- 
+  <include file="OE9.1/RetroCI_Sample_type_test_adds.xml" />
+   
   </databaseChangeLog> 

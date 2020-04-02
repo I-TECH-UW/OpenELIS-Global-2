@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="java.util.List,
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
@@ -28,7 +28,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 
  <%--
 <bean:define id="testList" name='${form.formName}' property="existingSampleTypeList" type="java.util.List"/>
@@ -43,15 +43,13 @@
 <c:set var="existingFrenchNames" value="${form.existingFrenchNames}" />
 
 <%!
-	public static final String NAME_SEPARATOR = "$";
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 4;
+	final String NAME_SEPARATOR = "$";
 %>
 
 <%
-    columnCount = 0;
-    testCount = 0;
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 4;
 %>
 <script type="text/javascript">
     if (!jQuery) {

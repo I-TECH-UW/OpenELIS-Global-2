@@ -5,10 +5,10 @@ import org.openelisglobal.common.form.BaseForm;
 
 //values used for fetching, tight validation not needed
 public class PrintBarcodeForm extends BaseForm {
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String accessionNumber;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String patientId;
 
     public PrintBarcodeForm() {

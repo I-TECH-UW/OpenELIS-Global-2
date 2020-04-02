@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.internationalization.MessageUtil"
         %>
 <%@ page isELIgnored="false" %>
@@ -62,7 +62,11 @@
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.uom.rename") %>"
                    onclick="submitAction('UomRenameEntry.do');"
                    class="textButton"/><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.uom.rename.explain")%></li>           
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.uom.rename.explain")%></li>
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.selectList.rename") %>"
+                   onclick="submitAction('SelectListRenameEntry.do');"
+                   class="textButton"/><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.rename.explain")%></li>
     </ul>
     <h3><spring:message code="configuration.test.management.organization" /></h3>
     <ul>
@@ -101,7 +105,14 @@
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.panel.manage") %>"
                    onclick="submitAction('PanelManagement.do');"
                    class="textButton"/><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.panel.manage.explain")%></li>    
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.panel.manage.explain")%></li>
+
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.selectList.add") %>"
+                   onclick="submitAction('ResultSelectListAdd.do');"
+                   class="textButton"/><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.explain")%><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.alert")%></li>
+
     </ul>
 
 

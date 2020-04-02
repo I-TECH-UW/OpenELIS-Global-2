@@ -26,7 +26,9 @@ import org.openelisglobal.common.log.LogEvent;
  *
  */
 public class ResourceLocator {
-    private static ResourceLocator me; // Holder for Singleton
+    private static class SingletonHelper {
+        private static final ResourceLocator INSTANCE = new ResourceLocator(); // Holder for Singleton
+    }
 
     // Name of file that contains resource mappings. This class loads this into
     // the propertyFilePairs object
@@ -60,16 +62,15 @@ public class ResourceLocator {
             propertyFilePairs.load(propertyStream);
         } catch (IOException e) {
             // bugzilla 2154
-            LogEvent.logError("ResourceLocator", "ResourceLocator()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new RuntimeException(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     // bugzilla 2154
-                    LogEvent.logError("ResourceLocator", "ResourceLocator()", e.toString());
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }
@@ -82,14 +83,7 @@ public class ResourceLocator {
      * Return the instance of this singleton
      */
     public static ResourceLocator getInstance() throws RuntimeException {
-        if (me == null) {
-            synchronized (ResourceLocator.class) {
-                if (me == null) {
-                    me = new ResourceLocator();
-                }
-            }
-        }
-        return me;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
@@ -121,32 +115,6 @@ public class ResourceLocator {
         }
         return resourceFileName;
     }
-
-    /*
-     */
-    // @Deprecated
-    // private void initializeMessageResources() {
-    // MessageResourcesConfig config = new MessageResourcesConfig();
-    // config.setParameter(propertyFilePairs
-    // .getProperty("ApplicationResources.classpath"));
-    // String factory = config.getFactory();
-    // MessageResourcesFactory.setFactoryClass(factory);
-    // MessageResourcesFactory factoryObject = MessageResourcesFactory
-    // .createFactory();
-//
-    // messageResources = factoryObject.createResources(config.getParameter());
-    // messageResources.setReturnNull(config.getNull());
-    // }
-
-    /**
-     * Returns the messageResources.
-     *
-     * @return MessageResources
-     */
-    // @Deprecated //use MessageUtils for interacting with message resources
-    // public MessageResources getMessageResources() {
-    // return messageResources;
-    // }
 
     /**
      * Returns the path for a resource filename.

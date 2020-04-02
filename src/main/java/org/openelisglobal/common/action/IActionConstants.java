@@ -89,7 +89,6 @@ public interface IActionConstants {
 
     String ALLOW_EDITS_KEY = "allowEdits";
 
-    String MENU_SELECT_LIST_HEADER_SEARCH_STRING = "menuSelectListHeaderSearchString";
     String IN_MENU_SELECT_LIST_HEADER_SEARCH = "inMenuSelectListHeaderSearch";
     String MENU_SEARCH_BY_TABLE_COLUMN = "menuSearchByTableColumn";
 

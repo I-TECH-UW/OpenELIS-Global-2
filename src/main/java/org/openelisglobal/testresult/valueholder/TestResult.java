@@ -38,6 +38,7 @@ public class TestResult extends BaseObject<String> {
     private String scriptletName;
     private ValueHolderInterface scriptlet;
     private Boolean isQuantifiable = false;
+    private Boolean isNormal = false;
     private Boolean isActive = true;
 
     public TestResult() {
@@ -184,5 +185,13 @@ public class TestResult extends BaseObject<String> {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Boolean getIsNormal() {
+        return isNormal;
+    }
+
+    public void setIsNormal(Boolean normal) {
+        isNormal = normal;
     }
 }

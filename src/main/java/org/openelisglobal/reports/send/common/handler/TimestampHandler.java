@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.reports.send.common.handler;
@@ -46,9 +46,11 @@ public class TimestampHandler extends GeneralizedFieldHandler {
      * @param value the object value to convert after performing a get operation
      * @return the converted value.
      */
+    @Override
     public Object convertUponGet(Object value) {
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         SimpleDateFormat formatter = new SimpleDateFormat(FORMAT);
         java.util.Date date = (java.util.Date) value;
         return formatter.format(date);
@@ -62,6 +64,7 @@ public class TimestampHandler extends GeneralizedFieldHandler {
      * @param value the object value to convert before performing a set operation
      * @return the converted value.
      */
+    @Override
     public Object convertUponSet(Object value) {
         SimpleDateFormat formatter = new SimpleDateFormat(FORMAT);
         java.util.Date date = null;
@@ -69,10 +72,10 @@ public class TimestampHandler extends GeneralizedFieldHandler {
             // date = formatter.parse((String)value);
             date = new java.sql.Date(formatter.parse((String) value).getTime());
 
-        } catch (ParseException px) {
+        } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError("TimestampHandler", "convertUponSet()", px.toString());
-            throw new IllegalArgumentException(px.getMessage());
+            LogEvent.logError(e.toString(), e);
+            throw new IllegalArgumentException(e);
         }
         return date;
     }
@@ -84,6 +87,7 @@ public class TimestampHandler extends GeneralizedFieldHandler {
      *
      * @return the class type of of the field
      */
+    @Override
     public Class getFieldType() {
         return java.sql.Timestamp.class;
     }
@@ -96,6 +100,7 @@ public class TimestampHandler extends GeneralizedFieldHandler {
      * @throws IllegalStateException This field is a simple type and cannot be
      *                               instantiated
      */
+    @Override
     public Object newInstance(Object parent) throws IllegalStateException {
         // -- Since it's marked as a string...just return null,
         // -- it's not needed.

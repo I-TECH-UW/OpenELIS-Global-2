@@ -15,6 +15,8 @@ import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,8 +24,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
     SiteInformationService siteInformationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleBatchEntrySetup", method = RequestMethod.GET)
     public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request)

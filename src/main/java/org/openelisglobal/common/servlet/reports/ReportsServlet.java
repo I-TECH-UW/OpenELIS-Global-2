@@ -43,11 +43,9 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class ReportsServlet extends HttpServlet {
 
-    private BaseReportsProvider reportProvider = null;
-
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
@@ -94,7 +92,7 @@ public class ReportsServlet extends HttpServlet {
             parameters.put(keyList.get(i), valList.get(i));
         }
 
-        reportProvider = ReportsProviderFactory.getInstance().getReportsProvider(reportsProvider);
+        BaseReportsProvider reportProvider = ReportsProviderFactory.getInstance().getReportsProvider(reportsProvider);
 
         reportProvider.setServlet(this);
         // bugzilla 2274: added error handling

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PanelManagementController extends BaseController {
+
     @RequestMapping(value = "/PanelManagement", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView showPanelManagement(HttpServletRequest request) {
         PanelManagementForm form = new PanelManagementForm();

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
@@ -283,44 +282,27 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
     /**
      * @return the number of rows
      */
-    public Integer getCount();
+    Integer getCount();
 
     /**
      * @param id the id to start from
      * @return list of the object corresponding to the next two ids ( if they exist)
      */
-    public Optional<T> getNext(String id);
+    Optional<T> getNext(String id);
 
     /**
      * @param id the id to start from
      * @return list of the object corresponding to the previous two ids ( if they
      *         exist)
      */
-    public Optional<T> getPrevious(String id);
+    Optional<T> getPrevious(String id);
 
     /**
      * @return get table name in database for the object
      */
-    public String getTableName();
+    String getTableName();
 
-    /**
-     * @deprecated (simpler method replacing this one, call getNext(id) instead
-     */
-    @Deprecated
-    public List<T> getNextRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException;
-
-    /**
-     * @deprecated (simpler method replacing this one, call getPrevious(id) instead
-     */
-    @Deprecated
-    public List<T> getPreviousRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException;
-
-    /**
-     * @deprecated (simpler method replacing this one, call getCount() instead
-     */
-    @Deprecated
     // bugzilla 1411
-    public Integer getTotalCount(String table, Class<T> clazz) throws LIMSRuntimeException;
 
     List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo);
 

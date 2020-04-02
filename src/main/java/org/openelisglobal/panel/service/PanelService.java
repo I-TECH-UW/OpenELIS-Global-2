@@ -18,13 +18,9 @@ public interface PanelService extends BaseObjectService<Panel, String> {
 
     List<Panel> getAllActivePanels();
 
-    List getNextPanelRecord(String id);
-
-    List getPreviousPanelRecord(String id);
-
     Integer getTotalPanelCount();
 
-    List getActivePanels(String filter);
+    List<Panel> getActivePanels(String filter);
 
     Panel getPanelByName(String panelName);
 
@@ -32,7 +28,7 @@ public interface PanelService extends BaseObjectService<Panel, String> {
 
     Panel getPanelById(String id);
 
-    List getPageOfPanels(int startingRecNo);
+    List<Panel> getPageOfPanels(int startingRecNo);
 
     List<Panel> getAllPanels();
 

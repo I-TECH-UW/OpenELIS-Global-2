@@ -21,28 +21,17 @@ import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 
 public interface OrganizationTypeDAO extends BaseDAO<OrganizationType, String> {
 
-    public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException;
+    List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException;
 
     /**
      * @param name the
      * @return
      * @throws LIMSRuntimeException
      */
-    public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException;
+    OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException;
 
-    /**
-     * Find the organizations which belong to a certain organization type.
-     *
-     * @param names name of organization type
-     * @return a list (possibly empty) of all the organizations associated with the
-     *         type.
-     * @throws LIMSRuntimeException
-     */
-    public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names)
-            throws LIMSRuntimeException;
 }

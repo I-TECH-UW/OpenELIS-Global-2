@@ -19,6 +19,7 @@ package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,16 +49,18 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
     private final String VALUE_SEPERATOR = ",";
     protected AjaxServlet ajaxServlet = null;
 
+    private static int MAX_DOUBLE_LENGTH = 20;
+
     private TestReflexCD4Provider() {
-        Test test = testService.getTestByName("CD4 percentage count");
+        Test test = testService.getTestByLocalizedName("CD4 percentage count", Locale.ENGLISH);
         if (test != null) {
             CD4_TEST_ID = test.getId();
         }
-        test = testService.getTestByName("Lymph %");
+        test = testService.getTestByLocalizedName("Lymph %", Locale.ENGLISH);
         if (test != null) {
             LYMPH_TEST_ID = test.getId();
         }
-        test = testService.getTestByName("GB");
+        test = testService.getTestByLocalizedName("GB", Locale.ENGLISH);
         if (test != null) {
             GB_TEST_ID = test.getId();
         }
@@ -69,7 +72,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
         String resultIds = request.getParameter("results");
         String values = request.getParameter("values");
         String childRow = request.getParameter("childRow");
-        StringBuilder xml = new StringBuilder();
+        StringBuilder xml = new StringBuilder(childRow.length() + MAX_DOUBLE_LENGTH);
         String result = VALID;
 
         if (initialConditionsSatisfied(resultIds, values, childRow)) {
@@ -150,6 +153,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
         }
     }
 
+    @SuppressWarnings("unused")
     private void createChoiceElement(TestReflex testReflex, StringBuilder xml) {
 
         XMLUtil.appendKeyValue("conclusionText", testReflex.getActionScriptlet().getScriptletName(), xml);

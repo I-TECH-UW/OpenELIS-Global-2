@@ -149,6 +149,7 @@ public class TestUsageUpdate implements IResultUpdate {
 
         export.setSend(true);
 
+        JSONObject json = new JSONObject();
         try {
             databaseTestCountList = (Map<String, Long>) parser.parse(export.getData().replace("\n", ""),
                     CONTAINER_FACTORY);
@@ -157,20 +158,19 @@ public class TestUsageUpdate implements IResultUpdate {
                 Long count = databaseTestCountList.get(test);
                 databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
             }
-        } catch (ParseException pe) {
-            System.out.println(pe);
-        }
 
-        JSONObject json = new JSONObject();
-        for (String name : databaseTestCountList.keySet()) {
-            json.put(name, databaseTestCountList.get(name));
+            for (String name : databaseTestCountList.keySet()) {
+                json.put(name, databaseTestCountList.get(name));
+            }
+        } catch (ParseException e) {
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", e.toString());
         }
 
         StringWriter buffer = new StringWriter();
         try {
             json.writeJSONString(buffer);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         String data = buffer.toString().replace("\n", "");
@@ -188,7 +188,7 @@ public class TestUsageUpdate implements IResultUpdate {
 //				}
 //			}
         } catch (LIMSRuntimeException e) {
-            LogEvent.logError("TestUsageUpdate", "applyUpdatesToDB", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
     }
 }

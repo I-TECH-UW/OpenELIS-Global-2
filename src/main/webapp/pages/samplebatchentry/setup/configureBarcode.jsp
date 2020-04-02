@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property" %>
@@ -9,13 +9,8 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-
-<%!
-boolean restrictNewReferringSiteEntries = false;
-%>
 <%
-restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
+	boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
 %>
 
 <script type="text/javascript" >

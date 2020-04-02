@@ -2,6 +2,7 @@ package org.openelisglobal.panelitem.service;
 
 import java.util.List;
 
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
@@ -14,22 +15,21 @@ public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 
     List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList);
 
-    List getPreviousPanelItemRecord(String id);
-
-    List getPageOfPanelItems(int startingRecNo);
-
-    List getNextPanelItemRecord(String id);
+    List<PanelItem> getPageOfPanelItems(int startingRecNo);
 
     boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 
     List<PanelItem> getPanelItemByTestId(String id);
 
-    List getAllPanelItems();
+    List<PanelItem> getAllPanelItems();
 
-    List getPanelItems(String filter);
+    List<PanelItem> getPanelItems(String filter);
 
     List<PanelItem> getPanelItemsForPanel(String panelId);
 
     void updatePanelItems(List<PanelItem> panelItems, Panel panel, boolean updatePanel, String currentUser,
             List<Test> newTests);
+
+    boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException;
+
 }

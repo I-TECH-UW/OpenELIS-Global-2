@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.internationalization.MessageUtil;
 
 public class PageIdentityUtil {
 
@@ -46,14 +45,17 @@ public class PageIdentityUtil {
 
         actionName = (String) request.getAttribute(IActionConstants.ACTION_KEY);
 
-        String localizedName = MessageUtil.getContextualMessage("dictionary.result.Positif_VIH_2");
-        // System.out.println("gnrTest: " + localizedName);
+//        String localizedName = MessageUtil.getContextualMessage("dictionary.result.Positif_VIH_2");
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "gnrTest: " +
+        // localizedName);
 
         if (actionName == null) {
-            // System.out.println("actionName is null");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is
+            // null");
             actionName = "dummy";
         } else {
-            // System.out.println("actionName is " + Encode.forJava(actionName));
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is "
+            // + Encode.forJava(actionName));
         }
 
         if (actionName.equals("QuickEntryAddTestPopup")) {

@@ -251,6 +251,7 @@ public class ResultReportingCollator {
 
     // is this a result update (ie Final_Result) as opposed to a non-result update
     // (Cancelled)
+    @SuppressWarnings("unused")
     private boolean isResultUpdate(Result result) {
         Event event = result.getResultEvent();
         if (event == null) {

@@ -21,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,12 +32,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ChangePasswordLoginController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "loginName", "password", "newPassword",
+            "confirmPassword" };
+
     @Autowired
-    ChangePasswordLoginFormValidator formValidator;
+    private ChangePasswordLoginFormValidator formValidator;
     @Autowired
-    LoginValidator loginValidator;
+    private LoginValidator loginValidator;
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
     public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
@@ -77,9 +87,9 @@ public class ChangePasswordLoginController extends BaseController {
                 loginService.update(login);
             }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
             result.reject("login.error.message");
         }
         if (result.hasErrors()) {

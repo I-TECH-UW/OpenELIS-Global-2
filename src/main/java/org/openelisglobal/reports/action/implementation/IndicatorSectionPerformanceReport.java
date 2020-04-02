@@ -25,7 +25,7 @@ import java.util.List;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
@@ -33,6 +33,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.reports.action.implementation.reportBeans.SectionPerformanceData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
@@ -98,13 +99,13 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
 
         try {
             createReportItems();
         } catch (LIMSInvalidConfigurationException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

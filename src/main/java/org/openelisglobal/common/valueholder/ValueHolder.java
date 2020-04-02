@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.valueholder;
@@ -49,12 +49,13 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
     /**
      * INTERNAL:
      */
+    @Override
     public Object clone() {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException exception) {
+        } catch (CloneNotSupportedException e) {
             // bugzilla 2154
-            LogEvent.logError("ValueHolder", "clone()", exception.toString());
+            LogEvent.logError(e.toString(), e);
         }
 
         return null;
@@ -63,6 +64,7 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
     /**
      * PUBLIC: Return the wrapped object.
      */
+    @Override
     public synchronized Object getValue() {
         return value;
     }
@@ -71,6 +73,7 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
      * PUBLIC: Return a boolean indicating whether the wrapped object has been set
      * or not.
      */
+    @Override
     public boolean isInstantiated() {
         // Always return true since we consider
         // null to be a valid wrapped object.
@@ -80,6 +83,7 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
     /**
      * PUBLIC: Set the wrapped object.
      */
+    @Override
     public void setValue(Object value) {
         this.value = value;
     }
@@ -87,6 +91,7 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
     /**
      * INTERNAL:
      */
+    @Override
     public String toString() {
         if (getValue() == null) {
             return "{" + null + "}";

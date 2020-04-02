@@ -13,17 +13,13 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, Str
 
     String getNameForTypeOfSampleId(String id);
 
-    List getAllTypeOfSamples();
+    List<TypeOfSample> getAllTypeOfSamples();
 
     List<TypeOfSample> getAllTypeOfSamplesSortOrdered();
 
-    List getTypesForDomain(TypeOfSampleDAO.SampleDomain domain);
-
-    List getPreviousTypeOfSampleRecord(String id);
+    List<TypeOfSample> getTypesForDomain(TypeOfSampleDAO.SampleDomain domain);
 
     Integer getTotalTypeOfSampleCount();
-
-    List getNextTypeOfSampleRecord(String id);
 
     TypeOfSample getTypeOfSampleById(String typeOfSampleId);
 
@@ -31,9 +27,9 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, Str
 
     List<TypeOfSample> getTypesForDomainBySortOrder(TypeOfSampleDAO.SampleDomain human);
 
-    List getPageOfTypeOfSamples(int startingRecNo);
+    List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo);
 
-    List getTypes(String filter, String domain);
+    List<TypeOfSample> getTypes(String filter, String domain);
 
     TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain);
 

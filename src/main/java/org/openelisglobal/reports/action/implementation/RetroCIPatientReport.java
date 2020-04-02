@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -31,6 +30,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -63,12 +63,12 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowerNumber = form.getString("accessionDirect");
-        upperNumber = form.getString("highAccessionDirect");
+        lowerNumber = form.getAccessionDirect();
+        upperNumber = form.getHighAccessionDirect();
 
         handledOrders = new ArrayList<>();
 

@@ -89,7 +89,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
         } else {
             try {
                 isChecked = wasTestSelected(sampleKey, projectFormName, sampleItemTypeTag, testTag);
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new ServletException(e);
             }
         }
@@ -107,7 +107,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
     private boolean wasTestSelected(String sampleKey, String projectFormName, String sampleItemType, String testTag)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ProjectData projectData = new ProjectData();
-        Map<String, Boolean> miniForm = new HashMap<String, Boolean>();
+        Map<String, Boolean> miniForm = new HashMap<>();
         miniForm.put(sampleItemType + "Taken", Boolean.TRUE);
         miniForm.put(testTag, Boolean.TRUE);
         PropertyUtils.copyProperties(projectData, miniForm);
@@ -139,7 +139,7 @@ public class SampleItemTestProvider extends BaseQueryProvider {
         TypeOfSampleTests sampleTests = typeOfSampleTestsList.get(0);
         List<Test> tests = sampleTests.tests;
 
-        List<Integer> testIds = new ArrayList<Integer>();
+        List<Integer> testIds = new ArrayList<>();
         for (Test test : tests) {
             testIds.add(Integer.valueOf(test.getId()));
         }

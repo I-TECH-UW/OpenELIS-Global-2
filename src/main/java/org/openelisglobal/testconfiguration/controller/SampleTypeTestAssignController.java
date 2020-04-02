@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,12 +7,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -26,6 +24,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,12 +34,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleTypeTestAssignController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "testId", "sampleTypeId", "deactivateSampleTypeId" };
+
     @Autowired
     private TypeOfSampleService typeOfSampleService;
     @Autowired
     private TypeOfSampleTestService typeOfSampleTestService;
     @Autowired
     private SampleTypeTestAssignService sampleTypeTestAssignService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
     public ModelAndView showSampleTypeTestAssign(HttpServletRequest request) {
@@ -70,13 +77,8 @@ public class SampleTypeTestAssignController extends BaseController {
         // we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<>(typeOfSamples);
         joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-        try {
-            PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
-            PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setSampleTypeList(joinedList);
+        form.setSampleTypeTestList(sampleTypesTestsMap);
     }
 
     @Override
@@ -110,9 +112,9 @@ public class SampleTypeTestAssignController extends BaseController {
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        String testId = form.getString("testId");
-        String sampleTypeId = form.getString("sampleTypeId");
-        String deactivateSampleTypeId = form.getString("deactivateSampleTypeId");
+        String testId = form.getTestId();
+        String sampleTypeId = form.getSampleTypeId();
+        String deactivateSampleTypeId = form.getDeactivateSampleTypeId();
         boolean updateTypeOfSample = false;
         String systemUserId = getSysUserId(request);
 
@@ -150,7 +152,7 @@ public class SampleTypeTestAssignController extends BaseController {
         }
 
 //------------------------------------------
-        if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
             deActivateTypeOfSample = SpringContext.getBean(TypeOfSampleService.class)
                     .getTransientTypeOfSampleById(deactivateSampleTypeId);
             deActivateTypeOfSample.setIsActive(false);
@@ -160,8 +162,8 @@ public class SampleTypeTestAssignController extends BaseController {
         try {
             sampleTypeTestAssignService.update(typeOfSample, testId, typeOfSamplesTestID, sampleTypeId,
                     deleteExistingTypeOfSampleTest, updateTypeOfSample, deActivateTypeOfSample, systemUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);

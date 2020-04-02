@@ -43,26 +43,14 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSystemUsers(int startingRecNo) {
+    public List<SystemUser> getPageOfSystemUsers(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSystemUsers(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllSystemUsers() {
+    public List<SystemUser> getAllSystemUsers() {
         return getBaseObjectDAO().getAllSystemUsers();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextSystemUserRecord(String id) {
-        return getBaseObjectDAO().getNextSystemUserRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSystemUserRecord(String id) {
-        return getBaseObjectDAO().getPreviousSystemUserRecord(id);
     }
 
     @Override

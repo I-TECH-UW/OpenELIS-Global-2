@@ -59,7 +59,7 @@ public abstract class EnumValueItemImpl extends BaseObject<String> implements En
 
     @Override
     public void setName(String pName) {
-        name = name;
+        name = pName;
     }
 
     // enumValueItem sortorder
@@ -70,7 +70,7 @@ public abstract class EnumValueItemImpl extends BaseObject<String> implements En
 
     @Override
     public void setSortOrder(String pSortorder) {
-        sortOrder = sortOrder;
+        sortOrder = pSortorder;
     }
 
     // is enum active

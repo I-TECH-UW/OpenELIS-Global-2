@@ -80,7 +80,7 @@ public class TypeOfSample extends BaseObject<String> {
         try {
             msg = getLocalization().getLocalizedValue();
             return msg;
-        } catch (Exception ex) {
+        } catch (RuntimeException e) {
             // throw away
             return "TypeOfSample:getDefaultLocalizedName:84:";
         }

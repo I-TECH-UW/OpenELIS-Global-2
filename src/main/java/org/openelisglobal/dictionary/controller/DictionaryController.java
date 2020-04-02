@@ -16,8 +16,8 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.form.DictionaryForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.validator.DictionaryFormValidator;
@@ -26,10 +26,13 @@ import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,25 +45,36 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class DictionaryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "dirtyFormFields", "id",
+            "selectedDictionaryCategoryId", "isActive", "dictEntry", "localAbbreviation" };
+
     @Autowired
-    DictionaryFormValidator formValidator;
+    private DictionaryFormValidator formValidator;
     @Autowired
-    DictionaryService dictionaryService;
+    private DictionaryService dictionaryService;
     @Autowired
-    DictionaryCategoryService dictionaryCategoryService;
+    private DictionaryCategoryService dictionaryCategoryService;
 
     @ModelAttribute("form")
     public DictionaryForm form() {
         return new DictionaryForm();
     }
 
-    @RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
-    public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, DictionaryForm.class);
-        form.setCancelAction("CancelDictionary.do");
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
-        String id = request.getParameter(ID);
+    @RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
+    public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
+        newForm.setCancelAction("CancelDictionary.do");
+
+        String id = "";
+        if (ValidationHelper.ID_REGEX.matches(request.getParameter(ID))) {
+            id = request.getParameter(ID);
+        }
 
         setDefaultButtonAttributes(request);
 
@@ -92,13 +106,13 @@ public class DictionaryController extends BaseController {
         }
 
         // populate form from valueholder
-        PropertyUtils.copyProperties(form, dictionary);
+        PropertyUtils.copyProperties(newForm, dictionary);
 
         List<DictionaryCategory> dictCats = dictionaryCategoryService.getAll();
 
-        PropertyUtils.setProperty(form, "categories", dictCats);
+        newForm.setCategories(dictCats);
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     private void setDefaultButtonAttributes(HttpServletRequest request) {
@@ -120,14 +134,14 @@ public class DictionaryController extends BaseController {
         } else if (FWD_PREVIOUS.equals(direction)) {
             nextPrevId = dictionaryService.getPrevious(id).getId();
         }
-        if (GenericValidator.isBlankOrNull(nextPrevId)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(nextPrevId)) {
             Errors errors = new BaseErrors();
             errors.reject("dictionary.nextprev.error");
             saveErrors(errors);
             return new ModelAndView(findForward(FWD_FAIL));
         }
 
-        String url = "redirect:/Dictionary.do?ID=" + nextPrevId;
+        String url = "redirect:/Dictionary.do?ID=" + Encode.forUriComponent(nextPrevId);
         return new ModelAndView(url);
     }
 
@@ -158,18 +172,18 @@ public class DictionaryController extends BaseController {
                 // INSERT
                 dictionaryService.insert(dictionary);
             }
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryUpdateAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
             // 1482
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
-            } else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
                 String messageKey = "dictionary.dictEntryByCategory";
                 String msg = MessageUtil.getMessage(messageKey);
                 result.reject("errors.DuplicateRecord.activate", new String[] { msg },
                         "errors.DuplicateRecord.activate");
-            } else if (lre.getException() instanceof LIMSFrozenRecordException) {
+            } else if (e.getException() instanceof LIMSFrozenRecordException) {
                 String messageKey = "dictionary.dictEntry";
                 String msg = MessageUtil.getMessage(messageKey);
                 result.reject("errors.FrozenRecord", new String[] { msg }, "errors.FrozenRecord");
@@ -213,7 +227,7 @@ public class DictionaryController extends BaseController {
         // populate valueholder from form
         PropertyUtils.copyProperties(dictionary, form);
 
-        String selectedCategoryId = (String) form.get("selectedDictionaryCategoryId");
+        String selectedCategoryId = form.getSelectedDictionaryCategoryId();
         // bugzilla 2108
         DictionaryCategory dictionaryCategory = dictionaryCategoryService.get(selectedCategoryId);
         dictionary.setDictionaryCategory(dictionaryCategory);
@@ -230,8 +244,8 @@ public class DictionaryController extends BaseController {
         // OR
         // bugzilla 1847: also the local abbreviation can be deleted/updated/inserted at
         // anytime
-        String dirtyFormFields = form.getString("dirtyFormFields");
-        String isActiveValue = form.getString("isActive");
+        String dirtyFormFields = form.getDirtyFormFields();
+        String isActiveValue = form.getIsActive();
 
         String[] dirtyFields = dirtyFormFields.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
         List<String> listOfDirtyFields = new ArrayList<>();
@@ -268,10 +282,10 @@ public class DictionaryController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelDictionary", method = RequestMethod.GET)
-    public ModelAndView cancelDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
+    public ModelAndView cancelDictionary(HttpServletRequest request,
             SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new DictionaryForm());
     }
 
     @Override

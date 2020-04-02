@@ -58,7 +58,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //				String tableName = "NOTE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note AuditTrail deleteData()", e);
@@ -72,7 +72,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note deleteData()", e);
@@ -93,7 +93,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note insertData()", e);
@@ -114,7 +114,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			} else {
 //				note.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note getData()", e);
@@ -128,7 +128,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
             Note note = entityManager.unwrap(Session.class).get(Note.class, noteId);
             // closeSession(); // CSL remove old
             return note;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getData");
         }
 
@@ -151,7 +151,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "getPageOfNotes()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note getPageOfNotes()", e);
@@ -166,7 +166,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			note = entityManager.unwrap(Session.class).get(Note.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "readNote()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note readNote()", e);
@@ -190,7 +190,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
+    public List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
         try {
 
             String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
@@ -199,19 +199,19 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
             query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
-            List list = query.list();
+            List<Note> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
-            LogEvent.logError("NoteDAOImpl", "getAllNotesByRefIdRefTable()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
         }
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws LIMSRuntimeException {
 //		try {
 //			String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId and n.noteType = :noteType order by n.lastupdated";
@@ -226,7 +226,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return list;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("NoteDAOImpl", "getNotesByNoteTypeRefIdRefTable()", e.toString());
 //			throw new LIMSRuntimeException("Error in Note getNotesByNoteTypeRefIdRefTable()", e);
 //		}
@@ -234,7 +234,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
 //	@Override
 //	public Integer getTotalNoteCount() throws LIMSRuntimeException {
-//		return getTotalCount("Note", Note.class);
+//		return getCount();
 //	}
 //
 //	@Override
@@ -256,7 +256,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -285,7 +285,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("NoteDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -295,7 +295,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+
     public boolean duplicateNoteExists(Note note) {
         try {
 
@@ -320,13 +320,13 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
             return list.size() > 0;
 
-        } catch (Exception e) {
-            LogEvent.logError("NoteDAOImpl", "duplicateNoteExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
         }
     }
 
-//	@SuppressWarnings("unchecked")
+//
 //	@Override
 //	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject)
 //			throws LIMSRuntimeException {
@@ -350,7 +350,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id)
 //			throws LIMSRuntimeException {
 //		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId order by n.lastupdated asc";
@@ -372,7 +372,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
             List<String> filter) throws LIMSRuntimeException {

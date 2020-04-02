@@ -26,7 +26,7 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			} else {
 //				indicator.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
@@ -40,7 +40,7 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return indicator;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataIndicatorDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataIndicator getData()", e);
@@ -98,7 +98,7 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataIndicatorDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataIndicator insertData()", e);
@@ -118,7 +118,7 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "DATA_INDICATOR";
 //			// auditDAO.saveHistory(dataIndicator, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DataIndicatorDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataIndicator AuditTrail updateData()", e);
 //		}
@@ -129,7 +129,7 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator, String> imp
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(dataIndicator);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(dataIndicator);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DataIndicatorDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataIndicator updateData()", e);

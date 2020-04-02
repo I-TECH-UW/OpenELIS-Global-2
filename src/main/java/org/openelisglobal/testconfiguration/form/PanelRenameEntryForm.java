@@ -14,11 +14,11 @@ public class PanelRenameEntryForm extends BaseForm {
     private List panelList;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameEnglish = "";
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameFrench = "";
 
     @NotBlank

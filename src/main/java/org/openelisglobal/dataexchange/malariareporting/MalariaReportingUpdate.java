@@ -127,7 +127,7 @@ public class MalariaReportingUpdate implements IResultUpdate {
             }
             for (Result result : malariaResults) {
                 if (!collator.addResult(result, patient, false, true)) {
-                    LogEvent.logError("MalariaReportingUpdate", "postTransactionalCommitUpdate",
+                    LogEvent.logError(this.getClass().getName(), "postTransactionalCommitUpdate",
                             "Unable to add malaria result to ResultReportingCollator.");
                 }
             }

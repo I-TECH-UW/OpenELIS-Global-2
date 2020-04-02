@@ -3,7 +3,6 @@ package org.openelisglobal.result.form;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -16,7 +15,7 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
-public class LogbookResultsForm extends BaseForm {
+public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public interface LogbookResults {
     }
@@ -48,8 +47,8 @@ public class LogbookResultsForm extends BaseForm {
     // for display
     private List<String> syphilisKits;
 
-    // for display
-    private String logbookType = "";
+    @Pattern(regexp = "^[a-zA-Z-]*$", groups = { LogbookResults.class })
+    private String type = "";
 
     // for display
     private List<IdValuePair> referralReasons;
@@ -63,7 +62,6 @@ public class LogbookResultsForm extends BaseForm {
     // for display
     private List<IdValuePair> testSectionsByName;
 
-    @NotBlank(groups = { LogbookResults.class })
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
 
@@ -74,10 +72,12 @@ public class LogbookResultsForm extends BaseForm {
         setFormName("LogbookResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -114,10 +114,12 @@ public class LogbookResultsForm extends BaseForm {
         this.displayTestKit = displayTestKit;
     }
 
+    @Override
     public List<TestResultItem> getTestResult() {
         return testResult;
     }
 
+    @Override
     public void setTestResult(List<TestResultItem> testResult) {
         this.testResult = testResult;
     }
@@ -146,12 +148,12 @@ public class LogbookResultsForm extends BaseForm {
         this.syphilisKits = syphilisKits;
     }
 
-    public String getLogbookType() {
-        return logbookType;
+    public String getType() {
+        return type;
     }
 
-    public void setLogbookType(String logbookType) {
-        this.logbookType = logbookType;
+    public void setType(String logbookType) {
+        this.type = logbookType;
     }
 
     public List<IdValuePair> getReferralReasons() {
@@ -186,10 +188,12 @@ public class LogbookResultsForm extends BaseForm {
         this.testSectionsByName = testSectionsByName;
     }
 
+    @Override
     public String getTestSectionId() {
         return testSectionId;
     }
 
+    @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
@@ -201,4 +205,5 @@ public class LogbookResultsForm extends BaseForm {
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
     }
+
 }

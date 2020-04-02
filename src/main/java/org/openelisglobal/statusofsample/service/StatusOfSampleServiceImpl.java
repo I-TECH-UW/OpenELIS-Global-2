@@ -35,13 +35,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousStatusOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousStatusOfSampleRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPageOfStatusOfSamples(int startingRecNo) {
+    public List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfStatusOfSamples(startingRecNo);
     }
 
@@ -59,14 +53,8 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllStatusOfSamples() {
+    public List<StatusOfSample> getAllStatusOfSamples() {
         return getBaseObjectDAO().getAllStatusOfSamples();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextStatusOfSampleRecord(String id) {
-        return getBaseObjectDAO().getNextStatusOfSampleRecord(id);
     }
 
     @Override
@@ -78,7 +66,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError("StatusOfSample", "insertData()", sb.toString());
+            LogEvent.logError(this.getClass().getName(), "insert", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.insert(statusOfSample);
@@ -93,7 +81,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError("StatusOfSample", "insertData()", sb.toString());
+            LogEvent.logError(this.getClass().getName(), "save", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.save(statusOfSample);
@@ -108,7 +96,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError("StatusOfSample", "insertData()", sb.toString());
+            LogEvent.logError(this.getClass().getName(), "update", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.update(statusOfSample);

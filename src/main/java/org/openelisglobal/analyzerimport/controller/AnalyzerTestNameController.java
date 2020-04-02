@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzerimport.form.AnalyzerTestNameForm;
@@ -17,7 +16,6 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -25,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,26 +37,33 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class AnalyzerTestNameController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "analyzerId", "analyzerTestName", "testId" };
+
     @Autowired
-    AnalyzerTestMappingValidator analyzerTestMappingValidator;
+    private AnalyzerTestMappingValidator analyzerTestMappingValidator;
     @Autowired
-    AnalyzerTestMappingService analyzerTestMappingService;
+    private AnalyzerTestMappingService analyzerTestMappingService;
     @Autowired
-    AnalyzerService analyzerService;
+    private AnalyzerService analyzerService;
     @Autowired
-    TestService testService;
+    private TestService testService;
 
     @ModelAttribute("form")
     public AnalyzerTestNameForm initForm() {
         return new AnalyzerTestNameForm();
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.GET)
-    public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+    public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm,
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, AnalyzerTestNameForm.class);
-        form.setCancelAction("CancelAnalyzerTestName.do");
+        AnalyzerTestNameForm newForm = resetSessionFormToType(oldForm, AnalyzerTestNameForm.class);
+        newForm.setCancelAction("CancelAnalyzerTestName.do");
 
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -65,25 +72,28 @@ public class AnalyzerTestNameController extends BaseController {
         List<Analyzer> analyzerList = getAllAnalyzers();
         List<Test> testList = getAllTests();
 
-        PropertyUtils.setProperty(form, "analyzerList", analyzerList);
-        PropertyUtils.setProperty(form, "testList", testList);
+        newForm.setAnalyzerList(analyzerList);
+        newForm.setTestList(testList);
 
-        String id = request.getParameter("ID");
 
-        if (id != null) {
-            String[] splitId = id.split("#");
-            PropertyUtils.setProperty(form, "analyzerTestName", splitId[1]);
-            PropertyUtils.setProperty(form, "testId", splitId[2]);
-            PropertyUtils.setProperty(form, "analyzerId", splitId[0]);
+        if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
+            String[] splitId = request.getParameter("ID").split("#");
+            newForm.setAnalyzerTestName(splitId[1]);
+            newForm.setTestId(splitId[2]);
+            newForm.setAnalyzerId(splitId[0]);
         }
 
-        if (GenericValidator.isBlankOrNull((String) PropertyUtils.getProperty(form, "analyzerId"))) {
-            PropertyUtils.setProperty(form, "newMapping", true);
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(newForm.getAnalyzerId())) {
+            newForm.setNewMapping(true);
         } else {
-            PropertyUtils.setProperty(form, "newMapping", false);
+            newForm.setNewMapping(false);
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
+    }
+
+    private boolean isValidID(String ID) {
+        return ID.matches("^[0-9]+#[^#/\\<>?]*#[0-9]+");
     }
 
     private List<Analyzer> getAllAnalyzers() {
@@ -98,7 +108,6 @@ public class AnalyzerTestNameController extends BaseController {
     public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
             @ModelAttribute("form") @Valid AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes) {
-
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);
@@ -121,10 +130,10 @@ public class AnalyzerTestNameController extends BaseController {
 
     public String updateAnalyzerTestName(HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
         String forward = FWD_SUCCESS_INSERT;
-        String analyzerId = form.getString("analyzerId");
-        String analyzerTestName = form.getString("analyzerTestName");
-        String testId = form.getString("testId");
-        boolean newMapping = (boolean) form.get("newMapping");
+        String analyzerId = form.getAnalyzerId();
+        String analyzerTestName = form.getAnalyzerTestName();
+        String testId = form.getTestId();
+        boolean newMapping = form.isNewMapping();
 
         AnalyzerTestMapping analyzerTestNameMapping;
         if (newMapping) {
@@ -155,9 +164,9 @@ public class AnalyzerTestNameController extends BaseController {
                 analyzerTestMappingService.update(analyzerTestNameMapping);
             }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg = null;
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.UpdateException";
@@ -169,7 +178,7 @@ public class AnalyzerTestNameController extends BaseController {
             forward = FWD_FAIL_INSERT;
         }
 
-        AnalyzerTestNameCache.instance().reloadCache();
+        AnalyzerTestNameCache.getInstance().reloadCache();
 
         return forward;
     }
@@ -204,10 +213,9 @@ public class AnalyzerTestNameController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelAnalyzerTestName", method = RequestMethod.GET)
-    public ModelAndView cancelAnalyzerTestName(HttpServletRequest request,
-            @ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status) {
+    public ModelAndView cancelAnalyzerTestName(HttpServletRequest request, SessionStatus status) {
         status.setComplete();
-        return findForward(FWD_CANCEL, form);
+        return findForward(FWD_CANCEL, new AnalyzerTestNameForm());
     }
 
     @Override

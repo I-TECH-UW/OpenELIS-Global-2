@@ -110,12 +110,6 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextOrganizationRecord(String id) {
-        return getBaseObjectDAO().getNextOrganizationRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<Organization> getOrganizationsByParentId(String parentId) {
         return getBaseObjectDAO().getOrganizationsByParentId(parentId);
     }
@@ -134,14 +128,8 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllOrganizations() {
+    public List<Organization> getAllOrganizations() {
         return getBaseObjectDAO().getAllOrganizations();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousOrganizationRecord(String id) {
-        return getBaseObjectDAO().getPreviousOrganizationRecord(id);
     }
 
     @Override
@@ -152,13 +140,13 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfOrganizations(int startingRecNo) {
+    public List<Organization> getPageOfOrganizations(int startingRecNo) {
         return getBaseObjectDAO().getPageOfOrganizations(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getOrganizations(String filter) {
+    public List<Organization> getOrganizations(String filter) {
         return getBaseObjectDAO().getOrganizations(filter);
     }
 

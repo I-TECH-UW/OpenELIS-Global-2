@@ -9,13 +9,9 @@ import org.openelisglobal.provider.valueholder.Provider;
 public interface ProviderService extends BaseObjectService<Provider, String> {
     void getData(Provider provider);
 
-    List getPageOfProviders(int startingRecNo);
+    List<Provider> getPageOfProviders(int startingRecNo);
 
-    List getAllProviders();
-
-    List getNextProviderRecord(String id);
-
-    List getPreviousProviderRecord(String id);
+    List<Provider> getAllProviders();
 
     Provider getProviderByPerson(Person person);
 }

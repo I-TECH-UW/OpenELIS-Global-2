@@ -35,20 +35,16 @@ public interface PersonDAO extends BaseDAO<Person, String> {
 
 //	public void deleteData(List persons) throws LIMSRuntimeException;
 
-    public List getAllPersons() throws LIMSRuntimeException;
+    List<Person> getAllPersons() throws LIMSRuntimeException;
 
-    public List getPageOfPersons(int startingRecNo) throws LIMSRuntimeException;
+    List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Person person) throws LIMSRuntimeException;
+    void getData(Person person) throws LIMSRuntimeException;
 
 //	public void updateData(Person person) throws LIMSRuntimeException;
 
-    public List getNextPersonRecord(String id) throws LIMSRuntimeException;
+    Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
 
-    public List getPreviousPersonRecord(String id) throws LIMSRuntimeException;
-
-    public Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
-
-    public Person getPersonById(String personId) throws LIMSRuntimeException;
+    Person getPersonById(String personId) throws LIMSRuntimeException;
 
 }

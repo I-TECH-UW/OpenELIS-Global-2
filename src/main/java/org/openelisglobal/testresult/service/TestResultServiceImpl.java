@@ -1,6 +1,8 @@
 package org.openelisglobal.testresult.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,37 +66,56 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestResultRecord(String id) {
-        return getBaseObjectDAO().getNextTestResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public TestResult getTestResultById(TestResult testResult) {
         return getBaseObjectDAO().getTestResultById(testResult);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestResults(int startingRecNo) {
+    public List<TestResult> getPageOfTestResults(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTestResultRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getAllTestResults() {
+    public List<TestResult> getAllTestResults() {
         return getBaseObjectDAO().getAllTestResults();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
+    public List<TestResult> getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
         return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TestResult> getAllSortedTestResults() {
+        List<TestResult> testResults = getBaseObjectDAO().getAllTestResults();
+        Collections.sort(testResults, new Comparator<TestResult>() {
+            @Override
+            public int compare(TestResult o1, TestResult o2) {
+                int result = o1.getTest().getId().compareTo(o2.getTest().getId());
+
+                if (result != 0) {
+                    return result;
+                }
+
+                String so1 = o1.getSortOrder();
+                String so2 = o2.getSortOrder();
+
+                if (so1 == so2) {
+                    return 0;
+                } else if (so1 == null) {
+                    return -1;
+                } else if (so2 == null) {
+                    return 1;
+                } else {
+                    return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                }
+
+            }
+        });
+        return testResults;
     }
 }

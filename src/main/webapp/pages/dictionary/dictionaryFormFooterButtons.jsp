@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
             org.openelisglobal.common.util.Versioning,
 	        org.openelisglobal.common.util.SystemConfiguration,
@@ -14,23 +14,16 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
-String path = "";
-String basePath = "";
-String recordFrozenDisableEdits = "false";
-String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
+	String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
 %>
 <%--bugzilla 2061-2063--%>
 <%
+	String recordFrozenDisableEdits = "false";
+
          if (request.getAttribute(IActionConstants.RECORD_FROZEN_EDIT_DISABLED_KEY) != null) {
             recordFrozenDisableEdits = (String)request.getAttribute(IActionConstants.RECORD_FROZEN_EDIT_DISABLED_KEY);
          }
 
-
-
-
-	       path = request.getContextPath();
-           basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-	
 		    String previousDisabled = "false";
             String nextDisabled = "false"; 
             if (request.getAttribute(IActionConstants.PREVIOUS_DISABLED) != null) {
@@ -73,7 +66,7 @@ function confirmSaveForwardPopup(direction)
      
  %> 
 
-    var href = "<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>";
+    var href = "css/openElisCore.css?";
  
     var strHTML = ""; 
  

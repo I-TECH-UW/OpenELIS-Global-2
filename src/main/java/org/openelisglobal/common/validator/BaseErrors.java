@@ -8,22 +8,26 @@ import org.springframework.validation.AbstractBindingResult;
 @Scope("prototype")
 public class BaseErrors extends AbstractBindingResult {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 959269351827856310L;
+
     public BaseErrors() {
-        super("");
-        // TODO Auto-generated constructor stub
+        super("Non bound errors");
     }
 
     boolean error = false;
 
     @Override
     protected Object getActualFieldValue(String arg0) {
-        // TODO Auto-generated method stub
+        // not bound to actual object
         return null;
     }
 
     @Override
     public Object getTarget() {
-        // TODO Auto-generated method stub
+        // not bound to actual object
         return null;
     }
 

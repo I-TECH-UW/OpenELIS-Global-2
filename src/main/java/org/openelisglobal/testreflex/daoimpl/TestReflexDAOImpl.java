@@ -15,9 +15,9 @@
  */
 package org.openelisglobal.testreflex.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -63,7 +63,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //				String tableName = "TEST_REFLEX";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex AuditTrail deleteData()", e);
@@ -78,7 +78,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex deleteData()", e);
@@ -108,7 +108,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex insertData()", e);
@@ -128,7 +128,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //								+ testReflex.getTestResult().getValue() + BLANK
 //								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
@@ -144,7 +144,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST_REFLEX";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex AuditTrail updateData()", e);
@@ -156,7 +156,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(testReflex);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(testReflex);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
@@ -175,28 +175,28 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             } else {
                 testReflex.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestReflexs() throws LIMSRuntimeException {
-        List list = null;
+    public List<TestReflex> getAllTestReflexs() throws LIMSRuntimeException {
+        List<TestReflex> list = null;
         try {
-            String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
+            String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getAllTestReflexs()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getAllTestReflexs()", e);
         }
 
@@ -205,8 +205,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestReflex> getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException {
+        List<TestReflex> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -214,7 +214,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // bugzilla 1399 - still need to figure out how to sort (3rd sort
             // column) for dictionary values - requires further step of getting
             // value from dictionary table before sorting
-            String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
+            String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
@@ -222,9 +222,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getPageOfTestReflexs()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getPageOfTestReflexs()", e);
         }
 
@@ -241,21 +241,21 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
      */
     @Override
     @Transactional(readOnly = true)
-    public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
+    public List<TestReflex> getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
         try {
             String sql = "from TestReflex t where t.testResult.id = :testResultId";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 
-            List list = query.list();
+            List<TestReflex> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -270,7 +270,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
      */
     @Override
     @Transactional(readOnly = true)
-    public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
+    public List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
             throws LIMSRuntimeException {
         try {
             // bugzilla 1404 testResultId is mapped as testResult.id now
@@ -279,15 +279,15 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             query.setParameter("param", testResult.getId());
             query.setParameter("param2", testAnalyte.getId());
 
-            List list = query.list();
+            List<TestReflex> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -304,7 +304,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     @Override
     public boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException {
         try {
-            List list = null;
+            List<TestReflex> list = null;
 
             if (analysis.getParentAnalysis() != null && analysis.getParentResult() != null) {
                 String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.analyte.id = :param2 and t.test.id = :param3 and t.addedTest.id = :param4";
@@ -321,15 +321,15 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
             return list != null && list.size() > 0;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getTestReflexesByTestResult()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
             throws LIMSRuntimeException {
@@ -349,8 +349,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                 // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
                 return list;
-            } catch (Exception e) {
-                LogEvent.logError("TestReflexDAOImpl", "getTestReflexByTestResultAnalyteTest", e.toString());
+            } catch (RuntimeException e) {
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException(
                         "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
                         e);
@@ -365,104 +365,19 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             tr = entityManager.unwrap(Session.class).get(TestReflex.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "readTestReflex()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestReflex readTestReflex()", e);
         }
         return tr;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTestReflexRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "TestReflex", TestReflex.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "TestReflex", TestReflex.class);
     }
 
     // bugzilla 1411
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestReflexCount() throws LIMSRuntimeException {
-        return getTotalCount("TestReflex", TestReflex.class);
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select tr.id from TestReflex tr "
-                    + " order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select tr.id from TestReflex tr "
-                    + " order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestReflexDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
+        return getCount();
     }
 
     // bugzilla 1482
@@ -470,7 +385,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     public boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<TestReflex> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -503,14 +418,14 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                 return false;
             }
 
-        } catch (Exception e) {
-            LogEvent.logError("TestReflexDAOImpl", "duplicateTestReflexExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestReflexExists()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException {
         if (GenericValidator.isBlankOrNull(testId)) {
@@ -536,14 +451,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestReflexsByTestAndFlag()");
         }
 
         return reflexList;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
@@ -560,7 +474,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             List<TestReflex> list = query.list();
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getFlaggedTestReflexesByTestResult");
         }
 

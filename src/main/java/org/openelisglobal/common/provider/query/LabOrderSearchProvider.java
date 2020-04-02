@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
@@ -191,7 +192,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
 
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
+        } finally {
+            try {
+                context.close();
+            } catch (IOException e) {
+                LogEvent.logError(e);
+            }
         }
     }
 
@@ -355,18 +362,15 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     }
 
     private void addTests(StringBuilder xml, String parent, List<Test> tests) {
-        xml.append("<");
-        xml.append(parent);
-        xml.append(">");
+
+        xml.append(XMLUtil.makeStartTag(parent));
         for (Test test : tests) {
             xml.append("<test>");
             XMLUtil.appendKeyValue("id", test.getId(), xml);
             XMLUtil.appendKeyValue("name", test.getLocalizedName(), xml);
             xml.append("</test>");
         }
-        xml.append("</");
-        xml.append(parent);
-        xml.append(">");
+        xml.append(XMLUtil.makeEndTag(parent));
     }
 
     private void addCrossPanels(StringBuilder xml) {

@@ -21,7 +21,7 @@ public class ProjectData implements Serializable {
 
     private static final long serialVersionUID = -6470190207790723782L;
     // ALL
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String underInvestigationNote;
 
     // TESTS
@@ -81,15 +81,15 @@ public class ProjectData implements Serializable {
     private String EIDsiteName;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String EIDsiteCode;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String dbsInfantNumber;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String dbsSiteInfantNumber;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String eidWhichPCR;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String eidSecondPCRReason;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String requester;
     private List eidWhichPCRList = new ArrayList();
     private List eidSecondPCRReasonList = new ArrayList();
@@ -101,7 +101,7 @@ public class ProjectData implements Serializable {
     private String INDsiteName;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String INDsiteCode;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String address;
     @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String phoneNumber;
@@ -112,7 +112,7 @@ public class ProjectData implements Serializable {
 
     // SPE - Special Request
     private List requestReasons;
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String reasonForRequest;
 
     // TESTS

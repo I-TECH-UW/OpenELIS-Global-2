@@ -61,10 +61,10 @@ public class CobasReader extends AnalyzerLineInserter {
 
     public CobasReader() {
 //		TestDAO testDAO = new TestDAOImpl();
-        ASTL_ID = testService.getActiveTestByName("Transaminases ASTL").get(0).getId();
-        ALTL_ID = testService.getActiveTestByName("Transaminases ALTL").get(0).getId();
-        CRE_ID = testService.getActiveTestByName("Créatininémie").get(0).getId();
-        GLU_ID = testService.getActiveTestByName("Glycémie").get(0).getId();
+        ASTL_ID = testService.getActiveTestsByName("Transaminases ASTL").get(0).getId();
+        ALTL_ID = testService.getActiveTestsByName("Transaminases ALTL").get(0).getId();
+        CRE_ID = testService.getActiveTestsByName("Créatininémie").get(0).getId();
+        GLU_ID = testService.getActiveTestsByName("Glycémie").get(0).getId();
 
         testIdToPresentation = new HashMap<>();
         testIdToPresentation.put(ALTL_ID, 0);
@@ -115,7 +115,7 @@ public class CobasReader extends AnalyzerLineInserter {
             // ensure transaction block
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }
@@ -138,10 +138,12 @@ public class CobasReader extends AnalyzerLineInserter {
         String[] fields = line.split(DELIMITER);
 
         AnalyzerResults analyzerResults = new AnalyzerResults();
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(COBAS_INTEGRA400_NAME, fields[TEST]);
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(COBAS_INTEGRA400_NAME,
+                fields[TEST]);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(COBAS_INTEGRA400_NAME, fields[TEST]);
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(COBAS_INTEGRA400_NAME,
+                    fields[TEST]);
         }
 
         analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());

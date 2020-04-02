@@ -55,7 +55,7 @@ public class CodeForOrganizationProvider extends BaseQueryProvider {
     private void createXml(String code, StringBuilder xml) {
 
         xml.append("<code ");
-        XMLUtil.appendKeyValueAttribute("value", code, xml);
+        XMLUtil.appendAttributeKeyValue("value", code, xml);
         xml.append(" />");
     }
 

@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,14 +10,15 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -55,6 +55,8 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +64,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TestModifyEntryController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad", "testId", "loinc" };
 
     @Autowired
     private TestModifyEntryFormValidator formValidator;
@@ -84,6 +88,11 @@ public class TestModifyEntryController extends BaseController {
     @Autowired
     private TestSectionService testSectionService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
     public ModelAndView showTestModifyEntry(HttpServletRequest request) {
 
@@ -99,41 +108,24 @@ public class TestModifyEntryController extends BaseController {
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
 
-        try {
-            PropertyUtils.setProperty(form, "sampleTypeList", allSampleTypesList);
-            PropertyUtils.setProperty(form, "panelList", DisplayListService.getInstance().getList(ListType.PANELS));
-            PropertyUtils.setProperty(form, "resultTypeList",
-                    DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
-            PropertyUtils.setProperty(form, "uomList",
-                    DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
-            PropertyUtils.setProperty(form, "labUnitList",
-                    DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-            PropertyUtils.setProperty(form, "ageRangeList",
-                    SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
-            PropertyUtils.setProperty(form, "dictionaryList",
-                    DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
-            PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
-            PropertyUtils.setProperty(form, "testList",
-                    DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setSampleTypeList(allSampleTypesList);
+        form.setPanelList(DisplayListService.getInstance().getList(ListType.PANELS));
+        form.setResultTypeList(DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
+        form.setUomList(DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
+        form.setLabUnitList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
+        form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
+        form.setGroupedDictionaryList(createGroupedDictionaryList());
+        form.setTestList(DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
 
         // gnr: ALL_TESTS calls getActiveTests, this could be a way to enable
         // maintenance of inactive tests
-        // PropertyUtils.setProperty( form, "testListInactive",
-        // DisplayListService.getInstance().getList(
+        // form.setTestListInactive( DisplayListService.getInstance().getList(
         // DisplayListService.ListType.ALL_TESTS_INACTIVE )
         // );
 
         List<TestCatalogBean> testCatBeanList = createTestCatBeanList();
-        try {
-            PropertyUtils.setProperty(form, "testCatBeanList", testCatBeanList);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setTestCatBeanList(testCatBeanList);
     }
 
     private List<TestCatalogBean> createTestCatBeanList() {
@@ -368,8 +360,9 @@ public class TestModifyEntryController extends BaseController {
                     return result;
                 }
 
-                return org.apache.commons.validator.GenericValidator.isBlankOrNull(o1.getSortOrder()) ? 0
-                        : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+                return (GenericValidator.isBlankOrNull(o1.getSortOrder())
+                        || GenericValidator.isBlankOrNull(o2.getSortOrder())) ? 0
+                                : Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
             }
         });
         return testResults;
@@ -434,15 +427,14 @@ public class TestModifyEntryController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
         String currentUserId = getSysUserId(request);
-        String changeList = form.getString("jsonWad");
+        String changeList = form.getJsonWad();
 
         JSONParser parser = new JSONParser();
         JSONObject obj = null;
         try {
             obj = (JSONObject) parser.parse(changeList);
-        } catch (ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (ParseException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
 
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
@@ -455,8 +447,8 @@ public class TestModifyEntryController extends BaseController {
         try {
             testModifyService.updateTestSets(testSets, testAddParams, nameLocalization, reportingNameLocalization,
                     currentUserId);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
             result.reject("error.hibernate.exception");
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
@@ -547,7 +539,6 @@ public class TestModifyEntryController extends BaseController {
 
             test.setUnitOfMeasure(uom);
             test.setDescription(testAddParams.testNameEnglish + "(" + typeOfSample.getDescription() + ")");
-            test.setTestName(testAddParams.testNameEnglish);
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
@@ -650,7 +641,7 @@ public class TestModifyEntryController extends BaseController {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return testAddParams;

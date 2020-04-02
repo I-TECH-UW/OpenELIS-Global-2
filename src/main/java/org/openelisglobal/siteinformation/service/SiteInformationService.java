@@ -16,11 +16,11 @@ public interface SiteInformationService extends BaseObjectService<SiteInformatio
 
     SiteInformation getSiteInformationById(String urlId);
 
-    List<SiteInformation> getNextSiteInformationRecord(String id);
+
 
     List<SiteInformation> getSiteInformationByDomainName(String domainName);
 
-    List<SiteInformation> getPreviousSiteInformationRecord(String id);
+
 
     List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
 

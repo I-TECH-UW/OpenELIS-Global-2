@@ -274,6 +274,7 @@ public class AuditTrailViewWorker {
         return qaEvents;
     }
 
+    @SuppressWarnings("unused")
     private void sortItems(List<AuditTrailItem> items) {
         Collections.sort(items, new Comparator<AuditTrailItem>() {
             @Override

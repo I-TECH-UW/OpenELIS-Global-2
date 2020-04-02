@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants"%>
 
 <%@ page isELIgnored="false" %>
@@ -7,16 +7,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
- 
-
-<%!String allowEdits = "true";%>
-
-<%
-	if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-		allowEdits = (String) request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-	}
-%>
 
 <script>
 function validateForm(form) {

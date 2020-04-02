@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DependsOn({ "springContext" })
 public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> implements SampleService {
 
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
 
     private static Long PERSON_REQUESTER_TYPE_ID;
     private static Long ORGANIZATION_REQUESTER_TYPE_ID;
@@ -84,6 +84,10 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     protected SampleDAO getBaseObjectDAO() {
         return sampleDAO;
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override
@@ -270,7 +274,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         List<Integer> sampIDList = new ArrayList<>();
         List<Integer> testIDList = new ArrayList<>();
 
-        testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
+        testIDList.add(Integer.parseInt(testService.getTestByLocalizedName(testName).getId()));
 
         if (patientSampleList.isEmpty()) {
             return previousSample;
@@ -361,14 +365,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getSamplesByStatusAndDomain(List statuses, String domain) {
+    public List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain) {
         return getBaseObjectDAO().getSamplesByStatusAndDomain(statuses, domain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousSampleRecord(id);
     }
 
     @Override
@@ -389,12 +387,6 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
             boolean filterByDomain) {
         return getBaseObjectDAO().getSamplesWithPendingQaEvents(sample, filterByCategory, qaEventCategoryId,
                 filterByDomain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextSampleRecord(String id) {
-        return getBaseObjectDAO().getNextSampleRecord(id);
     }
 
     @Override
@@ -424,7 +416,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSamples(int startingRecNo) {
+    public List<Sample> getPageOfSamples(int startingRecNo) {
         return getBaseObjectDAO().getPageOfSamples(startingRecNo);
     }
 

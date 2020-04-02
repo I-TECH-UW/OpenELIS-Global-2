@@ -64,7 +64,7 @@ public class FACSCantoReader extends AnalyzerLineInserter {
 
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 successful = false;
             }
         }
@@ -124,11 +124,11 @@ public class FACSCantoReader extends AnalyzerLineInserter {
         // this is sort of dumb, we have the indexes we are interested in
         for (int i = 0; i < testNameIndex.length; i++) {
             if (!GenericValidator.isBlankOrNull(testNameIndex[i])) {
-                MappedTestName mappedName = AnalyzerTestNameCache.instance()
+                MappedTestName mappedName = AnalyzerTestNameCache.getInstance()
                         .getMappedTest(AnalyzerTestNameCache.FACSCANTO, testNameIndex[i].replace("\"", ""));
 
                 if (mappedName == null) {
-                    mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(
+                    mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(
                             AnalyzerTestNameCache.FACSCANTO, testNameIndex[i].replace("\"", ""));
                 }
 

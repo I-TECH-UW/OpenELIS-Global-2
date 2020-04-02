@@ -19,7 +19,7 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
     }
 
     @Override
-    public List getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
+    public List<History> getHistoryByRefIdAndRefTableId(String refId, String tableId) throws LIMSRuntimeException {
         History history = new History();
         history.setReferenceId(refId);
         history.setReferenceTable(tableId);
@@ -28,10 +28,10 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
 
     @Override
     @Transactional(readOnly = true)
-    public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
+    public List<History> getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException {
         String refId = history.getReferenceId();
         String tableId = history.getReferenceTable();
-        List list;
+        List<History> list;
 
         try {
             String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
@@ -40,7 +40,7 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
             query.setInteger("tableId", Integer.parseInt(tableId));
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
         }
         return list;

@@ -19,23 +19,19 @@ public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 
 //	public void deleteData(List patientType) throws LIMSRuntimeException;
 
-    public List getAllPatientTypes() throws LIMSRuntimeException;
+    List<PatientType> getAllPatientTypes() throws LIMSRuntimeException;
 
-    public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException;
+    List<PatientType> getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(PatientType patientType) throws LIMSRuntimeException;
+    void getData(PatientType patientType) throws LIMSRuntimeException;
 
 //	public void updateData(PatientType patientType) throws LIMSRuntimeException;
 
-    public List getPatientTypes(String filter) throws LIMSRuntimeException;
+    List<PatientType> getPatientTypes(String filter) throws LIMSRuntimeException;
 
-    public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException;
+    PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
 
-    public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
 
-    public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
-
-    public Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
-
-    public boolean duplicatePatientTypeExists(PatientType patientType);
+    boolean duplicatePatientTypeExists(PatientType patientType);
 }

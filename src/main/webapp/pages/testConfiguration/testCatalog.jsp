@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="java.util.List,
          		 java.util.Locale,
                  org.openelisglobal.test.valueholder.TestSection,
@@ -35,12 +35,8 @@
 <c:set var="testSectionList" value="${form.testSectionList}" />
 <c:set var="testCatalogList" value="${form.testCatalogList}" />
 
-<%!
-    String currentTestUnitName;
-%>
-
 <%
-    currentTestUnitName = "";
+    String currentTestUnitName = "";
 %>
 
 <script type="text/javascript">

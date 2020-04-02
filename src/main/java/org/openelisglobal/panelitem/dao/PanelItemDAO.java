@@ -35,32 +35,27 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 //	public void deleteData(List panelItems) throws LIMSRuntimeException;
 
-    public List getAllPanelItems() throws LIMSRuntimeException;
+    List<PanelItem> getAllPanelItems() throws LIMSRuntimeException;
 
-    public List getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException;
+    List<PanelItem> getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(PanelItem panelItem) throws LIMSRuntimeException;
+    void getData(PanelItem panelItem) throws LIMSRuntimeException;
 
 //	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
 
-    public List getPanelItems(String filter) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItems(String filter) throws LIMSRuntimeException;
 
-    public List getNextPanelItemRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalPanelItemCount() throws LIMSRuntimeException;
 
-    public List getPreviousPanelItemRecord(String id) throws LIMSRuntimeException;
-
-    public Integer getTotalPanelItemCount() throws LIMSRuntimeException;
-
-    public boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
+    boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 
 //	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException;
 
-    public List getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
 
-    public List<PanelItem> getPanelItemByTestId(String id) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItemByTestId(String id) throws LIMSRuntimeException;
 
-    public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
+    List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
             throws LIMSRuntimeException;
 
-    boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException;
 }

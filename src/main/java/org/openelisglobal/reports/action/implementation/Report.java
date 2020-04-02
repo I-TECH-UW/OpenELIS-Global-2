@@ -18,7 +18,11 @@ package org.openelisglobal.reports.action.implementation;
 
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,26 +30,24 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
-import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.spring.util.SpringContext;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperRunManager;
 
 public abstract class Report implements IReportCreator {
 
-    public static ImageService imageService = SpringContext.getBean(ImageService.class);
-    public static SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
     private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
     public static final String ERROR_REPORT = "NoticeOfReportError";
 
@@ -106,23 +108,14 @@ public abstract class Report implements IReportCreator {
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }
 
-    // @Deprecated
-    // private Object getImage(String siteName) {
-    // SiteInformation siteInformation =
-    // siteInformationService.getSiteInformationByName(siteName);
-    // return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-    // : imageService.retrieveImageInputStream(siteInformation.getValue());
-    // }
-
     /**
      *
-     * @return map
-     * @deprecated The correct way to localize JasperReports is to us $R{key}. This
-     *             was put in before the correct way was understood. Do not add to
-     *             this list. It will eventually be moved to the correct way.
+     * @return map The correct way to localize JasperReports is to us $R{key}. This
+     *         was put in before the correct way was understood. Do not add to this
+     *         list. It will eventually be moved to the correct way although this
+     *         way is functional
      */
     // TODO csl see above note
-    @Deprecated
     protected Map<String, String> createLocalizationMap() {
         HashMap<String, String> localizationMap = new HashMap<>();
         localizationMap.put("requestOrderNumber", MessageUtil.getMessage("report.requestOrderNumber"));
@@ -224,7 +217,8 @@ public abstract class Report implements IReportCreator {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, SQLException, IllegalStateException,
+            JRException, ParseException {
         return JasperRunManager.runReportToPdf(fullReportFilename, getReportParameters(), getReportDataSource());
     }
 
@@ -284,7 +278,7 @@ public abstract class Report implements IReportCreator {
 
         try {
             checkDate = DateUtil.convertStringDateToSqlDate(checkDateStr);
-        } catch (LIMSRuntimeException re) {
+        } catch (LIMSRuntimeException e) {
             add1LineErrorMessage("report.error.message.date.format", " " + checkDateStr);
             return null;
         }
@@ -377,7 +371,8 @@ public abstract class Report implements IReportCreator {
                 if (!GenericValidator.isBlankOrNull(highDateStr)) {
                     range += "  -  " + highDateStr;
                 }
-            } catch (Exception ignored) {
+            } catch (RuntimeException e) {
+                LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
             }
             return range;
         }

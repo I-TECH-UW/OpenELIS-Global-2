@@ -149,7 +149,7 @@ public class TestModifyEntryFormValidator implements Validator {
         } catch (
 
         ParseException e) {
-            LogEvent.logError("TestAddFormValidator", "validate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             errors.rejectValue("jsonWad", "error.field.format.json", "expected JSON but got something else");
         }
     }

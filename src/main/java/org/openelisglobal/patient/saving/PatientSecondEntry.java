@@ -48,7 +48,7 @@ public class PatientSecondEntry extends PatientEntry implements IPatientSecondEn
      * @throws LIMSRuntimeException
      */
     public PatientSecondEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

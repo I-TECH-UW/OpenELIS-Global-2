@@ -7,6 +7,7 @@
  */
 package org.openelisglobal.patienttype.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -17,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.patienttype.dao.PatientTypeDAO;
@@ -51,8 +53,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //				String tableName = "PATIENT_TYPE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in PATIENT_TYPE AuditTrail deleteData()", e);
 //		}
 //
@@ -63,8 +65,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in PatientType deleteData()", e);
 //		}
 //	}
@@ -85,8 +87,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in patientType insertData()", e);
 //		}
 //
@@ -101,7 +103,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //			 * LIMSDuplicateRecordException( "Duplicate record exists for " +
 //			 * patientTypes.getDescription()); }
 //			 */
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			throw new LIMSRuntimeException("Error in patientType updateData()", e);
 //		}
 //
@@ -115,8 +117,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PATIENT_TYPE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in patientType AuditTrail updateData()", e);
 //		}
 //
@@ -126,8 +128,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(patientTypes);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(patientTypes);
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in PatientType updateData()", e);
 //		}
 //	}
@@ -144,16 +146,16 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             } else {
                 patientType.setId(null);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in PatientType getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPatientTypes() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<PatientType> getAllPatientTypes() throws LIMSRuntimeException {
+        List<PatientType> list = new Vector<>();
         try {
             String sql = "from PatientType p order by p.type";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -162,8 +164,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in patientType getAllPatientTypes()", e);
         }
 
@@ -172,8 +174,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<PatientType> getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException {
+        List<PatientType> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -186,8 +188,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in getPageOfPatientType()", e);
         }
 
@@ -200,8 +202,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             patientType = entityManager.unwrap(Session.class).get(PatientType.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in PatientType readPatientType()", e);
         }
 
@@ -211,8 +213,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getPatientTypes(String description) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<PatientType> getPatientTypes(String description) throws LIMSRuntimeException {
+        List<PatientType> list = new Vector<>();
         try {
             String sql = "from patientType l where upper(l.description) like upper(:param) order by upper(l.description)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -221,27 +223,12 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in patientType getPatientTypes(String filter)", e);
         }
 
         return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextPatientTypeRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "PatientType", PatientType.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "PatientType", PatientType.class);
     }
 
     @Override
@@ -252,18 +239,18 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", patientType.getType());
 
-            List list = query.list();
+            List<PatientType> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             PatientType patientTypes = null;
             if (list.size() > 0) {
-                patientTypes = (PatientType) list.get(0);
+                patientTypes = list.get(0);
             }
 
             return patientTypes;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in PatientType getPatientTypeByName()", e);
         }
     }
@@ -271,58 +258,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalPatientTypeCount() throws LIMSRuntimeException {
-        return getTotalCount("PatientType", PatientType.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select d.id from PatientType d" + " order by d.type";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select g.id from PatientType g order by g.type desc";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
+        return getCount();
     }
 
     // Check duplicate with fild Description .
@@ -330,7 +266,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
     public boolean duplicatePatientTypeExists(PatientType patientType) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<PatientType> list = new ArrayList<>();
             String sql = "from PatientType t where trim(upper(t.description)) = :param1 or trim(upper(t.type)) = :param2";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
@@ -355,8 +291,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
                 return false;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in duplicatePatientTypeExists()", e);
         }
     }

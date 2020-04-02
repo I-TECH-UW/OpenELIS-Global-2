@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class RetroCIReport extends Report implements IReportCreator {
@@ -112,5 +112,5 @@ public abstract class RetroCIReport extends Report implements IReportCreator {
      * @see org.openelisglobal.reports.action.implementation.IReportCreator#initializeReport(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    abstract public void initializeReport(BaseForm form);
+    abstract public void initializeReport(ReportForm form);
 }

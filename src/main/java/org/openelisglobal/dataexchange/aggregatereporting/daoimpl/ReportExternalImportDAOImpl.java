@@ -38,7 +38,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         super(ReportExternalImport.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
@@ -88,7 +88,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(report);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(report);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "updateReportExternalImport");
 //		}
 //	}
@@ -105,9 +105,9 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getUniqueSites() throws LIMSRuntimeException {
         String sql = "select distinct sending_site from clinlims.report_external_import ";
         try {
@@ -122,7 +122,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
@@ -147,7 +147,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)

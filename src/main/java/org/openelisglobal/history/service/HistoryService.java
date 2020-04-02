@@ -8,7 +8,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 
 public interface HistoryService extends BaseObjectService<History, String> {
 
-    public List getHistoryByRefIdAndRefTableId(String Id, String Table) throws LIMSRuntimeException;
+    List<History> getHistoryByRefIdAndRefTableId(String Id, String Table) throws LIMSRuntimeException;
 
-    public List getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException;
+    List<History> getHistoryByRefIdAndRefTableId(History history) throws LIMSRuntimeException;
 }

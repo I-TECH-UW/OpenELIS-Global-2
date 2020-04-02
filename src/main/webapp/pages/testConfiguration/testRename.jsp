@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
          		org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil,
@@ -29,7 +29,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <c:set var="formName" value="${form.formName}" />
 <c:set var="testList" value="${form.testList}" />
 
@@ -156,18 +156,11 @@
     }
 </script>
 
-
-<%!
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-%>
-
 <%
-    columnCount = 0;
-    testCount = 0;
-    List testList;
-    testList =  ((TestRenameEntryForm) request.getAttribute("form")).getTestList();
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 3;
+    List testList =  ((TestRenameEntryForm) request.getAttribute("form")).getTestList();
 %>
 
 

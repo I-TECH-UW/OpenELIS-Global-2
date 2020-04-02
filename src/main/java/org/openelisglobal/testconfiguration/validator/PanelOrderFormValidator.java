@@ -40,8 +40,8 @@ public class PanelOrderFormValidator implements Validator {
                 }
             }
         } catch (ParseException | ClassCastException e) {
-            LogEvent.logError("PanelOrderFormValidator", "validate()", e.toString());
-            errors.rejectValue("jsonChangeList", "error.field.format.json", e.getMessage());
+            LogEvent.logError(e.toString(), e);
+            errors.rejectValue("jsonChangeList", "error.field.format.json", "could not parse JSON");
         }
 
     }

@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -42,6 +41,7 @@ import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qaevent.form.NonConformityForm;
+import org.openelisglobal.qaevent.form.NonConformityForm.NonConformitySearch;
 import org.openelisglobal.qaevent.service.NonConformityHelper;
 import org.openelisglobal.qaevent.validator.NonConformityFormValidator;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
@@ -68,6 +68,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,41 +79,62 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class NonConformityController extends BaseController {
 
-    @Autowired
-    NonConformityFormValidator formValidator;
+    private static final String[] ALLOWED_FIELDS = new String[] { "sampleId", "patientId", "sampleItemsTypeOfSampleIds",
+            "date", "time", "project", "projectId", "subjectNew", "subjectNo", "newSTNumber", "STNumber",
+            "nationalIdNew", "nationalId", "serviceNew", "newServiceName", "service", "doctorNew", "requesterSampleID",
+            "providerLastName", "providerFirstName", "providerStreetAddress", "providerCity", "providerCommune",
+            "providerDepartment", "providerWorkPhone", "doctor", "qaEvents[*].recordNumber", "qaEvents[*].id",
+            "qaEvents[*].qaEvent", "qaEvents[*].sampleType", "qaEvents[*].section", "qaEvents[*].authorizer",
+            "qaEvents[*].note", "qaEvents[*].remove", "commentNew", "comment" };
 
     @Autowired
-    SampleService sampleService;
+    private NonConformityFormValidator formValidator;
+
     @Autowired
-    SampleItemService sampleItemService;
+    private SampleService sampleService;
     @Autowired
-    TypeOfSampleService typeOfSampleService;
+    private SampleItemService sampleItemService;
     @Autowired
-    SampleHumanService sampleHumanService;
+    private TypeOfSampleService typeOfSampleService;
     @Autowired
-    org.openelisglobal.person.service.PersonService personService;
+    private SampleHumanService sampleHumanService;
     @Autowired
-    ProviderService providerService;
+    private PersonService personService;
     @Autowired
-    OrganizationService organizationService;
+    private ProviderService providerService;
     @Autowired
-    ObservationHistoryService observationHistoryService;
+    private OrganizationService organizationService;
     @Autowired
-    SampleProjectService sampleProjectService;
+    private ObservationHistoryService observationHistoryService;
     @Autowired
-    TestSectionService testSectionService;
+    private SampleProjectService sampleProjectService;
     @Autowired
-    SampleRequesterService sampleRequesterService;
+    private TestSectionService testSectionService;
     @Autowired
-    ProjectService projectService;
+    private SampleRequesterService sampleRequesterService;
     @Autowired
-    SampleQaEventService sampleQaEventService;
+    private ProjectService projectService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
-    public ModelAndView showNonConformity(HttpServletRequest request) throws LIMSInvalidConfigurationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        NonConformityForm form = new NonConformityForm();
-        String labNumber = request.getParameter("labNo");
+    public ModelAndView showNonConformity(HttpServletRequest request,
+            @Validated(NonConformitySearch.class) NonConformityForm form, BindingResult result)
+            throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form = new NonConformityForm();
+            return findForward(FWD_FAIL, form);
+        }
+        String labNumber = form.getLabNo();
+        // reset form. We only need labNo at this stage
+        form = new NonConformityForm();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             setupFormForLabNumber(labNumber, form);
         }
@@ -128,11 +151,11 @@ public class NonConformityController extends BaseController {
 
         boolean sampleFound = !(sample == null || GenericValidator.isBlankOrNull(sample.getId()));
 
-        PropertyUtils.setProperty(form, "labNo", labNumber);
+        form.setLabNo(labNumber);
         Date today = Calendar.getInstance().getTime();
-        PropertyUtils.setProperty(form, "date", DateUtil.formatDateAsText(today));
+        form.setDate(DateUtil.formatDateAsText(today));
         if (FormFields.getInstance().useField(Field.QATimeWithDate)) {
-            PropertyUtils.setProperty(form, "time", DateUtil.nowTimeAsText());
+            form.setTime(DateUtil.nowTimeAsText());
         }
 
         if (sampleFound) {
@@ -141,42 +164,39 @@ public class NonConformityController extends BaseController {
 
         setProjectList(form);
 
-        PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString(sample));
-        PropertyUtils.setProperty(form, "sections", createSectionList());
-        PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getInstance().getList(ListType.QA_EVENTS));
-        PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
+        form.setSampleItemsTypeOfSampleIds(getSampleTypeOfSamplesString(sample));
+        form.setSections(createSectionList());
+        form.setQaEventTypes(DisplayListService.getInstance().getList(ListType.QA_EVENTS));
+        form.setQaEvents(getSampleQaEventItems(sample));
 
-        PropertyUtils.setProperty(form, "typeOfSamples",
-                DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTypeOfSamples(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
 
-        PropertyUtils.setProperty(form, "readOnly", false);
-        PropertyUtils.setProperty(form, "siteList",
-                DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+        form.setReadOnly(false);
+        form.setSiteList(DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
         Provider provider = getProvider(sample);
         if (provider != null) {
-            PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
+            form.setProviderNew(Boolean.FALSE.toString());
             Person providerPerson = getProviderPerson(provider);
             if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
-                PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName(providerPerson));
-                PropertyUtils.setProperty(form, "providerLastName", personService.getLastName(providerPerson));
-                PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone(providerPerson));
+                form.setProviderFirstName(personService.getFirstName(providerPerson));
+                form.setProviderLastName(personService.getLastName(providerPerson));
+                form.setProviderWorkPhone(personService.getPhone(providerPerson));
                 Map<String, String> addressComponents = personService.getAddressComponents(providerPerson);
 
-                PropertyUtils.setProperty(form, "providerStreetAddress", addressComponents.get("Street"));
-                PropertyUtils.setProperty(form, "providerCity", addressComponents.get("village"));
-                PropertyUtils.setProperty(form, "providerCommune", addressComponents.get("commune"));
-                PropertyUtils.setProperty(form, "providerDepartment", addressComponents.get("department"));
+                form.setProviderStreetAddress(addressComponents.get("Street"));
+                form.setProviderCity(addressComponents.get("village"));
+                form.setProviderCommune(addressComponents.get("commune"));
+                form.setProviderDepartment(addressComponents.get("department"));
             }
         } else {
-            PropertyUtils.setProperty(form, "providerNew", Boolean.TRUE.toString());
-            PropertyUtils.setProperty(form, "requesterSampleID", "");
-            PropertyUtils.setProperty(form, "providerFirstName", "");
-            PropertyUtils.setProperty(form, "providerLastName", "");
-            PropertyUtils.setProperty(form, "providerWorkPhone", "");
+            form.setProviderNew(Boolean.TRUE.toString());
+            form.setRequesterSampleID("");
+            form.setProviderFirstName("");
+            form.setProviderLastName("");
+            form.setProviderWorkPhone("");
         }
 
-        PropertyUtils.setProperty(form, "departments",
-                DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
+        form.setDepartments(DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
 
     }
 
@@ -187,53 +207,53 @@ public class NonConformityController extends BaseController {
         PersonService personService = SpringContext.getBean(PersonService.class);
         personService.getData(patient.getPerson());
         List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patient);
-        PropertyUtils.setProperty(form, "sampleId", sample.getId());
-        PropertyUtils.setProperty(form, "patientId", patientService.getPatientId(patient));
+        form.setSampleId(sample.getId());
+        form.setPatientId(patientService.getPatientId(patient));
 
         Project project = getProjectForSample(sample);
         if (project != null) {
-            PropertyUtils.setProperty(form, "projectId", project.getId());
-            PropertyUtils.setProperty(form, "project", project.getLocalizedName());
+            form.setProjectId(project.getId());
+            form.setProject(project.getLocalizedName());
         }
 
         String subjectNo = patientService.getSubjectNumber(patient);
         if (!GenericValidator.isBlankOrNull(subjectNo)) {
-            PropertyUtils.setProperty(form, "subjectNew", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "subjectNo", subjectNo);
+            form.setSubjectNew(Boolean.FALSE);
+            form.setSubjectNo(subjectNo);
         }
 
         String STNo = patientService.getSTNumber(patient);
         if (!GenericValidator.isBlankOrNull(STNo)) {
-            PropertyUtils.setProperty(form, "newSTNumber", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "STNumber", STNo);
+            form.setNewSTNumber(Boolean.FALSE);
+            form.setSTNumber(STNo);
         }
 
         String nationalId = patientService.getNationalId(patient);
         if (!GenericValidator.isBlankOrNull(nationalId)) {
-            PropertyUtils.setProperty(form, "nationalIdNew", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "nationalId", nationalId);
+            form.setNationalIdNew(Boolean.FALSE);
+            form.setNationalId(nationalId);
         }
 
         ObservationHistory doctorObservation = getRefererObservation(observationHistoryList);
         if (doctorObservation != null) {
-            PropertyUtils.setProperty(form, "doctorNew", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "doctor", doctorObservation.getValue());
+            form.setDoctorNew(Boolean.FALSE);
+            form.setDoctor(doctorObservation.getValue());
         }
 
         if (FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST)) {
-            PropertyUtils.setProperty(form, "serviceNew", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "service", getSampleRequesterOrganizationName(sample));
+            form.setServiceNew(Boolean.FALSE);
+            form.setService(getSampleRequesterOrganizationName(sample));
         } else {
             ObservationHistory serviceObservation = getServiceObservation(observationHistoryList);
             if (serviceObservation != null) {
-                PropertyUtils.setProperty(form, "serviceNew", Boolean.FALSE);
-                PropertyUtils.setProperty(form, "service", serviceObservation.getValue());
+                form.setServiceNew(Boolean.FALSE);
+                form.setService(serviceObservation.getValue());
             }
         }
 
-        PropertyUtils.setProperty(form, "comment", NonConformityHelper.getNoteForSample(sample));
+        form.setComment(NonConformityHelper.getNoteForSample(sample));
 
-        PropertyUtils.setProperty(form, "requesterSampleID", sample.getReferringId());
+        form.setRequesterSampleID(sample.getReferringId());
     }
 
     /**
@@ -356,7 +376,7 @@ public class NonConformityController extends BaseController {
     private void setProjectList(NonConformityForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         List<Project> projects = projectService.getAll();
-        PropertyUtils.setProperty(form, "projects", projects);
+        form.setProjects(projects);
     }
 
     private Sample getSampleForLabNumber(String labNumber) throws LIMSInvalidConfigurationException {
@@ -445,7 +465,7 @@ public class NonConformityController extends BaseController {
         worker.setWebData(data);
         try {
             worker.update();
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             saveErrors(worker.getErrors());
             return findForward(FWD_FAIL_INSERT, form);
         }
@@ -467,6 +487,8 @@ public class NonConformityController extends BaseController {
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
+            return "nonConformityDefiniton";
+        } else if (FWD_FAIL.equals(forward)) {
             return "nonConformityDefiniton";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/NonConformity.do";

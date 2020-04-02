@@ -13,7 +13,7 @@ public class DataResource extends BaseObject<String> {
     // switch to enum if hibernate is upgraded and enums become available
     /*
      * public enum Level { ALL, COUNTY, LAB, NATIONAL, PARTNER, SITE, SUBCOUNTY;
-     * 
+     *
      * public static List<Level> getAllLevels() { return
      * Arrays.asList(Level.values()); } public static List<Level>
      * getAllNamedLevels() { List<Level> levels = new
@@ -21,13 +21,13 @@ public class DataResource extends BaseObject<String> {
      * levels; } }
      */
 
-    public static String ALL = "all";
-    public static String COUNTY = "county";
-    public static String LAB = "lab";
-    public static String NATIONAL = "national";
-    public static String PARTNER = "partner";
-    public static String SITE = "facility";
-    public static String SUBCOUNTY = "subcounty";
+    public static final String ALL = "all";
+    public static final String COUNTY = "county";
+    public static final String LAB = "lab";
+    public static final String NATIONAL = "national";
+    public static final String PARTNER = "partner";
+    public static final String SITE = "facility";
+    public static final String SUBCOUNTY = "subcounty";
 
     private String id;
     private String name;
@@ -35,21 +35,23 @@ public class DataResource extends BaseObject<String> {
     private String headerKey;
     private String level;
     // id of entries on VLDASH database by level
-    private Map<String, String> levelIdMap = new HashMap<String, String>();
-    private List<DataValue> columnValues = new ArrayList<DataValue>();
+    private Map<String, String> levelIdMap = new HashMap<>();
+    private List<DataValue> columnValues = new ArrayList<>();
 
     public static List<String> getAllLevels() {
-        return new ArrayList<String>(Arrays.asList(ALL, COUNTY, LAB, NATIONAL, PARTNER, SITE, SUBCOUNTY));
+        return new ArrayList<>(Arrays.asList(ALL, COUNTY, LAB, NATIONAL, PARTNER, SITE, SUBCOUNTY));
     }
 
     public static List<String> getAllNamedLevels() {
-        return new ArrayList<String>(Arrays.asList(COUNTY, LAB, NATIONAL, PARTNER, SITE, SUBCOUNTY));
+        return new ArrayList<>(Arrays.asList(COUNTY, LAB, NATIONAL, PARTNER, SITE, SUBCOUNTY));
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

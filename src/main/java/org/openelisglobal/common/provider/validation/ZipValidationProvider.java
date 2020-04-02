@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.validation;
@@ -27,6 +27,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 
 /**
  * @author benzd1 bugzilla 1765 changed to validate zipcode only (combination of
@@ -44,14 +45,15 @@ public class ZipValidationProvider extends BaseValidationProvider {
         this.ajaxServlet = ajaxServlet;
     }
 
+    @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         // get id from request
-        String zip = (String) request.getParameter("id");
-        String formField = (String) request.getParameter("field");
+        String zip = request.getParameter("id");
+        String formField = request.getParameter("field");
         String result = validate(zip);
-        ajaxServlet.sendData(formField, result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
     }
 
 //bugzilla 1367 efficiency fix (and bug fix)

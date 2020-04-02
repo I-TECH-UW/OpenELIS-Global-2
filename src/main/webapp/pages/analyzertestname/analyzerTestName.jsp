@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 	org.openelisglobal.internationalization.MessageUtil,
 	org.openelisglobal.analyzer.valueholder.Analyzer,
@@ -16,15 +16,6 @@
 <c:set var="analyzerNameOrId" value="${form.analyzerId}" />
 <c:set var="testList" value="${form.testList}" />
 <c:set var="testNameOrId" value="${form.testId}" />
-
-<%!String allowEdits = "true";%>
-
-<%
-	if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-		allowEdits = (String) request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-	}
-%>
-
 
 <script>
 

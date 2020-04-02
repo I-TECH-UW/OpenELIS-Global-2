@@ -15,9 +15,9 @@
 */
 package org.openelisglobal.patient.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -61,7 +61,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //				String tableName = "PATIENT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PatientDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Patient AuditTrail deleteData()", e);
@@ -77,7 +77,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PatientDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Patient deleteData()", e);
@@ -99,10 +99,10 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("PatientDAOImpl", "insertData()", e.toString());
-//			e.printStackTrace();
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Patient insertData()", e);
 //		}
 //
@@ -120,7 +120,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PATIENT";
 //			auditDAO.saveHistory(patient, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Patient AuditTrail updateData()", e);
 //		}
@@ -131,7 +131,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(patient);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(patient);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Patient updateData()", e);
 //		}
@@ -169,8 +169,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
                 patient.setId(null);
             }
 
-        } catch (Exception e) {
-            LogEvent.logError("PatientDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getData()", e);
         }
     }
@@ -189,17 +189,17 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPatients() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Patient> getAllPatients() throws LIMSRuntimeException {
+        List<Patient> list;
         try {
             String sql = "from Patient";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getAllPatients()", e);
         }
 
@@ -208,8 +208,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
-        List patients = new Vector();
+    public List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
+        List<Patient> patients;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -223,9 +223,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "getPageOfPatients()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient getPageOfPatients()", e);
         }
 
@@ -239,9 +239,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             pat = entityManager.unwrap(Session.class).get(Patient.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 
@@ -249,24 +249,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextPatientRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Patient", Patient.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPatientRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Patient", Patient.class);
-    }
-
-    @Override
     public boolean externalIDExists(String patientExternalID) {
 
-        List results;
+        List<Patient> results;
 
         try {
             String sql = "From Patient where external_id = :patientID";
@@ -277,15 +262,14 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             results = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 
         return !results.isEmpty();
     }
 
-    @SuppressWarnings("unchecked")
     protected Patient getPatientByStringProperty(String propertyName, String propertyValue) {
         List<Patient> patients;
 
@@ -296,8 +280,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             patients = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
         }
         return patients.isEmpty() ? null : patients.get(0);
@@ -309,7 +293,6 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         return getPatientByStringProperty("nationalId", nationalId);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
@@ -320,7 +303,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             List<Patient> patients = query.list();
             // closeSession(); // CSL remove old
             return patients;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getPatientsByNationalId");
         }
 
@@ -334,7 +317,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
         List<Patient> patients;
@@ -348,8 +331,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             patients = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
         }
 
@@ -357,7 +340,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
             String project) throws LIMSRuntimeException {
 
@@ -385,7 +368,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             // closeSession(); // CSL remove old
 
             return subjectList;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getPatientIdentityBySampleStatusIdAndProject");
         }
 

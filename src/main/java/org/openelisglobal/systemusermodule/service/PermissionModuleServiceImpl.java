@@ -349,20 +349,8 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextPermissionModuleRecord(String id) {
-        return getActivePermissionModule().getNextPermissionModuleRecord(id);
-    }
-
-    @Override
     public boolean doesUserHaveAnyModules(int userId) {
         return getActivePermissionModule().doesUserHaveAnyModules(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPermissionModuleRecord(String id) {
-        return getActivePermissionModule().getPreviousPermissionModuleRecord(id);
     }
 
     @Override

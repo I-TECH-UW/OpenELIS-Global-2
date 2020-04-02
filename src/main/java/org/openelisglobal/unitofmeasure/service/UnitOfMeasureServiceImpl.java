@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
@@ -61,12 +62,12 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
         createTestIdToNameMap();
     }
 
-    public String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
+    public synchronized String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
         String name = unitOfMeasureIdToNameMap.get(unitOfMeasureId);
         return name == null ? "" : name;
     }
 
-    private void createTestIdToNameMap() {
+    private synchronized void createTestIdToNameMap() {
         unitOfMeasureIdToNameMap = new HashMap<>();
 
         List<UnitOfMeasure> unitOfMeasures = unitOfMeasureDAO.getAll();
@@ -134,7 +135,9 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
     @Override
     public Localization getLocalizationForUnitOfMeasure(String id) {
         UnitOfMeasure unitOfMeasure = getUnitOfMeasureById(id);
-        return unitOfMeasure != null ? unitOfMeasure.getLocalization() : null;
+        Localization localization = unitOfMeasure != null ? unitOfMeasure.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 
 }

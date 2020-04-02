@@ -55,7 +55,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
             throws LIMSRuntimeException {

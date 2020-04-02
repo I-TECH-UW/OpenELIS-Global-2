@@ -22,20 +22,24 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class SearchResultsDAOImp implements SearchResultsDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     private static final String FIRST_NAME_PARAM = "firstName";
     private static final String LAST_NAME_PARAM = "lastName";
@@ -45,10 +49,16 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     private static final String SUBJECT_NUMBER_PARAM = "subjectNumber";
     private static final String ID_PARAM = "id";
     private static final String GUID = "guid";
+
+    private static final String ID_TYPE_FOR_ST = "stNumberId";
+    private static final String ID_TYPE_FOR_SUBJECT_NUMBER = "subjectNumberId";
+    private static final String ID_TYPE_FOR_GUID = "guidId";
+
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     @Override
     @SuppressWarnings("rawtypes")
+    @Transactional
     public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String externalID, String patientID, String guid)
             throws LIMSRuntimeException {
@@ -69,7 +79,13 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
                     queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid);
 
-            org.hibernate.Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+
+            query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
+            query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT")));
+            query.setInteger(ID_TYPE_FOR_GUID,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
 
             if (queryFirstName) {
                 query.setString(FIRST_NAME_PARAM, firstName);
@@ -97,8 +113,8 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                 query.setString(GUID, guid);
             }
             queryResults = query.list();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
         }
 
@@ -132,18 +148,18 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(
                 "select p.id, pr.first_name, pr.last_name, p.gender, p.entered_birth_date, p.national_id, p.external_id, pi.identity_data as st, piSN.identity_data as subject, piGUID.identity_data as guid from patient p join person pr on p.person_id = pr.id ");
-        queryBuilder.append("left join patient_identity  pi on pi.patient_id = p.id and pi.identity_type_id = '");
-        queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("ST"));
-        queryBuilder.append("' ");
+        queryBuilder.append("left join patient_identity  pi on pi.patient_id = p.id and pi.identity_type_id = :");
+        queryBuilder.append(ID_TYPE_FOR_ST);
+        queryBuilder.append(" ");
 
-        queryBuilder.append("left join patient_identity  piSN on piSN.patient_id = p.id and piSN.identity_type_id = '");
-        queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT"));
-        queryBuilder.append("' ");
+        queryBuilder.append("left join patient_identity  piSN on piSN.patient_id = p.id and piSN.identity_type_id = :");
+        queryBuilder.append(ID_TYPE_FOR_SUBJECT_NUMBER);
+        queryBuilder.append(" ");
 
         queryBuilder.append(
-                "left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = '");
-        queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("GUID"));
-        queryBuilder.append("' where ");
+                "left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = :");
+        queryBuilder.append(ID_TYPE_FOR_GUID);
+        queryBuilder.append(" where ");
 
         if (lastName) {
             queryBuilder.append(" pr.last_name ilike :");

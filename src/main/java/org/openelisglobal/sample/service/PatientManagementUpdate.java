@@ -16,6 +16,7 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -317,8 +318,8 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
         try {
             typeName = patientInfo.getPatientType();
-        } catch (Exception ignored) {
-            System.out.println("typeName ignored");
+        } catch (RuntimeException e) {
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "typeName ignored");
         }
 
         if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {

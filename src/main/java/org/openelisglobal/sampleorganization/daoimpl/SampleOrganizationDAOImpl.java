@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.sampleorganization.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -62,7 +63,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //				String tableName = "SAMPLE_ORGANIZATION";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail deleteData()", e);
@@ -77,7 +78,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
@@ -100,7 +101,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleOrganization insertData()", e);
@@ -122,7 +123,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SAMPLE_ORGANIZATION";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail updateData()", e);
@@ -134,7 +135,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleOrg);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(sampleOrg);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleOrganization updateData()", e);
@@ -154,9 +155,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             } else {
                 sampleOrg.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
     }
@@ -167,9 +168,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
         }
 
@@ -184,17 +185,17 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             String sql = "from SampleOrganization so where samp_id = :param";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
-            List list = query.list();
+            List<SampleOrganization> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             SampleOrganization so = null;
             if (list.size() > 0) {
-                so = (SampleOrganization) list.get(0);
+                so = list.get(0);
                 PropertyUtils.copyProperties(sampleOrganization, so);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
 

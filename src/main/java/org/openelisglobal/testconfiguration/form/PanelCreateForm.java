@@ -33,10 +33,10 @@ public class PanelCreateForm extends BaseForm {
     private String existingFrenchNames;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String panelEnglishName;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String panelFrenchName;
 
     @NotBlank

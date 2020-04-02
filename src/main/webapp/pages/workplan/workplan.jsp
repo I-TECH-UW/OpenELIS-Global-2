@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="java.util.List,
 			org.openelisglobal.common.action.IActionConstants,
 			java.util.Collection,
@@ -17,7 +17,7 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<c:set var="workplanType" value="${param.type}"/>
+<c:set var="workplanType" value="${form.workplanType}"/>
 <c:set var="tests" value="${form.workplanTests}"/>
 <c:set var="testCount" value="${fn:length(tests)}"/>
 <c:set var="currentAccessionNumber" value=""/>
@@ -32,15 +32,6 @@
 	</c:forEach>
 	</script>
 </c:if>
-
-<%
-
-	String basePath = "";
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-	+ request.getServerPort() + path + "/";
-
-%>
 
 <script type="text/javascript" >
 

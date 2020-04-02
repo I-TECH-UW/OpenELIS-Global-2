@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.SampleOrderService;
@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,11 +42,60 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
+            "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
+            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
+            "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
+            "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
+            "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
+            "patientProperties.nationality", "patientProperties.otherNationality", "patientClinicalProperties.stdOther",
+            "patientClinicalProperties.tbDiarrhae", "patientClinicalProperties.stdZona",
+            "patientClinicalProperties.tbPrurigol", "patientClinicalProperties.stdKaposi",
+            "patientClinicalProperties.tbMenigitis", "patientClinicalProperties.stdCandidiasis",
+            "patientClinicalProperties.tbCerebral", "patientClinicalProperties.stdColonCancer",
+            "patientClinicalProperties.tbExtraPulmanary", "patientClinicalProperties.arvProphyaxixType",
+            "patientClinicalProperties.arvTreatmentReceiving", "patientClinicalProperties.arvTreatmentRemembered",
+            "patientClinicalProperties.arvTreatment1", "patientClinicalProperties.arvTreatment2",
+            "patientClinicalProperties.arvTreatment3", "patientClinicalProperties.arvTreatment4",
+            "patientClinicalProperties.cotrimoxazoleReceiving", "patientClinicalProperties.cotrimoxazoleType",
+            "patientClinicalProperties.infectionExtraPulmanary", "patientClinicalProperties.stdInfectionColon",
+            "patientClinicalProperties.infectionCerebral", "patientClinicalProperties.stdInfectionCandidiasis",
+            "patientClinicalProperties.infectionMeningitis", "patientClinicalProperties.stdInfectionKaposi",
+            "patientClinicalProperties.infectionPrurigol", "patientClinicalProperties.stdInfectionZona",
+            "patientClinicalProperties.infectionOther", "patientClinicalProperties.infectionUnderTreatment",
+            "patientClinicalProperties.weight", "patientClinicalProperties.karnofskyScore",
+            //
+            "initialSampleConditionList", "sampleXML",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.modified", "sampleOrderItems.sampleId",
+            "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
+            "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
+            "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
+            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
+            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
+            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
+            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
+            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
+            "sampleOrderItems.otherLocationCode",
+            //
+            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber" };
+
     @Autowired
     SamplePatientEntryFormValidator formValidator;
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)
@@ -53,24 +104,23 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
-        PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
-        PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
-        PropertyUtils.setProperty(form, "patientSearch", new PatientSearch());
-        PropertyUtils.setProperty(form, "sampleTypes",
-                DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-        PropertyUtils.setProperty(form, "testSectionList",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.setPatientProperties(new PatientManagementInfo());
+        form.setPatientSearch(new PatientSearch());
+        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
 
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // System.out.println(((IdValuePair) program).getValue());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // program).getValue());
         // }
 
         addProjectList(form);
         addBillingLabel();
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            PropertyUtils.setProperty(form, "initialSampleConditionList",
+            form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
 
@@ -91,9 +141,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
-        PatientManagementInfo patientInfo = (PatientManagementInfo) PropertyUtils.getProperty(form,
-                "patientProperties");
-        SampleOrderItem sampleOrder = (SampleOrderItem) PropertyUtils.getProperty(form, "sampleOrderItems");
+        PatientManagementInfo patientInfo = form.getPatientProperties();
+        SampleOrderItem sampleOrder = form.getSampleOrderItems();
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
@@ -126,17 +175,17 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // ActionError error;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 // error = new ActionError("errors.OptimisticLockException", null, null);
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            System.out.println(result);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);

@@ -39,10 +39,12 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Scope("prototype")
 public class DBOrderPersister implements IOrderPersister {
 
     private String SERVICE_USER_ID;
@@ -241,8 +243,8 @@ public class DBOrderPersister implements IOrderPersister {
             persist(orderPatient);
             eOrder.setPatient(patient);
             eOrderService.insert(eOrder);
-        } catch (Exception e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "persist()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logErrorStack(e);
             throw e;
         }
     }
@@ -263,8 +265,8 @@ public class DBOrderPersister implements IOrderPersister {
                 eOrder.setSysUserId(SERVICE_USER_ID);
                 try {
                     eOrderService.update(eOrder);
-                } catch (Exception e) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "cancelOrder()", e);
+                } catch (RuntimeException e) {
+                    LogEvent.logErrorStack(e);
                 }
 
             }

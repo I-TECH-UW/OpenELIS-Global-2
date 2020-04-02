@@ -29,6 +29,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.search.service.SearchResultsService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -73,6 +74,6 @@ public class SubjectNumberValidationProvider extends BaseValidationProvider {
             }
         }
         response.setCharacterEncoding("UTF-8");
-        ajaxServlet.sendData(fieldId, queryResponse, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(fieldId), queryResponse, request, response);
     }
 }

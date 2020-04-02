@@ -6,6 +6,7 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryForm;
@@ -31,7 +32,10 @@ public class InventoryFormValidator implements Validator {
         InventoryForm form = (InventoryForm) target;
 
         try {
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.isValidating();
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            Document doc = documentBuilderFactory.newDocumentBuilder()
                     .parse(new InputSource(new StringReader(form.getNewKitsXML())));
 
             NodeList newKits = doc.getElementsByTagName("kit");
@@ -59,7 +63,7 @@ public class InventoryFormValidator implements Validator {
 
         } catch (SAXException | IOException | ParserConfigurationException e) {
             errors.rejectValue("newKitsXMl", "errors.field.format.xml");
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
     }
 

@@ -35,36 +35,32 @@ public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
 //	public void deleteData(List testSections) throws LIMSRuntimeException;
 
-    public List<TestSection> getAllTestSections() throws LIMSRuntimeException;
+    List<TestSection> getAllTestSections() throws LIMSRuntimeException;
 
-    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
+    List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(TestSection testSection) throws LIMSRuntimeException;
+    void getData(TestSection testSection) throws LIMSRuntimeException;
 
 //	public void updateData(TestSection testSection) throws LIMSRuntimeException;
 
-    public List getTestSections(String filter) throws LIMSRuntimeException;
+    List<TestSection> getTestSections(String filter) throws LIMSRuntimeException;
 
-    public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+    List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
             throws LIMSRuntimeException;
 
-    public List getNextTestSectionRecord(String id) throws LIMSRuntimeException;
+    TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
 
-    public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException;
+    Integer getTotalTestSectionCount() throws LIMSRuntimeException;
 
-    public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
+    List<TestSection> getAllActiveTestSections() throws LIMSRuntimeException;
 
-    public Integer getTotalTestSectionCount() throws LIMSRuntimeException;
+    TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException;
 
-    public List<TestSection> getAllActiveTestSections() throws LIMSRuntimeException;
+    TestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException;
 
-    public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException;
-
-    public TestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException;
-
-    public List<TestSection> getAllInActiveTestSections() throws LIMSRuntimeException;
+    List<TestSection> getAllInActiveTestSections() throws LIMSRuntimeException;
 
     boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException;
 
-    List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException;
+    List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException;
 }

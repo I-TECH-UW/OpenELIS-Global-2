@@ -1,5 +1,6 @@
 package org.openelisglobal.test.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +11,12 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemusersection.service.SystemUserSectionService;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 import org.openelisglobal.test.dao.TestSectionDAO;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +28,10 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     private Map<String, String> testUnitIdToNameMap;
 
-    protected TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
-
-    private SystemUserSectionService systemUserSectionService = SpringContext.getBean(SystemUserSectionService.class);
+    @Autowired
+    private TestSectionDAO baseObjectDAO;
+    @Autowired
+    private SystemUserSectionService systemUserSectionService;
 
     @PostConstruct
     private void initializeGlobalVariables() {
@@ -84,12 +86,12 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
         return getUserLocalizedTestSectionName(testSection.getId());
     }
 
-    public String getUserLocalizedTestSectionName(String testSectionId) {
+    public synchronized String getUserLocalizedTestSectionName(String testSectionId) {
         String name = testUnitIdToNameMap.get(testSectionId);
         return name == null ? "" : name;
     }
 
-    private void createTestIdToNameMap() {
+    private synchronized void createTestIdToNameMap() {
         testUnitIdToNameMap = new HashMap<>();
 
         List<TestSection> testSections = baseObjectDAO.getAllTestSections();
@@ -117,7 +119,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) {
+    public List<TestSection> getTestSections(String filter) {
         return getBaseObjectDAO().getTestSections(filter);
     }
 
@@ -135,13 +137,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestSectionRecord(String id) {
-        return getBaseObjectDAO().getNextTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) {
+    public List<TestSection> getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
 
@@ -153,39 +149,35 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, S
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTestSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<TestSection> getAllTestSections() {
         return baseObjectDAO.getAllTestSections();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSectionsBySysUserId(String filter, int sysUserId) {
-        String sectionIdList = "";
+    public List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId) {
+        List<String> sectionIdList = new ArrayList<>();
 
-        List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+        List<SystemUserSection> userTestSectionList = systemUserSectionService
+                .getAllSystemUserSectionsBySystemUserId(sysUserId);
         for (int i = 0; i < userTestSectionList.size(); i++) {
-            SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+            SystemUserSection sus = userTestSectionList.get(i);
+            sectionIdList.add(sus.getTestSection().getId());
         }
         return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId, sectionIdList);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSectionsBySysUserId(int sysUserId) {
-        String sectionIdList = "";
-
-        List userTestSectionList = systemUserSectionService.getAllSystemUserSectionsBySystemUserId(sysUserId);
+    public List<TestSection> getAllTestSectionsBySysUserId(int sysUserId) {
+        List<SystemUserSection> userTestSectionList = systemUserSectionService
+                .getAllSystemUserSectionsBySystemUserId(sysUserId);
+        List<String> sectionIds = new ArrayList<>();
         for (int i = 0; i < userTestSectionList.size(); i++) {
-            SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
-            sectionIdList += sus.getTestSection().getId() + ",";
+            SystemUserSection sus = userTestSectionList.get(i);
+            sectionIds.add(sus.getTestSection().getId());
         }
-        return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIdList);
+        return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId, sectionIds);
     }
 
     @Override

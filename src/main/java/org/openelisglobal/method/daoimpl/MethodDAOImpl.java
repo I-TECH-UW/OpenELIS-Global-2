@@ -56,7 +56,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //				String tableName = "METHOD";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method AuditTrail deleteData()", e);
@@ -75,7 +75,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method deleteData()", e);
@@ -103,7 +103,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method insertData()", e);
@@ -119,7 +119,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			if (duplicateMethodExists(method)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method updateData()", e);
@@ -135,7 +135,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "METHOD";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method AuditTrail updateData()", e);
@@ -147,7 +147,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(method);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(method);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method updateData()", e);
@@ -173,7 +173,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			} else {
 //				method.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method getData()", e);
@@ -182,7 +182,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 //	@Override
 //	public List getAllMethods() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Method";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -190,7 +190,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getAllMethods()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method getAllMethods()", e);
@@ -201,7 +201,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 //	@Override
 //	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -216,7 +216,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getPageOfMethods()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method getPageOfMethods()", e);
@@ -231,7 +231,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			method = entityManager.unwrap(Session.class).get(Method.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "readMethod()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method readMethod()", e);
@@ -256,8 +256,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getMethods(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Method> getMethods(String filter) throws LIMSRuntimeException {
+        List<Method> list = new Vector<>();
         try {
             String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -266,9 +266,9 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
         }
         return list;
@@ -292,7 +292,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //
 //			return m;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getMethodByName()", e.toString());
 //			throw new LIMSRuntimeException("Error in Method getMethodByName()", e);
@@ -302,14 +302,14 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalMethodCount() throws LIMSRuntimeException {
-//		return getTotalCount("Method", Method.class);
+//		return getCount();
 //	}
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id
 //	@Override
 //	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.methodName";
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -318,7 +318,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //
 //			list = query.list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -331,7 +331,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //	@Override
 //	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 //
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from " + table + " t order by t.methodName desc where name <= " + enquote(id);
 //			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -339,7 +339,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //			query.setMaxResults(2);
 //
 //			list = query.list();
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("MethodDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -353,7 +353,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
     public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Method> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -378,9 +378,9 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("MethodDAOImpl", "duplicateMethodExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
         }
     }

@@ -70,7 +70,7 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 
             try {
                 persistResults(results, currentUserId);
-            } catch (LIMSRuntimeException lre) {
+            } catch (LIMSRuntimeException e) {
                 error = "Cobas Taqman DBS analyzer: Unable to save to database";
                 successful = false;
             }
@@ -158,11 +158,11 @@ public class CobasC311Reader extends AnalyzerLineInserter {
 
         AnalyzerResults analyzerResults = new AnalyzerResults();
 
-        MappedTestName mappedName = AnalyzerTestNameCache.instance().getMappedTest(AnalyzerTestNameCache.COBAS_C311,
+        MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.COBAS_C311,
                 analyzerTestName);
 
         if (mappedName == null) {
-            mappedName = AnalyzerTestNameCache.instance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_C311,
+            mappedName = AnalyzerTestNameCache.getInstance().getEmptyMappedTestName(AnalyzerTestNameCache.COBAS_C311,
                     analyzerTestName);
         }
 

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TestManagementConfigMenuController extends BaseController {
+
     @RequestMapping(value = "/TestManagementConfigMenu", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
         TestManagementConfigForm form = new TestManagementConfigForm();

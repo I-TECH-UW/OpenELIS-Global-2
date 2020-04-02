@@ -17,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -88,6 +89,13 @@ public class AppConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(20848820);
+        return multipartResolver;
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
@@ -104,6 +112,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
+        registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
         registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
     }
 

@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="java.util.Iterator,
 		javax.servlet.jsp.JspException,
 		org.openelisglobal.common.action.IActionConstants,
@@ -14,15 +14,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
-
-<%!
-String path = "";
-String basePath = "";
-%>
-<%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-%>
 
 <script>
 

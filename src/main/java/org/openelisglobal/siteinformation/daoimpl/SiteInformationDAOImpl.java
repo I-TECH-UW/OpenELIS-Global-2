@@ -17,6 +17,8 @@
 */
 package org.openelisglobal.siteinformation.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -51,7 +53,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //			auditDAO.saveHistory(newData, oldData, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 //					"SITE_INFORMATION");
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail deleteData()", e);
 //		}
@@ -62,7 +64,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SiteInformationsDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SiteInformation deleteData()", e);
 //		}
@@ -80,7 +82,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SiteInformationDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SiteInformation insertData()", e);
 //		}
@@ -97,7 +99,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //
 //			auditDAO.saveHistory(siteInformation, oldData, siteInformation.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "SITE_INFORMATION");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SiteInformationDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SiteInformation AuditTrail updateData()", e);
 //		}
@@ -109,7 +111,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(siteInformation);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(siteInformation);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SiteInformationsDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SiteInformation updateData()", e);
 //		}
@@ -128,14 +130,14 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             } else {
                 siteInformation.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("SiteInformationsDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException {
         List<SiteInformation> list;
@@ -145,8 +147,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("SiteInformationsDAOImpl", "getAllSiteInformation()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation getAllSiteInformation()", e);
         }
 
@@ -154,11 +156,11 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
             throws LIMSRuntimeException {
-        List<SiteInformation> list = null;
+        List<SiteInformation> list = new ArrayList<>();
         try {
 
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -173,7 +175,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getPageOfSiteInformationByDomainName");
         }
 
@@ -186,26 +188,12 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             recoveredSiteInformation = entityManager.unwrap(Session.class).get(SiteInformation.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("SiteInformationDAOImpl", "readSiteInformation()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SiteInformation readSiteInformation()", e);
         }
 
         return recoveredSiteInformation;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
-    public List<SiteInformation> getNextSiteInformationRecord(String id) throws LIMSRuntimeException {
-        return getNextRecord(id, "SiteInformation", SiteInformation.class);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
-    public List<SiteInformation> getPreviousSiteInformationRecord(String id) throws LIMSRuntimeException {
-        return getPreviousRecord(id, "SiteInformation", SiteInformation.class);
     }
 
     @Override

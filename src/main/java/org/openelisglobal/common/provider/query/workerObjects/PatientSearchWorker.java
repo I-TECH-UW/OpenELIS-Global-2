@@ -78,6 +78,7 @@ abstract public class PatientSearchWorker {
 
     class FoundListComparator implements Comparator<PatientSearchResults> {
 
+        @Override
         public int compare(PatientSearchResults o1, PatientSearchResults o2) {
             if (o1.getLastName() == null) {
                 return o2.getLastName() == null ? 0 : 1;

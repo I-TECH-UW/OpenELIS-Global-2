@@ -162,12 +162,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         receivedTimestamp = DateUtil.convertSqlDateToTimestamp(receivedDate);
     }
 
-    /**
-     * @deprecated Use DateUtil methods
-     * @return The received time in either 12 hour or 24 hour notation depending on
-     *         configuration
-     */
-    @Deprecated
     public String getReceivedTimeForDisplay() {
         return receivedTimestamp != null ? DateUtil.convertTimestampToStringConfiguredHourTime(receivedTimestamp)
                 : null;
@@ -361,15 +355,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         receivedTimeForDisplay = DateUtil.convertTimestampToStringTime(receivedTimestamp);
     }
 
-    /**
-     * @deprecated use DateUtil methods instead
-     * @param receivedTimeForDisplay -- the time for display
-     */
-    @Deprecated
-    public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
-        this.receivedTimeForDisplay = receivedTimeForDisplay;
-    }
-
     public String getReferringId() {
         return referringId;
     }
@@ -396,7 +381,7 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
 
     @Override
     public String getTableId() {
-        return SampleServiceImpl.TABLE_REFERENCE_ID;
+        return SampleServiceImpl.getTableReferenceId();
     }
 
     @Override

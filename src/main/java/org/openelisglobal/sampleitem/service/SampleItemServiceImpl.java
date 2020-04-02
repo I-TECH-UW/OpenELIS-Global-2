@@ -3,7 +3,10 @@ package org.openelisglobal.sampleitem.service;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.sampleitem.dao.SampleItemDAO;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -13,11 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, String> implements SampleItemService {
+
+    private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
+
     @Autowired
     protected SampleItemDAO baseObjectDAO;
 
+    @Autowired
+    private ReferenceTablesService refTableService;
+
+    @PostConstruct
+    public void initializeGlobalVariables() {
+        SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
+    }
+
     SampleItemServiceImpl() {
         super(SampleItem.class);
+    }
+
+    public static String getSampleItemTableReferenceId() {
+        return SAMPLE_ITEM_TABLE_REFERENCE_ID;
     }
 
     @Override
@@ -64,20 +82,8 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List<SampleItem> getPreviousSampleItemRecord(String id) {
-        return getBaseObjectDAO().getPreviousSampleItemRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<SampleItem> getAllSampleItems() {
         return getBaseObjectDAO().getAllSampleItems();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<SampleItem> getNextSampleItemRecord(String id) {
-        return getBaseObjectDAO().getNextSampleItemRecord(id);
     }
 
     @Override

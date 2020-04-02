@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.test.valueholder.Test;
 
 public class SPEFormMapper extends ARVFormMapper implements IProjectFormMapper {
 
     private final String projectCode = MessageUtil.getMessage("sample.entry.project.LSPE");
 
-    public SPEFormMapper(String projectFormId, BaseForm form) {
+    public SPEFormMapper(String projectFormId, IProjectForm form) {
         super(projectFormId, form);
     }
 
@@ -103,7 +103,7 @@ public class SPEFormMapper extends ARVFormMapper implements IProjectFormMapper {
     }
 
     @Override
-    public List<Test> getEDTATubeTests(BaseForm form) {
+    public List<Test> getEDTATubeTests(IProjectForm form) {
         List<Test> testList = new ArrayList<>();
 
         if (projectData.getNfsTest()) {

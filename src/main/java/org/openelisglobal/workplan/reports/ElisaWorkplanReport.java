@@ -20,9 +20,9 @@ package org.openelisglobal.workplan.reports;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.workplan.form.WorkplanForm;
 
 import net.sf.jasperreports.engine.JRParameter;
 
@@ -54,9 +54,9 @@ public class ElisaWorkplanReport implements IWorkplanReport {
     }
 
     @Override
-    public List<?> prepareRows(BaseForm form) {
+    public List<?> prepareRows(WorkplanForm form) {
 
-        List<AnalysisItem> workplanTests = (List<AnalysisItem>) form.get("resultList");
+        List<AnalysisItem> workplanTests = form.getResultList();
         return workplanTests;
     }
 

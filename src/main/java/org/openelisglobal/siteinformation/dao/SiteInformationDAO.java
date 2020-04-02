@@ -35,9 +35,9 @@ public interface SiteInformationDAO extends BaseDAO<SiteInformation, String> {
 
 //	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
-    public List<SiteInformation> getNextSiteInformationRecord(String id) throws LIMSRuntimeException;
 
-    public List<SiteInformation> getPreviousSiteInformationRecord(String id) throws LIMSRuntimeException;
+
+
 
     public SiteInformation getSiteInformationByName(String siteName) throws LIMSRuntimeException;
 

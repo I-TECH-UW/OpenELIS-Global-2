@@ -1,5 +1,6 @@
 package org.openelisglobal.datasubmission.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -34,9 +35,9 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             } else {
                 typeOfIndicator.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfDataIndicatorDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getData()", e);
         }
     }
@@ -51,8 +52,8 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfDataIndicator", "getAllTypeOfDataIndicator()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getAllTypeOfDataIndicator()", e);
         }
 
@@ -67,9 +68,9 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return dataValue;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfDataIndicatorDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfDataIndicator getData()", e);
         }
     }
@@ -88,7 +89,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfDataIndicator insertData()", e);
@@ -108,7 +109,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TYPE_OF_DATA_INDICATOR";
 //			auditDAO.saveHistory(typeOfIndicator, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DataValueDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfDataIndicator AuditTrail updateData()", e);
 //		}
@@ -120,32 +121,11 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(typeOfIndicator);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(typeOfIndicator);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in DataValue updateData()", e);
 //		}
 //	}
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

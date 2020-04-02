@@ -6,13 +6,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.action.workers.AuditTrailViewWorker;
 import org.openelisglobal.audittrail.form.AuditTrailViewForm;
 import org.openelisglobal.common.controller.BaseController;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,20 +22,27 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuditTrailReportController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
     public ModelAndView showAuditTrailReport(HttpServletRequest request,
             @ModelAttribute("form") @Valid AuditTrailViewForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         form.setFormMethod(RequestMethod.GET);
 
-        String accessionNumber = form.getString("accessionNumberSearch");
+        String accessionNumber = form.getAccessionNumberSearch();
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
             List<AuditTrailItem> items = worker.getAuditTrail();
-            PropertyUtils.setProperty(form, "log", items);
-            PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
-            PropertyUtils.setProperty(form, "sampleOrderItems", worker.getSampleOrderSnapshot());
-            PropertyUtils.setProperty(form, "patientProperties", worker.getPatientSnapshot());
+            form.setLog(items);
+            form.setAccessionNumber(accessionNumber);
+            form.setSampleOrderItems(worker.getSampleOrderSnapshot());
+            form.setPatientProperties(worker.getPatientSnapshot());
         }
 
         return findForward(FWD_SUCCESS, form);

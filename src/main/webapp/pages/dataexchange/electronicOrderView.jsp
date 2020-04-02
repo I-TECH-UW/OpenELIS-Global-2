@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -13,17 +13,28 @@ var firstPage = pageNumber == 1;
 var lastPage = ${total == endIndex};
 	
 function sortBy(sortOption) {
-	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption;
+	const params = new URLSearchParams({
+		"sortOrder": sortOption,
+		});
+	window.location.href = "ElectronicOrders.do?" + params.toString();
 }
 
 function nextPage() {
 	var sortOption = jQuery("#sortSelect").val();
-	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption + "&page=" + (pageNumber + 1);
+	const params = new URLSearchParams({
+		"sortOrder": sortOption,
+		"page": (pageNumber + 1),
+		});
+	window.location.href = "ElectronicOrders.do?" + params.toString();
 }
 
 function prevPage() {
 	var sortOption = jQuery("#sortSelect").val();
-	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption + "&page=" + (pageNumber - 1);
+	const params = new URLSearchParams({
+		"sortOrder": sortOption,
+		"page": (pageNumber -1),
+		});
+	window.location.href = "ElectronicOrders.do?" + params.toString();
 }
 
 jQuery(window).load(function(){	

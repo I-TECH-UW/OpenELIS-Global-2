@@ -26,11 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
  * via AJAX.
- * 
+ *
  */
 public class NonConformityRecordNumberValidationProvider extends BaseValidationProvider {
 
@@ -65,7 +66,7 @@ public class NonConformityRecordNumberValidationProvider extends BaseValidationP
         }
 
         response.setCharacterEncoding("UTF-8");
-        ajaxServlet.sendData(field, returnData, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
     }
 
     public static String getDocumentNumberFormat() {
@@ -79,7 +80,7 @@ public class NonConformityRecordNumberValidationProvider extends BaseValidationP
 
         enum Validation {
             FORMAT_ERROR, RECORD_FOUND, RECORD_NOT_FOUND
-        };
+        }
 
         public RecordValidation(String recordNumber) {
             this.recordNumber = recordNumber;

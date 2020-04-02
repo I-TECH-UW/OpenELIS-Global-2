@@ -11,15 +11,11 @@ import org.openelisglobal.test.valueholder.Test;
 
 public interface ResultLimitService extends BaseObjectService<ResultLimit, String> {
 
-    List getAllResultLimits() throws LIMSRuntimeException;
+    List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException;
 
-    List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
+    List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
 
     void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
-
-    List getNextResultLimitRecord(String id) throws LIMSRuntimeException;
-
-    List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException;
 
     List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
 

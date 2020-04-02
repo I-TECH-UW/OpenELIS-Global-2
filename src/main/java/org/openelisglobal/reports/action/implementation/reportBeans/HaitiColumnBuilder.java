@@ -5,6 +5,8 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.SAMPLE_STATUS;
 
+import java.sql.Date;
+
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 
 /**
@@ -14,7 +16,7 @@ import org.openelisglobal.reports.action.implementation.Report.DateRange;
  * output including looking up resource names. This class also can print out
  * just the XML needed for the Jasper report which helps make the CSV file (see
  * the call to generateJasperXML).
- * 
+ *
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jan 28, 2011
  */
@@ -41,7 +43,7 @@ public class HaitiColumnBuilder extends CSVColumnBuilder {
      * have to rerun generateJasperXML (see commented out call in c'tor above) and
      * paste each chunk into the JasperReports XML.
      */
-    protected void defineAllColumns() {
+    private void defineAllColumns() {
         add("accession_number", "LABNO", NONE);
         add("status_id", "ECHSTAT", SAMPLE_STATUS);
         add("national_id", "SUJETNO", NONE);
@@ -59,10 +61,11 @@ public class HaitiColumnBuilder extends CSVColumnBuilder {
      * @return the SQL for one big row for each sample item in the date range for
      *         the particular project.
      */
+    @Override
     public void makeSQL() {
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(
                 "SELECT s.id as sample_id, s.accession_number, s.entered_date, s.received_date, s.collection_date, s.status_id "
                         + ", pat.national_id, pat.birth_date, per.first_name, per.last_name, pat.gender " + " ");
@@ -75,17 +78,17 @@ public class HaitiColumnBuilder extends CSVColumnBuilder {
         query.append("\n FROM sample as s, patient as pat, person as per, sample_human as sh \n ");
 
         // all observation history values
-        appendOrganization(lowDatePostgres, highDatePostgres);
-        appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
-        appendResultCrosstab(lowDatePostgres, highDatePostgres);
+        appendOrganization(lowDate, highDate);
+        appendObservationHistoryCrosstab(lowDate, highDate);
+        appendResultCrosstab(lowDate, highDate);
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
         query.append("\n WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
-                + "\n AND s.collection_date >= '" + lowDatePostgres + "'" + "\n AND s.collection_date <= '"
-                + highDatePostgres + "'" + "\n AND pat.person_id = per.id " + "\n AND s.id = demo.samp_id "
-                + "\n AND s.id = result.samp_id " + "\n AND s.id = organization.samp_id "
-                + " ORDER BY s.accession_number ");
+                + "\n AND s.collection_date >= '" + formatDateForDatabaseSql(lowDate) + "'"
+                + "\n AND s.collection_date <= '" + formatDateForDatabaseSql(highDate) + "'"
+                + "\n AND pat.person_id = per.id " + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id "
+                + "\n AND s.id = organization.samp_id " + " ORDER BY s.accession_number ");
         // no don't insert another crosstab or table here, go up before the main WHERE
         // clause
         return;
@@ -95,15 +98,14 @@ public class HaitiColumnBuilder extends CSVColumnBuilder {
      * @param lowDatePostgres
      * @param highDatePostgres
      */
-    private void appendOrganization(String lowDatePostgres, String highDatePostgres) {
-        String listName = "organization";
-        appendCrosstabPreamble(listName);
+    private void appendOrganization(Date lowDate, Date highDate) {
+        appendCrosstabPreamble(SQLConstant.ORGANIZATION);
         query.append(
 
                 "\n( SELECT s.id as s_id, o.name AS organization_name FROM organization AS o, sample AS s, sample_organization as so "
-                        + "\n     WHERE s.collection_date >= date('" + lowDatePostgres + "') "
-                        + "\n     AND   s.collection_date <= date('" + highDatePostgres + "') "
+                        + "\n     WHERE s.collection_date >= date('" + formatDateForDatabaseSql(lowDate) + "') "
+                        + "\n     AND   s.collection_date <= date('" + formatDateForDatabaseSql(highDate) + "') "
                         + "\n     AND   s.id = so.samp_id AND so.org_id = o.id ) AS ORGANIZATION " + "\n  ");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, listName);
+        appendCrosstabPostfix(lowDate, highDate, SQLConstant.ORGANIZATION);
     }
 }

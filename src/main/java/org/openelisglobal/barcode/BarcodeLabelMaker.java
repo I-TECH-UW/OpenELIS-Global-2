@@ -12,6 +12,7 @@ import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
@@ -96,9 +97,9 @@ public class BarcodeLabelMaker {
     public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
 
         /*
-         * System.out.println( "labNo: " + labNo + "\n" + "patientId: " + patientId +
-         * "\n" + "type: " + type + "\n" + "quantity: " + quantity + "\n" + "override: "
-         * + override);
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
+         * labNo + "\n" + "patientId: " + patientId + "\n" + "type: " + type + "\n" +
+         * "quantity: " + quantity + "\n" + "override: " + override);
          */
 
         SampleService sampleService = SpringContext.getBean(SampleService.class);
@@ -203,8 +204,8 @@ public class BarcodeLabelMaker {
             }
             document.close();
             writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DocumentException | IOException e) {
+            LogEvent.logDebug(e);
         }
 
         return stream;

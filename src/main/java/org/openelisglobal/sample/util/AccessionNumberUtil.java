@@ -31,7 +31,6 @@ import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 
 public class AccessionNumberUtil {
 
@@ -50,7 +49,7 @@ public class AccessionNumberUtil {
     }
 
     public static IAccessionNumberValidator getAccessionNumberValidator(String prefix) {
-        if (GenericValidator.isBlankOrNull(prefix)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(prefix)) {
             return getAccessionNumberValidator();
         }
         try {
@@ -80,15 +79,8 @@ public class AccessionNumberUtil {
 
     public static ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType,
             String isRequired, String projectFormName) {
-
-        try {
-            return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
-                    projectFormName);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        return ValidationResults.SAMPLE_NOT_FOUND;
+        return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
+                projectFormName);
     }
 
     public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {

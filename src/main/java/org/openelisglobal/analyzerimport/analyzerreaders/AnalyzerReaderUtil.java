@@ -6,6 +6,7 @@ import java.util.List;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.result.service.ResultService;
@@ -44,7 +45,7 @@ public class AnalyzerReaderUtil {
                             resultFromDB.setResultType(resultFromAnalyzer.getResultType());
                             return resultFromDB;
                         } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
+                            LogEvent.logDebug(e);
                         }
                     }
                 }

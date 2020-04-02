@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -23,10 +22,13 @@ import org.openelisglobal.scheduler.service.CronSchedulerService;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +37,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "reports[*].enabledId", "reports[*].enabled",
+            "reports[*].urlId", "reports[*].url", "reports[*].scheduleHours", "reports[*].scheduleMin",
+            "reports[*].userName", "reports[*].password", };
 
     @Autowired
     private SiteInformationService siteInformationService;
@@ -45,6 +51,11 @@ public class ResultReportingConfigurationController extends BaseController {
     private static final String NEVER = "never";
     private static final String CRON_POSTFIX = "? * *";
     private static final String CRON_PREFIX = "0 ";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.GET)
     public ModelAndView showResultReportingConfiguration(HttpServletRequest request)
@@ -58,9 +69,9 @@ public class ResultReportingConfigurationController extends BaseController {
 
         ExchangeConfigurationService configService = new ExchangeConfigurationService(ConfigurationDomain.REPORT);
 
-        PropertyUtils.setProperty(form, "reports", configService.getConfigurations());
-        PropertyUtils.setProperty(form, "hourList", DisplayListService.getInstance().getList(ListType.HOURS));
-        PropertyUtils.setProperty(form, "minList", DisplayListService.getInstance().getList(ListType.MINS));
+        form.setReports(configService.getConfigurations());
+        form.setHourList(DisplayListService.getInstance().getList(ListType.HOURS));
+        form.setMinList(DisplayListService.getInstance().getList(ListType.MINS));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -76,8 +87,7 @@ public class ResultReportingConfigurationController extends BaseController {
         }
         List<SiteInformation> informationList = new ArrayList<>();
         List<CronScheduler> scheduleList = new ArrayList<>();
-        @SuppressWarnings("unchecked")
-        List<ReportingConfiguration> reports = (List<ReportingConfiguration>) form.get("reports");
+        List<ReportingConfiguration> reports = form.getReports();
 
         for (ReportingConfiguration config : reports) {
             informationList.add(setSiteInformationFor(config.getUrl(), config.getUrlId()));
@@ -98,7 +108,7 @@ public class ResultReportingConfigurationController extends BaseController {
         }
 
         ConfigurationProperties.forceReload();
-        new LateStartScheduler().restartSchedules();
+        SpringContext.getBean(LateStartScheduler.class).restartSchedules();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
@@ -117,7 +127,8 @@ public class ResultReportingConfigurationController extends BaseController {
     }
 
     private String createCronStatement(String hour, String min, boolean tweak) {
-        StringBuilder cronBuilder = new StringBuilder();
+        int approxStringLength = 10;
+        StringBuilder cronBuilder = new StringBuilder(approxStringLength);
 
         if (GenericValidator.isBlankOrNull(hour) || GenericValidator.isBlankOrNull(min)) {
             cronBuilder.append(NEVER);

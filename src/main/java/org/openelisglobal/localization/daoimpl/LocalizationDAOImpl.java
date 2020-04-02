@@ -52,7 +52,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 //
 //			auditDAO.saveHistory(localization, oldData, localization.getSysUserId(),
 //					IActionConstants.AUDIT_TRAIL_UPDATE, "LOCALIZATION");
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "Error in Localization AuditTrail updateData()");
 //		}
 //
@@ -73,7 +73,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return localization;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "readLocalization");
 //		}
 //

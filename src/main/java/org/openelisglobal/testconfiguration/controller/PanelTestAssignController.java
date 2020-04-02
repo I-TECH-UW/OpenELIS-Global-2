@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,10 +8,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.panel.service.PanelService;
@@ -29,6 +28,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,22 +39,34 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class PanelTestAssignController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "deactivatePanelId", "currentTests[*]",
+            "availableTests[*]" };
+
     @Autowired
-    PanelService panelService;
+    private PanelService panelService;
     @Autowired
-    PanelItemService panelItemService;
+    private PanelItemService panelItemService;
     @Autowired
-    TestService testService;
+    private TestService testService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
-    public ModelAndView showPanelTestAssign(HttpServletRequest request) {
+    public ModelAndView showPanelTestAssign(@Valid @ModelAttribute("form") PanelTestAssignForm oldForm,
+            BindingResult result,
+            HttpServletRequest request) {
         PanelTestAssignForm form = new PanelTestAssignForm();
 
-        String panelId = request.getParameter("panelId");
-        if (panelId == null) {
-            panelId = "";
+        if (!result.hasFieldErrors("panelId")) {
+            String panelId = oldForm.getPanelId();
+            if (panelId == null) {
+                panelId = "";
+            }
+            form.setPanelId(panelId);
         }
-        form.setPanelId(panelId);
 
         setupDisplayItems(form);
 
@@ -65,12 +78,7 @@ public class PanelTestAssignController extends BaseController {
     private void setupDisplayItems(PanelTestAssignForm form) {
         List<IdValuePair> panels = DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
 
-        try {
-            PropertyUtils.setProperty(form, "panelList", panels);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setPanelList(panels);
 
         if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
             Panel panel = panelService.getPanelById(form.getPanelId());
@@ -91,13 +99,7 @@ public class PanelTestAssignController extends BaseController {
             }
             panelTests.setTests(tests, testIdSet);
 
-            try {
-
-                PropertyUtils.setProperty(form, "selectedPanel", panelTests);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            form.setSelectedPanel(panelTests);
         }
     }
 
@@ -118,14 +120,14 @@ public class PanelTestAssignController extends BaseController {
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
     public ModelAndView postPanelTestAssign(HttpServletRequest request,
             @ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) throws Exception {
+            RedirectAttributes redirectAttributes)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String panelId = form.getString("panelId");
+        String panelId = form.getPanelId();
         String currentUser = getSysUserId(request);
         boolean updatePanel = false;
 
@@ -134,7 +136,7 @@ public class PanelTestAssignController extends BaseController {
         if (!GenericValidator.isBlankOrNull(panelId)) {
             List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
-            List<String> newTestIds = (List<String>) form.get("currentTests");
+            List<String> newTestIds = form.getCurrentTests();
             List<Test> newTests = new ArrayList<>();
             for (String testId : newTestIds) {
                 newTests.add(testService.get(testId));
@@ -142,8 +144,8 @@ public class PanelTestAssignController extends BaseController {
 
             try {
                 panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
-            } catch (LIMSRuntimeException lre) {
-                lre.printStackTrace();
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
             }
         }
 

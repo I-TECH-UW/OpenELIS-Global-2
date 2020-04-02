@@ -16,7 +16,7 @@ public interface SampleQaEventService extends BaseObjectService<SampleQaEvent, S
 
     List<SampleQaEvent> getSampleQaEventsBySample(Sample sample);
 
-    List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent);
+    List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent);
 
     List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate);
 

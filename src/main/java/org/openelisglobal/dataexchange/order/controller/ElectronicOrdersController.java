@@ -11,7 +11,6 @@ import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.statusofsample.service.StatusOfSampleService;
-import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,15 +24,18 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
-    StatusOfSampleService statusOfSampleService;
+    private StatusOfSampleService statusOfSampleService;
     @Autowired
-    ElectronicOrderService electronicOrderService;
+    private ElectronicOrderService electronicOrderService;
 
     @InitBinder
     public void initBinder(final WebDataBinder webdataBinder) {
         webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
                 new ElectronicOrderSortOrderCategoryConvertor());
+        webdataBinder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
@@ -61,10 +63,7 @@ public class ElectronicOrdersController extends BaseController {
         // get section of list for display on current page
         eOrders = eOrders.subList(startIndex, endIndex);
         for (ElectronicOrder eOrder : eOrders) {
-            StatusOfSample status = new StatusOfSample();
-            status.setId(eOrder.getStatusId());
-            statusOfSampleService.get(eOrder.getStatusId());
-            eOrder.setStatus(status);
+            eOrder.setStatus(statusOfSampleService.get(eOrder.getStatusId()));
         }
         form.setEOrders(eOrders);
 

@@ -21,9 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -34,6 +33,7 @@ import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralReason;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
@@ -67,17 +67,17 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      * @see org.openelisglobal.reports.action.implementation.IReportParameterSetter#setRequestParameters(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
             List<Organization> list = organizationService.getOrganizationsByTypeName("organizationName", "referralLab");
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLocationCode", true);
-            PropertyUtils.setProperty(form, "locationCodeList", list);
-            PropertyUtils.setProperty(form, "useLowerDateRange", true);
-            PropertyUtils.setProperty(form, "useUpperDateRange", true);
-            PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("instructions.report.referral"));
-        } catch (Exception e) {
-            e.printStackTrace();
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLocationCode(true);
+            form.setLocationCodeList(list);
+            form.setUseLowerDateRange(true);
+            form.setUseUpperDateRange(true);
+            form.setInstructions(MessageUtil.getMessage("instructions.report.referral"));
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
         }
     }
 
@@ -85,11 +85,11 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      * @see org.openelisglobal.reports.action.implementation.IReportCreator#initializeReport(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        locationId = form.getString("locationCode");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        locationId = form.getLocationCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
         reportLocation = getValidOrganization(locationId);
 
@@ -192,12 +192,11 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
         String note = analysisService.getNotesAsString(currentAnalysis, false, true, "<br/>", false);
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
         for (int i = 0; i < referralResults.size(); i++) {
-            i = reportReferralResultValue(referralResults, i);
+            i = lastUsedReportReferralResultValue(referralResults, i);
             ReferralResult referralResult = referralResults.get(i);
             ClinicalPatientData data = buildClinicalPatientData(false);
-            data.setReferralSentDate((referral != null && referral.getSentDate() != null)
-                    ? DateUtil.formatDateAsText(referral.getSentDate())
-                    : "");
+            data.setReferralSentDate(
+                    referral.getSentDate() != null ? DateUtil.formatDateAsText(referral.getSentDate()) : "");
             data.setReferralResult(reportReferralResultValue);
             data.setReferralNote(note);
             String testId = referralResult.getTestId();

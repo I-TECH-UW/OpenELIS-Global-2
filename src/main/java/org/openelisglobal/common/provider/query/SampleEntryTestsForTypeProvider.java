@@ -28,10 +28,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -60,7 +60,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     private boolean isVariableTypeOfSample;
 
-    public void initializeGlobalVariables() {
+    private final void initializeGlobalVariables() {
         USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
         VARIABLE_SAMPLE_TYPE_ID = typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable");
     }
@@ -121,7 +121,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         if (isVariableTypeOfSample) {
             xml.append("<variableSampleType/>");
         }
-        XMLUtil.appendKeyValue("sampleTypeId", sampleType, xml);
+        XMLUtil.appendKeyValue("sampleTypeId", StringUtil.snipToMaxIdLength(sampleType), xml);
         addTests(tests, xml);
 
         List<TypeOfSamplePanel> panelList = getPanelList(sampleType);
@@ -143,8 +143,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     private void addTest(Test test, StringBuilder xml) {
         xml.append("<test>");
-        XMLUtil.appendKeyValue("name", StringEscapeUtils.escapeXml(TestServiceImpl.getUserLocalizedTestName(test)),
-                xml);
+        XMLUtil.appendKeyValue("name", TestServiceImpl.getUserLocalizedTestName(test), xml);
         XMLUtil.appendKeyValue("id", test.getId(), xml);
         XMLUtil.appendKeyValue("userBenchChoice",
                 String.valueOf(USER_TEST_SECTION_ID.equals(test.getTestSection().getId())), xml);
@@ -160,13 +159,13 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
                 .getDictionaryListByCategory(testDictionary.getDictionaryCategory().getCategoryName());
         xml.append("<variableSampleTypes ");
         if (!GenericValidator.isBlankOrNull(testDictionary.getQualifiableDictionaryId())) {
-            XMLUtil.appendKeyValueAttribute("qualifiableId", testDictionary.getQualifiableDictionaryId(), xml);
+            XMLUtil.appendAttributeKeyValue("qualifiableId", testDictionary.getQualifiableDictionaryId(), xml);
         }
         xml.append(" >");
         for (IdValuePair pair : pairs) {
             xml.append("<type ");
-            XMLUtil.appendKeyValueAttribute("id", pair.getId(), xml);
-            XMLUtil.appendKeyValueAttribute("name", pair.getValue(), xml);
+            XMLUtil.appendAttributeKeyValue("id", pair.getId(), xml);
+            XMLUtil.appendAttributeKeyValue("name", pair.getValue(), xml);
             xml.append(" />");
         }
         xml.append("</variableSampleTypes>");

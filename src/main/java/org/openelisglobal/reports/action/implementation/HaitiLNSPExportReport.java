@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -36,6 +35,7 @@ import org.openelisglobal.patient.service.PatientServiceImpl;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.reports.action.implementation.reportBeans.TestSegmentedExportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
@@ -72,13 +72,13 @@ public class HaitiLNSPExportReport extends CSVExportReport {
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
 
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
@@ -196,7 +196,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
     }
 
     @Override
-    public byte[] runReport() throws Exception {
+    public byte[] runReport()  {
         StringBuilder builder = new StringBuilder();
         builder.append(TestSegmentedExportBean.getHeader());
         builder.append("\n");

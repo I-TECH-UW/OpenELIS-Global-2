@@ -38,25 +38,25 @@
 		</property>
 	</class>
 
-	<query name="login.getNext">
-		from Login login order by login.loginName
-	</query>
-	<query name="login.getPrevious">
-		from Login login order by login.loginName
-	</query>
+<!-- 	<query name="login.getNext"> -->
+<!-- 		from Login login order by login.loginName -->
+<!-- 	</query> -->
+<!-- 	<query name="login.getPrevious"> -->
+<!-- 		from Login login order by login.loginName -->
+<!-- 	</query> -->
 	<!-- Get password expired day -->
-	<sql-query name="login.getAnalysisPasswordExpiredDayCount">
-		<return-scalar column="cnt" type="integer" />   
-           <![CDATA[  
-	       		SELECT 
-	       			floor(current_date-password_expired_dt)*-1 as cnt
-	       		FROM Login_User l where l.LOGIN_NAME = :loginName       
-			]]>
-	</sql-query>
-	<sql-query name="login.getSystemUserId">
-		<return-scalar column="id" type="integer" />   
-           <![CDATA[         
-            	 SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'
-			]]>
-	</sql-query>
+<!-- 	<sql-query name="login.getAnalysisPasswordExpiredDayCount"> -->
+<!-- 		<return-scalar column="cnt" type="integer" />    -->
+<!--            <![CDATA[   -->
+<!-- 	       		SELECT  -->
+<!-- 	       			floor(current_date-password_expired_dt)*-1 as cnt -->
+<!-- 	       		FROM Login_User l where l.LOGIN_NAME = :loginName        -->
+<!-- 			]]> -->
+<!-- 	</sql-query> -->
+<!-- 	<sql-query name="login.getSystemUserId"> -->
+<!-- 		<return-scalar column="id" type="integer" />    -->
+<!--            <![CDATA[          -->
+<!--             	 SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y' -->
+<!-- 			]]> -->
+<!-- 	</sql-query> -->
 </hibernate-mapping>

@@ -72,7 +72,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
     }
 
     private void handleBacklog() {
-        System.out.println("Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -131,7 +131,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
         try {
             json.writeJSONString(out);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         String jsonText = out.toString().replace("\n", "");
 
@@ -153,7 +153,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
             }
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeReportForDayPeriod()", e);
+            LogEvent.logErrorStack(e);
             throw e;
         }
     }

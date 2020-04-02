@@ -15,10 +15,10 @@ public class DataIndicator extends BaseObject<String> {
         SENT, RECEIVED, FAILED, UNSAVED
     }
 
-    public static String SENT = "sent";
-    public static String RECEIVED = "received";
-    public static String FAILED = "failed";
-    public static String UNSAVED = "unsaved";
+    public static final String SENT = "sent";
+    public static final String RECEIVED = "received";
+    public static final String FAILED = "failed";
+    public static final String UNSAVED = "unsaved";
 
     private String id;
     private List<DataResource> resources;
@@ -31,10 +31,12 @@ public class DataIndicator extends BaseObject<String> {
     private String status;
     private boolean sendIndicator = false;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
           	     org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
@@ -12,25 +12,16 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-
-<%!
-    String path = "";
-    String basePath = "";
-    boolean acceptExternalOrders = false;
-%>
 <%
-    path = request.getContextPath();
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-    acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
+    boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
 %>
 
-<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
+<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?"/>
 
-<script type="text/javascript" src="<%=basePath%>scripts/additional_utilities.js"></script>
-<script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="scripts/laborder.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/additional_utilities.js"></script>
+<script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/laborder.js?"></script>
 <script type="text/javascript">
 
 //validation logic for this 'page'

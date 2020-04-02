@@ -27,7 +27,7 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getMethods(String filter) {
+    public List<Method> getMethods(String filter) {
         return getBaseObjectDAO().getMethods(filter);
     }
 

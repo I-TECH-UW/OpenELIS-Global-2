@@ -38,7 +38,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//	
 //	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException {
 //
 //		List<AnalyzerResults> results = null;
@@ -55,7 +55,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //
 //			return results;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerResultsDAOImpl", "getResultsbyAnalyzer()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerResults getResultsbyAnalyzer()", e);
 //		}
@@ -63,7 +63,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //	}
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
         try {
@@ -83,8 +83,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 
             return list.size() > 0 ? list : null;
 
-        } catch (Exception e) {
-            LogEvent.logError("AnalyzerResultsDAOImpl", "duplicateAnalyzerResultsExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
         }
     }
@@ -105,7 +105,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(results);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(results);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
 //		}
@@ -118,8 +118,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
             data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
         }
         return data;
@@ -138,7 +138,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //			} else {
 //				analyzerResults.setId(null);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("AnalyzerResultsDAOImpl", "getData()", e.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerResults getData()", e);
 //		}
@@ -155,7 +155,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			}
-//		} catch (HibernateException se) {
+//		} catch (HibernateException e) {
 //			LogEvent.logError("AnalyzerResultsDAOImpl", "delete()", se.toString());
 //			throw new LIMSRuntimeException("Error in AnalyzerResults delete()", se);
 //		}

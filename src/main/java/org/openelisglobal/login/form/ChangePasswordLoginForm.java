@@ -15,15 +15,15 @@ public class ChangePasswordLoginForm extends BaseForm {
 
     // in validator
     @Password
-    private String password = "";
+    private String password;
 
     // in validator
     @Password
-    private String newPassword = "";
+    private String newPassword;
 
     // in validator
     @Password
-    private String confirmPassword = "";
+    private String confirmPassword;
 
     public ChangePasswordLoginForm() {
         setFormName("changePasswordLoginForm");
