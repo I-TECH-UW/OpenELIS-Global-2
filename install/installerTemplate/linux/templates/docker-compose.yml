@@ -18,7 +18,7 @@ services:
 #db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
 #db              # values must match values in DatabaseBackup.pl
 #db            - [% db_backups_dir %]:[% docker_backups_dir %]     
-            
+
     openelisglobal:
         container_name: openelisglobal-webapp # don't change
         image: openelisglobal
@@ -38,11 +38,11 @@ services:
             - source: tomcat_cert.key
               # this will be read into CATALINA_OPTS in docker-entrypoint.sh
             - source: OE_DB_USER_PASSWORD
-            
+
 secrets:
   OE_DB_USER_PASSWORD:
     file: [% secrets_dir %]OE_DB_USER_PASSWORD
   tomcat_cert.crt:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
-    file: /etc/tomcat/ssl/private/tomcat_cert.key
+    file: /etc/tomcat/ssl/private/tomcat_cert.key 
